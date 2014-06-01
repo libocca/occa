@@ -1,0 +1,87 @@
++---[ 0: README ]-----------------------
+|   Installing:
+|     Go to your occa directory
+|        You should see: include, src, lib
+|
+|     Specify your compiler:
+|        Set CXX to your preferred C++ compiler
+|        (For specific C++ flags, use CXXFLAGS)
+|
+|        Set MPICXX to your preferred MPI-C++ compiler
+|        (For specific MPI-C++ flags, use MPICXXFLAGS)
+|
+|     Install:
+|        Type "make"
+|
+|     Setup environment variables (1)
++=======================================
+
+
++---[ 1: ENVIRONMENT VARIABLES ]--------
+|  Required environment variables:
+|    (2) OCCA_DIR
+|    (3) OCCA_CACHE_DIR
+|
+|  Optional environment variables:
+|    (4) OCCA_MPI_ENABLED
+|    (5) OCCA_OPENCL_ENABLED
+|    (6) OCCA_CUDA_ENABLED
++=======================================
+
+
++---[ 2: OCCA_DIR ]---------------------
+|  Info:
+|    Directory where occa/ is stored:
+|      $OCCA_DIR/include
+|      $OCCA_DIR/src
+|      $OCCA_DIR/lib
+|
+|  Setting it:
+|    export OCCA_DIR=/absolute/path/to/dir
++=======================================
+
+
++---[ 2: OCCA_CACHE_DIR ]---------------
+|  Info:
+|    Directory where compile kernels are
+|      stored (caching binaries)
+|
+|  Setting it:
+|    export OCCA_CACHE_DIR=/absolute/path/to/dir
++=======================================
+
+
++--[ 4: OCCA_MPI_ENABLED ]--------------
+|  Info:
+|    Enable MPI features in OCCA
+|
+|  Enabling MPI features:
+|    export OCCA_MPI_ENABLED=1
+|
+|  Defaults to:
+|    export OCCA_MPI_ENABLED=0
++=======================================
+
+
++--[ 5: OCCA_OPENCL_ENABLED ]-----------
+|  Info:
+|    Enable OpenCL mode in OCCA
+|
+|  Enabling OpenCL:
+|    export OCCA_OPENCL_ENABLED=1
+|
+|  Defaults to:
+|    export OCCA_OPENCL_ENABLED=0
++=======================================
+
+
++--[ 6: OCCA_CUDA_ENABLED ]-------------
+|  Info:
+|    Enable CUDA mode in OCCA
+|
+|  Enabling CUDA:
+|    export OCCA_CUDA_ENABLED=1
+|
+|  Defaults to:
+|    export OCCA_CUDA_ENABLED=0
++=======================================
