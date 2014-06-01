@@ -1,5 +1,5 @@
-#ifndef RASCALS_SETUPAIDE
-#define RASCALS_SETUPAIDE
+#ifndef OCCA_SETUPAIDE_HEADER
+#define OCCA_SETUPAIDE_HEADER
 
 #include <sys/stat.h>
 #include <fcntl.h>

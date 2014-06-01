@@ -1,24 +1,23 @@
-#if COMPILED_WITH_GL
-#  ifndef RASCALS_VISUALIZER
-#  define RASCALS_VISUALIZER
+#if OCCA_GL_ENABLED
+#  ifndef OCCA_VISUALIZER_HEADER
+#  define OCCA_VISUALIZER_HEADER
 
 #include <iostream>
 
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <ctime>
 
 #include <iostream>
 
-#ifdef   OS_LINUX
+#if   OCCA_OS == LINUX_OS
 #  include <GL/glew.h>
 #  include <GL/gl.h>
 #  include <GL/glut.h>
-#else
-#  ifdef OS_OSX
-#    include <OpenGL/gl.h>
-#    include <GLUT/glut.h>
-#  endif
+#elif OCCA_OS == LINUX_OS
+#  include <OpenGL/gl.h>
+#  include <GLUT/glut.h>
 #endif
 
 using std::string;

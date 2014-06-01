@@ -8,7 +8,7 @@
 #include "setupAide.hpp"
 #include "occa.hpp"
 
-#if COMPILED_WITH_GL
+#if OCCA_GL_ENABLED
 visualizer vis;
 int click;
 #endif
@@ -42,14 +42,14 @@ void setupMesh();
 void setupSolver();
 void solve();
 
-#if COMPILED_WITH_GL
+#if OCCA_GL_ENABLED
 void glRun();
 void update();
 void drawMesh();
 #endif
 
 int main(int argc, char **argv){
-#if COMPILED_WITH_GL
+#if OCCA_GL_ENABLED
   vis.setup("OCL Visualizer", argc, argv);
   glRun();
 #else
@@ -59,7 +59,7 @@ int main(int argc, char **argv){
   return 0;
 }
 
-#if COMPILED_WITH_GL
+#if OCCA_GL_ENABLED
 void glRun(){
   setupMesh();
   setupSolver();
@@ -155,7 +155,7 @@ void setupMesh(){
   mY = height/2;
 }
 
-#if COMPILED_WITH_GL
+#if OCCA_GL_ENABLED
 void update(){
   if( vis.keyIsPressed(' ') ){
     if(!click){

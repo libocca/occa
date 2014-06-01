@@ -1,4 +1,4 @@
-#if COMPILED_WITH_GL
+#if OCCA_GL_ENABLED
 
 #include "visualizer.hpp"
 
@@ -469,7 +469,7 @@ void visualizer::initFunctions(){
 void visualizer::start(){
   if(!vpRowCount || !vpColCount){
     printf("Viewports not setup [ createViewports(int,int) ] .\nExiting Program.\n");
-    exit(1);
+    throw 1;
   }
 
   glutMainLoop();
@@ -664,7 +664,7 @@ int visualizer::getVP(){
 void visualizer::createViewports(int rCount, int cCount){
   if(rCount <= 0 || cCount <= 0){
     printf("Number of viewports [ %d , %d ] is not acceptable.\nExiting Program.\n", rCount, cCount);
-    exit(1);
+    throw 1;
   }
 
   vpRowCount = rCount;

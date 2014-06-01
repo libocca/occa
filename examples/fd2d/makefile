@@ -1,6 +1,7 @@
 include ${OCCA_DIR}/scripts/makefile
 
-flags += -DtFloat=float
+flags += -DtFloat=float -DOCCA_GL_ENABLED=1
+links += -lGLU -lglut
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
