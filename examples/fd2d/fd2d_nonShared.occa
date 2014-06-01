@@ -1,0 +1,95 @@
+#define PI   3.14159265358
+#define PI_4 0.78539816339           // PI/4
+
+#define FD_STENCIL_1(D)                         \
+  {1.0/(D*D), -2.0/(D*D), 1.0/(D*D)}
+
+#define FD_STENCIL_2(D)                         \
+  {-0.0833333/(D*D), 1.33333/(D*D), -2.5/(D*D), \
+      1.33333/(D*D), -0.0833333/(D*D)}
+
+#define FD_STENCIL_3(D)                         \
+  {0.0111111/(D*D), -0.15/(D*D), 1.5/(D*D),     \
+      -2.72222/(D*D), 1.5/(D*D), -0.15/(D*D),   \
+      0.0111111/(D*D)}
+
+#define FD_STENCIL_4(D)                                 \
+  {-0.00178571/(D*D), 0.0253968/(D*D), -0.2/(D*D),      \
+      1.6/(D*D), -2.84722/(D*D), 1.6/(D*D),             \
+      -0.2/(D*D), 0.0253968/(D*D), -0.00178571/(D*D)}
+
+#define FD_STENCIL_5(D)                                         \
+  {0.00031746/(D*D), -0.00496032/(D*D), 0.0396825/(D*D),        \
+      -0.238095/(D*D), 1.66667/(D*D), -2.92722/(D*D),           \
+      1.66667/(D*D), -0.238095/(D*D), 0.0396825/(D*D),          \
+      -0.00496032/(D*D), 0.00031746/(D*D)}
+
+#define FD_STENCIL_6(D)                                         \
+  {-6.01251e-05/(D*D), 0.00103896/(D*D), -0.00892857/(D*D),     \
+      0.0529101/(D*D), -0.267857/(D*D), 1.71429/(D*D),          \
+      -2.98278/(D*D), 1.71429/(D*D), -0.267857/(D*D),           \
+      0.0529101/(D*D), -0.00892857/(D*D), 0.00103896/(D*D),     \
+      -6.01251e-05/(D*D)}
+
+#define FD_STENCIL_7(D)                                         \
+  {1.18929e-05/(D*D), -0.000226625/(D*D), 0.00212121/(D*D),     \
+      -0.0132576/(D*D), 0.0648148/(D*D), -0.291667/(D*D),       \
+      1.75/(D*D), -3.02359/(D*D), 1.75/(D*D),                   \
+      -0.291667/(D*D), 0.0648148/(D*D), -0.0132576/(D*D),       \
+      0.00212121/(D*D), -0.000226625/(D*D), 1.18929e-05/(D*D)}
+
+#define FD_STENCIL2(N,D) FD_STENCIL_##N(D)
+#define FD_STENCIL(N,D)  FD_STENCIL2(N,D) // Unwraps N and D
+
+occaConstant tFloat tStencil[] = FD_STENCIL(1 , dt);
+occaConstant tFloat xStencil[] = FD_STENCIL(sr, dx);
+
+// 0.9899*sqrt(8.0*log(10.0))/(PI*freq);
+occaConstant tFloat hat_t0 = 1.3523661426929/freq;
+
+occaDeviceFunction tFloat hatWavelet(tFloat t);
+
+occaDeviceFunction tFloat hatWavelet(tFloat t){
+  const tFloat pift  = PI*freq*(t - hat_t0);
+  const tFloat pift2 = pift*pift;
+
+  return (1.0 - 2.0*pift2)*exp(-pift2);
+}
+
+occaKernel void fd2d(occaKernelInfoArg,
+                     occaPointer tFloat *u1,
+                     occaPointer tFloat *u2,
+                     occaPointer tFloat *u3,
+                     const       tFloat  occaVariable currentTime){
+  occaOuterFor1{
+    occaOuterFor0{
+      occaInnerFor1{
+        occaInnerFor0{
+          const int tx = occaGlobalId0;
+          const int ty = occaGlobalId1;
+
+          const int id = ty*w + tx;
+
+          const tFloat r_u2 = u2[id];
+          const tFloat r_u3 = u3[id];
+
+          tFloat lap = 0.0;
+
+          for(int i = -sr; i <= sr; i++){
+            const int nX = (tx + w + i) % w;
+            const int nY = (ty + h + i) % h;
+
+            lap += xStencil[sr + i]*u2[ty*w + nX] + xStencil[sr + i]*u2[nY*w + tx];
+          }
+
+          const tFloat u_n1 = (-tStencil[1]*r_u2 - tStencil[2]*r_u3 + lap)/tStencil[0];
+
+          if( (tx == mX) && (ty == mY) )
+            u1[id] = u_n1 + hatWavelet(currentTime)/tStencil[0];
+          else
+            u1[id] = u_n1;
+        }
+      }
+    }
+  }
+}

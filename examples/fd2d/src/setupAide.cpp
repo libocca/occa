@@ -1,0 +1,152 @@
+#include "setupAide.hpp"
+
+setupAide::setupAide(){}
+
+setupAide::setupAide(string setupFile){
+  read(setupFile);
+}
+
+setupAide::setupAide(const setupAide& sa){
+  *this = sa;
+}
+
+setupAide& setupAide::operator = (const setupAide& sa){
+  data = sa.data;
+  return *this;
+}
+
+string setupAide::readFile(string filename){
+  struct stat statbuf;
+
+  FILE *fh = fopen(filename.c_str(), "r");
+
+  if (fh == 0){
+    printf("Failed to open: %s\n", filename.c_str());
+    exit(1);
+  }
+
+  stat(filename.c_str(), &statbuf);
+  char *source = (char *) malloc(statbuf.st_size + 1);
+  fread(source, statbuf.st_size, 1, fh);
+  source[statbuf.st_size] = '\0';
+
+  string ret = source;
+
+  return ret;
+}
+
+void setupAide::read(string setupFile){
+  vector<string> data2;
+  vector<string> keyword2;
+
+  string args = readFile(setupFile);
+
+  int size = args.length();
+  string current = "";
+  stringstream ss;
+  char c;
+
+  for(int i=0; i<size; i++){
+    c = args[i];
+
+    // Batch strings together
+    if(c == '\'' || c == '"'){
+      current += c;
+      i++;
+
+      while(i < size && args[i] != c)
+	current += args[i++];
+
+      if(i >= size)
+	break;
+
+      if( i < (size-1) )
+	current += args[i];
+    }
+
+    // Batch comments
+    else if(c == '/' && i < size && args[i+1] == '*'){
+      i += 2;
+
+      while( args[i] != '*' || (i < size && args[i+1] != '/') )
+	i++;
+
+      if(i >= size)
+	break;
+
+      i++;
+    }
+
+    // Removing # comments
+    else if(c == '#'){
+      i++;
+
+      while(i < size && args[i] != '\n')
+	i++;
+    }
+
+    // Change \[\] to []
+    else if(c == '\\' && i < size && (args[i+1] == '[' || args[i+1] == ']')){
+      current += args[i+1];
+      i += 2;
+    }
+
+    // Split keywords []
+    else if(c == '['){
+      if(current != ""){
+        data2.push_back(current);
+        current = "";
+      }
+
+      i++;
+
+      while(i < size && args[i] != ']')
+	current += args[i++];
+
+      keyword2.push_back(current);
+      current = "";
+    }
+
+    // Else add the character
+    else
+      current += c;
+
+    if(i >= (size-1) && current.length()){
+      data2.push_back(current);
+      current = "";
+    }
+  }
+
+  if(current.length())
+    data2.push_back(current);
+
+  int argc = keyword2.size();
+
+  for(int i=0; i<argc; i++)
+    data[ keyword2[i] ] = data2[i];
+}
+
+string setupAide::getArgs(string key){
+  return data[key];
+}
+
+void setupAide::getArgs(string key, vector<string>& argv, string delimeter){
+  string args, current;
+  int size;
+
+  args = getArgs(key);
+
+  size = args.length();
+
+  current = "";
+
+  for(int i=0; i<size; i++){
+    while( i < size && delimeter.find(args[i]) == string::npos )
+      current += args[i++];
+
+    if(current.length())
+      argv.push_back(current);
+
+    current = "";
+  }
+}
