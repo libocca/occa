@@ -1,7 +1,14 @@
 include ${OCCA_DIR}/scripts/makefile
 
 flags += -DtFloat=float -DOCCA_GL_ENABLED=1
-links += -lGLU -lglut
+
+ifeq ($(OS),OSX)
+	links += -framework OpenGL -framework GLUT
+endif
+
+ifeq ($(OS),LINUX)
+	links += -lGLU -lglut
+endif
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
