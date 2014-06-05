@@ -105,6 +105,12 @@ ifdef OCCA_CUDA_ENABLED
 	CUDA_Enabled = $(OCCA_CUDA_ENABLED)
 endif
 
+ifeq ($(DEBUG), 1)
+	Debug_Enabled = 1
+else
+	Debug_Enabled = 0
+endif
+
 ifeq ($(Debug_Enabled), 1)
 	flags += $(Debug_Flags)   -DOCCA_DEBUG_ENABLED=1
 else

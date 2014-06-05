@@ -279,7 +279,7 @@ namespace occa {
 
   template <>
   void memory_t<OpenMP>::free(){
-    ::free(handle);
+    _mm_free(handle);
   }
   //==================================
 
