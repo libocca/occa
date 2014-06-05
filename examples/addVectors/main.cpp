@@ -52,14 +52,13 @@ int main(int argc, char **argv){
   delete [] b;
   delete [] ab;
 
-  device.free();
-
   addVectors.free();
-
-  return 0;
-}
-
   o_a.free();
   o_b.free();
   o_ab.free();
+  device.free();
+
 }
+
+
+ 
