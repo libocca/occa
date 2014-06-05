@@ -85,8 +85,6 @@ namespace occa {
     inline dim(size_t x_, size_t y_);
     inline dim(size_t x_, size_t y_, size_t z_);
 
-    inline dim(size_t xyz[3]);
-
     inline dim(const dim &d);
 
     inline dim& operator = (const dim &d);
@@ -619,12 +617,6 @@ namespace occa {
     x(x_),
     y(y_),
     z(z_) {}
-
-
-  inline dim(size_t xyz[3]) :
-    x(xyz[0]),
-    y(xyz[1]),
-    z(xyz[2]) {}
 
   inline dim::dim(const dim &d) :
     x(d.x),

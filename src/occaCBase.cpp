@@ -54,7 +54,7 @@ extern "C" {
   const char* occaDeviceMode(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
-    return device_.mode.c_str();
+    return device_.mode().c_str();
   }
 
 
@@ -77,7 +77,7 @@ extern "C" {
 
     occa::kernel *kernel = new occa::kernel();
 
-    *kernel = device_.buildKernelFromBinary(filename,
+    *kernel = device_.buildKernelFromSource(filename,
                                             functionName,
                                             info_);
 
@@ -100,7 +100,7 @@ extern "C" {
 
   occaMemory occaMalloc(occaDevice device,
                         size_t bytes,
-                        const void *source){
+                        void *source){
     occa::device &device_ = *((occa::device*) device);
 
     occa::memory *memory = new occa::memory();
@@ -146,7 +146,7 @@ extern "C" {
   const char* occaKernelMode(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 
-    return kernel_.mode.c_str();
+    return kernel_.mode().c_str();
   }
 
   int occaKernelPerferredDimSize(occaKernel kernel){
@@ -157,11 +157,13 @@ extern "C" {
 
   void occaKernelSetWorkingDims(occaKernel kernel,
                                 int dims,
-                                occaDim itemsPerGroup,
+                                occaDim items,
                                 occaDim groups){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 
-    kernel_.setWorkingDims(dims, itemsPerGroup, groups);
+    kernel_.setWorkingDims(dims,
+                           occa::dim(items.x, items.y, items.z),
+                           occa::dim(groups.x, groups.y, groups.z));
   }
 
 
@@ -189,14 +191,14 @@ extern "C" {
   const char* occaMemoryMode(occaMemory memory){
     occa::memory &memory_ = *((occa::memory*) memory);
 
-    return memory_.mode.c_str();
+    return memory_.mode().c_str();
   }
 
   // Copies
 
   void occaMemorySwap(occaMemory memoryA, occaMemory memoryB){
     occa::memory &memoryA_ = *((occa::memory*) memoryA);
-    occa::memory &memoryA_ = *((occa::memory*) memoryB);
+    occa::memory &memoryB_ = *((occa::memory*) memoryB);
 
     memoryA_.swap(memoryB_);
   }

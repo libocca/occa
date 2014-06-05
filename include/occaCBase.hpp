@@ -11,12 +11,11 @@ extern "C" {
 
   typedef void* occaStream;
 
-  typedev void* occaKernelInfo;
+  typedef void* occaKernelInfo;
 
   typedef struct occaDim_t {
     size_t x, y, z;
   } occaDim;
-
 
   //---[ General ]----------------------
   void occaSetOmpCompiler(const char *compiler);
@@ -56,7 +55,7 @@ extern "C" {
 
   occaMemory occaMalloc(occaDevice device,
                         size_t bytes,
-                        const void *source);
+                        void *source);
 
   occaStream occaGenStream(occaDevice device);
   occaStream occaGetStream(occaDevice device);
@@ -73,7 +72,7 @@ extern "C" {
 
   void occaKernelSetWorkingDims(occaKernel kernel,
                                 int dims,
-                                occaDim itemsPerGroup,
+                                occaDim items,
                                 occaDim groups);
 
   double occaKernelTimeTaken(occaKernel kernel);
