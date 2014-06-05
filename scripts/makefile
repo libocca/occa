@@ -6,9 +6,9 @@ iPath = include
 
 
 #---[ Default Variables ]-------------------------
-Debug_Enabled  = 1
+Debug_Enabled  = 0
 
-OMP_Enabled    = 0
+OMP_Enabled    = 1
 OpenGL_Enabled = 1
 #=================================================
 
@@ -16,8 +16,8 @@ OpenGL_Enabled = 1
 #---[ Paths/Flags/Links ]-------------------------
 paths  = -I./$(sPath) -I./$(iPath) -I${OCCA_DIR}/lib -I${OCCA_DIR}/include
 paths += -I/sw/include/ -I/opt/AMDAPP/include/ -I/usr/include/ -I/opt/X11/include
-paths += -I/Developer/NVIDIA/CUDA-5.5/include/ -I/usr/local/cuda/include
-paths += -L/opt/X11/lib -L${OCCA_DIR}/lib -L/usr/local/cuda/lib64
+paths += -I/Developer/NVIDIA/CUDA-5.5/include/ -I/usr/local/cuda/include -I/glb/data/comp_mod/Tools/cuda-5.5/include
+paths += -L/opt/X11/lib -L${OCCA_DIR}/lib -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib
 
 flags = -Wno-deprecated -Wno-unused-value
 
