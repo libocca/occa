@@ -2,22 +2,12 @@
 
 #include "occa.hpp"
 
-occa::device device;
-occa::kernel addVectors;
-occa::memory o_a, o_b, o_ab;
-
-int entries;
-
-float *a, *b, *ab;
-
-void freeStuff();
-
 int main(int argc, char **argv){
   int entries = 5;
 
-  a  = new float[entries];
-  b  = new float[entries];
-  ab = new float[entries];
+  float *a  = new float[entries];
+  float *b  = new float[entries];
+  float *ab = new float[entries];
 
   for(int i = 0; i < entries; ++i){
     a[i]  = i;
@@ -28,6 +18,10 @@ int main(int argc, char **argv){
   std::string mode = "OpenMP";
   int platformID = 0;
   int deviceID   = 0;
+
+  occa::device device;
+  occa::kernel addVectors;
+  occa::memory o_a, o_b, o_ab;
 
   device.setup(mode, platformID, deviceID);
 
@@ -54,12 +48,6 @@ int main(int argc, char **argv){
   for(int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
-  freeStuff();
-
-  return 0;
-}
-
-void freeStuff(){
   delete [] a;
   delete [] b;
   delete [] ab;
@@ -67,6 +55,9 @@ void freeStuff(){
   device.free();
 
   addVectors.free();
+
+  return 0;
+}
 
   o_a.free();
   o_b.free();
