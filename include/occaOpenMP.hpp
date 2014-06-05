@@ -17,21 +17,6 @@ namespace occa {
   struct OpenMPKernelData_t {
     void *handle;
   };
-
-  class occaArgs_t {
-  public:
-    int data[12];
-
-    inline occaArgs_t(dim inner, dim outer){
-      data[0] = outer.z;
-      data[2] = outer.y;
-      data[4] = outer.x;
-
-      data[6]  = inner.z;
-      data[8]  = inner.y;
-      data[10] = inner.x;
-    }
-  };
   //==================================
 
 

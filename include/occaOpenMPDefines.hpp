@@ -1,17 +1,14 @@
 #ifndef OCCA_OPENMP_DEFINES_HEADER
 #define OCCA_OPENMP_DEFINES_HEADER
 
+#include <cstdlib>
+#include <cstdio>
 #include <cmath>
 
-#if OCCA_OPENMP_ENABLED
-#  include "omp.h"
-#endif
 
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
-#define OCCA_MEM_ALIGN   32
-
-typedef struct occaArgs_t_ { int data[12]; } occaArgs_t;
+#define OCCA_MEM_ALIGN   64
 
 typedef struct float2_t { float  x,y;     } float2;
 typedef struct float3_t { float  x,y,z;   } float3;
@@ -24,23 +21,13 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Loop Info ]--------------------------------
-#define occaOuterDim2 occaArgs.data[0]
-#define occaOuterId2  occaArgs.data[1]
-
-#define occaOuterDim1 occaArgs.data[2]
-#define occaOuterId1  occaArgs.data[3]
-
-#define occaOuterDim0 occaArgs.data[4]
-#define occaOuterId0  occaArgs.data[5]
+#define occaOuterDim2 occaKernelArgs[0]
+#define occaOuterDim1 occaKernelArgs[1]
+#define occaOuterDim0 occaKernelArgs[2]
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaInnerDim2 occaArgs.data[6]
-#define occaInnerId2  occaArgs.data[7]
-
-#define occaInnerDim1 occaArgs.data[8]
-#define occaInnerId1  occaArgs.data[9]
-
-#define occaInnerDim0 occaArgs.data[10]
-#define occaInnerId0  occaArgs.data[11]
+#define occaInnerDim2 occaKernelArgs[3]
+#define occaInnerDim1 occaKernelArgs[4]
+#define occaInnerDim0 occaKernelArgs[5]
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaGlobalDim2 (occaInnerDim2 * occaOuterDim2)
 #define occaGlobalId2  (occaOuterId2*occaInnerDim2 + occaInnerId2)
@@ -54,17 +41,10 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Loops ]------------------------------------
-#define occaOuterFor2 for(occaOuterId2 = 0; occaOuterId2 < occaOuterDim2; ++occaOuterId2)
-#define occaOuterFor1 for(occaOuterId1 = 0; occaOuterId1 < occaOuterDim1; ++occaOuterId1)
+#define occaOuterFor2 for(int occaOuterId2 = 0; occaOuterId2 < occaOuterDim2; ++occaOuterId2)
+#define occaOuterFor1 for(int occaOuterId1 = 0; occaOuterId1 < occaOuterDim1; ++occaOuterId1)
+#define occaOuterFor0 for(int occaOuterId0 = 0; occaOuterId0 < occaOuterDim0; ++occaOuterId0)
 
-#if OCCA_OPENMP_ENABLED
-#  define occaOuterFor0                                                   \
-  _Pragma("omp parallel for firstprivate(occaOuterId0, occaInnerId0, occaInnerId1, occaInnerId2)") \
-  for(occaOuterId0 = 0; occaOuterId0 < occaOuterDim0; ++occaOuterId0)
-#else
-#  define occaOuterFor0                                         \
-  for(occaOuterId0 = 0; occaOuterId0 < occaOuterDim0; ++occaOuterId0)
-#endif
 #define occaOuterFor occaOuterFor2 occaOuterFor1 occaOuterFor0
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaInnerFor2 for(occaInnerId2 = 0; occaInnerId2 < occaInnerDim2; ++occaInnerId2)
@@ -101,9 +81,9 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Kernel Info ]------------------------------
-#define occaKernelInfoArg   occaArgs_t &occaArgs
-#define occaFunctionInfoArg occaArgs_t &occaArgs
-#define occaFunctionInfo              occaArgs
+#define occaKernelInfoArg   const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
+#define occaFunctionInfoArg const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
+#define occaFunctionInfo               occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaKernel         extern "C"
 #define occaFunction
@@ -111,68 +91,85 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 //================================================
 
 
+#define occaUnroll3(LOOPS) _Pragma(#LOOPS)
+#define occaUnroll2(LOOPS) occaUnroll3(unroll LOOPS)
+#define occaUnroll(LOOPS)  occaUnroll2(LOOPS)
+
+
 //---[ Private ]---------------------------------
 template <class TM, const int SIZE>
 class occaPrivate_t {
 private:
-
-public:
-  const occaArgs_t &occaArgs;
+  const int dim0, dim1, dim2;
+  const int &id0, &id1, &id2;
 
   TM data[OCCA_MAX_THREADS][SIZE] occaAligned;
 
-  occaPrivate_t(occaArgs_t &occaArgs_) :
-    occaArgs(occaArgs_) {}
+  occaPrivate_t(int dim0_, int dim1_, int dim2_,
+                int &id0_, int &id1_, int &id2_) :
+    dim0(dim0_),
+    dim1(dim1_),
+    dim2(dim2_),
+    id0(id0_),
+    id1(id1_),
+    id2(id2_) {}
 
   ~occaPrivate_t(){}
 
-#define OCCA_PRIVATE_ID                                        \
-  (occaInnerId2*occaInnerDim1 + occaInnerId1)*occaInnerDim0 + occaInnerId0
+  inline int index(){
+    return ((id2*dim1 + id1)*dim0 + id0);
+  }
 
   inline TM& operator [] (const int n){
-    return data[OCCA_PRIVATE_ID][n];
+    return data[index()][n];
   }
 
   inline operator TM(){
-    return data[OCCA_PRIVATE_ID][0];
+    return data[index()][0];
+  }
+
+  inline operator TM*(){
+    return data[index()];
   }
 
   inline occaPrivate_t& operator = (const occaPrivate_t &r) {
-    const int id = OCCA_PRIVATE_ID;
-    data[id][0] = r.data[id][0];
+    data[index()][0] = r.data[index()][0];
+    return *this;
   }
 
   inline occaPrivate_t<TM,SIZE> & operator = (const TM &t){
-    data[OCCA_PRIVATE_ID][0] = t;
+    data[index()][0] = t;
     return *this;
   }
 
   inline occaPrivate_t<TM,SIZE> & operator += (const TM &t){
-    data[OCCA_PRIVATE_ID][0] += t;
+    data[index()][0] += t;
     return *this;
   }
 
   inline occaPrivate_t<TM,SIZE> & operator -= (const TM &t){
-    data[OCCA_PRIVATE_ID][0] -= t;
+    data[index()][0] -= t;
     return *this;
   }
 
   inline occaPrivate_t<TM,SIZE> & operator /= (const TM &t){
-    data[OCCA_PRIVATE_ID][0] /= t;
+    data[index()][0] /= t;
     return *this;
   }
 
   inline occaPrivate_t<TM,SIZE> & operator *= (const TM &t){
-    data[OCCA_PRIVATE_ID][0] *= t;
+    data[index()][0] *= t;
     return *this;
   }
 };
 
-#define occaPrivateArray( TYPE , NAME , SIZE )   \
-  occaPrivate_t<TYPE,SIZE> NAME(occaArgs);
+#define occaPrivateArray( TYPE , NAME , SIZE )                          \
+  occaPrivate_t<TYPE,SIZE> NAME(occaInnerDim0, occaInnerDim1, occaInnerDim2, \
+                                occaInnerId0, occaInnerId1, occaInnerId2);
 
-#define occaPrivate( TYPE , NAME )               \
-  occaPrivate_t<TYPE,1> NAME(occaArgs);
+#define occaPrivate( TYPE , NAME )                                      \
+  occaPrivate_t<TYPE,1> NAME(occaInnerDim0, occaInnerDim1, occaInnerDim2, \
+                             occaInnerId0, occaInnerId1, occaInnerId2);
 //================================================
 
 #endif

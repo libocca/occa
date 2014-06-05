@@ -66,6 +66,10 @@ namespace occa {
     info.addDefine("OCCA_USING_OPENCL", 0);
     info.addDefine("OCCA_USING_CUDA"  , 0);
 
+#if OCCA_OPENMP_ENABLED
+    info.addInclude("omp.h");
+#endif
+
     info.addOCCAKeywords(occaOpenMPDefines);
 
     std::stringstream salt;
