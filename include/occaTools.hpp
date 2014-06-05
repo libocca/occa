@@ -2,7 +2,7 @@
 #define OCCA_TOOLS_HEADER
 
 #include <iostream>
-// cry
+#include <stdlib.h>
 
 namespace occa {
   class kernelInfo;
