@@ -103,6 +103,13 @@ namespace occa {
 
     if(dev->cudaArch != "")
       command << " -arch=sm_" << dev->cudaArch;
+    else{
+      int major, minor;
+      OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
+                      cuDeviceComputeCapability(&major, &minor, data_.device) );
+
+      command << " -arch=sm_" << major << minor;
+    }
 
     command << ' '          << dev->cudaCompilerFlags
             << ' '          << info.flags

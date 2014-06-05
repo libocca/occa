@@ -1,7 +1,9 @@
+
 #ifndef OCCA_BASE_HEADER
 #define OCCA_BASE_HEADER
 
 #include <iostream>
+#include <iomanip>
 #include <sstream>
 #include <fstream>
 #include <vector>
@@ -499,6 +501,18 @@ namespace occa {
       return (header + flags);
     }
 
+    inline static bool isAnOccaDefine(const std::string &name){
+      if((name == "occaInnerDim0") ||
+         (name == "occaInnerDim1") ||
+         (name == "occaInnerDim2") ||
+         (name == "occaOuterDim0") ||
+         (name == "occaOuterDim1") ||
+         (name == "occaOuterDim2"))
+        return true;
+
+      return false;
+    }
+
     inline void addOCCAKeywords(const std::string &keywords){
       occaKeywords = keywords;
     }
@@ -510,6 +524,10 @@ namespace occa {
     template <class TM>
     inline void addDefine(const std::string &macro, const TM &value){
       std::stringstream ss;
+
+      if(isAnOccaDefine(macro))
+        ss << "#undef " << macro << "\n";
+
       ss << "#define " << macro << " " << value << '\n';
 
       header = ss.str() + header;
@@ -523,6 +541,62 @@ namespace occa {
       flags += " " + f;
     }
   };
+
+  template <>
+  inline void kernelInfo::addDefine(const std::string &macro, const std::string &value){
+    std::stringstream ss;
+
+    if(isAnOccaDefine(macro))
+      ss << "#undef " << macro << "\n";
+
+    // Make sure newlines are followed by escape characters
+    std::string value2 = "";
+    const int chars = value.size();
+
+    for(int i = 0; i < chars; ++i){
+      if(value[i] != '\n')
+        value2 += value[i];
+      else{
+        if((i < (chars - 1))
+           && (value[i] != '\\'))
+          value2 += "\\\n";
+        else
+          value2 += '\n';
+      }
+    }
+
+    if(value2[value2.size() - 1] != '\n')
+      value2 += '\n';
+    //======================================================
+
+    ss << "#define " << macro << " " << value2 << '\n';
+
+    header = ss.str() + header;
+  }
+
+  template <>
+  inline void kernelInfo::addDefine(const std::string &macro, const float &value){
+    std::stringstream ss;
+
+    if(isAnOccaDefine(macro))
+      ss << "#undef " << macro << "\n";
+
+    ss << "#define " << macro << " " << std::setprecision(8) << value << '\n';
+
+    header = ss.str() + header;
+  }
+
+  template <>
+  inline void kernelInfo::addDefine(const std::string &macro, const double &value){
+    std::stringstream ss;
+
+    if(isAnOccaDefine(macro))
+      ss << "#undef " << macro << "\n";
+
+    ss << "#define " << macro << " " << std::setprecision(16) << value << '\n';
+
+    header = ss.str() + header;
+  }
 
   inline dim::dim() :
     x(1),
