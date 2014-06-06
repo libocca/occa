@@ -1,4 +1,3 @@
-
 #ifndef OCCA_BASE_HEADER
 #define OCCA_BASE_HEADER
 
