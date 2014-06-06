@@ -147,29 +147,23 @@ extern "C" {
   //---[ Memory ]-----------------------
   const char* occaMemoryMode(occaMemory memory);
 
-  void occaCopyFromMem(occaMemory dest, occaMemory src,
-                       const size_t bytes, const size_t offset);
+  void occaCopyMemToMem(occaMemory dest, occaMemory src,
+                        const size_t bytes, const size_t offset);
 
-  void occaCopyFromPtr(occaMemory dest, void *src,
-                       const size_t bytes, const size_t offset);
+  void occaCopyPtrToMem(occaMemory dest, void *src,
+                        const size_t bytes, const size_t offset);
 
-  void occaCopyToMem(occaMemory dest, occaMemory src,
-                     const size_t bytes, const size_t offset);
+  void occaCopyMemToPtr(void *dest, occaMemory src,
+                        const size_t bytes, const size_t offset);
 
-  void occaCopyToPtr(void *dest, occaMemory src,
-                     const size_t bytes, const size_t offset);
+  void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
+                             const size_t bytes, const size_t offset);
 
-  void occaAsyncCopyFromMem(occaMemory dest, occaMemory src,
-                            const size_t bytes, const size_t offset);
+  void occaAsyncCopyPtrToMem(occaMemory dest, void *src,
+                             const size_t bytes, const size_t offset);
 
-  void occaAsyncCopyFromPtr(occaMemory dest, void * src,
-                            const size_t bytes, const size_t offset);
-
-  void occaAsyncCopyToMem(occaMemory dest, occaMemory src,
-                          const size_t bytes, const size_t offset);
-
-  void occaAsyncCopyToPtr(void *dest, occaMemory src,
-                          const size_t bytes, const size_t offset);
+  void occaAsyncCopyMemToPtr(void *dest, occaMemory src,
+                             const size_t bytes, const size_t offset);
 
   void occaMemorySwap(occaMemory memoryA, occaMemory memoryB);
 

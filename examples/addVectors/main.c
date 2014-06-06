@@ -44,8 +44,8 @@ int main(int argc, char **argv){
   occaKernelSetWorkingDims(addVectors,
                            dims, itemsPerGroup, groups);
 
-  occaCopyFromPtr(o_a, a, entries*sizeof(float), 0);
-  occaCopyFromPtr(o_b, b, occaAutoSize, occaNoOffset);
+  occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0);
+  occaCopyPtrToMem(o_b, b, occaAutoSize, occaNoOffset);
 
   occaArgumentList list = occaGenArgumentList();
 
@@ -59,7 +59,7 @@ int main(int argc, char **argv){
   occaArgumentListClear(list);
   occaArgumentListFree(list);
 
-  occaCopyToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
+  occaCopyMemToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
 
   for(i = 0; i < 5; ++i)
     printf("%d = %f\n", i, ab[i]);
