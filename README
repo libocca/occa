@@ -21,11 +21,12 @@
 |  Required environment variables:
 |    (2) OCCA_DIR
 |    (3) OCCA_CACHE_DIR
+|    (4) LD_LIBRARY_PATH
 |
 |  Optional environment variables:
-|    (4) OCCA_MPI_ENABLED
-|    (5) OCCA_OPENCL_ENABLED
-|    (6) OCCA_CUDA_ENABLED
+|    (5) OCCA_MPI_ENABLED
+|    (6) OCCA_OPENCL_ENABLED
+|    (7) OCCA_CUDA_ENABLED
 +=======================================
 
 
@@ -41,7 +42,7 @@
 +=======================================
 
 
-+---[ 2: OCCA_CACHE_DIR ]---------------
++---[ 3: OCCA_CACHE_DIR ]---------------
 |  Info:
 |    Directory where compile kernels are
 |      stored (caching binaries)
@@ -51,7 +52,17 @@
 +=======================================
 
 
-+--[ 4: OCCA_MPI_ENABLED ]--------------
++---[ 4: LD_LIBRARY_PATH ]--------------
+|  Info:
+|    Append directory where libocca is stored
+|      $OCCA_DIR/lib
+|
+|  Setting it:
+|    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH":${OCCA_DIR}/lib"
++=======================================
+
+
++--[ 5: OCCA_MPI_ENABLED ]--------------
 |  Info:
 |    Enable MPI features in OCCA
 |
@@ -63,7 +74,7 @@
 +=======================================
 
 
-+--[ 5: OCCA_OPENCL_ENABLED ]-----------
++--[ 6: OCCA_OPENCL_ENABLED ]-----------
 |  Info:
 |    Enable OpenCL mode in OCCA
 |
@@ -75,7 +86,7 @@
 +=======================================
 
 
-+--[ 6: OCCA_CUDA_ENABLED ]-------------
++--[ 7: OCCA_CUDA_ENABLED ]-------------
 |  Info:
 |    Enable CUDA mode in OCCA
 |
