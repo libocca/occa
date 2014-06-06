@@ -92,14 +92,6 @@ extern "C" {
 
   extern const size_t occaTypeSize[OCCA_TYPE_COUNT];
 
-  //---[ General ]----------------------
-  void occaSetOmpCompiler(const char *compiler);
-  void occaSetOmpCompilerFlags(const char *compilerFlags);
-
-  void occaSetCudaCompiler(const char *compiler);
-  void occaSetCudaCompilerFlags(const char *compilerFlags);
-  //====================================
-
 
   //---[ TypeCasting ]------------------
   occaType occaInt(int value);
@@ -122,17 +114,11 @@ extern "C" {
   //---[ Device ]-----------------------
   const char* occaDeviceMode(occaDevice device);
 
-  void occaDeviceSetOmpCompiler(occaDevice device,
-                                const char *compiler);
+  void occaDeviceSetCompiler(occaDevice device,
+                             const char *compiler);
 
-  void occaDeviceSetOmpCompilerFlags(occaDevice device,
-                                     const char *compilerFlags);
-
-  void occaDeviceSetCudaCompiler(occaDevice device,
-                                 const char *compiler);
-
-  void occaDeviceSetCudaCompilerFlags(occaDevice device,
-                                      const char *compilerFlags);
+  void occaDeviceSetCompilerFlags(occaDevice device,
+                                  const char *compilerFlags);
 
   occaDevice occaGetDevice(const char *mode,
                            int platformID, int deviceID);
