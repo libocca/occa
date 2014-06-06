@@ -12,6 +12,7 @@
 #define OCCA_TYPE_ULONG  8
 #define OCCA_TYPE_FLOAT  9
 #define OCCA_TYPE_DOUBLE 10
+#define OCCA_TYPE_COUNT  11
 
 #  ifdef __cplusplus
 extern "C" {
@@ -20,15 +21,10 @@ extern "C" {
   typedef void* occaDevice;
   typedef void* occaKernel;
 
-  typedef struct {
-    int type;
-    void *ptr;
-  } occaMemory_t;
+  typedef struct occaMemory_t* occaMemory;
 
-  typedef occaMemory_t occaType_t;
-
-  typedef occaMemory_t* occaMemory;
-  typedef occaType_t*   occaType;
+  typedef struct occaType_t*         occaType;
+  typedef struct occaArgumentList_t* occaArgumentList;
 
   typedef void* occaStream;
 
@@ -42,6 +38,8 @@ extern "C" {
 
   extern size_t occaAutoSize;
   extern size_t occaNoOffset;
+
+  extern const size_t occaTypeSize[OCCA_TYPE_COUNT];
 
   //---[ General ]----------------------
   void occaSetOmpCompiler(const char *compiler);
@@ -121,6 +119,12 @@ extern "C" {
 
   double occaKernelTimeTaken(occaKernel kernel);
 
+  void occaAddArgument(occaArgumentList list,
+                       occaMemory type);
+
+  void occaRunKernel_(occaKernel kernel,
+                      occaArgumentList list);
+
   void occaKernelFree(occaKernel kernel);
 
   occaKernelInfo occaGenKernelInfo();
@@ -130,9 +134,6 @@ extern "C" {
                                occaType value);
 
   void occaKernelInfoFree(occaKernelInfo info);
-
-  // Operators
-
   //====================================
 
 

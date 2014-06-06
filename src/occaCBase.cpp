@@ -5,10 +5,40 @@
 extern "C" {
 #  endif
 
+  struct occaMemory_t {
+    int type;
+    void *ptr;
+  };
+
+  // Note: Has to be the same as occaMemory_t
+  struct occaType_t {
+    int type;
+    void *ptr;
+  };
+
+  struct occaArgumentList_t {
+    int argc;
+    occaMemory argv[100];
+  };
+
   occaKernelInfo occaNoKernelInfo = NULL;
 
   size_t occaAutoSize = 0;
   size_t occaNoOffset = 0;
+
+  const size_t occaTypeSize[OCCA_TYPE_COUNT] = {
+    sizeof(void*),
+    sizeof(int),
+    sizeof(unsigned int),
+    sizeof(char),
+    sizeof(unsigned char),
+    sizeof(short),
+    sizeof(unsigned short),
+    sizeof(long),
+    sizeof(unsigned long),
+    sizeof(float),
+    sizeof(double)
+  };
 
   //---[ TypeCasting ]------------------
   occaType occaInt(int value){
@@ -281,6 +311,31 @@ extern "C" {
     return kernel_.timeTaken();
   }
 
+  void occaAddArgument(occaArgumentList list,
+                       occaMemory type){
+    occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
+
+    list_.argv[list_.argc++] = type;
+  }
+
+  // Note the _
+  //   Macro that is called > API function that is never seen
+  void occaRunKernel_(occaKernel kernel,
+                      occaArgumentList list){
+    occa::kernel &kernel_     = *((occa::kernel*) kernel);
+    occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
+
+    for(int i = 0; i < list_.argc; ++i){
+      occaMemory_t &memory_ = *((occaMemory_t*) list_.argv[i]);
+
+      const void *ptr    = memory_.ptr;
+      const size_t bytes = occaTypeSize[memory_.type];
+
+      kernel_.addArgument(i, ptr, bytes);
+    }
+
+    kernel_.run();
+  }
 
   void occaKernelFree(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
