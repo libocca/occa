@@ -17,6 +17,11 @@ extern "C" {
     size_t x, y, z;
   } occaDim;
 
+  extern occaKernelInfo occaNoKernelInfo;
+
+  extern size_t occaAutoSize;
+  extern size_t occaNoOffset;
+
   //---[ General ]----------------------
   void occaSetOmpCompiler(const char *compiler);
   void occaSetOmpCompilerFlags(const char *compilerFlags);

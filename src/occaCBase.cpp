@@ -4,6 +4,12 @@
 #  ifdef __cplusplus
 extern "C" {
 #  endif
+
+  occaKernelInfo occaNoKernelInfo = NULL;
+
+  size_t occaAutoSize = 0;
+  size_t occaNoOffset = 0;
+
   //---[ General ]----------------------
   void occaSetOmpCompiler(const char *compiler){
     occa::ompCompiler = compiler;
@@ -73,13 +79,20 @@ extern "C" {
                                        const char *functionName,
                                        occaKernelInfo info){
     occa::device &device_   = *((occa::device*) device);
-    occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
 
     occa::kernel *kernel = new occa::kernel();
 
-    *kernel = device_.buildKernelFromSource(filename,
-                                            functionName,
-                                            info_);
+    if(info != occaNoKernelInfo){
+      occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
+      *kernel = device_.buildKernelFromSource(filename,
+                                              functionName,
+                                              info_);
+    }
+    else{
+      *kernel = device_.buildKernelFromSource(filename,
+                                              functionName);
+    }
 
     return (occaKernel) kernel;
   }
