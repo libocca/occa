@@ -431,7 +431,7 @@ extern "C" {
 
   void occaCopyMemToMem(occaMemory dest, occaMemory src,
                         const size_t bytes, const size_t offset){
-    occa::memory &src_ = *((occa::memory*) src->ptr);
+    occa::memory &src_  = *((occa::memory*) src->ptr);
     occa::memory &dest_ = *((occa::memory*) dest->ptr);
 
     dest_.copyFrom(src_, bytes, offset);
@@ -453,7 +453,7 @@ extern "C" {
 
   void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
                              const size_t bytes, const size_t offset){
-    occa::memory &src_ = *((occa::memory*) src->ptr);
+    occa::memory &src_  = *((occa::memory*) src->ptr);
     occa::memory &dest_ = *((occa::memory*) dest->ptr);
 
     dest_.asyncCopyFrom(src_, bytes, offset);

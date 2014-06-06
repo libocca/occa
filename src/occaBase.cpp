@@ -61,10 +61,10 @@ namespace occa {
 
   void kernel::addArgument(const int argPos,
                            const kernelArg &arg){
-    if(argumentCount < argPos){
+    if(argumentCount < (argPos + 1)){
       OCCA_CHECK(argPos < OCCA_MAX_ARGS);
 
-      argumentCount = argPos;
+      argumentCount = (argPos + 1);
     }
 
     arguments[argPos] = arg;
