@@ -8,7 +8,7 @@ extern "C" {
   // [-] Keep [int type] as the first entry
   struct occaMemory_t {
     int type;
-    void *ptr;
+    occa::memory mem;
   };
 
   // [-] Keep [int type] as the first entry
@@ -242,9 +242,7 @@ extern "C" {
     occaMemory_t *memory = new occaMemory_t();
 
     memory->type = OCCA_TYPE_MEMORY;
-    memory->ptr  = new occa::memory();
-
-    *((occa::memory*) memory->ptr) = device_.malloc(bytes, source);
+    memory->mem = device_.malloc(bytes, source);
 
     return (occaMemory) memory;
   }
@@ -363,7 +361,7 @@ extern "C" {
       occaMemory_t &memory_ = *((occaMemory_t*) list_.argv[i]);
 
       if(memory_.type == OCCA_TYPE_MEMORY){
-        kernel_.addArgument(i, occa::kernelArg(memory_.ptr));
+        kernel_.addArgument(i, occa::kernelArg(memory_.mem));
       }
       else{
         occaType_t &type_ = *((occaType_t*) list_.argv[i]);
@@ -424,71 +422,67 @@ extern "C" {
 
   //---[ Memory ]-----------------------
   const char* occaMemoryMode(occaMemory memory){
-    occa::memory &memory_ = *((occa::memory*) memory->ptr);
+    occa::memory &memory_ = memory->mem;
 
     return memory_.mode().c_str();
   }
 
   void occaCopyMemToMem(occaMemory dest, occaMemory src,
                         const size_t bytes, const size_t offset){
-    occa::memory &src_  = *((occa::memory*) src->ptr);
-    occa::memory &dest_ = *((occa::memory*) dest->ptr);
+    occa::memory &src_  = src->mem;
+    occa::memory &dest_ = dest->mem;
 
     dest_.copyFrom(src_, bytes, offset);
   }
 
   void occaCopyPtrToMem(occaMemory dest, void *src,
                         const size_t bytes, const size_t offset){
-    occa::memory &dest_ = *((occa::memory*) dest->ptr);
+    occa::memory &dest_ = dest->mem;
 
     dest_.copyFrom(src, bytes, offset);
   }
 
   void occaCopyMemToPtr(void *dest, occaMemory src,
                         const size_t bytes, const size_t offset){
-    occa::memory &src_ = *((occa::memory*) src->ptr);
+    occa::memory &src_ = src->mem;
 
     src_.copyTo(dest, bytes, offset);
   }
 
   void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
                              const size_t bytes, const size_t offset){
-    occa::memory &src_  = *((occa::memory*) src->ptr);
-    occa::memory &dest_ = *((occa::memory*) dest->ptr);
+    occa::memory &src_  = src->mem;
+    occa::memory &dest_ = dest->mem;
 
     dest_.asyncCopyFrom(src_, bytes, offset);
   }
 
   void occaAsyncCopyPtrToMem(occaMemory dest, void * src,
                              const size_t bytes, const size_t offset){
-    occa::memory &dest_ = *((occa::memory*) dest->ptr);
+    occa::memory &dest_ = dest->mem;
 
     dest_.asyncCopyFrom(src, bytes, offset);
   }
 
   void occaAsyncCopyMemToPtr(void *dest, occaMemory src,
                              const size_t bytes, const size_t offset){
-    occa::memory &src_ = *((occa::memory*) src->ptr);
+    occa::memory &src_ = src->mem;
 
     src_.asyncCopyTo(src, bytes, offset);
   }
 
   void occaMemorySwap(occaMemory memoryA, occaMemory memoryB){
-    occa::memory &memoryA_ = *((occa::memory*) memoryA->ptr);
-    occa::memory &memoryB_ = *((occa::memory*) memoryB->ptr);
+    occa::memory &memoryA_ = memoryA->mem;
+    occa::memory &memoryB_ = memoryB->mem;
 
     memoryA_.swap(memoryB_);
   }
 
 
   void occaMemoryFree(occaMemory memory){
-    occaMemory_t &memory_ = *((occaMemory_t*) memory);
+    memory->mem.free();
 
-    ((occa::memory*) memory_.ptr)->free();
-
-    delete ((occa::memory*) memory_.ptr);
-
-    delete &memory_;
+    delete memory;
   }
   //====================================
 
