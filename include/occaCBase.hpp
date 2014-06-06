@@ -120,6 +120,8 @@ extern "C" {
 
 
   //---[ Device ]-----------------------
+  const char* occaDeviceMode(occaDevice device);
+
   void occaDeviceSetOmpCompiler(occaDevice device,
                                 const char *compiler);
 
@@ -131,8 +133,6 @@ extern "C" {
 
   void occaDeviceSetCudaCompilerFlags(occaDevice device,
                                       const char *compilerFlags);
-
-  const char* occaDeviceMode(occaDevice device);
 
   occaDevice occaGetDevice(const char *mode,
                            int platformID, int deviceID);
@@ -161,7 +161,7 @@ extern "C" {
   //---[ Kernel ]-----------------------
   const char* occaKernelMode(occaKernel kernel);
 
-  int occaKernelPerferredDimSize(occaKernel kernel);
+  int occaKernelPreferredDimSize(occaKernel kernel);
 
   void occaKernelSetWorkingDims(occaKernel kernel,
                                 int dims,

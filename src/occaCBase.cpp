@@ -155,6 +155,12 @@ extern "C" {
 
 
   //---[ Device ]-----------------------
+  const char* occaDeviceMode(occaDevice device){
+    occa::device &device_ = *((occa::device*) device);
+
+    return device_.mode().c_str();
+  }
+
   void occaDeviceSetOmpCompiler(occaDevice device,
                                 const char *compiler){
     occa::device &device_ = *((occa::device*) device);
@@ -177,13 +183,6 @@ extern "C" {
   void occaDeviceSetCudaCompilerFlags(occaDevice device,
                                       const char *compilerFlags){
     occa::device &device_ = *((occa::device*) device);
-  }
-
-
-  const char* occaDeviceMode(occaDevice device){
-    occa::device &device_ = *((occa::device*) device);
-
-    return device_.mode().c_str();
   }
 
 
@@ -286,7 +285,7 @@ extern "C" {
     return kernel_.mode().c_str();
   }
 
-  int occaKernelPerferredDimSize(occaKernel kernel){
+  int occaKernelPreferredDimSize(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 
     return kernel_.preferredDimSize();
