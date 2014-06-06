@@ -126,7 +126,7 @@ extern "C" {
   void occaArgumentListFree(occaArgumentList list);
 
   void occaKernelAddArgument(occaArgumentList list,
-                             occaMemory type);
+                             void *type);
 
   void occaKernelRun_(occaKernel kernel,
                       occaArgumentList list);

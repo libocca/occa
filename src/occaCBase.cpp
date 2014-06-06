@@ -330,10 +330,10 @@ extern "C" {
 
 
   void occaAddArgument(occaArgumentList list,
-                       occaMemory type){
+                       void * type){
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
-    list_.argv[list_.argc++] = type;
+    list_.argv[list_.argc++] = (occaMemory_t*) type;
   }
 
   // Note the _
