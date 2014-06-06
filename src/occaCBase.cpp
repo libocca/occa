@@ -330,10 +330,17 @@ extern "C" {
 
 
   void occaAddArgument(occaArgumentList list,
+                       int argPos,
                        void * type){
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
-    list_.argv[list_.argc++] = (occaMemory_t*) type;
+    if(list_.argc < argPos){
+      OCCA_CHECK(argPos < OCCA_MAX_ARGS);
+
+      list_.argc = argPos;
+    }
+
+    list_.argv[argPos] = (occaMemory_t*) type;
   }
 
   // Note the _
