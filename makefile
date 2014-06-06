@@ -1,6 +1,7 @@
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
+compilerFlags += -fPIC
 lPath = lib
 
 occaIPath = ${OCCA_DIR}/$(iPath)
@@ -16,7 +17,7 @@ sources = $(wildcard $(occaSPath)/*.cpp)
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
 $(occaLPath)/libocca.a:$(objects) $(headers)
-	ar rcs $(occaLPath)/libocca.a $(objects)
+	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(objects) -lc
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))\
 	$(occaOPath)/occaKernelDefines.o

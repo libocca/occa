@@ -4,7 +4,7 @@ include ${OCCA_DIR}/scripts/makefile
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
 sources = $(wildcard $(sPath)/*.cpp)
 
-objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o)) ${OCCA_DIR}/lib/libocca.a
+objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o)) ${OCCA_DIR}/lib/libocca.so
 
 main: $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
