@@ -31,7 +31,7 @@
 
 
 //---[ Base ]---------------------------
-#define OCCA_ARGUMENT_SWITCH_ARG(N) , arguments[N]
+#define OCCA_ARGUMENT_SWITCH_ARG(N)  , arguments[N - 1]
 #define OCCA_ARGUMENT_SWITCH_ARGS(N) case N: (*kHandle)(arguments[0] OCL_FOR(2, N, OCCA_ARGUMENT_SWITCH_ARG)); break;
 
 #define OCCA_RUN_FROM_ARGUMENTS_SWITCH OCL_FOR_2(1, OCCA_MAX_ARGS, OCCA_ARGUMENT_SWITCH_ARGS)

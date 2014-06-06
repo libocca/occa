@@ -322,6 +322,13 @@ extern "C" {
   void occaArgumentListClear(occaArgumentList list){
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
+    for(int i = 0; i < list_.argc; ++i){
+      occaType_t &type_ = *((occaType_t*) list_.argv[i]);
+
+      if(type_.type != OCCA_TYPE_MEMORY)
+        delete (occaType_t*) list_.argv[i];
+    }
+
     list_.argc = 0;
   }
 
@@ -334,10 +341,10 @@ extern "C" {
                               void * type){
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
-    if(list_.argc < argPos){
+    if(list_.argc < (argPos + 1)){
       OCCA_CHECK(argPos < OCCA_MAX_ARGS);
 
-      list_.argc = argPos;
+      list_.argc = (argPos + 1);
     }
 
     list_.argv[argPos] = (occaMemory_t*) type;
@@ -349,6 +356,8 @@ extern "C" {
                       occaArgumentList list){
     occa::kernel &kernel_     = *((occa::kernel*) kernel);
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
+
+    kernel_.clearArgumentList();
 
     for(int i = 0; i < list_.argc; ++i){
       occaMemory_t &memory_ = *((occaMemory_t*) list_.argv[i]);
