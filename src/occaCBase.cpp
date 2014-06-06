@@ -10,6 +10,98 @@ extern "C" {
   size_t occaAutoSize = 0;
   size_t occaNoOffset = 0;
 
+  //---[ TypeCasting ]------------------
+  occaType occaInt(int value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_INT;
+    type->ptr  = new int(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaUInt(unsigned int value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_UINT;
+    type->ptr  = new unsigned int(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaChar(char value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_CHAR;
+    type->ptr  = new char(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaUChar(unsigned char value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_UCHAR;
+    type->ptr =  new unsigned char(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaShort(short value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_SHORT;
+    type->ptr  = new short(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaUShort(unsigned short value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_USHORT;
+    type->ptr  = new unsigned short(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaLong(long value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_LONG;
+    type->ptr  = new long(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaULong(unsigned long value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_ULONG;
+    type->ptr  = new unsigned long(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaFloat(float value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_FLOAT;
+    type->ptr  = new float(value);
+
+    return (occaType) type;
+  }
+
+  occaType occaDouble(double value){
+    occaType_t *type = new occaType_t;
+
+    type->type = OCCA_TYPE_DOUBLE;
+    type->ptr  = new double(value);
+
+    return (occaType) type;
+  }
+  //====================================
+
   //---[ General ]----------------------
   void occaSetOmpCompiler(const char *compiler){
     occa::ompCompiler = compiler;
@@ -116,9 +208,12 @@ extern "C" {
                         void *source){
     occa::device &device_ = *((occa::device*) device);
 
-    occa::memory *memory = new occa::memory();
+    occaMemory_t *memory = new occaMemory_t();
 
-    *memory = device_.malloc(bytes, source);
+    memory->type = OCCA_TYPE_MEMORY;
+    memory->ptr  = new occa::memory();
+
+    *((occa::memory*) memory->ptr) = device_.malloc(bytes, source);
 
     return (occaMemory) memory;
   }
@@ -193,6 +288,40 @@ extern "C" {
     kernel_.free();
 
     delete (occa::kernel*) kernel;
+  }
+
+  occaKernelInfo occaGenKernelInfo(){
+    occa::kernelInfo *info = new occa::kernelInfo();
+
+    return (occaKernelInfo) info;
+
+  }
+
+  void occaKernelInfoAddDefine(occaKernelInfo info,
+                               const char *macro,
+                               occaType value){
+    occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+    occaType_t &value_      = *((occaType_t*) value);
+
+    switch(value_.type){
+    case OCCA_TYPE_INT    :
+    case OCCA_TYPE_UINT   : info_.addDefine(macro, *((int*) value_.ptr));    break;
+    case OCCA_TYPE_CHAR   :
+    case OCCA_TYPE_UCHAR  : info_.addDefine(macro, *((char*) value_.ptr));   break;
+    case OCCA_TYPE_SHORT  :
+    case OCCA_TYPE_USHORT : info_.addDefine(macro, *((short*) value_.ptr));  break;
+    case OCCA_TYPE_LONG   :
+    case OCCA_TYPE_ULONG  : info_.addDefine(macro, *((long*) value_.ptr));   break;
+
+    case OCCA_TYPE_FLOAT  : info_.addDefine(macro, *((float*) value_.ptr));  break;
+    case OCCA_TYPE_DOUBLE : info_.addDefine(macro, *((double*) value_.ptr)); break;
+    default:
+      std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
+    }
+  }
+
+  void occaKernelInfoFree(occaKernelInfo info){
+    delete (occa::kernelInfo*) info;
   }
 
   // Operators
@@ -276,11 +405,13 @@ extern "C" {
 
 
   void occaMemoryFree(occaMemory memory){
-    occa::memory &memory_ = *((occa::memory*) memory);
+    occaMemory_t &memory_ = *((occaMemory_t*) memory);
 
-    memory_.free();
+    ((occa::memory*) memory_.ptr)->free();
 
-    delete (occa::memory*) memory;
+    delete ((occa::memory*) memory_.ptr);
+
+    delete &memory_;
   }
   //====================================
 

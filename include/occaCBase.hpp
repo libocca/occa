@@ -1,13 +1,34 @@
 #ifndef OCCA_CBASE_HEADER
 #define OCCA_CBASE_HEADER
 
+#define OCCA_TYPE_MEMORY 0
+#define OCCA_TYPE_INT    1
+#define OCCA_TYPE_UINT   2
+#define OCCA_TYPE_CHAR   3
+#define OCCA_TYPE_UCHAR  4
+#define OCCA_TYPE_SHORT  5
+#define OCCA_TYPE_USHORT 6
+#define OCCA_TYPE_LONG   7
+#define OCCA_TYPE_ULONG  8
+#define OCCA_TYPE_FLOAT  9
+#define OCCA_TYPE_DOUBLE 10
+
 #  ifdef __cplusplus
 extern "C" {
 #  endif
 
   typedef void* occaDevice;
   typedef void* occaKernel;
-  typedef void* occaMemory;
+
+  typedef struct {
+    int type;
+    void *ptr;
+  } occaMemory_t;
+
+  typedef occaMemory_t occaType_t;
+
+  typedef occaMemory_t* occaMemory;
+  typedef occaType_t*   occaType;
 
   typedef void* occaStream;
 
@@ -28,6 +49,24 @@ extern "C" {
 
   void occaSetCudaCompiler(const char *compiler);
   void occaSetCudaCompilerFlags(const char *compilerFlags);
+  //====================================
+
+
+  //---[ TypeCasting ]------------------
+  occaType occaInt(int value);
+  occaType occaUInt(unsigned int value);
+
+  occaType occaChar(char value);
+  occaType occaUChar(unsigned char value);
+
+  occaType occaShort(short value);
+  occaType occaUShort(unsigned short value);
+
+  occaType occaLong(long value);
+  occaType occaULong(unsigned long value);
+
+  occaType occaFloat(float value);
+  occaType occaDouble(double value);
   //====================================
 
 
@@ -83,6 +122,14 @@ extern "C" {
   double occaKernelTimeTaken(occaKernel kernel);
 
   void occaKernelFree(occaKernel kernel);
+
+  occaKernelInfo occaGenKernelInfo();
+
+  void occaKernelInfoAddDefine(occaKernelInfo info,
+                               const char *macro,
+                               occaType value);
+
+  void occaKernelInfoFree(occaKernelInfo info);
 
   // Operators
 
