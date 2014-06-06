@@ -329,9 +329,9 @@ extern "C" {
 
 
 
-  void occaAddArgument(occaArgumentList list,
-                       int argPos,
-                       void * type){
+  void occaKernelAddArgument(occaArgumentList list,
+                             int argPos,
+                             void * type){
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
     if(list_.argc < argPos){
@@ -345,7 +345,7 @@ extern "C" {
 
   // Note the _
   //   Macro that is called > API function that is never seen
-  void occaRunKernel_(occaKernel kernel,
+  void occaKernelRun_(occaKernel kernel,
                       occaArgumentList list){
     occa::kernel &kernel_     = *((occa::kernel*) kernel);
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
