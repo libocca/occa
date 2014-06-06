@@ -129,8 +129,11 @@ namespace occa {
 
     functionName = functionName_;
 
-    void *dlHandle = dlopen(filename.c_str(), RTLD_NOW);
-    data_.handle = dlsym(dlHandle, functionName.c_str());
+    data_.dlHandle = dlopen(filename.c_str(), RTLD_NOW);
+
+    OCCA_CHECK(data_.dlHandle != NULL);
+
+    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     OCCA_CHECK(data_.handle != NULL);
 
@@ -157,7 +160,7 @@ namespace occa {
   void kernel_t<OpenMP>::free(){
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    dlclose(data_.handle);
+    dlclose(data_.dlHandle);
   }
   //==================================
 

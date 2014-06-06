@@ -122,19 +122,21 @@ namespace occa {
     }
 
     inline kernelArg(kernelArg_t arg_, size_t size_, bool pointer_) :
-      arg(arg_),
       size(size_),
-      pointer(pointer_) {}
+      pointer(pointer_) {
+      arg.size_t_ = arg_.size_t_;
+    }
 
     inline kernelArg(const kernelArg &k) :
-      arg(k.arg),
       size(k.size),
-      pointer(k.pointer) {}
+      pointer(k.pointer) {
+      arg.size_t_ = k.arg.size_t_;
+    }
 
     inline kernelArg& operator = (const kernelArg &k){
-      arg.void_ = k.arg.void_;
-      size      = k.size;
-      pointer   = k.pointer;
+      arg.size_t_ = k.arg.size_t_;
+      size        = k.size;
+      pointer     = k.pointer;
 
       return *this;
     }

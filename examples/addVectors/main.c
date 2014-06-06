@@ -49,10 +49,10 @@ int main(int argc, char **argv){
 
   occaArgumentList list = occaGenArgumentList();
 
-  occaKernelAddArgument(list, 0, occaInt(entries));
-  occaKernelAddArgument(list, 1, o_a);
-  occaKernelAddArgument(list, 2, o_b);
-  occaKernelAddArgument(list, 3, o_ab);
+  occaArgumentListAddArg(list, 0, occaInt(entries));
+  occaArgumentListAddArg(list, 1, o_a);
+  occaArgumentListAddArg(list, 2, o_b);
+  occaArgumentListAddArg(list, 3, o_ab);
 
   occaKernelRun_(addVectors, list);
 

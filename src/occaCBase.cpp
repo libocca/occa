@@ -5,11 +5,13 @@
 extern "C" {
 #  endif
 
+  // [-] Keep [int type] as the first entry
   struct occaMemory_t {
     int type;
     void *ptr;
   };
 
+  // [-] Keep [int type] as the first entry
   struct occaType_t {
     int type;
     occa::kernelArg_t value;
@@ -327,11 +329,9 @@ extern "C" {
     delete (occaArgumentList_t*) list;
   }
 
-
-
-  void occaKernelAddArgument(occaArgumentList list,
-                             int argPos,
-                             void * type){
+  void occaArgumentListAddArg(occaArgumentList list,
+                              int argPos,
+                              void * type){
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
     if(list_.argc < argPos){
