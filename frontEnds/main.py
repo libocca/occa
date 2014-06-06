@@ -19,9 +19,7 @@ dims = 1;
 itemsPerGroup([2]);
 groups([(entries + itemsPerGroup - 1)/itemsPerGroup]);
 
-addVectors.setWorkingDims(dims,
-                          itemsPerGroup,
-                          groups);
+addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 
 o_a.copyFrom(a);
 o_b.copyFrom(b);
