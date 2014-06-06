@@ -1,5 +1,6 @@
 from ctypes import *
 from array import *
+from types import primitiveTypes
 
 libocca = CDLL('libocca.so', RTLD_GLOBAL)
 
@@ -13,17 +14,11 @@ class device:
     def setup(self, mode, platformID, deviceID):
         self.cDevice = libocca.occaGetDevice(mode, platformID, deviceID)
 
-    def setOmpCompiler(self, compiler):
-        libocca.occaDeviceSetOmpCompiler(self.cDevice, compiler)
+    def setCompiler(self, compiler):
+        libocca.occaDeviceSetCompiler(self.cDevice, compiler)
 
-    def setOmpCompilerFlags(self, compilerFlags):
-        libocca.occaDeviceSetOmpCompilerFlags(self.cDevice, compilerFlags)
-
-    def setCudaCompiler(self, compiler):
-        libocca.occaDeviceSetCudaCompiler(self.cDevice, compiler)
-
-    def setCudaCompilerFlags(self, compilerFlags):
-        libocca.occaDeviceSetCudaCompilerFlags(self.cDevice, compilerFlags)
+    def setCompilerFlags(self, compilerFlags):
+        libocca.occaDeviceSetCompilerFlags(self.cDevice, compilerFlags)
 
     def malloc(self, byteCount, source):
         return memory(libocca.occaDevicMalloc(self.cDevice,
@@ -62,8 +57,16 @@ class kernel:
         # occaDims = ?
         return libocca.occaKernelSetWorkingDims(self.cKernel)
 
+    def __call__(self, args):
+        argList = libocca.occaGenArgumentList()
 
-    # (self) Operator
+        for arg in args:
+            if arg.__class__ is memory:
+                libocca.occaArgumentlistAddArg(argList, arg)
+            else:
+                print "Not implemented yet"
+
+        libocca.occaKernelRun_(self.cKernel, argList)
 
     def timeTaken(self):
         return libocca.occaKernelTimeTaken(self.cKernel)
