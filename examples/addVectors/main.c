@@ -47,17 +47,20 @@ int main(int argc, char **argv){
   occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0);
   occaCopyPtrToMem(o_b, b, occaAutoSize, occaNoOffset);
 
-  occaArgumentList list = occaGenArgumentList();
+  /* occaArgumentList list = occaGenArgumentList(); */
 
-  occaArgumentListAddArg(list, 0, occaInt(entries));
-  occaArgumentListAddArg(list, 1, o_a);
-  occaArgumentListAddArg(list, 2, o_b);
-  occaArgumentListAddArg(list, 3, o_ab);
+  /* occaArgumentListAddArg(list, 0, occaInt(entries)); */
+  /* occaArgumentListAddArg(list, 1, o_a); */
+  /* occaArgumentListAddArg(list, 2, o_b); */
+  /* occaArgumentListAddArg(list, 3, o_ab); */
 
-  occaKernelRun_(addVectors, list);
+  /* occaKernelRun_(addVectors, list); */
 
-  occaArgumentListClear(list);
-  occaArgumentListFree(list);
+  occaKernelRun(addVectors,
+               occaInt(entries), o_a, o_b, o_ab);
+
+  /* occaArgumentListClear(list); */
+  /* occaArgumentListFree(list); */
 
   occaCopyMemToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
 

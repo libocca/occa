@@ -367,13 +367,15 @@ extern "C" {
         occaType_t &type_ = *((occaType_t*) list_.argv[i]);
 
         kernel_.addArgument(i, occa::kernelArg(type_.value,
-                                               occaTypeSize[memory_.type],
+                                               occaTypeSize[type_.type],
                                                false));
       }
     }
 
     kernel_.runFromArguments();
   }
+
+  OCCA_C_KERNEL_RUN_DEFINITIONS;
 
   void occaKernelFree(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
