@@ -55,6 +55,30 @@ namespace occa {
     return kHandle->preferredDimSize();
   }
 
+  void kernel::clearArgumentList(){
+    argumentCount = 0;
+  }
+
+  void kernel::addArgument(const int argPos,
+                           const kernelArg &arg){
+    if(argumentCount < argPos){
+      OCCA_CHECK(argPos < OCCA_MAX_ARGS);
+
+      argumentCount = argPos;
+    }
+
+    arguments[argPos] = arg;
+  }
+
+  void kernel::runFromArguments(){
+    // [-] OCCA_MAX_ARGS = 25
+    switch(argumentCount){
+      OCCA_RUN_FROM_ARGUMENTS_SWITCH;
+    }
+
+    return;
+  }
+
   OCCA_KERNEL_OPERATOR_DEFINITIONS;
 
   double kernel::timeTaken(){

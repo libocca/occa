@@ -3,7 +3,6 @@
 #  define OCCA_CUDA_HEADER
 
 #include "occaBase.hpp"
-#include "occaPods.hpp"
 
 #include "occaKernelDefines.hpp"
 

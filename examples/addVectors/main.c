@@ -1,7 +1,7 @@
 #include "stdlib.h"
 #include "stdio.h"
 
-#include "occa_c.hpp"
+#include "occa_c.h"
 
 int main(int argc, char **argv){
   int entries = 5;
@@ -27,9 +27,9 @@ int main(int argc, char **argv){
 
   device = occaGetDevice(mode, platformID, deviceID);
 
-  o_a  = device.malloc(entries*sizeof(float));
-  o_b  = device.malloc(entries*sizeof(float));
-  o_ab = device.malloc(entries*sizeof(float));
+  o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
+  o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
+  o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL);
 
   addVectors = occaBuildKernelFromSource(device,
                                          "addVectors.occa", "addVectors",
@@ -39,7 +39,7 @@ int main(int argc, char **argv){
   occaDim itemsPerGroup, groups;
 
   itemsPerGroup.x = 2;
-   group.x        = (entries + itemsPerGroup - 1)/itemsPerGroup;
+  groups.x        = (entries + itemsPerGroup.x - 1)/itemsPerGroup.x;
 
   occaKernelSetWorkingDims(addVectors,
                            dims, itemsPerGroup, groups);
@@ -47,9 +47,17 @@ int main(int argc, char **argv){
   occaCopyFromPtr(o_a, a, entries*sizeof(float), 0);
   occaCopyFromPtr(o_b, b, occaAutoSize, occaNoOffset);
 
-  occaRunKernel(addVectors,
-                occaInt(entries),
-                o_a, o_b, o_ab);
+  occaArgumentList list = occaGenArgumentList();
+
+  occaKernelAddArgument(list, occaInt(entries));
+  occaKernelAddArgument(list, o_a);
+  occaKernelAddArgument(list, o_b);
+  occaKernelAddArgument(list, o_ab);
+
+  occaKernelRun_(addVectors, list);
+
+  occaArgumentListClear(list);
+  occaArgumentListFree(list);
 
   occaCopyToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
 
@@ -60,11 +68,11 @@ int main(int argc, char **argv){
   free(b);
   free(ab);
 
-  occaFreeKernel(addVectors);
-  occaFreeMemory(o_a);
-  occaFreeMemory(o_b);
-  occaFreeMemory(o_ab);
-  occaFreeDevice(device);
+  occaKernelFree(addVectors);
+  occaMemoryFree(o_a);
+  occaMemoryFree(o_b);
+  occaMemoryFree(o_ab);
+  occaDeviceFree(device);
 }
 
 

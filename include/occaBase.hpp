@@ -68,8 +68,6 @@ namespace occa {
   template <occa::mode> class device_t;
   class device;
 
-  class kernelArg;
-
   class dim {
   public:
     union {
@@ -90,6 +88,83 @@ namespace occa {
     inline dim  operator * (const dim &d);
 
     inline size_t& operator [] (int i);
+  };
+
+  union kernelArg_t {
+    int int_;
+    unsigned int uint_;
+
+    char char_;
+    unsigned char uchar_;
+
+    short short_;
+    unsigned short ushort_;
+
+    long long_;
+    // unsigned long == size_t
+
+    float float_;
+    double double_;
+
+    size_t size_t_;
+    void* void_;
+  };
+
+  class kernelArg {
+  public:
+    kernelArg_t arg;
+
+    size_t size;
+    bool pointer;
+
+    inline kernelArg(){
+      arg.void_ = NULL;
+    }
+
+    inline kernelArg(kernelArg_t arg_, size_t size_, bool pointer_) :
+      arg(arg_),
+      size(size_),
+      pointer(pointer_) {}
+
+    inline kernelArg(const kernelArg &k) :
+      arg(k.arg),
+      size(k.size),
+      pointer(k.pointer) {}
+
+    inline kernelArg& operator = (const kernelArg &k){
+      arg.void_ = k.arg.void_;
+      size      = k.size;
+      pointer   = k.pointer;
+
+      return *this;
+    }
+
+    OCCA_KERNEL_ARG_CONSTRUCTOR(int);
+    OCCA_KERNEL_ARG_CONSTRUCTOR(char);
+    OCCA_KERNEL_ARG_CONSTRUCTOR(short);
+    OCCA_KERNEL_ARG_CONSTRUCTOR(long);
+
+    OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned int  , uint);
+    OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned char , uchar);
+    OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned short, ushort);
+
+    OCCA_KERNEL_ARG_CONSTRUCTOR(float);
+    OCCA_KERNEL_ARG_CONSTRUCTOR(double);
+
+    OCCA_KERNEL_ARG_CONSTRUCTOR(size_t);
+
+    inline kernelArg(occa::memory &m);
+
+    inline kernelArg(void *arg_){
+      arg.void_ = arg_;
+      size = sizeof(void*);
+
+      pointer = true;
+    }
+
+    inline void* data() const {
+      return pointer ? arg.void_ : (void*) &arg;
+    }
   };
 
   //---[ Kernel ]---------------------
@@ -167,6 +242,9 @@ namespace occa {
     occa::mode mode_;
     kernel_v *kHandle;
 
+    int argumentCount;
+    kernelArg arguments[25];
+
   public:
     kernel();
 
@@ -185,6 +263,13 @@ namespace occa {
     int preferredDimSize();
 
     void setWorkingDims(int dims, dim inner, dim outer);
+
+    void clearArgumentList();
+
+    void addArgument(const int argPos,
+                     const kernelArg &arg);
+
+    void runFromArguments();
 
     OCCA_KERNEL_OPERATOR_DECLARATIONS;
 
@@ -346,6 +431,14 @@ namespace occa {
 
     void free();
   };
+
+  //---[ KernelArg ]----------
+  inline kernelArg::kernelArg(occa::memory &m){
+    arg.void_ = m.mHandle->handle;
+    size = sizeof(void*);
+
+    pointer = true;
+  }
   //==================================
 
 

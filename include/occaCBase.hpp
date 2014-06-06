@@ -95,9 +95,9 @@ extern "C" {
                                        const char *filename,
                                        const char *functionName);
 
-  occaMemory occaMalloc(occaDevice device,
-                        size_t bytes,
-                        void *source);
+  occaMemory occaDeviceMalloc(occaDevice device,
+                              size_t bytes,
+                              void *source);
 
   occaStream occaGenStream(occaDevice device);
   occaStream occaGetStream(occaDevice device);
@@ -119,10 +119,16 @@ extern "C" {
 
   double occaKernelTimeTaken(occaKernel kernel);
 
-  void occaAddArgument(occaArgumentList list,
-                       occaMemory type);
+  occaArgumentList occaGenArgumentList();
 
-  void occaRunKernel_(occaKernel kernel,
+  void occaArgumentListClear(occaArgumentList list);
+
+  void occaArgumentListFree(occaArgumentList list);
+
+  void occaKernelAddArgument(occaArgumentList list,
+                             occaMemory type);
+
+  void occaKernelRun_(occaKernel kernel,
                       occaArgumentList list);
 
   void occaKernelFree(occaKernel kernel);

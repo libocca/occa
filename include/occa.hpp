@@ -8,6 +8,4 @@
 
 #include "occaBase.hpp"
 
-#include "occaPods.hpp"
-
 #endif

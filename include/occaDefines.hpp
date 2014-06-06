@@ -23,12 +23,35 @@
 #  define OCCA_CHECK( _expr )
 #endif
 
-#define OCCA_MEM_ALIGN  16
+#define OCCA_MEM_ALIGN  64
 #define OCCA_SIMD_WIDTH 8
+
+#define OCCA_MAX_ARGS OCL_MAX_FOR_LOOPS
 //======================================
 
 
 //---[ Base ]---------------------------
+#define OCCA_ARGUMENT_SWITCH_ARG(N) , arguments[N]
+#define OCCA_ARGUMENT_SWITCH_ARGS(N) case N: (*kHandle)(arguments[0] OCL_FOR(2, N, OCCA_ARGUMENT_SWITCH_ARG)); break;
+
+#define OCCA_RUN_FROM_ARGUMENTS_SWITCH OCL_FOR_2(1, OCCA_MAX_ARGS, OCCA_ARGUMENT_SWITCH_ARGS)
+
+#define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)       \
+  inline kernelArg(const TYPE &arg_){           \
+    arg.TYPE##_ = arg_;                         \
+    size = sizeof(TYPE);                        \
+                                                \
+    pointer = false;                            \
+  }
+
+#define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
+  inline kernelArg(const TYPE &arg_){                   \
+    arg.ALIAS##_ = arg_;                                \
+    size = sizeof(TYPE);                                \
+                                                        \
+    pointer = false;                                    \
+  }
+
 #define OCCA_EXTRACT_DATA(MODE, CLASS)                          \
   MODE##CLASS##Data_t &data_ = *((MODE##CLASS##Data_t*) data);
 

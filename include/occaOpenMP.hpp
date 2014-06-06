@@ -8,7 +8,6 @@
 #include <fcntl.h>
 
 #include "occaBase.hpp"
-#include "occaPods.hpp"
 
 #include "occaKernelDefines.hpp"
 
