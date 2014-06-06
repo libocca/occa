@@ -1,4 +1,4 @@
-+---[ 0: README ]-----------------------
++---[ (0) README ]----------------------
 |   Installing:
 |     Go to your occa directory
 |        You should see: include, src, lib
@@ -17,20 +17,29 @@
 +=======================================
 
 
-+---[ 1: ENVIRONMENT VARIABLES ]--------
++---[ (1) ENVIRONMENT VARIABLES ]-------
 |  Required environment variables:
 |    (2) OCCA_DIR
 |    (3) OCCA_CACHE_DIR
 |    (4) LD_LIBRARY_PATH
 |
+|    (5) OpenMP Requirements
+|            OCCA_OMP_COMPILER, OCCA_OMP_COMPILER_FLAGS
+|
+|    (6) OpenCL Requirements
+|            OCCA_OPENCL_COMPILER, OCCA_OPENCL_COMPILER_FLAGS
+|
+|    (7) CUDA Requirements
+|            OCCA_CUDA_COMPILER, OCCA_CUDA_COMPILER_FLAGS
+|
 |  Optional environment variables:
-|    (5) OCCA_MPI_ENABLED
-|    (6) OCCA_OPENCL_ENABLED
-|    (7) OCCA_CUDA_ENABLED
+|    (8)  OCCA_MPI_ENABLED
+|    (9)  OCCA_OPENCL_ENABLED
+|    (10) OCCA_CUDA_ENABLED
 +=======================================
 
 
-+---[ 2: OCCA_DIR ]---------------------
++---[ (2) OCCA_DIR ]--------------------
 |  Info:
 |    Directory where occa/ is stored:
 |      $OCCA_DIR/include
@@ -42,7 +51,7 @@
 +=======================================
 
 
-+---[ 3: OCCA_CACHE_DIR ]---------------
++---[ (3) OCCA_CACHE_DIR ]--------------
 |  Info:
 |    Directory where compile kernels are
 |      stored (caching binaries)
@@ -52,7 +61,7 @@
 +=======================================
 
 
-+---[ 4: LD_LIBRARY_PATH ]--------------
++---[ (4) LD_LIBRARY_PATH ]-------------
 |  Info:
 |    Append directory where libocca is stored
 |      $OCCA_DIR/lib
@@ -62,7 +71,38 @@
 +=======================================
 
 
-+--[ 5: OCCA_MPI_ENABLED ]--------------
++---[ (5) OpenMP Requirements ]---------
+|  Info:
+|    OCCA_OPENMP_COMPILER      : OpenMP Compiler
+|    OCCA_OPENMP_COMPILER_FLAGS: OpenMP Compiler Flags
+|
+|  Setting it:
+|    export OCCA_OPENMP_COMPILER="clang++"
+|    export OCCA_OPENMP_COMPILER_FLAGS="-O3"
++=======================================
+
+
++---[ (6) OpenCL Requirements ]---------
+|  Info:
+|    OCCA_OPENCL_COMPILER_FLAGS: OpenCL Compiler Flags
+|
+|  Setting it:
+|    export OCCA_OPENCL_COMPILER_FLAGS="-cl-mad-enable -cl-finite-math-only"
++=======================================
+
+
++---[ (7) CUDA Requirements ]---------
+|  Info:
+|    OCCA_CUDA_COMPILER      : CUDA Compiler
+|    OCCA_CUDA_COMPILER_FLAGS: CUDA Compiler Flags
+|
+|  Setting it:
+|    export OCCA_CUDA_COMPILER="nvcc"
+|    export OCCA_CUDA_COMPILER_FLAGS="-O3"
++=======================================
+
+
++--[ (8) OCCA_MPI_ENABLED ]-------------
 |  Info:
 |    Enable MPI features in OCCA
 |
@@ -74,7 +114,7 @@
 +=======================================
 
 
-+--[ 6: OCCA_OPENCL_ENABLED ]-----------
++--[ (9) OCCA_OPENCL_ENABLED ]----------
 |  Info:
 |    Enable OpenCL mode in OCCA
 |
@@ -86,7 +126,7 @@
 +=======================================
 
 
-+--[ 7: OCCA_CUDA_ENABLED ]-------------
++--[ (10) OCCA_CUDA_ENABLED ]-----------
 |  Info:
 |    Enable CUDA mode in OCCA
 |

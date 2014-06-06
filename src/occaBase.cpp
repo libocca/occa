@@ -3,9 +3,6 @@
 // Use events for timing!
 
 namespace occa {
-  std::string ompCompiler = "g++", ompCompilerFlags = "";
-  std::string cudaCompiler = "nvcc", cudaArch = "", cudaCompilerFlags = "";
-
   kernelInfo defaultKernelInfo;
 
   //---[ Kernel ]---------------------
@@ -191,13 +188,6 @@ namespace occa {
 
   void device::setup(occa::mode m,
                      int platform, int device){
-    ompCompiler       = occa::ompCompiler;
-    ompCompilerFlags  = occa::ompCompilerFlags;
-
-    cudaCompiler      = occa::cudaCompiler;
-    cudaArch          = occa::cudaArch;
-    cudaCompilerFlags = occa::cudaCompilerFlags;
-
     mode_ = m;
 
     switch(m){
@@ -234,6 +224,14 @@ namespace occa {
   void device::setup(const std::string &m,
                      int platform, int device){
     setup(strToMode(m), platform, device);
+  }
+
+  void device::setCompiler(const std::string &compiler){
+    dHandle->setCompiler(compiler);
+  }
+
+  void device::setCompilerFlags(const std::string &compilerFlags){
+    dHandle->setCompilerFlags(compilerFlags);
   }
 
   std::string device::mode(){

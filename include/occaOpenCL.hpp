@@ -142,6 +142,15 @@ namespace occa {
   void device_t<OpenCL>::setup(const int platform, const int device);
 
   template <>
+  void device_t<OpenCL>::getEnvironmentVariables();
+
+  template <>
+  void device_t<OpenCL>::setCompiler(const std::string &compiler);
+
+  template <>
+  void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags);
+
+  template <>
   void device_t<OpenCL>::flush();
 
   template <>

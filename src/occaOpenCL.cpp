@@ -121,7 +121,12 @@ namespace occa {
     data_.program = clCreateProgramWithSource(data_.context, 1, (const char **) &cFunction, &cLength, &error);
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
 
-    error = clBuildProgram(data_.program, 1, &data_.deviceID, info.flags.c_str(), NULL, NULL);
+    std::string catFlags = info.flags + dev->dHandle->compilerFlags;
+
+    error = clBuildProgram(data_.program,
+                           1, &data_.deviceID,
+                           catFlags.c_str(),
+                           NULL, NULL);
 
     if(error){
       cl_int error;
@@ -210,7 +215,10 @@ namespace occa {
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", binaryError);
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
 
-    error = clBuildProgram(data_.program, 1, &data_.deviceID, NULL, NULL, NULL); // <> Needs flags!
+    error = clBuildProgram(data_.program,
+                           1, &data_.deviceID,
+                           dev->dHandle->compilerFlags.c_str(),
+                           NULL, NULL);
 
     if(error){
       cl_int error;
@@ -471,23 +479,33 @@ namespace occa {
   template <>
   device_t<OpenCL>::device_t() :
     data(NULL),
-    memoryUsed(0) {}
+    memoryUsed(0) {
+
+    getEnvironmentVariables();
+  }
 
   template <>
   device_t<OpenCL>::device_t(int platform, int device) :
     data(NULL),
-    memoryUsed(0) {}
+    memoryUsed(0) {
+
+    getEnvironmentVariables();
+  }
 
   template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
     data       = d.data;
     memoryUsed = d.memoryUsed;
+
+    compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<OpenCL>& device_t<OpenCL>::operator = (const device_t<OpenCL> &d){
     data       = d.data;
     memoryUsed = d.memoryUsed;
+
+    compilerFlags = d.compilerFlags;
 
     return *this;
   }
@@ -521,6 +539,23 @@ namespace occa {
 
     delete [] platforms;
     delete [] devices;
+  }
+
+  template <>
+  void device_t<OpenCL>::getEnvironmentVariables(){
+    char *c_compilerFlags = getenv("OCCA_OPENCL_COMPILER_FLAGS");
+    if(c_compilerFlags != NULL)
+      compilerFlags = std::string(c_compilerFlags);
+  }
+
+  template <>
+  void device_t<OpenCL>::setCompiler(const std::string &compiler_){
+    compiler = compiler_;
+  }
+
+  template <>
+  void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags_){
+    compilerFlags = compilerFlags_;
   }
 
   template <>

@@ -97,13 +97,11 @@ namespace occa {
 
     std::stringstream command;
 
-    command << dev->cudaCompiler
+    command << dev->dHandle->compiler
             << " -o "       << cachedBinary
             << " -ptx -I.";
 
-    if(dev->cudaArch != "")
-      command << " -arch=sm_" << dev->cudaArch;
-    else{
+    if(dev->dHandle->compilerFlags.find("-arch=sm_") != std::string::npos){
       int major, minor;
       OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&major, &minor, data_.device) );
@@ -111,7 +109,7 @@ namespace occa {
       command << " -arch=sm_" << major << minor;
     }
 
-    command << ' '          << dev->cudaCompilerFlags
+    command << ' '          << dev->dHandle->compilerFlags
             << ' '          << info.flags
             << " -x cu "    << iCachedBinary;
 
@@ -316,23 +314,35 @@ namespace occa {
   template <>
   device_t<CUDA>::device_t() :
     data(NULL),
-    memoryUsed(0) {}
+    memoryUsed(0) {
+
+    getEnvironmentVariables();
+  }
 
   template <>
   device_t<CUDA>::device_t(int platform, int device) :
     data(NULL),
-    memoryUsed(0) {}
+    memoryUsed(0) {
+
+    getEnvironmentVariables();
+  }
 
   template <>
   device_t<CUDA>::device_t(const device_t<CUDA> &d){
     data       = d.data;
     memoryUsed = d.memoryUsed;
+
+    compiler      = d.compiler;
+    compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<CUDA>& device_t<CUDA>::operator = (const device_t<CUDA> &d){
     data       = d.data;
     memoryUsed = d.memoryUsed;
+
+    compiler      = d.compiler;
+    compilerFlags = d.compilerFlags;
 
     return *this;
   }
@@ -355,6 +365,27 @@ namespace occa {
 
     OCCA_CUDA_CHECK("Device: Creating Context",
                     cuCtxCreate(&data_.context, CU_CTX_SCHED_AUTO, data_.device));
+  }
+
+  template <>
+  void device_t<CUDA>::getEnvironmentVariables(){
+    char *c_compiler = getenv("OCCA_CUDA_COMPILER");
+    if(c_compiler != NULL)
+      compiler = std::string(c_compiler);
+
+    char *c_compilerFlags = getenv("OCCA_CUDA_COMPILER_FLAGS");
+    if(c_compilerFlags != NULL)
+      compilerFlags = std::string(c_compilerFlags);
+  }
+
+  template <>
+  void device_t<CUDA>::setCompiler(const std::string &compiler_){
+    compiler = compiler_;
+  }
+
+  template <>
+  void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags_){
+    compilerFlags = compilerFlags_;
   }
 
   template <>

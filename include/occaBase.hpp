@@ -19,9 +19,6 @@
 #include "occaTools.hpp"
 
 namespace occa {
-  extern std::string ompCompiler, ompCompilerFlags;
-  extern std::string cudaCompiler, cudaArch, cudaCompilerFlags;
-
   class kernelInfo;
   extern kernelInfo defaultKernelInfo;
 
@@ -447,16 +444,24 @@ namespace occa {
   //---[ Device ]---------------------
   class device_v {
     template<occa::mode> friend class occa::device_t;
+    template<occa::mode> friend class occa::kernel_t;
     friend class occa::device;
 
   private:
     void* data;
     occa::device *dev;
 
+    std::string compiler, compilerFlags;
+
     int simdWidth_;
 
   public:
     virtual void setup(const int platform, const int device) = 0;
+
+    virtual void getEnvironmentVariables() = 0;
+
+    virtual void setCompiler(const std::string &compiler) = 0;
+    virtual void setCompilerFlags(const std::string &compilerFlags) = 0;
 
     virtual void flush()  = 0;
     virtual void finish() = 0;
@@ -492,6 +497,11 @@ namespace occa {
 
     void setup(const int platform, const int device);
 
+    void getEnvironmentVariables();
+
+    void setCompiler(const std::string &compiler);
+    void setCompilerFlags(const std::string &compilerFlags);
+
     void flush();
     void finish();
 
@@ -524,9 +534,6 @@ namespace occa {
     std::vector<stream> streams;
 
   public:
-    std::string ompCompiler, ompCompilerFlags;
-    std::string cudaCompiler, cudaArch, cudaCompilerFlags;
-
     device();
 
     device(const device &d);
@@ -538,6 +545,9 @@ namespace occa {
                const int platform, const int device);
 
     std::string mode();
+
+    void setCompiler(const std::string &compiler);
+    void setCompilerFlags(const std::string &compilerFlags);
 
     void flush();
     void finish();

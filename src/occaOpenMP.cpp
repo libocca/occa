@@ -95,10 +95,10 @@ namespace occa {
 
     std::stringstream command;
 
-    command << dev->ompCompiler
+    command << dev->dHandle->compiler
             << " -o " << cachedBinary
             << " -x c++ -w -fPIC -shared"
-            << ' '    << dev->ompCompilerFlags
+            << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary;
 
@@ -301,18 +301,25 @@ namespace occa {
   device_t<OpenMP>::device_t(){
     data = NULL;
     memoryUsed = 0;
+
+    getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(int platform, int device){
     data       = NULL;
     memoryUsed = 0;
+
+    getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(const device_t<OpenMP> &d){
     data       = d.data;
     memoryUsed = d.memoryUsed;
+
+    compiler      = d.compiler;
+    compilerFlags = d.compilerFlags;
   }
 
   template <>
@@ -320,11 +327,35 @@ namespace occa {
     data       = d.data;
     memoryUsed = d.memoryUsed;
 
+    compiler      = d.compiler;
+    compilerFlags = d.compilerFlags;
+
     return *this;
   }
 
   template <>
   void device_t<OpenMP>::setup(const int platform, const int device){}
+
+  template <>
+  void device_t<OpenMP>::getEnvironmentVariables(){
+    char *c_compiler = getenv("OCCA_OPENMP_COMPILER");
+    if(c_compiler != NULL)
+      compiler = std::string(c_compiler);
+
+    char *c_compilerFlags = getenv("OCCA_OPENMP_COMPILER_FLAGS");
+    if(c_compilerFlags != NULL)
+      compilerFlags = std::string(c_compilerFlags);
+  }
+
+  template <>
+  void device_t<OpenMP>::setCompiler(const std::string &compiler_){
+    compiler = compiler_;
+  }
+
+  template <>
+  void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
+    compilerFlags = compilerFlags_;
+  }
 
   template <>
   void device_t<OpenMP>::flush(){}

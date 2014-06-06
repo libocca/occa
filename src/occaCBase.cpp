@@ -133,26 +133,6 @@ extern "C" {
   }
   //====================================
 
-  //---[ General ]----------------------
-  void occaSetOmpCompiler(const char *compiler){
-    occa::ompCompiler = compiler;
-  }
-
-  void occaSetOmpCompilerFlags(const char *compilerFlags){
-    occa::ompCompilerFlags = compilerFlags;
-  }
-
-
-  void occaSetCudaCompiler(const char *compiler){
-    occa::cudaCompiler = compiler;
-  }
-
-  void occaSetCudaCompilerFlags(const char *compilerFlags){
-    occa::cudaCompilerFlags = compilerFlags;
-  }
-
-  //====================================
-
 
   //---[ Device ]-----------------------
   const char* occaDeviceMode(occaDevice device){
@@ -161,28 +141,16 @@ extern "C" {
     return device_.mode().c_str();
   }
 
-  void occaDeviceSetOmpCompiler(occaDevice device,
-                                const char *compiler){
+  void occaDeviceSetCompiler(occaDevice device,
+                             const char *compiler){
     occa::device &device_ = *((occa::device*) device);
-    device_.ompCompiler = compiler;
+    device_.setCompiler(compiler);
   }
 
-
-  void occaDeviceSetOmpCompilerFlags(occaDevice device,
-                                     const char *compilerFlags){
+  void occaDeviceSetCompilerFlags(occaDevice device,
+                                  const char *compilerFlags){
     occa::device &device_ = *((occa::device*) device);
-  }
-
-
-  void occaDeviceSetCudaCompiler(occaDevice device,
-                                 const char *compiler){
-    occa::device &device_ = *((occa::device*) device);
-  }
-
-
-  void occaDeviceSetCudaCompilerFlags(occaDevice device,
-                                      const char *compilerFlags){
-    occa::device &device_ = *((occa::device*) device);
+    device_.setCompilerFlags(compilerFlags);
   }
 
 
