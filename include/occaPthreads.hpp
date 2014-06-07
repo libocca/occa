@@ -11,6 +11,8 @@
 
 #include "occaKernelDefines.hpp"
 
+#include <pthread.h>
+
 namespace occa {
   //---[ Data Structs ]---------------
   struct PthreadsKernelData_t {
