@@ -83,6 +83,40 @@
 //======================================
 
 
+//---[ Pthreads ]-------------------------
+#  define OCCA_PTHREADS_FUNCTION_ARG(N) , void *arg##N
+#  define OCCA_PTHREADS_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
+  OCL_FOR(1, N, OCCA_PTHREADS_FUNCTION_ARG)
+
+#  define OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_PTHREADS_FUNCTION_ARGS(N));
+#  define OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEFS                         \
+    OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF)
+
+#  define OCCA_PTHREADS_INPUT_FUNCTION_ARG(N) , arg##N.data()
+#  define OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,           \
+                                                occaInnerId0, occaInnerId1, occaInnerId2 \
+                                                OCL_FOR(1, N, OCCA_PTHREADS_INPUT_FUNCTION_ARG)
+
+#  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION(N)                     \
+    template <>                                                         \
+    void kernel_t<Pthreads>::operator() (OCCA_KERNEL_ARGS(N)){            \
+      OCCA_EXTRACT_DATA(Pthreads, Kernel);                                \
+      functionPointer##N tmpKernel = (functionPointer##N) data_.handle; \
+                                                                        \
+        int occaKernelArgs[6] = {outer.z, outer.y, outer.x,             \
+                                 inner.z, inner.y, inner.x};            \
+                                                                        \
+        int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;       \
+                                                                        \
+        tmpKernel(OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N));                  \
+    }
+
+#  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITIONS                       \
+  OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION)
+//======================================
+
+
+
 //---[ OpenMP ]-------------------------
 #  define OCCA_OPENMP_FUNCTION_ARG(N) , void *arg##N
 #  define OCCA_OPENMP_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
