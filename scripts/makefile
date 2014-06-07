@@ -8,6 +8,7 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
+PTHREADS_Enabled = 1
 OMP_Enabled    = 1
 OpenGL_Enabled = 1
 #=================================================
@@ -121,6 +122,13 @@ ifeq ($(OMP_Enabled), 1)
 	flags += -fopenmp -DOCCA_OPENMP_ENABLED=1
 else
 	flags +=          -DOCCA_OPENMP_ENABLED=0
+endif
+
+
+ifeq ($(PTHREADS_Enabled), 1)
+	flags += -DOCCA_PTHREADS_ENABLED=1
+else
+	flags += -DOCCA_PTHREADS_ENABLED=0
 endif
 
 ifeq ($(MPI_Enabled), 1)

@@ -97,19 +97,43 @@
                                                 occaInnerId0, occaInnerId1, occaInnerId2 \
                                                 OCL_FOR(1, N, OCCA_PTHREADS_INPUT_FUNCTION_ARG)
 
-#  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION(N)                     \
-    template <>                                                         \
-    void kernel_t<Pthreads>::operator() (OCCA_KERNEL_ARGS(N)){            \
-      OCCA_EXTRACT_DATA(Pthreads, Kernel);                                \
+#  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION(N)			\
+  template <>								\
+    void kernel_t<Pthreads>::operator() (OCCA_KERNEL_ARGS(N)){		\
+      OCCA_EXTRACT_DATA(Pthreads, Kernel);				\
       functionPointer##N tmpKernel = (functionPointer##N) data_.handle; \
+      int sk = 0;							\
+      int bsize2 = 1, bsize1 = 1, bsize0 = 10; /* hard code for now */	\
+      pthread_t *threads = new pthread_t[bsize2*bsize1*bsize0];		\
+      /* fork */ 							\
+      for(int b2=0;b2<outer.z;b2+=bsize2){				\
+	for(int b1=0;b1<outer.y;b1+=bsize1){				\
+	  for(int b0=0;b0<outer.x;b0+=bsize0){				\
                                                                         \
-        int occaKernelArgs[6] = {outer.z, outer.y, outer.x,             \
-                                 inner.z, inner.y, inner.x};            \
-                                                                        \
-        int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;       \
-                                                                        \
-        tmpKernel(OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N));                  \
-    }
+	    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,	\
+				      inner.z, inner.y, inner.x,	\
+				      b2, b2+bsize2,			\
+				      b1, b1+bsize1,			\
+				      b0, b0+bsize0};			\
+	    								\
+	    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;	\
+            								\
+	    /* need to pack everything into a single argument for pthread_create */ \
+	    /*            tmpKernel(OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N));  */ \
+	    pthread_create(threads+sk, NULL, launchThread, packedArgs);	\
+	    ++sk;							\
+	  }								\
+	}								\
+      }									\
+      /* join */							\
+      sk = 0;								\
+      for(int b2=0;b2<outer.z;b2+=bsize2)				\
+	for(int b1=0;b1<outer.y;b1+=bsize1)				\
+	  for(int b0=0;b0<outer.x;b0+=bsize0)				\
+	    pthread_join(threads[sk++], NULL);				\
+      									\
+      delete [] threads;						\
+  }
 
 #  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITIONS                       \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION)
