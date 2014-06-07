@@ -96,6 +96,28 @@
 #  define OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,           \
                                                 occaInnerId0, occaInnerId1, occaInnerId2 \
                                                 OCL_FOR(1, N, OCCA_PTHREADS_INPUT_FUNCTION_ARG)
+  template <>
+  void launchKernel(void *args){
+    
+    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
+    int N = *( ((int**)args)[1]);
+    int *occaKernelInfo = (int*) args[2];
+    switch(N){
+    case 1: 
+      void* fn(void *, int, int, int. void *) = args[0];      
+      fn(occaKernelInfo, occaInnerId0, occaInnerId1, occaInnerId2, args[3]);
+      break;
+    case 2: 
+      void* fn(void *, int, int, int, void *, void *) = args[0];      
+      fn(occaKernelInfo, occaInnerId0, occaInnerId1, occaInnerId2, args[3], args[4]);
+      break;
+    case 3: 
+      void* fn(void *, int, int, int, void *, void *, void *) = args[0];      
+      fn(occaKernelInfo, occaInnerId0, occaInnerId1, occaInnerId2, args[3], args[4], args[5]);
+      break;
+    }
+  }
+
 
 #  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION(N)			\
   template <>								\
@@ -104,24 +126,40 @@
       functionPointer##N tmpKernel = (functionPointer##N) data_.handle; \
       int sk = 0;							\
       int bsize2 = 1, bsize1 = 1, bsize0 = 10; /* hard code for now */	\
-      pthread_t *threads = new pthread_t[bsize2*bsize1*bsize0];		\
+      int Nb = bsize2*bsize1*bsize0;					\
+      pthread_t *threads = new pthread_t[Nb];				\
+      int occaKernelInfoArg = new int[Nb][6+6];				\
+      void *packedArgs = new void*[Nb][3+N];				\
+									\
       /* fork */ 							\
       for(int b2=0;b2<outer.z;b2+=bsize2){				\
 	for(int b1=0;b1<outer.y;b1+=bsize1){				\
-	  for(int b0=0;b0<outer.x;b0+=bsize0){				\
-                                                                        \
-	    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,	\
-				      inner.z, inner.y, inner.x,	\
-				      b2, b2+bsize2,			\
-				      b1, b1+bsize1,			\
-				      b0, b0+bsize0};			\
-	    								\
-	    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;	\
-            								\
-	    /* need to pack everything into a single argument for pthread_create */ \
-	    /*            tmpKernel(OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N));  */ \
-	    pthread_create(threads+sk, NULL, launchThread, packedArgs);	\
-	    ++sk;							\
+	  for(int b0=0;b0<outer.x;b0+=bsize0){				\		                  
+								\
+               void *args[N+1] = {OCCA_PTHREADS_KERNEL_ARGS(N)};	\
+									\
+               /* store args in a persistent array */					\
+               occaKernelInfoArg[sk][0] = outer.z;					\
+               occaKernelInfoArg[sk][1] = outer.y;					\
+               occaKernelInfoArg[sk][2] = outer.x;					\
+               occaKernelInfoArg[sk][3] = inner.z;					\
+               occaKernelInfoArg[sk][4] = inner.y;					\
+               occaKernelInfoArg[sk][5] = inner.x;					\
+               occaKernelInfoArg[sk][6] = b2;						\
+               occaKernelInfoArg[sk][7] = b2+bsize2;					\
+               occaKernelInfoArg[sk][8] = b1;						\
+               occaKernelInfoArg[sk][9] = b1+bsize1;					\
+               occaKernelInfoArg[sk][10] = b0;						\
+               occaKernelInfoArg[sk][11] = b0+bsize0;					\
+									\
+               /* collect pointers in thread safe array */				\
+               packedArgs[sk][0] = tmpKernel;						\
+               packedArgs[sk][1] = &N;							\
+               packedArgs[sk][2] = occaKernelInfoArg[sk];				\
+               for(n=0;n<N;++n) packerdArgs[sk][3+n] = args[n];			\
+									\
+               pthread_create(threads+sk, NULL, launchThread, packedArgs[sk]);		\
+	       ++sk;							\
 	  }								\
 	}								\
       }									\
