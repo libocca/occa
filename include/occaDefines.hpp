@@ -85,24 +85,33 @@
 
 //---[ Pthreads ]-------------------------
 
-#  define OCCA_PTHREADS_KERNEL_LAUNCHER_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_PTHREADS_KERNEL_LAUNCHER_FUNCTION_ARGS(N));
+#  define OCCA_PTHREADS_KERNEL_LAUNCHER_ARG(N) , void *arg##N
+#  define OCCA_PTHREADS_KERNEL_LAUNCHER_ARGS(N)  int *occaKernelInfoArgs, \
+						int occaInnerId0, \
+						int occaInnerId1, \
+						int occaInnerId2  \
+  OCL_FOR(1, N, OCCA_OPENMP_FUNCTION_ARG)
+
+#  define OCCA_PTHREADS_KERNEL_LAUNCHER_POINTER_TYPEDEF(N)		\
+  typedef void (*ptFunctionPointer##N)(OCCA_PTHREADS_KERNEL_LAUNCHER_ARGS(N));
+
 #  define OCCA_PTHREADS_KERNEL_LAUNCHER_POINTER_TYPEDEFS                         \
     OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_KERNEL_LAUNCHER_POINTER_TYPEDEF)
 
 
-#  define OCCA_PTHREADS_KERNEL_LAUNCHER_FUNCTION_ARG(N) , packedArgs[N+2]
+#  define OCCA_PTHREADS_KERNEL_LAUNCHER_FUNCTION_ARG(N) , ((void**)packedArgs)[N+2]
 #  define OCCA_PTHREADS_KERNEL_LAUNCHER_FUNCTION_ARGS(N)  occaKernelArgs, \
                                                 occaInnerId0, occaInnerId1, occaInnerId2 \
                                                 OCL_FOR(1, N, OCCA_PTHREADS_KERNEL_LAUNCHER_FUNCTION_ARG)
 
 #  define OCCA_PTHREADS_KERNEL_LAUNCHER_DEFINITION(N)			\
-  template <>							\
-  void launchKernel##N(void *packerArgs){					\
+  void launchKernel##N(void *packedArgs){				\
     									\
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;		\
-    int *occaKernelArgs = (int*) packedArgs[1];				\
-    									\
-    OCCA_PTHREADS_KERNEL_LAUNCHER_POINTER_TYPEDEF(N) fn = packedArgs[0]; \
+    int *occaKernelArgs = ((int**) packedArgs)[1];			\
+    void *ptfn = ((void**)packedArgs)[0];				\
+    /* ARGH: function pointer hell */					\
+    functionPointer##N *fn = ptfn;					\
     									\
     fn(OCCA_PTHREADS_KERNEL_LAUNCHER_FUNCTION_ARGS(N));			\
   }
@@ -119,7 +128,6 @@
   template <>								\
   void kernel_t<Pthreads>::operator() (OCCA_KERNEL_ARGS(N)){		\
     OCCA_EXTRACT_DATA(Pthreads, Kernel);				\
-    void *launchKernel##N(void *);					\
     functionPointer##N tmpKernel = (functionPointer##N) data_.handle;	\
     int sk = 0;								\
     int bsize2 = 1, bsize1 = 1, bsize0 = 10; /* hard code for now */	\
@@ -194,18 +202,18 @@
                                                 OCL_FOR(1, N, OCCA_OPENMP_INPUT_FUNCTION_ARG)
 
 #  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITION(N)                     \
-    template <>                                                         \
-    void kernel_t<OpenMP>::operator() (OCCA_KERNEL_ARGS(N)){            \
-      OCCA_EXTRACT_DATA(OpenMP, Kernel);                                \
-      functionPointer##N tmpKernel = (functionPointer##N) data_.handle; \
-                                                                        \
-        int occaKernelArgs[6] = {outer.z, outer.y, outer.x,             \
+  template <>								\
+  void kernel_t<OpenMP>::operator() (OCCA_KERNEL_ARGS(N)){		\
+    OCCA_EXTRACT_DATA(OpenMP, Kernel);					\
+    functionPointer##N tmpKernel = (functionPointer##N) data_.handle;	\
+    									\
+    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,			\
                                  inner.z, inner.y, inner.x};            \
-                                                                        \
-        int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;       \
-                                                                        \
-        tmpKernel(OCCA_OPENMP_INPUT_FUNCTION_ARGS(N));                  \
-    }
+    									\
+    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;		\
+    									\
+    tmpKernel(OCCA_OPENMP_INPUT_FUNCTION_ARGS(N));			\
+  }
 
 #  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITIONS                       \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_OPENMP_KERNEL_OPERATOR_DEFINITION)
