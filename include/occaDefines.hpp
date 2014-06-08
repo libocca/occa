@@ -142,7 +142,7 @@
   template <>                                                           \
   void kernel_t<Pthreads>::operator() (OCCA_KERNEL_ARGS(N)){            \
     OCCA_EXTRACT_DATA(Pthreads, Kernel);                                \
-    int pThreadCount = 1;/*data_.pThreadCount;*/                        \
+    int pThreadCount = 2;/*data_.pThreadCount;*/                        \
     pthread_t *tid = data_.tid;                                         \
                                                                         \
     for(int p = 0; p < pThreadCount; ++p){                              \
@@ -161,7 +161,7 @@
     }                                                                   \
   }
 
-#  define OCCA_PTHREAD_SET_KERNEL_ARG(N) args[p].args[N - 1] = arg##N;
+#  define OCCA_PTHREAD_SET_KERNEL_ARG(N) args->args[N - 1] = arg##N;
 #  define OCCA_PTHREAD_SET_KERNEL_ARGS(N)       \
   OCL_FOR(1, N, OCCA_PTHREAD_SET_KERNEL_ARG)
 
