@@ -6,8 +6,6 @@ occaKernel void addVectors(occaKernelInfoArg,
   occaOuterFor0{
     occaInnerFor0{
       const int N = occaGlobalId0;
-      printf("N       = %d\n", N);
-      printf("entries = %d\n", entries);
 
       if(N < entries)
         ab[N] = a[N] + b[N];

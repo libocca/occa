@@ -26,16 +26,19 @@
 |    (5) OpenMP Requirements
 |            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
 |
-|    (6) OpenCL Requirements
+|    (6) OpenMP Requirements
+|            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
+|
+|    (7) OpenCL Requirements
 |            OCCA_OPENCL_COMPILER_FLAGS
 |
-|    (7) CUDA Requirements
+|    (8) CUDA Requirements
 |            OCCA_CUDA_COMPILER, OCCA_CUDA_COMPILER_FLAGS
 |
 |  Optional environment variables:
-|    (8)  OCCA_MPI_ENABLED
-|    (9)  OCCA_OPENCL_ENABLED
-|    (10) OCCA_CUDA_ENABLED
+|    (9)  OCCA_MPI_ENABLED
+|    (10) OCCA_OPENCL_ENABLED
+|    (11) OCCA_CUDA_ENABLED
 +=======================================
 
 
@@ -71,7 +74,20 @@
 +=======================================
 
 
-+---[ (5) OpenMP Requirements ]---------
++---[ (5) Pthreads Requirements ]-------
+|  Info:
+|    OCCA_PTHREAD_COUNT          : Threads spawned at each kernel
+|    OCCA_PTHREADS_COMPILER      : Pthreads Compiler
+|    OCCA_PTHREADS_COMPILER_FLAGS: Pthreads Compiler Flags
+|
+|  Setting it:
+|    export OCCA_PTHREAD_COUNT="8"
+|    export OCCA_PTHREADS_COMPILER="clang++"
+|    export OCCA_PTHREADS_COMPILER_FLAGS="-O3"
++=======================================
+
+
++---[ (6) OpenMP Requirements ]---------
 |  Info:
 |    OCCA_OPENMP_COMPILER      : OpenMP Compiler
 |    OCCA_OPENMP_COMPILER_FLAGS: OpenMP Compiler Flags
@@ -82,7 +98,7 @@
 +=======================================
 
 
-+---[ (6) OpenCL Requirements ]---------
++---[ (7) OpenCL Requirements ]---------
 |  Info:
 |    OCCA_OPENCL_COMPILER_FLAGS: OpenCL Compiler Flags
 |
@@ -91,7 +107,7 @@
 +=======================================
 
 
-+---[ (7) CUDA Requirements ]---------
++---[ (8) CUDA Requirements ]---------
 |  Info:
 |    OCCA_CUDA_COMPILER      : CUDA Compiler
 |    OCCA_CUDA_COMPILER_FLAGS: CUDA Compiler Flags
@@ -102,7 +118,7 @@
 +=======================================
 
 
-+--[ (8) OCCA_MPI_ENABLED ]-------------
++--[ (9) OCCA_MPI_ENABLED ]-------------
 |  Info:
 |    Enable MPI features in OCCA
 |
@@ -114,7 +130,7 @@
 +=======================================
 
 
-+--[ (9) OCCA_OPENCL_ENABLED ]----------
++--[ (10) OCCA_OPENCL_ENABLED ]---------
 |  Info:
 |    Enable OpenCL mode in OCCA
 |
@@ -126,7 +142,7 @@
 +=======================================
 
 
-+--[ (10) OCCA_CUDA_ENABLED ]-----------
++--[ (11) OCCA_CUDA_ENABLED ]-----------
 |  Info:
 |    Enable CUDA mode in OCCA
 |

@@ -106,6 +106,13 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
+    char *c_pThreadCount = getenv("OCCA_PTHREAD_COUNT");
+
+    if(c_pThreadCount == NULL)
+      data_.pThreadCount = 1;
+    else
+      data_.pThreadCount = atoi(c_pThreadCount);
+
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
     OCCA_CHECK(dlHandle != NULL);
@@ -126,6 +133,13 @@ namespace occa {
                                                           const std::string &functionName_){
     data = ::_mm_malloc(sizeof(PthreadsKernelData_t), OCCA_MEM_ALIGN);
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
+
+    char *c_pThreadCount = getenv("OCCA_PTHREAD_COUNT");
+
+    if(c_pThreadCount == NULL)
+      data_.pThreadCount = 1;
+    else
+      data_.pThreadCount = atoi(c_pThreadCount);
 
     functionName = functionName_;
 
