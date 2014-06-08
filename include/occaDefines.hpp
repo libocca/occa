@@ -88,6 +88,10 @@
 #  define OCCA_PTHREADS_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
   OCL_FOR(1, N, OCCA_PTHREADS_FUNCTION_ARG)
 
+#  define OCCA_PTHREADS_LAUNCHER_ARG(N) , void *arg
+#  define OCCA_PTHREADS_LAUNCHER_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
+  OCL_FOR(1, N, OCCA_PTHREADS_LAUNCHER_ARG)
+
 #  define OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_PTHREADS_FUNCTION_ARGS(N));
 #  define OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEFS                         \
     OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF)
@@ -96,27 +100,28 @@
 #  define OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,           \
                                                 occaInnerId0, occaInnerId1, occaInnerId2 \
                                                 OCL_FOR(1, N, OCCA_PTHREADS_INPUT_FUNCTION_ARG)
-  template <>
-  void launchKernel(void *args){
-    
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-    int N = *( ((int**)args)[1]);
-    int *occaKernelInfo = (int*) args[2];
-    switch(N){
-    case 1: 
-      void* fn(void *, int, int, int. void *) = args[0];      
-      fn(occaKernelInfo, occaInnerId0, occaInnerId1, occaInnerId2, args[3]);
-      break;
-    case 2: 
-      void* fn(void *, int, int, int, void *, void *) = args[0];      
-      fn(occaKernelInfo, occaInnerId0, occaInnerId1, occaInnerId2, args[3], args[4]);
-      break;
-    case 3: 
-      void* fn(void *, int, int, int, void *, void *, void *) = args[0];      
-      fn(occaKernelInfo, occaInnerId0, occaInnerId1, occaInnerId2, args[3], args[4], args[5]);
-      break;
-    }
+
+#  define OCCA_PTHREADS_LAUNCHER_FUNCTION_ARG(N) , packedArgs[N+3]
+#  define OCCA_PTHREADS_LAUNCHER_FUNCTION_ARGS(N)  occaKernelArgs,           \
+                                                occaInnerId0, occaInnerId1, occaInnerId2 \
+                                                OCL_FOR(1, N, OCCA_PTHREADS_LAUNCHER_FUNCTION_ARG)
+
+#  define OCCA_PTHREADS_KERNEL_LAUNCHER_DEFINITION(N)			\
+  template <>								\
+  void launchKernel(void *packerArgs){					\
+									\
+    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;		\
+    int N = *( ((int**)packedArgs)[1]);					\
+    int *occaKerneArgs = (int*) packedArgs[2];				\
+									\
+    OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF(N) fn = packedArgs[0];		\
+    									\
+    fn(occa_PTHREADS_INPUT_LAUNCH_ARGS(N));				\
+									\
   }
+
+#  define OCCA_PTHREADS_KERNEL_LAUNCHER_DEFINITIONS                       \
+  OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_KERNEL_LAUNCHER_DEFINITION)
 
 
 #  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION(N)			\
@@ -134,10 +139,8 @@
       /* fork */ 							\
       for(int b2=0;b2<outer.z;b2+=bsize2){				\
 	for(int b1=0;b1<outer.y;b1+=bsize1){				\
-	  for(int b0=0;b0<outer.x;b0+=bsize0){				\		                  
-								\
+	  for(int b0=0;b0<outer.x;b0+=bsize0){				\
                void *args[N+1] = {OCCA_PTHREADS_KERNEL_ARGS(N)};	\
-									\
                /* store args in a persistent array */					\
                occaKernelInfoArg[sk][0] = outer.z;					\
                occaKernelInfoArg[sk][1] = outer.y;					\
@@ -151,13 +154,11 @@
                occaKernelInfoArg[sk][9] = b1+bsize1;					\
                occaKernelInfoArg[sk][10] = b0;						\
                occaKernelInfoArg[sk][11] = b0+bsize0;					\
-									\
                /* collect pointers in thread safe array */				\
                packedArgs[sk][0] = tmpKernel;						\
                packedArgs[sk][1] = &N;							\
                packedArgs[sk][2] = occaKernelInfoArg[sk];				\
                for(n=0;n<N;++n) packerdArgs[sk][3+n] = args[n];			\
-									\
                pthread_create(threads+sk, NULL, launchThread, packedArgs[sk]);		\
 	       ++sk;							\
 	  }								\
