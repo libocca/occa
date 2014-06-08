@@ -191,6 +191,9 @@ namespace occa {
     mode_ = m;
 
     switch(m){
+    case Pthreads:
+      dHandle = new device_t<Pthreads>(); break;
+
     case OpenMP:
       dHandle = new device_t<OpenMP>(); break;
 

@@ -97,6 +97,7 @@ int main(int argc, char **argv){
   fs.open(occaKernelDefinesSource.c_str());
 
   fs << ns << '\n'
+     << pt << '\n'
      << mp << '\n'
      << cl << '\n'
      << cu << '\n'

@@ -1,5 +1,5 @@
-#ifndef OCCA_OPENMP_HEADER
-#define OCCA_OPENMP_HEADER
+#ifndef OCCA_PTHREADS_HEADER
+#define OCCA_PTHREADS_HEADER
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -11,18 +11,32 @@
 
 #include "occaKernelDefines.hpp"
 
-#include <pthread.h>
-
 namespace occa {
   //---[ Data Structs ]---------------
+  // [-] Hard-coded for now
   struct PthreadsKernelData_t {
     void *dlHandle, *handle;
+    int pThreadCount;
+    pthread_t tid[50];
+  };
+
+  struct PthreadKernelArgData_t {
+    void *kernelData;
+    int dims;
+    occa::dim inner, outer;
+    int rank, count;
+  };
+
+  // [-] Hard-coded for now
+  struct PthreadKernelArg_t {
+    PthreadKernelArgData_t data;
+    occa::kernelArg args[50];
   };
   //==================================
 
 
   //---[ Kernel ]---------------------
-  OCCA_OPENMP_FUNCTION_POINTER_TYPEDEFS;
+  OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEFS;
 
   template <>
   kernel_t<Pthreads>::kernel_t();
@@ -38,12 +52,12 @@ namespace occa {
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
-                                                      const kernelInfo &info_);
+                                                          const std::string &functionName_,
+                                                          const kernelInfo &info_);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                          const std::string &functionName_);
 
   template <>
   int kernel_t<Pthreads>::preferredDimSize();
@@ -68,43 +82,43 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyFrom(const void *source,
-                                  const size_t bytes,
-                                  const size_t offset);
+                                    const size_t bytes,
+                                    const size_t offset);
 
   template <>
   void memory_t<Pthreads>::copyFrom(const memory_v *source,
+                                    const size_t bytes,
+                                    const size_t offset);
+
+  template <>
+  void memory_t<Pthreads>::copyTo(void *dest,
                                   const size_t bytes,
                                   const size_t offset);
 
   template <>
-  void memory_t<Pthreads>::copyTo(void *dest,
-                                const size_t bytes,
-                                const size_t offset);
-
-  template <>
   void memory_t<Pthreads>::copyTo(memory_v *dest,
-                                const size_t bytes,
-                                const size_t offset);
+                                  const size_t bytes,
+                                  const size_t offset);
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const void *source,
-                                       const size_t bytes,
-                                       const size_t offset);
+                                         const size_t bytes,
+                                         const size_t offset);
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const memory_v *source,
+                                         const size_t bytes,
+                                         const size_t offset);
+
+  template <>
+  void memory_t<Pthreads>::asyncCopyTo(void *dest,
                                        const size_t bytes,
                                        const size_t offset);
 
   template <>
-  void memory_t<Pthreads>::asyncCopyTo(void *dest,
-                                     const size_t bytes,
-                                     const size_t offset);
-
-  template <>
   void memory_t<Pthreads>::asyncCopyTo(memory_v *dest,
-                                     const size_t bytes,
-                                     const size_t offset);
+                                       const size_t bytes,
+                                       const size_t offset);
 
   template <>
   void memory_t<Pthreads>::free();
@@ -150,16 +164,16 @@ namespace occa {
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,
-                                                    const std::string &functionName_,
-                                                    const kernelInfo &info_);
+                                                      const std::string &functionName_,
+                                                      const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromBinary(const std::string &filename,
-                                                    const std::string &functionName_);
+                                                      const std::string &functionName_);
 
   template <>
   memory_v* device_t<Pthreads>::malloc(const size_t bytes,
-                                     void *source);
+                                       void *source);
 
   template <>
   int device_t<Pthreads>::simdWidth();

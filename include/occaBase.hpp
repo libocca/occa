@@ -33,9 +33,9 @@ namespace occa {
   inline std::string modeToStr(occa::mode m){
     switch(m){
     case Pthreads: return "Pthreads";
-    case OpenMP: return "OpenMP";
-    case OpenCL: return "OpenCL";
-    case CUDA  : return "CUDA";
+    case OpenMP:   return "OpenMP";
+    case OpenCL:   return "OpenCL";
+    case CUDA  :   return "CUDA";
     }
 
     OCCA_CHECK(false);
@@ -44,9 +44,9 @@ namespace occa {
 
   inline mode strToMode(const std::string &str){
     if(str == "Pthreads") return Pthreads;
-    if(str == "OpenMP") return OpenMP;
-    if(str == "OpenCL") return OpenCL;
-    if(str == "CUDA")   return CUDA;
+    if(str == "OpenMP")   return OpenMP;
+    if(str == "OpenCL")   return OpenCL;
+    if(str == "CUDA")     return CUDA;
 
     OCCA_CHECK(false);
 

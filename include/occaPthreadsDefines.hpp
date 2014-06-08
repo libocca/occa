@@ -36,7 +36,6 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaOuterStart0 occaKernelArgs[10]
 #define occaOuterEnd0   occaKernelArgs[11]
 // - - - - - - - - - - - - - - - - - - - - - - - -
-
 #define occaGlobalDim2 (occaInnerDim2 * occaOuterDim2)
 #define occaGlobalId2  (occaOuterId2*occaInnerDim2 + occaInnerId2)
 
