@@ -26,8 +26,8 @@
 |    (5) OpenMP Requirements
 |            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
 |
-|    (6) OpenMP Requirements
-|            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
+|    (6) Pthreads Requirements
+|            OCCA_PTHREADS_COMPILER, OCCA_PTHREADS_COMPILER_FLAGS
 |
 |    (7) OpenCL Requirements
 |            OCCA_OPENCL_COMPILER_FLAGS
@@ -39,6 +39,7 @@
 |    (9)  OCCA_MPI_ENABLED
 |    (10) OCCA_OPENCL_ENABLED
 |    (11) OCCA_CUDA_ENABLED
+|    (12) OCCA_PTHREADS_ENABLED
 +=======================================
 
 
