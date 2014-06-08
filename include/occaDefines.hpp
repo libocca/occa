@@ -140,7 +140,7 @@
       for(int b2=0;b2<outer.z;b2+=bsize2){				\
 	for(int b1=0;b1<outer.y;b1+=bsize1){				\
 	  for(int b0=0;b0<outer.x;b0+=bsize0){				\
-               void *args[N+1] = {OCCA_PTHREADS_KERNEL_ARGS(N)};	\
+               void *args[N+1] = {OCCA_PTHREADS_FUNCTION_ARGS(N)};	\
                /* store args in a persistent array */					\
                occaKernelInfoArg[sk][0] = outer.z;					\
                occaKernelInfoArg[sk][1] = outer.y;					\
