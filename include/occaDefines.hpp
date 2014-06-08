@@ -116,7 +116,7 @@
 									\
     OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF(N) fn = packedArgs[0];		\
     									\
-    fn(occa_PTHREADS_INPUT_LAUNCH_ARGS(N));				\
+    fn(occa_PTHREADS_INPUT_LAUNCHER_ARGS(N));				\
 									\
   }
 
@@ -133,8 +133,8 @@
       int bsize2 = 1, bsize1 = 1, bsize0 = 10; /* hard code for now */	\
       int Nb = bsize2*bsize1*bsize0;					\
       pthread_t *threads = new pthread_t[Nb];				\
-      int occaKernelInfoArg = new int[Nb][6+6];				\
-      void *packedArgs = new void*[Nb][3+N];				\
+      int occaKernelInfoArg[Nb][6+6];				\
+      void *packedArgs[Nb][3+N];				\
 									\
       /* fork */ 							\
       for(int b2=0;b2<outer.z;b2+=bsize2){				\
