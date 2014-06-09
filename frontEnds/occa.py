@@ -106,10 +106,12 @@ class kernel:
         libocca.occaKernelFree(self.cKernel)
 
 class memory:
+    # Ok
     def mode(self):
         cMode = libocca.occaMemoryMode(self.cMemory)
         return c_char_p(cMode).value
 
+    # Ok
     def __init__(self, cMemory):
         self.cMemory = cMemory
 
@@ -172,15 +174,19 @@ class memory:
             traceback.print_exc(file=sys.stdout)
             sys.exit()
 
-    def asyncCopyTo(self, dest, byteCount = 0, offset = 0):
-        pass
+    # [-] Add async later
+    def asyncCopyTo(self, entryType, dest, byteCount = 0, offset = 0):
+        self.copyTo(entryType, dest, byteCount, offset)
 
-    def asyncCopyFrom(self, src, byteCount = 0, offset = 0):
-        pass
+    # [-] Add async later
+    def asyncCopyFrom(self, entryType, src, byteCount = 0, offset = 0):
+        self.copyFrom(entryType, src, byteCount, offset)
 
+    # Ok
     def swap(self, m):
         self.cMemory, m.cMemory = m.cMemory, self.cMemory
 
+    # Ok
     def free(self):
         libocca.occaMemoryFree(self.cMemory)
 
@@ -191,16 +197,19 @@ print d.mode()
 d.setCompiler("clang++")
 d.setCompilerFlags("blah blah")
 
-m = d.malloc(c_float, [1,2,3])
+m1 = d.malloc(c_float, [1,1,1])
+m2 = d.malloc(c_float, [3,3,3])
 
-m.copyFrom(c_float, [2,5,7])
+m1.copyFrom(c_float, [2,5,7])
+m1.swap(m2)
 
-m2 = [3,2,1]
+a = [3,2,1]
 
-m.copyTo(c_float, m2)
+m2.copyTo(c_float, a)
 
-print m2
+print a
 
-m.free()
+m1.free()
+m2.free()
 d.free()
 
