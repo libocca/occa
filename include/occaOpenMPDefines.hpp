@@ -91,9 +91,11 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 //================================================
 
 
-#define occaUnroll3(LOOPS) _Pragma(#LOOPS)
-#define occaUnroll2(LOOPS) occaUnroll3(unroll LOOPS)
-#define occaUnroll(LOOPS)  occaUnroll2(LOOPS)
+//---[ Misc ]-------------------------------------
+#define occaUnroll3(N) _Pragma(#N)
+#define occaUnroll2(N) occaUnroll3(N)
+#define occaUnroll(N)  occaUnroll2(unroll N)
+//================================================
 
 
 //---[ Private ]---------------------------------

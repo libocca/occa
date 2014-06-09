@@ -85,6 +85,13 @@
 //================================================
 
 
+//---[ Misc ]-------------------------------------
+#define occaUnroll3(N) _Pragma(#N)
+#define occaUnroll2(N) occaUnroll3(N)
+#define occaUnroll(N)  occaUnroll2(unroll N)
+//================================================
+
+
 //---[ Private ]---------------------------------
 #define occaPrivateArray( TYPE , NAME , SIZE ) TYPE NAME[SIZE]
 #define occaPrivate( TYPE , NAME )             TYPE NAME
