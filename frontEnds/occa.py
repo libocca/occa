@@ -40,6 +40,17 @@ class device:
     def setCompilerFlags(self, compilerFlags):
         self.lib.occaDeviceSetCompilerFlags(self.cDevice, compilerFlags)
 
+    def buildKernelFromSource(self, filename, functionName, info = None):
+        return kernel(self.lib.occaBuildKernelFromSource(self.cDevice,
+                                                         filename,
+                                                         functionName,
+                                                         info))
+
+    def buildKernelFromBinary(self, filename, functionName):
+        return kernel(self.lib.occaBuildKernelFromBinary(self.cDevice,
+                                                         filename,
+                                                         functionName))
+
     # Ok
     def malloc(self, entryType, entries):
         if type(entries) is list:
@@ -72,12 +83,23 @@ class device:
             self.lib.occaDeviceFree(self.cDevice)
             self.isAllocated = False
 
+    # Ok
     def __del__(self):
         self.free()
 
 class kernelInfo:
-    def addDefine(self):
-        pass
+    def __init__(self):
+        self.lib = libocca
+
+        self.cKernelInfo = self.lib.occaGenKernelInfo()
+
+    def addDefine(self, macro, value):
+        self.lib.occaKernelInfoAddDefine(self.cKernelInfo,
+                                         macro,
+                                         self.lib.occaString(str(value)));
+
+    def __del__(self):
+        self.lib.occaKernelInfoFree(self.cKernelInfo);
 
 class kernel:
     def mode(self):
@@ -89,31 +111,44 @@ class kernel:
 
         self.cKernel = cKernel
 
+    # Ok
     def preferredDimSize(self):
         return self.lib.occaKernelPreferredDimSize(self.cKernel)
 
     def setWorkingDims(self, dims, itemsPerGroup, groups):
+        itemsPerGroup_ = [(itemsPerGroup[i] if (i < len(itemsPerGroup)) else 1) for i in xrange(3)]
+        groups_        = [(groups[i]        if (i < len(groups))        else 1) for i in xrange(3)]
 
+        cItemsPerGroup = (c_size_t * 3)(*itemsPerGroup_)
+        cGroups        = (c_size_t * 3)(*groups_)
 
-        # occaDims = ?
-        return self.lib.occaKernelSetWorkingDims(self.cKernel)
+        self.lib.occaKernelSetWorkingDims(self.cKernel,
+                                          dims,
+                                          cItemsPerGroup,
+                                          cGroups)
 
     def __call__(self, args):
         argList = self.lib.occaGenArgumentList()
 
         for arg in args:
             if arg.__class__ is memory:
-                self.lib.occaArgumentlistAddArg(argList, arg)
+                self.lib.occaArgumentlistAddArg(argList, arg.cMemory)
             else:
-                print "Not implemented yet"
+                self.lib.occaArgumentlistAddArg(argList, arg)
 
         self.lib.occaKernelRun_(self.cKernel, argList)
 
+    # Ok
     def timeTaken(self):
         return self.lib.occaKernelTimeTaken(self.cKernel)
 
+    # Ok
     def free(self):
         self.lib.occaKernelFree(self.cKernel)
+
+    # Ok
+    def __del__(self):
+        self.free()
 
 class memory:
     # Ok
@@ -205,6 +240,7 @@ class memory:
             self.lib.occaMemoryFree(self.cMemory)
             self.isAllocated = False
 
+    # Ok
     def __del__(self):
         self.free()
 
@@ -213,16 +249,17 @@ d = device("OpenCL", 0, 0)
 print d.mode()
 
 d.setCompiler("clang++")
-d.setCompilerFlags("blah blah")
+d.setCompilerFlags("")
 
-m1 = d.malloc(c_float, [1,1,1])
-m2 = d.malloc(c_float, [3,3,3])
+addVectors = d.buildKernelFromSource("addVectors.occa",
+                                     "addVectors")
 
-m1.copyFrom(c_float, [2,5,7])
-m1.swap(m2)
+o_a  = d.malloc(c_float, [1,1,1])
+o_b  = d.malloc(c_float, [1,2,3])
+o_ab = d.malloc(c_float, 3)
 
-a = [3,2,1]
+ab = [0]*3
 
-m2.copyTo(c_float, a)
+o_ab.copyTo(c_float, ab)
 
-print a
+print ab

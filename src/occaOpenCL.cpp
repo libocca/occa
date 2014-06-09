@@ -112,7 +112,7 @@ namespace occa {
 
     const size_t cLength = fileInfo.st_size;
 
-    char *cFunction = (char*) malloc(cLength);
+    char *cFunction = new char[cLength + 1];
 
     ::read(fileHandle, cFunction, cLength);
 
@@ -155,9 +155,9 @@ namespace occa {
       char *binary;
 
       OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes",
-                   clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(dim), &binarySize, NULL));
+                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &binarySize, NULL));
 
-      binary = new char[binarySize];
+      binary = new char[binarySize + 1];
 
       OCCA_CL_CHECK("saveProgramBinary: Getting Binary",
                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL));
@@ -188,7 +188,6 @@ namespace occa {
 
     cl_int binaryError, error;
 
-
     int fileHandle = ::open(filename.c_str(), O_RDWR);
     if(fileHandle == 0)
       printf("File [ %s ] does not exist.\n", filename.c_str());
@@ -201,7 +200,7 @@ namespace occa {
 
     const size_t fileSize = fileInfo.st_size;
 
-    unsigned char *cFile = (unsigned char*) malloc(fileSize);
+    unsigned char *cFile = new unsigned char[fileSize];
 
     ::read(fileHandle, cFile, fileSize);
 

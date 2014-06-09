@@ -38,7 +38,8 @@ extern "C" {
     sizeof(long),
     sizeof(unsigned long),
     sizeof(float),
-    sizeof(double)
+    sizeof(double),
+    sizeof(char *)
   };
 
   //---[ TypeCasting ]------------------
@@ -128,6 +129,15 @@ extern "C" {
 
     type->type          = OCCA_TYPE_DOUBLE;
     type->value.double_ = value;
+
+    return (occaType) type;
+  }
+
+  occaType occaString(char *value){
+    occaType_t *type = new occaType_t;
+
+    type->type        = OCCA_TYPE_STRING;
+    type->value.void_ = value;
 
     return (occaType) type;
   }
@@ -378,6 +388,8 @@ extern "C" {
 
     case OCCA_TYPE_FLOAT  : info_.addDefine(macro, value_.float_);  break;
     case OCCA_TYPE_DOUBLE : info_.addDefine(macro, value_.double_); break;
+
+    case OCCA_TYPE_STRING : info_.addDefine(macro, std::string((char*) value_.void_)); break;
     default:
       std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
     }
