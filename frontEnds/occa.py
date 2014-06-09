@@ -1,14 +1,19 @@
 import sys, traceback
 from ctypes import *
 
-libocca = CDLL('libocca.so', RTLD_GLOBAL)
+libc    = CDLL('libc.so.6')
+libocca = CDLL('libocca.so')
 
-occaBool   = c_bool
-occaChar   = c_char
-occaInt    = c_int
-occaLong   = c_long
-occaFloat  = c_float
-occaDouble = c_double
+"""
+---[ C types ]----------------
+    c_bool
+    c_char
+    c_int
+    c_long
+    c_float
+    c_double
+//============================
+"""
 
 class device:
     # Ok
@@ -36,12 +41,12 @@ class device:
     def malloc(self, entryType, entries):
         if type(entries) is list:
             cByteCount = sizeof(entryType)*len(entries)
-            cSource    = (entryType * 3)(*entries)
+            cSource    = (entryType * len(entries))(*entries)
         elif isinstance(entries, (int,long)):
             cByteCount = sizeof(entryType)*entries
             cSource    = None
         else:
-            print "Wrong arguments"
+            print "Entries should be a list"
             traceback.print_exc(file=sys.stdout)
             sys.exit()
 
@@ -108,16 +113,64 @@ class memory:
     def __init__(self, cMemory):
         self.cMemory = cMemory
 
-    def copyTo(self, dest, byteCount = 0, offset = 0):
-        if dest.__class__ is array:
-            pass
-        elif dest.__class__ is memory:
-            pass
-        else:
-            print "Error"
+    # Ok
+    def copyTo(self, entryType, dest, entries = 0, offset = 0):
+        copyingToMem = (dest.__class__ is memory)
 
-    def copyFrom(self, src, byteCount = 0, offset = 0):
-        pass
+        if (entries == 0) and not copyingToMem:
+            cEntries = len(dest)
+        else:
+            cEntries = entries
+
+        cByteCount = sizeof(entryType) * cEntries
+
+        if type(dest) is list:
+            cDest = (entryType * cEntries)()
+
+            libocca.occaCopyMemToPtr(cDest,
+                                     self.cMemory,
+                                     cByteCount,
+                                     offset)
+
+            for e in xrange(cEntries):
+                dest[e + offset] = cDest[e];
+        elif copyingToMem:
+            libocca.occaCopyMemToMem(dest.cMemory,
+                                     self.cMemory,
+                                     cByteCount,
+                                     offset)
+        else:
+            print "Wrong arguments"
+            traceback.print_exc(file=sys.stdout)
+            sys.exit()
+
+    # Ok
+    def copyFrom(self, entryType, src, entries = 0, offset = 0):
+        copyingFromMem = (src.__class__ is memory)
+
+        if (entries == 0) and not copyingFromMem:
+            cEntries = len(src)
+        else:
+            cEntries = entries
+
+        cByteCount = sizeof(entryType) * cEntries
+
+        if type(src) is list:
+            cSrc = (entryType * cEntries)(*src)
+
+            libocca.occaCopyPtrToMem(self.cMemory,
+                                     cSrc,
+                                     cByteCount,
+                                     offset)
+        elif copyingFromMem:
+            libocca.occaCopyMemToMem(self.cMemory,
+                                     src.cMemory,
+                                     cByteCount,
+                                     offset)
+        else:
+            print "Wrong arguments"
+            traceback.print_exc(file=sys.stdout)
+            sys.exit()
 
     def asyncCopyTo(self, dest, byteCount = 0, offset = 0):
         pass
@@ -131,13 +184,23 @@ class memory:
     def free(self):
         libocca.occaMemoryFree(self.cMemory)
 
-d = device("OpenMP", 0, 0)
+d = device("OpenCL", 0, 0)
 
 print d.mode()
 
 d.setCompiler("clang++")
 d.setCompilerFlags("blah blah")
 
-d.malloc(c_float, [1,2,3])
+m = d.malloc(c_float, [1,2,3])
 
+m.copyFrom(c_float, [2,5,7])
+
+m2 = [3,2,1]
+
+m.copyTo(c_float, m2)
+
+print m2
+
+m.free()
 d.free()
+
