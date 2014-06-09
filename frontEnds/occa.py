@@ -1,7 +1,6 @@
-import sys, traceback
+import sys, traceback, gc
 from ctypes import *
 
-libc    = CDLL('libc.so.6')
 libocca = CDLL('libocca.so')
 
 """
@@ -18,24 +17,28 @@ libocca = CDLL('libocca.so')
 class device:
     # Ok
     def mode(self):
-        cMode = libocca.occaDeviceMode(self.cDevice)
+        cMode = self.lib.occaDeviceMode(self.cDevice)
         return c_char_p(cMode).value
 
     # Ok
     def __init__(self, mode, platformID, deviceID):
-        self.cDevice = libocca.occaGetDevice(mode, platformID, deviceID)
+        self.lib = libocca
+
+        self.isAllocated = True
+        self.cDevice = self.lib.occaGetDevice(mode, platformID, deviceID)
 
     # Ok
     def setup(self, mode, platformID, deviceID):
-        self.cDevice = libocca.occaGetDevice(mode, platformID, deviceID)
+        self.isAllocated = True
+        self.cDevice = self.lib.occaGetDevice(mode, platformID, deviceID)
 
     # Ok
     def setCompiler(self, compiler):
-        libocca.occaDeviceSetCompiler(self.cDevice, compiler)
+        self.lib.occaDeviceSetCompiler(self.cDevice, compiler)
 
     # Ok
     def setCompilerFlags(self, compilerFlags):
-        libocca.occaDeviceSetCompilerFlags(self.cDevice, compilerFlags)
+        self.lib.occaDeviceSetCompilerFlags(self.cDevice, compilerFlags)
 
     # Ok
     def malloc(self, entryType, entries):
@@ -50,22 +53,27 @@ class device:
             traceback.print_exc(file=sys.stdout)
             sys.exit()
 
-        return memory(libocca.occaDeviceMalloc(self.cDevice,
+        return memory(self.lib.occaDeviceMalloc(self.cDevice,
                                                cByteCount,
                                                cSource))
 
     def genStream(self):
-        return libocca.occaGenStream(self.cDevice)
+        return self.lib.occaGenStream(self.cDevice)
 
     def getStream(self):
-        return libocca.occaGetStream(self.cDevice)
+        return self.lib.occaGetStream(self.cDevice)
 
     def setStream(self):
-        return libocca.occaSetStream(self.cDevice)
+        return self.lib.occaSetStream(self.cDevice)
 
     # Ok
     def free(self):
-        return libocca.occaDeviceFree(self.cDevice)
+        if self.isAllocated:
+            self.lib.occaDeviceFree(self.cDevice)
+            self.isAllocated = False
+
+    def __del__(self):
+        self.free()
 
 class kernelInfo:
     def addDefine(self):
@@ -73,46 +81,51 @@ class kernelInfo:
 
 class kernel:
     def mode(self):
-        cMode = libocca.occaKernelMode(self.cKernel)
+        cMode = self.lib.occaKernelMode(self.cKernel)
         return c_char_p(cMode).value
 
     def __init__(self, cKernel):
+        self.lib = libocca
+
         self.cKernel = cKernel
 
     def preferredDimSize(self):
-        return libocca.occaKernelPreferredDimSize(self.cKernel)
+        return self.lib.occaKernelPreferredDimSize(self.cKernel)
 
     def setWorkingDims(self, dims, itemsPerGroup, groups):
 
 
         # occaDims = ?
-        return libocca.occaKernelSetWorkingDims(self.cKernel)
+        return self.lib.occaKernelSetWorkingDims(self.cKernel)
 
     def __call__(self, args):
-        argList = libocca.occaGenArgumentList()
+        argList = self.lib.occaGenArgumentList()
 
         for arg in args:
             if arg.__class__ is memory:
-                libocca.occaArgumentlistAddArg(argList, arg)
+                self.lib.occaArgumentlistAddArg(argList, arg)
             else:
                 print "Not implemented yet"
 
-        libocca.occaKernelRun_(self.cKernel, argList)
+        self.lib.occaKernelRun_(self.cKernel, argList)
 
     def timeTaken(self):
-        return libocca.occaKernelTimeTaken(self.cKernel)
+        return self.lib.occaKernelTimeTaken(self.cKernel)
 
     def free(self):
-        libocca.occaKernelFree(self.cKernel)
+        self.lib.occaKernelFree(self.cKernel)
 
 class memory:
     # Ok
     def mode(self):
-        cMode = libocca.occaMemoryMode(self.cMemory)
+        cMode = self.lib.occaMemoryMode(self.cMemory)
         return c_char_p(cMode).value
 
     # Ok
     def __init__(self, cMemory):
+        self.lib = libocca
+
+        self.isAllocated = True
         self.cMemory = cMemory
 
     # Ok
@@ -129,15 +142,15 @@ class memory:
         if type(dest) is list:
             cDest = (entryType * cEntries)()
 
-            libocca.occaCopyMemToPtr(cDest,
+            self.lib.occaCopyMemToPtr(cDest,
                                      self.cMemory,
                                      cByteCount,
                                      offset)
 
             for e in xrange(cEntries):
-                dest[e + offset] = cDest[e];
+                dest[e + offset] = cDest[e]
         elif copyingToMem:
-            libocca.occaCopyMemToMem(dest.cMemory,
+            self.lib.occaCopyMemToMem(dest.cMemory,
                                      self.cMemory,
                                      cByteCount,
                                      offset)
@@ -160,12 +173,12 @@ class memory:
         if type(src) is list:
             cSrc = (entryType * cEntries)(*src)
 
-            libocca.occaCopyPtrToMem(self.cMemory,
+            self.lib.occaCopyPtrToMem(self.cMemory,
                                      cSrc,
                                      cByteCount,
                                      offset)
         elif copyingFromMem:
-            libocca.occaCopyMemToMem(self.cMemory,
+            self.lib.occaCopyMemToMem(self.cMemory,
                                      src.cMemory,
                                      cByteCount,
                                      offset)
@@ -188,7 +201,12 @@ class memory:
 
     # Ok
     def free(self):
-        libocca.occaMemoryFree(self.cMemory)
+        if self.isAllocated:
+            self.lib.occaMemoryFree(self.cMemory)
+            self.isAllocated = False
+
+    def __del__(self):
+        self.free()
 
 d = device("OpenCL", 0, 0)
 
@@ -208,8 +226,3 @@ a = [3,2,1]
 m2.copyTo(c_float, a)
 
 print a
-
-m1.free()
-m2.free()
-d.free()
-
