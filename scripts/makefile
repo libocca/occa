@@ -8,9 +8,9 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-PTHREADS_Enabled = 1
-OMP_Enabled    = 1
-OpenGL_Enabled = 1
+Pthreads_Enabled = 1
+OpenMP_Enabled   = 1
+OpenGL_Enabled   = 1
 #=================================================
 
 
@@ -98,6 +98,14 @@ ifdef OCCA_MPI_ENABLED
 	MPI_Enabled = $(OCCA_MPI_ENABLED)
 endif
 
+ifdef OCCA_PTHREADS_ENABLED
+	Pthreads_Enabled = $(OCCA_PTHREADS_ENABLED)
+endif
+
+ifdef OCCA_OPENMP_ENABLED
+	OpenMP_Enabled = $(OCCA_OPENMP_ENABLED)
+endif
+
 ifdef OCCA_OPENCL_ENABLED
 	OpenCL_Enabled = $(OCCA_OPENCL_ENABLED)
 endif
@@ -118,14 +126,14 @@ else
 	flags += $(Release_Flags) -DOCCA_DEBUG_ENABLED=0 -DOCCA_SHOW_WARNINGS=0
 endif
 
-ifeq ($(OMP_Enabled), 1)
+ifeq ($(OpenMP_Enabled), 1)
 	flags += -fopenmp -DOCCA_OPENMP_ENABLED=1
 else
 	flags +=          -DOCCA_OPENMP_ENABLED=0
 endif
 
 
-ifeq ($(PTHREADS_Enabled), 1)
+ifeq ($(Pthreads_Enabled), 1)
 	flags += -DOCCA_PTHREADS_ENABLED=1
 else
 	flags += -DOCCA_PTHREADS_ENABLED=0

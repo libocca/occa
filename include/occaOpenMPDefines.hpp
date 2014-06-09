@@ -105,6 +105,7 @@ private:
 
   TM data[OCCA_MAX_THREADS][SIZE] occaAligned;
 
+public:
   occaPrivate_t(int dim0_, int dim1_, int dim2_,
                 int &id0_, int &id1_, int &id2_) :
     dim0(dim0_),
