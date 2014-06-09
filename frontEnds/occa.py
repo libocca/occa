@@ -1,29 +1,53 @@
+import sys, traceback
 from ctypes import *
-from array import *
-from types import primitiveTypes
 
 libocca = CDLL('libocca.so', RTLD_GLOBAL)
 
-class device:
-    def mode(self):
-        return libocca.occaDeviceMode(self.cDevice)
+occaBool   = c_bool
+occaChar   = c_char
+occaInt    = c_int
+occaLong   = c_long
+occaFloat  = c_float
+occaDouble = c_double
 
+class device:
+    # Ok
+    def mode(self):
+        cMode = libocca.occaDeviceMode(self.cDevice)
+        return c_char_p(cMode).value
+
+    # Ok
     def __init__(self, mode, platformID, deviceID):
         self.cDevice = libocca.occaGetDevice(mode, platformID, deviceID)
 
+    # Ok
     def setup(self, mode, platformID, deviceID):
         self.cDevice = libocca.occaGetDevice(mode, platformID, deviceID)
 
+    # Ok
     def setCompiler(self, compiler):
         libocca.occaDeviceSetCompiler(self.cDevice, compiler)
 
+    # Ok
     def setCompilerFlags(self, compilerFlags):
         libocca.occaDeviceSetCompilerFlags(self.cDevice, compilerFlags)
 
-    def malloc(self, byteCount, source):
-        return memory(libocca.occaDevicMalloc(self.cDevice,
-                                              byteCount,
-                                              source))
+    # Ok
+    def malloc(self, entryType, entries):
+        if type(entries) is list:
+            cByteCount = sizeof(entryType)*len(entries)
+            cSource    = (entryType * 3)(*entries)
+        elif isinstance(entries, (int,long)):
+            cByteCount = sizeof(entryType)*entries
+            cSource    = None
+        else:
+            print "Wrong arguments"
+            traceback.print_exc(file=sys.stdout)
+            sys.exit()
+
+        return memory(libocca.occaDeviceMalloc(self.cDevice,
+                                               cByteCount,
+                                               cSource))
 
     def genStream(self):
         return libocca.occaGenStream(self.cDevice)
@@ -34,6 +58,7 @@ class device:
     def setStream(self):
         return libocca.occaSetStream(self.cDevice)
 
+    # Ok
     def free(self):
         return libocca.occaDeviceFree(self.cDevice)
 
@@ -43,7 +68,8 @@ class kernelInfo:
 
 class kernel:
     def mode(self):
-        return libocca.occaKernelMode(self.cKernel)
+        cMode = libocca.occaKernelMode(self.cKernel)
+        return c_char_p(cMode).value
 
     def __init__(self, cKernel):
         self.cKernel = cKernel
@@ -76,7 +102,8 @@ class kernel:
 
 class memory:
     def mode(self):
-        return libocca.occaMemoryMode(self.cMemory)
+        cMode = libocca.occaMemoryMode(self.cMemory)
+        return c_char_p(cMode).value
 
     def __init__(self, cMemory):
         self.cMemory = cMemory
@@ -104,11 +131,13 @@ class memory:
     def free(self):
         libocca.occaMemoryFree(self.cMemory)
 
-a = array('f', [0,1])
 d = device("OpenMP", 0, 0)
 
-if a.__class__ is array:
-    print 1
+print d.mode()
 
-if d.__class__ is device:
-    print 1
+d.setCompiler("clang++")
+d.setCompilerFlags("blah blah")
+
+d.malloc(c_float, [1,2,3])
+
+d.free()

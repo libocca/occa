@@ -8,9 +8,9 @@ ab = [0     for i in xrange(entries)]
 
 device = occa.device("OpenMP", 0, 0)
 
-o_a  = device.malloc(a);
-o_b  = device.malloc(b);
-o_ab = device.malloc(ab);
+o_a  = device.malloc(occaFloat, a);
+o_b  = device.malloc(occaFloat, b);
+o_ab = device.malloc(occaFloat, ab);
 
 addVectors = device.buildKernelFromSource("addVectors.occa",
                                           "addVectors");
