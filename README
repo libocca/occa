@@ -23,11 +23,12 @@
 |    (3) OCCA_CACHE_DIR
 |    (4) LD_LIBRARY_PATH
 |
-|    (5) OpenMP Requirements
-|            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
+|    (5) Pthreads Requirements
+|            OCCA_PTHREAD_COUNT, OCCA_PTHREADS_COMPILER,
+|            OCCA_PTHREADS_COMPILER_FLAGS
 |
-|    (6) Pthreads Requirements
-|            OCCA_PTHREADS_COMPILER, OCCA_PTHREADS_COMPILER_FLAGS
+|    (6) OpenMP Requirements
+|            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
 |
 |    (7) OpenCL Requirements
 |            OCCA_OPENCL_COMPILER_FLAGS
@@ -37,9 +38,10 @@
 |
 |  Optional environment variables:
 |    (9)  OCCA_MPI_ENABLED
-|    (10) OCCA_OPENCL_ENABLED
-|    (11) OCCA_CUDA_ENABLED
-|    (12) OCCA_PTHREADS_ENABLED
+|    (10) OCCA_PTHREADS_ENABLED
+|    (11) OCCA_OPENMP_ENABLED
+|    (12) OCCA_OPENCL_ENABLED
+|    (13) OCCA_CUDA_ENABLED
 +=======================================
 
 
@@ -131,19 +133,31 @@
 +=======================================
 
 
-+--[ (10) OCCA_OPENCL_ENABLED ]---------
++--[ (12) OCCA_PTHREADS_ENABLED ]---------
 |  Info:
-|    Enable OpenCL mode in OCCA
+|    Enable Pthreads mode in OCCA
 |
 |  Enabling OpenCL:
-|    export OCCA_OPENCL_ENABLED=1
+|    export OCCA_PTHREADS_ENABLED=1
 |
 |  Defaults to:
-|    export OCCA_OPENCL_ENABLED=0
+|    export OCCA_PTHREADS_ENABLED=0
 +=======================================
 
 
-+--[ (11) OCCA_CUDA_ENABLED ]-----------
++--[ (12) OCCA_OPENMP_ENABLED ]---------
+|  Info:
+|    Enable OpenMP mode in OCCA
+|
+|  Enabling OpenCL:
+|    export OCCA_OPENMP_ENABLED=1
+|
+|  Defaults to:
+|    export OCCA_OPENMP_ENABLED=0
++=======================================
+
+
++--[ (13) OCCA_CUDA_ENABLED ]-----------
 |  Info:
 |    Enable CUDA mode in OCCA
 |

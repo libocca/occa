@@ -40,19 +40,21 @@ class device:
     def setCompilerFlags(self, compilerFlags):
         self.lib.occaDeviceSetCompilerFlags(self.cDevice, compilerFlags)
 
+    # Ok
     def buildKernelFromSource(self, filename, functionName, info = None):
         return kernel(self.lib.occaBuildKernelFromSource(self.cDevice,
                                                          filename,
                                                          functionName,
                                                          info))
 
+    # Ok
     def buildKernelFromBinary(self, filename, functionName):
         return kernel(self.lib.occaBuildKernelFromBinary(self.cDevice,
                                                          filename,
                                                          functionName))
 
     # Ok
-    def malloc(self, entryType, entries):
+    def malloc(self, entries, entryType):
         if type(entries) is list:
             cByteCount = sizeof(entryType)*len(entries)
             cSource    = (entryType * len(entries))(*entries)
@@ -87,6 +89,12 @@ class device:
     def __del__(self):
         self.free()
 
+# Ok
+class occaDim(Structure):
+    _fields_ = [('x', c_size_t),
+                ('y', c_size_t),
+                ('z', c_size_t)]
+
 class kernelInfo:
     def __init__(self):
         self.lib = libocca
@@ -96,16 +104,18 @@ class kernelInfo:
     def addDefine(self, macro, value):
         self.lib.occaKernelInfoAddDefine(self.cKernelInfo,
                                          macro,
-                                         self.lib.occaString(str(value)));
+                                         self.lib.occaString(str(value)))
 
     def __del__(self):
-        self.lib.occaKernelInfoFree(self.cKernelInfo);
+        self.lib.occaKernelInfoFree(self.cKernelInfo)
 
 class kernel:
+    # Ok
     def mode(self):
         cMode = self.lib.occaKernelMode(self.cKernel)
         return c_char_p(cMode).value
 
+    # Ok
     def __init__(self, cKernel):
         self.lib = libocca
 
@@ -115,28 +125,48 @@ class kernel:
     def preferredDimSize(self):
         return self.lib.occaKernelPreferredDimSize(self.cKernel)
 
+    # Ok
     def setWorkingDims(self, dims, itemsPerGroup, groups):
-        itemsPerGroup_ = [(itemsPerGroup[i] if (i < len(itemsPerGroup)) else 1) for i in xrange(3)]
-        groups_        = [(groups[i]        if (i < len(groups))        else 1) for i in xrange(3)]
+        if type(itemsPerGroup) is list:
+            ipg = [(itemsPerGroup[i] if (i < len(itemsPerGroup)) else 1) for i in xrange(3)]
+        else:
+            ipg = [itemsPerGroup, 1, 1]
 
-        cItemsPerGroup = (c_size_t * 3)(*itemsPerGroup_)
-        cGroups        = (c_size_t * 3)(*groups_)
+        if type(groups) is list:
+            g = [(groups[i] if (i < len(groups)) else 1) for i in xrange(3)]
+        else:
+            g = [groups, 1, 1]
+
+        cItemsPerGroup = occaDim(ipg[0], ipg[1], ipg[2])
+        cGroups        = occaDim(g[0]  , g[1]  , g[2])
 
         self.lib.occaKernelSetWorkingDims(self.cKernel,
-                                          dims,
+                                          c_size_t(dims),
                                           cItemsPerGroup,
                                           cGroups)
 
+    # Ok
     def __call__(self, args):
         argList = self.lib.occaGenArgumentList()
 
-        for arg in args:
+        for i in xrange(len(args)):
+            arg = args[i]
+
             if arg.__class__ is memory:
-                self.lib.occaArgumentlistAddArg(argList, arg.cMemory)
+                self.lib.occaArgumentListAddArg(argList, i, arg.cMemory)
             else:
-                self.lib.occaArgumentlistAddArg(argList, arg)
+                cType = str(arg.__class__.__name__)[2:]
+
+                if cType[0] == 'u':
+                    cType = "occa" + cType[:2].swapcase() + cType[2:]
+                else:
+                    cType = "occa" + cType[:1].swapcase() + cType[1:]
+
+                self.lib.occaArgumentListAddArg(argList, i, getattr(self.lib, cType)(arg))
 
         self.lib.occaKernelRun_(self.cKernel, argList)
+
+        self.lib.occaArgumentListFree(argList)
 
     # Ok
     def timeTaken(self):
@@ -164,7 +194,7 @@ class memory:
         self.cMemory = cMemory
 
     # Ok
-    def copyTo(self, entryType, dest, entries = 0, offset = 0):
+    def copyTo(self, dest, entryType = c_byte, entries = 0, offset = 0):
         copyingToMem = (dest.__class__ is memory)
 
         if (entries == 0) and not copyingToMem:
@@ -195,7 +225,7 @@ class memory:
             sys.exit()
 
     # Ok
-    def copyFrom(self, entryType, src, entries = 0, offset = 0):
+    def copyFrom(self, src, entryType = c_byte, entries = 0, offset = 0):
         copyingFromMem = (src.__class__ is memory)
 
         if (entries == 0) and not copyingFromMem:
@@ -223,12 +253,12 @@ class memory:
             sys.exit()
 
     # [-] Add async later
-    def asyncCopyTo(self, entryType, dest, byteCount = 0, offset = 0):
-        self.copyTo(entryType, dest, byteCount, offset)
+    def asyncCopyTo(self, dest, entryType = c_byte, byteCount = 0, offset = 0):
+        self.copyTo(dest, entryType, byteCount, offset)
 
     # [-] Add async later
-    def asyncCopyFrom(self, entryType, src, byteCount = 0, offset = 0):
-        self.copyFrom(entryType, src, byteCount, offset)
+    def asyncCopyFrom(self, src, entryType = c_byte, byteCount = 0, offset = 0):
+        self.copyFrom(src, entryType, byteCount, offset)
 
     # Ok
     def swap(self, m):
@@ -243,23 +273,3 @@ class memory:
     # Ok
     def __del__(self):
         self.free()
-
-d = device("OpenCL", 0, 0)
-
-print d.mode()
-
-d.setCompiler("clang++")
-d.setCompilerFlags("")
-
-addVectors = d.buildKernelFromSource("addVectors.occa",
-                                     "addVectors")
-
-o_a  = d.malloc(c_float, [1,1,1])
-o_b  = d.malloc(c_float, [1,2,3])
-o_ab = d.malloc(c_float, 3)
-
-ab = [0]*3
-
-o_ab.copyTo(c_float, ab)
-
-print ab

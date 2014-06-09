@@ -7,12 +7,15 @@ namespace occa {
 
   //---[ Kernel ]---------------------
   kernel::kernel() :
+    mode_(),
     kHandle(NULL) {}
 
   kernel::kernel(const kernel &k) :
+    mode_(k.mode_),
     kHandle(k.kHandle) {}
 
   kernel& kernel::operator = (const kernel &k){
+    mode_   = k.mode_;
     kHandle = k.kHandle;
 
     return *this;
@@ -91,12 +94,15 @@ namespace occa {
 
   //---[ Memory ]---------------------
   memory::memory() :
+    mode_(),
     mHandle(NULL) {}
 
   memory::memory(const memory &m) :
+    mode_(m.mode_),
     mHandle(m.mHandle) {}
 
   memory& memory::operator = (const memory &m){
+    mode_   = m.mode_;
     mHandle = m.mHandle;
 
     return *this;
@@ -266,6 +272,9 @@ namespace occa {
                                        const std::string &functionName,
                                        const kernelInfo &info_){
     kernel ker;
+
+    ker.mode_ = mode_;
+
     ker.kHandle      = dHandle->buildKernelFromSource(filename, functionName, info_);
     ker.kHandle->dev = this;
 
@@ -275,6 +284,9 @@ namespace occa {
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &functionName){
     kernel ker;
+
+    ker.mode_ = mode_;
+
     ker.kHandle      = dHandle->buildKernelFromBinary(filename, functionName);
     ker.kHandle->dev = this;
 
@@ -284,6 +296,8 @@ namespace occa {
   memory device::malloc(const size_t bytes,
                         void *source){
     memory mem;
+
+    mem.mode_ = mode_;
 
     mem.mHandle      = dHandle->malloc(bytes, source);
     mem.mHandle->dev = this;
