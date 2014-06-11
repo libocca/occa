@@ -101,7 +101,7 @@ namespace occa {
             << " -o "       << cachedBinary
             << " -ptx -I.";
 
-    if(dev->dHandle->compilerFlags.find("-arch=sm_") != std::string::npos){
+    if(dev->dHandle->compilerFlags.find("-arch=sm_") == std::string::npos){
       int major, minor;
       OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&major, &minor, data_.device) );
