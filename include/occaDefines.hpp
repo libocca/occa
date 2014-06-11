@@ -4,7 +4,7 @@
 #include "ocl_preprocessor.hpp"
 
 //---[ Checks and Info ]----------------
-#if OCCA_DEBUG
+#if OCCA_DEBUG_ENABLED
 #  define OCCA_CHECK2( _expr , file , line , func )                     \
   do {                                                                  \
     size_t expr = _expr;                                                \
@@ -306,4 +306,3 @@
 //======================================
 
 #endif
-

@@ -17,7 +17,7 @@ sources = $(wildcard $(occaSPath)/*.cpp)
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
-	$(compiler) $(compilerFlags) -shared $(flags) -o $(occaLPath)/libocca.so $(objects) $(paths) $(filter-out -locca, $(links))
+	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))\
 	$(occaOPath)/occaKernelDefines.o

@@ -41,10 +41,13 @@ namespace occa {
   }
 
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
-    for(int i = 0; i < 3; ++i){
+    for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
       outer[i] += (outer[i] ? 0 : 1);
     }
+
+    for(int i = dims; i < 3; ++i)
+      inner[i] = outer[i] = 1;
 
     kHandle->dims  = dims;
     kHandle->inner = inner;
