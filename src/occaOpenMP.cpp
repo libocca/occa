@@ -112,7 +112,7 @@ namespace occa {
 
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
-    OCCA_CHECK(dlHandle != NULL);
+    OCCA_CHECK(data_.dlHandle != NULL);
 
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
@@ -334,7 +334,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenMP>::setup(const int platform, const int device){}
+  void device_t<OpenMP>::setup(const int unusedArg1, const int unusedArg2){}
 
   template <>
   void device_t<OpenMP>::getEnvironmentVariables(){

@@ -122,13 +122,13 @@ namespace occa {
   device_t<CUDA>::device_t(const device_t<CUDA> &k);
 
   template <>
-  device_t<CUDA>::device_t(const int platform, const int device);
+  device_t<CUDA>::device_t(const int arg1, const int arg2);
 
   template <>
   device_t<CUDA>& device_t<CUDA>::operator = (const device_t<CUDA> &k);
 
   template <>
-  void device_t<CUDA>::setup(const int platform, const int device);
+  void device_t<CUDA>::setup(const int device, const int unusedArg);
 
   template <>
   void device_t<CUDA>::getEnvironmentVariables();

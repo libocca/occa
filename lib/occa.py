@@ -25,7 +25,13 @@ class device:
         self.lib = libocca
 
         self.isAllocated = True
-        self.cDevice = self.lib.occaGetDevice(mode, platformID, deviceID)
+
+        getDevice = getattr(self.lib, "occaGetDevice")
+        getDevice.restype = c_void_p
+
+        self.cDevice = c_void_p(self.lib.occaGetDevice(mode,
+                                                       c_int(platformID),
+                                                       c_int(deviceID)))
 
     # Ok
     def setup(self, mode, platformID, deviceID):
@@ -42,16 +48,22 @@ class device:
 
     # Ok
     def buildKernelFromSource(self, filename, functionName, info = None):
-        return kernel(self.lib.occaBuildKernelFromSource(self.cDevice,
-                                                         filename,
-                                                         functionName,
-                                                         info))
+        occaBuildKernelFromSource = getattr(self.lib, "occaBuildKernelFromSource")
+        occaBuildKernelFromSource.restype = c_void_p
+
+        return kernel(c_void_p(self.lib.occaBuildKernelFromSource(self.cDevice,
+                                                                  filename,
+                                                                  functionName,
+                                                                  info)))
 
     # Ok
     def buildKernelFromBinary(self, filename, functionName):
-        return kernel(self.lib.occaBuildKernelFromBinary(self.cDevice,
-                                                         filename,
-                                                         functionName))
+        occaBuildKernelFromBinary = getattr(self.lib, "occaBuildKernelFromBinary")
+        occaBuildKernelFromBinary.restype = c_void_p
+
+        return c_void_p(self.lib.occaBuildKernelFromBinary(self.cDevice,
+                                                           filename,
+                                                           functionName))
 
     # Ok
     def malloc(self, entries, entryType):
@@ -66,9 +78,12 @@ class device:
             traceback.print_exc(file=sys.stdout)
             sys.exit()
 
-        return memory(self.lib.occaDeviceMalloc(self.cDevice,
-                                               cByteCount,
-                                               cSource))
+        occaDeviceMalloc = getattr(self.lib, "occaDeviceMalloc")
+        occaDeviceMalloc.restype = c_void_p
+
+        return memory(c_void_p(self.lib.occaDeviceMalloc(self.cDevice,
+                                                         c_size_t(cByteCount),
+                                                         cSource)))
 
     def genStream(self):
         return self.lib.occaGenStream(self.cDevice)
@@ -147,13 +162,21 @@ class kernel:
 
     # Ok
     def __call__(self, args):
-        argList = self.lib.occaGenArgumentList()
+        # X = getattr(self.lib, "X")
+        # X.restype = c_void_p
+
+        occaGenArgumentList = getattr(self.lib, "occaGenArgumentList")
+        occaGenArgumentList.restype = c_void_p
+
+        argList = c_void_p(self.lib.occaGenArgumentList())
 
         for i in xrange(len(args)):
             arg = args[i]
 
             if arg.__class__ is memory:
-                self.lib.occaArgumentListAddArg(argList, i, arg.cMemory)
+                self.lib.occaArgumentListAddArg(argList,
+                                                c_int(i),
+                                                arg.cMemory)
             else:
                 cType = str(arg.__class__.__name__)[2:]
 
@@ -162,7 +185,12 @@ class kernel:
                 else:
                     cType = "occa" + cType[:1].swapcase() + cType[1:]
 
-                self.lib.occaArgumentListAddArg(argList, i, getattr(self.lib, cType)(arg))
+                occaCast = getattr(self.lib, cType)
+                occaCast.restype = c_void_p
+
+                self.lib.occaArgumentListAddArg(argList,
+                                                c_int(i),
+                                                c_void_p(getattr(self.lib, cType)(arg)))
 
         self.lib.occaKernelRun_(self.cKernel, argList)
 

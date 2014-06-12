@@ -196,7 +196,7 @@ namespace occa {
   }
 
   void device::setup(occa::mode m,
-                     int platform, int device){
+                     const int arg1, const int arg2){
     mode_ = m;
 
     switch(m){
@@ -228,14 +228,14 @@ namespace occa {
     }
 
     dHandle->dev = this;
-    dHandle->setup(platform, device);
+    dHandle->setup(arg1, arg2);
 
     currentStream = genStream();
   }
 
   void device::setup(const std::string &m,
-                     int platform, int device){
-    setup(strToMode(m), platform, device);
+                     const int arg1, const int arg2){
+    setup(strToMode(m), arg1, arg2);
   }
 
   void device::setCompiler(const std::string &compiler){

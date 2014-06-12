@@ -7,14 +7,14 @@
 #if OCCA_DEBUG_ENABLED
 #  define OCCA_CHECK2( _expr , file , line , func )                     \
   do {                                                                  \
-    size_t expr = _expr;                                                \
+    size_t expr = (_expr);                                              \
     if( !expr ){                                                        \
       std::cout << '\n'                                                 \
                 << "---[ Error ]--------------------------------------------\n" \
                 << "    File     : " << file << '\n'                    \
                 << "    Function : " << func << '\n'                    \
                 << "    Line     : " << line << '\n'                    \
-        std::cout << "========================================================\n"; \
+                << "========================================================\n"; \
       throw 1;                                                          \
     }                                                                   \
   } while(0)
@@ -39,17 +39,17 @@
 #define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)       \
   inline kernelArg(const TYPE &arg_){           \
     arg.TYPE##_ = arg_;                         \
-    size = sizeof(TYPE);                        \
+      size = sizeof(TYPE);                      \
                                                 \
-    pointer = false;                            \
+      pointer = false;                          \
   }
 
 #define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
   inline kernelArg(const TYPE &arg_){                   \
     arg.ALIAS##_ = arg_;                                \
-    size = sizeof(TYPE);                                \
+      size = sizeof(TYPE);                              \
                                                         \
-    pointer = false;                                    \
+      pointer = false;                                  \
   }
 
 #define OCCA_EXTRACT_DATA(MODE, CLASS)                          \
@@ -61,17 +61,17 @@
 #define OCCA_INPUT_KERNEL_ARG(N) , arg##N
 #define OCCA_INPUT_KERNEL_ARGS(N)  arg1 OCL_FOR(2, N, OCCA_INPUT_KERNEL_ARG)
 
-#define OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATION(N)   \
-  virtual void operator() (OCCA_KERNEL_ARGS(N)) = 0;
+#define OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATION(N)     \
+    virtual void operator() (OCCA_KERNEL_ARGS(N)) = 0;
 
 #define OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATIONS                       \
-  OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATION)
+    OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATION)
 
 #define OCCA_KERNEL_OPERATOR_DECLARATION(N)     \
-  void operator() (OCCA_KERNEL_ARGS(N));
+    void operator() (OCCA_KERNEL_ARGS(N));
 
-#define OCCA_KERNEL_OPERATOR_DECLARATIONS                           \
-  OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_KERNEL_OPERATOR_DECLARATION)
+#define OCCA_KERNEL_OPERATOR_DECLARATIONS                             \
+    OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_KERNEL_OPERATOR_DECLARATION)
 
 #define OCCA_KERNEL_OPERATOR_DEFINITION(N)        \
   void kernel::operator() (OCCA_KERNEL_ARGS(N)){  \
@@ -92,73 +92,73 @@
 #  define OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEFS                       \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEF)
 
-#  define OCCA_PTHREADS_INPUT_FUNCTION_ARG(N) , kArgs.args[N - 1].data()
+#  define OCCA_PTHREADS_INPUT_FUNCTION_ARG(N) , args.args[N - 1].data()
 #  define OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,         \
                                                 occaInnerId0, occaInnerId1, occaInnerId2 \
                                                 OCL_FOR(1, N, OCCA_PTHREADS_INPUT_FUNCTION_ARG)
 
 #  define OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITION(N)                   \
-  static void* launchKernel##N(void *args){                             \
-    PthreadKernelArg_t &kArgs  = *((PthreadKernelArg_t*) args);         \
-    PthreadKernelArgData_t &kdArgs = kArgs.data;                        \
+  static void launchKernel##N(PthreadKernelArg_t &args){                \
+    functionPointer##N tmpKernel = (functionPointer##N) args.kernelHandle; \
                                                                         \
-    PthreadsKernelData_t &data = *((PthreadsKernelData_t*) kdArgs.kernelData); \
+      int dp           = args.dims - 1;                                 \
+      occa::dim &outer = args.outer;                                    \
+      occa::dim &inner = args.inner;                                    \
                                                                         \
-    functionPointer##N tmpKernel = (functionPointer##N) data.handle;    \
+      occa::dim start(0,0,0), end(outer);                               \
                                                                         \
-    int dp           = kdArgs.dims - 1;                                 \
-    occa::dim &outer = kdArgs.outer;                                    \
-    occa::dim &inner = kdArgs.inner;                                    \
+      int loops     = outer[dp]/args.count;                             \
+      int coolRanks = (outer[dp] - loops*args.count);                   \
                                                                         \
-    occa::dim start(0,0,0), end(outer);                                 \
+      if(args.rank < coolRanks){                                        \
+        start[dp] = (args.rank)*(loops + 1);                            \
+        end[dp]   = start[dp] + (loops + 1);                            \
+      }                                                                 \
+      else{                                                             \
+        start[dp] = args.rank*loops + coolRanks;                        \
+        end[dp]   = start[dp] + loops;                                  \
+      }                                                                 \
                                                                         \
-    int loops     = outer[dp]/kdArgs.count;                             \
-    int coolRanks = (outer[dp] - loops*kdArgs.count);                   \
+      int occaKernelArgs[12] = {outer.z, outer.y, outer.x,              \
+                                inner.z, inner.y, inner.x,              \
+                                start.z, end.z,                         \
+                                start.y, end.y,                         \
+                                start.x, end.x};                        \
                                                                         \
-    if(kdArgs.rank < coolRanks){                                        \
-      start[dp] = (kdArgs.rank)*(loops + 1);                            \
-      end[dp]   = start[dp] + (loops + 1);                              \
-    }                                                                   \
-    else{                                                               \
-      start[dp] = kdArgs.rank*loops + coolRanks;                        \
-      end[dp]   = start[dp] + loops;                                    \
-    }                                                                   \
+      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;         \
                                                                         \
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,                \
-                              inner.z, inner.y, inner.x,                \
-                              start.z, end.z,                           \
-                              start.y, end.y,                           \
-                              start.x, end.x};                          \
+      tmpKernel(OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N));                  \
                                                                         \
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;           \
-                                                                        \
-    tmpKernel(OCCA_PTHREADS_INPUT_FUNCTION_ARGS(N));                    \
-                                                                        \
-    delete &kArgs;                                                      \
-                                                                        \
-    return NULL;                                                        \
+      delete &args;                                                     \
   }                                                                     \
                                                                         \
   template <>                                                           \
   void kernel_t<Pthreads>::operator() (OCCA_KERNEL_ARGS(N)){            \
     OCCA_EXTRACT_DATA(Pthreads, Kernel);                                \
     int pThreadCount = data_.pThreadCount;                              \
-    pthread_t *tid = data_.tid;                                         \
                                                                         \
     for(int p = 0; p < pThreadCount; ++p){                              \
       PthreadKernelArg_t *args = new PthreadKernelArg_t;                \
                                                                         \
-      args->data.kernelData = data;                                     \
-      args->data.dims       = dims;                                     \
-      args->data.inner      = inner;                                    \
-      args->data.outer      = outer;                                    \
-      args->data.rank       = p;                                        \
-      args->data.count      = pThreadCount;                             \
+      args->rank  = p;                                                  \
+      args->count = pThreadCount;                                       \
+                                                                        \
+      args->kernelHandle = data_.handle;                                \
+                                                                        \
+      args->dims  = dims;                                               \
+      args->inner = inner;                                              \
+      args->outer = outer;                                              \
                                                                         \
       OCCA_PTHREAD_SET_KERNEL_ARGS(N);                                  \
                                                                         \
-      pthread_create(&tid[p], NULL, launchKernel##N, args);             \
+      /* [-] Queue up args and launchKernel##N*/                        \
     }                                                                   \
+                                                                        \
+    int &pendingJobs = ((PthreadsDeviceData_t*) dev->dHandle->data)->pendingJobs; \
+                                                                        \
+    pthread_mutex_lock( &(data_.pendingJobsMutex) );                    \
+    pendingJobs += data_.pThreadCount;                                  \
+    pthread_mutex_unlock( &(data_.pendingJobsMutex) );                  \
   }
 
 #  define OCCA_PTHREAD_SET_KERNEL_ARG(N) args->args[N - 1] = arg##N;
@@ -174,16 +174,16 @@
 //---[ OpenMP ]-------------------------
 #  define OCCA_OPENMP_FUNCTION_ARG(N) , void *arg##N
 #  define OCCA_OPENMP_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
-    OCL_FOR(1, N, OCCA_OPENMP_FUNCTION_ARG)
+                   OCL_FOR(1, N, OCCA_OPENMP_FUNCTION_ARG)
 
 #  define OCCA_OPENMP_FUNCTION_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_OPENMP_FUNCTION_ARGS(N));
 #  define OCCA_OPENMP_FUNCTION_POINTER_TYPEDEFS                         \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_OPENMP_FUNCTION_POINTER_TYPEDEF)
 
 #  define OCCA_OPENMP_INPUT_FUNCTION_ARG(N) , arg##N.data()
-#  define OCCA_OPENMP_INPUT_FUNCTION_ARGS(N)  occaKernelArgs, \
-    occaInnerId0, occaInnerId1, occaInnerId2                  \
-    OCL_FOR(1, N, OCCA_OPENMP_INPUT_FUNCTION_ARG)
+#  define OCCA_OPENMP_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,     \
+                   occaInnerId0, occaInnerId1, occaInnerId2       \
+                   OCL_FOR(1, N, OCCA_OPENMP_INPUT_FUNCTION_ARG)
 
 #  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITION(N)                   \
   template <>                                                         \
@@ -191,12 +191,12 @@
     OCCA_EXTRACT_DATA(OpenMP, Kernel);                                \
     functionPointer##N tmpKernel = (functionPointer##N) data_.handle;	\
                                                                       \
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,               \
-                             inner.z, inner.y, inner.x};              \
+      int occaKernelArgs[6] = {outer.z, outer.y, outer.x,             \
+                               inner.z, inner.y, inner.x};            \
                                                                       \
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;         \
+      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;       \
                                                                       \
-    tmpKernel(OCCA_OPENMP_INPUT_FUNCTION_ARGS(N));                    \
+      tmpKernel(OCCA_OPENMP_INPUT_FUNCTION_ARGS(N));                  \
   }
 
 #  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITIONS                       \

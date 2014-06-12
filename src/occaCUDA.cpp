@@ -348,7 +348,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<CUDA>::setup(const int platform, const int device){
+  void device_t<CUDA>::setup(const int device, const int unusedArg){
     static bool cudaIsNotInitialized = true;
 
     if(cudaIsNotInitialized){

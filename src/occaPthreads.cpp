@@ -115,7 +115,7 @@ namespace occa {
 
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
-    OCCA_CHECK(dlHandle != NULL);
+    OCCA_CHECK(data_.dlHandle != NULL);
 
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
@@ -344,7 +344,37 @@ namespace occa {
   }
 
   template <>
-  void device_t<Pthreads>::setup(const int platform, const int device){}
+  void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo){
+    OCCA_EXTRACT_DATA(Pthreads, Device);
+
+    data_.pendingJobs = 0;
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    data_.coreCount = sysconf(_SC_NPROCESSORS_ONLN);
+#else
+#  warning "Core finding not implemented for this OS"
+#endif
+
+    data_.pThreadCount = (threadCount ? threadCount : 1);
+    data_.pinningInfo  = pinningInfo;
+
+    for(int p = 0; p < threadCount; ++p){
+      PthreadWorkerData_t *args = new PthreadWorkerData_t;
+
+      args->rank  = p;
+      args->count = data_.pThreadCount;
+
+      // [-] Need to know number of sockets
+      if(pinningInfo & occa::compact)
+        args->pinnedCore = p % data_.coreCount;
+      else
+        args->pinnedCore = p % data_.coreCount;
+
+      args->pendingJobs = &(data_.pendingJobs);
+
+      pthread_create(&data_.tid[p], NULL, pthreadLimbo, args);
+    }
+  }
 
   template <>
   void device_t<Pthreads>::getEnvironmentVariables(){

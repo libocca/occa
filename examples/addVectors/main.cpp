@@ -15,7 +15,7 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  std::string mode = "Pthreads";
+  std::string mode = "OpenMP";//"Pthreads";
   int platformID = 0;
   int deviceID   = 0;
 
@@ -61,6 +61,3 @@ int main(int argc, char **argv){
   device.free();
 
 }
-
-
-

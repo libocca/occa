@@ -117,13 +117,13 @@ namespace occa {
   device_t<OpenMP>::device_t(const device_t<OpenMP> &k);
 
   template <>
-  device_t<OpenMP>::device_t(const int platform, const int device);
+  device_t<OpenMP>::device_t(const int arg1, const int arg2);
 
   template <>
   device_t<OpenMP>& device_t<OpenMP>::operator = (const device_t<OpenMP> &k);
 
   template <>
-  void device_t<OpenMP>::setup(const int platform, const int device);
+  void device_t<OpenMP>::setup(const int arg1, const int arg2);
 
   template <>
   void device_t<OpenMP>::getEnvironmentVariables();

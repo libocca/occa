@@ -458,7 +458,7 @@ namespace occa {
     int simdWidth_;
 
   public:
-    virtual void setup(const int platform, const int device) = 0;
+    virtual void setup(const int arg1, const int arg2) = 0;
 
     virtual void getEnvironmentVariables() = 0;
 
@@ -492,12 +492,12 @@ namespace occa {
 
   public:
     device_t();
-    device_t(const int platform, const int device);
+    device_t(const int arg1, const int arg2);
 
     device_t(const device_t<mode> &k);
     device_t<mode>& operator = (const device_t<mode> &k);
 
-    void setup(const int platform, const int device);
+    void setup(const int arg1, const int arg2);
 
     void getEnvironmentVariables();
 
@@ -542,9 +542,9 @@ namespace occa {
     device& operator = (const device &d);
 
     void setup(occa::mode m,
-               const int platform, const int device);
+               const int arg1 = 0, const int arg2 = 0);
     void setup(const std::string &m,
-               const int platform, const int device);
+               const int arg1 = 0, const int arg2 = 0);
 
     std::string mode();
 

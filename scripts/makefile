@@ -8,7 +8,7 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-icpc_Enabled = 1
+icpc_Enabled = 0
 
 Pthreads_Enabled = 1
 OpenMP_Enabled   = 1
@@ -22,7 +22,7 @@ paths += -I/sw/include/ -I/opt/AMDAPP/include/ -I/usr/include/ -I/opt/X11/includ
 paths += -I/Developer/NVIDIA/CUDA-5.5/include/ -I/usr/local/cuda/include -I/glb/data/comp_mod/Tools/cuda-5.5/include
 paths += -L/opt/X11/lib -L${OCCA_DIR}/lib -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -L/usr/lib
 
-# flags = -Wno-deprecated -Wno-unused-value
+flags = -Wno-deprecated -Wno-unused-value
 
 links = -locca
 #=================================================
@@ -53,7 +53,7 @@ ifeq ($(icpc_Enabled), 1)
 	Release_Flags = -ldl -no-ansi-alias -funroll-all-loops -ftree-vectorize -fp-model fast=2 -ftz -O3 -xHost
 else
 	Debug_Flags   = -g
-	Release_Flags = -msse -O3 -ftree-vectorize -funroll-all-loops -fsplit-ivs-in-unroller -ffast-math
+	Release_Flags = -msse -O3 -ftree-vectorize -funroll-all-loops -ffast-math
 endif
 
 ifeq ($(OS),OSX)

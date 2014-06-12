@@ -1,11 +1,14 @@
 #ifndef OCCA_PTHREADS_HEADER
 #define OCCA_PTHREADS_HEADER
 
+#include <sys/sysctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <dlfcn.h>
 #include <fcntl.h>
+
+#include <pthread.h>
 
 #include "occaBase.hpp"
 
@@ -13,25 +16,53 @@
 
 namespace occa {
   //---[ Data Structs ]---------------
+  struct PthreadKernelArg_t;
+  typedef void (*PthreadLaunchHandle_t)(PthreadKernelArg_t &args);
+
   // [-] Hard-coded for now
-  struct PthreadsKernelData_t {
-    void *dlHandle, *handle;
+  struct PthreadsDeviceData_t {
+    int coreCount;
+
     int pThreadCount;
+    int pinningInfo;
+
+    int pendingJobs;
+
     pthread_t tid[50];
   };
 
-  struct PthreadKernelArgData_t {
-    void *kernelData;
-    int dims;
-    occa::dim inner, outer;
+  struct PthreadsKernelData_t {
+    void *dlHandle, *handle;
+    int pThreadCount;
+
+    pthread_mutex_t pendingJobsMutex, kernelMutex;
+  };
+
+  struct PthreadWorkerData_t {
     int rank, count;
+    int pinnedCore;
+
+    int *pendingJobs;
+    std::vector<PthreadLaunchHandle_t*> kernelLaunch;
+    std::vector<PthreadKernelArg_t*> kernelArgs;
+
+    pthread_mutex_t *pendingJobsMutex, *kernelMutex;
   };
 
   // [-] Hard-coded for now
   struct PthreadKernelArg_t {
-    PthreadKernelArgData_t data;
+    int rank, count;
+
+    void *kernelHandle;
+
+    int dims;
+    occa::dim inner, outer;
+
     occa::kernelArg args[50];
   };
+
+  static const int compact = (1 << 10);
+  static const int scatter = (1 << 11);
   //==================================
 
 
@@ -133,13 +164,13 @@ namespace occa {
   device_t<Pthreads>::device_t(const device_t<Pthreads> &k);
 
   template <>
-  device_t<Pthreads>::device_t(const int platform, const int device);
+  device_t<Pthreads>::device_t(const int threadCount, const int pinningInfo);
 
   template <>
   device_t<Pthreads>& device_t<Pthreads>::operator = (const device_t<Pthreads> &k);
 
   template <>
-  void device_t<Pthreads>::setup(const int platform, const int device);
+  void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo);
 
   template <>
   void device_t<Pthreads>::getEnvironmentVariables();
@@ -177,6 +208,40 @@ namespace occa {
 
   template <>
   int device_t<Pthreads>::simdWidth();
+  //==================================
+
+
+  //---[ Pthreads ]-------------------
+  static void* pthreadLimbo(void *args){
+    PthreadWorkerData_t &data = *((PthreadWorkerData_t*) args);
+
+    // Thread affinity
+#if (OCL_OS == LINUX_OS)
+    cpu_set_t cpuHandle;
+    CPU_ZERO(&cpuHandle);
+    CPU_SET(data.pinnedCore, &cpuHandle);
+#else
+#  warning "Affinity not guaranteed in this OS"
+#endif
+
+    while(true){
+      // Fence local data (incase of out-of-socket updates)
+      __asm__ __volatile__ ("lfence");
+
+      if( *(data.pendingJobs) ){
+        (*data.kernelLaunch[0])( *(data.kernelArgs[0]) );
+
+        //---[ Barrier ]----------------
+        pthread_mutex_lock(data.pendingJobsMutex);
+        --( *(data.pendingJobs) );
+        pthread_mutex_unlock(data.pendingJobsMutex);
+
+        while((*data.pendingJobs) % data.count)
+          __asm__ __volatile__ ("lfence");
+        //==============================
+      }
+    }
+  }
   //==================================
 };
 
