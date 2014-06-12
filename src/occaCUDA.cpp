@@ -95,21 +95,44 @@ namespace occa {
                                                          cachedBinary,
                                                          info);
 
-    std::stringstream command;
-
-    command << dev->dHandle->compiler
-            << " -o "       << cachedBinary
-            << " -ptx -I.";
+    std::string archSM = "";
 
     if(dev->dHandle->compilerFlags.find("-arch=sm_") == std::string::npos){
+      std::stringstream archSM_;
+
       int major, minor;
       OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting CUDA Device Arch",
                       cuDeviceComputeCapability(&major, &minor, data_.device) );
 
-      command << " -arch=sm_" << major << minor;
+      archSM_ << " -arch=sm_" << major << minor << ' ';
+
+      archSM = archSM_.str();
     }
 
-    command << ' '          << dev->dHandle->compilerFlags
+    std::stringstream command;
+
+    //---[ PTX Check Command ]----------
+    command << dev->dHandle->compiler
+            << ' '          << dev->dHandle->compilerFlags
+            << archSM
+            << " -Xptxas -v,-dlcm=cg,-abi=no"
+            << ' '          << info.flags
+            << " -x cu "    << iCachedBinary;
+
+    const std::string &ptxCommand = command.str();
+
+    std::cout << ptxCommand << '\n';
+
+    system(ptxCommand.c_str());
+
+    //---[ Compiling Command ]----------
+    command.str("");
+
+    command << dev->dHandle->compiler
+            << " -o "       << cachedBinary
+            << " -ptx -I."
+            << ' '          << dev->dHandle->compilerFlags
+            << archSM
             << ' '          << info.flags
             << " -x cu "    << iCachedBinary;
 

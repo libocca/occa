@@ -141,34 +141,45 @@ public:
     return data[index()];
   }
 
-  inline occaPrivate_t& operator = (const occaPrivate_t &r) {
-    data[index()][0] = r.data[index()][0];
-    return *this;
-  }
-
-  inline occaPrivate_t<TM,SIZE> & operator = (const TM &t){
+  inline TM& operator = (const TM &t){
     data[index()][0] = t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator += (const TM &t){
+  inline TM& operator += (const TM &t){
     data[index()][0] += t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator -= (const TM &t){
+  inline TM& operator -= (const TM &t){
     data[index()][0] -= t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator /= (const TM &t){
+  inline TM& operator /= (const TM &t){
     data[index()][0] /= t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator *= (const TM &t){
+  inline TM& operator *= (const TM &t){
     data[index()][0] *= t;
     return *this;
+  }
+
+  inline TM& operator ++ (){
+    return (++data[index()][0]);
+  }
+
+  inline TM& operator ++ (int){
+    return (data[index()][0]++);
+  }
+
+  inline TM& operator -- (){
+    return (--data[index()][0]);
+  }
+
+  inline TM& operator -- (int){
+    return (data[index()][0]--);
   }
 };
 
