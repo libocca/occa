@@ -8,5 +8,5 @@ function init
     occaHeader = strcat(occaDir, '/include/occaCBase.hpp');
     occaLib    = strcat(occaDir, '/lib/libocca.so');
     
-    [~, ~] = loadlibrary(occaLib, occaHeader);
+    [~, ~] = loadlibrary(occaLib, occaHeader);   
 end

@@ -4,20 +4,44 @@ classdef device < handle
        cDevice    
    end
    
-   methods       
+   methods (Static)      
+       function deviceCountFunction(arg)
+           persistent counter;
+           
+           if arg == 1
+               if isempty(counter)
+                   counter = 1;
+               else
+                   counter = counter + 1;
+               end
+           elseif arg == 0
+               counter = counter - 1;
+           end
+           
+           if counter == 0
+               unloadlibrary('libocca');
+           end
+       end
+   end
+      
+   methods
        function mode_ = mode(this)
            mode_ = calllib('libocca', 'occaDeviceMode', this.cDevice);
        end
        
        function this = device(mode, arg1, arg2)
            occa.init()
+                      
+           this.deviceCountFunction(1)
            
            this.cDevice     = calllib('libocca', 'occaGetDevice', mode, arg1, arg2);
-           this.isAllocated = 1;
+           this.isAllocated = 1;           
        end
        
        function setup(this, mode, arg1, arg2)
            occa.init()
+           
+           this.deviceCountFunction(1)
            
            this.cDevice     = calllib('libocca', 'occaGetDevice', mode, arg1, arg2);
            this.isAllocated = 1;
@@ -64,8 +88,9 @@ classdef device < handle
        end
        
        function free(this)
-           if this.isAllocated
+           if this.isAllocated              
                calllib('libocca', 'occaDeviceFree', this.cDevice);
+               this.deviceCountFunction(0)
            end
        end
        
