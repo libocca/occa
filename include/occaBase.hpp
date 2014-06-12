@@ -486,8 +486,9 @@ namespace occa {
 
   template <occa::mode mode>
   class device_t : public device_v {
+    template<occa::mode> friend class occa::kernel_t;
+
   private:
-    void *data;
     size_t memoryUsed;
 
   public:

@@ -477,16 +477,16 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenCL>::device_t() :
-    data(NULL),
     memoryUsed(0) {
+    data = NULL;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenCL>::device_t(int platform, int device) :
-    data(NULL),
     memoryUsed(0) {
+    data = NULL;
 
     getEnvironmentVariables();
   }

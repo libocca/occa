@@ -125,7 +125,7 @@ namespace occa {
       throw 1;
     }
 
-    PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) dev->dHandle->data);
+    PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dev->dHandle)->data);
 
     data_.pendingJobs = &(dData.pendingJobs);
 
@@ -167,7 +167,7 @@ namespace occa {
       throw 1;
     }
 
-    PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) dev->dHandle->data);
+    PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dev->dHandle)->data);
 
     data_.pendingJobs = &(dData.pendingJobs);
 

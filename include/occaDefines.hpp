@@ -151,16 +151,15 @@
                                                                         \
       OCCA_PTHREAD_SET_KERNEL_ARGS(N);                                  \
                                                                         \
-      printf("Z\n");                                                    \
-      pthread_mutex_lock(data_.kernelMutex); printf("A1\n");             \
+      pthread_mutex_lock(data_.kernelMutex);                            \
       data_.kernelLaunch[p]->push(launchKernel##N);                     \
       data_.kernelArgs[p]->push(args);                                  \
-      pthread_mutex_unlock(data_.kernelMutex); printf("B1\n");           \
+      pthread_mutex_unlock(data_.kernelMutex);                          \
     }                                                                   \
                                                                         \
-    pthread_mutex_lock(data_.pendingJobsMutex); printf("A2\n");          \
+    pthread_mutex_lock(data_.pendingJobsMutex);                         \
     *(data_.pendingJobs) += data_.pThreadCount;                         \
-    pthread_mutex_unlock(data_.pendingJobsMutex); printf("B2\n");       \
+    pthread_mutex_unlock(data_.pendingJobsMutex);                       \
   }
 
 #  define OCCA_PTHREAD_SET_KERNEL_ARG(N) args->args[N - 1] = arg##N;
