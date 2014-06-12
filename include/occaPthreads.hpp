@@ -9,6 +9,7 @@
 #include <fcntl.h>
 
 #include <pthread.h>
+#include <queue>
 
 #include "occaBase.hpp"
 
@@ -26,16 +27,26 @@ namespace occa {
     int pThreadCount;
     int pinningInfo;
 
+    pthread_t tid[50];
+
     int pendingJobs;
 
-    pthread_t tid[50];
+    std::queue<PthreadLaunchHandle_t> kernelLaunch[50];
+    std::queue<PthreadKernelArg_t*> kernelArgs[50];
+
+    pthread_mutex_t pendingJobsMutex, kernelMutex;
   };
 
   struct PthreadsKernelData_t {
     void *dlHandle, *handle;
     int pThreadCount;
 
-    pthread_mutex_t pendingJobsMutex, kernelMutex;
+    int *pendingJobs;
+
+    std::queue<PthreadLaunchHandle_t> *kernelLaunch[50];
+    std::queue<PthreadKernelArg_t*> *kernelArgs[50];
+
+    pthread_mutex_t *pendingJobsMutex, *kernelMutex;
   };
 
   struct PthreadWorkerData_t {
@@ -43,8 +54,9 @@ namespace occa {
     int pinnedCore;
 
     int *pendingJobs;
-    std::vector<PthreadLaunchHandle_t*> kernelLaunch;
-    std::vector<PthreadKernelArg_t*> kernelArgs;
+
+    std::queue<PthreadLaunchHandle_t> *kernelLaunch;
+    std::queue<PthreadKernelArg_t*> *kernelArgs;
 
     pthread_mutex_t *pendingJobsMutex, *kernelMutex;
   };
@@ -229,7 +241,17 @@ namespace occa {
       __asm__ __volatile__ ("lfence");
 
       if( *(data.pendingJobs) ){
-        (*data.kernelLaunch[0])( *(data.kernelArgs[0]) );
+        pthread_mutex_lock(data.kernelMutex);
+
+        PthreadLaunchHandle_t launchKernel = data.kernelLaunch->front();
+        data.kernelLaunch->pop();
+
+        PthreadKernelArg_t &launchArgs = *(data.kernelArgs->front());
+        data.kernelArgs->pop();
+
+        pthread_mutex_unlock(data.kernelMutex);
+
+        launchKernel(launchArgs);
 
         //---[ Barrier ]----------------
         pthread_mutex_lock(data.pendingJobsMutex);

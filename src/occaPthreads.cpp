@@ -125,6 +125,18 @@ namespace occa {
       throw 1;
     }
 
+    PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) dev->dHandle->data);
+
+    data_.pendingJobs = &(dData.pendingJobs);
+
+    for(int p = 0; p < 50; ++p){
+      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
+      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
+    }
+
+    data_.pendingJobsMutex = &(dData.pendingJobsMutex);
+    data_.kernelMutex      = &(dData.kernelMutex);
+
     return this;
   }
 
@@ -154,6 +166,18 @@ namespace occa {
       fputs(dlError, stderr);
       throw 1;
     }
+
+    PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) dev->dHandle->data);
+
+    data_.pendingJobs = &(dData.pendingJobs);
+
+    for(int p = 0; p < 50; ++p){
+      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
+      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
+    }
+
+    data_.pendingJobsMutex = &(dData.pendingJobsMutex);
+    data_.kernelMutex      = &(dData.kernelMutex);
 
     return this;
   }
@@ -345,6 +369,8 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo){
+    data = ::_mm_malloc(sizeof(PthreadsDeviceData_t), OCCA_MEM_ALIGN);
+
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
     data_.pendingJobs = 0;
@@ -357,6 +383,12 @@ namespace occa {
 
     data_.pThreadCount = (threadCount ? threadCount : 1);
     data_.pinningInfo  = pinningInfo;
+
+    int error = pthread_mutex_init(&(data_.pendingJobsMutex), NULL);
+    OCCA_CHECK(error == 0);
+
+    error = pthread_mutex_init(&(data_.kernelMutex), NULL);
+    OCCA_CHECK(error == 0);
 
     for(int p = 0; p < threadCount; ++p){
       PthreadWorkerData_t *args = new PthreadWorkerData_t;
@@ -371,6 +403,12 @@ namespace occa {
         args->pinnedCore = p % data_.coreCount;
 
       args->pendingJobs = &(data_.pendingJobs);
+
+      args->pendingJobsMutex = &(data_.pendingJobsMutex);
+      args->kernelMutex      = &(data_.kernelMutex);
+
+      args->kernelLaunch = &(data_.kernelLaunch[p]);
+      args->kernelArgs   = &(data_.kernelArgs[p]);
 
       pthread_create(&data_.tid[p], NULL, pthreadLimbo, args);
     }

@@ -151,14 +151,16 @@
                                                                         \
       OCCA_PTHREAD_SET_KERNEL_ARGS(N);                                  \
                                                                         \
-      /* [-] Queue up args and launchKernel##N*/                        \
+      printf("Z\n");                                                    \
+      pthread_mutex_lock(data_.kernelMutex); printf("A1\n");             \
+      data_.kernelLaunch[p]->push(launchKernel##N);                     \
+      data_.kernelArgs[p]->push(args);                                  \
+      pthread_mutex_unlock(data_.kernelMutex); printf("B1\n");           \
     }                                                                   \
                                                                         \
-    int &pendingJobs = ((PthreadsDeviceData_t*) dev->dHandle->data)->pendingJobs; \
-                                                                        \
-    pthread_mutex_lock( &(data_.pendingJobsMutex) );                    \
-    pendingJobs += data_.pThreadCount;                                  \
-    pthread_mutex_unlock( &(data_.pendingJobsMutex) );                  \
+    pthread_mutex_lock(data_.pendingJobsMutex); printf("A2\n");          \
+    *(data_.pendingJobs) += data_.pThreadCount;                         \
+    pthread_mutex_unlock(data_.pendingJobsMutex); printf("B2\n");       \
   }
 
 #  define OCCA_PTHREAD_SET_KERNEL_ARG(N) args->args[N - 1] = arg##N;
