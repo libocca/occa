@@ -101,13 +101,12 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 //---[ Private ]---------------------------------
 template <class TM, const int SIZE>
 class occaPrivate_t {
-private:
+public:
   const int dim0, dim1, dim2;
   const int &id0, &id1, &id2;
 
   TM data[OCCA_MAX_THREADS][SIZE] occaAligned;
 
-public:
   occaPrivate_t(int dim0_, int dim1_, int dim2_,
                 int &id0_, int &id1_, int &id2_) :
     dim0(dim0_),
