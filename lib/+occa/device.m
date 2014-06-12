@@ -11,7 +11,7 @@ classdef device < handle
            if arg == 1
                if isempty(counter)
                    counter = 1;
-               else
+               else                   
                    counter = counter + 1;
                end
            elseif arg == 0
@@ -70,9 +70,18 @@ classdef device < handle
            kernel_.isAllocated = 1;                                                                             
        end
        
-       function memory_ = malloc(this, entries, entryType)           
-           memory_.cMemory = calllib('libocca', 'occaDeviceMalloc', this.cDevice, entries, entryType);
-           memory_.isAllocated = 1;
+       function memory_ = malloc(this, arg, type)           
+           if isnumeric(arg)               
+               bytes = numel(arg)*occa.sizeof(type);
+                              
+               cMemory = calllib('libocca', 'occaDeviceMalloc', this.cDevice, bytes, arg);
+           else
+               bytes = arg*occa.sizeof(type);
+               
+               cMemory = calllib('libocca', 'occaDeviceMalloc', this.cDevice, bytes, libpointer);
+           end                      
+
+           memory_ = occa.memory(cMemory);
        end
        
        function stream_ = genStream(this)
