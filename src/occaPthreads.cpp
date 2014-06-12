@@ -255,6 +255,8 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
+    dev->finish();
+
     memcpy(dest, ((char*) handle) + offset, bytes_);
   }
 
@@ -265,6 +267,8 @@ namespace occa {
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
+
+    dev->finish();
 
     memcpy(dest->handle, ((char*) handle) + offset, bytes_);
   }
@@ -429,7 +433,13 @@ namespace occa {
   void device_t<Pthreads>::flush(){}
 
   template <>
-  void device_t<Pthreads>::finish(){}
+  void device_t<Pthreads>::finish(){
+    OCCA_EXTRACT_DATA(Pthreads, Device);
+
+    // Fence local data (incase of out-of-socket updates)
+    while(data_.pendingJobs)
+      __asm__ __volatile__ ("lfence");
+  }
 
   template <>
   stream device_t<Pthreads>::genStream(){
