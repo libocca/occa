@@ -83,7 +83,7 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
-    data = ::_mm_malloc(sizeof(PthreadsKernelData_t), OCCA_MEM_ALIGN);
+    data = new PthreadsKernelData_t;
 
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
@@ -138,7 +138,8 @@ namespace occa {
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
                                                           const std::string &functionName_){
-    data = ::_mm_malloc(sizeof(PthreadsKernelData_t), OCCA_MEM_ALIGN);
+    data = new PthreadsKernelData_t;
+
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
     functionName = functionName_;
@@ -363,7 +364,7 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo){
-    data = ::_mm_malloc(sizeof(PthreadsDeviceData_t), OCCA_MEM_ALIGN);
+    data = new PthreadsDeviceData_t;
 
     OCCA_EXTRACT_DATA(Pthreads, Device);
 

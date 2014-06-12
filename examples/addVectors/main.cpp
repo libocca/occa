@@ -42,16 +42,6 @@ int main(int argc, char **argv){
   o_b.copyFrom(b);
 
   addVectors(entries, o_a, o_b, o_ab);
-  addVectors(entries, o_a, o_ab, o_ab);
-  addVectors(entries, o_b, o_ab, o_ab);
-  addVectors(entries, o_a, o_ab, o_ab);
-  addVectors(entries, o_b, o_ab, o_ab);
-  addVectors(entries, o_a, o_ab, o_ab);
-  addVectors(entries, o_b, o_ab, o_ab);
-  addVectors(entries, o_a, o_ab, o_ab);
-  addVectors(entries, o_b, o_ab, o_ab);
-
-  sleep(2);
 
   o_ab.copyTo(ab);
 

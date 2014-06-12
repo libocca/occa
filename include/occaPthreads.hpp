@@ -243,6 +243,8 @@ namespace occa {
       if( *(data.pendingJobs) ){
         pthread_mutex_lock(data.kernelMutex);
 
+        std::cout.flush();
+
         PthreadLaunchHandle_t launchKernel = data.kernelLaunch->front();
         data.kernelLaunch->pop();
 
