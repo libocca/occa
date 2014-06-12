@@ -106,13 +106,6 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
-    char *c_pThreadCount = getenv("OCCA_PTHREAD_COUNT");
-
-    if(c_pThreadCount == NULL)
-      data_.pThreadCount = 1;
-    else
-      data_.pThreadCount = atoi(c_pThreadCount);
-
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
     OCCA_CHECK(data_.dlHandle != NULL);
@@ -126,6 +119,8 @@ namespace occa {
     }
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dev->dHandle)->data);
+
+    data_.pThreadCount = dData.pThreadCount;
 
     data_.pendingJobs = &(dData.pendingJobs);
 
@@ -146,13 +141,6 @@ namespace occa {
     data = ::_mm_malloc(sizeof(PthreadsKernelData_t), OCCA_MEM_ALIGN);
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
-    char *c_pThreadCount = getenv("OCCA_PTHREAD_COUNT");
-
-    if(c_pThreadCount == NULL)
-      data_.pThreadCount = 1;
-    else
-      data_.pThreadCount = atoi(c_pThreadCount);
-
     functionName = functionName_;
 
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
@@ -168,6 +156,8 @@ namespace occa {
     }
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dev->dHandle)->data);
+
+    data_.pThreadCount = dData.pThreadCount;
 
     data_.pendingJobs = &(dData.pendingJobs);
 
@@ -390,7 +380,7 @@ namespace occa {
     error = pthread_mutex_init(&(data_.kernelMutex), NULL);
     OCCA_CHECK(error == 0);
 
-    for(int p = 0; p < threadCount; ++p){
+    for(int p = 0; p < data_.pThreadCount; ++p){
       PthreadWorkerData_t *args = new PthreadWorkerData_t;
 
       args->rank  = p;
