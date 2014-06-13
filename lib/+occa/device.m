@@ -55,7 +55,13 @@ classdef device < handle
             calllib('libocca', 'occaDeviceSetCompilerFlags', this.cDevice, compilerFlags);
         end
 
-        function kernel_ = buildKernelFromSource(this, filename, functionName, info)
+        function kernel_ = buildKernelFromSource(this, filename, functionName, varargin)
+            if nargin == 3
+                info = libpointer
+            else
+                info = varargin{1}
+            end
+
             kernel_.cKernel = calllib('libocca', 'occaBuildKernelFromSource', this.cDevice, ...
                                                                               filename,     ...
                                                                               functionName, ...
