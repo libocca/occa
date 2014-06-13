@@ -22,6 +22,4 @@ addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 addVectors(occa.type(entries, 'int32'), ...
            o_a, o_b, o_ab);
 
-ab = o_ab(:);
-
-ab
+ab = o_ab(:
