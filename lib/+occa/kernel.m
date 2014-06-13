@@ -9,6 +9,11 @@ classdef kernel < handle
            mode_ = calllib('libocca', 'occaKernelMode', this.cKernel);
        end
 
+       function this = kernel(cKernel_)
+           this.cKernel = cKernel_;
+           this.isAllocated = 1;
+       end
+
        function size_ = preferredDimSize(this)
            size_ = calllib('libocca', 'occaKernelPreferredDimSize', this.cKernel);
        end
@@ -16,53 +21,60 @@ classdef kernel < handle
        function setWorkingDims(this, dims, itemsPerGroup, groups)
            if isnumeric(itemsPerGroup)
                ipg = itemsPerGroup(:);
-               ipg = [ipg(1:(dims + 1)); ones(3 - dims, 1)];
+               ipg = [ipg(1:dims); ones(3 - dims, 1)];
            else
                ipg = [itemsPerGroup; ones(2,1)];
            end
 
            if isnumeric(groups)
                grp = groups(:);
-               grp = [grp(1:(dims + 1)); ones(3 - dims, 1)];
+               grp = [grp(1:dims); ones(3 - dims, 1)];
            else
                grp = [groups; ones(2,1)];
            end
 
-           ipgDim = calllib('libocca', 'occaDim', ipg(1), ipg(2), ipg(3));
-           grpDim = calllib('libocca', 'occaDim', grp(1), grp(2), grp(3));
-
-           calllib('libocca', 'occaKernelSetWorkingDims', this.cKernel,
-                                                          dims,
-                                                          ipgDim,
-                                                          grpDim);
+           calllib('libocca', 'occaKernelSetAllWorkingDims', this.cKernel, ...
+                                                             dims,         ...
+                                                             ipg(1),       ...
+                                                             ipg(2),       ...
+                                                             ipg(3),       ...
+                                                             grp(1),       ...
+                                                             grp(2),       ...
+                                                             grp(3));
        end
 
        function varargout = subsref(this, index)
-           switch index.type
-           case '.'
-               switch index.subs
-               case 'isAllocated'
-                   varargout{1} = this.isAllocated;
-               case 'cKernel'
-                   varargout{1} = this.cKernel;
-               end
-           case '()'
-               argList = calllib('libocca', 'occaGenArgumentList');
+           indexArgs = numel(index);
 
-               pos = 0;
-               for arg = index.subs
-                   if isa(arg, 'occa.memory')
-                       calllib('libocca', 'occaArgumentListAddArg', argList, ...
-                                                                    pos,     ...
-                                                                    arg.cMemory);
-                   else
-                       calllib('libocca', 'occaArgumentListAddArg', argList, ...
-                                                                    pos,     ...
-                                                                    arg.cPtr);
+           if indexArgs == 1
+               switch index.type
+               case '.'
+                   switch index.subs
+                   case 'isAllocated'
+                       varargout{1} = this.isAllocated;
+                   case 'cKernel'
+                       varargout{1} = this.cKernel;
                    end
+               case '()'
+                   argList = calllib('libocca', 'occaGenArgumentList');
 
-                   pos = pos + 1;
+                   for pos = 1:length(index.subs)
+                       arg = index.subs{pos};
+
+                       if isa(arg, 'occa.memory')
+                           calllib('libocca', 'occaArgumentListAddArg', argList, ...
+                                                                        pos,     ...
+                                                                        arg.cMemory);
+                       else
+                           calllib('libocca', 'occaArgumentListAddArg', argList, ...
+                                                                        pos,     ...
+                                                                        arg.cPtr);
+                       end
+                   end
                end
+           else
+               numargout = nargout(index(1).subs);
+               [varargout{1:numargout}] = builtin('subsref', this, index);
            end
        end
 

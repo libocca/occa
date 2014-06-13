@@ -159,6 +159,11 @@ extern "C" {
                                 occaDim items,
                                 occaDim groups);
 
+  void occaKernelSetAllWorkingDims(occaKernel kernel,
+                                   int dims,
+                                   size_t itemsX, size_t itemsY, size_t itemsZ,
+                                   size_t groupsX, size_t groupsY, size_t groupsZ);
+
   double occaKernelTimeTaken(occaKernel kernel);
 
   occaArgumentList occaGenArgumentList();

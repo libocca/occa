@@ -257,6 +257,16 @@ extern "C" {
 
 
   //---[ Kernel ]-----------------------
+  occaDim occaGenDim(size_t x, size_t y, size_t z){
+    occaDim ret;
+
+    ret.x = x;
+    ret.y = y;
+    ret.z = z;
+
+    return ret;
+  }
+
   const char* occaKernelMode(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 
@@ -278,6 +288,17 @@ extern "C" {
     kernel_.setWorkingDims(dims,
                            occa::dim(items.x, items.y, items.z),
                            occa::dim(groups.x, groups.y, groups.z));
+  }
+
+  void occaKernelSetAllWorkingDims(occaKernel kernel,
+                                   int dims,
+                                   size_t itemsX, size_t itemsY, size_t itemsZ,
+                                   size_t groupsX, size_t groupsY, size_t groupsZ){
+    occa::kernel &kernel_ = *((occa::kernel*) kernel);
+
+    kernel_.setWorkingDims(dims,
+                           occa::dim(itemsX, itemsY, itemsZ),
+                           occa::dim(groupsX, groupsY, groupsZ));
   }
 
 

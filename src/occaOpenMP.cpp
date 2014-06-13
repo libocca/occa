@@ -395,11 +395,6 @@ namespace occa {
                                      void *source){
     memory_v *mem = new memory_t<OpenMP>;
 
-    int *s = (int*) source;
-    std::cout << "s[0] = " << s[0] << '\n'
-              << "s[1] = " << s[1] << '\n'
-              << "s[2] = " << s[2] << '\n';
-
     mem->dev    = dev;
     mem->handle = ::_mm_malloc(bytes, OCCA_MEM_ALIGN);
     mem->size   = bytes;
