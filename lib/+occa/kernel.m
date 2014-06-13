@@ -24,8 +24,9 @@ classdef kernel < handle
        end
        
        function free(this)
-           if isAllocated
+           if this.isAllocated
                timeTaken_ = calllib('libocca', 'occaKernelFree', this.cKernel);
+               this.isAllocated = 0;
            end
        end
        

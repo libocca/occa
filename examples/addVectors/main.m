@@ -20,8 +20,8 @@ groups = (entries + itemsPerGroup - 1)/itemsPerGroup;
 addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 
 addVectors(occa.type(entries, 'int32'),
-           o_a, o_b, o_ab]);
+           o_a, o_b, o_ab);
 
-o_ab.copyTo(ab, 'single');
+ab = o_ab(:);
 
 ab
