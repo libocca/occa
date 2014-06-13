@@ -3,6 +3,8 @@
 
 #include "ocl_preprocessor.hpp"
 
+#include "stdlib.h"
+
 #define OCCA_TYPE_MEMORY 0
 #define OCCA_TYPE_INT    1
 #define OCCA_TYPE_UINT   2

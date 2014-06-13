@@ -8,7 +8,7 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-icpc_Enabled = 0
+icpc_Enabled = 1
 
 Pthreads_Enabled = 1
 OpenMP_Enabled   = 1

@@ -228,7 +228,7 @@ namespace occa {
     PthreadWorkerData_t &data = *((PthreadWorkerData_t*) args);
 
     // Thread affinity
-#if (OCL_OS == LINUX_OS)
+#if (OCCA_OS == LINUX_OS)
     cpu_set_t cpuHandle;
     CPU_ZERO(&cpuHandle);
     CPU_SET(data.pinnedCore, &cpuHandle);

@@ -3,3 +3,5 @@
 # Except this file
 !.gitignore
 !occa.py
+!+occa
+!+occa/*

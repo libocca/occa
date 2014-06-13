@@ -108,13 +108,12 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 //---[ Private ]---------------------------------
 template <class TM, const int SIZE>
 class occaPrivate_t {
-private:
+public:
   const int dim0, dim1, dim2;
   const int &id0, &id1, &id2;
 
   TM data[OCCA_MAX_THREADS][SIZE] occaAligned;
 
-public:
   occaPrivate_t(int dim0_, int dim1_, int dim2_,
                 int &id0_, int &id1_, int &id2_) :
     dim0(dim0_),
@@ -142,34 +141,45 @@ public:
     return data[index()];
   }
 
-  inline occaPrivate_t& operator = (const occaPrivate_t &r) {
-    data[index()][0] = r.data[index()][0];
-    return *this;
-  }
-
-  inline occaPrivate_t<TM,SIZE> & operator = (const TM &t){
+  inline TM& operator = (const TM &t){
     data[index()][0] = t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator += (const TM &t){
+  inline TM& operator += (const TM &t){
     data[index()][0] += t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator -= (const TM &t){
+  inline TM& operator -= (const TM &t){
     data[index()][0] -= t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator /= (const TM &t){
+  inline TM& operator /= (const TM &t){
     data[index()][0] /= t;
     return *this;
   }
 
-  inline occaPrivate_t<TM,SIZE> & operator *= (const TM &t){
+  inline TM& operator *= (const TM &t){
     data[index()][0] *= t;
     return *this;
+  }
+
+  inline TM& operator ++ (){
+    return (++data[index()][0]);
+  }
+
+  inline TM& operator ++ (int){
+    return (data[index()][0]++);
+  }
+
+  inline TM& operator -- (){
+    return (--data[index()][0]);
+  }
+
+  inline TM& operator -- (int){
+    return (data[index()][0]--);
   }
 };
 
