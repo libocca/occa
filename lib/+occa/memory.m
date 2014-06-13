@@ -3,7 +3,9 @@ classdef memory < handle
        isAllocated = 0
        cMemory
        cType
+       cPtrType
        cSize
+       cEntries
    end
 
    methods
@@ -26,34 +28,39 @@ classdef memory < handle
                    varargout{1} = this.cMemory;
                case 'cType'
                    varargout{1} = this.cType;
+               case 'cPtrType'
+                   varargout{1} = this.cPtrType;
                case 'cSize'
                    varargout{1} = this.cSize;
+               case 'cEntries'
+                   varargout{1} = this.cEntries;
                end
            case '()'
-               switch index.subs{1}
-               case ':'
-                   bytes  = cSize(1)*occa.sizeof(cType);
-                   offset = 0;
-               otherwise
-                   if isnumeric(index.subs{1})
-                       entries = numel(index.subs{1});
-                       offset  = (index.subs{1}(1) - 1);
-                   else
+               if isnumeric(index.subs{1})
+                   entries = numel(index.subs{1});
+                   offset  = (index.subs{1}(1) - 1);
+               else
+                   switch index.subs{1}
+                   case ':'
+                       entries = this.cEntries;
+                       offset  = 0;
+                   otherwise
                        entries = 1;
                        offset  = (index.subs{1} - 1);
                    end
                end
 
-               bytes = entries*occa.sizeof(cType);
+               bytes  = entries*occa.sizeof(this.cType);
+               offset = offset*occa.sizeof(this.cType);
 
-               ptr = libpointer(cType, entries);
+               ptr = libpointer(this.cPtrType, zeros(entries,1));
 
                calllib('libocca', 'occaCopyMemToPtr', ptr,          ...
                                                       this.cMemory, ...
                                                       bytes,        ...
                                                       offset);
 
-               this = ptr.value;
+               varargout{1} = ptr.value;
            end
        end
 
@@ -61,34 +68,43 @@ classdef memory < handle
            switch index.type
            case '.'
                switch index.subs
+               case 'isAllocated'
+                   this.isAllocated = value;
+               case 'cMemory'
+                   this.cMemory = value;
                case 'cType'
                    this.cType = value;
+               case 'cPtrType'
+                   this.cPtrType = value;
+               case 'cSize'
+                   this.cSize = value;
+               case 'cEntries'
+                   this.cEntries = value;
                end
            case '()'
-               switch index.subs{1}
-               case ':'
-                   bytes  = cSize(1)*occa.sizeof(cType);
-                   offset = 0;
-               otherwise
-                   if isnumeric(index.subs{1})
-                       entries = numel(index.subs{1});
-                       offset  = (index.subs{1}(1) - 1);
-                   else
+               if isnumeric(index.subs{1})
+                   entries = numel(index.subs{1});
+                   offset  = (index.subs{1}(1) - 1);
+               else
+                   switch index.subs{1}
+                   case ':'
+                       entries = this.cEntries;
+                       offset  = 0;
+                   otherwise
                        entries = 1;
                        offset  = (index.subs{1} - 1);
                    end
                end
 
-               bytes = entries*occa.sizeof(cType);
+               bytes  = entries*occa.sizeof(this.cType);
+               offset = offset*occa.sizeof(this.cType);
 
-               ptr = libpointer(cType, entries);
+               ptr = libpointer(this.cPtrType, value);
 
-               calllib('libocca', 'occaCopyMemFromPtr', ptr,          ...
-                                                        this.cMemory, ...
-                                                        bytes,        ...
-                                                        offset);
-
-               this = ptr.value;
+               calllib('libocca', 'occaCopyPtrToMem', this.cMemory, ...
+                                                      ptr,          ...
+                                                      bytes,        ...
+                                                      offset);
            end
        end
 

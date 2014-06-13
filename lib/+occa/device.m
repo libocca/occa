@@ -86,7 +86,17 @@ classdef device < handle
             end
 
             memory_ = occa.memory(cMemory);
-            memory_.cType = ptrType;
+
+            memory_.cType    = type;
+            memory_.cPtrType = ptrType;
+
+            if isnumeric(arg)
+                memory_.cSize    = size(arg);
+                memory_.cEntries = numel(arg);
+            else
+                memory_.cSize    = [arg 1];
+                memory_.cEntries = arg;
+            end
         end
 
         function stream_ = genStream(this)
