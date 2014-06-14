@@ -1,4 +1,4 @@
-include("occa.fl")
+include("occa.jl")
 
 entries = 5
 
@@ -13,7 +13,7 @@ o_a  = occa.malloc(device, a);
 o_b  = occa.malloc(device, b);
 o_ab = occa.malloc(device, ab);
 
-k = occa.buildKernelFromSource(device,
+addVectors = occa.buildKernelFromSource(device,
                                "addVectors.occa",
                                "addVectors")
 
@@ -21,10 +21,10 @@ dims = 1;
 itemsPerGroup = 2;
 groups = (entries + itemsPerGroup - 1)/itemsPerGroup;
 
-occa.setWorkingDims(k,
+occa.setWorkingDims(addVectors,
                     dims, itemsPerGroup, groups);
 
-occa.runKernel(k,
+occa.runKernel(addVectors,
                (entries, Int32),
                o_a, o_b, o_ab)
 
