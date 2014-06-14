@@ -1,4 +1,4 @@
-include("occa.jl")
+require( bytestring(ENV["OCCA_DIR"], "/lib/occa.jl") )
 
 entries = 5
 

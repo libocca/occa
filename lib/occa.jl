@@ -1,22 +1,8 @@
 module occa
 
 #---[ Setup ]-----------------
-macro getenv(var::String)
-    var = ccall((:getenv, "libc"),
-                Ptr{Uint8},
-                (Ptr{Uint8},),
-                bytestring(var))
-
-    if var == C_NULL
-        error("getenv: undefined variable: ", var)
-    end
-
-    return bytestring(var)
-end
-
 macro libocca()
-    occaDir = @getenv("OCCA_DIR")
-    return bytestring(occaDir, "/lib/libocca.so")
+    return bytestring(ENV["OCCA_DIR"], "/lib/libocca.so")
 end
 
 #---[ Types ]-----------------
