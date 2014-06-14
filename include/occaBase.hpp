@@ -241,6 +241,8 @@ namespace occa {
 
   private:
     occa::mode mode_;
+    std::string strMode;
+
     kernel_v *kHandle;
 
     int argumentCount;
@@ -252,7 +254,7 @@ namespace occa {
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
 
-    std::string mode();
+    std::string& mode();
 
     kernel& buildFromSource(const std::string &filename,
                             const std::string &functionName_,
@@ -386,6 +388,8 @@ namespace occa {
 
   private:
     occa::mode mode_;
+    std::string strMode;
+
     memory_v *mHandle;
 
   public:
@@ -394,7 +398,7 @@ namespace occa {
     memory(const memory &m);
     memory& operator = (const memory &m);
 
-    std::string mode();
+    std::string& mode();
 
     void copyFrom(const void *source,
                   const size_t bytes = 0,
@@ -531,6 +535,8 @@ namespace occa {
 
   private:
     occa::mode mode_;
+    std::string strMode;
+
     device_v *dHandle;
 
     stream currentStream;
@@ -547,7 +553,7 @@ namespace occa {
     void setup(const std::string &m,
                const int arg1 = 0, const int arg2 = 0);
 
-    std::string mode();
+    std::string& mode();
 
     void setCompiler(const std::string &compiler);
     void setCompilerFlags(const std::string &compilerFlags);

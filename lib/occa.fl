@@ -1,0 +1,256 @@
+module occa
+
+#---[ Setup ]-----------------
+macro getenv(var::String)
+    var = ccall((:getenv, "libc"),
+                Ptr{Uint8},
+                (Ptr{Uint8},),
+                bytestring(var))
+
+    if var == C_NULL
+        error("getenv: undefined variable: ", var)
+    end
+
+    return bytestring(var)
+end
+
+macro libocca()
+    occaDir = @getenv("OCCA_DIR")
+    return bytestring(occaDir, "/lib/libocca.so")
+end
+
+#---[ Types ]-----------------
+type device
+    cDevice::Ptr{Void}
+
+    function device(mode::String, arg1::Number, arg2::Number)
+        convert(Int32, arg1)
+        convert(Int32, arg2)
+
+        cDevice = ccall((:occaGetDevice, @libocca()),
+                        Ptr{Void},
+                        (Ptr{Uint8}, Int32, Int32,),
+                        bytestring(mode), arg1, arg2)
+
+        println(cDevice)
+
+        new(cDevice)
+    end
+end
+
+type stream
+    cStream::Ptr{Void}
+
+    function stream(ptr::Ptr{Void})
+        new(ptr)
+    end
+end
+
+type kernel
+    cKernel::Ptr{Void}
+
+    function kernel(cKernel)
+        new(cKernel)
+    end
+end
+
+type kernelInfo
+    cKernelInfo::Ptr{Void}
+
+    function kernelInfo(ptr::Ptr{Void})
+        new(ptr)
+    end
+end
+
+type memory
+    cMemory::Ptr{Void}
+
+    function memory(cMemory)
+        new(cMemory)
+    end
+end
+
+#---[ Device ]----------------
+function finalizer(d::device)
+    ccall((:occaDeviceFree, @libocca()),
+          Void,
+          (Ptr{Void},),
+          d.cDevice)
+end
+
+function mode(d::device)
+    cMode = ccall((:occaDeviceMode, @libocca()),
+                  Ptr{Uint8},
+                  (Ptr{Void},), d.cDevice)
+
+    return bytestring(cMode)
+end
+
+function setCompiler(d::device,
+                     compiler::String)
+    ccall((:occaDeviceSetCompiler, @libocca()),
+          Void,
+          (Ptr{Void}, Ptr{Uint8},),
+          d.cDevice, bytestring(compiler))
+end
+
+function setCompilerFlags(d::device,
+                          compilerFlags::String)
+    ccall((:occaDeviceSetCompilerFlags, @libocca()),
+          Void,
+          (Ptr{Void}, Ptr{Uint8},),
+          d.cDevice, bytestring(compilerFlags))
+end
+
+function buildKernelFromSource(d::device,
+                               filename::String,
+                               functionName::String,
+                               info::kernelInfo = C_NULL)
+    if info == C_NULL
+        cKernel = ccall((:occaBuildKernelFromSource, @libocca()),
+                        Ptr{Void},
+                        (Ptr{Void}, Ptr{Uint8}, Ptr{Uint8}, Ptr{Void}),
+                        d.cDevice,
+                        bytestring(filename),
+                        bytestring(functionName),
+                        C_NULL)
+    else
+        cKernel = ccall((:occaBuildKernelFromSource, @libocca()),
+                        Ptr{Void},
+                        (Ptr{Void}, Ptr{Uint8}, Ptr{Uint8}, Ptr{Void}),
+                        d.cDevice,
+                        bytestring(filename),
+                        bytestring(functionName),
+                        info.cKernelInfo)
+    end
+
+    return kernel(cKernel)
+end
+
+function buildKernelFromBinary(d::device,
+                               filename::String,
+                               functionName::String)
+    cKernel = ccall((:occaBuildKernelFromBinary, @libocca()),
+                    Ptr{Void},
+                    (Ptr{Void}, Ptr{Uint8}, Ptr{Uint8}),
+                    d.cDevice,
+                    bytestring(filename),
+                    bytestring(functionName))
+
+    return kernel(cKernel)
+end
+
+function malloc(d::device,
+                bytes::Number,
+                source = C_NULL)
+    if source != C_NULL
+        convert(Ptr{Void}, source)
+    end
+
+    convert(Uint, bytes)
+
+    cMemory = ccall((:occaDeviceMalloc, @libocca()),
+                    Ptr{Void},
+                    (Ptr{Void}, Uint, Ptr{Void}),
+                    d.cDevice, bytes, source)
+
+    return memory(cMemory)
+end
+
+function genStream(d::device)
+    cStream = ccall((:occaGenStream, @libocca()),
+                    Ptr{Void},
+                    (Ptr{Void},),
+                    d.cDevice)
+
+    return stream(cStream)
+end
+
+function getStream(d::device)
+    cStream = ccall((:occaGetStream, @libocca()),
+                    Ptr{Void},
+                    (Ptr{Void},),
+                    d.cDevice)
+
+    return stream(cStream)
+end
+
+function setStream(d::device, s::stream)
+    ccall((:occaSetStream, @libocca()),
+          Void,
+          (Ptr{Void}, Ptr{Void},),
+          d.cDevice, s.cStream)
+end
+
+#---[ Kernel ]----------------
+function finalizer(k::kernel)
+    ccall((:occaKernelFree, @libocca()),
+          Void,
+          (Ptr{Void},),
+          k.cKernel)
+end
+
+function mode(k::kernel)
+    cMode = ccall((:occaKernelMode, @libocca()),
+                  Ptr{Uint8},
+                  (Ptr{Void},), k.cKernel)
+
+    return bytestring(cMode)
+end
+
+function getPreferredDimSize(k::kernel)
+end
+
+function setWorkingDims(k::kernel,
+                        dims, items, groups)
+end
+
+function run(k::kernel, args...)
+end
+
+function timeTaken(k::kernel)
+    return ccall((:occaKernelTimeTaken, @libocca()),
+                 Float64,
+                 (Ptr{Void},), k.cKernel)
+end
+
+# function addDefine(info::kernelInfo, macro_::String, value::?)
+#     ccall((:occaKernelInfoFree, @libocca()),
+#           Void,
+#           (Ptr{Void}, Ptr{Uint8}, ? ),
+#           info.cKernelInfo, bytestring(macro_), value)
+# end
+
+function finalizer(info::kernelInfo)
+    ccall((:occaKernelInfoFree, @libocca()),
+          Void,
+          (Ptr{Void},),
+          info.cKernelInfo)
+end
+
+#---[ Memory ]----------------
+function finalizer(m::memory)
+    ccall((:occaMemoryFree, @libocca()),
+          Void,
+          (Ptr{Void},),
+          m.cMemory)
+end
+
+function mode(m::memory)
+    cMode = ccall((:occaMemoryMode, @libocca()),
+                  Ptr{Uint8},
+                  (Ptr{Void},), m.cMemory)
+
+    return bytestring(cMode)
+end
+
+function memcpy(destTuple, srcTuple)
+end
+
+function swap(a::memory, b::memory)
+    tmp       = a.cMemory
+    a.cMemory = b.cMemory
+    b.cMemory = tmp
+end
+
+end

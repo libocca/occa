@@ -8,21 +8,25 @@ namespace occa {
   //---[ Kernel ]---------------------
   kernel::kernel() :
     mode_(),
+    strMode(""),
     kHandle(NULL) {}
 
   kernel::kernel(const kernel &k) :
     mode_(k.mode_),
+    strMode(k.strMode),
     kHandle(k.kHandle) {}
 
   kernel& kernel::operator = (const kernel &k){
     mode_   = k.mode_;
+    strMode = k.strMode;
+
     kHandle = k.kHandle;
 
     return *this;
   }
 
-  std::string kernel::mode(){
-    return modeToStr(mode_);
+  std::string& kernel::mode(){
+    return strMode;
   }
 
   kernel& kernel::buildFromSource(const std::string &filename,
@@ -98,21 +102,25 @@ namespace occa {
   //---[ Memory ]---------------------
   memory::memory() :
     mode_(),
+    strMode(""),
     mHandle(NULL) {}
 
   memory::memory(const memory &m) :
     mode_(m.mode_),
+    strMode(m.strMode),
     mHandle(m.mHandle) {}
 
   memory& memory::operator = (const memory &m){
     mode_   = m.mode_;
+    strMode = m.strMode;
+
     mHandle = m.mHandle;
 
     return *this;
   }
 
-  std::string memory::mode(){
-    return modeToStr(mode_);
+  std::string& memory::mode(){
+    return strMode;
   }
 
   void memory::copyFrom(const void *source,
@@ -168,6 +176,10 @@ namespace occa {
     m.mode_        = mode_;
     mode_          = mode2;
 
+    std::string strMode2 = m.strMode;
+    m.strMode            = strMode;
+    strMode              = strMode2;
+
     memory_v *mHandle2 = m.mHandle;
     m.mHandle          = mHandle;
     mHandle            = mHandle2;
@@ -186,6 +198,7 @@ namespace occa {
 
   device::device(const device &d) :
     mode_(d.mode_),
+    strMode(d.strMode),
     dHandle(d.dHandle) {}
 
   device& device::operator = (const device &d){
@@ -197,7 +210,8 @@ namespace occa {
 
   void device::setup(occa::mode m,
                      const int arg1, const int arg2){
-    mode_ = m;
+    mode_   = m;
+    strMode = modeToStr(m);
 
     switch(m){
     case Pthreads:
@@ -246,8 +260,8 @@ namespace occa {
     dHandle->setCompilerFlags(compilerFlags);
   }
 
-  std::string device::mode(){
-    return modeToStr(mode_);
+  std::string& device::mode(){
+    return strMode;
   }
 
   void device::flush(){
@@ -276,7 +290,8 @@ namespace occa {
                                        const kernelInfo &info_){
     kernel ker;
 
-    ker.mode_ = mode_;
+    ker.mode_   = mode_;
+    ker.strMode = strMode;
 
     ker.kHandle      = dHandle->buildKernelFromSource(filename, functionName, info_);
     ker.kHandle->dev = this;
@@ -288,7 +303,8 @@ namespace occa {
                                        const std::string &functionName){
     kernel ker;
 
-    ker.mode_ = mode_;
+    ker.mode_   = mode_;
+    ker.strMode = strMode;
 
     ker.kHandle      = dHandle->buildKernelFromBinary(filename, functionName);
     ker.kHandle->dev = this;
@@ -300,7 +316,8 @@ namespace occa {
                         void *source){
     memory mem;
 
-    mem.mode_ = mode_;
+    mem.mode_   = mode_;
+    mem.strMode = strMode;
 
     mem.mHandle      = dHandle->malloc(bytes, source);
     mem.mHandle->dev = this;

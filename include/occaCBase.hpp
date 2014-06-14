@@ -126,7 +126,7 @@ extern "C" {
                                   const char *compilerFlags);
 
   occaDevice occaGetDevice(const char *mode,
-                           int platformID, int deviceID);
+                           int arg1, int arg2);
 
   occaKernel occaBuildKernelFromSource(occaDevice device,
                                        const char *filename,

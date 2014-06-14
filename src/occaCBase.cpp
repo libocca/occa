@@ -165,10 +165,10 @@ extern "C" {
 
 
   occaDevice occaGetDevice(const char *mode,
-                           int platformID, int deviceID){
+                           int arg1, int arg2){
     occa::device *device = new occa::device();
 
-    device->setup(mode, platformID, deviceID);
+    device->setup(mode, arg1, arg2);
 
     return (occaDevice) device;
   }
