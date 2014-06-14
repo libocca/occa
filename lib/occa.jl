@@ -104,7 +104,7 @@ end
 function buildKernelFromSource(d::device,
                                filename::String,
                                functionName::String,
-                               info::kernelInfo = C_NULL)
+                               info = C_NULL)
     if info == C_NULL
         cKernel = ccall((:occaBuildKernelFromSource, @libocca()),
                         Ptr{Void},
@@ -139,29 +139,35 @@ function buildKernelFromBinary(d::device,
     return kernel(cKernel)
 end
 
-function malloc(d::device, sourceAndType)
-    if length(sourceAndType) != 2
-        error("malloc second argument must be a tuple of (bytes, type) or (array, type)")
-    end
-
-    cTypes = sourceAndType[2]
-
-    if isa(sourceAndType[1], Array)
-        bytes = length(sourceAndType[1]) * sizeof(cTypes)
-
-        source = sourceAndType[1]
-        convert(Ptr{Void}, source)
-    else
-        bytes  = sourceAndType[1] * sizeof(cTypes)
-        source = C_NULL
-    end
+function malloc(d::device, source::Array)
+    cTypes = typeof(source[1])
+    bytes  = length(source) * sizeof(cTypes)
 
     convert(Uint, bytes)
 
     cMemory = ccall((:occaDeviceMalloc, @libocca()),
                     Ptr{Void},
                     (Ptr{Void}, Uint, Ptr{Void},),
-                    d.cDevice, bytes, source)
+                    d.cDevice, bytes, pointer(source))
+
+    return memory(cMemory, cTypes)
+end
+
+function malloc(d::device, entriesAndType)
+    if length(entriesAndType) != 2
+        error("malloc second argument must be a tuple of (bytes, type) or Array")
+    end
+
+    cTypes = entriesAndType[2]
+
+    bytes  = entriesAndType[1] * sizeof(cTypes)
+
+    convert(Uint, bytes)
+
+    cMemory = ccall((:occaDeviceMalloc, @libocca()),
+                    Ptr{Void},
+                    (Ptr{Void}, Uint, Ptr{Void},),
+                    d.cDevice, bytes, C_NULL)
 
     return memory(cMemory, cTypes)
 end
@@ -217,6 +223,8 @@ end
 
 function setWorkingDims(k::kernel,
                         dims, items, groups)
+    convert(Int32, dims)
+
     items_  = ones(Uint, 3)
     groups_ = ones(Uint, 3)
 
@@ -231,29 +239,52 @@ function setWorkingDims(k::kernel,
            Int32,
            Uint, Uint, Uint,
            Uint, Uint, Uint,),
-          info.cKernelInfo,
+          k.cKernel,
           dims,
           items_[1] , items_[2] , items_[3],
           groups_[1], groups_[2], groups_[3])
 end
 
-function run(k::kernel, args...)
+argType(arg::Int8)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int8,) , arg)
+argType(arg::Uint8) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint8,), arg)
+
+argType(arg::Int16)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int16,) , arg)
+argType(arg::Uint16) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint16,), arg)
+
+argType(arg::Int32)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int32,) , arg)
+argType(arg::Uint32) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint32,), arg)
+
+argType(arg::Int64)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int64,) , arg)
+argType(arg::Uint64) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint64,), arg)
+
+argType(arg::Float32) = ccall((:occaChar, @libocca()), Ptr{Void}, (Float32,) , arg)
+argType(arg::Float64) = ccall((:occaChar, @libocca()), Ptr{Void}, (Float64,) , arg)
+
+function runKernel(k::kernel, args...)
     argList = ccall((:occaGenArgumentList, @libocca()),
                     Ptr{Void}, ())
 
-    pos = 0
+    pos = convert(Int32, 0)
     for arg in args
         if isa(arg, memory)
             ccall((:occaArgumentListAddArg, @libocca()),
                   Void,
                   (Ptr{Void}, Int32, Ptr{Void},),
-                  argList, pos, arg)
+                  argList, pos, arg.cMemory)
         else
-            # Missing
+            if length(arg) != 2
+                error("Kernel argument should be in the form of (value, type)")
+            end
+
+            arg_ = arg[1]
+            convert(arg[2], arg_)
+
+            cArg = argType(arg_)
+
             ccall((:occaArgumentListAddArg, @libocca()),
                   Void,
                   (Ptr{Void}, Int32, Ptr{Void},),
-                  argList, pos, occaArg)
+                  argList, pos, cArg)
         end
 
         pos += 1
@@ -313,7 +344,7 @@ function mode(m::memory)
     return bytestring(cMode)
 end
 
-function memcpy(destTuple, srcTuple, bytes::Number)
+function memcpy(destTuple, srcTuple, bytes::Number = 0)
     if isa(destTuple, memory)
         dest = destTuple.cMemory
 
