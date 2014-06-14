@@ -5,9 +5,9 @@ entries = 5
 device = occa.device("OpenMP", 0, 0);
 
 # Dynamic range?
-a  = [convert(Float32, 1 - i) for i in 1:5]
-b  = [convert(Float32, i    ) for i in 1:5]
-ab = [convert(Float32, 0    ) for i in 1:5]
+a  = Float32[1 - i for i in 1:entries]
+b  = Float32[i     for i in 1:entries]
+ab = Float32[0     for i in 1:entries]
 
 o_a  = occa.malloc(device, a);
 o_b  = occa.malloc(device, b);
