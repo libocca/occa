@@ -236,13 +236,17 @@ namespace occa {
   template <>
   void memory_t<CUDA>::copyFrom(const memory_v *source,
                                 const size_t bytes,
-                                const size_t offset){
+                                const size_t destOffset,
+                                const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
     OCCA_CUDA_CHECK("Memory: Copy From",
-                    cuMemcpyDtoD(*((CUdeviceptr*) handle) + offset, *((CUdeviceptr*) source->handle), bytes_) );
+                    cuMemcpyDtoD(*((CUdeviceptr*) handle)         + destOffset,
+                                 *((CUdeviceptr*) source->handle) + srcOffset,
+                                 bytes_) );
   }
 
   template <>
@@ -260,13 +264,17 @@ namespace occa {
   template <>
   void memory_t<CUDA>::copyTo(memory_v *dest,
                               const size_t bytes,
-                              const size_t offset){
+                              const size_t destOffset,
+                              const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
     OCCA_CUDA_CHECK("Memory: Copy To",
-                    cuMemcpyDtoD(*((CUdeviceptr*) dest->handle), *((CUdeviceptr*) handle) + offset, bytes_) );
+                    cuMemcpyDtoD(*((CUdeviceptr*) dest->handle) + destOffset,
+                                 *((CUdeviceptr*) handle)       + srcOffset,
+                                 bytes_) );
   }
 
   template <>
@@ -286,15 +294,19 @@ namespace occa {
   template <>
   void memory_t<CUDA>::asyncCopyFrom(const memory_v *source,
                                      const size_t bytes,
-                                     const size_t offset){
+                                     const size_t destOffset,
+                                     const size_t srcOffset){
     const CUstream &stream = *((CUstream*) dev->currentStream);
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
     OCCA_CUDA_CHECK("Memory: Asynchronous Copy From",
-                    cuMemcpyDtoDAsync(*((CUdeviceptr*) handle) + offset, *((CUdeviceptr*) source->handle), bytes_, stream) );
+                    cuMemcpyDtoDAsync(*((CUdeviceptr*) handle)         + destOffset,
+                                      *((CUdeviceptr*) source->handle) + srcOffset,
+                                      bytes_, stream) );
   }
 
   template <>
@@ -314,15 +326,19 @@ namespace occa {
   template <>
   void memory_t<CUDA>::asyncCopyTo(memory_v *dest,
                                    const size_t bytes,
-                                   const size_t offset){
+                                   const size_t destOffset,
+                                   const size_t srcOffset){
     const CUstream &stream = *((CUstream*) dev->currentStream);
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
     OCCA_CUDA_CHECK("Memory: Asynchronous Copy To",
-                    cuMemcpyDtoDAsync(*((CUdeviceptr*) dest->handle), *((CUdeviceptr*) handle) + offset, bytes_, stream) );
+                    cuMemcpyDtoDAsync(*((CUdeviceptr*) dest->handle) + destOffset,
+                                      *((CUdeviceptr*) handle)       + srcOffset,
+                                      bytes_, stream) );
   }
 
   template <>

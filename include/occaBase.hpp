@@ -284,6 +284,50 @@ namespace occa {
 
 
   //---[ Memory ]---------------------
+  void memcpy(memory &dest,
+              const void *source,
+              const size_t bytes = 0,
+              const size_t offset = 0);
+
+  void memcpy(memory &dest,
+              const memory &source,
+              const size_t bytes = 0,
+              const size_t destOffset = 0,
+              const size_t srcOffset = 0);
+
+  void memcpy(void *dest,
+              memory &source,
+              const size_t bytes = 0,
+              const size_t offset = 0);
+
+  void memcpy(memory &dest,
+              memory &source,
+              const size_t bytes = 0,
+              const size_t destOffset = 0,
+              const size_t srcOffset = 0);
+
+  void asyncMemcpy(memory &dest,
+                   const void *source,
+                   const size_t bytes = 0,
+                   const size_t offset = 0);
+
+  void asyncMemcpy(memory &dest,
+                   const memory &source,
+                   const size_t bytes = 0,
+                   const size_t destOffset = 0,
+                   const size_t srcOffset = 0);
+
+  void asyncMemcpy(void *dest,
+                   memory &source,
+                   const size_t bytes = 0,
+                   const size_t offset = 0);
+
+  void asyncMemcpy(memory &dest,
+                   memory &source,
+                   const size_t bytes = 0,
+                   const size_t destOffset = 0,
+                   const size_t srcOffset = 0);
+
   class memory_v {
     template<occa::mode> friend class occa::memory_t;
     template<occa::mode> friend class occa::device_t;
@@ -305,7 +349,8 @@ namespace occa {
 
     virtual void copyFrom(const memory_v *source,
                           const size_t bytes = 0,
-                          const size_t offset = 0) = 0;
+                          const size_t destOffset = 0,
+                          const size_t srcOffset = 0) = 0;
 
     virtual void copyTo(void *dest,
                         const size_t bytes = 0,
@@ -313,7 +358,8 @@ namespace occa {
 
     virtual void copyTo(memory_v *dest,
                         const size_t bytes = 0,
-                        const size_t offset = 0) = 0;
+                        const size_t destOffset = 0,
+                        const size_t srcOffset = 0) = 0;
 
     virtual void asyncCopyFrom(const void *source,
                                const size_t bytes = 0,
@@ -321,7 +367,8 @@ namespace occa {
 
     virtual void asyncCopyFrom(const memory_v *source,
                                const size_t bytes = 0,
-                               const size_t offset = 0) = 0;
+                               const size_t destOffset = 0,
+                               const size_t srcOffset = 0) = 0;
 
     virtual void asyncCopyTo(void *dest,
                              const size_t bytes = 0,
@@ -329,7 +376,8 @@ namespace occa {
 
     virtual void asyncCopyTo(memory_v *dest,
                              const size_t bytes = 0,
-                             const size_t offset = 0) = 0;
+                             const size_t destOffset = 0,
+                             const size_t srcOffset = 0) = 0;
 
     virtual void free() = 0;
   };
@@ -352,7 +400,8 @@ namespace occa {
 
     void copyFrom(const memory_v *source,
                   const size_t bytes = 0,
-                  const size_t offset = 0);
+                  const size_t destOffset = 0,
+                  const size_t srcOffset = 0);
 
     void copyTo(void *dest,
                 const size_t bytes = 0,
@@ -360,7 +409,8 @@ namespace occa {
 
     void copyTo(memory_v *dest,
                 const size_t bytes = 0,
-                const size_t offset = 0);
+                const size_t destOffset = 0,
+                const size_t srcOffset = 0);
 
     void asyncCopyFrom(const void *source,
                        const size_t bytes = 0,
@@ -368,7 +418,8 @@ namespace occa {
 
     void asyncCopyFrom(const memory_v *source,
                        const size_t bytes = 0,
-                       const size_t offset = 0);
+                       const size_t destOffset = 0,
+                       const size_t srcOffset = 0);
 
     void asyncCopyTo(void *dest,
                      const size_t bytes = 0,
@@ -376,7 +427,8 @@ namespace occa {
 
     void asyncCopyTo(memory_v *dest,
                      const size_t bytes = 0,
-                     const size_t offset = 0);
+                     const size_t destOffset = 0,
+                     const size_t srcOffset = 0);
 
     void free();
   };
@@ -406,7 +458,8 @@ namespace occa {
 
     void copyFrom(const memory &source,
                   const size_t bytes = 0,
-                  const size_t offset = 0);
+                  const size_t destOffset = 0,
+                  const size_t srcOffset = 0);
 
     void copyTo(void *dest,
                 const size_t bytes = 0,
@@ -414,7 +467,8 @@ namespace occa {
 
     void copyTo(memory &dest,
                 const size_t bytes = 0,
-                const size_t offset = 0);
+                const size_t destOffset = 0,
+                const size_t srcOffset = 0);
 
     void asyncCopyFrom(const void *source,
                        const size_t bytes = 0,
@@ -422,7 +476,8 @@ namespace occa {
 
     void asyncCopyFrom(const memory &source,
                        const size_t bytes = 0,
-                       const size_t offset = 0);
+                       const size_t destOffset = 0,
+                       const size_t srcOffset = 0);
 
     void asyncCopyTo(void *dest,
                      const size_t bytes = 0,
@@ -430,7 +485,8 @@ namespace occa {
 
     void asyncCopyTo(memory &dest,
                      const size_t bytes = 0,
-                     const size_t offset = 0);
+                     const size_t destOffset = 0,
+                     const size_t srcOffset = 0);
 
     void swap(memory &m);
 

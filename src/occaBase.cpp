@@ -131,8 +131,9 @@ namespace occa {
 
   void memory::copyFrom(const memory &source,
                         const size_t bytes,
-                        const size_t offset){
-    mHandle->copyFrom(source.mHandle, bytes, offset);
+                        const size_t destOffset,
+                        const size_t srcOffset){
+    mHandle->copyFrom(source.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::copyTo(void *dest,
@@ -143,8 +144,9 @@ namespace occa {
 
   void memory::copyTo(memory &dest,
                       const size_t bytes,
-                      const size_t offset){
-    mHandle->copyTo(dest.mHandle, bytes, offset);
+                      const size_t destOffset,
+                      const size_t srcOffset){
+    mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyFrom(const void *source,
@@ -155,8 +157,9 @@ namespace occa {
 
   void memory::asyncCopyFrom(const memory &source,
                              const size_t bytes,
-                             const size_t offset){
-    mHandle->asyncCopyFrom(source.mHandle, bytes, offset);
+                             const size_t destOffset,
+                             const size_t srcOffset){
+    mHandle->asyncCopyFrom(source.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyTo(void *dest,
@@ -167,8 +170,69 @@ namespace occa {
 
   void memory::asyncCopyTo(memory &dest,
                            const size_t bytes,
-                           const size_t offset){
-    mHandle->asyncCopyTo(dest.mHandle, bytes, offset);
+                           const size_t destOffset,
+                           const size_t srcOffset){
+    mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
+  }
+
+  void memcpy(memory &dest,
+              const void *source,
+              const size_t bytes,
+              const size_t offset){
+    dest.copyFrom(source, bytes, offset);
+  }
+
+  void memcpy(memory &dest,
+              const memory &source,
+              const size_t bytes,
+              const size_t destOffset,
+              const size_t srcOffset){
+    dest.copyFrom(source, bytes, destOffset, srcOffset);
+  }
+
+  void memcpy(void *dest,
+              memory &source,
+              const size_t bytes,
+              const size_t offset){
+    source.copyTo(dest, bytes, offset);
+  }
+
+  void memcpy(memory &dest,
+              memory &source,
+              const size_t bytes,
+              const size_t destOffset,
+              const size_t srcOffset){
+    source.copyTo(dest, bytes, destOffset, srcOffset);
+  }
+
+  void asyncMemcpy(memory &dest,
+                   const void *source,
+                   const size_t bytes,
+                   const size_t offset){
+    dest.asyncCopyFrom(source, bytes, offset);
+  }
+
+  void asyncMemcpy(memory &dest,
+                   const memory &source,
+                   const size_t bytes,
+                   const size_t destOffset,
+                   const size_t srcOffset){
+    dest.asyncCopyFrom(source, bytes, destOffset, srcOffset);
+  }
+
+  void asyncMemcpy(void *dest,
+                   memory &source,
+                   const size_t bytes,
+                   const size_t offset){
+    source.asyncCopyTo(dest, bytes, offset);
+  }
+
+  void asyncMemcpy(memory &dest,
+                   memory &source,
+                   const size_t bytes,
+                   const size_t destOffset,
+                   const size_t srcOffset){
+    source.asyncCopyTo(dest, bytes, destOffset, srcOffset);
   }
 
   void memory::swap(memory &m){
@@ -222,18 +286,18 @@ namespace occa {
 
     case OpenCL:
 #if OCCA_OPENCL_ENABLED
-     dHandle = new device_t<OpenCL>(); break;
+      dHandle = new device_t<OpenCL>(); break;
 #else
-     std::cout << "OCCA mode [OpenCL] is not enabled\n";
-     throw 1;
+      std::cout << "OCCA mode [OpenCL] is not enabled\n";
+      throw 1;
 #endif
 
     case CUDA:
 #if OCCA_CUDA_ENABLED
       dHandle = new device_t<CUDA>(); break;
 #else
-     std::cout << "OCCA mode [CUDA] is not enabled\n";
-     throw 1;
+      std::cout << "OCCA mode [CUDA] is not enabled\n";
+      throw 1;
 #endif
 
     default:

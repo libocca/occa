@@ -234,18 +234,26 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(((char*) handle) + offset, source, bytes_);
+    dev->finish();
+
+    ::memcpy(((char*) handle) + offset, source, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::copyFrom(const memory_v *source,
                                     const size_t bytes,
-                                    const size_t offset){
+                                    const size_t destOffset,
+                                    const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    memcpy(((char*) handle) + offset, source->handle, bytes_);
+    dev->finish();
+
+    ::memcpy(((char*) handle)         + destOffset,
+             ((char*) source->handle) + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -258,20 +266,24 @@ namespace occa {
 
     dev->finish();
 
-    memcpy(dest, ((char*) handle) + offset, bytes_);
+    ::memcpy(dest, ((char*) handle) + offset, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::copyTo(memory_v *dest,
                                   const size_t bytes,
-                                  const size_t offset){
+                                  const size_t destOffset,
+                                  const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
     dev->finish();
 
-    memcpy(dest->handle, ((char*) handle) + offset, bytes_);
+    ::memcpy(((char*) dest->handle) + destOffset,
+             ((char*) handle)       + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -282,18 +294,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(((char*) handle) + offset, source , bytes_);
+    ::memcpy(((char*) handle) + offset, source , bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const memory_v *source,
                                          const size_t bytes,
-                                         const size_t offset){
+                                         const size_t destOffset,
+                                         const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    memcpy(((char*) handle) + offset, source->handle , bytes_);
+    ::memcpy(((char*) handle)         + destOffset,
+             ((char*) source->handle) + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -304,18 +320,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(dest, ((char*) handle) + offset, bytes_);
+    ::memcpy(dest, ((char*) handle) + offset, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::asyncCopyTo(memory_v *dest,
                                        const size_t bytes,
-                                       const size_t offset){
+                                       const size_t destOffset,
+                                       const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    memcpy(dest->handle, ((char*) handle) + offset, bytes_);
+    ::memcpy(((char*) dest->handle) + destOffset,
+             ((char*) handle)       + srcOffset,
+             bytes_);
   }
 
   template <>

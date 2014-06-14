@@ -342,18 +342,20 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::copyFrom(const memory_v *source,
                                   const size_t bytes,
-                                  const size_t offset){
+                                  const size_t destOffset,
+                                  const size_t srcOffset){
     cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
     OCCA_CL_CHECK("Memory: Copy From",
                   clEnqueueCopyBuffer(stream,
                                       *((cl_mem*) source->handle),
                                       *((cl_mem*) handle),
-                                      0, offset,// <>
+                                      srcOffset, destOffset,
                                       bytes_,
                                       0, NULL, NULL));
   }
@@ -378,18 +380,20 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::copyTo(memory_v *dest,
                                 const size_t bytes,
-                                const size_t offset){
+                                const size_t destOffset,
+                                const size_t srcOffset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
     OCCA_CL_CHECK("Memory: Copy To",
                   clEnqueueCopyBuffer(stream,
                                       *((cl_mem*) handle),
                                       *((cl_mem*) dest->handle),
-                                      offset, 0,// <>
+                                      srcOffset, destOffset,
                                       bytes_,
                                       0, NULL, NULL));
   }
@@ -414,18 +418,20 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::asyncCopyFrom(const memory_v *source,
                                        const size_t bytes,
-                                       const size_t offset){
+                                       const size_t destOffset,
+                                       const size_t srcOffset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
     OCCA_CL_CHECK("Memory: Asynchronous Copy From",
                   clEnqueueCopyBuffer(stream,
                                       *((cl_mem*) source->handle),
                                       *((cl_mem*) handle),
-                                      0, offset,// <>
+                                      srcOffset, destOffset,
                                       bytes_,
                                       0, NULL, NULL));
   }
@@ -450,18 +456,20 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::asyncCopyTo(memory_v *dest,
                                      const size_t bytes,
-                                     const size_t offset){
+                                     const size_t destOffset,
+                                     const size_t srcOffset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
     OCCA_CL_CHECK("Memory: Asynchronous Copy To",
                   clEnqueueCopyBuffer(stream,
                                       *((cl_mem*) handle),
                                       *((cl_mem*) dest->handle),
-                                      offset, 0, // <>
+                                      srcOffset, destOffset,
                                       bytes_,
                                       0, NULL, NULL));
   }

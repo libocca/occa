@@ -64,9 +64,10 @@ end
 
 type memory
     cMemory::Ptr{Void}
+    cTypes
 
-    function memory(cMemory)
-        new(cMemory)
+    function memory(cMemory, cTypes)
+        new(cMemory, cTypes)
     end
 end
 
@@ -141,12 +142,14 @@ function buildKernelFromBinary(d::device,
 end
 
 function malloc(d::device,
-                bytes::Number,
+                entries::Number,
+                cType,
                 source = C_NULL)
     if source != C_NULL
         convert(Ptr{Void}, source)
     end
 
+    bytes = entries * sizeof(cType)
     convert(Uint, bytes)
 
     cMemory = ccall((:occaDeviceMalloc, @libocca()),
@@ -154,7 +157,7 @@ function malloc(d::device,
                     (Ptr{Void}, Uint, Ptr{Void}),
                     d.cDevice, bytes, source)
 
-    return memory(cMemory)
+    return memory(cMemory, cTypes)
 end
 
 function genStream(d::device)
@@ -193,27 +196,36 @@ end
 function mode(k::kernel)
     cMode = ccall((:occaKernelMode, @libocca()),
                   Ptr{Uint8},
-                  (Ptr{Void},), k.cKernel)
+                  (Ptr{Void},),
+                  k.cKernel)
 
     return bytestring(cMode)
 end
 
 function getPreferredDimSize(k::kernel)
+    return ccall((:occaKernelPreferredDimSize, @libocca()),
+                 Int32,
+                 (Ptr{Void},),
+                 k.cKernel)
 end
 
+# Missing
 function setWorkingDims(k::kernel,
                         dims, items, groups)
 end
 
+# Missing
 function run(k::kernel, args...)
 end
 
 function timeTaken(k::kernel)
     return ccall((:occaKernelTimeTaken, @libocca()),
                  Float64,
-                 (Ptr{Void},), k.cKernel)
+                 (Ptr{Void},),
+                 k.cKernel)
 end
 
+# Missing
 # function addDefine(info::kernelInfo, macro_::String, value::?)
 #     ccall((:occaKernelInfoFree, @libocca()),
 #           Void,
@@ -239,12 +251,56 @@ end
 function mode(m::memory)
     cMode = ccall((:occaMemoryMode, @libocca()),
                   Ptr{Uint8},
-                  (Ptr{Void},), m.cMemory)
+                  (Ptr{Void},),
+                  m.cMemory)
 
     return bytestring(cMode)
 end
 
-function memcpy(destTuple, srcTuple)
+# Missing
+function memcpy(destTuple, srcTuple, bytes:Number)
+    destArgs = length(destTuple)
+    srcArgs  = length(srcTuple)
+
+    destOffset = (destArgs >= 2) ? destTuple[2] : 0
+    srcOffset  = (srcArgs >= 2)  ? srcTuple[2]  : 0
+
+    convert(Uint, destOffset)
+    convert(Uint, srcOffset)
+
+    convert(Uint, bytes)
+
+    destIsAMemory = isa(destTuple[1], memory)
+    srcIsAMemory  = isa(srcTuple[1] , memory)
+
+    if destIsAMemory
+        if srcIsAMemory
+            ccall((:occaCopyMemToMem, @libocca()),
+                  Void,
+                  (Ptr{Void}, Ptr{Void}, Uint, Uint, Uint),
+                  destTuple[1].cMemory, srcTuple[1].cMemory,
+                  bytes,
+                  destOffset, srcOffset)
+        else
+            ccall((:occaCopyPtrToMem, @libocca()),
+                  Void,
+                  (Ptr{Void}, Ptr{Void}, Uint, Uint),
+                  destTuple[1].cMemory, pointer(srcTuple[1]),
+                  bytes,
+                  offset)
+        end
+    else
+        if srcIsAMemory
+            ccall((:occaCopyMemToPtr, @libocca()),
+                  Void,
+                  (Ptr{Void}, Ptr{Void}, Uint, Uint),
+                  pointer(destTuple[1]), srcTuple[1].cMemory,
+                  bytes,
+                  offset)
+        else
+            println("One of the arguments should be an OCCA memory type")
+        end
+    end
 end
 
 function swap(a::memory, b::memory)

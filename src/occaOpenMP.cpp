@@ -209,18 +209,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(((char*) handle) + offset, source, bytes_);
+    ::memcpy(((char*) handle) + offset, source, bytes_);
   }
 
   template <>
   void memory_t<OpenMP>::copyFrom(const memory_v *source,
                                   const size_t bytes,
-                                  const size_t offset){
+                                  const size_t destOffset,
+                                  const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    memcpy(((char*) handle) + offset, source->handle, bytes_);
+    ::memcpy(((char*) handle)         + destOffset,
+             ((char*) source->handle) + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -231,18 +235,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(dest, ((char*) handle) + offset, bytes_);
+    ::memcpy(dest, ((char*) handle) + offset, bytes_);
   }
 
   template <>
   void memory_t<OpenMP>::copyTo(memory_v *dest,
                                 const size_t bytes,
-                                const size_t offset){
+                                const size_t destOffset,
+                                const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    memcpy(dest->handle, ((char*) handle) + offset, bytes_);
+    ::memcpy(((char*) dest->handle) + destOffset,
+             ((char*) handle)       + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -253,18 +261,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(((char*) handle) + offset, source , bytes_);
+    ::memcpy(((char*) handle) + offset, source , bytes_);
   }
 
   template <>
   void memory_t<OpenMP>::asyncCopyFrom(const memory_v *source,
                                        const size_t bytes,
-                                       const size_t offset){
+                                       const size_t destOffset,
+                                       const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    memcpy(((char*) handle) + offset, source->handle , bytes_);
+    ::memcpy(((char*) handle)         + destOffset,
+             ((char*) source->handle) + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -275,18 +287,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    memcpy(dest, ((char*) handle) + offset, bytes_);
+    ::memcpy(dest, ((char*) handle) + offset, bytes_);
   }
 
   template <>
   void memory_t<OpenMP>::asyncCopyTo(memory_v *dest,
                                      const size_t bytes,
-                                     const size_t offset){
+                                     const size_t destOffset,
+                                     const size_t srcOffset){
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    memcpy(dest->handle, ((char*) handle) + offset, bytes_);
+    ::memcpy(((char*) dest->handle) + destOffset,
+             ((char*) handle)       + srcOffset,
+             bytes_);
   }
 
   template <>
@@ -373,8 +389,8 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromSource(const std::string &filename,
-                                                   const std::string &functionName,
-                                                   const kernelInfo &info_){
+                                                    const std::string &functionName,
+                                                    const kernelInfo &info_){
     kernel_v *k = new kernel_t<OpenMP>;
     k->dev = dev;
     k->buildFromSource(filename, functionName, info_);
@@ -383,7 +399,7 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
-                                                   const std::string &functionName){
+                                                    const std::string &functionName){
     kernel_v *k = new kernel_t<OpenMP>;
     k->dev = dev;
     k->buildFromBinary(filename, functionName);

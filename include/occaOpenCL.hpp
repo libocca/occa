@@ -88,7 +88,8 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::copyFrom(const memory_v *source,
                                   const size_t bytes,
-                                  const size_t offset);
+                                  const size_t destOffset,
+                                  const size_t srcOffset);
 
   template <>
   void memory_t<OpenCL>::copyTo(void *dest,
@@ -98,16 +99,18 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::copyTo(memory_v *dest,
                                 const size_t bytes,
-                                const size_t offset);
+                                const size_t destOffset,
+                                const size_t srcOffset);
 
   template <>
   void memory_t<OpenCL>::asyncCopyFrom(const void *source,
                                        const size_t bytes,
-                                       const size_t offset);
+                                       const size_t destOffset);
 
   template <>
   void memory_t<OpenCL>::asyncCopyFrom(const memory_v *source,
                                        const size_t bytes,
+                                       const size_t srcOffset,
                                        const size_t offset);
 
   template <>
@@ -118,7 +121,8 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::asyncCopyTo(memory_v *dest,
                                      const size_t bytes,
-                                     const size_t offset);
+                                     const size_t destOffset,
+                                     const size_t srcOffset);
 
   template <>
   void memory_t<OpenCL>::free();
