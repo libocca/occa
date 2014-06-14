@@ -23,7 +23,7 @@ end
 type device
     cDevice::Ptr{Void}
 
-    function device(mode::String, arg1::Number, arg2::Number)
+    function device(mode::String, arg1::Number = 0, arg2::Number = 0)
         convert(Int32, arg1)
         convert(Int32, arg2)
 
@@ -139,15 +139,23 @@ function buildKernelFromBinary(d::device,
     return kernel(cKernel)
 end
 
-function malloc(d::device,
-                entries::Number,
-                cType,
-                source = C_NULL)
-    if source != C_NULL
-        convert(Ptr{Void}, source)
+function malloc(d::device, sourceAndType)
+    if length(sourceAndType) != 2
+        error("malloc second argument must be a tuple of (bytes, type) or (array, type)")
     end
 
-    bytes = entries * sizeof(cType)
+    cTypes = sourceAndType[2]
+
+    if isa(sourceAndType[1], Array)
+        bytes = length(sourceAndType[1]) * sizeof(cTypes)
+
+        source = sourceAndType[1]
+        convert(Ptr{Void}, source)
+    else
+        bytes  = sourceAndType[1] * sizeof(cTypes)
+        source = C_NULL
+    end
+
     convert(Uint, bytes)
 
     cMemory = ccall((:occaDeviceMalloc, @libocca()),
@@ -306,46 +314,86 @@ function mode(m::memory)
 end
 
 function memcpy(destTuple, srcTuple, bytes::Number)
-    destArgs = length(destTuple)
-    srcArgs  = length(srcTuple)
+    if isa(destTuple, memory)
+        dest = destTuple.cMemory
 
-    destOffset = (destArgs >= 2) ? destTuple[2] : 0
-    srcOffset  = (srcArgs >= 2)  ? srcTuple[2]  : 0
+        destOffset = 0
+        convert(Uint, destOffset)
 
-    convert(Uint, destOffset)
-    convert(Uint, srcOffset)
+        destIsAMemory = true
+    elseif isa(destTuple, Array)
+        dest = pointer(destTuple)
+
+        destOffset = 0
+        convert(Uint, destOffset)
+
+        destIsAMemory = false
+    else
+        dest = destTuple[1]
+
+        if isa(dest, memory)
+            dest = dest.cMemory
+            destIsAMemory = true
+        else
+            dest = pointer(destTuple[1])
+            destIsAMemory = false
+        end
+
+        destOffset = destTuple[2]
+        convert(Uint, destOffset)
+    end
+
+    if isa(srcTuple, memory)
+        src = srcTuple.cMemory
+
+        srcOffset = 0
+        convert(Uint, srcOffset)
+
+        srcIsAMemory = true
+    elseif isa(srcTuple, Array)
+        src = pointer(srcTuple)
+
+        srcOffset = 0
+        convert(Uint, srcOffset)
+
+        srcIsAMemory = false
+    else
+        src = srcTuple[1]
+
+        if isa(src, memory)
+            src = src.cMemory
+            srcIsAMemory = true
+        else
+            src = pointer(srcTuple[1])
+            srcIsAMemory = false
+        end
+
+        srcOffset = srcTuple[2]
+        convert(Uint, srcOffset)
+    end
 
     convert(Uint, bytes)
-
-    destIsAMemory = isa(destTuple[1], memory)
-    srcIsAMemory  = isa(srcTuple[1] , memory)
 
     if destIsAMemory
         if srcIsAMemory
             ccall((:occaCopyMemToMem, @libocca()),
                   Void,
                   (Ptr{Void}, Ptr{Void}, Uint, Uint, Uint,),
-                  destTuple[1].cMemory, srcTuple[1].cMemory,
-                  bytes,
-                  destOffset, srcOffset)
+                  dest, src, bytes, destOffset, srcOffset)
         else
             ccall((:occaCopyPtrToMem, @libocca()),
                   Void,
                   (Ptr{Void}, Ptr{Void}, Uint, Uint,),
-                  destTuple[1].cMemory, pointer(srcTuple[1]),
-                  bytes,
-                  offset)
+                  dest, src, bytes, destOffset)
         end
     else
         if srcIsAMemory
             ccall((:occaCopyMemToPtr, @libocca()),
                   Void,
                   (Ptr{Void}, Ptr{Void}, Uint, Uint,),
-                  pointer(destTuple[1]), srcTuple[1].cMemory,
-                  bytes,
-                  offset)
+                  dest, src, bytes, srcOffset)
         else
-            println("One of the arguments should be an OCCA memory type")
+            error("One of the arguments should be an OCCA memory type")
         end
     end
 end
