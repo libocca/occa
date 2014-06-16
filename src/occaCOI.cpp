@@ -119,12 +119,18 @@ namespace occa {
                                                  NULL,
                                                  &outLibrary));
 
+    OCCA_COI_CHECK("Kernel: Getting Handle",
+                   COIProcessGetFunctionHandles(data_.chiefID,
+                                                1,
+                                                functionName.c_str(),
+                                                &(data_.kernel)));
+
     return this;
   }
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
-                                                          const std::string &functionName_){
+                                                const std::string &functionName_){
     data = new COIKernelData_t;
 
     OCCA_EXTRACT_DATA(COI, Kernel);
@@ -136,9 +142,15 @@ namespace occa {
     OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
                    COIProcessLoadLibraryFromFile(data_.chiefID,
                                                  NULL,
-                                                 cachedBinary.c_str(),
+                                                 filename.c_str(),
                                                  NULL,
                                                  &outLibrary));
+
+    OCCA_COI_CHECK("Kernel: Getting Handle",
+                   COIProcessGetFunctionHandles(data_.chiefID,
+                                                1,
+                                                functionName.c_str(),
+                                                &(data_.kernel)));
 
     return this;
   }
@@ -436,11 +448,57 @@ namespace occa {
     OCCA_COI_CHECK("Device: Get Handle",
                    COIEngineGetHandle(COI_ISA_MIC, device, &data_.deviceID) );
 
-    // [-] Need a simple basic main(argc, argv) binary
+    std::stringstream salt;
+    salt << "COI"
+         << occaCoiMain;
+
+    std::string cachedBinary = binaryIsCached("i_occaCOIMain", salt.str());
+
+    struct stat buffer;
+    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+
+    if(fileExists){
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
+    //---[ Write File ]-----------------
+    int lastSlash = 0;
+    const int chars = cachedBinary.size();
+
+    for(int i = 0; i < chars; ++i)
+      if(cachedBinary[i] == '/')
+        lastSlash = i;
+
+    ++lastSlash;
+    const std::string iCachedBinary =
+      cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars);
+
+    std::ofstream fs;
+    fs.open(iCachedBinary.c_str());
+
+    fs << info.occaKeywords << info.header << readFile(filename);
+
+    fs.close();
+
+    std::stringstream command;
+
+    command << dev->dHandle->compiler
+            << " -o " << cachedBinary
+            << " -x c++ -w -fPIC -shared"
+            << ' '    << dev->dHandle->compilerFlags
+            << ' '    << info.flags
+            << ' '    << iCachedBinary;
+
+    const std::string &sCommand = command.str();
+
+    std::cout << sCommand << '\n';
+
+    system(sCommand.c_str());
 
     OCCA_COI_CHECK("Device: Initializing",
                    COIProcessCreateFromFile(data_.deviceID,
-                                            SINK_NAME,
+                                            cachedBinary.c_str(),
                                             0    , NULL,
                                             false, NULL,
                                             true , NULL,

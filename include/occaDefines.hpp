@@ -313,9 +313,27 @@
 
 
 //---[ COI ]----------------------------
+#if OCCA_DEBUG_ENABLED
+#  define OCCA_COI_CHECK( _str , _statement ) OCCA_COI_CHECK2( _str , _statement , __FILE__ , __LINE__ )
+#  define OCCA_COI_CHECK2( _str , _statement , file , line )            \
+  do {                                                                  \
+    COIRESULT errorCode = _statement;                                   \
+    if(errorCode != COI_SUCCESS){                                       \
+      std::cout << "Error\n"                                            \
+                << "    File    : " << file << '\n'                     \
+                << "    Line    : " << line << '\n'                     \
+                << "    Error   : " << occa::coiError(errorCode) << '\n' \
+                << "    Message : " << _str << '\n';                    \
+      throw 1;                                                          \
+    }                                                                   \
+  } while(0);
+#else
+#  define OCCA_COI_CHECK( _str , _statement ) do { _statement; } while(0);
+#endif
+
 #  define OCCA_COI_FUNCTION_ARG(N) , void *arg##N
-#  define OCCA_COI_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
-                                       OCL_FOR(1, N, OCCA_COI_FUNCTION_ARG)
+#  define OCCA_COI_FUNCTION_ARGS(N)  int *occaKernelInfoArgs \
+  OCL_FOR(1, N, OCCA_COI_FUNCTION_ARG)
 
 #  define OCCA_COI_FUNCTION_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_COI_FUNCTION_ARGS(N));
 #  define OCCA_COI_FUNCTION_POINTER_TYPEDEFS                            \
@@ -323,21 +341,30 @@
 
 #  define OCCA_COI_INPUT_FUNCTION_ARG(N) , arg##N.data()
 #  define OCCA_COI_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,              \
-                                       occaInnerId0, occaInnerId1, occaInnerId2 \
                                        OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITION(N)                        \
   template <>                                                           \
   void kernel_t<COI>::operator() (OCCA_KERNEL_ARGS(N)){                 \
     OCCA_EXTRACT_DATA(COI, Kernel);                                     \
-    functionPointer##N tmpKernel = (functionPointer##N) data_.handle;	\
                                                                         \
-      int occaKernelArgs[6] = {outer.z, outer.y, outer.x,               \
-                               inner.z, inner.y, inner.x};              \
+    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
+                             inner.z, inner.y, inner.x};                \
                                                                         \
-      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;         \
+    /* OCCA_COI_INPUT_FUNCTION_ARGS(N); */                              \
+    coiStream &stream = *((coiStream*) dev->currentStream);             \
+    coiEvent lastEvent = stream.lastEvent;                              \
                                                                         \
-      tmpKernel(OCCA_COI_INPUT_FUNCTION_ARGS(N));                       \
+    void *deviceArgv, *hostArgv;                                        \
+    int deviceArgc = 0, hostArgc = 0;                                   \
+                                                                        \
+    OCCA_COI_CHECK("Kernel: Launch",                                    \
+                   COIPipelineRunFunction(stream.handle,                \
+                                          data_.kernel,                 \
+                                          deviceArgc, deviceArgv, NULL, \
+                                          1, &lastEvent,                \
+                                          hostArgc, hostArgv,           \
+                                          NULL, 0, &(stream.lastEvent)) ); \
   }
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \

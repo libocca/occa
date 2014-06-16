@@ -27,7 +27,7 @@ namespace occa {
   struct coiStream {
     COIPIPELINE handle;
     coiEvent lastEvent;
-  }
+  };
 
   struct COIKernelData_t {
     coiChief chiefID;

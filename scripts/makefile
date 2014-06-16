@@ -100,26 +100,38 @@ endif
 #---[ Variable Dependencies ]---------------------
 ifdef OCCA_MPI_ENABLED
 	MPI_Enabled = $(OCCA_MPI_ENABLED)
+else
+	MPI_Enabled = 0
 endif
 
 ifdef OCCA_PTHREADS_ENABLED
 	Pthreads_Enabled = $(OCCA_PTHREADS_ENABLED)
+else
+	Pthreads_Enabled = 0
 endif
 
 ifdef OCCA_OPENMP_ENABLED
 	OpenMP_Enabled = $(OCCA_OPENMP_ENABLED)
+else
+	OpenMP_Enabled = 0
 endif
 
 ifdef OCCA_OPENCL_ENABLED
 	OpenCL_Enabled = $(OCCA_OPENCL_ENABLED)
+else
+	OpenCL_Enabled = 0
 endif
 
 ifdef OCCA_CUDA_ENABLED
 	CUDA_Enabled = $(OCCA_CUDA_ENABLED)
+else
+	CUDA_Enabled = 0
 endif
 
 ifdef OCCA_COI_ENABLED
 	COI_Enabled = $(OCCA_CUDA_ENABLED)
+else
+	COI_Enabled = 0
 endif
 
 ifeq ($(DEBUG), 1)
@@ -180,5 +192,12 @@ ifeq ($(CUDA_Enabled), 1)
 	links += $(CUDA_Links)
 else
 	flags +=               -DOCCA_CUDA_ENABLED=0
+endif
+
+# [-] Not working?
+ifeq ($(COI_Enabled), 1)
+	flags += -DOCCA_COI_ENABLED=1
+else
+	flags += -DOCCA_COI_ENABLED=1
 endif
 #=================================================

@@ -28,14 +28,15 @@ namespace occa {
   //==================================
 
   //---[ Mode ]-----------------------
-  enum mode {Pthreads, OpenMP, OpenCL, CUDA};
+  enum mode {Pthreads, OpenMP, OpenCL, CUDA, COI};
 
   inline std::string modeToStr(occa::mode m){
     switch(m){
     case Pthreads: return "Pthreads";
-    case OpenMP:   return "OpenMP";
-    case OpenCL:   return "OpenCL";
-    case CUDA  :   return "CUDA";
+    case OpenMP  : return "OpenMP";
+    case OpenCL  : return "OpenCL";
+    case CUDA    : return "CUDA";
+    case COI     : return "COI";
     }
 
     OCCA_CHECK(false);
@@ -47,6 +48,7 @@ namespace occa {
     if(str == "OpenMP")   return OpenMP;
     if(str == "OpenCL")   return OpenCL;
     if(str == "CUDA")     return CUDA;
+    if(str == "COI")      return COI;
 
     OCCA_CHECK(false);
 
