@@ -62,10 +62,8 @@ namespace occa {
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
-                                                const std::string &functionName_,
-                                                const kernelInfo &info_){
-    OCCA_EXTRACT_DATA(COI, Kernel);
-
+                                                          const std::string &functionName_,
+                                                          const kernelInfo &info_){
     functionName = functionName_;
 
     kernelInfo info = info_;
@@ -76,191 +74,113 @@ namespace occa {
 
     std::stringstream salt;
     salt << "COI"
-         << data_.platform << '-' << data_.device
          << info.salt()
          << functionName;
 
     std::string cachedBinary = binaryIsCached(filename, salt.str());
 
     struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
       return buildFromBinary(cachedBinary, functionName);
     }
 
+    data = new COIKernelData_t;
+
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
                                                          info);
 
-    cl_int error;
+    std::stringstream command;
 
-    int fileHandle = ::open(iCachedBinary.c_str(), O_RDWR);
-    if(fileHandle == 0)
-      printf("File [ %s ] does not exist.\n", iCachedBinary.c_str());
+    command << dev->dHandle->compiler
+            << " -o " << cachedBinary
+            << " -x c++ -w -fPIC -shared"
+            << ' '    << dev->dHandle->compilerFlags
+            << ' '    << info.flags
+            << ' '    << iCachedBinary;
 
-    struct stat fileInfo;
-    const int status = fstat(fileHandle, &fileInfo);
+    const std::string &sCommand = command.str();
 
-    if(status != 0)
-      printf( "File [ %s ] gave a bad fstat.\n" , iCachedBinary.c_str());
+    std::cout << sCommand << '\n';
 
-    const size_t cLength = fileInfo.st_size;
+    system(sCommand.c_str());
 
-    char *cFunction = new char[cLength + 1];
+    OCCA_EXTRACT_DATA(COI, Kernel);
 
-    ::read(fileHandle, cFunction, cLength);
+    data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
-    ::close(fileHandle);
+    OCCA_CHECK(data_.dlHandle != NULL);
 
-    data_.program = clCreateProgramWithSource(data_.context, 1, (const char **) &cFunction, &cLength, &error);
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
+    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
-    std::string catFlags = info.flags + dev->dHandle->compilerFlags;
-
-    error = clBuildProgram(data_.program,
-                           1, &data_.deviceID,
-                           catFlags.c_str(),
-                           NULL, NULL);
-
-    if(error){
-      cl_int error;
-      char *log;
-      size_t logSize;
-
-      clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
-
-      if(logSize > 2){
-        log = new char[logSize+1];
-
-        error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-        OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
-        log[logSize] = '\0';
-
-        printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
-
-        delete[] log;
-      }
+    char *dlError;
+    if ((dlError = dlerror()) != NULL)  {
+      fputs(dlError, stderr);
+      throw 1;
     }
 
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
 
-    {
-      size_t binarySize;
-      char *binary;
+    data_.pThreadCount = dData.pThreadCount;
 
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes",
-                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &binarySize, NULL));
+    data_.pendingJobs = &(dData.pendingJobs);
 
-      binary = new char[binarySize + 1];
-
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary",
-                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL));
-
-      FILE *fp = fopen(cachedBinary.c_str(), "wb");
-      fwrite(binary, 1, binarySize, fp);
-      fclose(fp);
-
-      delete [] binary;
+    for(int p = 0; p < 50; ++p){
+      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
+      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
     }
 
-    data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
-    OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
-
-    std::cout << "COI compiled " << filename << " from [" << iCachedBinary << "]\n";
-
-    delete [] cFunction;
+    data_.pendingJobsMutex = &(dData.pendingJobsMutex);
+    data_.kernelMutex      = &(dData.kernelMutex);
 
     return this;
   }
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
-                                                const std::string &functionName_){
+                                                          const std::string &functionName_){
+    data = new COIKernelData_t;
+
     OCCA_EXTRACT_DATA(COI, Kernel);
 
     functionName = functionName_;
 
-    cl_int binaryError, error;
+    data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
 
-    int fileHandle = ::open(filename.c_str(), O_RDWR);
-    if(fileHandle == 0)
-      printf("File [ %s ] does not exist.\n", filename.c_str());
+    OCCA_CHECK(data_.dlHandle != NULL);
 
-    struct stat fileInfo;
-    const int status = fstat(fileHandle, &fileInfo);
+    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
-    if(status != 0)
-      printf( "File [ %s ] gave a bad fstat.\n" , filename.c_str());
-
-    const size_t fileSize = fileInfo.st_size;
-
-    unsigned char *cFile = new unsigned char[fileSize];
-
-    ::read(fileHandle, cFile, fileSize);
-
-    ::close(fileHandle);
-
-    data_.program = clCreateProgramWithBinary(data_.context,
-                                              1, &(data_.deviceID),
-                                              &fileSize,
-                                              (const unsigned char**) &cFile,
-                                              &binaryError, &error);
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", binaryError);
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
-
-    error = clBuildProgram(data_.program,
-                           1, &data_.deviceID,
-                           dev->dHandle->compilerFlags.c_str(),
-                           NULL, NULL);
-
-    if(error){
-      cl_int error;
-      char *log;
-      size_t logSize;
-
-      clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
-
-      if(logSize > 2){
-        log = new char[logSize+1];
-
-        error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-        OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
-        log[logSize] = '\0';
-
-        printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
-
-        delete[] log;
-      }
+    char *dlError;
+    if ((dlError = dlerror()) != NULL)  {
+      fputs(dlError, stderr);
+      throw 1;
     }
 
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
 
-    data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
-    OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
+    data_.pThreadCount = dData.pThreadCount;
 
-    delete [] cFile;
+    data_.pendingJobs = &(dData.pendingJobs);
+
+    for(int p = 0; p < 50; ++p){
+      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
+      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
+    }
+
+    data_.pendingJobsMutex = &(dData.pendingJobsMutex);
+    data_.kernelMutex      = &(dData.kernelMutex);
 
     return this;
   }
 
+  // [-] Missing
   template <>
   int kernel_t<COI>::preferredDimSize(){
-    if(preferredDimSize_)
-      return preferredDimSize_;
-
-    OCCA_EXTRACT_DATA(COI, Kernel);
-
-    size_t pds;
-
-    OCCA_CL_CHECK("Kernel: Getting Preferred Dim Size",
-                  clGetKernelWorkGroupInfo(data_.kernel,
-                                           data_.deviceID,
-                                           CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE,
-                                           sizeof(size_t), &pds, NULL));
-
-    preferredDimSize_ = pds;
+    preferredDimSize_ = 1;
 
     return preferredDimSize_;
   }
@@ -269,20 +189,10 @@ namespace occa {
 
   template <>
   double kernel_t<COI>::timeTaken(){
-    coiEvent &startEvent = *((coiEvent*) startTime);
-    coiEvent &endEvent   = *((coiEvent*) endTime);
+    const double &start = *((double*) startTime);
+    const double &end   = *((double*) endTime);
 
-    cl_ulong start, end;
-
-    clGetEventProfilingInfo(startEvent, CL_PROFILING_COMMAND_END,
-                            sizeof(cl_ulong), &start,
-                            NULL);
-
-    clGetEventProfilingInfo(endEvent, CL_PROFILING_COMMAND_START,
-                            sizeof(cl_ulong), &end,
-                            NULL);
-
-    return 1.0e-9*(end - start);
+    return 1.0e3*(end - start);
   }
 
   template <>

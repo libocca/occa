@@ -169,6 +169,7 @@ namespace occa {
     return this;
   }
 
+  // [-] Missing
   template <>
   int kernel_t<Pthreads>::preferredDimSize(){
     preferredDimSize_ = OCCA_SIMD_WIDTH;

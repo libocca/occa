@@ -15,7 +15,17 @@ inline std::string saveFileToVariable(std::string filename,
                                       std::string varName,
                                       int &chars,
                                       std::string indent = ""){
-  std::string fileContents = readFile(filename);
+  std::stringstream occaDeviceDefines;
+  occaDeviceDefines << "#define OCCA_USING_CPU 0\n"
+                    << "#define OCCA_USING_GPU 0\n"
+                    << '\n'
+                    << "#define OCCA_USING_PTHREADS 0\n"
+                    << "#define OCCA_USING_OPENMP   0\n"
+                    << "#define OCCA_USING_OPENCL   0\n"
+                    << "#define OCCA_USING_CUDA     0\n"
+                    << "#define OCCA_USING_COI      0\n";
+
+    std::string fileContents = occaDeviceDefines.str() + readFile(filename);
   chars = fileContents.size();
 
   std::stringstream headerSS;
