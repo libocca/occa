@@ -30,6 +30,7 @@
 //======================================
 
 
+
 //---[ Base ]---------------------------
 #define OCCA_ARGUMENT_SWITCH_ARG(N)  , arguments[N - 1]
 #define OCCA_ARGUMENT_SWITCH_ARGS(N) case N: (*kHandle)(arguments[0] OCL_FOR(2, N, OCCA_ARGUMENT_SWITCH_ARG)); break;
@@ -70,17 +71,18 @@
 #define OCCA_KERNEL_OPERATOR_DECLARATION(N)     \
     void operator() (OCCA_KERNEL_ARGS(N));
 
-#define OCCA_KERNEL_OPERATOR_DECLARATIONS                             \
+#define OCCA_KERNEL_OPERATOR_DECLARATIONS                               \
     OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_KERNEL_OPERATOR_DECLARATION)
 
-#define OCCA_KERNEL_OPERATOR_DEFINITION(N)        \
-  void kernel::operator() (OCCA_KERNEL_ARGS(N)){  \
-    (*kHandle)(OCCA_INPUT_KERNEL_ARGS(N));        \
+#define OCCA_KERNEL_OPERATOR_DEFINITION(N)              \
+  void kernel::operator() (OCCA_KERNEL_ARGS(N)){        \
+    (*kHandle)(OCCA_INPUT_KERNEL_ARGS(N));              \
   }
 
-#define OCCA_KERNEL_OPERATOR_DEFINITIONS                            \
+#define OCCA_KERNEL_OPERATOR_DEFINITIONS                                \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_KERNEL_OPERATOR_DEFINITION)
 //======================================
+
 
 
 //---[ Pthreads ]-----------------------
@@ -175,29 +177,29 @@
 //---[ OpenMP ]-------------------------
 #  define OCCA_OPENMP_FUNCTION_ARG(N) , void *arg##N
 #  define OCCA_OPENMP_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
-                   OCL_FOR(1, N, OCCA_OPENMP_FUNCTION_ARG)
+                                                OCL_FOR(1, N, OCCA_OPENMP_FUNCTION_ARG)
 
 #  define OCCA_OPENMP_FUNCTION_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_OPENMP_FUNCTION_ARGS(N));
 #  define OCCA_OPENMP_FUNCTION_POINTER_TYPEDEFS                         \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_OPENMP_FUNCTION_POINTER_TYPEDEF)
 
 #  define OCCA_OPENMP_INPUT_FUNCTION_ARG(N) , arg##N.data()
-#  define OCCA_OPENMP_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,     \
-                   occaInnerId0, occaInnerId1, occaInnerId2       \
-                   OCL_FOR(1, N, OCCA_OPENMP_INPUT_FUNCTION_ARG)
+#  define OCCA_OPENMP_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,           \
+                                                occaInnerId0, occaInnerId1, occaInnerId2 \
+                                                OCL_FOR(1, N, OCCA_OPENMP_INPUT_FUNCTION_ARG)
 
-#  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITION(N)                   \
-  template <>                                                         \
-  void kernel_t<OpenMP>::operator() (OCCA_KERNEL_ARGS(N)){            \
-    OCCA_EXTRACT_DATA(OpenMP, Kernel);                                \
+#  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITION(N)                     \
+  template <>                                                           \
+  void kernel_t<OpenMP>::operator() (OCCA_KERNEL_ARGS(N)){              \
+    OCCA_EXTRACT_DATA(OpenMP, Kernel);                                  \
     functionPointer##N tmpKernel = (functionPointer##N) data_.handle;	\
-                                                                      \
-      int occaKernelArgs[6] = {outer.z, outer.y, outer.x,             \
-                               inner.z, inner.y, inner.x};            \
-                                                                      \
-      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;       \
-                                                                      \
-      tmpKernel(OCCA_OPENMP_INPUT_FUNCTION_ARGS(N));                  \
+                                                                        \
+      int occaKernelArgs[6] = {outer.z, outer.y, outer.x,               \
+                               inner.z, inner.y, inner.x};              \
+                                                                        \
+      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;         \
+                                                                        \
+      tmpKernel(OCCA_OPENMP_INPUT_FUNCTION_ARGS(N));                    \
   }
 
 #  define OCCA_OPENMP_KERNEL_OPERATOR_DEFINITIONS                       \
@@ -205,24 +207,25 @@
 //======================================
 
 
+
 //---[ OpenCL ]-------------------------
 #if OCCA_DEBUG_ENABLED
 #  define OCCA_CL_CHECK( _str , _statement ) OCCA_CL_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_CL_CHECK2( _str , _statement , file , line )             \
-  do {                                                                  \
-    cl_int _error = _statement;                                         \
-    if(_error){                                                         \
-      _error = _error < 0  ? _error : -_error;                          \
-      _error = _error < 65 ? _error : 15;                               \
+                                                do {                    \
+                                                  cl_int _error = _statement; \
+                                                  if(_error){           \
+                                                    _error = _error < 0  ? _error : -_error; \
+                                                    _error = _error < 65 ? _error : 15; \
                                                                         \
-      std::cout << "Error\n"                                            \
-                << "    File    : " << file << '\n'                     \
-                << "    Line    : " << line << '\n'                     \
-                << "    Error   : OpenCL Error [ " << _error << " ]: " << openclError(_error) << '\n' \
-                << "    Message : " << _str << '\n';                    \
-      throw 1;                                                          \
-    }                                                                   \
-  } while(0);
+                                                    std::cout << "Error\n" \
+                                                              << "    File    : " << file << '\n' \
+                                                              << "    Line    : " << line << '\n' \
+                                                              << "    Error   : OpenCL Error [ " << _error << " ]: " << openclError(_error) << '\n' \
+                                                              << "    Message : " << _str << '\n'; \
+                                                    throw 1;            \
+                                                  }                     \
+                                                } while(0);
 #else
 #  define OCCA_CL_CHECK( _str , _statement ) do { _statement; } while(0);
 #endif
@@ -263,6 +266,7 @@
 //======================================
 
 
+
 //---[ CUDA ]---------------------------
 #if OCCA_DEBUG_ENABLED
 #  define OCCA_CUDA_CHECK( _str , _statement ) OCCA_CUDA_CHECK2( _str , _statement , __FILE__ , __LINE__ )
@@ -285,25 +289,58 @@
 #  define OCCA_CUDA_KERNEL_ARG(N) , arg##N.data()
 #  define OCCA_CUDA_KERNEL_ARGS(N) &occaKernelInfoArgs OCL_FOR(1, N, OCCA_CUDA_KERNEL_ARG)
 
-#  define OCCA_CUDA_KERNEL_OPERATOR_DEFINITION(N)         \
-  template <>                                             \
-  void kernel_t<CUDA>::operator() (OCCA_KERNEL_ARGS(N)){  \
-    OCCA_EXTRACT_DATA(CUDA, Kernel);                      \
-    CUfunction function_ = data_.function;                \
-    int occaKernelInfoArgs = 0;                           \
-                                                          \
-    void *args[N+1] = {OCCA_CUDA_KERNEL_ARGS(N)};         \
-                                                          \
-    cuLaunchKernel(function_,                             \
-                   outer.x, outer.y, outer.z,             \
-                   inner.x, inner.y, inner.z,             \
-                   0,                                     \
-                   *((CUstream*) dev->currentStream),     \
-                   args, 0);                              \
+#  define OCCA_CUDA_KERNEL_OPERATOR_DEFINITION(N)               \
+  template <>                                                   \
+  void kernel_t<CUDA>::operator() (OCCA_KERNEL_ARGS(N)){        \
+    OCCA_EXTRACT_DATA(CUDA, Kernel);                            \
+    CUfunction function_ = data_.function;                      \
+    int occaKernelInfoArgs = 0;                                 \
+                                                                \
+    void *args[N+1] = {OCCA_CUDA_KERNEL_ARGS(N)};               \
+                                                                \
+    cuLaunchKernel(function_,                                   \
+                   outer.x, outer.y, outer.z,                   \
+                   inner.x, inner.y, inner.z,                   \
+                   0,                                           \
+                   *((CUstream*) dev->currentStream),           \
+                   args, 0);                                    \
   }
 
 #  define OCCA_CUDA_KERNEL_OPERATOR_DEFINITIONS                         \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_CUDA_KERNEL_OPERATOR_DEFINITION)
 //======================================
 
+
+
+//---[ COI ]----------------------------
+#  define OCCA_COI_FUNCTION_ARG(N) , void *arg##N
+#  define OCCA_COI_FUNCTION_ARGS(N)  int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2 \
+                                       OCL_FOR(1, N, OCCA_COI_FUNCTION_ARG)
+
+#  define OCCA_COI_FUNCTION_POINTER_TYPEDEF(N) typedef void (*functionPointer##N)(OCCA_COI_FUNCTION_ARGS(N));
+#  define OCCA_COI_FUNCTION_POINTER_TYPEDEFS                            \
+    OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_FUNCTION_POINTER_TYPEDEF)
+
+#  define OCCA_COI_INPUT_FUNCTION_ARG(N) , arg##N.data()
+#  define OCCA_COI_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,              \
+                                       occaInnerId0, occaInnerId1, occaInnerId2 \
+                                       OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
+
+#  define OCCA_COI_KERNEL_OPERATOR_DEFINITION(N)                        \
+  template <>                                                           \
+  void kernel_t<COI>::operator() (OCCA_KERNEL_ARGS(N)){                 \
+    OCCA_EXTRACT_DATA(COI, Kernel);                                     \
+    functionPointer##N tmpKernel = (functionPointer##N) data_.handle;	\
+                                                                        \
+      int occaKernelArgs[6] = {outer.z, outer.y, outer.x,               \
+                               inner.z, inner.y, inner.x};              \
+                                                                        \
+      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;         \
+                                                                        \
+      tmpKernel(OCCA_COI_INPUT_FUNCTION_ARGS(N));                       \
+  }
+
+#  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \
+                                       OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_KERNEL_OPERATOR_DEFINITION)
+//======================================
 #endif

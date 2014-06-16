@@ -32,6 +32,7 @@ $(occaOPath)/occaKernelDefines.o:            \
 	$(occaIPath)/occaCUDADefines.hpp     \
 	$(occaIPath)/occaPthreadsDefines.hpp \
 	$(occaIPath)/occaCOIDefines.hpp      \
+	$(occaIPath)/occaCOIMain.hpp         \
 	$(occaIPath)/occaKernelDefines.hpp
 	$(compiler) $(compilerFlags) -o $(occaOPath)/occaKernelDefines.o $(flags) -c $(paths) $(occaSPath)/occaKernelDefines.cpp
 
@@ -40,7 +41,8 @@ $(OCCA_DIR)/scripts/occaKernelDefinesGenerator:\
 	$(occaIPath)/occaOpenCLDefines.hpp     \
 	$(occaIPath)/occaCUDADefines.hpp       \
 	$(occaIPath)/occaPthreadsDefines.hpp   \
-	$(occaIPath)/occaCOIDefines.hpp
+	$(occaIPath)/occaCOIDefines.hpp        \
+	$(occaIPath)/occaCOIMain.hpp
 	$(compiler) -o $(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)/scripts/occaKernelDefinesGenerator.cpp
 
 $(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefinesGenerator

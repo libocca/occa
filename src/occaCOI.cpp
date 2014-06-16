@@ -110,31 +110,14 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(COI, Kernel);
 
-    data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
+    COILIBRARY outLibrary;
 
-    OCCA_CHECK(data_.dlHandle != NULL);
-
-    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-
-    char *dlError;
-    if ((dlError = dlerror()) != NULL)  {
-      fputs(dlError, stderr);
-      throw 1;
-    }
-
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
-
-    data_.pThreadCount = dData.pThreadCount;
-
-    data_.pendingJobs = &(dData.pendingJobs);
-
-    for(int p = 0; p < 50; ++p){
-      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
-      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
-    }
-
-    data_.pendingJobsMutex = &(dData.pendingJobsMutex);
-    data_.kernelMutex      = &(dData.kernelMutex);
+    OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
+                   COIProcessLoadLibraryFromFile(data_.chiefID,
+                                                 NULL,
+                                                 cachedBinary.c_str(),
+                                                 NULL,
+                                                 &outLibrary));
 
     return this;
   }
@@ -148,31 +131,14 @@ namespace occa {
 
     functionName = functionName_;
 
-    data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    COILIBRARY outLibrary;
 
-    OCCA_CHECK(data_.dlHandle != NULL);
-
-    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-
-    char *dlError;
-    if ((dlError = dlerror()) != NULL)  {
-      fputs(dlError, stderr);
-      throw 1;
-    }
-
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
-
-    data_.pThreadCount = dData.pThreadCount;
-
-    data_.pendingJobs = &(dData.pendingJobs);
-
-    for(int p = 0; p < 50; ++p){
-      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
-      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
-    }
-
-    data_.pendingJobsMutex = &(dData.pendingJobsMutex);
-    data_.kernelMutex      = &(dData.kernelMutex);
+    OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
+                   COIProcessLoadLibraryFromFile(data_.chiefID,
+                                                 NULL,
+                                                 cachedBinary.c_str(),
+                                                 NULL,
+                                                 &outLibrary));
 
     return this;
   }
