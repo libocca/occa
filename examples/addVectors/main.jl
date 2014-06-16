@@ -4,7 +4,6 @@ entries = 5
 
 device = occa.device("OpenMP", 0, 0);
 
-# Dynamic range?
 a  = Float32[1 - i for i in 1:entries]
 b  = Float32[i     for i in 1:entries]
 ab = Float32[0     for i in 1:entries]
@@ -14,8 +13,8 @@ o_b  = occa.malloc(device, b);
 o_ab = occa.malloc(device, ab);
 
 addVectors = occa.buildKernelFromSource(device,
-                               "addVectors.occa",
-                               "addVectors")
+                                        "addVectors.occa",
+                                        "addVectors")
 
 dims = 1;
 itemsPerGroup = 2;
