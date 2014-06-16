@@ -59,12 +59,8 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU", 1);
-    info.addDefine("OCCA_USING_GPU", 0);
-
+    info.addDefine("OCCA_USING_CPU"     , 1);
     info.addDefine("OCCA_USING_PTHREADS", 1);
-    info.addDefine("OCCA_USING_OPENCL", 0);
-    info.addDefine("OCCA_USING_CUDA"  , 0);
 
     info.addOCCAKeywords(occaPthreadsDefines);
 
@@ -340,7 +336,7 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::free(){
-    _mm_free(handle);
+    ::free(handle);
   }
   //==================================
 
@@ -495,13 +491,25 @@ namespace occa {
     memory_v *mem = new memory_t<Pthreads>;
 
     mem->dev    = dev;
-    mem->handle = ::_mm_malloc(bytes, OCCA_MEM_ALIGN);
+    mem->handle = ::malloc(bytes);
     mem->size   = bytes;
 
     if(source != NULL)
       ::memcpy(mem->handle, source, bytes);
 
     return mem;
+  }
+
+  template <>
+  void device_t<Pthreads>::free(){
+    finish();
+
+    OCCA_EXTRACT_DATA(Pthreads, Device);
+
+    pthread_mutex_destroy( &(data_.pendingJobsMutex) );
+    pthread_mutex_destroy( &(data_.kernelMutex) );
+
+    ::free(data);
   }
 
   template <>

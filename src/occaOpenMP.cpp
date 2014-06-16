@@ -59,12 +59,8 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU", 1);
-    info.addDefine("OCCA_USING_GPU", 0);
-
+    info.addDefine("OCCA_USING_CPU"   , 1);
     info.addDefine("OCCA_USING_OPENMP", 1);
-    info.addDefine("OCCA_USING_OPENCL", 0);
-    info.addDefine("OCCA_USING_CUDA"  , 0);
 
 #if OCCA_OPENMP_ENABLED
     info.addInclude("omp.h");
@@ -87,7 +83,7 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
-    data = ::_mm_malloc(sizeof(OpenMPKernelData_t), OCCA_MEM_ALIGN);
+    data = ::malloc(sizeof(OpenMPKernelData_t));
 
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
@@ -128,7 +124,7 @@ namespace occa {
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName_){
-    data = ::_mm_malloc(sizeof(OpenMPKernelData_t), OCCA_MEM_ALIGN);
+    data = ::malloc(sizeof(OpenMPKernelData_t));
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
     functionName = functionName_;
@@ -307,7 +303,7 @@ namespace occa {
 
   template <>
   void memory_t<OpenMP>::free(){
-    _mm_free(handle);
+    ::free(handle);
   }
   //==================================
 
@@ -412,7 +408,7 @@ namespace occa {
     memory_v *mem = new memory_t<OpenMP>;
 
     mem->dev    = dev;
-    mem->handle = ::_mm_malloc(bytes, OCCA_MEM_ALIGN);
+    mem->handle = ::malloc(bytes);
     mem->size   = bytes;
 
     if(source != NULL)
@@ -420,6 +416,9 @@ namespace occa {
 
     return mem;
   }
+
+  template <>
+  void device_t<OpenMP>::free(){}
 
   template <>
   int device_t<OpenMP>::simdWidth(){

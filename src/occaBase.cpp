@@ -394,6 +394,10 @@ namespace occa {
 
     for(int i = 0; i < streamCount; ++i)
       dHandle->freeStream(streams[i]);
+
+    dHandle->free();
+
+    delete dHandle;
   }
 
   int device::simdWidth(){

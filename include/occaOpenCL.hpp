@@ -180,6 +180,9 @@ namespace occa {
                                      void *source);
 
   template <>
+  void device_t<OpenCL>::free();
+
+  template <>
   int device_t<OpenCL>::simdWidth();
   //==================================
 

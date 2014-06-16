@@ -219,6 +219,9 @@ namespace occa {
                                                       const std::string &functionName_);
 
   template <>
+  void device_t<Pthreads>::free();
+
+  template <>
   memory_v* device_t<Pthreads>::malloc(const size_t bytes,
                                        void *source);
 

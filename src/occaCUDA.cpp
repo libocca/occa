@@ -67,12 +67,8 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU", 0);
-    info.addDefine("OCCA_USING_GPU", 1);
-
-    info.addDefine("OCCA_USING_OPENMP", 0);
-    info.addDefine("OCCA_USING_OPENCL", 0);
-    info.addDefine("OCCA_USING_CUDA"  , 1);
+    info.addDefine("OCCA_USING_GPU" , 1);
+    info.addDefine("OCCA_USING_CUDA", 1);
 
     info.addOCCAKeywords(occaCUDADefines);
 
@@ -395,7 +391,7 @@ namespace occa {
       cudaIsNotInitialized = false;
     }
 
-    data = ::_mm_malloc(sizeof(CUDADeviceData_t), OCCA_MEM_ALIGN);
+    data = ::malloc(sizeof(CUDADeviceData_t));
 
     OCCA_EXTRACT_DATA(CUDA, Device);
 
@@ -440,7 +436,7 @@ namespace occa {
   stream device_t<CUDA>::genStream(){
     OCCA_EXTRACT_DATA(CUDA, Device);
 
-    CUstream *retStream = (CUstream*) ::_mm_malloc(sizeof(CUstream), OCCA_MEM_ALIGN);
+    CUstream *retStream = (CUstream*) ::malloc(sizeof(CUstream));
 
     OCCA_CUDA_CHECK("Device: genStream",
                     cuStreamCreate(retStream, CU_STREAM_DEFAULT));
@@ -464,7 +460,7 @@ namespace occa {
     kernel_v *k = new kernel_t<CUDA>;
 
     k->dev  = dev;
-    k->data = ::_mm_malloc(sizeof(CUDAKernelData_t), OCCA_MEM_ALIGN);
+    k->data = ::malloc(sizeof(CUDAKernelData_t));
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
@@ -483,7 +479,7 @@ namespace occa {
     kernel_v *k = new kernel_t<CUDA>;
 
     k->dev  = dev;
-    k->data = ::_mm_malloc(sizeof(CUDAKernelData_t), OCCA_MEM_ALIGN);
+    k->data = ::malloc(sizeof(CUDAKernelData_t));
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
@@ -502,7 +498,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dev    = dev;
-    mem->handle = ::_mm_malloc(sizeof(CUdeviceptr), OCCA_MEM_ALIGN);
+    mem->handle = ::malloc(sizeof(CUdeviceptr));
     mem->size   = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",
@@ -512,6 +508,16 @@ namespace occa {
       mem->copyFrom(source, bytes, 0);
 
     return mem;
+  }
+
+  template <>
+  void device_t<CUDA>::free(){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
+    OCCA_CUDA_CHECK("Device: Freeing Context",
+                    cuCtxDestroy(data_.context) );
+
+    ::free(data);
   }
 
   template <>

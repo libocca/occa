@@ -169,6 +169,9 @@ namespace occa {
                                    void *source);
 
   template <>
+  void device_t<CUDA>::free();
+
+  template <>
   int device_t<CUDA>::simdWidth();
   //==================================
 

@@ -164,6 +164,9 @@ namespace occa {
                                      void *source);
 
   template <>
+  void device_t<OpenMP>::free();
+
+  template <>
   int device_t<OpenMP>::simdWidth();
   //==================================
 };

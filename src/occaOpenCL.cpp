@@ -69,12 +69,8 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU", 0);
-    info.addDefine("OCCA_USING_GPU", 1);
-
-    info.addDefine("OCCA_USING_OPENMP", 0);
+    info.addDefine("OCCA_USING_GPU"   , 1); // [-] Is it really?
     info.addDefine("OCCA_USING_OPENCL", 1);
-    info.addDefine("OCCA_USING_CUDA"  , 0);
 
     info.addOCCAKeywords(occaOpenCLDefines);
 
@@ -519,7 +515,7 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::setup(const int platform, const int device){
-    data = ::_mm_malloc(sizeof(OpenCLDeviceData_t), OCCA_MEM_ALIGN);
+    data = ::malloc(sizeof(OpenCLDeviceData_t));
 
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
@@ -580,7 +576,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
-    cl_command_queue *retStream = (cl_command_queue*) ::_mm_malloc(sizeof(cl_command_queue), OCCA_MEM_ALIGN);
+    cl_command_queue *retStream = (cl_command_queue*) ::malloc(sizeof(cl_command_queue));
 
     *retStream = clCreateCommandQueue(data_.context, data_.deviceID, CL_QUEUE_PROFILING_ENABLE, &error);
     OCCA_CL_CHECK("Device: genStream", error);
@@ -604,7 +600,7 @@ namespace occa {
     kernel_v *k = new kernel_t<OpenCL>;
 
     k->dev  = dev;
-    k->data = ::_mm_malloc(sizeof(OpenCLKernelData_t), OCCA_MEM_ALIGN);
+    k->data = ::malloc(sizeof(OpenCLKernelData_t));
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -627,7 +623,7 @@ namespace occa {
     kernel_v *k = new kernel_t<OpenCL>;
 
     k->dev  = dev;
-    k->data = ::_mm_malloc(sizeof(OpenCLKernelData_t), OCCA_MEM_ALIGN);
+    k->data = ::malloc(sizeof(OpenCLKernelData_t));
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -651,7 +647,7 @@ namespace occa {
     cl_int error;
 
     mem->dev    = dev;
-    mem->handle = ::_mm_malloc(sizeof(cl_mem), OCCA_MEM_ALIGN);
+    mem->handle = ::malloc(sizeof(cl_mem));
     mem->size   = bytes;
 
     if(source == NULL)
@@ -666,6 +662,16 @@ namespace occa {
     OCCA_CL_CHECK("Device: malloc", error);
 
     return mem;
+  }
+
+  template <>
+  void device_t<OpenCL>::free(){
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    OCCA_CL_CHECK("Device: Freeing Context",
+                  clReleaseContext(data_.context) );
+
+    ::free(data);
   }
 
   template <>

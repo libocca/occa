@@ -8,11 +8,8 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-icpc_Enabled = 0
-
-Pthreads_Enabled = 1
-OpenMP_Enabled   = 1
-OpenGL_Enabled   = 0
+icpc_Enabled   = 1
+OpenGL_Enabled = 0
 #=================================================
 
 
@@ -119,6 +116,10 @@ endif
 
 ifdef OCCA_CUDA_ENABLED
 	CUDA_Enabled = $(OCCA_CUDA_ENABLED)
+endif
+
+ifdef OCCA_COI_ENABLED
+	COI_Enabled = $(OCCA_CUDA_ENABLED)
 endif
 
 ifeq ($(DEBUG), 1)

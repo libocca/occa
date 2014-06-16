@@ -541,6 +541,8 @@ namespace occa {
     virtual memory_v* malloc(const size_t bytes,
                              void* source) = 0;
 
+    virtual void free() = 0;
+
     virtual int simdWidth() = 0;
   };
 
@@ -580,6 +582,8 @@ namespace occa {
 
     memory_v* malloc(const size_t bytes,
                      void *source);
+
+    void free();
 
     int simdWidth();
   };
@@ -671,9 +675,19 @@ namespace occa {
     }
 
     inline static bool isAnOccaDefine(const std::string &name){
-      if((name == "occaInnerDim0") ||
+      if((name == "OCCA_USING_CPU") ||
+         (name == "OCCA_USING_GPU") ||
+
+         (name == "OCCA_USING_PTHREADS") ||
+         (name == "OCCA_USING_OPENMP")   ||
+         (name == "OCCA_USING_OPENCL")   ||
+         (name == "OCCA_USING_CUDA")     ||
+         (name == "OCCA_USING_COI")      ||
+
+         (name == "occaInnerDim0") ||
          (name == "occaInnerDim1") ||
          (name == "occaInnerDim2") ||
+
          (name == "occaOuterDim0") ||
          (name == "occaOuterDim1") ||
          (name == "occaOuterDim2"))
