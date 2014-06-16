@@ -26,10 +26,21 @@ $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaS
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -lcoi_host -Wl,--enable-new-dtags -c $(paths) $<
 
-$(occaOPath)/occaKernelDefines.o:$(occaIPath)/occaOpenMPDefines.hpp $(occaIPath)/occaOpenCLDefines.hpp $(occaIPath)/occaCUDADefines.hpp $(occaIPath)/occaKernelDefines.hpp
+$(occaOPath)/occaKernelDefines.o:            \
+	$(occaIPath)/occaOpenMPDefines.hpp   \
+	$(occaIPath)/occaOpenCLDefines.hpp   \
+	$(occaIPath)/occaCUDADefines.hpp     \
+	$(occaIPath)/occaPthreadsDefines.hpp \
+	$(occaIPath)/occaCOIDefines.hpp      \
+	$(occaIPath)/occaKernelDefines.hpp
 	$(compiler) $(compilerFlags) -o $(occaOPath)/occaKernelDefines.o $(flags) -c $(paths) $(occaSPath)/occaKernelDefines.cpp
 
-$(OCCA_DIR)/scripts/occaKernelDefinesGenerator:$(occaIPath)/occaOpenMPDefines.hpp $(occaIPath)/occaOpenCLDefines.hpp $(occaIPath)/occaCUDADefines.hpp
+$(OCCA_DIR)/scripts/occaKernelDefinesGenerator:\
+	$(occaIPath)/occaOpenMPDefines.hpp     \
+	$(occaIPath)/occaOpenCLDefines.hpp     \
+	$(occaIPath)/occaCUDADefines.hpp       \
+	$(occaIPath)/occaPthreadsDefines.hpp   \
+	$(occaIPath)/occaCOIDefines.hpp
 	$(compiler) -o $(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)/scripts/occaKernelDefinesGenerator.cpp
 
 $(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefinesGenerator

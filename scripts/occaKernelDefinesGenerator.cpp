@@ -47,7 +47,7 @@ inline std::string saveFileToVariable(std::string filename,
 }
 
 int main(int argc, char **argv){
-  int mpChars, clChars, cuChars, ptChars;
+  int mpChars, clChars, cuChars, ptChars, coiChars;
 
   char *occaDir_ = getenv("OCCA_DIR");
   if(occaDir_ == NULL){
@@ -79,6 +79,11 @@ int main(int argc, char **argv){
                                       cuChars,
                                       "    ");
 
+  std::string coi = saveFileToVariable(occaDir + "/include/occaCOIDefines.hpp",
+                                       "occaCOIDefines",
+                                       coiChars,
+                                       "    ");
+
   std::string occaKernelDefinesHeader = occaDir + "/include/occaKernelDefines.hpp";
   std::string occaKernelDefinesSource = occaDir + "/src/occaKernelDefines.cpp";
 
@@ -87,9 +92,10 @@ int main(int argc, char **argv){
 
   fs << ns << '\n'
      << "    extern char occaPthreadsDefines[" << ptChars << "];\n"
-     << "    extern char occaOpenMPDefines[" << mpChars << "];\n"
-     << "    extern char occaOpenCLDefines[" << clChars << "];\n"
-     << "    extern char occaCUDADefines["   << cuChars << "];\n"
+     << "    extern char occaOpenMPDefines[" << mpChars  << "];\n"
+     << "    extern char occaOpenCLDefines[" << clChars  << "];\n"
+     << "    extern char occaCUDADefines["   << cuChars  << "];\n"
+     << "    extern char occaCOIDefines["   << coiChars << "];\n"
      << "}\n";
 
   fs.close();
@@ -101,6 +107,7 @@ int main(int argc, char **argv){
      << mp << '\n'
      << cl << '\n'
      << cu << '\n'
+     << coi << '\n'
      << "}\n";
 
   fs.close();
