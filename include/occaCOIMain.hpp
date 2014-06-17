@@ -169,10 +169,6 @@ void occaKernelWith1Argument(uint32_t deviceArgc, void **deviceArgs, uint64_t *d
   occaKernelArgs_t kernelArgs = *((occaKernelArgs_t*) (hostArgs + hostPos));
   hostPos += 6*sizeof(int);
 
-  printf("outer = (%d,%d,%d)\ninner = (%d,%d,%d)\n",
-         kernelArgs.outerZ, kernelArgs.outerY, kernelArgs.outerX,
-         kernelArgs.innerZ, kernelArgs.innerY, kernelArgs.innerX);
-
   // int *types = (int*) (hostArgs + hostPos);
 
   // int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;

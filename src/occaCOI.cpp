@@ -248,7 +248,9 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent copyEvent;
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferWrite(*((coiMemory*) handle),
@@ -257,10 +259,10 @@ namespace occa {
                                   bytes_,
                                   COI_COPY_UNSPECIFIED,
                                   false, NULL,
-                                  &copyEvent));
+                                  &(stream.lastEvent)));
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
-                   COIEventWait(1, &copyEvent,
+                   COIEventWait(1, &(stream.lastEvent),
                                 -1, true, NULL, NULL) );
   }
 
@@ -276,7 +278,9 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <=         size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    coiEvent copyEvent;
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) handle),
@@ -286,10 +290,10 @@ namespace occa {
                                  bytes_,
                                  COI_COPY_UNSPECIFIED,
                                  false, NULL,
-                                 &copyEvent));
+                                 &(stream.lastEvent)));
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
-                   COIEventWait(1, &copyEvent,
+                   COIEventWait(1, &(stream.lastEvent),
                                 -1, true, NULL, NULL) );
   }
 
@@ -303,7 +307,9 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent copyEvent;
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferRead(*((coiMemory*) handle),
@@ -312,10 +318,10 @@ namespace occa {
                                  bytes_,
                                  COI_COPY_UNSPECIFIED,
                                  false, NULL,
-                                 &copyEvent));
+                                 &(stream.lastEvent)));
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
-                   COIEventWait(1, &copyEvent,
+                   COIEventWait(1, &(stream.lastEvent),
                                 -1, true, NULL, NULL) );
   }
 
@@ -331,7 +337,9 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
     OCCA_CHECK((bytes_ + srcOffset)  <=       size);
 
-    coiEvent copyEvent;
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) dest->handle),
@@ -341,10 +349,10 @@ namespace occa {
                                  bytes_,
                                  COI_COPY_UNSPECIFIED,
                                  false, NULL,
-                                 &copyEvent));
+                                 &(stream.lastEvent)));
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
-                   COIEventWait(1, &copyEvent,
+                   COIEventWait(1, &(stream.lastEvent),
                                 -1, true, NULL, NULL) );
   }
 
@@ -357,6 +365,10 @@ namespace occa {
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferWrite(*((coiMemory*) handle),
@@ -380,6 +392,10 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <=         size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
+
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) handle),
                                  *((coiMemory*) source->handle),
@@ -400,6 +416,10 @@ namespace occa {
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferRead(*((coiMemory*) handle),
@@ -422,6 +442,10 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
     OCCA_CHECK((bytes_ + srcOffset)  <=       size);
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, &(stream.lastEvent),
+                                -1, true, NULL, NULL) );
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) dest->handle),
