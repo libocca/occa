@@ -247,11 +247,11 @@ void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
                                void *ret, uint16_t retSize){
   printf("HERE!\n");
 
-  char *hostArgs = (char*) hostArgs_;
-  int hostPos = 0;
+  // char *hostArgs = (char*) hostArgs_;
+  // int hostPos = 0;
 
-  occaKernelWith4Arguments_t kernel = (occaKernelWith4Arguments_t) (hostArgs + hostPos);
-  hostPos += sizeof(void*);
+  // occaKernelWith4Arguments_t kernel = (occaKernelWith4Arguments_t) (hostArgs + hostPos);
+  // hostPos += sizeof(void*);
 
   // void *kernelArgs = hostArgs + hostPos;
   // hostPos += 6*sizeof(int);

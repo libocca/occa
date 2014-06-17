@@ -343,7 +343,9 @@
 #  define OCCA_COI_INPUT_FUNCTION_ARG(N)                                \
   if(arg##N.pointer){                                                   \
     typePtr[typePos++] = (int) ((1 << 31) + devicePos);                 \
-    data_.deviceArgv[devicePos++] = *((coiMemory*) arg##N.data());      \
+    data_.deviceArgv[devicePos]  = *((coiMemory*) arg##N.data());       \
+    data_.deviceFlags[devicePos] = COI_SINK_WRITE;                      \
+    ++devicePos;                                                        \
   }                                                                     \
   else{                                                                 \
     typePtr[typePos++] = (int) ((0 << 31) + hostPos);                   \
@@ -378,7 +380,9 @@
     OCCA_COI_CHECK("Kernel: Launching",                                 \
                    COIPipelineRunFunction(stream.handle,                \
                                           dData.kernelWrapper[N - 1],   \
-                                          devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
+                                          devicePos,                    \
+                                          (const coiMemory*) data_.deviceArgv, \
+                                          (const coiMemoryFlags*) data_.deviceFlags, \
                                           false, NULL,                  \
                                           data_.hostArgv, hostPos,      \
                                           NULL, 0,                      \

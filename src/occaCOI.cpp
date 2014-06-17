@@ -681,7 +681,7 @@ namespace occa {
     OCCA_COI_CHECK("Device: Malloc",
                    COIBufferCreate(bytes,
                                    COI_BUFFER_NORMAL,
-                                   0, // COI_SINK_MEMORY is not supported?
+                                   0,
                                    source,
                                    1,
                                    &(data_.chiefID),

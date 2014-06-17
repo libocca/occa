@@ -20,8 +20,9 @@ namespace occa {
 
   typedef COIEVENT    coiEvent;
 
-  typedef COIFUNCTION coiKernel;
-  typedef COIBUFFER   coiMemory;
+  typedef COIFUNCTION      coiKernel;
+  typedef COIBUFFER        coiMemory;
+  typedef COI_ACCESS_FLAGS coiMemoryFlags;
 
   typedef COIRESULT coiStatus;
 
@@ -37,6 +38,8 @@ namespace occa {
 
     // [-] Hard-coded for now
     coiMemory deviceArgv[25];
+    coiMemoryFlags deviceFlags[25];
+
     char hostArgv[100 + 6*4 + 25*(4 + 8)];
     //            ^     ^      ^  ^   ^__[Max Bytes]
     // [Padding]__|     |      |  |__[Type]
