@@ -353,24 +353,22 @@
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
                              inner.z, inner.y, inner.x};                \
                                                                         \
-    /* OCCA_COI_INPUT_FUNCTION_ARGS(N); */                              \
+    /*OCCA_COI_INPUT_FUNCTION_ARGS(N);*/                                \
+                                                                        \
     coiStream &stream      = *((coiStream*) dev->currentStream);        \
                                                                         \
     bool waitingOnEvent    = (stream.lastEvent != NULL);                \
     coiEvent *lastEventPtr = stream.lastEvent;                          \
                                                                         \
-    void *deviceArgv, *hostArgv;                                        \
-    int deviceArgc = 0, hostArgBytes = 0;                               \
-                                                                        \
     COIPipelineRunFunction(stream.handle,                               \
                            data_.kernel,                                \
-                           deviceArgc, (const COIBUFFER*) deviceArgv, NULL, \
+                           data_.deviceArgc, (const COIBUFFER*) data_.deviceArgv, NULL, \
                            waitingOnEvent, lastEventPtr,                \
-                           hostArgv, hostArgBytes,                      \
+                           data_.hostArgv, data_.hostArgBytes,          \
                            NULL, 0, stream.lastEvent);                  \
   }
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \
-                                       OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_KERNEL_OPERATOR_DEFINITION)
+  OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_KERNEL_OPERATOR_DEFINITION)
 //======================================
 #endif
