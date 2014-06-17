@@ -1,9 +1,16 @@
-#ifndef OCCA_OPENMP_DEFINES_HEADER
-#define OCCA_OPENMP_DEFINES_HEADER
+#ifndef OCCA_COI_DEFINES_HEADER
+#define OCCA_COI_DEFINES_HEADER
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <ctype.h>
 
-#include <cstdlib>
-#include <cstdio>
-#include <cmath>
+#include <omp.h>
+
+#include <intel-coi/sink/COIPipeline_sink.h>
+#include <intel-coi/sink/COIProcess_sink.h>
+#include <intel-coi/sink/COIBuffer_sink.h>
+#include <intel-coi/common/COIMacros_common.h>
 
 
 //---[ Defines ]----------------------------------
@@ -85,7 +92,7 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaFunctionInfoArg const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
 #define occaFunctionInfo               occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaKernel         extern "C"
+#define occaKernel         COINATIVELIBEXPORT
 #define occaFunction
 #define occaDeviceFunction
 //================================================

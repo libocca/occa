@@ -97,7 +97,7 @@ namespace occa {
 
     command << dev->dHandle->compiler
             << " -o " << cachedBinary
-            << " -x c++ -w -fPIC -shared"
+            << " -x c++ -w -nodefaultlibs -shared -fPIC"
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary;
@@ -114,8 +114,8 @@ namespace occa {
 
     OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
                    COIProcessLoadLibraryFromFile(data_.chiefID,
-                                                 NULL,
                                                  cachedBinary.c_str(),
+                                                 NULL,
                                                  NULL,
                                                  &outLibrary));
 
@@ -682,7 +682,7 @@ namespace occa {
     OCCA_COI_CHECK("Device: Malloc",
                    COIBufferCreate(bytes,
                                    COI_BUFFER_NORMAL,
-                                   COI_SINK_MEMORY,
+                                   0, // COI_SINK_MEMORY is not supported?
                                    source,
                                    1,
                                    &(data_.chiefID),
