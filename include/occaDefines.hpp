@@ -342,11 +342,11 @@
 #  define OCCA_COI_INPUT_FUNCTION_ARGS(N) OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
 #  define OCCA_COI_INPUT_FUNCTION_ARG(N)                                \
   if(arg##N.pointer){                                                   \
-    data_.hostArgv[typePos++] = (1 << 7) + devicePos;                   \
+    *((int*) &data_.hostArgv[typePos++]) = (int) ((1 << 31) + hostPos); \
     data_.deviceArgv[devicePos++] = arg##N.data();                      \
   }                                                                     \
   else{                                                                 \
-    data_.hostArgv[typePos++] = (0 << 7) + hostPos;                     \
+    *((int*) &data_.hostArgv[typePos++]) = ((0 << 31) + hostPos);       \
     ::memcpy(&(data_.hostArgv[hostPos]), &(arg##N.arg), arg##N.size);   \
     hostPos += arg##N.size;                                             \
   }
@@ -363,9 +363,9 @@
                              inner.z, inner.y, inner.x};                \
                                                                         \
     size_t kSize = sizeof(void*);                                       \
-    ::memcpy(&(data_.hostArgv[0])    , (void*) data_.kernel, kSize);    \
+    ::memcpy(&(data_.hostArgv[0])    , &(data_.kernel), kSize);         \
     ::memcpy(&(data_.hostArgv[kSize]), &(occaKernelArgs[0]), 6*sizeof(int)); \
-    int hostPos   = kSize + 6*sizeof(int) + N;                          \
+    int hostPos   = kSize + 6*sizeof(int) + N*sizeof(int);              \
     int typePos   = kSize + 6*sizeof(int);                              \
     int devicePos = 0;                                                  \
                                                                         \
@@ -377,10 +377,11 @@
                    COIPipelineRunFunction(stream.handle,                \
                                           dData.kernelWrapper[N - 1],   \
                                           devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
-                                          false, NULL,                                 \
-                                          data_.hostArgv, hostPos,                     \
-                                          NULL, 0, &(stream.lastEvent))); \
-}
+                                          false, NULL,                  \
+                                          data_.hostArgv, hostPos,      \
+                                          NULL, 0,                      \
+                                          &(stream.lastEvent)));        \
+  }
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_KERNEL_OPERATOR_DEFINITION)
