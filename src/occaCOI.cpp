@@ -722,7 +722,7 @@ namespace occa {
 
 
   //---[ Error Handling ]-------------
-  std::string coiError(COIRESULT e){
+  std::string coiError(coiStatus e){
     return std::string( COIResultGetName(e) );
   }
   //==================================

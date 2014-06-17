@@ -23,6 +23,8 @@ namespace occa {
   typedef COIFUNCTION coiKernel;
   typedef COIBUFFER   coiMemory;
 
+  typedef COIRESULT coiStatus;
+
   //---[ Data Structs ]---------------
   struct coiStream {
     COIPIPELINE handle;
@@ -202,7 +204,7 @@ namespace occa {
 
 
   //---[ Error Handling ]-------------
-  std::string coiError(int e);
+  std::string coiError(coiStatus e);
   //==================================
 };
 
