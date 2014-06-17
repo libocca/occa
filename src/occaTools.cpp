@@ -93,7 +93,7 @@ namespace occa {
 
     ++lastSlash;
     const std::string iCachedBinary =
-      cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars);
+      cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars - lastSlash);
 
     std::ofstream fs;
     fs.open(iCachedBinary.c_str());

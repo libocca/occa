@@ -88,7 +88,7 @@ namespace occa {
 
     ++lastSlash;
 
-    std::string soname  = cachedBinary.substr(lastSlash, chars);
+    std::string soname  = cachedBinary.substr(lastSlash, chars - lastSlash);
     std::string libPath = cachedBinary.substr(0, lastSlash);
     std::string libName = "lib" + soname + ".so";
 
@@ -150,12 +150,29 @@ namespace occa {
 
     functionName = functionName_;
 
+    int lastSlash = 0, lastPoint = 0;
+    const int chars = filename.size();
+
+    for(int i = 0; i < chars; ++i)
+      if(filename[i] == '/')
+        lastSlash = i;
+
+    ++lastSlash;
+
+    for(int i = lastSlash; i < chars; ++i)
+      if(filename[i] == '.'){
+        lastPoint = i;
+        break;
+      }
+
+    std::string soname = filename.substr(lastSlash, lastPoint - lastSlash);
+
     COILIBRARY outLibrary;
 
     OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
                    COIProcessLoadLibraryFromFile(data_.chiefID,
-                                                 NULL,
                                                  filename.c_str(),
+                                                 soname.c_str(),
                                                  NULL,
                                                  &outLibrary));
 
@@ -524,7 +541,8 @@ namespace occa {
       ++lastSlash;
 
       const std::string iCachedBinary =
-        cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars);
+        cachedBinary.substr(0, lastSlash) +
+        "i_" + cachedBinary.substr(lastSlash, chars - lastSlash);
 
       std::ofstream fs;
       fs.open(iCachedBinary.c_str());
