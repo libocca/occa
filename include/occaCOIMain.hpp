@@ -1,34 +1,3 @@
-// COINATIVELIBEXPORT
-// void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-//                                void *hostArgs_, uint16_t hostArgSize,
-//                                void *ret, uint16_t retSize){
-//   char *hostArgs = (char*) hostArgs_;
-//   int hostPos = 0;
-
-//   occaKernelWith4Arguments_t kernel = (occaKernelWith4Arguments_t) *((void**) hostArgs);
-//   hostPos += sizeof(void*);
-
-//   occaKernelArgs_t kernelArgs = *((occaKernelArgs_t*) (hostArgs + hostPos));
-//   hostPos += 6*sizeof(int);
-
-//   int *types = (int*) (hostArgs + hostPos);
-
-//   int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-//   void *argv[4];
-
-//   for(int i = 0; i < 4; ++i){
-//     if(types[i] & (1 << 31))
-//       argv[i] = deviceArgs[ types[i] - (1 << 31) ];
-//     else
-//       argv[i] = (void*) (hostArgs + types[i]);
-//   }
-
-//   kernel(&kernelArgs, occaInnerId0, occaInnerId2, occaInnerId2,
-//          argv[0] , argv[1] , argv[2] , argv[3] );
-// }
-
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -188,13 +157,13 @@ typedef void(*occaKernelWith25Arguments_t)(void *kernelArgs, int occaInnerId0, i
                                            void *arg20, void *arg21, void *arg22, void *arg23, void *arg24);
 
 COINATIVELIBEXPORT
-void occaKernelWith1Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+void occaKernelWith1Argument(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
+                             void *hostArgs_, uint16_t hostArgSize,
+                             void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith1Arguments_t kernel = (occaKernelWith1Arguments_t) *((void**) hostArgs);
+  occaKernelWith1Argument_t kernel = (occaKernelWith1Argument_t) *((void**) hostArgs);
   hostPos += sizeof(void*);
 
   occaKernelArgs_t kernelArgs = *((occaKernelArgs_t*) (hostArgs + hostPos));
@@ -219,8 +188,8 @@ void occaKernelWith1Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith2Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -249,8 +218,8 @@ void occaKernelWith2Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith3Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -279,8 +248,8 @@ void occaKernelWith3Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -309,8 +278,8 @@ void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith5Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -339,8 +308,8 @@ void occaKernelWith5Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith6Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -370,8 +339,8 @@ void occaKernelWith6Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith7Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -401,8 +370,8 @@ void occaKernelWith7Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith8Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
@@ -432,8 +401,8 @@ void occaKernelWith8Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
 COINATIVELIBEXPORT
 void occaKernelWith9Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+                              void *hostArgs_, uint16_t hostArgSize,
+                              void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
