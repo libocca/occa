@@ -343,6 +343,8 @@
 #  define OCCA_COI_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,              \
                                        OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
 
+; // For MACRO alignment
+
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITION(N)                        \
   template <>                                                           \
   void kernel_t<COI>::operator() (OCCA_KERNEL_ARGS(N)){                 \
@@ -358,15 +360,14 @@
     coiEvent *lastEventPtr = stream.lastEvent;                          \
                                                                         \
     void *deviceArgv, *hostArgv;                                        \
-    int deviceArgc = 0, hostArgc = 0;                                   \
+    int deviceArgc = 0, hostArgBytes = 0;                               \
                                                                         \
-    OCCA_COI_CHECK("Kernel: Launch",                                    \
-                   COIPipelineRunFunction(stream.handle,                \
-                                          data_.kernel,                 \
-                                          deviceArgc, deviceArgv, NULL, \
-                                          waitingOnEvent, lastEventPtr, \
-                                          hostArgc, hostArgv,           \
-                                          NULL, 0, stream.lastEvent) ); \
+    COIPipelineRunFunction(stream.handle,                               \
+                           data_.kernel,                                \
+                           deviceArgc, (const COIBUFFER*) deviceArgv, NULL, \
+                           waitingOnEvent, lastEventPtr,                \
+                           hostArgv, hostArgBytes,                      \
+                           NULL, 0, stream.lastEvent);                  \
   }
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \

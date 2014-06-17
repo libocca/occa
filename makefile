@@ -24,7 +24,7 @@ $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaS
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
-	$(compiler) $(compilerFlags) -o $@ $(flags) -lcoi_host -Wl,--enable-new-dtags -c $(paths) $<
+	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
 
 $(occaOPath)/occaKernelDefines.o:            \
 	$(occaIPath)/occaOpenMPDefines.hpp   \

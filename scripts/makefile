@@ -59,12 +59,14 @@ ifeq ($(OS),OSX)
 	OpenGL_Flags =
 	OpenCL_Flags =
 	CUDA_Flags   =
+	COI_Flags    =
 
 	links       += -framework accelerate
 	MPI_Links    =
 	OpenGL_Links = -D GL_GLEXT_PROTOTYPES -framework OpenGL -framework CoreServices -lX11 -lGL
 	OpenCL_Links = -framework OpenCL
 	CUDA_Links   = -framework CUDA
+	COI_Links    =
 endif
 
 ifeq ($(OS),LINUX)
@@ -73,12 +75,14 @@ ifeq ($(OS),LINUX)
 	OpenGL_Flags  = -D GL_GLEXT_PROTOTYPES
 	OpenCL_Flags  =
 	CUDA_Flags    =
+	COI_Flags     =
 
 	links        += -llapack -lblas -lm -lgfortran -lrt -ldl
 	MPI_Links     =
 	OpenGL_Links  =  -L/usr/lib/fglrx/ -lGL -lX11
 	OpenCL_Links  = -lOpenCL
 	CUDA_Links    = -lcuda
+	COI_Links     = -lcoi_host
 endif
 
 ifeq ($(OS),WINDOWS)
@@ -87,12 +91,14 @@ ifeq ($(OS),WINDOWS)
 	OpenGL_Flags  =
 	OpenCL_Flags  =
 	CUDA_Flags    =
+	COI_Flags    =
 
 	links        +=
 	MPI_Links     =
 	OpenGL_Links  =
 	OpenCL_Links  =
 	CUDA_Links    =
+	COI_Links    =
 endif
 #=================================================
 
@@ -129,7 +135,7 @@ else
 endif
 
 ifdef OCCA_COI_ENABLED
-	COI_Enabled = $(OCCA_CUDA_ENABLED)
+	COI_Enabled = $(OCCA_COI_ENABLED)
 else
 	COI_Enabled = 0
 endif
@@ -194,9 +200,9 @@ else
 	flags +=               -DOCCA_CUDA_ENABLED=0
 endif
 
-# [-] Not working?
 ifeq ($(COI_Enabled), 1)
-	flags += -DOCCA_COI_ENABLED=1
+	flags += $(COI_Flags) -DOCCA_COI_ENABLED=1
+	links += $(COI_Links)
 else
 	flags += -DOCCA_COI_ENABLED=1
 endif
