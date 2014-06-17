@@ -10,6 +10,11 @@
 #include <intel-coi/sink/COIBuffer_sink.h>
 #include <intel-coi/common/COIMacros_common.h>
 
+struct occaKernelArgs_t {
+  int outerZ, outerY, outerX;
+  int innerZ, innerY, innerX;
+};
+
 int main(int argc, char **argv){
   UNUSED_ATTR COIRESULT started = COIPipelineStartExecutingRunFunctions();
 
@@ -161,24 +166,28 @@ void occaKernelWith1Argument(uint32_t deviceArgc, void **deviceArgs, uint64_t *d
   occaKernelWith1Argument_t kernel = (occaKernelWith1Argument_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
-  void *kernelArgs = hostArgs + hostPos;
+  occatKernelArgs_t kernelArgs = *((occatKernelArgs_t*) (hostArgs + hostPos));
   hostPos += 6*sizeof(int);
 
-  int *types = (int*) (hostArgs + hostPos);
+  printf("outer = (%d,%d,%d)\ninner = (%d,%d,%d)\n",
+         kernelArgs.outerZ, kernelArgs.outerY, kernelArgs.outerX,
+         kernelArgs.innerZ, kernelArgs.innerY, kernelArgs.innerX);
 
-  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
+  // int *types = (int*) (hostArgs + hostPos);
 
-  void *argv[1];
+  // int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-  for(int i = 0; i < 1; ++i){
-    if(types[i] & (1 << 31))
-      argv[i] = deviceArgs[ types[i] & (0 << 31) ];
-    else
-      argv[i] = (void*) (hostArgs + types[i]);
-  }
+  // void *argv[1];
 
-  kernel(kernelArgs , occaInnerId0, occaInnerId2, occaInnerId2,
-         argv[0] );
+  // for(int i = 0; i < 1; ++i){
+  //   if(types[i] & (1 << 31))
+  //     argv[i] = deviceArgs[ types[i] & (0 << 31) ];
+  //   else
+  //     argv[i] = (void*) (hostArgs + types[i]);
+  // }
+
+  // kernel(kernelArgs , occaInnerId0, occaInnerId2, occaInnerId2,
+  //        argv[0] );
 }
 
 COINATIVELIBEXPORT
@@ -251,8 +260,8 @@ void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   occaKernelWith4Arguments_t kernel = (occaKernelWith4Arguments_t) *((void**) hostArgs);
   hostPos += sizeof(void*);
 
-  // void *kernelArgs = hostArgs + hostPos;
-  // hostPos += 6*sizeof(int);
+  void *kernelArgs = hostArgs + hostPos;
+  hostPos += 6*sizeof(int);
 
   // int *types = (int*) (hostArgs + hostPos);
 
