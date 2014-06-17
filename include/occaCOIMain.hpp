@@ -1029,7 +1029,7 @@ void occaKernelWith25Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
       argv[i] = (void*) (hostArgs + types[i]);
   }
 
-  kernel(&kernelArgs , occaInnerId0, occaInnerId2, occaInnerId2,
+  kernel(&&kernelArgs , occaInnerId0, occaInnerId2, occaInnerId2,
          argv[0] , argv[1] , argv[2] , argv[3] , argv[4] ,
          argv[5] , argv[6] , argv[7] , argv[8] , argv[9],
          argv[10], argv[11], argv[12], argv[13], argv[14],
