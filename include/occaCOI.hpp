@@ -36,7 +36,7 @@ namespace occa {
     coiKernel kernel;
 
     // [-] Hard-coded for now
-    void *deviceArgv[25];
+    coiMemory deviceArgv[25];
     char hostArgv[100 + 6*4 + 25*(4 + 8)];
     //            ^     ^      ^  ^   ^__[Max Bytes]
     // [Padding]__|     |      |  |__[Type]

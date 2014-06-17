@@ -342,11 +342,11 @@
 #  define OCCA_COI_INPUT_FUNCTION_ARGS(N) OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
 #  define OCCA_COI_INPUT_FUNCTION_ARG(N)                                \
   if(arg##N.pointer){                                                   \
-    *((int*) &data_.hostArgv[typePos++]) = (int) ((1 << 31) + hostPos); \
-    data_.deviceArgv[devicePos++] = arg##N.data();                      \
+    typePtr[typePos++] = (int) ((1 << 31) + devicePos);                 \
+    data_.deviceArgv[devicePos++] = *((coiMemory*) arg##N.data());      \
   }                                                                     \
   else{                                                                 \
-    *((int*) &data_.hostArgv[typePos++]) = ((0 << 31) + hostPos);       \
+    typePtr[typePos++] = (int) ((0 << 31) + hostPos);                   \
     ::memcpy(&(data_.hostArgv[hostPos]), &(arg##N.arg), arg##N.size);   \
     hostPos += arg##N.size;                                             \
   }
@@ -366,8 +366,10 @@
     ::memcpy(&(data_.hostArgv[0])    , &(data_.kernel), kSize);         \
     ::memcpy(&(data_.hostArgv[kSize]), &(occaKernelArgs[0]), 6*sizeof(int)); \
     int hostPos   = kSize + 6*sizeof(int) + N*sizeof(int);              \
-    int typePos   = kSize + 6*sizeof(int);                              \
+    int typePos   = 0;                                                  \
     int devicePos = 0;                                                  \
+                                                                        \
+    int *typePtr = (int*) (data_.hostArgv + kSize + 6*sizeof(int));     \
                                                                         \
     OCCA_COI_INPUT_FUNCTION_ARGS(N);                                    \
                                                                         \
@@ -376,7 +378,7 @@
     OCCA_COI_CHECK("Kernel: Launching",                                 \
                    COIPipelineRunFunction(stream.handle,                \
                                           dData.kernelWrapper[N - 1],   \
-                                          0, NULL, NULL, /*devicePos, (const COIBUFFER*) data_.deviceArgv, NULL,*/ \
+                                          devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
                                           false, NULL,                  \
                                           data_.hostArgv, hostPos,      \
                                           NULL, 0,                      \

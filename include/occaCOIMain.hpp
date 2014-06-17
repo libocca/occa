@@ -253,24 +253,24 @@ void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   occaKernelWith4Arguments_t kernel = (occaKernelWith4Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
-  void *kernelArgs = hostArgs + hostPos;
-  hostPos += 6*sizeof(int);
+  // void *kernelArgs = hostArgs + hostPos;
+  // hostPos += 6*sizeof(int);
 
-  int *types = (int*) (hostArgs + hostPos);
+  // int *types = (int*) (hostArgs + hostPos);
 
-  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
+  // int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-  void *argv[4];
+  // void *argv[4];
 
-  for(int i = 0; i < 4; ++i){
-    if(types[i] & (1 << 31))
-      argv[i] = deviceArgs[ types[i] & (0 << 31) ];
-    else
-      argv[i] = (void*) (hostArgs + types[i]);
-  }
+  // for(int i = 0; i < 4; ++i){
+  //   if(types[i] & (1 << 31))
+  //     argv[i] = deviceArgs[ types[i] & (0 << 31) ];
+  //   else
+  //     argv[i] = (void*) (hostArgs + types[i]);
+  // }
 
-  kernel(kernelArgs , occaInnerId0, occaInnerId2, occaInnerId2,
-         argv[0] , argv[1] , argv[2] , argv[3] );
+  // kernel(kernelArgs , occaInnerId0, occaInnerId2, occaInnerId2,
+  //        argv[0] , argv[1] , argv[2] , argv[3] );
 }
 
 COINATIVELIBEXPORT
