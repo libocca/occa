@@ -15,7 +15,7 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  std::string mode = "Pthreads";
+  std::string mode = "COI";
   int platformID = 5;
   int deviceID   = 0;
 

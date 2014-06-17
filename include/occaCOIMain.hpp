@@ -23,142 +23,142 @@ int main(int argc, char **argv){
   return 0;
 }
 
-typedef void(*occaKernelWith1Argument)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                       void *arg0 );
+typedef void(*occaKernelWith1Argument_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                         void *arg0 );
 
-typedef void(*occaKernelWith2Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 );
+typedef void(*occaKernelWith2Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 );
 
-typedef void(*occaKernelWith3Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 );
+typedef void(*occaKernelWith3Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 );
 
-typedef void(*occaKernelWith4Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 , void *arg3 );
+typedef void(*occaKernelWith4Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 , void *arg3 );
 
-typedef void(*occaKernelWith5Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 );
-
-
-typedef void(*occaKernelWith6Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                        void *arg5 );
-
-typedef void(*occaKernelWith7Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                        void *arg5 , void *arg6 );
-
-typedef void(*occaKernelWith8Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                        void *arg5 , void *arg6 , void *arg7 );
-
-typedef void(*occaKernelWith9Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                        void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                        void *arg5 , void *arg6 , void *arg7 , void *arg8 );
-
-typedef void(*occaKernelWith10Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 );
+typedef void(*occaKernelWith5Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 );
 
 
-typedef void(*occaKernelWith11Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10);
+typedef void(*occaKernelWith6Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                          void *arg5 );
 
-typedef void(*occaKernelWith12Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11);
+typedef void(*occaKernelWith7Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                          void *arg5 , void *arg6 );
 
-typedef void(*occaKernelWith13Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12);
+typedef void(*occaKernelWith8Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                          void *arg5 , void *arg6 , void *arg7 );
 
-typedef void(*occaKernelWith14Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13);
+typedef void(*occaKernelWith9Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                          void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                          void *arg5 , void *arg6 , void *arg7 , void *arg8 );
 
-typedef void(*occaKernelWith15Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14);
+typedef void(*occaKernelWith10Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 );
 
 
-typedef void(*occaKernelWith16Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15);
+typedef void(*occaKernelWith11Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10);
 
-typedef void(*occaKernelWith17Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16);
+typedef void(*occaKernelWith12Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11);
 
-typedef void(*occaKernelWith18Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17);
+typedef void(*occaKernelWith13Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12);
 
-typedef void(*occaKernelWith19Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18);
+typedef void(*occaKernelWith14Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13);
 
-typedef void(*occaKernelWith20Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18, void *arg19);
+typedef void(*occaKernelWith15Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14);
 
-typedef void(*occaKernelWith21Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
-                                         void *arg20);
 
-typedef void(*occaKernelWith22Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
-                                         void *arg20, void *arg21);
+typedef void(*occaKernelWith16Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15);
 
-typedef void(*occaKernelWith23Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
-                                         void *arg20, void *arg21, void *arg22);
+typedef void(*occaKernelWith17Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16);
 
-typedef void(*occaKernelWith24Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
-                                         void *arg20, void *arg21, void *arg22, void *arg23);
+typedef void(*occaKernelWith18Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17);
 
-typedef void(*occaKernelWith25Arguments)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
-                                         void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
-                                         void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
-                                         void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
-                                         void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
-                                         void *arg20, void *arg21, void *arg22, void *arg23, void *arg24);
+typedef void(*occaKernelWith19Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18);
+
+typedef void(*occaKernelWith20Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18, void *arg19);
+
+typedef void(*occaKernelWith21Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
+                                           void *arg20);
+
+typedef void(*occaKernelWith22Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
+                                           void *arg20, void *arg21);
+
+typedef void(*occaKernelWith23Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
+                                           void *arg20, void *arg21, void *arg22);
+
+typedef void(*occaKernelWith24Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
+                                           void *arg20, void *arg21, void *arg22, void *arg23);
+
+typedef void(*occaKernelWith25Arguments_t)(void *kernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                                           void *arg0 , void *arg1 , void *arg2 , void *arg3 , void *arg4 ,
+                                           void *arg5 , void *arg6 , void *arg7 , void *arg8 , void *arg9 ,
+                                           void *arg10, void *arg11, void *arg12, void *arg13, void *arg14,
+                                           void *arg15, void *arg16, void *arg17, void *arg18, void *arg19,
+                                           void *arg20, void *arg21, void *arg22, void *arg23, void *arg24);
 
 COINATIVELIBEXPORT
-void occaKernelWith1Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
-                               void *hostArgs_, uint16_t hostArgSize,
-                               void *ret, uint16_t retSize){
+void occaKernelWith1Argument(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
+                             void *hostArgs_, uint16_t hostArgSize,
+                             void *ret, uint16_t retSize){
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith1Arguments kernel = (occaKernelWith1Arguments) hostArgs + hostPos;
+  occaKernelWith1Argument_t kernel = (occaKernelWith1Argument_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -188,7 +188,7 @@ void occaKernelWith2Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith2Arguments kernel = (occaKernelWith2Arguments) hostArgs + hostPos;
+  occaKernelWith2Arguments_t kernel = (occaKernelWith2Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -218,7 +218,7 @@ void occaKernelWith3Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith3Arguments kernel = (occaKernelWith3Arguments) hostArgs + hostPos;
+  occaKernelWith3Arguments_t kernel = (occaKernelWith3Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -248,7 +248,7 @@ void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith4Arguments kernel = (occaKernelWith4Arguments) hostArgs + hostPos;
+  occaKernelWith4Arguments_t kernel = (occaKernelWith4Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -278,7 +278,7 @@ void occaKernelWith5Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith5Arguments kernel = (occaKernelWith5Arguments) hostArgs + hostPos;
+  occaKernelWith5Arguments_t kernel = (occaKernelWith5Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -308,7 +308,7 @@ void occaKernelWith6Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith6Arguments kernel = (occaKernelWith6Arguments) hostArgs + hostPos;
+  occaKernelWith6Arguments_t kernel = (occaKernelWith6Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -339,7 +339,7 @@ void occaKernelWith7Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith7Arguments kernel = (occaKernelWith7Arguments) hostArgs + hostPos;
+  occaKernelWith7Arguments_t kernel = (occaKernelWith7Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -370,7 +370,7 @@ void occaKernelWith8Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith8Arguments kernel = (occaKernelWith8Arguments) hostArgs + hostPos;
+  occaKernelWith8Arguments_t kernel = (occaKernelWith8Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -401,7 +401,7 @@ void occaKernelWith9Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith9Arguments kernel = (occaKernelWith9Arguments) hostArgs + hostPos;
+  occaKernelWith9Arguments_t kernel = (occaKernelWith9Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -432,7 +432,7 @@ void occaKernelWith10Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith10Arguments kernel = (occaKernelWith10Arguments) hostArgs + hostPos;
+  occaKernelWith10Arguments_t kernel = (occaKernelWith10Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -463,7 +463,7 @@ void occaKernelWith11Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith11Arguments kernel = (occaKernelWith11Arguments) hostArgs + hostPos;
+  occaKernelWith11Arguments_t kernel = (occaKernelWith11Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -495,7 +495,7 @@ void occaKernelWith12Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith12Arguments kernel = (occaKernelWith12Arguments) hostArgs + hostPos;
+  occaKernelWith12Arguments_t kernel = (occaKernelWith12Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -527,7 +527,7 @@ void occaKernelWith13Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith13Arguments kernel = (occaKernelWith13Arguments) hostArgs + hostPos;
+  occaKernelWith13Arguments_t kernel = (occaKernelWith13Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -559,7 +559,7 @@ void occaKernelWith14Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith14Arguments kernel = (occaKernelWith14Arguments) hostArgs + hostPos;
+  occaKernelWith14Arguments_t kernel = (occaKernelWith14Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -591,7 +591,7 @@ void occaKernelWith15Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith15Arguments kernel = (occaKernelWith15Arguments) hostArgs + hostPos;
+  occaKernelWith15Arguments_t kernel = (occaKernelWith15Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -623,7 +623,7 @@ void occaKernelWith16Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith16Arguments kernel = (occaKernelWith16Arguments) hostArgs + hostPos;
+  occaKernelWith16Arguments_t kernel = (occaKernelWith16Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -656,7 +656,7 @@ void occaKernelWith17Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith17Arguments kernel = (occaKernelWith17Arguments) hostArgs + hostPos;
+  occaKernelWith17Arguments_t kernel = (occaKernelWith17Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -689,7 +689,7 @@ void occaKernelWith18Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith18Arguments kernel = (occaKernelWith18Arguments) hostArgs + hostPos;
+  occaKernelWith18Arguments_t kernel = (occaKernelWith18Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -722,7 +722,7 @@ void occaKernelWith19Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith19Arguments kernel = (occaKernelWith19Arguments) hostArgs + hostPos;
+  occaKernelWith19Arguments_t kernel = (occaKernelWith19Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -755,7 +755,7 @@ void occaKernelWith20Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith20Arguments kernel = (occaKernelWith20Arguments) hostArgs + hostPos;
+  occaKernelWith20Arguments_t kernel = (occaKernelWith20Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -788,7 +788,7 @@ void occaKernelWith21Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith21Arguments kernel = (occaKernelWith21Arguments) hostArgs + hostPos;
+  occaKernelWith21Arguments_t kernel = (occaKernelWith21Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -822,7 +822,7 @@ void occaKernelWith22Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith22Arguments kernel = (occaKernelWith22Arguments) hostArgs + hostPos;
+  occaKernelWith22Arguments_t kernel = (occaKernelWith22Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -856,7 +856,7 @@ void occaKernelWith23Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith23Arguments kernel = (occaKernelWith23Arguments) hostArgs + hostPos;
+  occaKernelWith23Arguments_t kernel = (occaKernelWith23Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -890,7 +890,7 @@ void occaKernelWith24Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith24Arguments kernel = (occaKernelWith24Arguments) hostArgs + hostPos;
+  occaKernelWith24Arguments_t kernel = (occaKernelWith24Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;
@@ -924,7 +924,7 @@ void occaKernelWith25Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 
-  occaKernelWith25Arguments kernel = (occaKernelWith25Arguments) hostArgs + hostPos;
+  occaKernelWith25Arguments_t kernel = (occaKernelWith25Arguments_t) (hostArgs + hostPos);
   hostPos += sizeof(void*);
 
   void *kernelArgs = hostArgs + hostPos;

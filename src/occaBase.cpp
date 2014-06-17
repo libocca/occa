@@ -300,6 +300,14 @@ namespace occa {
       throw 1;
 #endif
 
+    case COI:
+#if OCCA_COI_ENABLED
+      dHandle = new device_t<COI>(); break;
+#else
+      std::cout << "OCCA mode [COI] is not enabled\n";
+      throw 1;
+#endif
+
     default:
       std::cout << "Incorrect OCCA mode given\n";
       throw 1;

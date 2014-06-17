@@ -357,6 +357,7 @@
   template <>                                                           \
   void kernel_t<COI>::operator() (OCCA_KERNEL_ARGS(N)){                 \
     OCCA_EXTRACT_DATA(COI, Kernel);                                     \
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data); \
                                                                         \
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
                              inner.z, inner.y, inner.x};                \
@@ -376,7 +377,7 @@
     coiEvent *lastEventPtr = stream.lastEvent;                          \
                                                                         \
     COIPipelineRunFunction(stream.handle,                               \
-                           data_.kernel,                                \
+                           dData.kernelWrapper[N - 1],                  \
                            devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
                            waitingOnEvent, lastEventPtr,                \
                            data_.hostArgv, hostPos,                     \

@@ -34,8 +34,8 @@ namespace occa {
     coiKernel kernel;
 
     // [-] Hard-coded for now
-    void *deviceArgv[50];
-    char hostArgv[100 + 6*4 + 50*(1 + 8)];
+    void *deviceArgv[25];
+    char hostArgv[100 + 6*4 + 25*(1 + 8)];
     //            ^     ^      ^  ^   ^__[Max Bytes]
     // [Padding]__|     |      |  |__[Type]
     //                  |      |__[Maximum Args]
@@ -45,6 +45,8 @@ namespace occa {
   struct COIDeviceData_t {
     coiDevice deviceID;
     coiChief chiefID;
+
+    coiKernel kernelWrapper[25];
   };
   //==================================
 

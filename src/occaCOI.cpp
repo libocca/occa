@@ -542,10 +542,31 @@ namespace occa {
                                             memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
                                             NULL,
                                             &data_.chiefID) );
+
+    const char *kernelNames[] = {"occaKernelWith1Argument" , "occaKernelWith2Arguments", "occaKernelWith3Arguments",
+                                 "occaKernelWith4Arguments", "occaKernelWith5Arguments", "occaKernelWith6Arguments",
+                                 "occaKernelWith7Arguments", "occaKernelWith8Arguments", "occaKernelWith9Arguments",
+                                 "occaKernelWith10Arguments", "occaKernelWith11Arguments", "occaKernelWith12Arguments",
+                                 "occaKernelWith13Arguments", "occaKernelWith14Arguments", "occaKernelWith15Arguments",
+                                 "occaKernelWith16Arguments", "occaKernelWith17Arguments", "occaKernelWith18Arguments",
+                                 "occaKernelWith19Arguments", "occaKernelWith20Arguments", "occaKernelWith21Arguments",
+                                 "occaKernelWith22Arguments", "occaKernelWith23Arguments", "occaKernelWith24Arguments",
+                                 "occaKernelWith25Arguments"};
+
+    // [-] More hard-coding, if you know what I mean
+    OCCA_COI_CHECK("Device: Getting Kernel Wrappers",
+                   COIProcessGetFunctionHandles(data_.chiefID,
+                                                25,
+                                                kernelNames,
+                                                data_.kernelWrapper));
   }
 
   template <>
   void device_t<COI>::getEnvironmentVariables(){
+    char *c_compiler = getenv("OCCA_COI_COMPILER");
+    if(c_compiler != NULL)
+      compiler = std::string(c_compiler);
+
     char *c_compilerFlags = getenv("OCCA_COI_COMPILER_FLAGS");
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
