@@ -119,10 +119,12 @@ namespace occa {
                                                  NULL,
                                                  &outLibrary));
 
+    const char *c_functionName = functionName.c_str();
+
     OCCA_COI_CHECK("Kernel: Getting Handle",
                    COIProcessGetFunctionHandles(data_.chiefID,
                                                 1,
-                                                functionName.c_str(),
+                                                &c_functionName,
                                                 &(data_.kernel)));
 
     return this;
@@ -146,10 +148,12 @@ namespace occa {
                                                  NULL,
                                                  &outLibrary));
 
+    const char *c_functionName = functionName.c_str();
+
     OCCA_COI_CHECK("Kernel: Getting Handle",
                    COIProcessGetFunctionHandles(data_.chiefID,
                                                 1,
-                                                functionName.c_str(),
+                                                &c_functionName,
                                                 &(data_.kernel)));
 
     return this;
@@ -216,17 +220,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
-                   COIBufferCopy(*((coiMemory*) handle),
-                                 offset,
-                                 source,
-                                 bytes,
-                                 COI_COPY_UNSPECIFIED,
-                                 lastEvent != NULL,
-                                 &lastEvent,
-                                 &(stream.lastEvent)) );
+                   COIBufferWrite(*((coiMemory*) handle),
+                                  offset,
+                                  source,
+                                  bytes,
+                                  COI_COPY_UNSPECIFIED,
+                                  waitingOnEvent,
+                                  lastEventPtr,
+                                  stream.lastEvent) );
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, stream.lastEvent,
+                                -1, true, NULL, NULL) );
   }
 
   template <>
@@ -240,7 +249,8 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) handle),
@@ -249,9 +259,13 @@ namespace occa {
                                  srcOffset,
                                  bytes,
                                  COI_COPY_UNSPECIFIED,
-                                 lastEvent != NULL,
-                                 &lastEvent,
-                                 &(stream.lastEvent)) );
+                                 waitingOnEvent,
+                                 lastEventPtr,
+                                 stream.lastEvent) );
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, stream.lastEvent,
+                                -1, true, NULL, NULL) );
   }
 
   template <>
@@ -264,17 +278,22 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
-                   COIBufferCopy(*((coiMemory*) handle),
+                   COIBufferRead(*((coiMemory*) handle),
                                  offset,
                                  dest,
                                  bytes,
                                  COI_COPY_UNSPECIFIED,
-                                 lastEvent != NULL,
-                                 &lastEvent,
-                                 &(stream.lastEvent)) );
+                                 waitingOnEvent,
+                                 lastEventPtr,
+                                 stream.lastEvent) );
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, stream.lastEvent,
+                                -1, true, NULL, NULL) );
   }
 
   template <>
@@ -288,7 +307,8 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) dest->handle),
@@ -297,9 +317,13 @@ namespace occa {
                                  srcOffset,
                                  bytes,
                                  COI_COPY_UNSPECIFIED,
-                                 lastEvent != NULL,
-                                 &lastEvent,
-                                 &(stream.lastEvent)) );
+                                 waitingOnEvent,
+                                 lastEventPtr,
+                                 stream.lastEvent) );
+
+    OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
+                   COIEventWait(1, stream.lastEvent,
+                                -1, true, NULL, NULL) );
   }
 
   template <>
@@ -312,13 +336,18 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
+
     OCCA_COI_CHECK("Memory: Copy From",
-                   COIBufferCopy(*((coiMemory*) handle),
-                                 offset,
-                                 source,
-                                 bytes,
-                                 COI_COPY_UNSPECIFIED,
-                                 0, NULL, NULL) );
+                   COIBufferWrite(*((coiMemory*) handle),
+                                  offset,
+                                  source,
+                                  bytes,
+                                  COI_COPY_UNSPECIFIED,
+                                  waitingOnEvent,
+                                  lastEventPtr,
+                                  stream.lastEvent) );
   }
 
   template <>
@@ -332,7 +361,8 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) handle),
@@ -341,7 +371,9 @@ namespace occa {
                                  srcOffset,
                                  bytes,
                                  COI_COPY_UNSPECIFIED,
-                                 0, NULL, NULL) );
+                                 waitingOnEvent,
+                                 lastEventPtr,
+                                 stream.lastEvent) );
   }
 
   template <>
@@ -354,15 +386,18 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
-                   COIBufferCopy(*((coiMemory*) handle),
+                   COIBufferRead(*((coiMemory*) handle),
                                  offset,
                                  dest,
                                  bytes,
                                  COI_COPY_UNSPECIFIED,
-                                 0, NULL, NULL) );
+                                 waitingOnEvent,
+                                 lastEventPtr,
+                                 stream.lastEvent) );
   }
 
   template <>
@@ -376,7 +411,8 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    coiEvent lastEvent = stream.lastEvent;
+    bool waitingOnEvent    = (stream.lastEvent != NULL);
+    coiEvent *lastEventPtr = stream.lastEvent;
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) dest->handle),
@@ -385,7 +421,9 @@ namespace occa {
                                  srcOffset,
                                  bytes,
                                  COI_COPY_UNSPECIFIED,
-                                 0, NULL, NULL) );
+                                 waitingOnEvent,
+                                 lastEventPtr,
+                                 stream.lastEvent) );
   }
 
   template <>
@@ -450,51 +488,50 @@ namespace occa {
 
     std::stringstream salt;
     salt << "COI"
-         << occaCoiMain;
+         << occaCOIMain;
 
-    std::string cachedBinary = binaryIsCached("i_occaCOIMain", salt.str());
+    std::string cachedBinary = binaryIsCached("occaCOIMain", salt.str());
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
-    if(fileExists){
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-      return buildFromBinary(cachedBinary, functionName);
+    if(fileExists)
+      std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
+    else{
+      //---[ Write File ]-----------------
+      int lastSlash = 0;
+      const int chars = cachedBinary.size();
+
+      for(int i = 0; i < chars; ++i)
+        if(cachedBinary[i] == '/')
+          lastSlash = i;
+
+      ++lastSlash;
+
+      const std::string iCachedBinary =
+        cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars);
+
+      std::ofstream fs;
+      fs.open(iCachedBinary.c_str());
+
+      fs << occaCOIMain;
+
+      fs.close();
+
+      std::stringstream command;
+
+      command << dev->dHandle->compiler
+              << " -o " << cachedBinary
+              << " -x c++ -w -fPIC -shared"
+              << ' '    << dev->dHandle->compilerFlags
+              << ' '    << iCachedBinary;
+
+      const std::string &sCommand = command.str();
+
+      std::cout << sCommand << '\n';
+
+      system(sCommand.c_str());
     }
-
-    //---[ Write File ]-----------------
-    int lastSlash = 0;
-    const int chars = cachedBinary.size();
-
-    for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-    const std::string iCachedBinary =
-      cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars);
-
-    std::ofstream fs;
-    fs.open(iCachedBinary.c_str());
-
-    fs << info.occaKeywords << info.header << readFile(filename);
-
-    fs.close();
-
-    std::stringstream command;
-
-    command << dev->dHandle->compiler
-            << " -o " << cachedBinary
-            << " -x c++ -w -fPIC -shared"
-            << ' '    << dev->dHandle->compilerFlags
-            << ' '    << info.flags
-            << ' '    << iCachedBinary;
-
-    const std::string &sCommand = command.str();
-
-    std::cout << sCommand << '\n';
-
-    system(sCommand.c_str());
 
     OCCA_COI_CHECK("Device: Initializing",
                    COIProcessCreateFromFile(data_.deviceID,
@@ -542,6 +579,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(COI, Device);
 
     coiStream *retStream = (coiStream*) ::malloc(sizeof(coiStream));
+    retStream->lastEvent = new coiEvent;
 
     OCCA_COI_CHECK("Device: Generating a Stream",
                    COIPipelineCreate(data_.chiefID,
@@ -555,10 +593,15 @@ namespace occa {
 
   template <>
   void device_t<COI>::freeStream(stream s){
+    if(s == NULL)
+      return;
+
     coiStream *stream = (coiStream*) s;
 
-    COIPipelineDestroy("Device: Freeing a Stream",
-                       stream.handle);
+    delete stream->lastEvent;
+
+    OCCA_COI_CHECK("Device: Freeing a Stream",
+                   COIPipelineDestroy(stream->handle));
 
     ::free(stream);
   }
@@ -606,7 +649,6 @@ namespace occa {
     OCCA_EXTRACT_DATA(COI, Device);
 
     memory_v *mem = new memory_t<COI>;
-    cl_int error;
 
     mem->dev    = dev;
     mem->handle = ::malloc(sizeof(coiMemory));
@@ -628,11 +670,12 @@ namespace occa {
   void device_t<COI>::free(){
     OCCA_EXTRACT_DATA(COI, Device);
 
-    OCCA_COI_CHECK( COIProcessDestroy(data_.chiefID,
-                                      -1,
-                                      false,
-                                      NULL,
-                                      NULL ));
+    OCCA_COI_CHECK("Device: Freeing Chief Processes",
+                   COIProcessDestroy(data_.chiefID,
+                                     -1,
+                                     false,
+                                     NULL,
+                                     NULL));
 
     ::free(data);
   }
@@ -647,7 +690,7 @@ namespace occa {
 
 
   //---[ Error Handling ]-------------
-  std::string coiError(int e){
+  std::string coiError(COIRESULT e){
     return std::string( COIResultGetName(e) );
   }
   //==================================

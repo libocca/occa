@@ -352,8 +352,10 @@
                              inner.z, inner.y, inner.x};                \
                                                                         \
     /* OCCA_COI_INPUT_FUNCTION_ARGS(N); */                              \
-    coiStream &stream = *((coiStream*) dev->currentStream);             \
-    coiEvent lastEvent = stream.lastEvent;                              \
+    coiStream &stream      = *((coiStream*) dev->currentStream);        \
+                                                                        \
+    bool waitingOnEvent    = (stream.lastEvent != NULL);                \
+    coiEvent *lastEventPtr = stream.lastEvent;                          \
                                                                         \
     void *deviceArgv, *hostArgv;                                        \
     int deviceArgc = 0, hostArgc = 0;                                   \
@@ -362,9 +364,9 @@
                    COIPipelineRunFunction(stream.handle,                \
                                           data_.kernel,                 \
                                           deviceArgc, deviceArgv, NULL, \
-                                          1, &lastEvent,                \
+                                          waitingOnEvent, lastEventPtr, \
                                           hostArgc, hostArgv,           \
-                                          NULL, 0, &(stream.lastEvent)) ); \
+                                          NULL, 0, stream.lastEvent) ); \
   }
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \

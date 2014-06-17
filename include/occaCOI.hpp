@@ -26,7 +26,7 @@ namespace occa {
   //---[ Data Structs ]---------------
   struct coiStream {
     COIPIPELINE handle;
-    coiEvent lastEvent;
+    coiEvent *lastEvent;
   };
 
   struct COIKernelData_t {
