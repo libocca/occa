@@ -373,16 +373,14 @@
                                                                         \
     coiStream &stream = *((coiStream*) dev->currentStream);             \
                                                                         \
-    bool waitingOnEvent    = (stream.lastEvent != NULL);                \
-    coiEvent *lastEventPtr = stream.lastEvent;                          \
-                                                                        \
-    COIPipelineRunFunction(stream.handle,                               \
-                           dData.kernelWrapper[N - 1],                  \
-                           devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
-                           waitingOnEvent, lastEventPtr,                \
-                           data_.hostArgv, hostPos,                     \
-                           NULL, 0, stream.lastEvent);                  \
-  }
+    OCCA_COI_CHECK("Kernel: Launching",                                 \
+                   COIPipelineRunFunction(stream.handle,                \
+                                          dData.kernelWrapper[N - 1],   \
+                                          devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
+                                          false, NULL,                                 \
+                                          data_.hostArgv, hostPos,                     \
+                                          NULL, 0, &(stream.lastEvent))); \
+}
 
 #  define OCCA_COI_KERNEL_OPERATOR_DEFINITIONS                          \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_KERNEL_OPERATOR_DEFINITION)
