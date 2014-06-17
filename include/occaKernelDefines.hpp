@@ -4,5 +4,5 @@ namespace occa {
     extern char occaOpenCLDefines[3426];
     extern char occaCUDADefines[3314];
     extern char occaCOIDefines[6330];
-    extern char occaCOIMain[36506];
+    extern char occaCOIMain[36921];
 }
