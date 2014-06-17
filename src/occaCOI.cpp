@@ -79,6 +79,21 @@ namespace occa {
 
     std::string cachedBinary = binaryIsCached(filename, salt.str());
 
+    int lastSlash = 0;
+    const int chars = cachedBinary.size();
+
+    for(int i = 0; i < chars; ++i)
+      if(cachedBinary[i] == '/')
+        lastSlash = i;
+
+    ++lastSlash;
+
+    std::string soname  = cachedBinary.substr(lastSlash, chars);
+    std::string libPath = cachedBinary.substr(0, lastSlash);
+    std::string libName = "lib" + soname + ".so";
+
+    cachedBinary = libPath + libName;
+
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
@@ -86,8 +101,6 @@ namespace occa {
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
       return buildFromBinary(cachedBinary, functionName);
     }
-
-    data = new COIKernelData_t;
 
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
@@ -115,7 +128,7 @@ namespace occa {
     OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
                    COIProcessLoadLibraryFromFile(data_.chiefID,
                                                  cachedBinary.c_str(),
-                                                 NULL,
+                                                 soname.c_str(),
                                                  NULL,
                                                  &outLibrary));
 
@@ -133,8 +146,6 @@ namespace occa {
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
                                                 const std::string &functionName_){
-    data = new COIKernelData_t;
-
     OCCA_EXTRACT_DATA(COI, Kernel);
 
     functionName = functionName_;
@@ -545,7 +556,7 @@ namespace occa {
                                             true , NULL,
                                             memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
                                             NULL,
-                                            &data_.chiefID) );
+                                            &(data_.chiefID)) );
 
     const char *kernelNames[] = {"occaKernelWith1Argument"  , "occaKernelWith2Arguments" , "occaKernelWith3Arguments" ,
                                  "occaKernelWith4Arguments" , "occaKernelWith5Arguments" , "occaKernelWith6Arguments" ,
