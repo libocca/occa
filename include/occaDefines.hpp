@@ -376,7 +376,7 @@
     OCCA_COI_CHECK("Kernel: Launching",                                 \
                    COIPipelineRunFunction(stream.handle,                \
                                           dData.kernelWrapper[N - 1],   \
-                                          devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
+                                          0, NULL, NULL, /*devicePos, (const COIBUFFER*) data_.deviceArgv, NULL,*/ \
                                           false, NULL,                  \
                                           data_.hostArgv, hostPos,      \
                                           NULL, 0,                      \
