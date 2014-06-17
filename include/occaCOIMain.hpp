@@ -166,7 +166,7 @@ void occaKernelWith1Argument(uint32_t deviceArgc, void **deviceArgs, uint64_t *d
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[1];
 
@@ -196,7 +196,7 @@ void occaKernelWith2Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[2];
 
@@ -226,7 +226,7 @@ void occaKernelWith3Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[3];
 
@@ -258,7 +258,7 @@ void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[4];
 
@@ -288,7 +288,7 @@ void occaKernelWith5Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[5];
 
@@ -318,7 +318,7 @@ void occaKernelWith6Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[6];
 
@@ -349,7 +349,7 @@ void occaKernelWith7Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[7];
 
@@ -380,7 +380,7 @@ void occaKernelWith8Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[8];
 
@@ -411,7 +411,7 @@ void occaKernelWith9Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[9];
 
@@ -442,7 +442,7 @@ void occaKernelWith10Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[10];
 
@@ -473,7 +473,7 @@ void occaKernelWith11Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[11];
 
@@ -505,7 +505,7 @@ void occaKernelWith12Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[12];
 
@@ -537,7 +537,7 @@ void occaKernelWith13Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[13];
 
@@ -569,7 +569,7 @@ void occaKernelWith14Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[14];
 
@@ -601,7 +601,7 @@ void occaKernelWith15Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[15];
 
@@ -633,7 +633,7 @@ void occaKernelWith16Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[16];
 
@@ -666,7 +666,7 @@ void occaKernelWith17Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[17];
 
@@ -699,7 +699,7 @@ void occaKernelWith18Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[18];
 
@@ -732,7 +732,7 @@ void occaKernelWith19Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[19];
 
@@ -765,7 +765,7 @@ void occaKernelWith20Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[20];
 
@@ -798,7 +798,7 @@ void occaKernelWith21Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[21];
 
@@ -832,7 +832,7 @@ void occaKernelWith22Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[22];
 
@@ -866,7 +866,7 @@ void occaKernelWith23Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[23];
 
@@ -900,7 +900,7 @@ void occaKernelWith24Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[24];
 
@@ -934,7 +934,7 @@ void occaKernelWith25Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t 
 
   char *types = (char*) (hostArgs + hostPos);
 
-  int occaInnerId0, occaInnerId1, occaInnerId2;
+  int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
   void *argv[25];
 

@@ -526,7 +526,7 @@ namespace occa {
 
       command << dev->dHandle->compiler
               << " -o " << cachedBinary
-              << " -x c++ -w -fPIC -shared"
+              << " -x c++"
               << ' '    << dev->dHandle->compilerFlags
               << ' '    << iCachedBinary;
 
@@ -536,8 +536,6 @@ namespace occa {
 
       system(sCommand.c_str());
     }
-
-    std::cout << cachedBinary << '\n';
 
     OCCA_COI_CHECK("Device: Initializing",
                    COIProcessCreateFromFile(data_.deviceID,
@@ -549,11 +547,9 @@ namespace occa {
                                             NULL,
                                             &data_.chiefID) );
 
-    std::cout << (void*) data_.chiefID << '\n';
-
-    const char *kernelNames[] = {"occaKernelWith1Argument" , "occaKernelWith2Arguments", "occaKernelWith3Arguments",
-                                 "occaKernelWith4Arguments", "occaKernelWith5Arguments", "occaKernelWith6Arguments",
-                                 "occaKernelWith7Arguments", "occaKernelWith8Arguments", "occaKernelWith9Arguments",
+    const char *kernelNames[] = {"occaKernelWith1Argument"  , "occaKernelWith2Arguments" , "occaKernelWith3Arguments" ,
+                                 "occaKernelWith4Arguments" , "occaKernelWith5Arguments" , "occaKernelWith6Arguments" ,
+                                 "occaKernelWith7Arguments" , "occaKernelWith8Arguments" , "occaKernelWith9Arguments" ,
                                  "occaKernelWith10Arguments", "occaKernelWith11Arguments", "occaKernelWith12Arguments",
                                  "occaKernelWith13Arguments", "occaKernelWith14Arguments", "occaKernelWith15Arguments",
                                  "occaKernelWith16Arguments", "occaKernelWith17Arguments", "occaKernelWith18Arguments",
@@ -567,9 +563,6 @@ namespace occa {
                                                 25,
                                                 kernelNames,
                                                 data_.kernelWrapper));
-
-    for(int i = 0; i < 5; ++i)
-      std::cout << i << ": " << data_.kernelWrapper[i] << '\n';
   }
 
   template <>
