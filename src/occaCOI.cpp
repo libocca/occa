@@ -156,9 +156,6 @@ namespace occa {
                                                 &c_functionName,
                                                 &(data_.kernel)));
 
-    //---[ JUNK ]-------------
-    //========================
-
     return this;
   }
 

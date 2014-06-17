@@ -35,13 +35,11 @@ namespace occa {
 
     // [-] Hard-coded for now
     void *deviceArgv[50];
-    char hostArgv[6*4 + 50*(1 + 8)];
-    //            ^      ^  ^   ^__[Max Bytes]
-    //            |      |  |__[Type]
-    //            |      |__[Maximum Args]
-    //            |__[KernelArgs]
-
-    int deviceArgc, hostArgBytes;
+    char hostArgv[100 + 6*4 + 50*(1 + 8)];
+    //            ^     ^      ^  ^   ^__[Max Bytes]
+    // [Padding]__|     |      |  |__[Type]
+    //                  |      |__[Maximum Args]
+    //                  |__[KernelArgs]
   };
 
   struct COIDeviceData_t {

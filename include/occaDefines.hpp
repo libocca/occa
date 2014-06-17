@@ -339,9 +339,17 @@
 #  define OCCA_COI_FUNCTION_POINTER_TYPEDEFS                            \
     OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_COI_FUNCTION_POINTER_TYPEDEF)
 
-#  define OCCA_COI_INPUT_FUNCTION_ARG(N) , arg##N.data()
-#  define OCCA_COI_INPUT_FUNCTION_ARGS(N)  occaKernelArgs,              \
-                                       OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
+#  define OCCA_COI_INPUT_FUNCTION_ARGS(N) OCL_FOR(1, N, OCCA_COI_INPUT_FUNCTION_ARG)
+#  define OCCA_COI_INPUT_FUNCTION_ARG(N)                                \
+  if(arg##N.pointer){                                                   \
+    data_.hostArgv[typePos++] = (1 << 7) + devicePos;                   \
+    data_.deviceArgv[devicePos++] = arg##N.data();                      \
+  }                                                                     \
+  else{                                                                 \
+    data_.hostArgv[typePos++] = (0 << 7) + hostPos;                     \
+    ::memcpy(&(data_.hostArgv[hostPos]), &(arg##N.arg), arg##N.size);   \
+    hostPos += arg##N.size;                                             \
+  }
 
 ; // For MACRO alignment
 
@@ -353,18 +361,23 @@
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
                              inner.z, inner.y, inner.x};                \
                                                                         \
-    /*OCCA_COI_INPUT_FUNCTION_ARGS(N);*/                                \
+    ::memcpy(&(data_.hostArgv[0]), &(occaKernelArgs[0]), 6*sizeof(int)); \
+    int hostPos   = 6*sizeof(int) + N;                                  \
+    int typePos   = 6*sizeof(int);                                      \
+    int devicePos = 0;                                                  \
                                                                         \
-    coiStream &stream      = *((coiStream*) dev->currentStream);        \
+    OCCA_COI_INPUT_FUNCTION_ARGS(N);                                    \
+                                                                        \
+    coiStream &stream = *((coiStream*) dev->currentStream);             \
                                                                         \
     bool waitingOnEvent    = (stream.lastEvent != NULL);                \
     coiEvent *lastEventPtr = stream.lastEvent;                          \
                                                                         \
     COIPipelineRunFunction(stream.handle,                               \
                            data_.kernel,                                \
-                           data_.deviceArgc, (const COIBUFFER*) data_.deviceArgv, NULL, \
+                           devicePos, (const COIBUFFER*) data_.deviceArgv, NULL, \
                            waitingOnEvent, lastEventPtr,                \
-                           data_.hostArgv, data_.hostArgBytes,          \
+                           data_.hostArgv, hostPos,                     \
                            NULL, 0, stream.lastEvent);                  \
   }
 

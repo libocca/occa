@@ -7,10 +7,11 @@
 #include <fstream>
 #include <vector>
 
-#include <fcntl.h>
-#include <stdio.h>
-#include <unistd.h>
 #include <xmmintrin.h>
+#include <unistd.h>
+#include <string.h>
+#include <stdio.h>
+#include <fcntl.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
