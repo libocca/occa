@@ -364,7 +364,7 @@
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
                              inner.z, inner.y, inner.x};                \
                                                                         \
-    size_t kSize = sizeof(void*);                                       \
+    size_t kSize = sizeof(data_.kernel);                                \
     ::memcpy(&(data_.hostArgv[0])    , &(data_.kernel), kSize);         \
     ::memcpy(&(data_.hostArgv[kSize]), &(occaKernelArgs[0]), 6*sizeof(int)); \
     int hostPos   = kSize + 6*sizeof(int) + N*sizeof(int);              \
