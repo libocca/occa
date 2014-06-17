@@ -361,9 +361,11 @@
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
                              inner.z, inner.y, inner.x};                \
                                                                         \
-    ::memcpy(&(data_.hostArgv[0]), &(occaKernelArgs[0]), 6*sizeof(int)); \
-    int hostPos   = 6*sizeof(int) + N;                                  \
-    int typePos   = 6*sizeof(int);                                      \
+    size_t kSize = sizeof(void*);                                       \
+    ::memcpy(&(data_.hostArgv[0])    , (void*) data_.kernel, kSize);    \
+    ::memcpy(&(data_.hostArgv[kSize]), &(occaKernelArgs[0]), 6*sizeof(int)); \
+    int hostPos   = kSize + 6*sizeof(int) + N;                          \
+    int typePos   = kSize + 6*sizeof(int);                              \
     int devicePos = 0;                                                  \
                                                                         \
     OCCA_COI_INPUT_FUNCTION_ARGS(N);                                    \
