@@ -202,7 +202,7 @@ namespace occa {
 
 
   //---[ Error Handling ]-------------
-  std::string openclError(int e);
+  std::string coiError(int e);
   //==================================
 };
 

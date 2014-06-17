@@ -245,6 +245,8 @@ COINATIVELIBEXPORT
 void occaKernelWith4Arguments(uint32_t deviceArgc, void **deviceArgs, uint64_t *deviceArgSize,
                                void *hostArgs_, uint16_t hostArgSize,
                                void *ret, uint16_t retSize){
+  printf("HERE!\n");
+
   char *hostArgs = (char*) hostArgs_;
   int hostPos = 0;
 

@@ -51,12 +51,27 @@ namespace occa {
     OCCA_CHECK(c_cachePath != NULL);
 
     std::string occaCachePath(c_cachePath);
+    const int chars = occaCachePath.size();
 
-    OCCA_CHECK(occaCachePath.size() > 0);
+    OCCA_CHECK(chars > 0);
 
+    // Take out the pesky //'s
+    int pos = 0;
 
-    if(occaCachePath[occaCachePath.size() - 1] != '/')
-      occaCachePath += '/';
+    for(int i = 0; i < chars; ++i){
+      if(c_cachePath[i] == '/')
+        while(i < (chars - 1) && c_cachePath[i + 1] == '/')
+          ++i;
+
+      occaCachePath[pos++] = occaCachePath[i];
+    }
+
+    if(occaCachePath[pos - 1] != '/'){
+      if(pos != chars)
+        occaCachePath[pos] = '/';
+      else
+        occaCachePath[pos] += '/';
+    }
     //================================
 
     const std::string fileContents = readFile(filename);

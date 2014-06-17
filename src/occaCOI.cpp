@@ -247,7 +247,8 @@ namespace occa {
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <=         size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
     bool waitingOnEvent    = (stream.lastEvent != NULL);
     coiEvent *lastEventPtr = stream.lastEvent;
@@ -305,7 +306,8 @@ namespace occa {
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset)  <=       size);
 
     bool waitingOnEvent    = (stream.lastEvent != NULL);
     coiEvent *lastEventPtr = stream.lastEvent;
@@ -359,7 +361,8 @@ namespace occa {
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <=         size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
     bool waitingOnEvent    = (stream.lastEvent != NULL);
     coiEvent *lastEventPtr = stream.lastEvent;
@@ -409,7 +412,8 @@ namespace occa {
 
     const size_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset)  <=       size);
 
     bool waitingOnEvent    = (stream.lastEvent != NULL);
     coiEvent *lastEventPtr = stream.lastEvent;
@@ -533,6 +537,8 @@ namespace occa {
       system(sCommand.c_str());
     }
 
+    std::cout << cachedBinary << '\n';
+
     OCCA_COI_CHECK("Device: Initializing",
                    COIProcessCreateFromFile(data_.deviceID,
                                             cachedBinary.c_str(),
@@ -542,6 +548,8 @@ namespace occa {
                                             memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
                                             NULL,
                                             &data_.chiefID) );
+
+    std::cout << (void*) data_.chiefID << '\n';
 
     const char *kernelNames[] = {"occaKernelWith1Argument" , "occaKernelWith2Arguments", "occaKernelWith3Arguments",
                                  "occaKernelWith4Arguments", "occaKernelWith5Arguments", "occaKernelWith6Arguments",
@@ -559,6 +567,9 @@ namespace occa {
                                                 25,
                                                 kernelNames,
                                                 data_.kernelWrapper));
+
+    for(int i = 0; i < 5; ++i)
+      std::cout << i << ": " << data_.kernelWrapper[i] << '\n';
   }
 
   template <>

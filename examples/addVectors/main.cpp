@@ -16,7 +16,7 @@ int main(int argc, char **argv){
   }
 
   std::string mode = "COI";
-  int platformID = 5;
+  int platformID = 0;
   int deviceID   = 0;
 
   occa::device device;
