@@ -468,6 +468,20 @@ namespace occa {
   void device_t<Pthreads>::freeStream(stream s){}
 
   template <>
+  tag device_t<Pthreads>::tagStream(){
+    tag ret;
+
+    ret.tagTime = currentTime();
+
+    return ret;
+  }
+
+  template <>
+  double device_t<Pthreads>::timeBetween(const tag &startTag, const tag &endTag){
+    return (endTag.tagTime - startTag.tagTime);
+  }
+
+  template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,
                                                       const std::string &functionName,
                                                       const kernelInfo &info_){

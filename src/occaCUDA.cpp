@@ -452,6 +452,26 @@ namespace occa {
   }
 
   template <>
+  tag device_t<CUDA>::tagStream(){
+    tag ret;
+
+    cuEventCreate(&(ret.cuEvent), CU_EVENT_DEFAULT);
+    cuEventRecord(ret.cuEvent, 0);
+
+    return ret;
+  }
+
+  template <>
+  double device_t<CUDA>::timeBetween(const tag &startTag, const tag &endTag){
+    cuEventSynchronize(endTag.cuEvent);
+
+    float msTimeTaken;
+    cuEventElapsedTime(&msTimeTaken, startTag.cuEvent, endTag.cuEvent);
+
+    return (double) (1.0e-3 * (double) msTimeTaken);
+  }
+
+  template <>
   kernel_v* device_t<CUDA>::buildKernelFromSource(const std::string &filename,
                                                  const std::string &functionName,
                                                  const kernelInfo &info_){

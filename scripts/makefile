@@ -204,6 +204,6 @@ ifeq ($(COI_Enabled), 1)
 	flags += $(COI_Flags) -DOCCA_COI_ENABLED=1
 	links += $(COI_Links)
 else
-	flags += -DOCCA_COI_ENABLED=1
+	flags += -DOCCA_COI_ENABLED=0
 endif
 #=================================================

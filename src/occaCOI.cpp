@@ -551,32 +551,12 @@ namespace occa {
 
       fs.close();
 
-      std::string mainCompilerFlags = dev->dHandle->compilerFlags;
-      chars = mainCompilerFlags.size();
-
-      if(mainCompilerFlags.find("-openmp")  != std::string::npos){
-        size_t pos = mainCompilerFlags.find("-openmp");
-
-        std::string leftFlags  = mainCompilerFlags.substr(0, pos);
-        std::string rightFlags = mainCompilerFlags.substr(pos + 7, chars - (pos + 7));
-
-        mainCompilerFlags = leftFlags + rightFlags;
-      }
-      else if(mainCompilerFlags.find("-fopenmp") != std::string::npos){
-        size_t pos = mainCompilerFlags.find("-fopenmp");
-
-        std::string leftFlags  = mainCompilerFlags.substr(0, pos);
-        std::string rightFlags = mainCompilerFlags.substr(pos + 8, chars - (pos + 8));
-
-        mainCompilerFlags = leftFlags + rightFlags;
-      }
-
       std::stringstream command;
 
       command << dev->dHandle->compiler
               << " -o " << cachedBinary
               << " -x c++"
-              << ' '    << mainCompilerFlags
+              << ' '    << dev->dHandle->compilerFlags
               << ' '    << iCachedBinary;
 
       const std::string &sCommand = command.str();
@@ -679,6 +659,21 @@ namespace occa {
                    COIPipelineDestroy(stream->handle));
 
     ::free(stream);
+  }
+
+  // [-] Event-based timing in COI?
+  template <>
+  tag device_t<COI>::tagStream(){
+    tag ret;
+
+    ret.tagTime = 0;
+
+    return ret;
+  }
+
+  template <>
+  double device_t<COI>::timeBetween(const tag &startTag, const tag &endTag){
+    return (endTag.tagTime - startTag.tagTime);
   }
 
   template <>

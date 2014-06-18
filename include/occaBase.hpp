@@ -19,13 +19,25 @@
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
 
+#if OCCA_OPENCL_ENABLED
+#  if   OCCA_OS == LINUX_OS
+#    include <CL/cl.h>
+#    include <CL/cl_gl.h>
+#  elif OCCA_OS == OSX_OS
+#    include <OpenCL/OpenCl.h>
+#  endif
+#endif
+
+#if OCCA_CUDA_ENABLED
+#  include <cuda.h>
+#endif
+
 namespace occa {
   class kernelInfo;
   extern kernelInfo defaultKernelInfo;
 
   //---[ Typedefs ]-------------------
   typedef void* stream;
-  typedef void* tag;
   //==================================
 
   //---[ Mode ]-----------------------
@@ -41,6 +53,7 @@ namespace occa {
     }
 
     OCCA_CHECK(false);
+
     return "No mode";
   }
 
@@ -169,6 +182,16 @@ namespace occa {
     inline void* data() const {
       return pointer ? arg.void_ : (void*) &arg;
     }
+  };
+
+  union tag {
+    double tagTime;
+#if OCCA_OPENCL_ENABLED
+    cl_event clEvent;
+#endif
+#if OCCA_CUDA_ENABLED
+    CUevent cuEvent;
+#endif
   };
 
   //---[ Kernel ]---------------------
@@ -534,6 +557,9 @@ namespace occa {
     virtual stream genStream() = 0;
     virtual void freeStream(stream s) = 0;
 
+    virtual tag tagStream() = 0;
+    virtual double timeBetween(const tag &startTag, const tag &endTag) = 0;
+
     virtual kernel_v* buildKernelFromSource(const std::string &filename,
                                             const std::string &functionName_,
                                             const kernelInfo &info_ = defaultKernelInfo) = 0;
@@ -575,6 +601,9 @@ namespace occa {
 
     stream genStream();
     void freeStream(stream s);
+
+    tag tagStream();
+    double timeBetween(const tag &startTag, const tag &endTag);
 
     kernel_v* buildKernelFromSource(const std::string &filename,
                                     const std::string &functionName,
@@ -627,6 +656,9 @@ namespace occa {
     stream genStream();
     stream getStream();
     void setStream(stream s);
+
+    tag tagStream();
+    double timeBetween(const tag &startTag, const tag &endTag);
 
     kernel buildKernelFromSource(const std::string &filename,
                                  const std::string &functionName,

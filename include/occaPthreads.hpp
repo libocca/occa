@@ -210,6 +210,12 @@ namespace occa {
   void device_t<Pthreads>::freeStream(stream s);
 
   template <>
+  tag device_t<Pthreads>::tagStream();
+
+  template <>
+  double device_t<Pthreads>::timeBetween(const tag &startTag, const tag &endTag);
+
+  template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,
                                                       const std::string &functionName_,
                                                       const kernelInfo &info_);

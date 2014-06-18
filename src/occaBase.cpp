@@ -357,6 +357,14 @@ namespace occa {
     currentStream = s;
   }
 
+  tag device::tagStream(){
+    return dHandle->tagStream();
+  }
+
+  double device::timeBetween(const tag &startTag, const tag &endTag){
+    return dHandle->timeBetween(startTag, endTag);
+  }
+
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){

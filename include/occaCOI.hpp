@@ -186,6 +186,12 @@ namespace occa {
   void device_t<COI>::freeStream(stream s);
 
   template <>
+  tag device_t<COI>::tagStream();
+
+  template <>
+  double device_t<COI>::timeBetween(const tag &startTag, const tag &endTag);
+
+  template <>
   kernel_v* device_t<COI>::buildKernelFromSource(const std::string &filename,
                                                  const std::string &functionName_,
                                                  const kernelInfo &info_);

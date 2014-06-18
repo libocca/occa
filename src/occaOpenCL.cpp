@@ -592,6 +592,46 @@ namespace occa {
   }
 
   template <>
+  tag device_t<OpenCL>::tagStream(){
+    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+
+    tag ret;
+
+#ifdef CL_VERSION_1_2
+    clEnqueueMarkerWithWaitList(stream, 0, NULL, &(ret.clEvent));
+#else
+    clEnqueueMarker(stream, &(ret.clEvent));
+#endif
+
+    return ret;
+  }
+
+  template <>
+  double device_t<OpenCL>::timeBetween(const tag &startTag, const tag &endTag){
+    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_ulong start, end;
+
+    clFinish(stream);
+
+    OCCA_CL_CHECK ("Device: Time Between Tags (Start)",
+                   clGetEventProfilingInfo(startTag.clEvent  ,
+                                           CL_PROFILING_COMMAND_END,
+                                           sizeof(cl_ulong),
+                                           &start, NULL) );
+
+    OCCA_CL_CHECK ("Device: Time Between Tags (End)",
+                   clGetEventProfilingInfo(endTag.clEvent  ,
+                                           CL_PROFILING_COMMAND_START,
+                                           sizeof(cl_ulong),
+                                           &end, NULL) );
+
+    clReleaseEvent(startTag.clEvent);
+    clReleaseEvent(endTag.clEvent);
+
+    return (double) (1.0e-9 * (double)(end - start));
+  }
+
+  template <>
   kernel_v* device_t<OpenCL>::buildKernelFromSource(const std::string &filename,
                                                    const std::string &functionName,
                                                    const kernelInfo &info_){
