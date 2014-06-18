@@ -473,7 +473,7 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
-    ::free(handle);
+    delete handle;
   }
   //==================================
 
@@ -515,7 +515,7 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::setup(const int platform, const int device){
-    data = ::malloc(sizeof(OpenCLDeviceData_t));
+    data = new OpenCLDeviceData_t;
 
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
@@ -576,7 +576,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
-    cl_command_queue *retStream = (cl_command_queue*) ::malloc(sizeof(cl_command_queue));
+    cl_command_queue *retStream = new cl_command_queue;
 
     *retStream = clCreateCommandQueue(data_.context, data_.deviceID, CL_QUEUE_PROFILING_ENABLE, &error);
     OCCA_CL_CHECK("Device: genStream", error);
@@ -588,7 +588,7 @@ namespace occa {
   void device_t<OpenCL>::freeStream(stream s){
     OCCA_CL_CHECK("Device: freeStream",
                   clReleaseCommandQueue( *((cl_command_queue*) s) ));
-    ::free(s);
+    delete s;
   }
 
   template <>
@@ -640,7 +640,7 @@ namespace occa {
     kernel_v *k = new kernel_t<OpenCL>;
 
     k->dev  = dev;
-    k->data = ::malloc(sizeof(OpenCLKernelData_t));
+    k->data = new OpenCLKernelData_t;
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -663,7 +663,7 @@ namespace occa {
     kernel_v *k = new kernel_t<OpenCL>;
 
     k->dev  = dev;
-    k->data = ::malloc(sizeof(OpenCLKernelData_t));
+    k->data = new OpenCLKernelData_t;
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -687,7 +687,7 @@ namespace occa {
     cl_int error;
 
     mem->dev    = dev;
-    mem->handle = ::malloc(sizeof(cl_mem));
+    mem->handle = new cl_mem;
     mem->size   = bytes;
 
     if(source == NULL)
@@ -711,7 +711,7 @@ namespace occa {
     OCCA_CL_CHECK("Device: Freeing Context",
                   clReleaseContext(data_.context) );
 
-    ::free(data);
+    delete data;
   }
 
   template <>

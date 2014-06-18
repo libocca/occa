@@ -23,7 +23,12 @@
 #  define OCCA_CHECK( _expr )
 #endif
 
-#define OCCA_MEM_ALIGN  64
+#if OCCA_OS == OSX_OS
+#  define OCCA_MEM_ALIGN 16
+#else
+#  define OCCA_MEM_ALIGN 64
+#endif
+
 #define OCCA_SIMD_WIDTH 8
 
 #define OCCA_MAX_ARGS OCL_MAX_FOR_LOOPS

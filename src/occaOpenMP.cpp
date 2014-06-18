@@ -83,7 +83,7 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
-    data = ::malloc(sizeof(OpenMPKernelData_t));
+    data = new OpenMPKernelData_t;
 
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
@@ -124,7 +124,7 @@ namespace occa {
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName_){
-    data = ::malloc(sizeof(OpenMPKernelData_t));
+    data = new OpenMPKernelData_t;
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
     functionName = functionName_;
@@ -304,7 +304,7 @@ namespace occa {
 
   template <>
   void memory_t<OpenMP>::free(){
-    ::free(handle);
+    delete handle;
   }
   //==================================
 
@@ -422,9 +422,17 @@ namespace occa {
                                      void *source){
     memory_v *mem = new memory_t<OpenMP>;
 
-    mem->dev    = dev;
+    mem->dev  = dev;
+    mem->size = bytes;
+
+#if   OCCA_OS == LINUX_OS
+    posix_memalign(&mem->handle, bytes, OCCA_MEM_ALIGN);
+#elif OCCA_OS == OSX_OS
     mem->handle = ::malloc(bytes);
-    mem->size   = bytes;
+#else
+#  warning "Aligned memory not supported in Windows yet"
+    mem->handle = ::malloc(bytes);
+#endif
 
     if(source != NULL)
       ::memcpy(mem->handle, source, bytes);

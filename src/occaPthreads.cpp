@@ -337,7 +337,7 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::free(){
-    ::free(handle);
+    delete handle;
   }
   //==================================
 
@@ -505,9 +505,17 @@ namespace occa {
                                        void *source){
     memory_v *mem = new memory_t<Pthreads>;
 
-    mem->dev    = dev;
+    mem->dev  = dev;
+    mem->size = bytes;
+
+#if   OCCA_OS == LINUX_OS
+    posix_memalign(&mem->handle, bytes, OCCA_MEM_ALIGN);
+#elif OCCA_OS == OSX_OS
     mem->handle = ::malloc(bytes);
-    mem->size   = bytes;
+#else
+#  warning "Aligned memory not supported in Windows yet"
+    mem->handle = ::malloc(bytes);
+#endif
 
     if(source != NULL)
       ::memcpy(mem->handle, source, bytes);
@@ -524,7 +532,7 @@ namespace occa {
     pthread_mutex_destroy( &(data_.pendingJobsMutex) );
     pthread_mutex_destroy( &(data_.kernelMutex) );
 
-    ::free(data);
+    delete data;
   }
 
   template <>

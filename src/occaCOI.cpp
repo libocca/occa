@@ -463,7 +463,7 @@ namespace occa {
     OCCA_COI_CHECK("Memory: free",
                    COIBufferDestroy( *((coiMemory*) handle) ) );
 
-    ::free(handle);
+    delete handle;
   }
   //==================================
 
@@ -505,7 +505,7 @@ namespace occa {
 
   template <>
   void device_t<COI>::setup(const int device, const int memoryAllocated){
-    data = ::malloc(sizeof(COIDeviceData_t));
+    data = new COIDeviceData_t;
 
     OCCA_EXTRACT_DATA(COI, Device);
 
@@ -638,7 +638,7 @@ namespace occa {
   stream device_t<COI>::genStream(){
     OCCA_EXTRACT_DATA(COI, Device);
 
-    coiStream *retStream = (coiStream*) ::malloc(sizeof(coiStream));
+    coiStream *retStream = new coiStream;
 
     OCCA_COI_CHECK("Device: Generating a Stream",
                    COIPipelineCreate(data_.chiefID,
@@ -658,7 +658,7 @@ namespace occa {
     OCCA_COI_CHECK("Device: Freeing a Stream",
                    COIPipelineDestroy(stream->handle));
 
-    ::free(stream);
+    delete stream;
   }
 
   // [-] Event-based timing in COI?
@@ -685,7 +685,7 @@ namespace occa {
     kernel_v *k = new kernel_t<COI>;
 
     k->dev  = dev;
-    k->data = ::malloc(sizeof(COIKernelData_t));
+    k->data = new COIKernelData_t;
 
     COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
 
@@ -703,7 +703,7 @@ namespace occa {
     kernel_v *k = new kernel_t<COI>;
 
     k->dev  = dev;
-    k->data = ::malloc(sizeof(COIKernelData_t));
+    k->data = new COIKernelData_t;
 
     COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
 
@@ -721,7 +721,7 @@ namespace occa {
     memory_v *mem = new memory_t<COI>;
 
     mem->dev    = dev;
-    mem->handle = ::malloc(sizeof(coiMemory));
+    mem->handle = new coiMemory;
     mem->size   = bytes;
 
     OCCA_COI_CHECK("Device: Malloc",
@@ -747,7 +747,7 @@ namespace occa {
                                      NULL,
                                      NULL));
 
-    ::free(data);
+    delete data;
   }
 
   template <>

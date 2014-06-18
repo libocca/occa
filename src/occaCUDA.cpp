@@ -340,7 +340,7 @@ namespace occa {
   template <>
   void memory_t<CUDA>::free(){
     cuMemFree(*((CUdeviceptr*) handle));
-    ::free(handle);
+    delete handle;
   }
   //==================================
 
@@ -391,7 +391,7 @@ namespace occa {
       cudaIsNotInitialized = false;
     }
 
-    data = ::malloc(sizeof(CUDADeviceData_t));
+    data = new CUDADeviceData_t;
 
     OCCA_EXTRACT_DATA(CUDA, Device);
 
@@ -436,7 +436,7 @@ namespace occa {
   stream device_t<CUDA>::genStream(){
     OCCA_EXTRACT_DATA(CUDA, Device);
 
-    CUstream *retStream = (CUstream*) ::malloc(sizeof(CUstream));
+    CUstream *retStream = new CUstream;
 
     OCCA_CUDA_CHECK("Device: genStream",
                     cuStreamCreate(retStream, CU_STREAM_DEFAULT));
@@ -448,7 +448,7 @@ namespace occa {
   void device_t<CUDA>::freeStream(stream s){
     OCCA_CUDA_CHECK("Device: freeStream",
                     cuStreamDestroy( *((CUstream*) s) ));
-    ::free(s);
+    delete s;
   }
 
   template <>
@@ -480,7 +480,7 @@ namespace occa {
     kernel_v *k = new kernel_t<CUDA>;
 
     k->dev  = dev;
-    k->data = ::malloc(sizeof(CUDAKernelData_t));
+    k->data = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
@@ -499,7 +499,7 @@ namespace occa {
     kernel_v *k = new kernel_t<CUDA>;
 
     k->dev  = dev;
-    k->data = ::malloc(sizeof(CUDAKernelData_t));
+    k->data = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
@@ -518,7 +518,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dev    = dev;
-    mem->handle = ::malloc(sizeof(CUdeviceptr));
+    mem->handle = new CUdeviceptr;
     mem->size   = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",
@@ -537,7 +537,7 @@ namespace occa {
     OCCA_CUDA_CHECK("Device: Freeing Context",
                     cuCtxDestroy(data_.context) );
 
-    ::free(data);
+    delete data;
   }
 
   template <>
