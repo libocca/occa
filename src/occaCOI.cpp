@@ -532,7 +532,7 @@ namespace occa {
     else{
       //---[ Write File ]-----------------
       int lastSlash = 0;
-      const int chars = cachedBinary.size();
+      int chars = cachedBinary.size();
 
       for(int i = 0; i < chars; ++i)
         if(cachedBinary[i] == '/')
@@ -551,12 +551,32 @@ namespace occa {
 
       fs.close();
 
+      std::string mainCompilerFlags = dev->dHandle->compilerFlags;
+      chars = mainCompilerFlags.size();
+
+      if(mainCompilerFlags.find("-openmp")  != std::string::npos){
+        size_t pos = mainCompilerFlags.find("-openmp");
+
+        std::string leftFlags  = mainCompilerFlags.substr(0, pos);
+        std::string rightFlags = mainCompilerFlags.substr(pos + 7, chars - (pos + 7));
+
+        mainCompilerFlags = leftFlags + rightFlags;
+      }
+      else if(mainCompilerFlags.find("-fopenmp") != std::string::npos){
+        size_t pos = mainCompilerFlags.find("-fopenmp");
+
+        std::string leftFlags  = mainCompilerFlags.substr(0, pos);
+        std::string rightFlags = mainCompilerFlags.substr(pos + 8, chars - (pos + 8));
+
+        mainCompilerFlags = leftFlags + rightFlags;
+      }
+
       std::stringstream command;
 
       command << dev->dHandle->compiler
               << " -o " << cachedBinary
               << " -x c++"
-              << ' '    << dev->dHandle->compilerFlags
+              << ' '    << mainCompilerFlags
               << ' '    << iCachedBinary;
 
       const std::string &sCommand = command.str();
@@ -566,14 +586,21 @@ namespace occa {
       system(sCommand.c_str());
     }
 
+    // [-] Tentative
+    std::string SINK_LD_LIBRARY_PATH;
+
+    char *c_SINK_LD_LIBRARY_PATH = getenv("SINK_LD_LIBRARY_PATH");
+    if(c_SINK_LD_LIBRARY_PATH != NULL)
+      SINK_LD_LIBRARY_PATH = std::string(c_SINK_LD_LIBRARY_PATH);
+
     OCCA_COI_CHECK("Device: Initializing",
                    COIProcessCreateFromFile(data_.deviceID,
                                             cachedBinary.c_str(),
-                                            0    , NULL,
-                                            false, NULL,
-                                            true , NULL,
+                                            0   , NULL,
+                                            true, NULL,
+                                            true, NULL,
                                             memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
-                                            NULL,
+                                            SINK_LD_LIBRARY_PATH.c_str(),
                                             &(data_.chiefID)) );
 
     const char *kernelNames[] = {"occaKernelWith1Argument"  , "occaKernelWith2Arguments" , "occaKernelWith3Arguments" ,
