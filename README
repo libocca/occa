@@ -167,3 +167,10 @@
 |  Defaults to:
 |    export OCCA_CUDA_ENABLED=0
 +=======================================
+
+
++--[ (A) MATLAB ]-----------
+|
+|  path(strcat(getenv('OCCA_DIR'), '/lib'), path)
+|
++=======================================
