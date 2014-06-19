@@ -735,8 +735,40 @@ namespace occa {
       occaKeywords = keywords;
     }
 
-    inline void addInclude(const std::string &file){
-      header += ("#include \"" + file + "\"\n");
+    inline void addIncludeDefine(const std::string &filename){
+      header += "\n#include \"" + filename + "\"\n";
+    }
+
+    inline void addInclude(const std::string &filename){
+      int fileHandle = ::open(filename.c_str(), O_RDWR);
+
+      if(fileHandle == 0){
+        printf("File [ %s ] does not exist.\n", filename.c_str());
+        throw 1;
+      }
+
+      struct stat fileInfo;
+      const int status = fstat(fileHandle, &fileInfo);
+
+      if(status != 0){
+        printf( "File [ %s ] gave a bad fstat.\n" , filename.c_str());
+        throw 1;
+      }
+
+      const size_t fileSize = fileInfo.st_size;
+
+      char *cFile = new char[fileSize + 1];
+      cFile[fileSize] = '\0';
+
+      ::read(fileHandle, cFile, fileSize);
+
+      ::close(fileHandle);
+
+      header += '\n';
+      header += cFile;
+      header += '\n';
+
+      delete [] cFile;
     }
 
     template <class TM>

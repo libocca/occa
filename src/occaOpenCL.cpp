@@ -97,18 +97,23 @@ namespace occa {
     cl_int error;
 
     int fileHandle = ::open(iCachedBinary.c_str(), O_RDWR);
-    if(fileHandle == 0)
+    if(fileHandle == 0){
       printf("File [ %s ] does not exist.\n", iCachedBinary.c_str());
+      throw 1;
+    }
 
     struct stat fileInfo;
     const int status = fstat(fileHandle, &fileInfo);
 
-    if(status != 0)
+    if(status != 0){
       printf( "File [ %s ] gave a bad fstat.\n" , iCachedBinary.c_str());
+      throw 1;
+    }
 
     const size_t cLength = fileInfo.st_size;
 
     char *cFunction = new char[cLength + 1];
+    cFunction[cLength] = '\0';
 
     ::read(fileHandle, cFunction, cLength);
 
@@ -185,18 +190,23 @@ namespace occa {
     cl_int binaryError, error;
 
     int fileHandle = ::open(filename.c_str(), O_RDWR);
-    if(fileHandle == 0)
+    if(fileHandle == 0){
       printf("File [ %s ] does not exist.\n", filename.c_str());
+      throw 1;
+    }
 
     struct stat fileInfo;
     const int status = fstat(fileHandle, &fileInfo);
 
-    if(status != 0)
+    if(status != 0){
       printf( "File [ %s ] gave a bad fstat.\n" , filename.c_str());
+      throw 1;
+    }
 
     const size_t fileSize = fileInfo.st_size;
 
-    unsigned char *cFile = new unsigned char[fileSize];
+    unsigned char *cFile = new unsigned char[fileSize + 1];
+    cFile[fileSize] = '\0';
 
     ::read(fileHandle, cFile, fileSize);
 

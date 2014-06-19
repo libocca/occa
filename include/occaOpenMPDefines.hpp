@@ -5,7 +5,6 @@
 #include <cstdio>
 #include <cmath>
 
-
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
 #define OCCA_MEM_ALIGN   64

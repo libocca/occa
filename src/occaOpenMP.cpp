@@ -63,7 +63,7 @@ namespace occa {
     info.addDefine("OCCA_USING_OPENMP", 1);
 
 #if OCCA_OPENMP_ENABLED
-    info.addInclude("omp.h");
+    info.addIncludeDefine("omp.h");
 #endif
 
     info.addOCCAKeywords(occaOpenMPDefines);
