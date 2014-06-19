@@ -58,11 +58,11 @@ namespace occa {
   }
 
   inline mode strToMode(const std::string &str){
-    if(str == "Pthreads") return Pthreads;
-    if(str == "OpenMP")   return OpenMP;
-    if(str == "OpenCL")   return OpenCL;
-    if(str == "CUDA")     return CUDA;
-    if(str == "COI")      return COI;
+    if(str.find("Pthreads") != std::string::npos) return Pthreads;
+    if(str.find("OpenMP")   != std::string::npos) return OpenMP;
+    if(str.find("OpenCL")   != std::string::npos) return OpenCL;
+    if(str.find("CUDA")     != std::string::npos) return CUDA;
+    if(str.find("COI")      != std::string::npos) return COI;
 
     OCCA_CHECK(false);
 
