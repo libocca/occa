@@ -426,7 +426,7 @@ namespace occa {
     mem->size = bytes;
 
 #if   OCCA_OS == LINUX_OS
-    posix_memalign(&mem->handle, bytes, OCCA_MEM_ALIGN);
+    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, bytes);
 #elif OCCA_OS == OSX_OS
     mem->handle = ::malloc(bytes);
 #else
