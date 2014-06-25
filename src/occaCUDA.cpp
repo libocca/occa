@@ -340,7 +340,7 @@ namespace occa {
   template <>
   void memory_t<CUDA>::free(){
     cuMemFree(*((CUdeviceptr*) handle));
-    delete handle;
+    delete (CUdeviceptr*) handle;
   }
   //==================================
 
@@ -448,7 +448,7 @@ namespace occa {
   void device_t<CUDA>::freeStream(stream s){
     OCCA_CUDA_CHECK("Device: freeStream",
                     cuStreamDestroy( *((CUstream*) s) ));
-    delete s;
+    delete (CUstream*) s;
   }
 
   template <>
@@ -537,7 +537,7 @@ namespace occa {
     OCCA_CUDA_CHECK("Device: Freeing Context",
                     cuCtxDestroy(data_.context) );
 
-    delete data;
+    delete (CUDADeviceData_t*) data;
   }
 
   template <>
