@@ -399,7 +399,7 @@ namespace occa {
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
                                       const std::string &pythonCode){
-    std::string cachedBinary = binaryIsCached(filename, "");
+    std::string cachedBinary = binaryIsCached(filename, pythonCode);
 
     std::cout << cachedBinary << '\n';
 
@@ -429,7 +429,7 @@ namespace occa {
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
 
-    fs << pythonCode << '\n' << readFile(filename);
+    fs << pythonCode << "\n\n" << readFile(filename);
 
     fs.close();
 
