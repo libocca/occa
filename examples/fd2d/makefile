@@ -1,4 +1,8 @@
-include ../../scripts/makefile
+ifndef OCCA_DIR
+	OCCA_DIR = ../../
+endif
+
+include ${OCCA_DIR}/scripts/makefile
 
 flags += -DtFloat=float -DOCCA_GL_ENABLED=1
 
