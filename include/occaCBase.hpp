@@ -84,12 +84,7 @@ extern "C" {
 
   union occaTag {
     double tagTime;
-#if OCCA_OPENCL_ENABLED
-    cl_event clEvent;
-#endif
-#if OCCA_CUDA_ENABLED
-    CUevent cuEvent;
-#endif
+    void* otherStuff;
   };
 
   typedef void* occaKernelInfo;
