@@ -1,3 +1,7 @@
+ifndef OCCA_DIR
+	OCCA_DIR = $(shell pwd)
+endif
+
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
