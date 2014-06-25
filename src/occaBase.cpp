@@ -365,6 +365,10 @@ namespace occa {
     return dHandle->timeBetween(startTag, endTag);
   }
 
+  void device::free(stream s){
+    dHandle->freeStream(s);
+  }
+
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){

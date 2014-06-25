@@ -544,6 +544,8 @@ namespace occa {
     int simdWidth_;
 
   public:
+    virtual inline ~device_v(){}
+
     virtual void setup(const int arg1, const int arg2) = 0;
 
     virtual void getEnvironmentVariables() = 0;
@@ -585,6 +587,8 @@ namespace occa {
   public:
     device_t();
     device_t(const int arg1, const int arg2);
+
+    inline ~device_t(){}
 
     device_t(const device_t<mode> &k);
     device_t<mode>& operator = (const device_t<mode> &k);
@@ -659,6 +663,8 @@ namespace occa {
 
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);
+
+    void free(stream s);
 
     kernel buildKernelFromSource(const std::string &filename,
                                  const std::string &functionName,

@@ -483,7 +483,7 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
-    delete handle;
+    delete (cl_mem*) handle;
   }
   //==================================
 
@@ -598,7 +598,7 @@ namespace occa {
   void device_t<OpenCL>::freeStream(stream s){
     OCCA_CL_CHECK("Device: freeStream",
                   clReleaseCommandQueue( *((cl_command_queue*) s) ));
-    delete s;
+    delete (cl_command_queue*) s;
   }
 
   template <>
@@ -721,7 +721,7 @@ namespace occa {
     OCCA_CL_CHECK("Device: Freeing Context",
                   clReleaseContext(data_.context) );
 
-    delete data;
+    delete (OpenCLDeviceData_t*) data;
   }
 
   template <>

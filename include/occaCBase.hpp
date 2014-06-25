@@ -82,6 +82,16 @@ extern "C" {
 
   typedef void* occaStream;
 
+  union occaTag {
+    double tagTime;
+#if OCCA_OPENCL_ENABLED
+    cl_event clEvent;
+#endif
+#if OCCA_CUDA_ENABLED
+    CUevent cuEvent;
+#endif
+  };
+
   typedef void* occaKernelInfo;
 
   typedef struct occaDim_t {
@@ -141,9 +151,18 @@ extern "C" {
                               size_t bytes,
                               void *source);
 
-  occaStream occaGenStream(occaDevice device);
-  occaStream occaGetStream(occaDevice device);
-  void       occaSetStream(occaDevice device, occaStream stream);
+  void occaDeviceFlush(occaDevice device);
+  void occaDeviceFinish(occaDevice device);
+
+  occaStream occaDeviceGenStream(occaDevice device);
+  occaStream occaDeviceGetStream(occaDevice device);
+  void       occaDeviceSetStream(occaDevice device, occaStream stream);
+
+  occaTag occaDeviceTagStream(occaDevice device);
+  double occaDeviceTimeBetweenTags(occaDevice device,
+                                   occaTag startTag, occaTag endTag);
+
+  void occaDeviceStreamFree(occaDevice device, occaStream stream);
 
   void occaDeviceFree(occaDevice device);
   //====================================

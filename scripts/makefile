@@ -8,7 +8,7 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-icpc_Enabled   = 1
+icpc_Enabled   = 0
 OpenGL_Enabled = 0
 #=================================================
 
@@ -61,9 +61,9 @@ ifeq ($(OS),OSX)
 	CUDA_Flags   =
 	COI_Flags    =
 
-	links       += -framework accelerate
+	links       += -framework accelerate -framework CoreServices
 	MPI_Links    =
-	OpenGL_Links = -D GL_GLEXT_PROTOTYPES -framework OpenGL -framework CoreServices -lX11 -lGL
+	OpenGL_Links = -D GL_GLEXT_PROTOTYPES -framework OpenGL -lX11 -lGL
 	OpenCL_Links = -framework OpenCL
 	CUDA_Links   = -framework CUDA
 	COI_Links    =

@@ -337,7 +337,7 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::free(){
-    delete handle;
+    delete (char*) handle;
   }
   //==================================
 
@@ -532,7 +532,7 @@ namespace occa {
     pthread_mutex_destroy( &(data_.pendingJobsMutex) );
     pthread_mutex_destroy( &(data_.kernelMutex) );
 
-    delete data;
+    delete (PthreadsDeviceData_t*) data;
   }
 
   template <>

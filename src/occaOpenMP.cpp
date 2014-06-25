@@ -304,7 +304,7 @@ namespace occa {
 
   template <>
   void memory_t<OpenMP>::free(){
-    delete handle;
+    delete (char*) handle;
   }
   //==================================
 

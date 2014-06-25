@@ -224,26 +224,66 @@ extern "C" {
     return (occaMemory) memory;
   }
 
+  void occaDeviceFlush(occaDevice device){
+    occa::device &device_ = *((occa::device*) device);
 
-  occaStream occaGenStream(occaDevice device){
+    device_.flush();
+  }
+
+  void occaDeviceFinish(occaDevice device){
+    occa::device &device_ = *((occa::device*) device);
+
+    device_.finish();
+  }
+
+  occaStream occaDeviceGenStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
     return (occaStream) device_.genStream();
   }
 
-  occaStream occaGetStream(occaDevice device){
+  occaStream occaDeviceGetStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
     return (occaStream) device_.getStream();
   }
 
-  void occaSetStream(occaDevice device, occaStream stream){
+  void occaDeviceSetStream(occaDevice device, occaStream stream){
     occa::device &device_ = *((occa::device*) device);
     occa::stream &stream_ = *((occa::stream*) stream);
 
     device_.setStream(stream_);
   }
 
+  occaTag occaDeviceTagStream(occaDevice device){
+    occa::device &device_ = *((occa::device*) device);
+
+    occa::tag oldTag = device_.tagStream();
+    occaTag newTag;
+
+    ::memcpy(&newTag, &oldTag, sizeof(oldTag));
+
+    return newTag;
+  }
+
+  double occaDeviceTimeBetweenTags(occaDevice device,
+                                   occaTag startTag, occaTag endTag){
+    occa::device &device_ = *((occa::device*) device);
+
+    occa::tag startTag_, endTag_;
+
+    ::memcpy(&startTag_, &startTag, sizeof(startTag_));
+    ::memcpy(&endTag_  , &endTag  , sizeof(endTag_));
+
+    return device_.timeBetween(startTag_, endTag_);
+  }
+
+  void occaDeviceStreamFree(occaDevice device, occaStream stream){
+    occa::device &device_ = *((occa::device*) device);
+    occa::stream &stream_ = *((occa::stream*) stream);
+
+    device_.free(stream_);
+  }
 
   void occaDeviceFree(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
@@ -252,7 +292,6 @@ extern "C" {
 
     delete (occa::device*) device;
   }
-
   //====================================
 
 
