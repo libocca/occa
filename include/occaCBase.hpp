@@ -95,8 +95,8 @@ extern "C" {
 
   extern occaKernelInfo occaNoKernelInfo;
 
-  extern size_t occaAutoSize;
-  extern size_t occaNoOffset;
+  extern const size_t occaAutoSize;
+  extern const size_t occaNoOffset;
 
   extern const size_t occaTypeSize[OCCA_TYPE_COUNT];
 
@@ -141,6 +141,11 @@ extern "C" {
   occaKernel occaBuildKernelFromBinary(occaDevice device,
                                        const char *filename,
                                        const char *functionName);
+
+  occaKernel occaBuildKernelFromLoopy(occaDevice device,
+                                      const char *filename,
+                                      const char *functionName,
+                                      occaKernelInfo info);
 
   occaMemory occaDeviceMalloc(occaDevice device,
                               size_t bytes,

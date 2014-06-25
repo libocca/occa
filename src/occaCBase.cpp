@@ -24,8 +24,8 @@ extern "C" {
 
   occaKernelInfo occaNoKernelInfo = NULL;
 
-  size_t occaAutoSize = 0;
-  size_t occaNoOffset = 0;
+  const size_t occaAutoSize = 0;
+  const size_t occaNoOffset = 0;
 
   const size_t occaTypeSize[OCCA_TYPE_COUNT] = {
     sizeof(void*),
@@ -173,12 +173,11 @@ extern "C" {
     return (occaDevice) device;
   }
 
-
   occaKernel occaBuildKernelFromSource(occaDevice device,
                                        const char *filename,
                                        const char *functionName,
                                        occaKernelInfo info){
-    occa::device &device_   = *((occa::device*) device);
+    occa::device &device_  = *((occa::device*) device);
 
     occa::kernel *kernel = new occa::kernel();
 
@@ -197,7 +196,6 @@ extern "C" {
     return (occaKernel) kernel;
   }
 
-
   occaKernel occaBuildKernelFromBinary(occaDevice device,
                                        const char *filename,
                                        const char *functionName){
@@ -210,6 +208,28 @@ extern "C" {
     return (occaKernel) kernel;
   }
 
+  occaKernel occaBuildKernelFromLoopy(occaDevice device,
+                                      const char *filename,
+                                      const char *functionName,
+                                      occaKernelInfo info){
+    occa::device &device_  = *((occa::device*) device);
+
+    occa::kernel *kernel = new occa::kernel();
+
+    if(info != occaNoKernelInfo){
+      occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
+      *kernel = device_.buildKernelFromLoopy(filename,
+                                             functionName,
+                                             info_);
+    }
+    else{
+      *kernel = device_.buildKernelFromLoopy(filename,
+                                             functionName);
+    }
+
+    return (occaKernel) kernel;
+  }
 
   occaMemory occaDeviceMalloc(occaDevice device,
                         size_t bytes,

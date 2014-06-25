@@ -396,6 +396,21 @@ namespace occa {
     return ker;
   }
 
+  // [-] Fix
+  kernel device::buildKernelFromLoopy(const std::string &filename,
+                                      const std::string &functionName,
+                                      const kernelInfo &info_){
+    kernel ker;
+
+    ker.mode_   = mode_;
+    ker.strMode = strMode;
+
+    ker.kHandle      = dHandle->buildKernelFromSource(filename, functionName, info_);
+    ker.kHandle->dev = this;
+
+    return ker;
+  }
+
   memory device::malloc(const size_t bytes,
                         void *source){
     memory mem;

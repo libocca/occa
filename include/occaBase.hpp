@@ -38,6 +38,9 @@ namespace occa {
 
   //---[ Typedefs ]-------------------
   typedef void* stream;
+
+  static const size_t useDefault = (1 << 0);
+  static const size_t useLoopy   = (1 << 1);
   //==================================
 
   //---[ Mode ]-----------------------
@@ -672,6 +675,10 @@ namespace occa {
 
     kernel buildKernelFromBinary(const std::string &filename,
                                  const std::string &functionName);
+
+    kernel buildKernelFromLoopy(const std::string &filename,
+                                const std::string &functionName,
+                                const kernelInfo &info_ = defaultKernelInfo);
 
     memory malloc(const size_t bytes,
                   void *source = NULL);
