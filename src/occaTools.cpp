@@ -70,9 +70,35 @@ namespace occa {
                              const std::string &salt){
     //---[ Place Somewhere Else ]-----
     char *c_cachePath = getenv("OCCA_CACHE_DIR");
-    OCCA_CHECK(c_cachePath != NULL);
 
-    std::string occaCachePath(c_cachePath);
+    std::string occaCachePath;
+
+    if(c_cachePath == NULL){
+      struct stat buffer;
+
+      char *c_home = getenv("HOME");
+
+      std::stringstream ss;
+
+      ss << c_home << "/.occa";
+
+      std::string defaultCacheDir = ss.str();
+
+      if(stat(defaultCacheDir.c_str(), &buffer)){
+        std::stringstream command;
+
+        command << "mkdir " << defaultCacheDir;
+
+        const std::string &sCommand = command.str();
+
+        system(sCommand.c_str());
+      }
+
+      occaCachePath = defaultCacheDir;
+    }
+    else
+      occaCachePath = c_cachePath;
+
     const int chars = occaCachePath.size();
 
     OCCA_CHECK(chars > 0);
@@ -81,8 +107,8 @@ namespace occa {
     int pos = 0;
 
     for(int i = 0; i < chars; ++i){
-      if(c_cachePath[i] == '/')
-        while(i < (chars - 1) && c_cachePath[i + 1] == '/')
+      if(occaCachePath[i] == '/')
+        while(i < (chars - 1) && occaCachePath[i + 1] == '/')
           ++i;
 
       occaCachePath[pos++] = occaCachePath[i];
