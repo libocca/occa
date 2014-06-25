@@ -1,10 +1,10 @@
-include ${OCCA_DIR}/scripts/makefile
+include ../..//scripts/makefile
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
 sources = $(wildcard $(sPath)/*.cpp)
 
-objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o)) ${OCCA_DIR}/lib/libocca.so
+objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
 executables: main main_c
 

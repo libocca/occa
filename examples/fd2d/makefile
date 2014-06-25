@@ -1,4 +1,4 @@
-include ${OCCA_DIR}/scripts/makefile
+include ../../scripts/makefile
 
 flags += -DtFloat=float -DOCCA_GL_ENABLED=1
 
@@ -14,7 +14,7 @@ endif
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
 sources = $(wildcard $(sPath)/*.cpp)
 
-objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o)) ${OCCA_DIR}/lib/libocca.a
+objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
 main: $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
