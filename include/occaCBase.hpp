@@ -145,7 +145,7 @@ extern "C" {
   occaKernel occaBuildKernelFromLoopy(occaDevice device,
                                       const char *filename,
                                       const char *functionName,
-                                      occaKernelInfo info);
+                                      const char *pythonCode);
 
   occaMemory occaDeviceMalloc(occaDevice device,
                               size_t bytes,

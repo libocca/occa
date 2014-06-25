@@ -211,22 +211,14 @@ extern "C" {
   occaKernel occaBuildKernelFromLoopy(occaDevice device,
                                       const char *filename,
                                       const char *functionName,
-                                      occaKernelInfo info){
+                                      const char *pythonCode){
     occa::device &device_  = *((occa::device*) device);
 
     occa::kernel *kernel = new occa::kernel();
 
-    if(info != occaNoKernelInfo){
-      occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
-
-      *kernel = device_.buildKernelFromLoopy(filename,
-                                             functionName,
-                                             info_);
-    }
-    else{
-      *kernel = device_.buildKernelFromLoopy(filename,
-                                             functionName);
-    }
+    *kernel = device_.buildKernelFromLoopy(filename,
+                                           functionName,
+                                           pythonCode);
 
     return (occaKernel) kernel;
   }

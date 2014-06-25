@@ -75,9 +75,9 @@
 
 
 //---[ Kernel Info ]------------------------------
-#define occaKernelInfoArg   int occaKernelInfoArg_
-#define occaFunctionInfoArg int occaKernelInfoArg_
-#define occaFunctionInfo        occaKernelInfoArg_
+#define occaKernelInfoArg   __global void *occaKernelInfoArg_
+#define occaFunctionInfoArg __global void *occaKernelInfoArg_
+#define occaFunctionInfo                   occaKernelInfoArg_
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaKernel         __kernel
 #define occaFunction
@@ -96,13 +96,5 @@
 #define occaPrivateArray( TYPE , NAME , SIZE ) TYPE NAME[SIZE]
 #define occaPrivate( TYPE , NAME )             TYPE NAME
 //================================================
-
-/*
-  Register -> Private
-  Barrier
-  occaInnerFor, occaOuterFor
-  occaFunctionShared
-  occaGlobalDim{0,1,2}
- */
 
 #endif

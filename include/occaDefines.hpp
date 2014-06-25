@@ -215,22 +215,24 @@
 
 //---[ OpenCL ]-------------------------
 #if OCCA_DEBUG_ENABLED
+;
 #  define OCCA_CL_CHECK( _str , _statement ) OCCA_CL_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_CL_CHECK2( _str , _statement , file , line )             \
-                                                do {                    \
-                                                  cl_int _error = _statement; \
-                                                  if(_error){           \
-                                                    _error = _error < 0  ? _error : -_error; \
-                                                    _error = _error < 65 ? _error : 15; \
+  do {                                                                  \
+    cl_int _error = _statement;                                         \
+    if(_error){                                                         \
+      _error = _error < 0  ? _error : -_error;                          \
+      _error = _error < 65 ? _error : 15;                               \
                                                                         \
-                                                    std::cout << "Error\n" \
-                                                              << "    File    : " << file << '\n' \
-                                                              << "    Line    : " << line << '\n' \
-                                                              << "    Error   : OpenCL Error [ " << _error << " ]: " << openclError(_error) << '\n' \
-                                                              << "    Message : " << _str << '\n'; \
-                                                    throw 1;            \
-                                                  }                     \
-                                                } while(0);
+      std::cout << "Error\n"                                            \
+                << "    File    : " << file << '\n'                     \
+                << "    Line    : " << line << '\n'                     \
+                << "    Error   : OpenCL Error [ " << _error << " ]: " << openclError(_error) << '\n' \
+                << "    Message : " << _str << '\n';                    \
+      throw 1;                                                          \
+    }                                                                   \
+  } while(0);
+
 #else
 #  define OCCA_CL_CHECK( _str , _statement ) do { _statement; } while(0);
 #endif
@@ -241,7 +243,7 @@
 
 #  define OCCA_OPENCL_SET_KERNEL_ARGS(N)                                \
   OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [ " + #N + " ]", \
-                clSetKernelArg(kernel_, 0, sizeof(cl_int), &occaKernelInfoArgs)); \
+                clSetKernelArg(kernel_, 0, sizeof(void*), NULL));       \
                                                                         \
   OCL_FOR(1, N, OCCA_OPENCL_SET_KERNEL_ARG)
 
@@ -251,8 +253,6 @@
     OCCA_EXTRACT_DATA(OpenCL, Kernel);                                  \
     cl_kernel kernel_   = data_.kernel;                                 \
     occa::dim fullOuter = outer*inner;                                  \
-                                                                        \
-    cl_int occaKernelInfoArgs = 0;                                      \
                                                                         \
     OCCA_OPENCL_SET_KERNEL_ARGS(N);                                     \
                                                                         \

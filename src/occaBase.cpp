@@ -396,19 +396,55 @@ namespace occa {
     return ker;
   }
 
-  // [-] Fix
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
-                                      const kernelInfo &info_){
-    kernel ker;
+                                      const std::string &pythonCode){
+    std::string cachedBinary = binaryIsCached(filename, "");
 
-    ker.mode_   = mode_;
-    ker.strMode = strMode;
+    std::cout << cachedBinary << '\n';
 
-    ker.kHandle      = dHandle->buildKernelFromSource(filename, functionName, info_);
-    ker.kHandle->dev = this;
+    struct stat buffer;
+    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
-    return ker;
+    if(fileExists){
+      std::cout << "Found loo.py cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      return buildKernelFromBinary(cachedBinary, functionName);
+    }
+
+    int lastSlash = 0;
+    const int chars = cachedBinary.size();
+
+    for(int i = 0; i < chars; ++i)
+      if(cachedBinary[i] == '/')
+        lastSlash = i;
+
+    ++lastSlash;
+
+    const std::string prefix    = cachedBinary.substr(0, lastSlash);
+    const std::string cacheName = cachedBinary.substr(lastSlash, chars - lastSlash);
+
+    const std::string pCachedBinary = prefix + "p_" + cacheName;
+    const std::string iCachedBinary = prefix + "i_" + cacheName;
+
+    std::ofstream fs;
+    fs.open(pCachedBinary.c_str());
+
+    fs << pythonCode << '\n' << readFile(filename);
+
+    fs.close();
+
+    std::stringstream command;
+
+    command << "floopy --lang=loopy --target=cl:0,0 "
+            << pCachedBinary << " " << iCachedBinary;
+
+    const std::string &sCommand = command.str();
+
+    std::cout << sCommand << '\n';
+
+    system(sCommand.c_str());
+
+    return buildKernelFromSource(iCachedBinary, functionName);
   }
 
   memory device::malloc(const size_t bytes,

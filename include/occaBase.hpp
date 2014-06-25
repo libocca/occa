@@ -678,7 +678,7 @@ namespace occa {
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
-                                const kernelInfo &info_ = defaultKernelInfo);
+                                const std::string &pythonCode = "");
 
     memory malloc(const size_t bytes,
                   void *source = NULL);

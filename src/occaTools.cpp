@@ -92,7 +92,7 @@ namespace occa {
       if(pos != chars)
         occaCachePath[pos] = '/';
       else
-        occaCachePath[pos] += '/';
+        occaCachePath += '/';
     }
     //================================
 
