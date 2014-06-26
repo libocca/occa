@@ -80,7 +80,7 @@ namespace occa {
 
       std::stringstream ss;
 
-      ss << c_home << "/.occa";
+      ss << c_home << "/._occa";
 
       std::string defaultCacheDir = ss.str();
 

@@ -55,14 +55,12 @@ endif
 
 ifeq ($(OS),OSX)
 	flags       += -D OCCA_OS=OSX_OS
-	MPI_Flags    =
 	OpenGL_Flags =
 	OpenCL_Flags =
 	CUDA_Flags   =
 	COI_Flags    =
 
 	links       += -framework accelerate -framework CoreServices
-	MPI_Links    =
 	OpenGL_Links = -D GL_GLEXT_PROTOTYPES -framework OpenGL -lX11 -lGL
 	OpenCL_Links = -framework OpenCL
 	CUDA_Links   = -framework CUDA
@@ -71,14 +69,12 @@ endif
 
 ifeq ($(OS),LINUX)
 	flags        += -D OCCA_OS=LINUX_OS
-	MPI_Flags     =
 	OpenGL_Flags  = -D GL_GLEXT_PROTOTYPES
 	OpenCL_Flags  =
 	CUDA_Flags    =
 	COI_Flags     =
 
 	links        += -llapack -lblas -lm -lgfortran -lrt -ldl
-	MPI_Links     =
 	OpenGL_Links  =  -L/usr/lib/fglrx/ -lGL -lX11
 	OpenCL_Links  = -lOpenCL
 	CUDA_Links    = -lcuda
@@ -87,14 +83,12 @@ endif
 
 ifeq ($(OS),WINDOWS)
 	flags        += -D OCCA_OS=WINDOWS_OS
-	MPI_Flags     =
 	OpenGL_Flags  =
 	OpenCL_Flags  =
 	CUDA_Flags    =
 	COI_Flags    =
 
 	links        +=
-	MPI_Links     =
 	OpenGL_Links  =
 	OpenCL_Links  =
 	CUDA_Links    =
@@ -104,12 +98,6 @@ endif
 
 
 #---[ Variable Dependencies ]---------------------
-ifdef OCCA_MPI_ENABLED
-	MPI_Enabled = $(OCCA_MPI_ENABLED)
-else
-	MPI_Enabled = 0
-endif
-
 ifdef OCCA_PTHREADS_ENABLED
 	Pthreads_Enabled = $(OCCA_PTHREADS_ENABLED)
 else
