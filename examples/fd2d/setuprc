@@ -1,5 +1,5 @@
 [MODEL]
-OpenCL
+OpenMP
 
 [STENCIL RADIUS]
 7

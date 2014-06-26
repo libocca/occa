@@ -352,12 +352,18 @@ namespace occa {
   template <>
   void device_t<OpenMP>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_OPENMP_COMPILER");
+
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
+    else
+      compiler = "g++"
 
     char *c_compilerFlags = getenv("OCCA_OPENMP_COMPILER_FLAGS");
+
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
+    else
+      compilerFlags = "-g"
   }
 
   template <>
