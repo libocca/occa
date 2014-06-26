@@ -405,12 +405,23 @@ namespace occa {
   template <>
   void device_t<CUDA>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_CUDA_COMPILER");
+
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
+    else
+      compiler = "nvcc";
 
     char *c_compilerFlags = getenv("OCCA_CUDA_COMPILER_FLAGS");
+
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
+    else{
+#if OCCA_DEBUG_ENABLED
+      compilerFlags = "-g";
+#else
+      compilerFlags = "--compiler-options -O3 --use_fast_math";
+#endif
+    }
   }
 
   template <>

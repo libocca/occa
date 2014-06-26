@@ -429,12 +429,23 @@ namespace occa {
   template <>
   void device_t<Pthreads>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_PTHREADS_COMPILER");
+
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
+    else
+      compiler = "g++";
 
     char *c_compilerFlags = getenv("OCCA_PTHREADS_COMPILER_FLAGS");
+
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
+    else{
+#if OCCA_DEBUG_ENABLED
+      compilerFlags = "-g";
+#else
+      compilerFlags = "-D__extern_always_inline=inline -O3";
+#endif
+    }
   }
 
   template <>

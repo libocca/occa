@@ -559,6 +559,13 @@ namespace occa {
     char *c_compilerFlags = getenv("OCCA_OPENCL_COMPILER_FLAGS");
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
+    else{
+#if OCCA_DEBUG_ENABLED
+      compilerFlags = "-cl-opt-disable";
+#else
+      compilerFlags = "-cl-single-precision-constant -cl-denorms-are-zero -cl-single-precision-constant -cl-fast-relaxed-math -cl-finite-math-only -cl-mad-enable -cl-no-signed-zeros";
+#endif
+    }
   }
 
   template <>
