@@ -401,8 +401,6 @@ namespace occa {
                                       const std::string &pythonCode){
     std::string cachedBinary = binaryIsCached(filename, pythonCode);
 
-    std::cout << cachedBinary << '\n';
-
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
