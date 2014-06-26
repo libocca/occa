@@ -10,6 +10,28 @@ Debug_Enabled  = 0
 
 icpc_Enabled   = 0
 OpenGL_Enabled = 0
+
+
+ifeq ($(DEBUG), 1)
+	Debug_Enabled = 1
+else
+	Debug_Enabled = 0
+endif
+
+ifndef CXX
+	CXX = g++
+endif
+
+ifndef CXXFLAGS
+	ifeq ($(DEBUG), 1)
+		CXXFLAGS = -g
+	else
+		CXXFLAGS = -O3
+	endif
+endif
+
+compiler      = $(CXX)
+compilerFlags = $(CXXFLAGS)
 #=================================================
 
 
@@ -128,12 +150,6 @@ else
 	COI_Enabled = 0
 endif
 
-ifeq ($(DEBUG), 1)
-	Debug_Enabled = 1
-else
-	Debug_Enabled = 0
-endif
-
 ifeq ($(Debug_Enabled), 1)
 	flags += $(Debug_Flags)   -DOCCA_DEBUG_ENABLED=1
 else
@@ -151,18 +167,6 @@ ifeq ($(Pthreads_Enabled), 1)
 	flags += -DOCCA_PTHREADS_ENABLED=1
 else
 	flags += -DOCCA_PTHREADS_ENABLED=0
-endif
-
-ifeq ($(MPI_Enabled), 1)
-	flags += $(MPI_Flags) -DOCCA_MPI_ENABLED=1
-	links += $(MPI_Links)
-
-	compiler      = $(MPICXX)
-	compilerFlags = $(MPICXXFLAGS)
-else
-	flags +=              -DOCCA_MPI_ENABLED=0
-	compiler      = $(CXX)
-	compilerFlags = $(CXXFLAGS)
 endif
 
 ifeq ($(OpenGL_Enabled), 1)

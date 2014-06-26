@@ -1,51 +1,53 @@
-+---[ (0) README ]----------------------
++---[ (0) README ]------------------------------------------
 |   Installing:
 |     Go to your occa directory
 |        You should see: include, src, lib
 |
-|     Specify your compiler:
-|        Set CXX to your preferred C++ compiler
-|        (For specific C++ flags, use CXXFLAGS)
-|
-|        Set MPICXX to your preferred MPI-C++ compiler
-|        (For specific MPI-C++ flags, use MPICXXFLAGS)
-|
 |     Install:
 |        Type "make"
 |
-|     Setup environment variables (1)
-+=======================================
+|   Running Examples:
+|     Setup your LD_LIBRARY PATH (check (4) below)
+|     cd examples/addVectors
+|     make
+|     ./main (C++), ./main_c (C), python main.py, etc
+|
+|   Further options can be seen in (1)
++===========================================================
 
 
-+---[ (1) ENVIRONMENT VARIABLES ]-------
-|  Required environment variables:
++---[ (1) ENVIRONMENT VARIABLES ]---------------------------
+|  Useful environment variables:
 |    (2) OCCA_DIR
 |    (3) OCCA_CACHE_DIR
 |    (4) LD_LIBRARY_PATH
 |
-|    (5) Pthreads Requirements
+|    (5) Pthreads Options
+|            OCCA_PTHREAD_ENABLED
 |            OCCA_PTHREAD_COUNT, OCCA_PTHREADS_COMPILER,
 |            OCCA_PTHREADS_COMPILER_FLAGS
 |
-|    (6) OpenMP Requirements
+|    (6) OpenMP Options
+|            OCCA_OPENMP_ENABLED
 |            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
 |
-|    (7) OpenCL Requirements
+|    (7) OpenCL Options
+|            OCCA_OPENCL_ENABLED
 |            OCCA_OPENCL_COMPILER_FLAGS
 |
-|    (8) CUDA Requirements
+|    (8) CUDA Options
+|            OCCA_CUDA_ENABLED
 |            OCCA_CUDA_COMPILER, OCCA_CUDA_COMPILER_FLAGS
 |
-|  Optional environment variables:
-|    (9)  OCCA_MPI_ENABLED
-|    (10) OCCA_PTHREADS_ENABLED
-|    (11) OCCA_OPENMP_ENABLED
-|    (12) OCCA_OPENCL_ENABLED
-|    (13) OCCA_CUDA_ENABLED
-+=======================================
+|    (9) COI Options
+|            OCCA_COI_ENABLED
+|            OCCA_COI_COMPILER, OCCA_COI_COMPILER_FLAGS
+|
+|    (A) Running OCCA on Matlab
++===========================================================
 
 
-+---[ (2) OCCA_DIR ]--------------------
++---[ (2) OCCA_DIR ]----------------------------------------
 |  Info:
 |    Directory where occa/ is stored:
 |      $OCCA_DIR/include
@@ -54,31 +56,32 @@
 |
 |  Setting it:
 |    export OCCA_DIR=/absolute/path/to/dir
-+=======================================
++===========================================================
 
 
-+---[ (3) OCCA_CACHE_DIR ]--------------
++---[ (3) OCCA_CACHE_DIR ]----------------------------------
 |  Info:
 |    Directory where compile kernels are
 |      stored (caching binaries)
 |
 |  Setting it:
 |    export OCCA_CACHE_DIR=/absolute/path/to/dir
-+=======================================
++===========================================================
 
 
-+---[ (4) LD_LIBRARY_PATH ]-------------
++---[ (4) LD_LIBRARY_PATH ]---------------------------------
 |  Info:
 |    Append directory where libocca is stored
 |      $OCCA_DIR/lib
 |
 |  Setting it:
 |    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH":${OCCA_DIR}/lib"
-+=======================================
++===========================================================
 
 
-+---[ (5) Pthreads Requirements ]-------
++---[ (5) Pthreads Options ]--------------------------------
 |  Info:
+|    OCCA_PTHREAD_ENABLED        : Allow Pthread-mode to be used
 |    OCCA_PTHREAD_COUNT          : Threads spawned at each kernel
 |    OCCA_PTHREADS_COMPILER      : Pthreads Compiler
 |    OCCA_PTHREADS_COMPILER_FLAGS: Pthreads Compiler Flags
@@ -87,90 +90,57 @@
 |    export OCCA_PTHREAD_COUNT="8"
 |    export OCCA_PTHREADS_COMPILER="clang++"
 |    export OCCA_PTHREADS_COMPILER_FLAGS="-O3"
-+=======================================
++===========================================================
 
 
-+---[ (6) OpenMP Requirements ]---------
++---[ (6) OpenMP Options ]----------------------------------
 |  Info:
+|    OCCA_OPENMP_ENABLED       : Allow OpenMP-mode to be used
 |    OCCA_OPENMP_COMPILER      : OpenMP Compiler
 |    OCCA_OPENMP_COMPILER_FLAGS: OpenMP Compiler Flags
 |
 |  Setting it:
 |    export OCCA_OPENMP_COMPILER="clang++"
 |    export OCCA_OPENMP_COMPILER_FLAGS="-O3"
-+=======================================
++===========================================================
 
 
-+---[ (7) OpenCL Requirements ]---------
++---[ (7) OpenCL Options ]----------------------------------
 |  Info:
+|    OCCA_OPENCL_ENABLED       : Allow OpenCL-mode to be used
 |    OCCA_OPENCL_COMPILER_FLAGS: OpenCL Compiler Flags
 |
 |  Setting it:
 |    export OCCA_OPENCL_COMPILER_FLAGS="-cl-mad-enable -cl-finite-math-only"
-+=======================================
++===========================================================
 
 
-+---[ (8) CUDA Requirements ]---------
++---[ (8) CUDA Options ]------------------------------------
 |  Info:
+|    OCCA_CUDA_ENABLED       : Allow CUDA-mode to be used
 |    OCCA_CUDA_COMPILER      : CUDA Compiler
 |    OCCA_CUDA_COMPILER_FLAGS: CUDA Compiler Flags
 |
 |  Setting it:
 |    export OCCA_CUDA_COMPILER="nvcc"
 |    export OCCA_CUDA_COMPILER_FLAGS="-O3"
-+=======================================
++===========================================================
 
 
-+--[ (9) OCCA_MPI_ENABLED ]-------------
++---[ (9) COI Options ]-------------------------------------
 |  Info:
-|    Enable MPI features in OCCA
+|    OCCA_COI_ENABLED       : Allow COI-mode to be used
+|    OCCA_COI_COMPILER      : COI Compiler
+|    OCCA_COI_COMPILER_FLAGS: COI Compiler Flags
 |
-|  Enabling MPI features:
-|    export OCCA_MPI_ENABLED=1
-|
-|  Defaults to:
-|    export OCCA_MPI_ENABLED=0
-+=======================================
+|  Setting it:
+|    export OCCA_COI_COMPILER="icpc"
+|    export OCCA_COI_COMPILER_FLAGS="-O3"
++===========================================================
 
 
-+--[ (12) OCCA_PTHREADS_ENABLED ]---------
-|  Info:
-|    Enable Pthreads mode in OCCA
-|
-|  Enabling OpenCL:
-|    export OCCA_PTHREADS_ENABLED=1
-|
-|  Defaults to:
-|    export OCCA_PTHREADS_ENABLED=0
-+=======================================
-
-
-+--[ (12) OCCA_OPENMP_ENABLED ]---------
-|  Info:
-|    Enable OpenMP mode in OCCA
-|
-|  Enabling OpenCL:
-|    export OCCA_OPENMP_ENABLED=1
-|
-|  Defaults to:
-|    export OCCA_OPENMP_ENABLED=0
-+=======================================
-
-
-+--[ (13) OCCA_CUDA_ENABLED ]-----------
-|  Info:
-|    Enable CUDA mode in OCCA
-|
-|  Enabling CUDA:
-|    export OCCA_CUDA_ENABLED=1
-|
-|  Defaults to:
-|    export OCCA_CUDA_ENABLED=0
-+=======================================
-
-
-+--[ (A) MATLAB ]-----------
++--[ (A) MATLAB ]-------------------------------------------
 |
 |  path(strcat(getenv('OCCA_DIR'), '/lib'), path)
 |
-+=======================================
++===========================================================
