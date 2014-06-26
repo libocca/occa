@@ -1,16 +1,14 @@
 +---[ (0) README ]------------------------------------------
 |   Installing:
-|     Go to your occa directory
-|        You should see: include, src, lib
+|      Using a termianl, go to your occa directory
+|         You should see: this README, include, src, lib
+|         Type "make" to compile libocca
 |
-|     Install:
-|        Type "make"
-|
-|   Running Examples:
-|     Setup your LD_LIBRARY PATH (check (4) below)
-|     cd examples/addVectors
-|     make
-|     ./main (C++), ./main_c (C), python main.py, etc
+|   Running Examples:  (After compiling libocca)
+|      Setup your LD_LIBRARY PATH (check (4) below)
+|      cd examples/addVectors
+|      make
+|      ./main (C++), ./main_c (C), python main.py, etc
 |
 |   Further options can be seen in (1)
 +===========================================================
