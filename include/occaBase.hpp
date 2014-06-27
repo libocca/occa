@@ -39,8 +39,8 @@ namespace occa {
   //---[ Typedefs ]-------------------
   typedef void* stream;
 
-  static const size_t useDefault = (1 << 0);
-  static const size_t useLoopy   = (1 << 1);
+  static const size_t useLoopy  = (1 << 0);
+  static const size_t useFloopy = (1 << 1);
   //==================================
 
   //---[ Mode ]-----------------------
@@ -678,7 +678,12 @@ namespace occa {
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
-                                const std::string &pythonCode = "");
+                                int loopyOrFloopy);
+
+    kernel buildKernelFromLoopy(const std::string &filename,
+                                const std::string &functionName,
+                                const std::string &pythonCode = "",
+                                int loopyOrFloopy = occa::useLoopy);
 
     memory malloc(const size_t bytes,
                   void *source = NULL);

@@ -396,9 +396,17 @@ namespace occa {
     return ker;
   }
 
+
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
-                                      const std::string &pythonCode){
+                                      const int useLoopyOrFloopy){
+    return buildKernelFromLoopy(filename, functionName, "", useLoopyOrFloopy);
+  }
+
+  kernel device::buildKernelFromLoopy(const std::string &filename,
+                                      const std::string &functionName,
+                                      const std::string &pythonCode,
+                                      const int useLoopyOrFloopy){
     std::string cachedBinary = binaryIsCached(filename, pythonCode);
 
     struct stat buffer;
@@ -424,16 +432,25 @@ namespace occa {
     const std::string pCachedBinary = prefix + "p_" + cacheName;
     const std::string iCachedBinary = prefix + "i_" + cacheName;
 
+    std::string loopyLang   = "loopy";
+    std::string loopyHeader = pythonCode;
+
+    if(useLoopyOrFloopy == occa::useFloopy){
+      loopyHeader = "!$loopy begin transform\n" + loopyHeader + "\n!$loopy end transform\n";
+
+      loopyLang = "floopy";
+    }
+
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
 
-    fs << pythonCode << "\n\n" << readFile(filename);
+    fs << loopyHeader << "\n\n" << readFile(filename);
 
     fs.close();
 
     std::stringstream command;
 
-    command << "floopy --lang=loopy --target=cl:0,0 "
+    command << "floopy --lang=" << loopyLang << " --target=cl:0,0 "
             << pCachedBinary << " " << iCachedBinary;
 
     const std::string &sCommand = command.str();
