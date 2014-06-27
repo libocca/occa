@@ -60,11 +60,11 @@ int main(int argc, char **argv){
   int mpChars, clChars, cuChars, ptChars, coiChars, coiMainChars;
 
   char *occaDir_ = getenv("OCCA_DIR");
-  if(occaDir_ == NULL){
-    std::cout << "Environment variable [OCCA_DIR] is not set.\n";
-    throw 1;
-  }
-  std::string occaDir(occaDir_);
+  std::string occaDir;
+  if(occaDir_ == NULL)
+    occaDir = "..";
+  else
+    occaDir = occaDir_;
 
   std::string ns = "namespace occa {";
 

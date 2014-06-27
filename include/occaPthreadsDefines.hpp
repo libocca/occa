@@ -143,27 +143,27 @@ public:
 
   inline TM& operator = (const TM &t){
     data[index()][0] = t;
-    return *this;
+    return data[index()][0];
   }
 
   inline TM& operator += (const TM &t){
     data[index()][0] += t;
-    return *this;
+    return data[index()][0];
   }
 
   inline TM& operator -= (const TM &t){
     data[index()][0] -= t;
-    return *this;
+    return data[index()][0];
   }
 
   inline TM& operator /= (const TM &t){
     data[index()][0] /= t;
-    return *this;
+    return data[index()][0];
   }
 
   inline TM& operator *= (const TM &t){
     data[index()][0] *= t;
-    return *this;
+    return data[index()][0];
   }
 
   inline TM& operator ++ (){
