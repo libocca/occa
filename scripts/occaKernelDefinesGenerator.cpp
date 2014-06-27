@@ -61,6 +61,7 @@ int main(int argc, char **argv){
 
   char *occaDir_ = getenv("OCCA_DIR");
   std::string occaDir;
+
   if(occaDir_ == NULL)
     occaDir = "..";
   else
