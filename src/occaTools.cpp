@@ -2,28 +2,6 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
-  double currentTime(){
-#if OCCA_OS == LINUX_OS
-
-    timespec ct;
-    clock_gettime(CLOCK_MONOTONIC, &ct);
-
-    return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
-
-#elif OCCA_OS == OSX_OS
-
-    uint64_t ct;
-    ct = mach_absolute_time();
-
-    const Nanoseconds ct2 = AbsoluteToNanoseconds(*(AbsoluteTime *) &ct);
-
-    return ((double) 1.0e-9) * ((double) ( *((uint64_t*) &ct2) ));
-
-#elif OCCA_OS == WINDOWS_OS
-#  warning "currentTime is not supported in Windows"
-#endif
-  }
-
   std::string fnv(const std::string &saltedString){
     const int len = saltedString.size();
     std::stringstream ss;
@@ -66,8 +44,8 @@ namespace occa {
                        std::istreambuf_iterator<char>());
   }
 
-  std::string binaryIsCached(const std::string &filename,
-                             const std::string &salt){
+  std::string getCachedName(const std::string &filename,
+                            const std::string &salt){
     //---[ Place Somewhere Else ]-----
     char *c_cachePath = getenv("OCCA_CACHE_DIR");
 
@@ -129,19 +107,29 @@ namespace occa {
     return occaCachePath + contentsSHA.substr(0, 16);
   }
 
-  std::string createIntermediateSource(const std::string &filename,
-                                       const std::string &cachedBinary,
-                                       const kernelInfo &info){
+  void getFilePrefixAndName(const std::string &fullFilename,
+                            std::string &prefix,
+                            std::string &filename){
     int lastSlash = 0;
-    const int chars = cachedBinary.size();
+    const int chars = fullFilename.size();
 
     for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
+      if(fullFilename[i] == '/')
         lastSlash = i;
 
     ++lastSlash;
-    const std::string iCachedBinary =
-      cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars - lastSlash);
+
+    prefix   = fullFilename.substr(0, lastSlash);
+    filename = fullFilename.substr(lastSlash, chars - lastSlash);
+  }
+
+  std::string createIntermediateSource(const std::string &filename,
+                                       const std::string &cachedBinary,
+                                       const kernelInfo &info){
+    std::string prefix, name;
+    getFilePrefixAndName(cachedBinary, prefix, name);
+
+    const std::string iCachedBinary = prefix + "i_" + name;
 
     std::ofstream fs;
     fs.open(iCachedBinary.c_str());

@@ -77,19 +77,11 @@ namespace occa {
          << info.salt()
          << functionName;
 
-    std::string cachedBinary = binaryIsCached(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string libPath, soname;
 
-    int lastSlash = 0;
-    const int chars = cachedBinary.size();
+    getFilePrefixAndName(cachedBinary, libPath, soname);
 
-    for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-
-    std::string soname  = cachedBinary.substr(lastSlash, chars - lastSlash);
-    std::string libPath = cachedBinary.substr(0, lastSlash);
     std::string libName = "lib" + soname + ".so";
 
     cachedBinary = libPath + libName;
@@ -150,22 +142,17 @@ namespace occa {
 
     functionName = functionName_;
 
-    int lastSlash = 0, lastPoint = 0;
-    const int chars = filename.size();
 
-    for(int i = 0; i < chars; ++i)
-      if(filename[i] == '/')
-        lastSlash = i;
+    std::string libPath, soname;
 
-    ++lastSlash;
+    getFilePrefixAndName(filename, libPath, soname);
 
-    for(int i = lastSlash; i < chars; ++i)
-      if(filename[i] == '.'){
-        lastPoint = i;
+    for(int i = 0; i < soname.size(); ++i){
+      if(soname[i] == '.'){
+        soname = soname.substr(0, i);
         break;
       }
-
-    std::string soname = filename.substr(lastSlash, lastPoint - lastSlash);
+    }
 
     COILIBRARY outLibrary;
 
@@ -522,7 +509,7 @@ namespace occa {
     salt << "COI"
          << occaCOIMain;
 
-    std::string cachedBinary = binaryIsCached("occaCOIMain", salt.str());
+    std::string cachedBinary = getCachedName("occaCOIMain", salt.str());
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -531,18 +518,11 @@ namespace occa {
       std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
     else{
       //---[ Write File ]-----------------
-      int lastSlash = 0;
-      int chars = cachedBinary.size();
+      std::string prefix, name;
 
-      for(int i = 0; i < chars; ++i)
-        if(cachedBinary[i] == '/')
-          lastSlash = i;
+      getFilePrefixAndName(cachedBinary, prefix, name);
 
-      ++lastSlash;
-
-      const std::string iCachedBinary =
-        cachedBinary.substr(0, lastSlash) +
-        "i_" + cachedBinary.substr(lastSlash, chars - lastSlash);
+      const std::string iCachedBinary = prefix + "i_" + name;
 
       std::ofstream fs;
       fs.open(iCachedBinary.c_str());

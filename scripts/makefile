@@ -8,14 +8,14 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-icpc_Enabled   = 0
+icpc_Enabled   = 1
 OpenGL_Enabled = 0
 
-# OCCA_OPENCL_ENABLED   = 1
-# OCCA_OPENMP_ENABLED   = 1
-# OCCA_CUDA_ENABLED     = 1
-# OCCA_COI_ENABLED      = 0
-# OCCA_PTHREADS_ENABLED = 1
+OCCA_OPENCL_ENABLED   = 1
+OCCA_OPENMP_ENABLED   = 1
+OCCA_CUDA_ENABLED     = 1
+OCCA_COI_ENABLED      = 0
+OCCA_PTHREADS_ENABLED = 1
 
 ifeq ($(DEBUG), 1)
 	Debug_Enabled = 1

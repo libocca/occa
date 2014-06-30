@@ -73,7 +73,7 @@ namespace occa {
          << info.salt()
          << functionName;
 
-    std::string cachedBinary = binaryIsCached(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, salt.str());
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);

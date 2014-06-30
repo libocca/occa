@@ -407,7 +407,7 @@ namespace occa {
                                       const std::string &functionName,
                                       const std::string &pythonCode,
                                       const int useLoopyOrFloopy){
-    std::string cachedBinary = binaryIsCached(filename, pythonCode);
+    std::string cachedBinary = getCachedName(filename, pythonCode);
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -417,17 +417,9 @@ namespace occa {
       return buildKernelFromBinary(cachedBinary, functionName);
     }
 
-    int lastSlash = 0;
-    const int chars = cachedBinary.size();
+    std::string prefix, cacheName;
 
-    for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-
-    const std::string prefix    = cachedBinary.substr(0, lastSlash);
-    const std::string cacheName = cachedBinary.substr(lastSlash, chars - lastSlash);
+    getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
     const std::string pCachedBinary = prefix + "p_" + cacheName;
     const std::string iCachedBinary = prefix + "i_" + cacheName;
