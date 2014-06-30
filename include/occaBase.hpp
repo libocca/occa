@@ -39,21 +39,56 @@ namespace occa {
   //---[ Typedefs ]-------------------
   typedef void* stream;
 
+  static const int CPU     = (1 << 0);
+  static const int GPU     = (1 << 1);
+  static const int FPGA    = (1 << 3);
+  static const int XeonPhi = (1 << 2);
+  static const int anyType = (CPU | GPU | FPGA | XeonPhi);
+
+  static const int Intel     = (1 << 4);
+  static const int AMD       = (1 << 5);
+  static const int Altera    = (1 << 6);
+  static const int NVIDIA    = (1 << 7);
+  static const int anyVendor = (Intel | AMD | Altera | NVIDIA);
+
+  const int any = (anyType | anyVendor);
+
+  inline std::string deviceType(int type){
+    if(type & CPU)     return "CPU";
+    if(type & GPU)     return "GPU";
+    if(type & FPGA)    return "FPGA";
+    if(type & XeonPhi) return "Xeon Phi";
+
+    return "N/A";
+  }
+
+  inline std::string vendor(int type){
+    if(type & Intel)  return "Intel";
+    if(type & AMD)    return "AMD";
+    if(type & NVIDIA) return "NVIDIA";
+
+    return "N/A";
+  }
+
   static const size_t useLoopy  = (1 << 0);
   static const size_t useFloopy = (1 << 1);
   //==================================
 
   //---[ Mode ]-----------------------
-  enum mode {Pthreads, OpenMP, OpenCL, CUDA, COI};
+  typedef int mode;
+
+  static const occa::mode Pthreads = (1 << 20);
+  static const occa::mode OpenMP   = (1 << 21);
+  static const occa::mode OpenCL   = (1 << 22);
+  static const occa::mode CUDA     = (1 << 23);
+  static const occa::mode COI      = (1 << 24);
 
   inline std::string modeToStr(occa::mode m){
-    switch(m){
-    case Pthreads: return "Pthreads";
-    case OpenMP  : return "OpenMP";
-    case OpenCL  : return "OpenCL";
-    case CUDA    : return "CUDA";
-    case COI     : return "COI";
-    }
+    if(m & Pthreads) return "Pthreads";
+    if(m & OpenMP)   return "OpenMP";
+    if(m & OpenCL)   return "OpenCL";
+    if(m & CUDA)     return "CUDA";
+    if(m & COI)      return "COI";
 
     OCCA_CHECK(false);
 
@@ -71,6 +106,29 @@ namespace occa {
 
     return OpenMP;
   }
+
+  inline std::string modes(int info, int preferredMode = 0){
+    std::string ret = "";
+    int info_ = info;
+    int count = 0;
+
+    if(preferredMode != 0){
+      ret = "[" + modeToStr(preferredMode) + "]";
+      info_ &= ~preferredMode;
+      ++count;
+    }
+
+    if(info_ & Pthreads) ret += std::string(count++ ? ", " : "") + "Pthreads";
+    if(info_ & OpenMP)   ret += std::string(count++ ? ", " : "") + "OpenMP";
+    if(info_ & OpenCL)   ret += std::string(count++ ? ", " : "") + "OpenCL";
+    if(info_ & CUDA)     ret += std::string(count++ ? ", " : "") + "CUDA";
+    if(info_ & COI)      ret += std::string(count++ ? ", " : "") + "COI";
+
+    if(count)
+      return ret;
+    else
+      return "N/A";
+  }
   //==================================
 
 
@@ -85,6 +143,84 @@ namespace occa {
   class device_v;
   template <occa::mode> class device_t;
   class device;
+
+  //---[ Helper Classes ]-------------
+  class deviceInfo {
+  public:
+    std::string name;
+    int id, info, preferredMode, cores;
+
+    static const char *line;
+    static const char *header;
+
+    inline deviceInfo() :
+      name("N/A"),
+      id(0),
+      info(0),
+      preferredMode(0),
+      cores(0) {}
+
+    inline deviceInfo(const deviceInfo &dInfo) :
+      name(dInfo.name),
+      id(dInfo.id),
+      info(dInfo.info),
+      preferredMode(dInfo.preferredMode),
+      cores(dInfo.cores) {}
+
+    inline deviceInfo& operator = (const deviceInfo &dInfo){
+      name = dInfo.name;
+      id   = dInfo.id;
+      info = dInfo.info;
+      preferredMode = dInfo.preferredMode;
+      cores = dInfo.cores;
+
+      return *this;
+    }
+
+    inline operator std::string() const {
+      std::stringstream ss;
+
+      ss << "| " << std::left << std::setw(40) << name
+         << "| " << std::left << std::setw(4) << id
+         << "| " << std::left << std::setw(6)  << cores
+         << "| " << std::left << std::setw(7)  << vendor(info)
+         << "| " << std::left << std::setw(33) << modes(info, preferredMode)
+         << "|";
+
+      return ss.str();
+    }
+
+    inline bool operator == (const deviceInfo &dInfo) const {
+      return ((name   == dInfo.name) &&
+              (id     == dInfo.id)   &&
+              (info   == dInfo.info));
+    }
+
+    inline bool operator != (const deviceInfo &info) const {
+      return !(*this == info);
+    }
+
+    inline bool operator < (const deviceInfo &dInfo) const {
+      if(name < dInfo.name) return true;
+      if(name > dInfo.name) return false;
+
+      if(id < dInfo.id) return true;
+      if(id > dInfo.id) return false;
+
+      if(info < dInfo.info) return true;
+
+      return false;
+    }
+
+    inline bool operator > (const deviceInfo &info) const {
+      return ((*this != info) && !(*this < info));
+    }
+
+    friend inline std::ostream& operator << (std::ostream &out, const deviceInfo &info){
+      out << (std::string) info;
+      return out;
+    }
+  };
 
   class dim {
   public:
@@ -196,11 +332,13 @@ namespace occa {
     CUevent cuEvent;
 #endif
   };
+  //==================================
+
 
   //---[ Kernel ]---------------------
   class kernel_v {
-    template<occa::mode> friend class occa::kernel_t;
-    template<occa::mode> friend class occa::device_t;
+    template <occa::mode> friend class occa::kernel_t;
+    template <occa::mode> friend class occa::device_t;
     friend class occa::kernel;
     friend class occa::device;
 
@@ -358,8 +496,8 @@ namespace occa {
                    const size_t srcOffset = 0);
 
   class memory_v {
-    template<occa::mode> friend class occa::memory_t;
-    template<occa::mode> friend class occa::device_t;
+    template <occa::mode> friend class occa::memory_t;
+    template <occa::mode> friend class occa::device_t;
     friend class occa::device;
     friend class occa::kernelArg;
 
@@ -533,9 +671,12 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+  template <occa::mode>
+  std::vector<occa::deviceInfo> availableDevices();
+
   class device_v {
-    template<occa::mode> friend class occa::device_t;
-    template<occa::mode> friend class occa::kernel_t;
+    template <occa::mode> friend class occa::device_t;
+    template <occa::mode> friend class occa::kernel_t;
     friend class occa::device;
 
   private:
@@ -582,7 +723,7 @@ namespace occa {
 
   template <occa::mode mode>
   class device_t : public device_v {
-    template<occa::mode> friend class occa::kernel_t;
+    template <occa::mode> friend class occa::kernel_t;
 
   private:
     size_t memoryUsed;
@@ -628,9 +769,9 @@ namespace occa {
   };
 
   class device {
-    template<occa::mode> friend class occa::kernel_t;
-    template<occa::mode> friend class occa::memory_t;
-    template<occa::mode> friend class occa::device_t;
+    template <occa::mode> friend class occa::kernel_t;
+    template <occa::mode> friend class occa::memory_t;
+    template <occa::mode> friend class occa::device_t;
 
   private:
     occa::mode mode_;

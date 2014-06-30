@@ -3,7 +3,12 @@
 // Use events for timing!
 
 namespace occa {
+  //---[ Helper Classes ]-------------
   kernelInfo defaultKernelInfo;
+
+  const char* deviceInfo::line   = "+-----------------------------------------+-----+-------+--------+----------------------------------+";
+  const char* deviceInfo::header = "| Name                                    | Num | Cores | Vendor | Available Modes                  |";
+  //==================================
 
   //---[ Kernel ]---------------------
   kernel::kernel() :

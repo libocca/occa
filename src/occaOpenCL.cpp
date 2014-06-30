@@ -3,6 +3,203 @@
 #include "occaOpenCL.hpp"
 
 namespace occa {
+  //---[ Helper Functions ]-----------
+  namespace cl {
+    cl_device_type deviceType(int type){
+      cl_device_type ret = 0;
+
+      if(type & occa::CPU)     ret |= CL_DEVICE_TYPE_CPU;
+      if(type & occa::GPU)     ret |= CL_DEVICE_TYPE_GPU;
+      if(type & occa::FPGA)    ret |= CL_DEVICE_TYPE_ACCELERATOR;
+      if(type & occa::XeonPhi) ret |= CL_DEVICE_TYPE_ACCELERATOR;
+
+      return ret;
+    }
+
+    int platformCount(){
+      cl_uint platformCount;
+
+      OCCA_CL_CHECK("OpenCL: Get Platform ID Count",
+                    clGetPlatformIDs(0, NULL, &platformCount));
+
+      return platformCount;
+    }
+
+    cl_platform_id platformID(int pID){
+      cl_platform_id *platforms = new cl_platform_id[pID + 1];
+
+      OCCA_CL_CHECK("OpenCL: Get Platform ID",
+                    clGetPlatformIDs(pID + 1, platforms, NULL));
+
+      cl_platform_id ret = platforms[pID];
+
+      delete [] platforms;
+
+      return ret;
+    }
+
+    int deviceCount(int type){
+      int pCount = cl::platformCount();
+      int ret = 0;
+
+      for(int p = 0; p < pCount; ++p)
+        ret += deviceCountInPlatform(p, type);
+
+      return ret;
+    }
+
+    int deviceCountInPlatform(int pID, int type){
+      cl_uint dCount;
+
+      cl_platform_id clPID = platformID(pID);
+
+      OCCA_CL_CHECK("OpenCL: Get Device ID Count",
+                    clGetDeviceIDs(clPID,
+                                   deviceType(type),
+                                   0, NULL, &dCount));
+
+      return dCount;
+    }
+
+    cl_device_id deviceID(int pID, int dID, int type){
+      cl_device_id *devices = new cl_device_id[dID + 1];
+
+      cl_platform_id clPID = platformID(pID);
+
+      OCCA_CL_CHECK("OpenCL: Get Device ID Count",
+                    clGetDeviceIDs(clPID,
+                                   deviceType(type),
+                                   dID + 1, devices, NULL));
+
+      cl_device_id ret = devices[dID];
+
+      delete [] devices;
+
+      return ret;
+    }
+
+    std::string deviceStrInfo(cl_device_id clDID,
+                              cl_device_info clInfo){
+      size_t bytes;
+
+      OCCA_CL_CHECK("OpenCL: Getting Device String Info",
+                    clGetDeviceInfo(clDID,
+                                    clInfo,
+                                    0, NULL, &bytes));
+
+      char *buffer  = new char[bytes + 1];
+      buffer[bytes] = '\0';
+
+      OCCA_CL_CHECK("OpenCL: Getting Device String Info",
+                    clGetDeviceInfo(clDID,
+                                    clInfo,
+                                    bytes, buffer, NULL));
+
+      std::string ret = buffer;
+
+      delete [] buffer;
+
+      int firstNS, lastNS;
+
+      for(int i = 0; i < ret.size(); ++i){
+        if((ret[i] != ' ') &&
+           (ret[i] != '\t') &&
+           (ret[i] != '\n')){
+          firstNS = i;
+          break;
+        }
+      }
+
+      for(int i = (ret.size() - 1); i > firstNS; --i){
+        if((ret[i] != ' ') &&
+           (ret[i] != '\t') &&
+           (ret[i] != '\n')){
+          lastNS = i;
+          break;
+        }
+      }
+
+      return ret.substr(firstNS, (lastNS - firstNS + 1));
+    }
+
+    std::string deviceName(int pID, int dID){
+      cl_device_id clDID = deviceID(pID, dID);
+
+      return deviceStrInfo(clDID, CL_DEVICE_NAME);
+    }
+
+    int deviceType(int pID, int dID){
+      cl_device_id clDID = deviceID(pID, dID);
+      int ret = 0;
+
+      cl_device_type clDeviceType;
+
+      OCCA_CL_CHECK("OpenCL: Get Device Type",
+                    clGetDeviceInfo(clDID,
+                                    CL_DEVICE_TYPE,
+                                    sizeof(clDeviceType), &clDeviceType, NULL));
+
+      if(clDeviceType & CL_DEVICE_TYPE_CPU)
+        ret |= occa::CPU;
+      else if(clDeviceType & CL_DEVICE_TYPE_GPU)
+        ret |= occa::GPU;
+
+      return ret;
+    }
+
+    int deviceVendor(int pID, int dID){
+      cl_device_id clDID = deviceID(pID, dID);
+      int ret = 0;
+
+      std::string vendor = deviceStrInfo(clDID, CL_DEVICE_VENDOR);
+
+      if(vendor.find("AMD")                    != std::string::npos ||
+         vendor.find("Advanced Micro Devices") != std::string::npos ||
+         vendor.find("ATI")                    != std::string::npos)
+        ret |= occa::AMD;
+
+      else if(vendor.find("Intel") != std::string::npos)
+        ret |= occa::Intel;
+
+      else if(vendor.find("Altera") != std::string::npos)
+        ret |= occa::Altera;
+
+      else if(vendor.find("Nvidia") != std::string::npos ||
+              vendor.find("NVIDIA") != std::string::npos)
+        ret |= occa::NVIDIA;
+
+      return ret;
+    }
+
+    int deviceCoreCount(int pID, int dID){
+      cl_device_id clDID = deviceID(pID, dID);
+      cl_uint ret;
+
+      OCCA_CL_CHECK("OpenCL: Get Device Core Count",
+                    clGetDeviceInfo(clDID,
+                                    CL_DEVICE_MAX_COMPUTE_UNITS,
+                                    sizeof(ret), &ret, NULL));
+
+      return ret;
+    }
+
+    occa::deviceInfo deviceInfo(int pID, int dID){
+      occa::deviceInfo dInfo;
+
+      dInfo.name  = deviceName(pID, dID);
+      dInfo.id    = pID*100 + dID;
+      dInfo.info  = deviceType(pID, dID) | deviceVendor(pID, dID) | occa::OpenCL;
+      dInfo.cores = deviceCoreCount(pID, dID);
+
+      if((dInfo.info & occa::GPU) && (dInfo.info & occa::AMD))
+        dInfo.preferredMode = occa::OpenCL;
+
+      return dInfo;
+    }
+  };
+  //==================================
+
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenCL>::kernel_t(){
@@ -498,6 +695,34 @@ namespace occa {
 
   //---[ Device ]---------------------
   template <>
+  std::vector<occa::deviceInfo> availableDevices<OpenCL>(){
+    std::vector<occa::deviceInfo> ret( occa::cl::deviceCount() );
+    int pos = 0;
+
+    int platformCount = occa::cl::platformCount();
+
+    std::cout << occa::deviceInfo::line << '\n'
+              << occa::deviceInfo::header << '\n'
+              << occa::deviceInfo::line << '\n';
+
+    for(int p = 0; p < platformCount; ++p){
+      int deviceCount = occa::cl::deviceCountInPlatform(p);
+
+      for(int d = 0; d < deviceCount; ++d){
+        ret[pos] = occa::cl::deviceInfo(p,d);
+
+        std::cout << ret[pos] << '\n';
+
+        ++pos;
+      }
+    }
+
+    std::cout << occa::deviceInfo::line << '\n';
+
+    return ret;
+  }
+
+  template <>
   device_t<OpenCL>::device_t() :
     memoryUsed(0) {
     data = NULL;
@@ -541,25 +766,11 @@ namespace occa {
     data_.platform = platform;
     data_.device   = device;
 
-    cl_platform_id *platforms = new cl_platform_id[platform + 1];
-    cl_device_id   *devices   = new cl_device_id[device + 1];
-
-    OCCA_CL_CHECK("OpenCL: Get Platform IDs",
-                  clGetPlatformIDs(platform + 1, platforms, NULL));
-
-    data_.platformID = platforms[platform];
-
-    clGetDeviceIDs(data_.platformID,
-                   CL_DEVICE_TYPE_ALL,
-                   device + 1, devices, NULL);
-
-    data_.deviceID = devices[device];
+    data_.platformID = cl::platformID(platform);
+    data_.deviceID   = cl::deviceID(platform, device);
 
     data_.context = clCreateContext(NULL, 1, &data_.deviceID, NULL, NULL, &error);
     OCCA_CL_CHECK("Device: Creating Context", error);
-
-    delete [] platforms;
-    delete [] devices;
   }
 
   template <>

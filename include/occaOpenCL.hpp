@@ -37,6 +37,35 @@ namespace occa {
   //==================================
 
 
+  //---[ Helper Functions ]-----------
+  namespace cl {
+    cl_device_type deviceType(int type);
+
+    int platformCount();
+
+    cl_platform_id platformID(int pID);
+
+    int deviceCount(int type = any);
+    int deviceCountInPlatform(int pID, int type = any);
+
+    cl_device_id deviceID(int pID, int dID, int type = any);
+
+    std::string deviceStrInfo(cl_device_id clDID,
+                              cl_device_info clInfo);
+
+    std::string deviceName(int pID, int dID);
+
+    int deviceType(int pID, int dID);
+
+    int deviceVendor(int pID, int dID);
+
+    int deviceCoreCount(int pID, int dID);
+
+    occa::deviceInfo deviceInfo(int pID, int dID);
+  };
+  //==================================
+
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenCL>::kernel_t();
@@ -130,6 +159,9 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+  template <>
+  std::vector<occa::deviceInfo> availableDevices<OpenCL>();
+
   template <>
   device_t<OpenCL>::device_t();
 
