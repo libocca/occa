@@ -83,6 +83,12 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
     data = new OpenMPKernelData_t;
 
     std::string iCachedBinary = createIntermediateSource(filename,
@@ -117,6 +123,8 @@ namespace occa {
       fputs(dlError, stderr);
       throw 1;
     }
+
+    releaseFile(cachedBinary);
 
     return this;
   }

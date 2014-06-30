@@ -79,6 +79,12 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
     data = new PthreadsKernelData_t;
 
     std::string iCachedBinary = createIntermediateSource(filename,
@@ -127,6 +133,8 @@ namespace occa {
 
     data_.pendingJobsMutex = &(dData.pendingJobsMutex);
     data_.kernelMutex      = &(dData.kernelMutex);
+
+    releaseFile(cachedBinary);
 
     return this;
   }

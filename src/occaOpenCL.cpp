@@ -90,6 +90,12 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
                                                          info);
@@ -174,6 +180,8 @@ namespace occa {
     OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
 
     std::cout << "OpenCL compiled " << filename << " from [" << iCachedBinary << "]\n";
+
+    releaseFile(cachedBinary);
 
     delete [] cFunction;
 

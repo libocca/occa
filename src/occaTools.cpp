@@ -52,8 +52,6 @@ namespace occa {
     std::string occaCachePath;
 
     if(c_cachePath == NULL){
-      struct stat buffer;
-
       char *c_home = getenv("HOME");
 
       std::stringstream ss;
@@ -62,15 +60,7 @@ namespace occa {
 
       std::string defaultCacheDir = ss.str();
 
-      if(stat(defaultCacheDir.c_str(), &buffer)){
-        std::stringstream command;
-
-        command << "mkdir " << defaultCacheDir;
-
-        const std::string &sCommand = command.str();
-
-        system(sCommand.c_str());
-      }
+      mkdir(defaultCacheDir.c_str(), 0755);
 
       occaCachePath = defaultCacheDir;
     }
@@ -105,22 +95,6 @@ namespace occa {
 
     // Only taking the first 16 characters
     return occaCachePath + contentsSHA.substr(0, 16);
-  }
-
-  void getFilePrefixAndName(const std::string &fullFilename,
-                            std::string &prefix,
-                            std::string &filename){
-    int lastSlash = 0;
-    const int chars = fullFilename.size();
-
-    for(int i = 0; i < chars; ++i)
-      if(fullFilename[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-
-    prefix   = fullFilename.substr(0, lastSlash);
-    filename = fullFilename.substr(lastSlash, chars - lastSlash);
   }
 
   std::string createIntermediateSource(const std::string &filename,

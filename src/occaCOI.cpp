@@ -94,6 +94,12 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
                                                          info);
@@ -131,6 +137,8 @@ namespace occa {
                                                 1,
                                                 &c_functionName,
                                                 &(data_.kernel)));
+
+    releaseFile(cachedBinary);
 
     return this;
   }
@@ -524,26 +532,32 @@ namespace occa {
 
       const std::string iCachedBinary = prefix + "i_" + name;
 
-      std::ofstream fs;
-      fs.open(iCachedBinary.c_str());
+      if(haveFile(cachedBinary)){
+        std::ofstream fs;
+        fs.open(iCachedBinary.c_str());
 
-      fs << occaCOIMain;
+        fs << occaCOIMain;
 
-      fs.close();
+        fs.close();
 
-      std::stringstream command;
+        std::stringstream command;
 
-      command << dev->dHandle->compiler
-              << " -o " << cachedBinary
-              << " -x c++"
-              << ' '    << dev->dHandle->compilerFlags
-              << ' '    << iCachedBinary;
+        command << dev->dHandle->compiler
+                << " -o " << cachedBinary
+                << " -x c++"
+                << ' '    << dev->dHandle->compilerFlags
+                << ' '    << iCachedBinary;
 
-      const std::string &sCommand = command.str();
+        const std::string &sCommand = command.str();
 
-      std::cout << sCommand << '\n';
+        std::cout << sCommand << '\n';
 
-      system(sCommand.c_str());
+        system(sCommand.c_str());
+
+        releaseFile(cachedBinary);
+      }
+      else
+        waitForFile(cachedBinary);
     }
 
     // [-] Tentative

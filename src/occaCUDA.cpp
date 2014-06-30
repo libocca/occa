@@ -87,6 +87,12 @@ namespace occa {
       return buildFromBinary(cachedBinary, functionName);
     }
 
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
                                                          info);
@@ -143,6 +149,8 @@ namespace occa {
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
                     cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
+
+    releaseFile(cachedBinary);
 
     return this;
   }
