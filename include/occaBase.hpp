@@ -147,45 +147,86 @@ namespace occa {
   //---[ Helper Classes ]-------------
   class deviceInfo {
   public:
-    std::string name;
-    int id, info, preferredMode, cores;
-
-    static const char *line;
+    static const char *sLine, *dLine1, *dLine2;
     static const char *header;
+
+    std::string name;
+    int id, count, info;
+    float memoryGB;
+    int preferredMode;
+
+    std::vector<std::string> labels, labelInfo;
 
     inline deviceInfo() :
       name("N/A"),
       id(0),
+      count(1),
       info(0),
-      preferredMode(0),
-      cores(0) {}
+      memoryGB(0),
+      preferredMode(0) {}
 
     inline deviceInfo(const deviceInfo &dInfo) :
       name(dInfo.name),
       id(dInfo.id),
+      count(dInfo.count),
       info(dInfo.info),
+      memoryGB(dInfo.memoryGB),
       preferredMode(dInfo.preferredMode),
-      cores(dInfo.cores) {}
+
+      labels(dInfo.labels),
+      labelInfo(dInfo.labelInfo) {}
 
     inline deviceInfo& operator = (const deviceInfo &dInfo){
-      name = dInfo.name;
-      id   = dInfo.id;
-      info = dInfo.info;
+      name          = dInfo.name;
+      id            = dInfo.id;
+      count         = dInfo.count;
+      info          = dInfo.info;
+      memoryGB      = dInfo.memoryGB;
       preferredMode = dInfo.preferredMode;
-      cores = dInfo.cores;
+
+      labels    = dInfo.labels;
+      labelInfo = dInfo.labelInfo;
 
       return *this;
     }
 
-    inline operator std::string() const {
+    inline std::string summarizedInfo() const {
       std::stringstream ss;
 
-      ss << "| " << std::left << std::setw(40) << name
-         << "| " << std::left << std::setw(4) << id
-         << "| " << std::left << std::setw(6)  << cores
-         << "| " << std::left << std::setw(7)  << vendor(info)
+      ss << "| " << std::left << std::setw(42) << name
+         << "| " << std::left << std::setw(4)  << count
          << "| " << std::left << std::setw(33) << modes(info, preferredMode)
          << "|";
+
+      return ss.str();
+    }
+
+    inline std::string detailedInfo() const {
+      std::stringstream ss;
+
+      const int labelCount = labels.size();
+
+      ss << dLine1 << '\n'
+         << "| " << std::left << std::setw(55) << name << "|\n"
+         << dLine1 << '\n'
+
+         << "| " << std::left << std::setw(16) << "Device Count"
+         << "| " << std::left << std::setw(37) << count << "|\n"
+         << dLine2 << '\n'
+
+         << "| " << std::left << std::setw(16) << "Vendor"
+         << "| " << std::left << std::setw(37) << vendor(info) << "|\n"
+
+         << "| " << std::left << std::setw(16) << "Memory"
+         << "| " << std::left << std::setw(37) << memoryGB << "|\n"
+         << dLine2 << '\n';
+
+      for(int i = 0; i < labelCount; ++i)
+        ss << "| " << std::left << std::setw(16) << labels[i]
+           << "| " << std::left << std::setw(37) << labelInfo[i]
+           << "|\n";
+
+      ss << dLine1 << '\n';
 
       return ss.str();
     }
@@ -214,11 +255,6 @@ namespace occa {
 
     inline bool operator > (const deviceInfo &info) const {
       return ((*this != info) && !(*this < info));
-    }
-
-    friend inline std::ostream& operator << (std::ostream &out, const deviceInfo &info){
-      out << (std::string) info;
-      return out;
     }
   };
 

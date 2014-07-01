@@ -6,8 +6,11 @@ namespace occa {
   //---[ Helper Classes ]-------------
   kernelInfo defaultKernelInfo;
 
-  const char* deviceInfo::line   = "+-----------------------------------------+-----+-------+--------+----------------------------------+";
-  const char* deviceInfo::header = "| Name                                    | Num | Cores | Vendor | Available Modes                  |";
+  const char* deviceInfo::header = "| Name                                      | Num | Available Modes                  |";
+  const char* deviceInfo::sLine  = "+-------------------------------------------+-----+----------------------------------+";
+
+  const char* deviceInfo::dLine1 = "+--------------------------------------------------------+";
+  const char* deviceInfo::dLine2 = "+  -  -  -  -  -  +  -  -  -  -  -  -  -  -  -  -  -  -  +";
   //==================================
 
   //---[ Kernel ]---------------------

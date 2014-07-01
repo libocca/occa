@@ -189,7 +189,6 @@ namespace occa {
       dInfo.name  = deviceName(pID, dID);
       dInfo.id    = pID*100 + dID;
       dInfo.info  = deviceType(pID, dID) | deviceVendor(pID, dID) | occa::OpenCL;
-      dInfo.cores = deviceCoreCount(pID, dID);
 
       if((dInfo.info & occa::GPU) && (dInfo.info & occa::AMD))
         dInfo.preferredMode = occa::OpenCL;
@@ -701,9 +700,9 @@ namespace occa {
 
     int platformCount = occa::cl::platformCount();
 
-    std::cout << occa::deviceInfo::line << '\n'
+    std::cout << occa::deviceInfo::sLine   << '\n'
               << occa::deviceInfo::header << '\n'
-              << occa::deviceInfo::line << '\n';
+              << occa::deviceInfo::sLine   << '\n';
 
     for(int p = 0; p < platformCount; ++p){
       int deviceCount = occa::cl::deviceCountInPlatform(p);
@@ -711,13 +710,13 @@ namespace occa {
       for(int d = 0; d < deviceCount; ++d){
         ret[pos] = occa::cl::deviceInfo(p,d);
 
-        std::cout << ret[pos] << '\n';
+        std::cout << ret[pos].summarizedInfo() << '\n';
 
         ++pos;
       }
     }
 
-    std::cout << occa::deviceInfo::line << '\n';
+    std::cout << occa::deviceInfo::sLine << '\n';
 
     return ret;
   }
