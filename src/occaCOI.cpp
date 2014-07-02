@@ -597,14 +597,14 @@ namespace occa {
 
   template <>
   void device_t<COI>::getEnvironmentVariables(){
-    char *c_compiler = getenv("OCCA_COI_COMPILER");
+    const char *c_compiler = getenv("OCCA_COI_COMPILER");
 
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
     else
-      compiler = "icpc"
+      compiler = "icpc";
 
-    char *c_compilerFlags = getenv("OCCA_COI_COMPILER_FLAGS");
+    const char *c_compilerFlags = getenv("OCCA_COI_COMPILER_FLAGS");
 
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
