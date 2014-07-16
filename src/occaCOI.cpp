@@ -75,6 +75,8 @@ namespace occa {
     std::stringstream salt;
     salt << "COI"
          << info.salt()
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
          << functionName;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
@@ -533,6 +535,8 @@ namespace occa {
       const std::string iCachedBinary = prefix + "i_" + name;
 
       if(haveFile(cachedBinary)){
+        std::cout << "Making [" << iCachedBinary << "]\n";
+
         std::ofstream fs;
         fs.open(iCachedBinary.c_str());
 

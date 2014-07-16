@@ -75,6 +75,8 @@ namespace occa {
     std::stringstream salt;
     salt << "CUDA"
          << info.salt()
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
          << functionName;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
