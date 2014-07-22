@@ -10,6 +10,7 @@
 #include <xmmintrin.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <fcntl.h>
 
@@ -39,10 +40,6 @@ namespace occa {
   //---[ Typedefs ]-------------------
   typedef void* stream;
 
-<<<<<<< HEAD
-  static const uintptr_t useDefault = (1 << 0);
-  static const uintptr_t useLoopy   = (1 << 1);
-=======
   static const int CPU     = (1 << 0);
   static const int GPU     = (1 << 1);
   static const int FPGA    = (1 << 3);
@@ -74,9 +71,8 @@ namespace occa {
     return "N/A";
   }
 
-  static const size_t useLoopy  = (1 << 0);
-  static const size_t useFloopy = (1 << 1);
->>>>>>> 65e95473308b77c43e81fbb179599a86dd22ae59
+  static const uintptr_t useLoopy  = (1 << 0);
+  static const uintptr_t useFloopy = (1 << 1);
   //==================================
 
   //---[ Mode ]-----------------------
