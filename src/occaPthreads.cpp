@@ -225,9 +225,9 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyFrom(const void *source,
-                                    const size_t bytes,
-                                    const size_t offset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                    const uintptr_t bytes,
+                                    const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -238,10 +238,10 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyFrom(const memory_v *source,
-                                    const size_t bytes,
-                                    const size_t destOffset,
-                                    const size_t srcOffset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                    const uintptr_t bytes,
+                                    const uintptr_t destOffset,
+                                    const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -255,9 +255,9 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyTo(void *dest,
-                                  const size_t bytes,
-                                  const size_t offset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                  const uintptr_t bytes,
+                                  const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -268,10 +268,10 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyTo(memory_v *dest,
-                                  const size_t bytes,
-                                  const size_t destOffset,
-                                  const size_t srcOffset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                  const uintptr_t bytes,
+                                  const uintptr_t destOffset,
+                                  const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
@@ -285,9 +285,9 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const void *source,
-                                         const size_t bytes,
-                                         const size_t offset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                         const uintptr_t bytes,
+                                         const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -296,10 +296,10 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const memory_v *source,
-                                         const size_t bytes,
-                                         const size_t destOffset,
-                                         const size_t srcOffset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                         const uintptr_t bytes,
+                                         const uintptr_t destOffset,
+                                         const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -311,9 +311,9 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::asyncCopyTo(void *dest,
-                                       const size_t bytes,
-                                       const size_t offset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                       const uintptr_t bytes,
+                                       const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -322,10 +322,10 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::asyncCopyTo(memory_v *dest,
-                                       const size_t bytes,
-                                       const size_t destOffset,
-                                       const size_t srcOffset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                       const uintptr_t bytes,
+                                       const uintptr_t destOffset,
+                                       const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
@@ -512,7 +512,7 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<Pthreads>::malloc(const size_t bytes,
+  memory_v* device_t<Pthreads>::malloc(const uintptr_t bytes,
                                        void *source){
     memory_v *mem = new memory_t<Pthreads>;
 

@@ -90,15 +90,15 @@ extern "C" {
   typedef void* occaKernelInfo;
 
   typedef struct occaDim_t {
-    size_t x, y, z;
+    uintptr_t x, y, z;
   } occaDim;
 
   extern occaKernelInfo occaNoKernelInfo;
 
-  extern const size_t occaAutoSize;
-  extern const size_t occaNoOffset;
+  extern const uintptr_t occaAutoSize;
+  extern const uintptr_t occaNoOffset;
 
-  extern const size_t occaTypeSize[OCCA_TYPE_COUNT];
+  extern const uintptr_t occaTypeSize[OCCA_TYPE_COUNT];
 
 
   //---[ TypeCasting ]------------------
@@ -148,7 +148,7 @@ extern "C" {
                                       const char *pythonCode);
 
   occaMemory occaDeviceMalloc(occaDevice device,
-                              size_t bytes,
+                              uintptr_t bytes,
                               void *source);
 
   void occaDeviceFlush(occaDevice device);
@@ -180,8 +180,8 @@ extern "C" {
 
   void occaKernelSetAllWorkingDims(occaKernel kernel,
                                    int dims,
-                                   size_t itemsX, size_t itemsY, size_t itemsZ,
-                                   size_t groupsX, size_t groupsY, size_t groupsZ);
+                                   uintptr_t itemsX, uintptr_t itemsY, uintptr_t itemsZ,
+                                   uintptr_t groupsX, uintptr_t groupsY, uintptr_t groupsZ);
 
   double occaKernelTimeTaken(occaKernel kernel);
 
@@ -216,26 +216,26 @@ extern "C" {
   const char* occaMemoryMode(occaMemory memory);
 
   void occaCopyMemToMem(occaMemory dest, occaMemory src,
-                        const size_t bytes,
-                        const size_t destOffset,
-                        const size_t srcOffset);
+                        const uintptr_t bytes,
+                        const uintptr_t destOffset,
+                        const uintptr_t srcOffset);
 
   void occaCopyPtrToMem(occaMemory dest, const void *src,
-                        const size_t bytes, const size_t offset);
+                        const uintptr_t bytes, const uintptr_t offset);
 
   void occaCopyMemToPtr(void *dest, occaMemory src,
-                        const size_t bytes, const size_t offset);
+                        const uintptr_t bytes, const uintptr_t offset);
 
   void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
-                             const size_t bytes,
-                             const size_t destOffset,
-                             const size_t srcOffset);
+                             const uintptr_t bytes,
+                             const uintptr_t destOffset,
+                             const uintptr_t srcOffset);
 
   void occaAsyncCopyPtrToMem(occaMemory dest, const void *src,
-                             const size_t bytes, const size_t offset);
+                             const uintptr_t bytes, const uintptr_t offset);
 
   void occaAsyncCopyMemToPtr(void *dest, occaMemory src,
-                             const size_t bytes, const size_t offset);
+                             const uintptr_t bytes, const uintptr_t offset);
 
   void occaMemorySwap(occaMemory memoryA, occaMemory memoryB);
 

@@ -7,7 +7,7 @@
 #if OCCA_DEBUG_ENABLED
 #  define OCCA_CHECK2( _expr , file , line , func )                     \
   do {                                                                  \
-    size_t expr = (_expr);                                              \
+    uintptr_t expr = (_expr);                                              \
     if( !expr ){                                                        \
       std::cout << '\n'                                                 \
                 << "---[ Error ]--------------------------------------------\n" \
@@ -261,8 +261,8 @@
                                          kernel_,                       \
                                          (cl_int) dims,                 \
                                          NULL,                          \
-                                         (size_t*) &fullOuter,          \
-                                         (size_t*) &inner,              \
+                                         (uintptr_t*) &fullOuter,          \
+                                         (uintptr_t*) &inner,              \
                                          0, NULL, NULL));               \
   }
 
@@ -369,7 +369,7 @@
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,                 \
                              inner.z, inner.y, inner.x};                \
                                                                         \
-    size_t kSize = sizeof(data_.kernel);                                \
+    uintptr_t kSize = sizeof(data_.kernel);                                \
     ::memcpy(&(data_.hostArgv[0])    , &(data_.kernel), kSize);         \
     ::memcpy(&(data_.hostArgv[kSize]), &(occaKernelArgs[0]), 6*sizeof(int)); \
     int hostPos   = kSize + 6*sizeof(int) + N*sizeof(int);              \

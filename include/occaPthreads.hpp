@@ -125,47 +125,47 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyFrom(const void *source,
-                                    const size_t bytes,
-                                    const size_t offset);
+                                    const uintptr_t bytes,
+                                    const uintptr_t offset);
 
   template <>
   void memory_t<Pthreads>::copyFrom(const memory_v *source,
-                                    const size_t bytes,
-                                    const size_t destOffset,
-                                    const size_t srcOffset);
+                                    const uintptr_t bytes,
+                                    const uintptr_t destOffset,
+                                    const uintptr_t srcOffset);
 
   template <>
   void memory_t<Pthreads>::copyTo(void *dest,
-                                  const size_t bytes,
-                                  const size_t destOffset);
+                                  const uintptr_t bytes,
+                                  const uintptr_t destOffset);
 
   template <>
   void memory_t<Pthreads>::copyTo(memory_v *dest,
-                                  const size_t bytes,
-                                  const size_t srcOffset,
-                                  const size_t offset);
+                                  const uintptr_t bytes,
+                                  const uintptr_t srcOffset,
+                                  const uintptr_t offset);
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const void *source,
-                                         const size_t bytes,
-                                         const size_t destOffset);
+                                         const uintptr_t bytes,
+                                         const uintptr_t destOffset);
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const memory_v *source,
-                                         const size_t bytes,
-                                         const size_t srcOffset,
-                                         const size_t offset);
+                                         const uintptr_t bytes,
+                                         const uintptr_t srcOffset,
+                                         const uintptr_t offset);
 
   template <>
   void memory_t<Pthreads>::asyncCopyTo(void *dest,
-                                       const size_t bytes,
-                                       const size_t offset);
+                                       const uintptr_t bytes,
+                                       const uintptr_t offset);
 
   template <>
   void memory_t<Pthreads>::asyncCopyTo(memory_v *dest,
-                                       const size_t bytes,
-                                       const size_t destOffset,
-                                       const size_t srcOffset);
+                                       const uintptr_t bytes,
+                                       const uintptr_t destOffset,
+                                       const uintptr_t srcOffset);
 
   template <>
   void memory_t<Pthreads>::free();
@@ -228,7 +228,7 @@ namespace occa {
   void device_t<Pthreads>::free();
 
   template <>
-  memory_v* device_t<Pthreads>::malloc(const size_t bytes,
+  memory_v* device_t<Pthreads>::malloc(const uintptr_t bytes,
                                        void *source);
 
   template <>

@@ -124,114 +124,114 @@ namespace occa {
   }
 
   void memory::copyFrom(const void *source,
-                        const size_t bytes,
-                        const size_t offset){
+                        const uintptr_t bytes,
+                        const uintptr_t offset){
     mHandle->copyFrom(source, bytes, offset);
   }
 
   void memory::copyFrom(const memory &source,
-                        const size_t bytes,
-                        const size_t destOffset,
-                        const size_t srcOffset){
+                        const uintptr_t bytes,
+                        const uintptr_t destOffset,
+                        const uintptr_t srcOffset){
     mHandle->copyFrom(source.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::copyTo(void *dest,
-                      const size_t bytes,
-                      const size_t offset){
+                      const uintptr_t bytes,
+                      const uintptr_t offset){
     mHandle->copyTo(dest, bytes, offset);
   }
 
   void memory::copyTo(memory &dest,
-                      const size_t bytes,
-                      const size_t destOffset,
-                      const size_t srcOffset){
+                      const uintptr_t bytes,
+                      const uintptr_t destOffset,
+                      const uintptr_t srcOffset){
     mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyFrom(const void *source,
-                             const size_t bytes,
-                             const size_t offset){
+                             const uintptr_t bytes,
+                             const uintptr_t offset){
     mHandle->asyncCopyFrom(source, bytes, offset);
   }
 
   void memory::asyncCopyFrom(const memory &source,
-                             const size_t bytes,
-                             const size_t destOffset,
-                             const size_t srcOffset){
+                             const uintptr_t bytes,
+                             const uintptr_t destOffset,
+                             const uintptr_t srcOffset){
     mHandle->asyncCopyFrom(source.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyTo(void *dest,
-                           const size_t bytes,
-                           const size_t offset){
+                           const uintptr_t bytes,
+                           const uintptr_t offset){
     mHandle->asyncCopyTo(dest, bytes, offset);
   }
 
   void memory::asyncCopyTo(memory &dest,
-                           const size_t bytes,
-                           const size_t destOffset,
-                           const size_t srcOffset){
+                           const uintptr_t bytes,
+                           const uintptr_t destOffset,
+                           const uintptr_t srcOffset){
     mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memcpy(memory &dest,
               const void *source,
-              const size_t bytes,
-              const size_t offset){
+              const uintptr_t bytes,
+              const uintptr_t offset){
     dest.copyFrom(source, bytes, offset);
   }
 
   void memcpy(memory &dest,
               const memory &source,
-              const size_t bytes,
-              const size_t destOffset,
-              const size_t srcOffset){
+              const uintptr_t bytes,
+              const uintptr_t destOffset,
+              const uintptr_t srcOffset){
     dest.copyFrom(source, bytes, destOffset, srcOffset);
   }
 
   void memcpy(void *dest,
               memory &source,
-              const size_t bytes,
-              const size_t offset){
+              const uintptr_t bytes,
+              const uintptr_t offset){
     source.copyTo(dest, bytes, offset);
   }
 
   void memcpy(memory &dest,
               memory &source,
-              const size_t bytes,
-              const size_t destOffset,
-              const size_t srcOffset){
+              const uintptr_t bytes,
+              const uintptr_t destOffset,
+              const uintptr_t srcOffset){
     source.copyTo(dest, bytes, destOffset, srcOffset);
   }
 
   void asyncMemcpy(memory &dest,
                    const void *source,
-                   const size_t bytes,
-                   const size_t offset){
+                   const uintptr_t bytes,
+                   const uintptr_t offset){
     dest.asyncCopyFrom(source, bytes, offset);
   }
 
   void asyncMemcpy(memory &dest,
                    const memory &source,
-                   const size_t bytes,
-                   const size_t destOffset,
-                   const size_t srcOffset){
+                   const uintptr_t bytes,
+                   const uintptr_t destOffset,
+                   const uintptr_t srcOffset){
     dest.asyncCopyFrom(source, bytes, destOffset, srcOffset);
   }
 
   void asyncMemcpy(void *dest,
                    memory &source,
-                   const size_t bytes,
-                   const size_t offset){
+                   const uintptr_t bytes,
+                   const uintptr_t offset){
     source.asyncCopyTo(dest, bytes, offset);
   }
 
   void asyncMemcpy(memory &dest,
                    memory &source,
-                   const size_t bytes,
-                   const size_t destOffset,
-                   const size_t srcOffset){
+                   const uintptr_t bytes,
+                   const uintptr_t destOffset,
+                   const uintptr_t srcOffset){
     source.asyncCopyTo(dest, bytes, destOffset, srcOffset);
   }
 
@@ -445,7 +445,7 @@ namespace occa {
     return buildKernelFromSource(iCachedBinary, functionName);
   }
 
-  memory device::malloc(const size_t bytes,
+  memory device::malloc(const uintptr_t bytes,
                         void *source){
     memory mem;
 

@@ -39,8 +39,8 @@ namespace occa {
   //---[ Typedefs ]-------------------
   typedef void* stream;
 
-  static const size_t useDefault = (1 << 0);
-  static const size_t useLoopy   = (1 << 1);
+  static const uintptr_t useDefault = (1 << 0);
+  static const uintptr_t useLoopy   = (1 << 1);
   //==================================
 
   //---[ Mode ]-----------------------
@@ -90,22 +90,22 @@ namespace occa {
   public:
     union {
       struct {
-        size_t x, y, z;
+        uintptr_t x, y, z;
       };
-      size_t data[3];
+      uintptr_t data[3];
     };
 
     inline dim();
-    inline dim(size_t x_);
-    inline dim(size_t x_, size_t y_);
-    inline dim(size_t x_, size_t y_, size_t z_);
+    inline dim(uintptr_t x_);
+    inline dim(uintptr_t x_, uintptr_t y_);
+    inline dim(uintptr_t x_, uintptr_t y_, uintptr_t z_);
 
     inline dim(const dim &d);
 
     inline dim& operator = (const dim &d);
     inline dim  operator * (const dim &d);
 
-    inline size_t& operator [] (int i);
+    inline uintptr_t& operator [] (int i);
   };
 
   union kernelArg_t {
@@ -119,12 +119,12 @@ namespace occa {
     unsigned short ushort_;
 
     long long_;
-    // unsigned long == size_t
+    // unsigned long == uintptr_t
 
     float float_;
     double double_;
 
-    size_t size_t_;
+    uintptr_t uintptr_t_;
     void* void_;
   };
 
@@ -132,14 +132,14 @@ namespace occa {
   public:
     kernelArg_t arg;
 
-    size_t size;
+    uintptr_t size;
     bool pointer;
 
     inline kernelArg(){
       arg.void_ = NULL;
     }
 
-    inline kernelArg(kernelArg_t arg_, size_t size_, bool pointer_) :
+    inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
       size(size_),
       pointer(pointer_) {
       arg.void_ = arg_.void_;
@@ -171,7 +171,7 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
-    OCCA_KERNEL_ARG_CONSTRUCTOR(size_t);
+    OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
 
     inline kernelArg(occa::memory &m);
 
@@ -315,47 +315,47 @@ namespace occa {
   //---[ Memory ]---------------------
   void memcpy(memory &dest,
               const void *source,
-              const size_t bytes = 0,
-              const size_t offset = 0);
+              const uintptr_t bytes = 0,
+              const uintptr_t offset = 0);
 
   void memcpy(memory &dest,
               const memory &source,
-              const size_t bytes = 0,
-              const size_t destOffset = 0,
-              const size_t srcOffset = 0);
+              const uintptr_t bytes = 0,
+              const uintptr_t destOffset = 0,
+              const uintptr_t srcOffset = 0);
 
   void memcpy(void *dest,
               memory &source,
-              const size_t bytes = 0,
-              const size_t offset = 0);
+              const uintptr_t bytes = 0,
+              const uintptr_t offset = 0);
 
   void memcpy(memory &dest,
               memory &source,
-              const size_t bytes = 0,
-              const size_t destOffset = 0,
-              const size_t srcOffset = 0);
+              const uintptr_t bytes = 0,
+              const uintptr_t destOffset = 0,
+              const uintptr_t srcOffset = 0);
 
   void asyncMemcpy(memory &dest,
                    const void *source,
-                   const size_t bytes = 0,
-                   const size_t offset = 0);
+                   const uintptr_t bytes = 0,
+                   const uintptr_t offset = 0);
 
   void asyncMemcpy(memory &dest,
                    const memory &source,
-                   const size_t bytes = 0,
-                   const size_t destOffset = 0,
-                   const size_t srcOffset = 0);
+                   const uintptr_t bytes = 0,
+                   const uintptr_t destOffset = 0,
+                   const uintptr_t srcOffset = 0);
 
   void asyncMemcpy(void *dest,
                    memory &source,
-                   const size_t bytes = 0,
-                   const size_t offset = 0);
+                   const uintptr_t bytes = 0,
+                   const uintptr_t offset = 0);
 
   void asyncMemcpy(memory &dest,
                    memory &source,
-                   const size_t bytes = 0,
-                   const size_t destOffset = 0,
-                   const size_t srcOffset = 0);
+                   const uintptr_t bytes = 0,
+                   const uintptr_t destOffset = 0,
+                   const uintptr_t srcOffset = 0);
 
   class memory_v {
     template<occa::mode> friend class occa::memory_t;
@@ -367,46 +367,46 @@ namespace occa {
     void *handle;
     occa::device *dev;
 
-    size_t size;
+    uintptr_t size;
 
   public:
     virtual inline ~memory_v(){}
 
     virtual void copyFrom(const void *source,
-                          const size_t bytes = 0,
-                          const size_t offset = 0) = 0;
+                          const uintptr_t bytes = 0,
+                          const uintptr_t offset = 0) = 0;
 
     virtual void copyFrom(const memory_v *source,
-                          const size_t bytes = 0,
-                          const size_t destOffset = 0,
-                          const size_t srcOffset = 0) = 0;
+                          const uintptr_t bytes = 0,
+                          const uintptr_t destOffset = 0,
+                          const uintptr_t srcOffset = 0) = 0;
 
     virtual void copyTo(void *dest,
-                        const size_t bytes = 0,
-                        const size_t offset = 0) = 0;
+                        const uintptr_t bytes = 0,
+                        const uintptr_t offset = 0) = 0;
 
     virtual void copyTo(memory_v *dest,
-                        const size_t bytes = 0,
-                        const size_t destOffset = 0,
-                        const size_t srcOffset = 0) = 0;
+                        const uintptr_t bytes = 0,
+                        const uintptr_t destOffset = 0,
+                        const uintptr_t srcOffset = 0) = 0;
 
     virtual void asyncCopyFrom(const void *source,
-                               const size_t bytes = 0,
-                               const size_t offset = 0) = 0;
+                               const uintptr_t bytes = 0,
+                               const uintptr_t offset = 0) = 0;
 
     virtual void asyncCopyFrom(const memory_v *source,
-                               const size_t bytes = 0,
-                               const size_t destOffset = 0,
-                               const size_t srcOffset = 0) = 0;
+                               const uintptr_t bytes = 0,
+                               const uintptr_t destOffset = 0,
+                               const uintptr_t srcOffset = 0) = 0;
 
     virtual void asyncCopyTo(void *dest,
-                             const size_t bytes = 0,
-                             const size_t offset = 0) = 0;
+                             const uintptr_t bytes = 0,
+                             const uintptr_t offset = 0) = 0;
 
     virtual void asyncCopyTo(memory_v *dest,
-                             const size_t bytes = 0,
-                             const size_t destOffset = 0,
-                             const size_t srcOffset = 0) = 0;
+                             const uintptr_t bytes = 0,
+                             const uintptr_t destOffset = 0,
+                             const uintptr_t srcOffset = 0) = 0;
 
     virtual void free() = 0;
   };
@@ -424,40 +424,40 @@ namespace occa {
     inline ~memory_t(){};
 
     void copyFrom(const void *source,
-                  const size_t bytes = 0,
-                  const size_t offset = 0);
+                  const uintptr_t bytes = 0,
+                  const uintptr_t offset = 0);
 
     void copyFrom(const memory_v *source,
-                  const size_t bytes = 0,
-                  const size_t destOffset = 0,
-                  const size_t srcOffset = 0);
+                  const uintptr_t bytes = 0,
+                  const uintptr_t destOffset = 0,
+                  const uintptr_t srcOffset = 0);
 
     void copyTo(void *dest,
-                const size_t bytes = 0,
-                const size_t offset = 0);
+                const uintptr_t bytes = 0,
+                const uintptr_t offset = 0);
 
     void copyTo(memory_v *dest,
-                const size_t bytes = 0,
-                const size_t destOffset = 0,
-                const size_t srcOffset = 0);
+                const uintptr_t bytes = 0,
+                const uintptr_t destOffset = 0,
+                const uintptr_t srcOffset = 0);
 
     void asyncCopyFrom(const void *source,
-                       const size_t bytes = 0,
-                       const size_t offset = 0);
+                       const uintptr_t bytes = 0,
+                       const uintptr_t offset = 0);
 
     void asyncCopyFrom(const memory_v *source,
-                       const size_t bytes = 0,
-                       const size_t destOffset = 0,
-                       const size_t srcOffset = 0);
+                       const uintptr_t bytes = 0,
+                       const uintptr_t destOffset = 0,
+                       const uintptr_t srcOffset = 0);
 
     void asyncCopyTo(void *dest,
-                     const size_t bytes = 0,
-                     const size_t offset = 0);
+                     const uintptr_t bytes = 0,
+                     const uintptr_t offset = 0);
 
     void asyncCopyTo(memory_v *dest,
-                     const size_t bytes = 0,
-                     const size_t destOffset = 0,
-                     const size_t srcOffset = 0);
+                     const uintptr_t bytes = 0,
+                     const uintptr_t destOffset = 0,
+                     const uintptr_t srcOffset = 0);
 
     void free();
   };
@@ -482,40 +482,40 @@ namespace occa {
     std::string& mode();
 
     void copyFrom(const void *source,
-                  const size_t bytes = 0,
-                  const size_t offset = 0);
+                  const uintptr_t bytes = 0,
+                  const uintptr_t offset = 0);
 
     void copyFrom(const memory &source,
-                  const size_t bytes = 0,
-                  const size_t destOffset = 0,
-                  const size_t srcOffset = 0);
+                  const uintptr_t bytes = 0,
+                  const uintptr_t destOffset = 0,
+                  const uintptr_t srcOffset = 0);
 
     void copyTo(void *dest,
-                const size_t bytes = 0,
-                const size_t offset = 0);
+                const uintptr_t bytes = 0,
+                const uintptr_t offset = 0);
 
     void copyTo(memory &dest,
-                const size_t bytes = 0,
-                const size_t destOffset = 0,
-                const size_t srcOffset = 0);
+                const uintptr_t bytes = 0,
+                const uintptr_t destOffset = 0,
+                const uintptr_t srcOffset = 0);
 
     void asyncCopyFrom(const void *source,
-                       const size_t bytes = 0,
-                       const size_t offset = 0);
+                       const uintptr_t bytes = 0,
+                       const uintptr_t offset = 0);
 
     void asyncCopyFrom(const memory &source,
-                       const size_t bytes = 0,
-                       const size_t destOffset = 0,
-                       const size_t srcOffset = 0);
+                       const uintptr_t bytes = 0,
+                       const uintptr_t destOffset = 0,
+                       const uintptr_t srcOffset = 0);
 
     void asyncCopyTo(void *dest,
-                     const size_t bytes = 0,
-                     const size_t offset = 0);
+                     const uintptr_t bytes = 0,
+                     const uintptr_t offset = 0);
 
     void asyncCopyTo(memory &dest,
-                     const size_t bytes = 0,
-                     const size_t destOffset = 0,
-                     const size_t srcOffset = 0);
+                     const uintptr_t bytes = 0,
+                     const uintptr_t destOffset = 0,
+                     const uintptr_t srcOffset = 0);
 
     void swap(memory &m);
 
@@ -572,7 +572,7 @@ namespace occa {
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                             const std::string &functionName_) = 0;
 
-    virtual memory_v* malloc(const size_t bytes,
+    virtual memory_v* malloc(const uintptr_t bytes,
                              void* source) = 0;
 
     virtual void free() = 0;
@@ -585,7 +585,7 @@ namespace occa {
     template<occa::mode> friend class occa::kernel_t;
 
   private:
-    size_t memoryUsed;
+    uintptr_t memoryUsed;
 
   public:
     device_t();
@@ -619,7 +619,7 @@ namespace occa {
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);
 
-    memory_v* malloc(const size_t bytes,
+    memory_v* malloc(const uintptr_t bytes,
                      void *source);
 
     void free();
@@ -680,7 +680,7 @@ namespace occa {
                                 const std::string &functionName,
                                 const std::string &pythonCode = "");
 
-    memory malloc(const size_t bytes,
+    memory malloc(const uintptr_t bytes,
                   void *source = NULL);
 
     void free();
@@ -768,7 +768,7 @@ namespace occa {
         throw 1;
       }
 
-      const size_t fileSize = fileInfo.st_size;
+      const uintptr_t fileSize = fileInfo.st_size;
 
       char *cFile = new char[fileSize + 1];
       cFile[fileSize] = '\0';
@@ -866,17 +866,17 @@ namespace occa {
     y(1),
     z(1) {}
 
-  inline dim::dim(size_t x_) :
+  inline dim::dim(uintptr_t x_) :
     x(x_),
     y(1),
     z(1) {}
 
-  inline dim::dim(size_t x_, size_t y_) :
+  inline dim::dim(uintptr_t x_, uintptr_t y_) :
     x(x_),
     y(y_),
     z(1) {}
 
-  inline dim::dim(size_t x_, size_t y_, size_t z_) :
+  inline dim::dim(uintptr_t x_, uintptr_t y_, uintptr_t z_) :
     x(x_),
     y(y_),
     z(z_) {}
@@ -900,7 +900,7 @@ namespace occa {
                z * d.z);
   }
 
-  inline size_t& dim::operator [] (int i){
+  inline uintptr_t& dim::operator [] (int i){
     return data[i];
   }
 };

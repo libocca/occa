@@ -101,47 +101,47 @@ namespace occa {
 
   template <>
   void memory_t<COI>::copyFrom(const void *source,
-                               const size_t bytes,
-                               const size_t offset);
+                               const uintptr_t bytes,
+                               const uintptr_t offset);
 
   template <>
   void memory_t<COI>::copyFrom(const memory_v *source,
-                               const size_t bytes,
-                               const size_t destOffset,
-                               const size_t srcOffset);
+                               const uintptr_t bytes,
+                               const uintptr_t destOffset,
+                               const uintptr_t srcOffset);
 
   template <>
   void memory_t<COI>::copyTo(void *dest,
-                             const size_t bytes,
-                             const size_t offset);
+                             const uintptr_t bytes,
+                             const uintptr_t offset);
 
   template <>
   void memory_t<COI>::copyTo(memory_v *dest,
-                             const size_t bytes,
-                             const size_t destOffset,
-                             const size_t srcOffset);
+                             const uintptr_t bytes,
+                             const uintptr_t destOffset,
+                             const uintptr_t srcOffset);
 
   template <>
   void memory_t<COI>::asyncCopyFrom(const void *source,
-                                    const size_t bytes,
-                                    const size_t destOffset);
+                                    const uintptr_t bytes,
+                                    const uintptr_t destOffset);
 
   template <>
   void memory_t<COI>::asyncCopyFrom(const memory_v *source,
-                                    const size_t bytes,
-                                    const size_t srcOffset,
-                                    const size_t offset);
+                                    const uintptr_t bytes,
+                                    const uintptr_t srcOffset,
+                                    const uintptr_t offset);
 
   template <>
   void memory_t<COI>::asyncCopyTo(void *dest,
-                                  const size_t bytes,
-                                  const size_t offset);
+                                  const uintptr_t bytes,
+                                  const uintptr_t offset);
 
   template <>
   void memory_t<COI>::asyncCopyTo(memory_v *dest,
-                                  const size_t bytes,
-                                  const size_t destOffset,
-                                  const size_t srcOffset);
+                                  const uintptr_t bytes,
+                                  const uintptr_t destOffset,
+                                  const uintptr_t srcOffset);
 
   template <>
   void memory_t<COI>::free();
@@ -201,7 +201,7 @@ namespace occa {
                                                  const std::string &functionName_);
 
   template <>
-  memory_v* device_t<COI>::malloc(const size_t bytes,
+  memory_v* device_t<COI>::malloc(const uintptr_t bytes,
                                   void *source);
 
   template <>

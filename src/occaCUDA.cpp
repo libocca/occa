@@ -219,9 +219,9 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::copyFrom(const void *source,
-                                const size_t bytes,
-                                const size_t offset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                const uintptr_t bytes,
+                                const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -231,10 +231,10 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::copyFrom(const memory_v *source,
-                                const size_t bytes,
-                                const size_t destOffset,
-                                const size_t srcOffset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                                const uintptr_t bytes,
+                                const uintptr_t destOffset,
+                                const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -247,9 +247,9 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::copyTo(void *dest,
-                              const size_t bytes,
-                              const size_t offset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                              const uintptr_t bytes,
+                              const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -259,10 +259,10 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::copyTo(memory_v *dest,
-                              const size_t bytes,
-                              const size_t destOffset,
-                              const size_t srcOffset){
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+                              const uintptr_t bytes,
+                              const uintptr_t destOffset,
+                              const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
@@ -275,11 +275,11 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::asyncCopyFrom(const void *source,
-                                     const size_t bytes,
-                                     const size_t offset){
+                                     const uintptr_t bytes,
+                                     const uintptr_t offset){
     const CUstream &stream = *((CUstream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -289,12 +289,12 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::asyncCopyFrom(const memory_v *source,
-                                     const size_t bytes,
-                                     const size_t destOffset,
-                                     const size_t srcOffset){
+                                     const uintptr_t bytes,
+                                     const uintptr_t destOffset,
+                                     const uintptr_t srcOffset){
     const CUstream &stream = *((CUstream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -307,11 +307,11 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::asyncCopyTo(void *dest,
-                                   const size_t bytes,
-                                   const size_t offset){
+                                   const uintptr_t bytes,
+                                   const uintptr_t offset){
     const CUstream &stream = *((CUstream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -321,12 +321,12 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::asyncCopyTo(memory_v *dest,
-                                   const size_t bytes,
-                                   const size_t destOffset,
-                                   const size_t srcOffset){
+                                   const uintptr_t bytes,
+                                   const uintptr_t destOffset,
+                                   const uintptr_t srcOffset){
     const CUstream &stream = *((CUstream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
@@ -522,7 +522,7 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<CUDA>::malloc(const size_t bytes,
+  memory_v* device_t<CUDA>::malloc(const uintptr_t bytes,
                                    void *source){
     OCCA_EXTRACT_DATA(CUDA, Device);
 

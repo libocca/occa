@@ -24,10 +24,10 @@ extern "C" {
 
   occaKernelInfo occaNoKernelInfo = NULL;
 
-  const size_t occaAutoSize = 0;
-  const size_t occaNoOffset = 0;
+  const uintptr_t occaAutoSize = 0;
+  const uintptr_t occaNoOffset = 0;
 
-  const size_t occaTypeSize[OCCA_TYPE_COUNT] = {
+  const uintptr_t occaTypeSize[OCCA_TYPE_COUNT] = {
     sizeof(void*),
     sizeof(int),
     sizeof(unsigned int),
@@ -110,7 +110,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type          = OCCA_TYPE_ULONG;
-    type->value.size_t_ = value;
+    type->value.uintptr_t_ = value;
 
     return (occaType) type;
   }
@@ -224,7 +224,7 @@ extern "C" {
   }
 
   occaMemory occaDeviceMalloc(occaDevice device,
-                        size_t bytes,
+                        uintptr_t bytes,
                         void *source){
     occa::device &device_ = *((occa::device*) device);
 
@@ -308,7 +308,7 @@ extern "C" {
 
 
   //---[ Kernel ]-----------------------
-  occaDim occaGenDim(size_t x, size_t y, size_t z){
+  occaDim occaGenDim(uintptr_t x, uintptr_t y, uintptr_t z){
     occaDim ret;
 
     ret.x = x;
@@ -343,8 +343,8 @@ extern "C" {
 
   void occaKernelSetAllWorkingDims(occaKernel kernel,
                                    int dims,
-                                   size_t itemsX, size_t itemsY, size_t itemsZ,
-                                   size_t groupsX, size_t groupsY, size_t groupsZ){
+                                   uintptr_t itemsX, uintptr_t itemsY, uintptr_t itemsZ,
+                                   uintptr_t groupsX, uintptr_t groupsY, uintptr_t groupsZ){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 
     kernel_.setWorkingDims(dims,
@@ -456,7 +456,7 @@ extern "C" {
     case OCCA_TYPE_SHORT  : info_.addDefine(macro, value_.short_);  break;
     case OCCA_TYPE_USHORT : info_.addDefine(macro, value_.ushort_); break;
     case OCCA_TYPE_LONG   : info_.addDefine(macro, value_.long_);   break;
-    case OCCA_TYPE_ULONG  : info_.addDefine(macro, value_.size_t_); break;
+    case OCCA_TYPE_ULONG  : info_.addDefine(macro, value_.uintptr_t_); break;
 
     case OCCA_TYPE_FLOAT  : info_.addDefine(macro, value_.float_);  break;
     case OCCA_TYPE_DOUBLE : info_.addDefine(macro, value_.double_); break;
@@ -481,9 +481,9 @@ extern "C" {
   }
 
   void occaCopyMemToMem(occaMemory dest, occaMemory src,
-                        const size_t bytes,
-                        const size_t destOffset,
-                        const size_t srcOffset){
+                        const uintptr_t bytes,
+                        const uintptr_t destOffset,
+                        const uintptr_t srcOffset){
     occa::memory &src_  = src->mem;
     occa::memory &dest_ = dest->mem;
 
@@ -491,25 +491,25 @@ extern "C" {
   }
 
   void occaCopyPtrToMem(occaMemory dest, const void *src,
-                        const size_t bytes,
-                        const size_t offset){
+                        const uintptr_t bytes,
+                        const uintptr_t offset){
     occa::memory &dest_ = dest->mem;
 
     memcpy(dest_, src, bytes, offset);
   }
 
   void occaCopyMemToPtr(void *dest, occaMemory src,
-                        const size_t bytes,
-                        const size_t offset){
+                        const uintptr_t bytes,
+                        const uintptr_t offset){
     occa::memory &src_ = src->mem;
 
     memcpy(dest, src_, bytes, offset);
   }
 
   void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
-                             const size_t bytes,
-                             const size_t destOffset,
-                             const size_t srcOffset){
+                             const uintptr_t bytes,
+                             const uintptr_t destOffset,
+                             const uintptr_t srcOffset){
     occa::memory &src_  = src->mem;
     occa::memory &dest_ = dest->mem;
 
@@ -517,16 +517,16 @@ extern "C" {
   }
 
   void occaAsyncCopyPtrToMem(occaMemory dest, const void * src,
-                             const size_t bytes,
-                             const size_t offset){
+                             const uintptr_t bytes,
+                             const uintptr_t offset){
     occa::memory &dest_ = dest->mem;
 
     asyncMemcpy(dest_, src, bytes, offset);
   }
 
   void occaAsyncCopyMemToPtr(void *dest, occaMemory src,
-                             const size_t bytes,
-                             const size_t offset){
+                             const uintptr_t bytes,
+                             const uintptr_t offset){
     occa::memory &src_ = src->mem;
 
     asyncMemcpy(dest, src_, bytes, offset);

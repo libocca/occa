@@ -240,11 +240,11 @@ namespace occa {
 
   template <>
   void memory_t<COI>::copyFrom(const void *source,
-                               const size_t bytes,
-                               const size_t offset){
+                               const uintptr_t bytes,
+                               const uintptr_t offset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -268,12 +268,12 @@ namespace occa {
 
   template <>
   void memory_t<COI>::copyFrom(const memory_v *source,
-                               const size_t bytes,
-                               const size_t destOffset,
-                               const size_t srcOffset){
+                               const uintptr_t bytes,
+                               const uintptr_t destOffset,
+                               const uintptr_t srcOffset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <=         size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -299,11 +299,11 @@ namespace occa {
 
   template <>
   void memory_t<COI>::copyTo(void *dest,
-                             const size_t bytes,
-                             const size_t offset){
+                             const uintptr_t bytes,
+                             const uintptr_t offset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -327,12 +327,12 @@ namespace occa {
 
   template <>
   void memory_t<COI>::copyTo(memory_v *dest,
-                             const size_t bytes,
-                             const size_t destOffset,
-                             const size_t srcOffset){
+                             const uintptr_t bytes,
+                             const uintptr_t destOffset,
+                             const uintptr_t srcOffset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
     OCCA_CHECK((bytes_ + srcOffset)  <=       size);
@@ -358,11 +358,11 @@ namespace occa {
 
   template <>
   void memory_t<COI>::asyncCopyFrom(const void *source,
-                                    const size_t bytes,
-                                    const size_t offset){
+                                    const uintptr_t bytes,
+                                    const uintptr_t offset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -382,12 +382,12 @@ namespace occa {
 
   template <>
   void memory_t<COI>::asyncCopyFrom(const memory_v *source,
-                                    const size_t bytes,
-                                    const size_t destOffset,
-                                    const size_t srcOffset){
+                                    const uintptr_t bytes,
+                                    const uintptr_t destOffset,
+                                    const uintptr_t srcOffset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <=         size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -409,11 +409,11 @@ namespace occa {
 
   template <>
   void memory_t<COI>::asyncCopyTo(void *dest,
-                                  const size_t bytes,
-                                  const size_t offset){
+                                  const uintptr_t bytes,
+                                  const uintptr_t offset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -433,12 +433,12 @@ namespace occa {
 
   template <>
   void memory_t<COI>::asyncCopyTo(memory_v *dest,
-                                  const size_t bytes,
-                                  const size_t destOffset,
-                                  const size_t srcOffset){
+                                  const uintptr_t bytes,
+                                  const uintptr_t destOffset,
+                                  const uintptr_t srcOffset){
     coiStream &stream = *((coiStream*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
     OCCA_CHECK((bytes_ + srcOffset)  <=       size);
@@ -725,7 +725,7 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<COI>::malloc(const size_t bytes,
+  memory_v* device_t<COI>::malloc(const uintptr_t bytes,
                                   void *source){
     OCCA_EXTRACT_DATA(COI, Device);
 

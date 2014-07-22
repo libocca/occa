@@ -110,7 +110,7 @@ namespace occa {
       throw 1;
     }
 
-    const size_t cLength = fileInfo.st_size;
+    const uintptr_t cLength = fileInfo.st_size;
 
     char *cFunction = new char[cLength + 1];
     cFunction[cLength] = '\0';
@@ -132,7 +132,7 @@ namespace occa {
     if(error){
       cl_int error;
       char *log;
-      size_t logSize;
+      uintptr_t logSize;
 
       clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
 
@@ -152,11 +152,11 @@ namespace occa {
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
 
     {
-      size_t binarySize;
+      uintptr_t binarySize;
       char *binary;
 
       OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes",
-                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &binarySize, NULL));
+                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(uintptr_t), &binarySize, NULL));
 
       binary = new char[binarySize + 1];
 
@@ -203,7 +203,7 @@ namespace occa {
       throw 1;
     }
 
-    const size_t fileSize = fileInfo.st_size;
+    const uintptr_t fileSize = fileInfo.st_size;
 
     unsigned char *cFile = new unsigned char[fileSize + 1];
     cFile[fileSize] = '\0';
@@ -228,7 +228,7 @@ namespace occa {
     if(error){
       cl_int error;
       char *log;
-      size_t logSize;
+      uintptr_t logSize;
 
       clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
 
@@ -262,13 +262,13 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
-    size_t pds;
+    uintptr_t pds;
 
     OCCA_CL_CHECK("Kernel: Getting Preferred Dim Size",
                   clGetKernelWorkGroupInfo(data_.kernel,
                                            data_.deviceID,
                                            CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE,
-                                           sizeof(size_t), &pds, NULL));
+                                           sizeof(uintptr_t), &pds, NULL));
 
     preferredDimSize_ = pds;
 
@@ -330,11 +330,11 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::copyFrom(const void *source,
-                                  const size_t bytes,
-                                  const size_t offset){
+                                  const uintptr_t bytes,
+                                  const uintptr_t offset){
     cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -347,12 +347,12 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::copyFrom(const memory_v *source,
-                                  const size_t bytes,
-                                  const size_t destOffset,
-                                  const size_t srcOffset){
+                                  const uintptr_t bytes,
+                                  const uintptr_t destOffset,
+                                  const uintptr_t srcOffset){
     cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -368,11 +368,11 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::copyTo(void *dest,
-                                const size_t bytes,
-                                const size_t offset){
+                                const uintptr_t bytes,
+                                const uintptr_t offset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -385,12 +385,12 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::copyTo(memory_v *dest,
-                                const size_t bytes,
-                                const size_t destOffset,
-                                const size_t srcOffset){
+                                const uintptr_t bytes,
+                                const uintptr_t destOffset,
+                                const uintptr_t srcOffset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
@@ -406,11 +406,11 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::asyncCopyFrom(const void *source,
-                                       const size_t bytes,
-                                       const size_t offset){
+                                       const uintptr_t bytes,
+                                       const uintptr_t offset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -423,12 +423,12 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::asyncCopyFrom(const memory_v *source,
-                                       const size_t bytes,
-                                       const size_t destOffset,
-                                       const size_t srcOffset){
+                                       const uintptr_t bytes,
+                                       const uintptr_t destOffset,
+                                       const uintptr_t srcOffset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
@@ -444,11 +444,11 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::asyncCopyTo(void *dest,
-                                     const size_t bytes,
-                                     const size_t offset){
+                                     const uintptr_t bytes,
+                                     const uintptr_t offset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
@@ -461,12 +461,12 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::asyncCopyTo(memory_v *dest,
-                                     const size_t bytes,
-                                     const size_t destOffset,
-                                     const size_t srcOffset){
+                                     const uintptr_t bytes,
+                                     const uintptr_t destOffset,
+                                     const uintptr_t srcOffset){
     const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 
-    const size_t bytes_ = (bytes == 0) ? size : bytes;
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
@@ -696,7 +696,7 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<OpenCL>::malloc(const size_t bytes,
+  memory_v* device_t<OpenCL>::malloc(const uintptr_t bytes,
                                      void *source){
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
