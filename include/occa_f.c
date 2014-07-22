@@ -44,10 +44,10 @@ extern "C" {
     return occaDouble(value);
   }
 
-  occaType occaString_fc(char *str OCCA_F_LSTR(str_l)
-                         OCCA_F_RSTR(str_l)){
+  occaType occaString_fc(char *str OCCA_F2C_LSTR(str_l)
+                         OCCA_F2C_RSTR(str_l)){
     char *str_c;
-    OCCA_F2C_STR(str, str_l, str_c);
+    OCCA_F2C_ALLOC_STR(str, str_l, str_c);
 
     occaType ret = occaString(str_c);
 
@@ -64,10 +64,10 @@ extern "C" {
   }
 
   void occaDeviceSetCompiler_fc(occaDevice device,
-                                const char *compiler OCCA_F_LSTR(compiler_l),
-                                OCCA_F_RSTR(compiler_l)){
+                                const char *compiler OCCA_F2C_LSTR(compiler_l),
+                                OCCA_F2C_RSTR(compiler_l)){
     char *compiler_c;
-    OCCA_F2C_STR(compiler, compiler_l, compiler_c);
+    OCCA_F2C_ALLOC_STR(compiler, compiler_l, compiler_c);
 
     occaDeviceSetCompiler(device, compiler_c);
 
@@ -75,21 +75,21 @@ extern "C" {
   }
 
   void occaDeviceSetCompilerFlags_fc(occaDevice device,
-                                     const char *compilerFlags OCCA_F_LSTR(compilerFlags_l)
-                                     OCCA_F_RSTR(compilerFlags_l)){
+                                     const char *compilerFlags OCCA_F2C_LSTR(compilerFlags_l)
+                                     OCCA_F2C_RSTR(compilerFlags_l)){
     char *compilerFlags_c;
-    OCCA_F2C_STR(compilerFlags, compilerFlags_l, compilerFlags_c);
+    OCCA_F2C_ALLOC_STR(compilerFlags, compilerFlags_l, compilerFlags_c);
 
     occaDeviceSetCompilerFlags(device, compilerFlags_c);
 
     OCCA_F2C_FREE_STR(compilerFlags, compilerFlags_c);
   }
 
-  occaDevice occaGetDevice_fc(const char *mode OCCA_F_LSTR(mode_l),
+  occaDevice occaGetDevice_fc(const char *mode OCCA_F2C_LSTR(mode_l),
                               int arg1, int arg2
-                              OCCA_F_RSTR(mode_l)){
+                              OCCA_F2C_RSTR(mode_l)){
     char *mode_c;
-    OCCA_F2C_STR(mode, mode_l, mode_c);
+    OCCA_F2C_ALLOC_STR(mode, mode_l, mode_c);
 
     occaDevice ret = occaGetDevice(mode_c, arg1, arg2);
 
@@ -99,14 +99,14 @@ extern "C" {
   }
 
   occaKernel occaBuildKernelFromSource_fc(occaDevice device,
-                                          const char *filename     OCCA_F_LSTR(filename_l),
-                                          const char *functionName OCCA_F_LSTR(functionName_l),
+                                          const char *filename     OCCA_F2C_LSTR(filename_l),
+                                          const char *functionName OCCA_F2C_LSTR(functionName_l),
                                           occaKernelInfo info
-                                          OCCA_F_RSTR(filename_l)
-                                          OCCA_F_RSTR(functionName_l)){
+                                          OCCA_F2C_RSTR(filename_l)
+                                          OCCA_F2C_RSTR(functionName_l)){
     char *filename_c, *functionName_c;
-    OCCA_F2C_STR(filename    , filename_l    , filename_c);
-    OCCA_F2C_STR(functionName, functionName_l, functionName_c);
+    OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
 
     occaKernel ret = occaBuildKernelFromSource(device, filename_c, functionName_c, info);
 
@@ -117,13 +117,13 @@ extern "C" {
   }
 
   occaKernel occaBuildKernelFromBinary_fc(occaDevice device,
-                                          const char *filename     OCCA_F_LSTR(filename_l),
-                                          const char *functionName OCCA_F_LSTR(functionName_l)
-                                          OCCA_F_RSTR(filename_l)
-                                          OCCA_F_RSTR(functionName_l)){
+                                          const char *filename     OCCA_F2C_LSTR(filename_l),
+                                          const char *functionName OCCA_F2C_LSTR(functionName_l)
+                                          OCCA_F2C_RSTR(filename_l)
+                                          OCCA_F2C_RSTR(functionName_l)){
     char *filename_c, *functionName_c;
-    OCCA_F2C_STR(filename    , filename_l    , filename_c);
-    OCCA_F2C_STR(functionName, functionName_l, functionName_c);
+    OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
 
     occaBuildKernelFromBinary(device, filename_c, functionName_c);
 
@@ -132,17 +132,17 @@ extern "C" {
   }
 
   occaKernel occaBuildKernelFromLoopy_fc(occaDevice device,
-                                         const char *filename     OCCA_F_LSTR(filename_l),
-                                         const char *functionName OCCA_F_LSTR(functionName_l),
-                                         const char *pythonCode   OCCA_F_LSTR(pythonCode_l)
-                                         OCCA_F_RSTR(filename_l)
-                                         OCCA_F_RSTR(functionName_l)
-                                         OCCA_F_RSTR(pythonCode_l)){
+                                         const char *filename     OCCA_F2C_LSTR(filename_l),
+                                         const char *functionName OCCA_F2C_LSTR(functionName_l),
+                                         const char *pythonCode   OCCA_F2C_LSTR(pythonCode_l)
+                                         OCCA_F2C_RSTR(filename_l)
+                                         OCCA_F2C_RSTR(functionName_l)
+                                         OCCA_F2C_RSTR(pythonCode_l)){
     char *filename_c, *functionName_c, *pythonCode_c;
 
-    OCCA_F2C_STR(filename    , filename_l    , filename_c);
-    OCCA_F2C_STR(functionName, functionName_l, functionName_c);
-    OCCA_F2C_STR(pythonCode  , pythonCode_l  , pythonCode_c);
+    OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
+    OCCA_F2C_ALLOC_STR(pythonCode  , pythonCode_l  , pythonCode_c);
 
     occaKernel ret = occaBuildKernelFromLoopy(device, filename_c, functionName_c, pythonCode_c);
 
@@ -256,11 +256,11 @@ extern "C" {
   }
 
   void occaKernelInfoAddDefine_fc(occaKernelInfo info,
-                                  const char *macro OCCA_F_LSTR(macro_l),
+                                  const char *macro OCCA_F2C_LSTR(macro_l),
                                   occaType value
-                                  OCCA_F_RSTR(macro_l)){
+                                  OCCA_F2C_RSTR(macro_l)){
     char *macro_c;
-    OCCA_F2C_STR(macro, macro_l, macro_c);
+    OCCA_F2C_ALLOC_STR(macro, macro_l, macro_c);
 
     occaKernelInfoAddDefine(info, macro_c, value);
 
