@@ -15,6 +15,8 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
+  // occa::availableDevices<occa::OpenCL>();
+
   std::string mode = "OpenMP";
   int platformID = 0;
   int deviceID   = 0;

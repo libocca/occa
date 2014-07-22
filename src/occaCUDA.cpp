@@ -75,15 +75,23 @@ namespace occa {
     std::stringstream salt;
     salt << "CUDA"
          << info.salt()
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
          << functionName;
 
-    std::string cachedBinary = binaryIsCached(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, salt.str());
 
     struct stat buffer;
     const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
       return buildFromBinary(cachedBinary, functionName);
     }
 
@@ -143,6 +151,8 @@ namespace occa {
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
                     cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
+
+    releaseFile(cachedBinary);
 
     return this;
   }

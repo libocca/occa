@@ -67,15 +67,23 @@ namespace occa {
     std::stringstream salt;
     salt << "Pthreads"
          << info.salt()
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
          << functionName;
 
-    std::string cachedBinary = binaryIsCached(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, salt.str());
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
       return buildFromBinary(cachedBinary, functionName);
     }
 
@@ -127,6 +135,8 @@ namespace occa {
 
     data_.pendingJobsMutex = &(dData.pendingJobsMutex);
     data_.kernelMutex      = &(dData.kernelMutex);
+
+    releaseFile(cachedBinary);
 
     return this;
   }

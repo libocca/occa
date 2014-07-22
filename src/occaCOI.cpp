@@ -75,21 +75,15 @@ namespace occa {
     std::stringstream salt;
     salt << "COI"
          << info.salt()
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
          << functionName;
 
-    std::string cachedBinary = binaryIsCached(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string libPath, soname;
 
-    int lastSlash = 0;
-    const int chars = cachedBinary.size();
+    getFilePrefixAndName(cachedBinary, libPath, soname);
 
-    for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-
-    std::string soname  = cachedBinary.substr(lastSlash, chars - lastSlash);
-    std::string libPath = cachedBinary.substr(0, lastSlash);
     std::string libName = "lib" + soname + ".so";
 
     cachedBinary = libPath + libName;
@@ -99,6 +93,12 @@ namespace occa {
 
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
       return buildFromBinary(cachedBinary, functionName);
     }
 
@@ -140,6 +140,8 @@ namespace occa {
                                                 &c_functionName,
                                                 &(data_.kernel)));
 
+    releaseFile(cachedBinary);
+
     return this;
   }
 
@@ -150,22 +152,17 @@ namespace occa {
 
     functionName = functionName_;
 
-    int lastSlash = 0, lastPoint = 0;
-    const int chars = filename.size();
 
-    for(int i = 0; i < chars; ++i)
-      if(filename[i] == '/')
-        lastSlash = i;
+    std::string libPath, soname;
 
-    ++lastSlash;
+    getFilePrefixAndName(filename, libPath, soname);
 
-    for(int i = lastSlash; i < chars; ++i)
-      if(filename[i] == '.'){
-        lastPoint = i;
+    for(int i = 0; i < soname.size(); ++i){
+      if(soname[i] == '.'){
+        soname = soname.substr(0, i);
         break;
       }
-
-    std::string soname = filename.substr(lastSlash, lastPoint - lastSlash);
+    }
 
     COILIBRARY outLibrary;
 
@@ -522,7 +519,7 @@ namespace occa {
     salt << "COI"
          << occaCOIMain;
 
-    std::string cachedBinary = binaryIsCached("occaCOIMain", salt.str());
+    std::string cachedBinary = getCachedName("occaCOIMain", salt.str());
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -531,39 +528,40 @@ namespace occa {
       std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
     else{
       //---[ Write File ]-----------------
-      int lastSlash = 0;
-      int chars = cachedBinary.size();
+      std::string prefix, name;
 
-      for(int i = 0; i < chars; ++i)
-        if(cachedBinary[i] == '/')
-          lastSlash = i;
+      getFilePrefixAndName(cachedBinary, prefix, name);
 
-      ++lastSlash;
+      const std::string iCachedBinary = prefix + "i_" + name;
 
-      const std::string iCachedBinary =
-        cachedBinary.substr(0, lastSlash) +
-        "i_" + cachedBinary.substr(lastSlash, chars - lastSlash);
+      if(haveFile(cachedBinary)){
+        std::cout << "Making [" << iCachedBinary << "]\n";
 
-      std::ofstream fs;
-      fs.open(iCachedBinary.c_str());
+        std::ofstream fs;
+        fs.open(iCachedBinary.c_str());
 
-      fs << occaCOIMain;
+        fs << occaCOIMain;
 
-      fs.close();
+        fs.close();
 
-      std::stringstream command;
+        std::stringstream command;
 
-      command << dev->dHandle->compiler
-              << " -o " << cachedBinary
-              << " -x c++"
-              << ' '    << dev->dHandle->compilerFlags
-              << ' '    << iCachedBinary;
+        command << dev->dHandle->compiler
+                << " -o " << cachedBinary
+                << " -x c++"
+                << ' '    << dev->dHandle->compilerFlags
+                << ' '    << iCachedBinary;
 
-      const std::string &sCommand = command.str();
+        const std::string &sCommand = command.str();
 
-      std::cout << sCommand << '\n';
+        std::cout << sCommand << '\n';
 
-      system(sCommand.c_str());
+        system(sCommand.c_str());
+
+        releaseFile(cachedBinary);
+      }
+      else
+        waitForFile(cachedBinary);
     }
 
     // [-] Tentative
@@ -603,14 +601,14 @@ namespace occa {
 
   template <>
   void device_t<COI>::getEnvironmentVariables(){
-    char *c_compiler = getenv("OCCA_COI_COMPILER");
+    const char *c_compiler = getenv("OCCA_COI_COMPILER");
 
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
     else
-      compiler = "icpc"
+      compiler = "icpc";
 
-    char *c_compilerFlags = getenv("OCCA_COI_COMPILER_FLAGS");
+    const char *c_compilerFlags = getenv("OCCA_COI_COMPILER_FLAGS");
 
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);

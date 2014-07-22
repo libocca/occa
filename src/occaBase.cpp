@@ -3,7 +3,15 @@
 // Use events for timing!
 
 namespace occa {
+  //---[ Helper Classes ]-------------
   kernelInfo defaultKernelInfo;
+
+  const char* deviceInfo::header = "| Name                                      | Num | Available Modes                  |";
+  const char* deviceInfo::sLine  = "+-------------------------------------------+-----+----------------------------------+";
+
+  const char* deviceInfo::dLine1 = "+--------------------------------------------------------+";
+  const char* deviceInfo::dLine2 = "+  -  -  -  -  -  +  -  -  -  -  -  -  -  -  -  -  -  -  +";
+  //==================================
 
   //---[ Kernel ]---------------------
   kernel::kernel() :
@@ -396,10 +404,18 @@ namespace occa {
     return ker;
   }
 
+
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
-                                      const std::string &pythonCode){
-    std::string cachedBinary = binaryIsCached(filename, pythonCode);
+                                      const int useLoopyOrFloopy){
+    return buildKernelFromLoopy(filename, functionName, "", useLoopyOrFloopy);
+  }
+
+  kernel device::buildKernelFromLoopy(const std::string &filename,
+                                      const std::string &functionName,
+                                      const std::string &pythonCode,
+                                      const int useLoopyOrFloopy){
+    std::string cachedBinary = getCachedName(filename, pythonCode);
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -409,31 +425,32 @@ namespace occa {
       return buildKernelFromBinary(cachedBinary, functionName);
     }
 
-    int lastSlash = 0;
-    const int chars = cachedBinary.size();
+    std::string prefix, cacheName;
 
-    for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-
-    const std::string prefix    = cachedBinary.substr(0, lastSlash);
-    const std::string cacheName = cachedBinary.substr(lastSlash, chars - lastSlash);
+    getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
     const std::string pCachedBinary = prefix + "p_" + cacheName;
     const std::string iCachedBinary = prefix + "i_" + cacheName;
 
+    std::string loopyLang   = "loopy";
+    std::string loopyHeader = pythonCode;
+
+    if(useLoopyOrFloopy == occa::useFloopy){
+      loopyHeader = "!$loopy begin transform\n" + loopyHeader + "\n!$loopy end transform\n";
+
+      loopyLang = "floopy";
+    }
+
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
 
-    fs << pythonCode << "\n\n" << readFile(filename);
+    fs << loopyHeader << "\n\n" << readFile(filename);
 
     fs.close();
 
     std::stringstream command;
 
-    command << "floopy --lang=loopy --target=cl:0,0 "
+    command << "floopy --lang=" << loopyLang << " --target=cl:0,0 "
             << pCachedBinary << " " << iCachedBinary;
 
     const std::string &sCommand = command.str();

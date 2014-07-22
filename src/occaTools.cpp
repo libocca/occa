@@ -2,28 +2,6 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
-  double currentTime(){
-#if OCCA_OS == LINUX_OS
-
-    timespec ct;
-    clock_gettime(CLOCK_MONOTONIC, &ct);
-
-    return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
-
-#elif OCCA_OS == OSX_OS
-
-    uint64_t ct;
-    ct = mach_absolute_time();
-
-    const Nanoseconds ct2 = AbsoluteToNanoseconds(*(AbsoluteTime *) &ct);
-
-    return ((double) 1.0e-9) * ((double) ( *((uint64_t*) &ct2) ));
-
-#elif OCCA_OS == WINDOWS_OS
-#  warning "currentTime is not supported in Windows"
-#endif
-  }
-
   std::string fnv(const std::string &saltedString){
     const int len = saltedString.size();
     std::stringstream ss;
@@ -66,16 +44,14 @@ namespace occa {
                        std::istreambuf_iterator<char>());
   }
 
-  std::string binaryIsCached(const std::string &filename,
-                             const std::string &salt){
+  std::string getCachedName(const std::string &filename,
+                            const std::string &salt){
     //---[ Place Somewhere Else ]-----
     char *c_cachePath = getenv("OCCA_CACHE_DIR");
 
     std::string occaCachePath;
 
     if(c_cachePath == NULL){
-      struct stat buffer;
-
       char *c_home = getenv("HOME");
 
       std::stringstream ss;
@@ -84,15 +60,7 @@ namespace occa {
 
       std::string defaultCacheDir = ss.str();
 
-      if(stat(defaultCacheDir.c_str(), &buffer)){
-        std::stringstream command;
-
-        command << "mkdir " << defaultCacheDir;
-
-        const std::string &sCommand = command.str();
-
-        system(sCommand.c_str());
-      }
+      mkdir(defaultCacheDir.c_str(), 0755);
 
       occaCachePath = defaultCacheDir;
     }
@@ -132,16 +100,10 @@ namespace occa {
   std::string createIntermediateSource(const std::string &filename,
                                        const std::string &cachedBinary,
                                        const kernelInfo &info){
-    int lastSlash = 0;
-    const int chars = cachedBinary.size();
+    std::string prefix, name;
+    getFilePrefixAndName(cachedBinary, prefix, name);
 
-    for(int i = 0; i < chars; ++i)
-      if(cachedBinary[i] == '/')
-        lastSlash = i;
-
-    ++lastSlash;
-    const std::string iCachedBinary =
-      cachedBinary.substr(0, lastSlash) + "i_" + cachedBinary.substr(lastSlash, chars - lastSlash);
+    const std::string iCachedBinary = prefix + "i_" + name;
 
     std::ofstream fs;
     fs.open(iCachedBinary.c_str());
