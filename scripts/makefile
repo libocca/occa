@@ -8,7 +8,7 @@ iPath = include
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
 
-icpc_Enabled   = 1
+icpc_Enabled   = 0
 OpenGL_Enabled = 0
 
 OCCA_OPENCL_ENABLED   = 0
