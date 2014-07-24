@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 #include <sys/stat.h>
+#include <string.h>
 #include <errno.h>
 
 #if   OCCA_OS == LINUX_OS

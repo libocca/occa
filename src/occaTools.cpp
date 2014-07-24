@@ -39,9 +39,28 @@ namespace occa {
   }
 
   std::string readFile(const std::string &filename){
+    struct stat fileInfo;
+
+    int fileHandle = ::open(filename.c_str(), O_RDWR);
+    const int status = fstat(fileHandle, &fileInfo);
+
+    const int chars = fileInfo.st_size;
+
+    if(status != 0)
+      printf("File [%s] gave a bad stat", filename.c_str());
+
+    char *buffer = (char*) malloc(chars);
+    memset(buffer, '\0', chars);
+
     std::ifstream fs(filename.c_str());
-    return std::string(std::istreambuf_iterator<char>(fs),
-                       std::istreambuf_iterator<char>());
+
+    fs.read(buffer, chars);
+
+    std::string contents(buffer, chars);
+
+    free(buffer);
+
+    return contents;
   }
 
   std::string getCachedName(const std::string &filename,

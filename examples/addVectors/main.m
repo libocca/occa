@@ -4,7 +4,7 @@ a  = ones(entries, 1);
 b  = ones(entries, 1);
 ab = zeros(entries, 1);
 
-device = occa.device('OpenMP', 0, 0);
+device = occa.device('Pthreads', 0, 0);
 
 o_a  = device.malloc(a , 'single');
 o_b  = device.malloc(b , 'single');

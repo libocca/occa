@@ -2,7 +2,7 @@ require( bytestring(ENV["OCCA_DIR"], "/lib/occa.jl") )
 
 entries = 5
 
-device = occa.device("OpenMP", 0, 0);
+device = occa.device("Pthreads", 0, 0);
 
 a  = Float32[1 - i for i in 1:entries]
 b  = Float32[i     for i in 1:entries]
