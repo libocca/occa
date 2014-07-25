@@ -50,7 +50,7 @@ $(OCCA_DIR)/scripts/occaKernelDefinesGenerator:\
 	$(compiler) -o $(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)/scripts/occaKernelDefinesGenerator.cpp
 
 $(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefinesGenerator
-	$(OCCA_DIR)/scripts/occaKernelDefinesGenerator
+	$(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)
 
 clean:
 	rm -f $(occaOPath)/*;
