@@ -56,4 +56,5 @@ clean:
 	rm -f $(occaOPath)/*;
 	rm -f ${OCCA_DIR}/scripts/main;
 	rm -f $(occaLPath)/libocca.a;
+	rm -f $(OCCA_DIR)/scripts/occaKernelDefinesGenerator
 #=================================================
