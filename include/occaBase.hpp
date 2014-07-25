@@ -1027,7 +1027,7 @@ namespace occa {
     if(isAnOccaDefine(macro))
       ss << "#undef " << macro << "\n";
 
-    ss << "#define " << macro << " " << std::setprecision(8) << value << '\n';
+    ss << "#define " << macro << " " << std::setprecision(8) << value << "f\n";
 
     header = ss.str() + header;
   }

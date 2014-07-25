@@ -201,10 +201,10 @@ operatorModeDefinition = { 'Pthreads' : pthreadOperatorDefinition,
                            'COI'      : coiOperatorDefinition }
 
 for mode in operatorModeDefinition:
-    hpp = open('occa' + mode + 'KernelOperators.hpp', 'w')
+    hpp = open('./tmp/occa' + mode + 'KernelOperators.hpp', 'w')
     hpp.write(operatorDeclarations(mode, maxN));
     hpp.close()
 
-    cpp = open('occa' + mode + 'KernelOperators.cpp', 'w')
+    cpp = open('./tmp/occa' + mode + 'KernelOperators.cpp', 'w')
     cpp.write(operatorDefinitions(mode, maxN));
     cpp.close()
