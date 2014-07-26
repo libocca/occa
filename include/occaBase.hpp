@@ -8,11 +8,14 @@
 #include <vector>
 
 #include <xmmintrin.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <io.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -344,7 +347,7 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
-    OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+    //OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
 
     inline kernelArg(occa::memory &m);
 
@@ -404,8 +407,8 @@ namespace occa {
 
     virtual int preferredDimSize() = 0;
 
-    OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATIONS;
-
+	OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATIONS;
+		
     virtual double timeTaken() = 0;
 
     virtual void free() = 0;

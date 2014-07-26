@@ -1,3 +1,5 @@
+#if OCCA_PTHREADS_ENABLED
+
 #ifndef OCCA_PTHREADS_HEADER
 #define OCCA_PTHREADS_HEADER
 
@@ -281,5 +283,7 @@ namespace occa {
   }
   //==================================
 };
+
+#endif
 
 #endif

@@ -4,8 +4,22 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
-#include <dlfcn.h>
+
 #include <fcntl.h>
+
+#ifdef WIN32
+#define OCCA_OS 4
+#define WINDOWS_OS 4
+#endif
+
+#if   OCCA_OS == LINUX_OS
+#include <dlfcn.h>
+#elif OCCA_OS == OSX_OS
+#include <dlfcn.h>
+#else
+#include <windows.h>
+#endif
+
 
 #include "occaBase.hpp"
 

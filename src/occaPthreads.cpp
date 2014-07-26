@@ -1,3 +1,5 @@
+#if OCCA_PTHREADS_ENABLED
+
 #include "occaPthreads.hpp"
 
 namespace occa {
@@ -563,3 +565,5 @@ namespace occa {
   }
   //==================================
 };
+
+#endif

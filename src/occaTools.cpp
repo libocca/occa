@@ -52,16 +52,20 @@ namespace occa {
     std::string occaCachePath;
 
     if(c_cachePath == NULL){
+	  std::stringstream ss;
+#ifndef WIN32
       char *c_home = getenv("HOME");
-
-      std::stringstream ss;
-
-      ss << c_home << "/._occa";
-
-      std::string defaultCacheDir = ss.str();
-
+	  ss << c_home << "/._occa";
+	  std::string defaultCacheDir = ss.str();
       mkdir(defaultCacheDir.c_str(), 0755);
-
+#else
+	  char *c_home = getenv("USERPROFILE");
+	  ss << c_home << "\\AppData\\Local\\._occa";
+	  std::string defaultCacheDir = ss.str();
+      
+	  LPCSTR C_defaultCacheDir = defaultCacheDir.c_str(); 
+	  CreateDirectoryA(C_defaultCacheDir, NULL);
+#endif
       occaCachePath = defaultCacheDir;
     }
     else

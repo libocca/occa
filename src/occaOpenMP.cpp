@@ -114,17 +114,28 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
+#ifndef WIN32
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
-
+#else 
+	data_.dlHandle = LoadLibraryA(cachedBinary.c_str()); 
+#endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
+#ifndef WIN32
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-
-    char *dlError;
+	char *dlError;
     if ((dlError = dlerror()) != NULL)  {
       fputs(dlError, stderr);
       throw 1;
     }
+#else
+	data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+	if(data_.dlHandle == NULL) {
+		fputs("unable to load function", stderr);
+		throw 1;
+	}
+#endif
+    
 
     releaseFile(cachedBinary);
 
@@ -139,10 +150,16 @@ namespace occa {
 
     functionName = functionName_;
 
+#ifndef WIN32
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
-
+#else 
+	data_.dlHandle = LoadLibraryA(filename.c_str()); 
+#endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
+
+
+#ifndef WIN32
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
@@ -150,6 +167,13 @@ namespace occa {
       fputs(dlError, stderr);
       throw 1;
     }
+#else
+	data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+	if(data_.dlHandle == NULL) {
+		fputs("unable to load function", stderr);
+		throw 1;
+	}
+#endif
 
     return this;
   }
@@ -175,8 +199,11 @@ namespace occa {
   void kernel_t<OpenMP>::free(){
     // [-] Fix later
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
-
+#ifndef WIN32
     dlclose(data_.dlHandle);
+#else
+	FreeLibrary((HMODULE) (data_.dlHandle));
+#endif
   }
   //==================================
 
@@ -451,7 +478,6 @@ namespace occa {
 #elif OCCA_OS == OSX_OS
     mem->handle = ::malloc(bytes);
 #else
-#  warning "Aligned memory not supported in Windows yet"
     mem->handle = ::malloc(bytes);
 #endif
 
