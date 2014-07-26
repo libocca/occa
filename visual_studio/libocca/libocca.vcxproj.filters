@@ -18,90 +18,87 @@
     <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\occaBase.cpp">
+    <ClCompile Include="..\..\src\occaBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaCBase.cpp">
+    <ClCompile Include="..\..\src\occaCBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaCOI.cpp">
+    <ClCompile Include="..\..\src\occaCOI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaCUDA.cpp">
+    <ClCompile Include="..\..\src\occaCUDA.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaKernelDefines.cpp">
+    <ClCompile Include="..\..\src\occaKernelDefines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaOpenCL.cpp">
+    <ClCompile Include="..\..\src\occaOpenCL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaOpenMP.cpp">
+    <ClCompile Include="..\..\src\occaOpenMP.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaPthreads.cpp">
+    <ClCompile Include="..\..\src\occaPthreads.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\occaTools.cpp">
+    <ClCompile Include="..\..\src\occaTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\include\occa.hpp">
+    <ClInclude Include="..\..\include\occa.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occa_c.h">
+    <ClInclude Include="..\..\include\occaBase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaBase.hpp">
+    <ClInclude Include="..\..\include\occaCOI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaCBase.hpp">
+    <ClInclude Include="..\..\include\occaCOIDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaCOI.hpp">
+    <ClInclude Include="..\..\include\occaCOIMain.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaCOIDefines.hpp">
+    <ClInclude Include="..\..\include\occaCUDA.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaCOIMain.hpp">
+    <ClInclude Include="..\..\include\occaCUDADefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaCUDA.hpp">
+    <ClInclude Include="..\..\include\occaDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaCUDADefines.hpp">
+    <ClInclude Include="..\..\include\occaKernelDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaDefines.hpp">
+    <ClInclude Include="..\..\include\occaOpenCL.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaKernelDefines.hpp">
+    <ClInclude Include="..\..\include\occaOpenCLDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaOpenCL.hpp">
+    <ClInclude Include="..\..\include\occaOpenMP.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaOpenCLDefines.hpp">
+    <ClInclude Include="..\..\include\occaOpenMPDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaOpenMP.hpp">
+    <ClInclude Include="..\..\include\occaPthreads.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaOpenMPDefines.hpp">
+    <ClInclude Include="..\..\include\occaPthreadsDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaPthreads.hpp">
+    <ClInclude Include="..\..\include\occaTools.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaPthreadsDefines.hpp">
+    <ClInclude Include="..\..\include\occa_c.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\include\occaTools.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\include\ocl_preprocessor.hpp">
+    <ClInclude Include="..\..\include\ocl_preprocessor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

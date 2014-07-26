@@ -2,7 +2,9 @@
 
 #include "occa.hpp"
 
+
 int main(int argc, char **argv){
+
   int entries = 5;
 
   float *a  = new float[entries];
@@ -16,17 +18,17 @@ int main(int argc, char **argv){
   }
 
   // occa::availableDevices<occa::OpenCL>();
-
+  
   std::string mode = "OpenMP";
   int platformID = 0;
   int deviceID   = 0;
-
+  
   occa::device device;
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
   device.setup(mode, platformID, deviceID);
-
+  /*
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
@@ -59,5 +61,5 @@ int main(int argc, char **argv){
   o_b.free();
   o_ab.free();
   device.free();
-
+  */
 }

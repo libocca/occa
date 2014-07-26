@@ -71,6 +71,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,7 +145,6 @@
   <ItemGroup>
     <ClInclude Include="..\..\include\occa.hpp" />
     <ClInclude Include="..\..\include\occaBase.hpp" />
-    <ClInclude Include="..\..\include\occaCBase.hpp" />
     <ClInclude Include="..\..\include\occaCOI.hpp" />
     <ClInclude Include="..\..\include\occaCOIDefines.hpp" />
     <ClInclude Include="..\..\include\occaCOIMain.hpp" />
