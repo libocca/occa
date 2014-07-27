@@ -287,7 +287,12 @@ namespace occa {
 
     switch(m){
     case Pthreads:
+#if OCCA_PTHREADS_ENABLED
       dHandle = new device_t<Pthreads>(); break;
+#else
+      std::cout << "OCCA mode [Pthreads] is not enabled\n";
+      throw 1;
+#endif
 
     case OpenMP:
       dHandle = new device_t<OpenMP>(); break;

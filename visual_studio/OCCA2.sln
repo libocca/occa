@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "libocca_c", "libocca_c\libo
 		{02D8DE28-46E9-423E-8FA6-CC5A845E8995} = {02D8DE28-46E9-423E-8FA6-CC5A845E8995}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "occaKernelDefinesGenerator", "occaKernelDefinesGenerator\occaKernelDefinesGenerator.vcxproj", "{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -49,6 +51,14 @@ Global
 		{4DB5E5A1-602D-4EA9-85C9-CB33288E8DD3}.Release|Win32.Build.0 = Release|Win32
 		{4DB5E5A1-602D-4EA9-85C9-CB33288E8DD3}.Release|x64.ActiveCfg = Release|Win32
 		{4DB5E5A1-602D-4EA9-85C9-CB33288E8DD3}.Release|x86.ActiveCfg = Release|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Debug|Win32.Build.0 = Debug|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Debug|x64.ActiveCfg = Debug|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Debug|x86.ActiveCfg = Debug|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Release|Win32.ActiveCfg = Release|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Release|Win32.Build.0 = Release|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Release|x64.ActiveCfg = Release|Win32
+		{3E4AB152-4B78-46FA-ACF9-9313C532A2DB}.Release|x86.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

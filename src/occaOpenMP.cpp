@@ -99,12 +99,14 @@ namespace occa {
 
     std::stringstream command;
 
+
     command << dev->dHandle->compiler
             << " -o " << cachedBinary
             << " -x c++ -w -fPIC -shared"
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary;
+			
 
     const std::string &sCommand = command.str();
 

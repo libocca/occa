@@ -12,8 +12,8 @@ int main(int argc, char **argv){
   float *ab = new float[entries];
 
   for(int i = 0; i < entries; ++i){
-    a[i]  = i;
-    b[i]  = 1 - i;
+    a[i]  = (float) i;
+    b[i]  = (float) (1 - i);
     ab[i] = 0;
   }
 
@@ -28,12 +28,15 @@ int main(int argc, char **argv){
   occa::memory o_a, o_b, o_ab;
 
   device.setup(mode, platformID, deviceID);
-  /*
+  
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  addVectors = device.buildKernelFromSource("addVectors.occa",
+  std::cout << "REM: faked filepath of addVectors.occa";
+  //addVectors = device.buildKernelFromSource("addVectors.occa",
+  //                                          "addVectors");
+  addVectors = device.buildKernelFromSource("C:\\Users\\florian\\Documents\\OCCA2\\examples\\addVectors\\addVectors.occa",
                                             "addVectors");
 
   int dims = 1;
@@ -61,5 +64,5 @@ int main(int argc, char **argv){
   o_b.free();
   o_ab.free();
   device.free();
-  */
+  
 }

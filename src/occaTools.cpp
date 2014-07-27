@@ -40,6 +40,10 @@ namespace occa {
 
   std::string readFile(const std::string &filename){
     std::ifstream fs(filename.c_str());
+	if(!fs) {
+		std::cerr << "Unable to read file " << filename;
+		throw 1;
+	}
     return std::string(std::istreambuf_iterator<char>(fs),
                        std::istreambuf_iterator<char>());
   }
