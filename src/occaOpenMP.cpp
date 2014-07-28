@@ -75,11 +75,15 @@ namespace occa {
          << dev->dHandle->compilerFlags
          << functionName;
 
+	struct stat buffer;
     std::string cachedBinary = getCachedName(filename, salt.str());
+	
+#ifdef WIN32
+	cachedBinary = cachedBinary + ".dll"; // windows refuses to load dll's that do not end with '.dll'
+#endif
 
-    struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
+    
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
       return buildFromBinary(cachedBinary, functionName);
@@ -99,18 +103,28 @@ namespace occa {
 
     std::stringstream command;
 
-
+	/*
     command << dev->dHandle->compiler
             << " -o " << cachedBinary
             << " -x c++ -w -fPIC -shared"
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary;
-			
+			*/
+
+	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl; 
+
+	command 
+		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" x86 " // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
+		<< " && "
+		<< "cl.exe "
+		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "
+		<< iCachedBinary << " "
+		<< "/link /OUT:" << cachedBinary;
 
     const std::string &sCommand = command.str();
 
-    std::cout << sCommand << '\n';
+    std::cout << sCommand << std::endl;
 
     system(sCommand.c_str());
 
@@ -120,6 +134,12 @@ namespace occa {
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 #else 
 	data_.dlHandle = LoadLibraryA(cachedBinary.c_str()); 
+	if(data_.dlHandle == NULL) {
+		DWORD errCode = GetLastError();
+		std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
+
+		throw 1;
+	}
 #endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
@@ -156,6 +176,11 @@ namespace occa {
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
 #else 
 	data_.dlHandle = LoadLibraryA(filename.c_str()); 
+	if(data_.dlHandle == NULL) {
+		DWORD errCode = GetLastError();
+		std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
+		throw 1;
+	}
 #endif
     OCCA_CHECK(data_.dlHandle != NULL);
 

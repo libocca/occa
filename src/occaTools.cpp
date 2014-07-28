@@ -2,6 +2,7 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
+
   std::string fnv(const std::string &saltedString){
     const int len = saltedString.size();
     std::stringstream ss;

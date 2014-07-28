@@ -34,10 +34,19 @@ int main(int argc, char **argv){
   o_ab = device.malloc(entries*sizeof(float));
 
   std::cout << "REM: faked filepath of addVectors.occa";
-  //addVectors = device.buildKernelFromSource("addVectors.occa",
-  //                                          "addVectors");
-  addVectors = device.buildKernelFromSource("C:\\Users\\florian\\Documents\\OCCA2\\examples\\addVectors\\addVectors.occa",
+  
+
+  char *occaDir_ = getenv("OCCA_DIR");
+  std::string addVectors_occa("addVectors.occa");
+  if(occaDir_ != NULL) {
+	  std::string occaDir(occaDir_);
+	  addVectors_occa = occaDir + "/examples/addVectors/" + addVectors_occa;
+  }
+
+  addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
                                             "addVectors");
+  //addVectors = device.buildKernelFromSource("C:\\Users\\florian\\Documents\\OCCA2\\examples\\addVectors\\addVectors.occa",
+  //                                          "addVectors");
 
   int dims = 1;
   int itemsPerGroup(2);
