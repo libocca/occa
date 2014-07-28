@@ -59,12 +59,11 @@ inline std::string saveFileToVariable(std::string filename,
 int main(int argc, char **argv){
   int mpChars, clChars, cuChars, ptChars, coiChars, coiMainChars;
 
-  char *occaDir_ = getenv("OCCA_DIR");
-  if(occaDir_ == NULL){
-    std::cout << "Environment variable [OCCA_DIR] is not set.\n";
+  if(argc != 2){
+    std::cout << "Usage " << argv[0] << " occa_dir"  ;
     throw 1;
   }
-  std::string occaDir(occaDir_);
+  std::string occaDir(argv[1]);
 
   std::string ns = "namespace occa {";
 
