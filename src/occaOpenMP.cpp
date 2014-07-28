@@ -103,7 +103,7 @@ namespace occa {
 
     std::stringstream command;
 
-	/*
+#ifndef WIN32
     command << dev->dHandle->compiler
             << " -o " << cachedBinary
             << " -x c++ -w -fPIC -shared"
@@ -111,7 +111,7 @@ namespace occa {
             << ' '    << info.flags
             << ' '    << iCachedBinary;
 			*/
-
+#else
 	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl; 
 
 	command 
@@ -121,7 +121,7 @@ namespace occa {
 		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "
 		<< iCachedBinary << " "
 		<< "/link /OUT:" << cachedBinary;
-
+#endif
     const std::string &sCommand = command.str();
 
     std::cout << sCommand << std::endl;
