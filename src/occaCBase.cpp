@@ -1,4 +1,5 @@
 #include "occaBase.hpp"
+#define LIBOCCA_C_EXPORTS
 #include "occaCBase.hpp"
 
 #  ifdef __cplusplus

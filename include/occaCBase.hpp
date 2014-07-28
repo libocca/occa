@@ -5,6 +5,16 @@
 
 #include "stdlib.h"
 
+#ifdef WIN32
+#ifdef LIBOCCA_C_EXPORTS
+#define LIBOCCA_API __declspec(dllexport)
+#else
+#define LIBOCCA_API __declspec(dllimport)
+#endif
+#else
+#define LIBOCCA_API  
+#endif
+
 #define OCCA_TYPE_MEMORY 0
 #define OCCA_TYPE_INT    1
 #define OCCA_TYPE_UINT   2
@@ -31,7 +41,7 @@
 
 #define OCCA_C_KERNEL_RUN_DECLARATION_ARGS(N) , void *arg##N
 #define OCCA_C_KERNEL_RUN_DECLARATION(N)                                \
-  void occaKernelRun##N(occaKernel kernel OCL_FOR(1, N, OCCA_C_KERNEL_RUN_DECLARATION_ARGS));
+  LIBOCCA_API void occaKernelRun##N(occaKernel kernel OCL_FOR(1, N, OCCA_C_KERNEL_RUN_DECLARATION_ARGS));
 
 #define OCCA_C_KERNEL_RUN_DECLARATIONS          \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_C_KERNEL_RUN_DECLARATION)
@@ -68,6 +78,9 @@
 #define OCCA_C_KERNEL_RUN_DEFINITIONS          \
   OCL_FOR_2(1, OCL_MAX_FOR_LOOPS, OCCA_C_KERNEL_RUN_DEFINITION)
 
+
+
+
 #  ifdef __cplusplus
 extern "C" {
 #  endif
@@ -93,153 +106,153 @@ extern "C" {
     uintptr_t x, y, z;
   } occaDim;
 
-  extern occaKernelInfo occaNoKernelInfo;
+  extern LIBOCCA_API occaKernelInfo occaNoKernelInfo;
 
-  extern const uintptr_t occaAutoSize;
-  extern const uintptr_t occaNoOffset;
+  extern LIBOCCA_API const uintptr_t occaAutoSize;
+  extern LIBOCCA_API const uintptr_t occaNoOffset;
 
-  extern const uintptr_t occaTypeSize[OCCA_TYPE_COUNT];
+  extern LIBOCCA_API const uintptr_t occaTypeSize[OCCA_TYPE_COUNT];
 
 
   //---[ TypeCasting ]------------------
-  occaType occaInt(int value);
-  occaType occaUInt(unsigned int value);
+  LIBOCCA_API occaType occaInt(int value);
+  LIBOCCA_API occaType occaUInt(unsigned int value);
 
-  occaType occaChar(char value);
-  occaType occaUChar(unsigned char value);
+  LIBOCCA_API occaType occaChar(char value);
+  LIBOCCA_API occaType occaUChar(unsigned char value);
 
-  occaType occaShort(short value);
-  occaType occaUShort(unsigned short value);
+  LIBOCCA_API occaType occaShort(short value);
+  LIBOCCA_API occaType occaUShort(unsigned short value);
 
-  occaType occaLong(long value);
-  occaType occaULong(unsigned long value);
+  LIBOCCA_API occaType occaLong(long value);
+  LIBOCCA_API occaType occaULong(unsigned long value);
 
-  occaType occaFloat(float value);
-  occaType occaDouble(double value);
+  LIBOCCA_API occaType occaFloat(float value);
+  LIBOCCA_API occaType occaDouble(double value);
 
-  occaType occaString(char *str);
+  LIBOCCA_API occaType occaString(char *str);
   //====================================
 
 
   //---[ Device ]-----------------------
-  const char* occaDeviceMode(occaDevice device);
+  LIBOCCA_API const char* occaDeviceMode(occaDevice device);
 
-  void occaDeviceSetCompiler(occaDevice device,
-                             const char *compiler);
+  LIBOCCA_API void occaDeviceSetCompiler(occaDevice device,
+                                         const char *compiler);
 
-  void occaDeviceSetCompilerFlags(occaDevice device,
-                                  const char *compilerFlags);
+  LIBOCCA_API void occaDeviceSetCompilerFlags(occaDevice device,
+                                              const char *compilerFlags);
 
-  occaDevice occaGetDevice(const char *mode,
-                           int arg1, int arg2);
+  LIBOCCA_API occaDevice occaGetDevice(const char *mode,
+                                       int arg1, int arg2);
 
-  occaKernel occaBuildKernelFromSource(occaDevice device,
-                                       const char *filename,
-                                       const char *functionName,
-                                       occaKernelInfo info);
+  LIBOCCA_API occaKernel occaBuildKernelFromSource(occaDevice device,
+                                                   const char *filename,
+                                                   const char *functionName,
+                                                   occaKernelInfo info);
 
-  occaKernel occaBuildKernelFromBinary(occaDevice device,
-                                       const char *filename,
-                                       const char *functionName);
+  LIBOCCA_API occaKernel occaBuildKernelFromBinary(occaDevice device,
+                                                   const char *filename,
+                                                   const char *functionName);
 
-  occaKernel occaBuildKernelFromLoopy(occaDevice device,
-                                      const char *filename,
-                                      const char *functionName,
-                                      const char *pythonCode);
+  LIBOCCA_API occaKernel occaBuildKernelFromLoopy(occaDevice device,
+                                                  const char *filename,
+                                                  const char *functionName,
+                                                  const char *pythonCode);
 
-  occaMemory occaDeviceMalloc(occaDevice device,
-                              uintptr_t bytes,
-                              void *source);
+  LIBOCCA_API occaMemory occaDeviceMalloc(occaDevice device,
+                                          uintptr_t bytes,
+                                          void *source);
 
-  void occaDeviceFlush(occaDevice device);
-  void occaDeviceFinish(occaDevice device);
+  LIBOCCA_API void occaDeviceFlush(occaDevice device);
+  LIBOCCA_API void occaDeviceFinish(occaDevice device);
 
-  occaStream occaDeviceGenStream(occaDevice device);
-  occaStream occaDeviceGetStream(occaDevice device);
-  void       occaDeviceSetStream(occaDevice device, occaStream stream);
+  LIBOCCA_API occaStream occaDeviceGenStream(occaDevice device);
+  LIBOCCA_API occaStream occaDeviceGetStream(occaDevice device);
+  LIBOCCA_API void       occaDeviceSetStream(occaDevice device, occaStream stream);
 
-  occaTag occaDeviceTagStream(occaDevice device);
-  double occaDeviceTimeBetweenTags(occaDevice device,
-                                   occaTag startTag, occaTag endTag);
+  LIBOCCA_API occaTag occaDeviceTagStream(occaDevice device);
+  LIBOCCA_API double occaDeviceTimeBetweenTags(occaDevice device,
+                                               occaTag startTag, occaTag endTag);
 
-  void occaDeviceStreamFree(occaDevice device, occaStream stream);
+  LIBOCCA_API void occaDeviceStreamFree(occaDevice device, occaStream stream);
 
-  void occaDeviceFree(occaDevice device);
+  LIBOCCA_API void occaDeviceFree(occaDevice device);
   //====================================
 
 
   //---[ Kernel ]-----------------------
-  const char* occaKernelMode(occaKernel kernel);
+  LIBOCCA_API const char* occaKernelMode(occaKernel kernel);
 
-  int occaKernelPreferredDimSize(occaKernel kernel);
+  LIBOCCA_API int occaKernelPreferredDimSize(occaKernel kernel);
 
-  void occaKernelSetWorkingDims(occaKernel kernel,
-                                int dims,
-                                occaDim items,
-                                occaDim groups);
+  LIBOCCA_API void occaKernelSetWorkingDims(occaKernel kernel,
+                                            int dims,
+                                            occaDim items,
+                                            occaDim groups);
 
-  void occaKernelSetAllWorkingDims(occaKernel kernel,
-                                   int dims,
-                                   uintptr_t itemsX, uintptr_t itemsY, uintptr_t itemsZ,
-                                   uintptr_t groupsX, uintptr_t groupsY, uintptr_t groupsZ);
+  LIBOCCA_API void occaKernelSetAllWorkingDims(occaKernel kernel,
+                                               int dims,
+                                               uintptr_t itemsX, uintptr_t itemsY, uintptr_t itemsZ,
+                                               uintptr_t groupsX, uintptr_t groupsY, uintptr_t groupsZ);
 
-  double occaKernelTimeTaken(occaKernel kernel);
+  LIBOCCA_API double occaKernelTimeTaken(occaKernel kernel);
 
-  occaArgumentList occaGenArgumentList();
+  LIBOCCA_API occaArgumentList occaGenArgumentList();
 
-  void occaArgumentListClear(occaArgumentList list);
+  LIBOCCA_API void occaArgumentListClear(occaArgumentList list);
 
-  void occaArgumentListFree(occaArgumentList list);
+  LIBOCCA_API void occaArgumentListFree(occaArgumentList list);
 
-  void occaArgumentListAddArg(occaArgumentList list,
-                              int argPos,
-                              void *type);
+  LIBOCCA_API void occaArgumentListAddArg(occaArgumentList list,
+                                          int argPos,
+                                          void *type);
 
-  void occaKernelRun_(occaKernel kernel,
-                      occaArgumentList list);
+  LIBOCCA_API void occaKernelRun_(occaKernel kernel,
+                                       occaArgumentList list);
 
   OCCA_C_KERNEL_RUN_DECLARATIONS;
 
-  void occaKernelFree(occaKernel kernel);
+  LIBOCCA_API void occaKernelFree(occaKernel kernel);
 
-  occaKernelInfo occaGenKernelInfo();
+  LIBOCCA_API occaKernelInfo occaGenKernelInfo();
 
-  void occaKernelInfoAddDefine(occaKernelInfo info,
-                               const char *macro,
-                               occaType value);
+  LIBOCCA_API void occaKernelInfoAddDefine(occaKernelInfo info,
+                                           const char *macro,
+                                           occaType value);
 
-  void occaKernelInfoFree(occaKernelInfo info);
+  LIBOCCA_API void occaKernelInfoFree(occaKernelInfo info);
   //====================================
 
 
   //---[ Memory ]-----------------------
-  const char* occaMemoryMode(occaMemory memory);
+  LIBOCCA_API const char* occaMemoryMode(occaMemory memory);
 
-  void occaCopyMemToMem(occaMemory dest, occaMemory src,
-                        const uintptr_t bytes,
-                        const uintptr_t destOffset,
-                        const uintptr_t srcOffset);
+  LIBOCCA_API void occaCopyMemToMem(occaMemory dest, occaMemory src,
+                                    const uintptr_t bytes,
+                                    const uintptr_t destOffset,
+                                    const uintptr_t srcOffset);
 
-  void occaCopyPtrToMem(occaMemory dest, const void *src,
-                        const uintptr_t bytes, const uintptr_t offset);
+  LIBOCCA_API void occaCopyPtrToMem(occaMemory dest, const void *src,
+                                    const uintptr_t bytes, const uintptr_t offset);
 
-  void occaCopyMemToPtr(void *dest, occaMemory src,
-                        const uintptr_t bytes, const uintptr_t offset);
+  LIBOCCA_API void occaCopyMemToPtr(void *dest, occaMemory src,
+                                    const uintptr_t bytes, const uintptr_t offset);
 
-  void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
-                             const uintptr_t bytes,
-                             const uintptr_t destOffset,
-                             const uintptr_t srcOffset);
+  LIBOCCA_API void occaAsyncCopyMemToMem(occaMemory dest, occaMemory src,
+                                         const uintptr_t bytes,
+                                         const uintptr_t destOffset,
+                                         const uintptr_t srcOffset);
 
-  void occaAsyncCopyPtrToMem(occaMemory dest, const void *src,
-                             const uintptr_t bytes, const uintptr_t offset);
+  LIBOCCA_API void occaAsyncCopyPtrToMem(occaMemory dest, const void *src,
+                                         const uintptr_t bytes, const uintptr_t offset);
 
-  void occaAsyncCopyMemToPtr(void *dest, occaMemory src,
-                             const uintptr_t bytes, const uintptr_t offset);
+  LIBOCCA_API void occaAsyncCopyMemToPtr(void *dest, occaMemory src,
+                                         const uintptr_t bytes, const uintptr_t offset);
 
-  void occaMemorySwap(occaMemory memoryA, occaMemory memoryB);
+  LIBOCCA_API void occaMemorySwap(occaMemory memoryA, occaMemory memoryB);
 
-  void occaMemoryFree(occaMemory memory);
+  LIBOCCA_API void occaMemoryFree(occaMemory memory);
   //====================================
 
 #  ifdef __cplusplus
