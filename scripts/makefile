@@ -7,6 +7,7 @@ iPath = include
 
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
+Check_Enabled  = 1
 
 icpc_Enabled   = 0
 OpenGL_Enabled = 0
@@ -167,6 +168,11 @@ else
 	flags +=          -DOCCA_OPENMP_ENABLED=0
 endif
 
+ifeq ($(Check_Enabled), 1)
+	flags += -DOCCA_CHECK_ENABLED=1
+else
+	flags += -DOCCA_CHECK_ENABLED=0
+endif
 
 ifeq ($(Pthreads_Enabled), 1)
 	flags += -DOCCA_PTHREADS_ENABLED=1
