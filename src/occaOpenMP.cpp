@@ -108,7 +108,7 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << sCommand << '\n';
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
     const int compileError = system(sCommand.c_str());
 

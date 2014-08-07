@@ -125,7 +125,7 @@ namespace occa {
 
     const std::string &ptxCommand = command.str();
 
-    std::cout << ptxCommand << '\n';
+    std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
     const int ptxError = system(ptxCommand.c_str());
 
