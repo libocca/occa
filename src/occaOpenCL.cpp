@@ -303,6 +303,7 @@ namespace occa {
     int fileHandle = ::open(iCachedBinary.c_str(), O_RDWR);
     if(fileHandle == 0){
       printf("File [ %s ] does not exist.\n", iCachedBinary.c_str());
+      releaseFile(cachedBinary);
       throw 1;
     }
 
@@ -311,6 +312,7 @@ namespace occa {
 
     if(status != 0){
       printf( "File [ %s ] gave a bad fstat.\n" , iCachedBinary.c_str());
+      releaseFile(cachedBinary);
       throw 1;
     }
 
@@ -324,6 +326,10 @@ namespace occa {
     ::close(fileHandle);
 
     data_.program = clCreateProgramWithSource(data_.context, 1, (const char **) &cFunction, &cLength, &error);
+
+    if(error)
+      releaseFile(cachedBinary);
+
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
 
     std::string catFlags = info.flags + dev->dHandle->compilerFlags;
@@ -351,6 +357,8 @@ namespace occa {
 
         delete[] log;
       }
+
+      releaseFile(cachedBinary);
     }
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
@@ -359,13 +367,21 @@ namespace occa {
       uintptr_t binarySize;
       char *binary;
 
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes",
-                    clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(uintptr_t), &binarySize, NULL));
+      error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(uintptr_t), &binarySize, NULL);
+
+      if(error)
+        releaseFile(cachedBinary);
+
+      OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes", error);
 
       binary = new char[binarySize + 1];
 
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary",
-                   clGetProgramInfo(data_.program, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL));
+      error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL);
+
+      if(error)
+        releaseFile(cachedBinary);
+
+      OCCA_CL_CHECK("saveProgramBinary: Getting Binary", error);
 
       FILE *fp = fopen(cachedBinary.c_str(), "wb");
       fwrite(binary, 1, binarySize, fp);
@@ -375,6 +391,10 @@ namespace occa {
     }
 
     data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
+
+    if(error)
+      releaseFile(cachedBinary);
+
     OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
 
     std::cout << "OpenCL compiled " << filename << " from [" << iCachedBinary << "]\n";

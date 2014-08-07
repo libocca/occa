@@ -127,7 +127,12 @@ namespace occa {
 
     std::cout << ptxCommand << '\n';
 
-    system(ptxCommand.c_str());
+    const int ptxError = system(ptxCommand.c_str());
+
+    if(ptxError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 
     //---[ Compiling Command ]----------
     command.str("");
@@ -144,13 +149,31 @@ namespace occa {
 
     std::cout << sCommand << '\n';
 
-    system(sCommand.c_str());
+    const int compileError = system(sCommand.c_str());
+
+    if(compileError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
+
+    const CUresult moduleLoadError = cuModuleLoad(&data_.module,
+                                                  cachedBinary.c_str());
+
+    if(moduleLoadError)
+      releaseFile(cachedBinary);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
-                    cuModuleLoad(&data_.module, cachedBinary.c_str()));
+                    moduleLoadError);
+
+    const CUresult moduleGetFunctionError = cuModuleGetFunction(&data_.function,
+                                                                data_.module,
+                                                                functionName.c_str());
+
+    if(moduleGetFunctionError)
+      releaseFile(cachedBinary);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
-                    cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
+                    moduleGetFunctionError);
 
     releaseFile(cachedBinary);
 

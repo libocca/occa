@@ -106,19 +106,28 @@ namespace occa {
 
     std::cout << sCommand << '\n';
 
-    system(sCommand.c_str());
+    const int compileError = system(sCommand.c_str());
+
+    if(compileError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
-    OCCA_CHECK(data_.dlHandle != NULL);
+    if(data_.dlHandle == NULL){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
     if ((dlError = dlerror()) != NULL)  {
       fputs(dlError, stderr);
+      releaseFile(cachedBinary);
       throw 1;
     }
 
