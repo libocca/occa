@@ -4,7 +4,7 @@
 #include "ocl_preprocessor.hpp"
 
 //---[ Checks and Info ]----------------
-#if OCCA_DEBUG_ENABLED
+#if OCCA_CHECK_ENABLED
 #  define OCCA_CHECK2( _expr , file , line , func )                     \
   do {                                                                  \
     uintptr_t expr = (_expr);                                              \
@@ -214,7 +214,7 @@
 
 
 //---[ OpenCL ]-------------------------
-#if OCCA_DEBUG_ENABLED
+#if OCCA_CHECK_ENABLED
 ;
 #  define OCCA_CL_CHECK( _str , _statement ) OCCA_CL_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_CL_CHECK2( _str , _statement , file , line )             \
@@ -273,7 +273,7 @@
 
 
 //---[ CUDA ]---------------------------
-#if OCCA_DEBUG_ENABLED
+#if OCCA_CHECK_ENABLED
 #  define OCCA_CUDA_CHECK( _str , _statement ) OCCA_CUDA_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_CUDA_CHECK2( _str , _statement , file , line )           \
   do {                                                                  \
@@ -318,7 +318,7 @@
 
 
 //---[ COI ]----------------------------
-#if OCCA_DEBUG_ENABLED
+#if OCCA_CHECK_ENABLED
 #  define OCCA_COI_CHECK( _str , _statement ) OCCA_COI_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_COI_CHECK2( _str , _statement , file , line )            \
   do {                                                                  \
