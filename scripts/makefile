@@ -9,12 +9,12 @@ iPath = include
 Debug_Enabled  = 0
 Check_Enabled  = 1
 
-icpc_Enabled   = 0
+usingICPC      = 0
 OpenGL_Enabled = 0
 
-OCCA_OPENCL_ENABLED   = 1
+OCCA_OPENCL_ENABLED   = 0
 OCCA_OPENMP_ENABLED   = 0
-OCCA_CUDA_ENABLED     = 1
+OCCA_CUDA_ENABLED     = 0
 OCCA_COI_ENABLED      = 0
 OCCA_PTHREADS_ENABLED = 1
 
@@ -73,7 +73,7 @@ endif
 
 
 #---[ OS-Based Dependencies ]---------------------
-ifeq ($(icpc_Enabled), 1)
+ifeq ($(usingICPC), 1)
 	Debug_Flags   = -g
 	Release_Flags = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
 else

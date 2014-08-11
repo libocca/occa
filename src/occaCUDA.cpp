@@ -121,7 +121,7 @@ namespace occa {
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
             << ' '          << info.flags
-            << " -x cu "    << iCachedBinary;
+            << " -x cu -c "    << iCachedBinary;
 
     const std::string &ptxCommand = command.str();
 
