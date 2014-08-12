@@ -473,7 +473,7 @@ namespace occa {
   template <>
   void device_t<CUDA>::finish(){
     OCCA_CUDA_CHECK("Device: Finish",
-                    cuCtxSynchronize() );
+                    cuStreamSynchronize(*((CUstream*) dev->currentStream)) );
   }
 
   template <>
