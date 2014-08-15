@@ -346,7 +346,7 @@ namespace occa {
 
     OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
 
-    inline kernelArg(occa::memory &m);
+    inline kernelArg(const occa::memory &m);
 
     inline kernelArg(void *arg_){
       arg.void_ = arg_;
@@ -698,7 +698,7 @@ namespace occa {
   };
 
   //---[ KernelArg ]----------
-  inline kernelArg::kernelArg(occa::memory &m){
+  inline kernelArg::kernelArg(const occa::memory &m){
     arg.void_ = m.mHandle->handle;
     size = sizeof(void*);
 
