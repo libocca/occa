@@ -85,6 +85,153 @@
 //================================================
 
 
+//---[ Math ]-------------------------------------
+inline float  occaCuda_sqrt(const float x){      return sqrtf(x);   }
+inline double occaCuda_sqrt(const double x){     return sqrt(x);    }
+inline float  occaCuda_fastSqrt(const float x){  return __sqrtf(x); }
+inline double occaCuda_fastSqrt(const double x){ return __sqrt(x);  }
+
+#define occaSqrt       occaCuda_sqrt
+#define occaFastSqrt   occaCuda_fastSqrt
+#define occaNativeSqrt occaSqrt
+
+inline float  occaCuda_sin(const float x){      return sinf(x);   }
+inline double occaCuda_sin(const double x){     return sin(x);    }
+inline float  occaCuda_fastSin(const float x){  return __sinf(x); }
+inline double occaCuda_fastSin(const double x){ return __sin(x);  }
+
+#define occaSin       occaCuda_sin
+#define occaFastSin   occaCuda_fastSin
+#define occaNativeSin occaSin
+
+inline float  occaCuda_asin(const float x){      return asinf(x);   }
+inline double occaCuda_asin(const double x){     return asin(x);    }
+inline float  occaCuda_fastAsin(const float x){  return __asinf(x); }
+inline double occaCuda_fastAsin(const double x){ return __asin(x);  }
+
+#define occaAsin       occaCuda_asin
+#define occaFastAsin   occaCuda_fastAsin
+#define occaNativeAsin occaAsin
+
+inline float  occaCuda_sinh(const float x){      return sinhf(x);   }
+inline double occaCuda_sinh(const double x){     return sinh(x);    }
+inline float  occaCuda_fastSinh(const float x){  return __sinhf(x); }
+inline double occaCuda_fastSinh(const double x){ return __sinh(x);  }
+
+#define occaSinh       occaCuda_sinh
+#define occaFastSinh   occaCuda_fastSinh
+#define occaNativeSinh occaSinh
+
+inline float  occaCuda_asinh(const float x){       return asinhf(x);   }
+inline double occaCuda_asinh(const double x){      return asinh(x);    }
+inline float  occaCuda_fastAsinh(const float x){   return __asinhf(x); }
+inline double occaCuda_fastAsinh(const double x){  return __asinh(x);  }
+
+#define occaAsinh       occaCuda_asinh
+#define occaFastAsinh   occaCuda_fastAsinh
+#define occaNativeAsinh occaAsinh
+
+inline float  occaCuda_cos(const float x){      return cosf(x);   }
+inline double occaCuda_cos(const double x){     return cos(x);    }
+inline float  occaCuda_fastCos(const float x){  return __cosf(x); }
+inline double occaCuda_fastCos(const double x){ return __cos(x);  }
+
+#define occaCos       occaCuda_cos
+#define occaFastCos   occaCuda_fastCos
+#define occaNativeCos occaCos
+
+inline float  occaCuda_acos(const float x){      return acosf(x);   }
+inline double occaCuda_acos(    const double x){ return acos(x);    }
+inline float  occaCuda_fastAcos(const float x){  return __acosf(x); }
+inline double occaCuda_fastAcos(const double x){ return __acos(x);  }
+
+#define occaAcos       occaCuda_acos
+#define occaFastAcos   occaCuda_fastAcos
+#define occaNativeAcos occaAcos
+
+inline float  occaCuda_cosh(const float x){      return coshf(x);   }
+inline double occaCuda_cosh(    const double x){ return cosh(x);    }
+inline float  occaCuda_fastCosh(const float x){  return __coshf(x); }
+inline double occaCuda_fastCosh(const double x){ return __cosh(x);  }
+
+#define occaCosh       occaCuda_cosh
+#define occaFastCosh   occaCuda_fastCosh
+#define occaNativeCosh occaCosh
+
+inline float  occaCuda_acosh(const float x){      return acoshf(x);   }
+inline double occaCuda_acosh    (const double x){ return acosh(x);    }
+inline float  occaCuda_fastAcosh(const float x){  return __acoshf(x); }
+inline double occaCuda_fastAcosh(const double x){ return __acosh(x);  }
+
+#define occaAcosh       occaCuda_acosh
+#define occaFastAcosh   occaCuda_fastAcosh
+#define occaNativeAcosh occaAcosh
+
+inline float  occaCuda_tan(const float x){      return tanf(x);   }
+inline double occaCuda_tan(const double x){     return tan(x);    }
+inline float  occaCuda_fastTan(const float x){  return __tanf(x); }
+inline double occaCuda_fastTan(const double x){ return __tan(x);  }
+
+#define occaTan       occaCuda_tan
+#define occaFastTan   occaCuda_fastTan
+#define occaNativeTan occaTan
+
+inline float  occaCuda_atan(const float x){      return atanf(x);   }
+inline double occaCuda_atan(const double x){     return atan(x);    }
+inline float  occaCuda_fastAtan(const float x){  return __atanf(x); }
+inline double occaCuda_fastAtan(const double x){ return __atan(x);  }
+
+#define occaAtan       occaCuda_atan
+#define occaFastAtan   occaCuda_fastAtan
+#define occaNativeAtan occaAtan
+
+inline float  occaCuda_tanh(const float x){      return tanhf(x);   }
+inline double occaCuda_tanh(    const double x){ return tanh(x);    }
+inline float  occaCuda_fastTanh(const float x){  return __tanhf(x); }
+inline double occaCuda_fastTanh(const double x){ return __tanh(x);  }
+
+#define occaTanh       occaCuda_tanh
+#define occaFastTanh   occaCuda_fastTanh
+#define occaNativeTanh occaTanh
+
+inline float  occaCuda_atanh(const float x){      return atanhf(x);   }
+inline double occaCuda_atanh(const double x){     return atanh(x);    }
+inline float  occaCuda_fastAtanh(const float x){  return __atanhf(x); }
+inline double occaCuda_fastAtanh(const double x){ return __atanh(x);  }
+
+#define occaAtanh       occaCuda_atanh
+#define occaFastAtanh   occaCuda_fastAtanh
+#define occaNativeAtanh occaAtanh
+
+inline float  occaCuda_exp(const float x){      return expf(x);   }
+inline double occaCuda_exp(const double x){     return exp(x);    }
+inline float  occaCuda_fastExp(const float x){  return __expf(x); }
+inline double occaCuda_fastExp(const double x){ return __exp(x);  }
+
+#define occaExp       occaCuda_exp
+#define occaFastExp   occaCuda_fastExp
+#define occaNativeExp occaExp
+
+inline float  occaCuda_log2(const float x){      return log2f(x);   }
+inline double occaCuda_log2(    const double x){ return log2(x);    }
+inline float  occaCuda_fastLog2(const float x){  return __log2f(x); }
+inline double occaCuda_fastLog2(const double x){ return __log2(x); }
+
+#define occaLog2       occaCuda_log2
+#define occaFastLog2   occaCuda_fastLog2
+#define occaNativeLog2 occaLog2
+
+inline float  occaCuda_log10(const float x){      return log10f(x);   }
+inline double occaCuda_log10(const double x){     return log10(x);    }
+inline float  occaCuda_fastLog10(const float x){  return __log10f(x); }
+inline double occaCuda_fastLog10(const double x){ return __log10(x);  }
+
+#define occaLog10       occaCuda_log10
+#define occaFastLog10   occaCuda_fastLog10
+#define occaNativeLog10 occaLog10
+//================================================
+
+
 //---[ Misc ]-------------------------------------
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)
