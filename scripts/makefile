@@ -14,7 +14,7 @@ OpenGL_Enabled = 0
 
 openclEnabled   = 0
 openmpEnabled   = 0
-cudaEnabled     = 0
+cudaEnabled     = 1
 coiEnabled      = 0
 pthreadsEnabled = 1
 
