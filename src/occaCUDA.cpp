@@ -374,6 +374,7 @@ namespace occa {
   void memory_t<CUDA>::free(){
     cuMemFree(*((CUdeviceptr*) handle));
     delete (CUdeviceptr*) handle;
+    size = 0;
   }
   //==================================
 

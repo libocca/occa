@@ -710,6 +710,7 @@ namespace occa {
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
     delete (cl_mem*) handle;
+    size = 0;
   }
   //==================================
 

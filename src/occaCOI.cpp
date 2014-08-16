@@ -474,6 +474,8 @@ namespace occa {
                    COIBufferDestroy( *((coiMemory*) handle) ) );
 
     delete handle;
+
+    size = 0;
   }
   //==================================
 

@@ -535,6 +535,7 @@ namespace occa {
   class memory_v {
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
+    friend class occa::memory;
     friend class occa::device;
     friend class occa::kernelArg;
 
@@ -655,6 +656,10 @@ namespace occa {
     memory& operator = (const memory &m);
 
     std::string& mode();
+
+    inline uintptr_t bytes() const {
+      return mHandle->size;
+    }
 
     void copyFrom(const void *source,
                   const uintptr_t bytes = 0,

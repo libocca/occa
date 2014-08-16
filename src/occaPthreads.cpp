@@ -357,6 +357,7 @@ namespace occa {
   template <>
   void memory_t<Pthreads>::free(){
     delete (char*) handle;
+    size = 0;
   }
   //==================================
 
