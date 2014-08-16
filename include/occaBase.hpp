@@ -658,6 +658,9 @@ namespace occa {
     std::string& mode();
 
     inline uintptr_t bytes() const {
+      if(mHandle == NULL)
+        return 0;
+
       return mHandle->size;
     }
 
