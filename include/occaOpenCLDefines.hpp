@@ -86,6 +86,73 @@
 //================================================
 
 
+//---[ Math ]-------------------------------------
+#define occaSqrt       sqrt
+#define occaFastSqrt   half_sqrt
+#define occaNativeSqrt native_sqrt
+
+#define occaSin       sin
+#define occaFastSin   half_sin
+#define occaNativeSin native_sin
+
+#define occaAsin       asin
+#define occaFastAsin   half_asin
+#define occaNativeAsin native_asin
+
+#define occaSinh       sinh
+#define occaFastSinh   half_sinh
+#define occaNativeSinh native_sinh
+
+#define occaAsinh       asinh
+#define occaFastAsinh   half_asinh
+#define occaNativeAsinh native_asinh
+
+#define occaCos       cos
+#define occaFastCos   half_cos
+#define occaNativeCos native_cos
+
+#define occaAcos       acos
+#define occaFastAcos   half_acos
+#define occaNativeAcos native_acos
+
+#define occaCosh       cosh
+#define occaFastCosh   half_cosh
+#define occaNativeCosh native_cosh
+
+#define occaAcosh       acosh
+#define occaFastAcosh   half_acosh
+#define occaNativeAcosh native_acosh
+
+#define occaTan       tan
+#define occaFastTan   half_tan
+#define occaNativeTan native_tan
+
+#define occaAtan       atan
+#define occaFastAtan   half_atan
+#define occaNativeAtan native_atan
+
+#define occaTanh       tanh
+#define occaFastTanh   half_tanh
+#define occaNativeTanh native_tanh
+
+#define occaAtanh       atanh
+#define occaFastAtanh   half_atanh
+#define occaNativeAtanh native_atanh
+
+#define occaExp       exp
+#define occaFastExp   half_exp
+#define occaNativeExp native_exp
+
+#define occaLog2       log2
+#define occaFastLog2   half_log2
+#define occaNativeLog2 native_log2
+
+#define occaLog10       log10
+#define occaFastLog10   half_log10
+#define occaNativeLog10 native_log10
+//================================================
+
+
 //---[ Misc ]-------------------------------------
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)

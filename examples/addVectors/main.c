@@ -17,7 +17,7 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  const char *mode = "OpenMP";
+  const char *mode = "Pthreads";
   int platformID = 0;
   int deviceID   = 0;
 
@@ -77,6 +77,3 @@ int main(int argc, char **argv){
   occaMemoryFree(o_ab);
   occaDeviceFree(device);
 }
-
-
-

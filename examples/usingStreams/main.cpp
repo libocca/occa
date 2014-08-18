@@ -2,72 +2,59 @@
 
 #include "occa.hpp"
 
-
 int main(int argc, char **argv){
-
-  int entries = 5;
+  int entries = 8;
 
   float *a  = new float[entries];
   float *b  = new float[entries];
   float *ab = new float[entries];
 
   for(int i = 0; i < entries; ++i){
-    a[i]  = (float) i;
-    b[i]  = (float) (1 - i);
+    a[i]  = i;
+    b[i]  = 1 - i;
     ab[i] = 0;
   }
 
-  int int_size = sizeof(int);
-  int pointer_size = sizeof(void*);
-  int size_t_size = sizeof(size_t);
-  std::cout << "Hello from addVectors: "
-      << " integer size: " << int_size
-      << " pointer size: " << pointer_size
-	  << " size_t size: " << size_t_size << std::endl;
-  
-
-
-  // occa::availableDevices<occa::OpenCL>();
-  
-  std::string mode = "OpenMP";
-
+  std::string mode = "CUDA";
   int platformID = 0;
   int deviceID   = 0;
-  
+
   occa::device device;
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
+  occa::stream streamA, streamB;
+
   device.setup(mode, platformID, deviceID);
-  
+
+  streamA = device.getStream();
+  streamB = device.genStream();
+
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  char *occaDir_ = getenv("OCCA_DIR");
-  std::string addVectors_occa("addVectors.occa");
-  if(occaDir_ != NULL) {
-	  std::string occaDir(occaDir_);
-	  addVectors_occa = occaDir + "/examples/addVectors/" + addVectors_occa;
-  }
-
-  addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
+  addVectors = device.buildKernelFromSource("addVectors.occa",
                                             "addVectors");
 
   int dims = 1;
   int itemsPerGroup(2);
-  int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
+  int groups(4);
 
   addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
-  addVectors(entries, o_a, o_b, o_ab);
+  device.setStream(streamA);
+  addVectors(entries, 0, o_a, o_b, o_ab);
+
+  device.setStream(streamB);
+  addVectors(entries, 4, o_a, o_b, o_ab);
 
   o_ab.copyTo(ab);
 
-  for(int i = 0; i < 5; ++i)
+  for(int i = 0; i < entries; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
   delete [] a;
@@ -79,5 +66,4 @@ int main(int argc, char **argv){
   o_b.free();
   o_ab.free();
   device.free();
-  
 }

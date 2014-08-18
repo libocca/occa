@@ -7,15 +7,16 @@ iPath = include
 
 #---[ Default Variables ]-------------------------
 Debug_Enabled  = 0
+Check_Enabled  = 1
 
-icpc_Enabled   = 1
+usingICPC      = 0
 OpenGL_Enabled = 0
 
-OCCA_OPENCL_ENABLED   = 0
-OCCA_OPENMP_ENABLED   = 1
-OCCA_CUDA_ENABLED     = 0
-OCCA_COI_ENABLED      = 1
-OCCA_PTHREADS_ENABLED = 1
+openclEnabled   = 0
+openmpEnabled   = 0
+cudaEnabled     = 1
+coiEnabled      = 0
+pthreadsEnabled = 1
 
 ifeq ($(DEBUG), 1)
 	Debug_Enabled = 1
@@ -72,7 +73,7 @@ endif
 
 
 #---[ OS-Based Dependencies ]---------------------
-ifeq ($(icpc_Enabled), 1)
+ifeq ($(usingICPC), 1)
 	Debug_Flags   = -g
 	Release_Flags = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
 else
@@ -128,31 +129,31 @@ endif
 ifdef OCCA_PTHREADS_ENABLED
 	Pthreads_Enabled = $(OCCA_PTHREADS_ENABLED)
 else
-	Pthreads_Enabled = 0
+	Pthreads_Enabled = pthreadsEnabled
 endif
 
 ifdef OCCA_OPENMP_ENABLED
 	OpenMP_Enabled = $(OCCA_OPENMP_ENABLED)
 else
-	OpenMP_Enabled = 0
+	OpenMP_Enabled = openmpEnabled
 endif
 
 ifdef OCCA_OPENCL_ENABLED
 	OpenCL_Enabled = $(OCCA_OPENCL_ENABLED)
 else
-	OpenCL_Enabled = 0
+	OpenCL_Enabled = openclEnabled
 endif
 
 ifdef OCCA_CUDA_ENABLED
 	CUDA_Enabled = $(OCCA_CUDA_ENABLED)
 else
-	CUDA_Enabled = 0
+	CUDA_Enabled = cudaEnabled
 endif
 
 ifdef OCCA_COI_ENABLED
 	COI_Enabled = $(OCCA_COI_ENABLED)
 else
-	COI_Enabled = 0
+	COI_Enabled = coiEnabled
 endif
 
 ifeq ($(Debug_Enabled), 1)
@@ -167,6 +168,11 @@ else
 	flags +=          -DOCCA_OPENMP_ENABLED=0
 endif
 
+ifeq ($(Check_Enabled), 1)
+	flags += -DOCCA_CHECK_ENABLED=1
+else
+	flags += -DOCCA_CHECK_ENABLED=0
+endif
 
 ifeq ($(Pthreads_Enabled), 1)
 	flags += -DOCCA_PTHREADS_ENABLED=1

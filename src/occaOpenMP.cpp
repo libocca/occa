@@ -124,14 +124,23 @@ namespace occa {
 #endif
     const std::string &sCommand = command.str();
 
-    std::cout << sCommand << std::endl;
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
-    system(sCommand.c_str());
+    const int compileError = system(sCommand.c_str());
+
+    if(compileError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
 #ifndef WIN32
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
+    if(data_.dlHandle == NULL){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 #else 
 	data_.dlHandle = LoadLibraryA(cachedBinary.c_str()); 
 	if(data_.dlHandle == NULL) {
@@ -141,13 +150,14 @@ namespace occa {
 		throw 1;
 	}
 #endif
-    OCCA_CHECK(data_.dlHandle != NULL);
+
 
 #ifndef WIN32
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 	char *dlError;
     if ((dlError = dlerror()) != NULL)  {
       fputs(dlError, stderr);
+      releaseFile(cachedBinary);
       throw 1;
     }
 #else
@@ -369,6 +379,7 @@ namespace occa {
   template <>
   void memory_t<OpenMP>::free(){
     delete (char*) handle;
+    size = 0;
   }
   //==================================
 

@@ -117,28 +117,41 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << sCommand << '\n';
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
-    system(sCommand.c_str());
+    const int compileError = system(sCommand.c_str());
+
+    if(compileError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 
     OCCA_EXTRACT_DATA(COI, Kernel);
 
     COILIBRARY outLibrary;
 
-    OCCA_COI_CHECK("Kernel: Loading Kernel To Chief",
-                   COIProcessLoadLibraryFromFile(data_.chiefID,
-                                                 cachedBinary.c_str(),
-                                                 soname.c_str(),
-                                                 NULL,
-                                                 &outLibrary));
+    const COIRESULT loadingLibraryResult = COIProcessLoadLibraryFromFile(data_.chiefID,
+                                                                         cachedBinary.c_str(),
+                                                                         soname.c_str(),
+                                                                         NULL,
+                                                                         &outLibrary);
+
+    if(errorCode != COI_SUCCESS)
+      releaseFile(cachedBinary);
+
+    OCCA_COI_CHECK("Kernel: Loading Kernel To Chief", loadingLibraryResult);
 
     const char *c_functionName = functionName.c_str();
 
-    OCCA_COI_CHECK("Kernel: Getting Handle",
-                   COIProcessGetFunctionHandles(data_.chiefID,
-                                                1,
-                                                &c_functionName,
-                                                &(data_.kernel)));
+    const COIRESULT getFunctionHandleResult = COIProcessGetFunctionHandles(data_.chiefID,
+                                                                           1,
+                                                                           &c_functionName,
+                                                                           &(data_.kernel));
+
+    if(errorCode != COI_SUCCESS)
+      releaseFile(cachedBinary);
+
+    OCCA_COI_CHECK("Kernel: Getting Handle", getFunctionHandleResult);
 
     releaseFile(cachedBinary);
 
@@ -461,6 +474,8 @@ namespace occa {
                    COIBufferDestroy( *((coiMemory*) handle) ) );
 
     delete handle;
+
+    size = 0;
   }
   //==================================
 
@@ -554,7 +569,7 @@ namespace occa {
 
         const std::string &sCommand = command.str();
 
-        std::cout << sCommand << '\n';
+        std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
         system(sCommand.c_str());
 

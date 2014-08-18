@@ -98,6 +98,73 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 //================================================
 
 
+//---[ Math ]-------------------------------------
+#define occaSqrt       sqrt
+#define occaFastSqrt   sqrt
+#define occaNativeSqrt sqrt
+
+#define occaSin       sin
+#define occaFastSin   sin
+#define occaNativeSin sin
+
+#define occaAsin       asin
+#define occaFastAsin   asin
+#define occaNativeAsin asin
+
+#define occaSinh       sinh
+#define occaFastSinh   sinh
+#define occaNativeSinh sinh
+
+#define occaAsinh       asinh
+#define occaFastAsinh   asinh
+#define occaNativeAsinh asinh
+
+#define occaCos       cos
+#define occaFastCos   cos
+#define occaNativeCos cos
+
+#define occaAcos       acos
+#define occaFastAcos   acos
+#define occaNativeAcos acos
+
+#define occaCosh       cosh
+#define occaFastCosh   cosh
+#define occaNativeCosh cosh
+
+#define occaAcosh       acosh
+#define occaFastAcosh   acosh
+#define occaNativeAcosh acosh
+
+#define occaTan       tan
+#define occaFastTan   tan
+#define occaNativeTan tan
+
+#define occaAtan       atan
+#define occaFastAtan   atan
+#define occaNativeAtan atan
+
+#define occaTanh       tanh
+#define occaFastTanh   tanh
+#define occaNativeTanh tanh
+
+#define occaAtanh       atanh
+#define occaFastAtanh   atanh
+#define occaNativeAtanh atanh
+
+#define occaExp       exp
+#define occaFastExp   exp
+#define occaNativeExp exp
+
+#define occaLog2       log2
+#define occaFastLog2   log2
+#define occaNativeLog2 log2
+
+#define occaLog10       log10
+#define occaFastLog10   log10
+#define occaNativeLog10 log10
+//================================================
+
+
 //---[ Misc ]-------------------------------------
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)

@@ -121,13 +121,18 @@ namespace occa {
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
             << ' '          << info.flags
-            << " -x cu "    << iCachedBinary;
+            << " -x cu -c "    << iCachedBinary;
 
     const std::string &ptxCommand = command.str();
 
-    std::cout << ptxCommand << '\n';
+    std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
-    system(ptxCommand.c_str());
+    const int ptxError = system(ptxCommand.c_str());
+
+    if(ptxError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
 
     //---[ Compiling Command ]----------
     command.str("");
@@ -144,13 +149,31 @@ namespace occa {
 
     std::cout << sCommand << '\n';
 
-    system(sCommand.c_str());
+    const int compileError = system(sCommand.c_str());
+
+    if(compileError){
+      releaseFile(cachedBinary);
+      throw 1;
+    }
+
+    const CUresult moduleLoadError = cuModuleLoad(&data_.module,
+                                                  cachedBinary.c_str());
+
+    if(moduleLoadError)
+      releaseFile(cachedBinary);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
-                    cuModuleLoad(&data_.module, cachedBinary.c_str()));
+                    moduleLoadError);
+
+    const CUresult moduleGetFunctionError = cuModuleGetFunction(&data_.function,
+                                                                data_.module,
+                                                                functionName.c_str());
+
+    if(moduleGetFunctionError)
+      releaseFile(cachedBinary);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
-                    cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
+                    moduleGetFunctionError);
 
     releaseFile(cachedBinary);
 
@@ -351,6 +374,7 @@ namespace occa {
   void memory_t<CUDA>::free(){
     cuMemFree(*((CUdeviceptr*) handle));
     delete (CUdeviceptr*) handle;
+    size = 0;
   }
   //==================================
 
@@ -450,7 +474,7 @@ namespace occa {
   template <>
   void device_t<CUDA>::finish(){
     OCCA_CUDA_CHECK("Device: Finish",
-                    cuCtxSynchronize() );
+                    cuStreamSynchronize(*((CUstream*) dev->currentStream)) );
   }
 
   template <>

@@ -347,10 +347,11 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
-#if sizeof(uintptr_t) != sizeof(unsigned int)
-    OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
-#endif
-    inline kernelArg(occa::memory &m);
+//#if sizeof(uintptr_t) != sizeof(unsigned int)
+    //OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+//#endif
+    
+    inline kernelArg(const occa::memory &m);
 
     inline kernelArg(void *arg_){
       arg.void_ = arg_;
@@ -539,6 +540,7 @@ namespace occa {
   class memory_v {
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
+    friend class occa::memory;
     friend class occa::device;
     friend class occa::kernelArg;
 
@@ -660,6 +662,13 @@ namespace occa {
 
     std::string& mode();
 
+    inline uintptr_t bytes() const {
+      if(mHandle == NULL)
+        return 0;
+
+      return mHandle->size;
+    }
+
     void copyFrom(const void *source,
                   const uintptr_t bytes = 0,
                   const uintptr_t offset = 0);
@@ -702,7 +711,7 @@ namespace occa {
   };
 
   //---[ KernelArg ]----------
-  inline kernelArg::kernelArg(occa::memory &m){
+  inline kernelArg::kernelArg(const occa::memory &m){
     arg.void_ = m.mHandle->handle;
     size = sizeof(void*);
 
@@ -1031,7 +1040,7 @@ namespace occa {
     if(isAnOccaDefine(macro))
       ss << "#undef " << macro << "\n";
 
-    ss << "#define " << macro << " " << std::setprecision(8) << value << '\n';
+    ss << "#define " << macro << " ((float) " << std::setprecision(8) << value << ")\n";
 
     header = ss.str() + header;
   }
@@ -1043,7 +1052,7 @@ namespace occa {
     if(isAnOccaDefine(macro))
       ss << "#undef " << macro << "\n";
 
-    ss << "#define " << macro << " " << std::setprecision(16) << value << '\n';
+    ss << "#define " << macro << " ((double) " << std::setprecision(16) << value << ")\n";
 
     header = ss.str() + header;
   }
