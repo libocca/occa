@@ -40,7 +40,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class1.cs" />
     <Compile Include="Device.cs" />
+    <Compile Include="Kernel.cs" />
+    <Compile Include="Memory.cs" />
     <Compile Include="occaDim.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
