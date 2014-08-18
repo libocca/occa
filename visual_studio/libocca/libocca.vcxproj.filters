@@ -21,9 +21,6 @@
     <ClCompile Include="..\..\src\occaBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\occaCBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\occaCOI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -48,9 +45,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\occa.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\occaBase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\occaCOI.hpp">
@@ -95,10 +89,10 @@
     <ClInclude Include="..\..\include\occaTools.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\occa_c.h">
+    <ClInclude Include="..\..\include\ocl_preprocessor.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\ocl_preprocessor.hpp">
+    <ClInclude Include="..\..\include\occaBase.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

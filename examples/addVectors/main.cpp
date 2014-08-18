@@ -17,6 +17,16 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
+  int int_size = sizeof(int);
+  int pointer_size = sizeof(void*);
+  int size_t_size = sizeof(size_t);
+  std::cout << "Hello from addVectors: "
+      << " integer size: " << int_size
+      << " pointer size: " << pointer_size
+	  << " size_t size: " << size_t_size << std::endl;
+  
+
+
   // occa::availableDevices<occa::OpenCL>();
   
   std::string mode = "OpenMP";

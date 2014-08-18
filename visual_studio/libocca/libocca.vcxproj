@@ -133,7 +133,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\occaBase.cpp" />
-    <ClCompile Include="..\..\src\occaCBase.cpp" />
     <ClCompile Include="..\..\src\occaCOI.cpp" />
     <ClCompile Include="..\..\src\occaCUDA.cpp" />
     <ClCompile Include="..\..\src\occaKernelDefines.cpp" />
@@ -159,7 +158,6 @@
     <ClInclude Include="..\..\include\occaPthreads.hpp" />
     <ClInclude Include="..\..\include\occaPthreadsDefines.hpp" />
     <ClInclude Include="..\..\include\occaTools.hpp" />
-    <ClInclude Include="..\..\include\occa_c.h" />
     <ClInclude Include="..\..\include\ocl_preprocessor.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -347,8 +347,9 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
-    //OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
-
+#if sizeof(uintptr_t) != sizeof(unsigned int)
+    OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+#endif
     inline kernelArg(occa::memory &m);
 
     inline kernelArg(void *arg_){
