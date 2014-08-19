@@ -35,7 +35,7 @@ namespace liboccaSharp {
                 occahome = System.Environment.GetEnvironmentVariable("OCCA_DIR");
             }
             if(occahome == null || occahome.Length <= 0) {
-                throw new ArgumentException("Unable to find occa directory. Sepcify either environment variable OCCA_HOME or set 'alternate_occahome' argument.");
+                throw new ArgumentException("Unable to find occa directory. Sepcify either environment variable OCCA_DIR or set the 'alternate_occahome' argument.");
             }
             if(!Directory.Exists(occahome)) {
                 throw new ApplicationException("It seems that the occa directory '" + occahome + "' does not exist.");

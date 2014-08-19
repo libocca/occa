@@ -7,9 +7,13 @@ using System.Runtime.InteropServices;
 namespace liboccaSharp {
     public class Device : OccaBase {
 
-       
+        public Mode Mode {
+            get;
+            private set;
+        }
 
         public Device(Mode m, int platformID, int deviceID) {
+            this.Mode = m;
             base.OccaHandle = occaGetDevice(m.ToString(), platformID, deviceID);
         }
 
@@ -38,7 +42,7 @@ namespace liboccaSharp {
             CheckState();
             occaDeviceFinish(this.OccaHandle);
         }
-
+        
         #region WRAPPERS
 
         [DllImport("occa_c")]

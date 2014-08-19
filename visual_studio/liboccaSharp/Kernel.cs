@@ -67,6 +67,12 @@ namespace liboccaSharp {
             private set;
         }
 
+        public Mode Mode {
+            get {
+                return (Mode) Enum.Parse(typeof(Mode), occaKernelMode(this.OccaHandle));
+            }
+        }
+
         #region WRAPPERS
 
         [DllImport("occa_c")]
