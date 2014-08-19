@@ -47,7 +47,7 @@ namespace addVectors_sharp {
             string addVectors_occa = "addVectors.occa";
             if(occaDir != null && occaDir.Length > 0) {
 
-                addVectors_occa = Path.Combine(occaDir, "examples", "addVectors" + addVectors_occa);
+                addVectors_occa = Path.Combine(occaDir, "examples", "addVectors", addVectors_occa);
             }
 
             addVectors = device.buildKernelFromSource(addVectors_occa, "addVectors");

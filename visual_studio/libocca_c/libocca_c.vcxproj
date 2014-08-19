@@ -76,8 +76,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBOCCA_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -89,12 +88,12 @@
       <AdditionalDependencies>libocca.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\Debug</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)occa_c$(TargetExt)</OutputFile>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;LIBOCCA_C_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -148,6 +147,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\occaCBase.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="exports.def" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

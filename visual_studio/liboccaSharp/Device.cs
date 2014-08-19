@@ -51,8 +51,10 @@ namespace liboccaSharp {
         [DllImport("occa_c")]
         extern unsafe static void occaDeviceSetCompilerFlags(IntPtr occaDevice_device,
                                   [MarshalAs(UnmanagedType.LPStr)] string compilerFlags);
+        
         [DllImport("occa_c")]
         extern unsafe static IntPtr /*occaDevice*/ occaGetDevice([MarshalAs(UnmanagedType.LPStr)] string mode, int arg1, int arg2);
+        
         [DllImport("occa_c")]
         extern unsafe static IntPtr /*occaKernel*/ occaBuildKernelFromSource(IntPtr occaDevice_device, [MarshalAs(UnmanagedType.LPStr)] string filename, [MarshalAs(UnmanagedType.LPStr)] string functionName, IntPtr occaKernelInfo_info);
 

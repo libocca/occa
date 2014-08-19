@@ -38,9 +38,9 @@ namespace liboccaSharp  {
             offsetSrc *= tsz;
             offsetDst *= tsz;
 
-            if((size + offsetSrc) * tsz > this.SizeInBytes)
+            if((size + offsetSrc) > this.SizeInBytes)
                 throw new ArgumentException("buffer overflow for source buffer");
-            if((size + offsetDst) * tsz > this.SizeInBytes)
+            if((size + offsetDst) > this.SizeInBytes)
                 throw new ArgumentException("buffer overflow for destination buffer");
         }
                 
