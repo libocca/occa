@@ -114,8 +114,14 @@ namespace occa {
 #else
 	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl; 
 
+#ifdef WIN64
+	std::string byteness("amd64");
+#else
+	std::string byteness("x86");
+#endif
+
 	command 
-		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" x86 " // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
+		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " << byteness // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
 		<< " && "
 		<< "cl.exe "
 		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "

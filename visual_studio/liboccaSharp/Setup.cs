@@ -8,11 +8,10 @@ using System.Runtime.InteropServices;
 namespace liboccaSharp {
 
     /// <summary>
-    /// 
+    /// utility functions for the OCCA-Setup
     /// </summary>
     public static class Setup {
-
-
+        
         /// <summary>
         /// This method (should) ensure that the DllImport's 
         /// find the right version of the occa_c.dll resp. libocca.so

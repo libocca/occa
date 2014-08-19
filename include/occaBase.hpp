@@ -347,9 +347,16 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
-//#if sizeof(uintptr_t) != sizeof(unsigned int)
-    //OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
-//#endif
+#ifndef WIN32
+    OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+#else 
+// in 32-bit windows, uintptr_t == unsigned int, therefor the OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t) macro causes a compile error.
+// Howerver, for 64-bit
+#ifdef WIN64
+	OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t); 
+#endif
+#endif
+
     
     inline kernelArg(const occa::memory &m);
 

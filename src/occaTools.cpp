@@ -178,6 +178,11 @@ namespace occa {
 #else
 	  char *c_home = getenv("USERPROFILE");
 	  ss << c_home << "\\AppData\\Local\\._occa";
+#ifdef WIN64
+	  ss << "\\amd64";  // use different dir's fro 32 and 64 bit 
+#else
+	  ss << "\\x86";    // use different dir's fro 32 and 64 bit 
+#endif
 	  std::string defaultCacheDir = ss.str();
       
 	  LPCSTR C_defaultCacheDir = defaultCacheDir.c_str(); 

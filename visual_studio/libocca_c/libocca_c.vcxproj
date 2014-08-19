@@ -105,6 +105,7 @@
       <AdditionalDependencies>libocca.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\x64\Debug</AdditionalLibraryDirectories>
       <OutputFile>$(OutDir)occa_c$(TargetExt)</OutputFile>
+      <ModuleDefinitionFile>exports.def</ModuleDefinitionFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
