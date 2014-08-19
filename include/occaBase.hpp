@@ -284,7 +284,11 @@ namespace occa {
     inline dim(const dim &d);
 
     inline dim& operator = (const dim &d);
-    inline dim  operator * (const dim &d);
+
+    inline dim operator + (const dim &d);
+    inline dim operator - (const dim &d);
+    inline dim operator * (const dim &d);
+    inline dim operator / (const dim &d);
 
     inline uintptr_t& operator [] (int i);
   };
