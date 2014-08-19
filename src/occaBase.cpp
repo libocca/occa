@@ -87,14 +87,12 @@ namespace occa {
 
   void kernel::runFromArguments(){
     // [-] OCCA_MAX_ARGS = 25
-    switch(argumentCount){
-      OCCA_RUN_FROM_ARGUMENTS_SWITCH;
-    }
+#include "operators/occaRunFromArguments.cpp"
 
     return;
   }
 
-  OCCA_KERNEL_OPERATOR_DEFINITIONS;
+#include "operators/occaOperatorDefinitions.cpp"
 
   double kernel::timeTaken(){
     return kHandle->timeTaken();

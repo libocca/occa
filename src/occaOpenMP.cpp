@@ -170,7 +170,7 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
 
-  OCCA_OPENMP_KERNEL_OPERATOR_DEFINITIONS;
+#include "operators/occaOpenMPKernelOperators.cpp"
 
   template <>
   double kernel_t<OpenMP>::timeTaken(){

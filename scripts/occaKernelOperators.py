@@ -1,6 +1,16 @@
 maxN = 50
 nSpacing = 3
 
+def vnlc(n, N):
+    ret = ''
+    if n < (N - 1):
+        ret = ', '
+
+    if n != (N - 1) and ((n + 1) % nSpacing) == 0:
+        ret += '\n                             '
+
+    return ret;
+
 def nlc(n, N):
     ret = ''
     if n < (N - 1):
@@ -11,11 +21,39 @@ def nlc(n, N):
 
     return ret;
 
+def functionPointerTypeDefs(N):
+    return '\n\n'.join([functionPointerTypeDef(n + 1) for n in xrange(N)])
+
+def functionPointerTypeDef(N):
+    return 'typedef void (*functionPointer' + str(N) + ' )(int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2, ' +  ' '.join(['void *arg' + str(n) + vnlc(n, N) for n in xrange(N)]) + ');'
+
+def coiFunctionPointerTypeDefs(N):
+    return '\n\n'.join([coiFunctionPointerTypeDef(n + 1) for n in xrange(N)])
+
+def coiFunctionPointerTypeDef(N):
+    return 'typedef void (*functionPointer' + str(N) + ' )(int *occaKernelInfoArgs, ' +  ' '.join(['void *arg' + str(n) + vnlc(n, N) for n in xrange(N)]) + ');'
+
+def runFromArguments(N):
+    return 'switch(argumentCount){\n' + '\n'.join([runFromArgument(n + 1) for n in xrange(N)]) + '}'
+
+def runFromArgument(N):
+    return 'case ' + str(N) + ': (*kHandle)(' + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + '); break;'
+
+def virtualOperatorDeclarations(N):
+    return '\n\n'.join([virtualOperatorDeclaration(n + 1) for n in xrange(N)])
+
+def virtualOperatorDeclaration(N):
+    return '    virtual void operator () ({0}) = 0;'.format( ' '.join(['const kernelArg &arg' + str(n) + vnlc(n, N) for n in xrange(N)]) )
+
 def operatorDeclarations(mode, N):
     return '\n\n'.join([operatorDeclaration(mode, n + 1) for n in xrange(N)])
 
 def operatorDeclaration(mode, N):
-    ret = '    void operator () ({0});'.format( ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
+    if mode == 'Base':
+        ret = '    void operator () ({0});'.format( ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
+    else:
+        ret = '    template <>\n'\
+              + '    void kernel_t<{0}>::operator () ({1});'.format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
 
     if mode == 'Pthreads':
         ret += '\n    static void launchKernel{0}(PthreadKernelArg_t &args);'.format(N)
@@ -26,12 +64,17 @@ def operatorDefinitions(mode, N):
     return '\n\n'.join([operatorDefinition(mode, n + 1) for n in xrange(N)])
 
 def operatorDefinition(mode, N):
-    header = operatorDefinitionHeader(mode, N)
-    return header + operatorModeDefinition[mode](N) + "\n  }"
+    if mode == 'Base':
+        return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
+    (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+  }"""
+    else:
+        header = operatorDefinitionHeader(mode, N)
+        return header + operatorModeDefinition[mode](N) + "\n  }"
 
 def operatorDefinitionHeader(mode, N):
     return """  template <>
-  void kernel<{0}>::operator () ({1}){{""".format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]))
+  void kernel_t<{0}>::operator () ({1}){{""".format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]))
 
 def pthreadOperatorDefinition(N):
     return """
@@ -49,7 +92,7 @@ def pthreadOperatorDefinition(N):
       args->inner = inner;
       args->outer = outer;
 
-      """ + ',\n    '.join(['args->args[{0}] = arg{0};'.format(n) for n in xrange(N)]) + """
+      """ + '\n    '.join(['args->args[{0}] = arg{0};'.format(n) for n in xrange(N)]) + """
 
       pthread_mutex_lock(data_.kernelMutex);
       data_.kernelLaunch[p]->push(launchKernel""" + str(N) + """);
@@ -62,7 +105,7 @@ def pthreadOperatorDefinition(N):
     pthread_mutex_unlock(data_.pendingJobsMutex);
   }
 
-  static void launchKernel""" + str(N) + """(PthreadKernelArg_t &args){
+  void launchKernel""" + str(N) + """(PthreadKernelArg_t &args){
     functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) args.kernelHandle;
 
     int dp = args.dims - 1;
@@ -91,7 +134,7 @@ def pthreadOperatorDefinition(N):
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2 ,
+              occaInnerId0, occaInnerId1, occaInnerId2,
               """ + ',\n            '.join(['args.args[{0}].data()'.format(n) for n in xrange(N)]) + """);
 
     delete &args;"""
@@ -99,15 +142,15 @@ def pthreadOperatorDefinition(N):
 def ompOperatorDefinition(N):
     return """
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
-    functionPointer2 tmpKernel = (functionPointer2) data_.handle;
+    functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) data_.handle;
     int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
                              inner.z, inner.y, inner.x};
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2 ,
-              """ + ',\n              '.join(['arg{0}.data()'.format(n) for n in xrange(N)])
+              occaInnerId0, occaInnerId1, occaInnerId2,
+              """ + ',\n              '.join(['arg{0}.data()'.format(n) for n in xrange(N)]) + ');'
 
 def clOperatorDefinition(N):
     return """
@@ -199,6 +242,30 @@ operatorModeDefinition = { 'Pthreads' : pthreadOperatorDefinition,
                            'OpenCL'   : clOperatorDefinition,
                            'CUDA'     : cudaOperatorDefinition,
                            'COI'      : coiOperatorDefinition }
+
+hpp = open('./tmp/includes/occaVirtualOperatorDeclarations.hpp', 'w')
+hpp.write(virtualOperatorDeclarations(maxN));
+hpp.close()
+
+hpp = open('./tmp/includes/occaOperatorDeclarations.hpp', 'w')
+hpp.write(operatorDeclarations('Base', maxN));
+hpp.close()
+
+hpp = open('./tmp/includes/occaFunctionPointerTypeDefs.hpp', 'w')
+hpp.write(functionPointerTypeDefs(maxN));
+hpp.close()
+
+hpp = open('./tmp/includes/occaCOIFunctionPointerTypeDefs.hpp', 'w')
+hpp.write(coiFunctionPointerTypeDefs(maxN));
+hpp.close()
+
+hpp = open('./tmp/src/occaOperatorDefinitions.cpp', 'w')
+hpp.write(operatorDefinitions('Base', maxN));
+hpp.close()
+
+hpp = open('./tmp/src/occaRunFromArguments.cpp', 'w')
+hpp.write(runFromArguments(maxN));
+hpp.close()
 
 for mode in operatorModeDefinition:
     hpp = open('./tmp/includes/occa' + mode + 'KernelOperators.hpp', 'w')

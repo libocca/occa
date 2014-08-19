@@ -224,6 +224,7 @@ namespace occa {
   int device_t<OpenCL>::simdWidth();
   //==================================
 
+#include "operators/occaOpenCLKernelOperators.hpp"
 
   //---[ Error Handling ]-------------
   std::string openclError(int e);

@@ -416,7 +416,7 @@ namespace occa {
 
     virtual int preferredDimSize() = 0;
 
-    OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATIONS;
+#include "operators/occaVirtualOperatorDeclarations.hpp"
 
     virtual double timeTaken() = 0;
 
@@ -445,7 +445,7 @@ namespace occa {
 
     int preferredDimSize();
 
-    OCCA_KERNEL_OPERATOR_DECLARATIONS;
+#include "operators/occaOperatorDeclarations.hpp"
 
     double timeTaken();
 
@@ -490,7 +490,7 @@ namespace occa {
 
     void runFromArguments();
 
-    OCCA_KERNEL_OPERATOR_DECLARATIONS;
+#include "operators/occaOperatorDeclarations.hpp"
 
     double timeTaken();
 

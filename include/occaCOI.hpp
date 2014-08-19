@@ -37,10 +37,10 @@ namespace occa {
     coiKernel kernel;
 
     // [-] Hard-coded for now
-    coiMemory deviceArgv[25];
-    coiMemoryFlags deviceFlags[25];
+    coiMemory deviceArgv[50];
+    coiMemoryFlags deviceFlags[50];
 
-    char hostArgv[100 + 6*4 + 25*(4 + 8)];
+    char hostArgv[100 + 6*4 + 50*(4 + 8)];
     //            ^     ^      ^  ^   ^__[Max Bytes]
     // [Padding]__|     |      |  |__[Type]
     //                  |      |__[Maximum Args]
@@ -51,7 +51,7 @@ namespace occa {
     coiDevice deviceID;
     coiChief chiefID;
 
-    coiKernel kernelWrapper[25];
+    coiKernel kernelWrapper[50];
   };
   //==================================
 
@@ -211,6 +211,8 @@ namespace occa {
   int device_t<COI>::simdWidth();
   //==================================
 
+#include "operators/occaCOIFunctionPointerTypeDefs.hpp"
+#include "operators/occaCOIKernelOperators.hpp"
 
   //---[ Error Handling ]-------------
   std::string coiError(coiStatus e);

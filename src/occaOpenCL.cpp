@@ -501,7 +501,7 @@ namespace occa {
     return preferredDimSize_;
   }
 
-  OCCA_OPENCL_KERNEL_OPERATOR_DEFINITIONS;
+#include "operators/occaOpenCLKernelOperators.cpp"
 
   template <>
   double kernel_t<OpenCL>::timeTaken(){
