@@ -1,4 +1,4 @@
-maxN = 25
+maxN = 50
 nSpacing = 3
 
 def nlc(n, N):
@@ -201,10 +201,10 @@ operatorModeDefinition = { 'Pthreads' : pthreadOperatorDefinition,
                            'COI'      : coiOperatorDefinition }
 
 for mode in operatorModeDefinition:
-    hpp = open('./tmp/occa' + mode + 'KernelOperators.hpp', 'w')
+    hpp = open('./tmp/includes/occa' + mode + 'KernelOperators.hpp', 'w')
     hpp.write(operatorDeclarations(mode, maxN));
     hpp.close()
 
-    cpp = open('./tmp/occa' + mode + 'KernelOperators.cpp', 'w')
+    cpp = open('./tmp/src/occa' + mode + 'KernelOperators.cpp', 'w')
     cpp.write(operatorDefinitions(mode, maxN));
     cpp.close()

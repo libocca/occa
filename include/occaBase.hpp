@@ -84,6 +84,14 @@ namespace occa {
   static const occa::mode CUDA     = (1 << 23);
   static const occa::mode COI      = (1 << 24);
 
+
+  static const occa::mode PthreadsIndex = 0;
+  static const occa::mode OpenMPIndex   = 1;
+  static const occa::mode OpenCLIndex   = 2;
+  static const occa::mode CUDAIndex     = 3;
+  static const occa::mode COIIndex      = 4;
+  static const int modeCount = 5;
+
   inline std::string modeToStr(occa::mode m){
     if(m & Pthreads) return "Pthreads";
     if(m & OpenMP)   return "OpenMP";
@@ -1085,10 +1093,28 @@ namespace occa {
     return *this;
   }
 
+  inline dim dim::operator + (const dim &d){
+    return dim(x + d.x,
+               y + d.y,
+               z + d.z);
+  }
+
+  inline dim dim::operator - (const dim &d){
+    return dim(x - d.x,
+               y - d.y,
+               z - d.z);
+  }
+
   inline dim dim::operator * (const dim &d){
     return dim(x * d.x,
                y * d.y,
                z * d.z);
+  }
+
+  inline dim dim::operator / (const dim &d){
+    return dim(x / d.x,
+               y / d.y,
+               z / d.z);
   }
 
   inline uintptr_t& dim::operator [] (int i){
