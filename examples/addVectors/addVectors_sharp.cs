@@ -8,6 +8,7 @@ using System.IO;
 namespace addVectors_sharp {
     class Program {
         static void Main(string[] args) {
+            liboccaSharp.Setup.SetDllSearchPath(ReleaseOrDebug: false);
 
             int entries = 5;
 

@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ArgumentList.cs" />
+    <Compile Include="DllSearchSetup.cs" />
     <Compile Include="KernelInfo.cs" />
     <Compile Include="Mode.cs" />
     <Compile Include="Device.cs" />
