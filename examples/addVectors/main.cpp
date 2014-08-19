@@ -20,8 +20,10 @@ int main(int argc, char **argv){
   int int_size = sizeof(int);
   int pointer_size = sizeof(void*);
   int size_t_size = sizeof(size_t);
+  int long_size = sizeof(long);
   std::cout << "Hello from addVectors: "
       << " integer size: " << int_size
+	  << " long size: " << long_size
       << " pointer size: " << pointer_size
 	  << " size_t size: " << size_t_size << std::endl;
   

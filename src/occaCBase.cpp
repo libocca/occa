@@ -166,7 +166,9 @@ extern "C" {
 
 
   occaDevice occaGetDevice(const char *mode,
-                           int arg1, int arg2){
+                           int arg1, int arg2) {
+	printf("arg1 %d, arg2 %d \n", arg1, arg2);
+	printf("mode: %s ", mode);
     occa::device *device = new occa::device();
 
     device->setup(mode, arg1, arg2);
