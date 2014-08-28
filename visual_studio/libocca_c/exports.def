@@ -1,0 +1,89 @@
+LIBRARY	"occa_c"
+EXPORTS
+		
+	; ----------------------------------------------------------------------
+	; misc
+	; ----------------------------------------------------------------------
+	occaGetDevice
+	occaArgumentListAddArg
+	occaArgumentListClear
+	occaArgumentListFree
+	occaAsyncCopyMemToMem
+	occaAsyncCopyMemToPtr
+	occaAsyncCopyPtrToMem
+	occaAutoSize
+	occaBuildKernelFromBinary
+	occaBuildKernelFromLoopy
+	occaBuildKernelFromSource
+	occaChar
+	occaCopyMemToMem
+	occaCopyMemToPtr
+	occaCopyPtrToMem
+	occaDeviceFinish
+	occaDeviceFlush
+	occaDeviceFree
+	occaDeviceGenStream
+	occaDeviceGetStream
+	occaDeviceMalloc
+	occaDeviceMode
+	occaDeviceSetCompiler
+	occaDeviceSetCompilerFlags
+	occaDeviceSetStream
+	occaDeviceStreamFree
+	occaDeviceTagStream
+	occaDeviceTimeBetweenTags
+	occaDouble
+	occaFloat
+	occaGenArgumentList
+	occaGenKernelInfo
+	occaInt
+	occaKernelFree
+	occaKernelInfoAddDefine
+	occaKernelInfoFree
+	occaKernelMode
+	occaKernelPreferredDimSize
+	occaKernelRun1
+	occaKernelRun10
+	occaKernelRun11
+	occaKernelRun12
+	occaKernelRun13
+	occaKernelRun14
+	occaKernelRun15
+	occaKernelRun16
+	occaKernelRun17
+	occaKernelRun18
+	occaKernelRun19
+	occaKernelRun2
+	occaKernelRun20
+	occaKernelRun21
+	occaKernelRun22
+	occaKernelRun23
+	occaKernelRun24
+	occaKernelRun25
+	occaKernelRun3
+	occaKernelRun4
+	occaKernelRun5
+	occaKernelRun6
+	occaKernelRun7
+	occaKernelRun8
+	occaKernelRun9
+	occaKernelRun_
+	occaKernelSetAllWorkingDims
+	occaKernelSetWorkingDims
+	occaKernelTimeTaken
+	occaLong
+	occaMemoryFree
+	occaMemoryMode
+	occaMemorySwap
+	occaNoKernelInfo
+	occaNoOffset
+	occaShort
+	occaString
+	occaTypeSize
+	occaUChar
+	occaUInt
+	occaULong
+	occaUShort
+
+    
+    

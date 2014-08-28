@@ -8,11 +8,14 @@
 #include <vector>
 
 #include <xmmintrin.h>
+#ifndef WIN32
 #include <unistd.h>
+#endif
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <fcntl.h>
+#include <io.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -356,8 +359,17 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
+#ifndef WIN32
     OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+#else 
+// in 32-bit windows, uintptr_t == unsigned int, therefor the OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t) macro causes a compile error.
+// Howerver, for 64-bit
+#ifdef WIN64
+	OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t); 
+#endif
+#endif
 
+    
     inline kernelArg(const occa::memory &m);
 
     inline kernelArg(void *arg_){
@@ -812,7 +824,7 @@ namespace occa {
 
     kernel_v* buildKernelFromSource(const std::string &filename,
                                     const std::string &functionName,
-                                    const kernelInfo &info_ = defaultKernelInfo);
+									const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);

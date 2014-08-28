@@ -2,6 +2,8 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
+
+
   double currentTime(){
 #if OCCA_OS == LINUX_OS
 
@@ -20,7 +22,11 @@ namespace occa {
     return ((double) 1.0e-9) * ((double) ( *((uint64_t*) &ct2) ));
 
 #elif OCCA_OS == WINDOWS_OS
-#  warning "currentTime is not supported in Windows"
+	LARGE_INTEGER timestamp, timerfreq;
+	QueryPerformanceFrequency(&timerfreq);
+	QueryPerformanceCounter(&timestamp);
+
+	return ((double)(timestamp.QuadPart))/((double)(timerfreq.QuadPart));
 #endif
   }
 
@@ -49,7 +55,7 @@ namespace occa {
 
   bool haveFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
-
+#ifndef WIN32
     int mkdirStatus = mkdir(lockDir.c_str(), 0755);
 
     // Someone else is making it
@@ -57,6 +63,16 @@ namespace occa {
       return false;
 
     return true;
+#else
+	LPCSTR lockDirStr = lockDir.c_str(); 
+	BOOL mkdirStatus = CreateDirectoryA(lockDirStr, NULL);
+
+	if( mkdirStatus == FALSE) {
+		assert(GetLastError() == ERROR_ALREADY_EXISTS);
+		return false;
+	}
+	return true;
+#endif
   }
 
   void waitForFile(const std::string &filename){
@@ -71,9 +87,14 @@ namespace occa {
 
   void releaseFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
-
+#ifndef WIN32
     rmdir(lockDir.c_str());
+#else
+	BOOL retStatus = RemoveDirectoryA(lockDir.c_str());
+	assert(retStatus == TRUE);
+#endif
   }
+
 
   std::string fnv(const std::string &saltedString){
     const int len = saltedString.size();
@@ -126,6 +147,10 @@ namespace occa {
     memset(buffer, '\0', chars);
 
     std::ifstream fs(filename.c_str());
+	if(!fs) {
+		std::cerr << "Unable to read file " << filename;
+		throw 1;
+	}
 
     fs.read(buffer, chars);
 
@@ -144,16 +169,25 @@ namespace occa {
     std::string occaCachePath;
 
     if(c_cachePath == NULL){
+	  std::stringstream ss;
+#ifndef WIN32
       char *c_home = getenv("HOME");
-
-      std::stringstream ss;
-
-      ss << c_home << "/._occa";
-
-      std::string defaultCacheDir = ss.str();
-
+	  ss << c_home << "/._occa";
+	  std::string defaultCacheDir = ss.str();
       mkdir(defaultCacheDir.c_str(), 0755);
-
+#else
+	  char *c_home = getenv("USERPROFILE");
+	  ss << c_home << "\\AppData\\Local\\._occa";
+#ifdef WIN64
+	  ss << "\\amd64";  // use different dir's fro 32 and 64 bit 
+#else
+	  ss << "\\x86";    // use different dir's fro 32 and 64 bit 
+#endif
+	  std::string defaultCacheDir = ss.str();
+      
+	  LPCSTR C_defaultCacheDir = defaultCacheDir.c_str(); 
+	  CreateDirectoryA(C_defaultCacheDir, NULL);
+#endif
       occaCachePath = defaultCacheDir;
     }
     else
