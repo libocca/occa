@@ -181,6 +181,7 @@ namespace occa {
   int device_t<CUDA>::simdWidth();
   //==================================
 
+#include "operators/occaCUDAKernelOperators.hpp"
 
   //---[ Error Handling ]-------------
   std::string cudaError(const CUresult errorCode);

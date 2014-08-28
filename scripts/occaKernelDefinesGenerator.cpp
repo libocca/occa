@@ -73,32 +73,34 @@ int main(int argc, char **argv){
 
   std::string ns = "namespace occa {";
 
-  std::string mp = saveFileToVariable(occaDir + "/include/occaOpenMPDefines.hpp",
-                                      "occaOpenMPDefines",
-                                      mpChars,
-                                      "    ");
-
-  std::string pt = saveFileToVariable(occaDir + "/include/occaPthreadsDefines.hpp",
+  std::string pt = saveFileToVariable(occaDir + "/include/defines/occaPthreadsDefines.hpp",
                                       "occaPthreadsDefines",
                                       ptChars,
                                       "    ");
 
-  std::string cl = saveFileToVariable(occaDir + "/include/occaOpenCLDefines.hpp",
+
+  std::string mp = saveFileToVariable(occaDir + "/include/defines/occaOpenMPDefines.hpp",
+                                      "occaOpenMPDefines",
+                                      mpChars,
+                                      "    ");
+
+  std::string cl = saveFileToVariable(occaDir + "/include/defines/occaOpenCLDefines.hpp",
+
                                       "occaOpenCLDefines",
                                       clChars,
                                       "    ");
 
-  std::string cu = saveFileToVariable(occaDir + "/include/occaCUDADefines.hpp",
+  std::string cu = saveFileToVariable(occaDir + "/include/defines/occaCUDADefines.hpp",
                                       "occaCUDADefines",
                                       cuChars,
                                       "    ");
 
-  std::string coi = saveFileToVariable(occaDir + "/include/occaCOIDefines.hpp",
+  std::string coi = saveFileToVariable(occaDir + "/include/defines/occaCOIDefines.hpp",
                                        "occaCOIDefines",
                                        coiChars,
                                        "    ");
 
-  std::string coiMain = saveFileToVariable(occaDir + "/include/occaCOIMain.hpp",
+  std::string coiMain = saveFileToVariable(occaDir + "/include/defines/occaCOIMain.hpp",
                                            "occaCOIMain",
                                            coiMainChars,
                                            "    ");

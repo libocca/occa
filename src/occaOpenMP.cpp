@@ -124,7 +124,7 @@ namespace occa {
 		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " << byteness // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
 		<< " && "
 		<< "cl.exe "
-		<< " /IC:\\Users\\florian\\Documents\\ALMOND "
+//		<< " /IC:\\Users\\florian\\Documents\\ALMOND "
 		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "
 		<< iCachedBinary << " "
 		<< "/link /OUT:" << cachedBinary;
@@ -229,7 +229,7 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
 
-  OCCA_OPENMP_KERNEL_OPERATOR_DEFINITIONS;
+#include "operators/occaOpenMPKernelOperators.cpp"
 
   template <>
   double kernel_t<OpenMP>::timeTaken(){

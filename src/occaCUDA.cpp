@@ -202,7 +202,7 @@ namespace occa {
     return 32;
   }
 
-  OCCA_CUDA_KERNEL_OPERATOR_DEFINITIONS;
+#include "operators/occaCUDAKernelOperators.cpp"
 
   template <>
   double kernel_t<CUDA>::timeTaken(){

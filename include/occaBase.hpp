@@ -87,6 +87,14 @@ namespace occa {
   static const occa::mode CUDA     = (1 << 23);
   static const occa::mode COI      = (1 << 24);
 
+
+  static const occa::mode PthreadsIndex = 0;
+  static const occa::mode OpenMPIndex   = 1;
+  static const occa::mode OpenCLIndex   = 2;
+  static const occa::mode CUDAIndex     = 3;
+  static const occa::mode COIIndex      = 4;
+  static const int modeCount = 5;
+
   inline std::string modeToStr(occa::mode m){
     if(m & Pthreads) return "Pthreads";
     if(m & OpenMP)   return "OpenMP";
@@ -279,7 +287,11 @@ namespace occa {
     inline dim(const dim &d);
 
     inline dim& operator = (const dim &d);
-    inline dim  operator * (const dim &d);
+
+    inline dim operator + (const dim &d);
+    inline dim operator - (const dim &d);
+    inline dim operator * (const dim &d);
+    inline dim operator / (const dim &d);
 
     inline uintptr_t& operator [] (int i);
   };
@@ -416,8 +428,8 @@ namespace occa {
 
     virtual int preferredDimSize() = 0;
 
-	OCCA_VIRTUAL_KERNEL_OPERATOR_DECLARATIONS;
-		
+#include "operators/occaVirtualOperatorDeclarations.hpp"
+
     virtual double timeTaken() = 0;
 
     virtual void free() = 0;
@@ -445,7 +457,7 @@ namespace occa {
 
     int preferredDimSize();
 
-    OCCA_KERNEL_OPERATOR_DECLARATIONS;
+#include "operators/occaOperatorDeclarations.hpp"
 
     double timeTaken();
 
@@ -490,7 +502,7 @@ namespace occa {
 
     void runFromArguments();
 
-    OCCA_KERNEL_OPERATOR_DECLARATIONS;
+#include "operators/occaOperatorDeclarations.hpp"
 
     double timeTaken();
 
@@ -1097,10 +1109,28 @@ namespace occa {
     return *this;
   }
 
+  inline dim dim::operator + (const dim &d){
+    return dim(x + d.x,
+               y + d.y,
+               z + d.z);
+  }
+
+  inline dim dim::operator - (const dim &d){
+    return dim(x - d.x,
+               y - d.y,
+               z - d.z);
+  }
+
   inline dim dim::operator * (const dim &d){
     return dim(x * d.x,
                y * d.y,
                z * d.z);
+  }
+
+  inline dim dim::operator / (const dim &d){
+    return dim(x / d.x,
+               y / d.y,
+               z / d.z);
   }
 
   inline uintptr_t& dim::operator [] (int i){

@@ -197,8 +197,6 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
 
-  OCCA_PTHREADS_KERNEL_OPERATOR_DEFINITIONS;
-
   template <>
   double kernel_t<Pthreads>::timeTaken(){
     const double &start = *((double*) startTime);
@@ -574,6 +572,8 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
   //==================================
+
+#include "operators/occaPthreadsKernelOperators.cpp"
 };
 
 #endif

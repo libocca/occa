@@ -34,8 +34,6 @@ namespace occa {
 
 
   //---[ Kernel ]---------------------
-  OCCA_OPENMP_FUNCTION_POINTER_TYPEDEFS;
-
   template <>
   kernel_t<OpenMP>::kernel_t();
 
@@ -189,6 +187,10 @@ namespace occa {
   template <>
   int device_t<OpenMP>::simdWidth();
   //==================================
+
+#include "operators/occaFunctionPointerTypeDefs.hpp"
+#include "operators/occaOpenMPKernelOperators.hpp"
+
 };
 
 #endif

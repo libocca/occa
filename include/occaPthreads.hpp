@@ -81,8 +81,6 @@ namespace occa {
 
 
   //---[ Kernel ]---------------------
-  OCCA_PTHREADS_FUNCTION_POINTER_TYPEDEFS;
-
   template <>
   kernel_t<Pthreads>::kernel_t();
 
@@ -237,6 +235,8 @@ namespace occa {
   int device_t<Pthreads>::simdWidth();
   //==================================
 
+#include "operators/occaFunctionPointerTypeDefs.hpp"
+#include "operators/occaPthreadsKernelOperators.hpp"
 
   //---[ Pthreads ]-------------------
   static void* pthreadLimbo(void *args){

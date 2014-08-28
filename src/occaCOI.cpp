@@ -205,7 +205,7 @@ namespace occa {
     return preferredDimSize_;
   }
 
-  OCCA_COI_KERNEL_OPERATOR_DEFINITIONS;
+#include "operators/occaCOIKernelOperators.cpp"
 
   template <>
   double kernel_t<COI>::timeTaken(){
