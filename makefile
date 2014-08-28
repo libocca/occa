@@ -20,16 +20,27 @@ sources = $(wildcard $(occaSPath)/*.cpp)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
+ifdef OCCA_DEVELOPER
+ifeq ($(OCCA_DEVELOPER), 1)
+	developerDependencies =	$(occaOPath)/occaKernelDefines.o
+else
+	developerDependencies =
+endif
+else
+	developerDependencies =
+endif
+
 $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 
-$(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))\
-	$(occaOPath)/occaKernelDefines.o
+$(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp))) $(developerDependencies)
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
 
+ifdef OCCA_DEVELOPER
+ifeq ($(OCCA_DEVELOPER), 1)
 $(occaOPath)/occaKernelDefines.o:            \
 	$(occaIPath)/defines/occaOpenMPDefines.hpp   \
 	$(occaIPath)/defines/occaOpenCLDefines.hpp   \
@@ -51,6 +62,8 @@ $(OCCA_DIR)/scripts/occaKernelDefinesGenerator:\
 
 $(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefinesGenerator
 	$(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)
+endif
+endif
 
 clean:
 	rm -f $(occaOPath)/*;
