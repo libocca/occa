@@ -139,12 +139,14 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
+
     if(data_.dlHandle == NULL){
       releaseFile(cachedBinary);
       throw 1;
     }
 #else
     data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
+
     if(data_.dlHandle == NULL) {
       DWORD errCode = GetLastError();
       std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
@@ -155,6 +157,7 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
+
     char *dlError;
     if ((dlError = dlerror()) != NULL)  {
       fputs(dlError, stderr);
@@ -163,12 +166,12 @@ namespace occa {
     }
 #else
     data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+
     if(data_.dlHandle == NULL) {
       fputs("unable to load function", stderr);
       throw 1;
     }
 #endif
-
 
     releaseFile(cachedBinary);
 
