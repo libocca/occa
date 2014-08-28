@@ -8,14 +8,16 @@
 #include <vector>
 
 #include <xmmintrin.h>
-#ifndef WIN32
-#include <unistd.h>
-#endif
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <fcntl.h>
-#include <io.h>
+
+#ifndef WIN32
+#  include <unistd.h>
+#else
+#  include <io.h>
+#endif
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -361,15 +363,15 @@ namespace occa {
 
 #ifndef WIN32
     OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
-#else 
+#else
 // in 32-bit windows, uintptr_t == unsigned int, therefor the OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t) macro causes a compile error.
 // Howerver, for 64-bit
 #ifdef WIN64
-	OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t); 
+	OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
 #endif
 #endif
 
-    
+
     inline kernelArg(const occa::memory &m);
 
     inline kernelArg(void *arg_){

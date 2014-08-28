@@ -77,13 +77,13 @@ namespace occa {
 
 	struct stat buffer;
     std::string cachedBinary = getCachedName(filename, salt.str());
-	
+
 #ifdef WIN32
 	cachedBinary = cachedBinary + ".dll"; // windows refuses to load dll's that do not end with '.dll'
 #endif
 
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-    
+
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
       return buildFromBinary(cachedBinary, functionName);
@@ -110,9 +110,8 @@ namespace occa {
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary;
-			*/
 #else
-	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl; 
+	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl;
 
 #ifdef WIN64
 	std::string byteness("amd64");
@@ -120,11 +119,12 @@ namespace occa {
 	std::string byteness("x86");
 #endif
 
-	command 
-		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " << byteness // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
+	command
+    // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
+		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " << byteness
 		<< " && "
 		<< "cl.exe "
-//		<< " /IC:\\Users\\florian\\Documents\\ALMOND "
+    // << " /IC:\\Users\\florian\\Documents\\ALMOND "
 		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "
 		<< iCachedBinary << " "
 		<< "/link /OUT:" << cachedBinary;
@@ -148,8 +148,8 @@ namespace occa {
       releaseFile(cachedBinary);
       throw 1;
     }
-#else 
-	data_.dlHandle = LoadLibraryA(cachedBinary.c_str()); 
+#else
+	data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
 	if(data_.dlHandle == NULL) {
 		DWORD errCode = GetLastError();
 		std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
@@ -174,7 +174,7 @@ namespace occa {
 		throw 1;
 	}
 #endif
-    
+
 
     releaseFile(cachedBinary);
 
@@ -191,8 +191,8 @@ namespace occa {
 
 #ifndef WIN32
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
-#else 
-	data_.dlHandle = LoadLibraryA(filename.c_str()); 
+#else
+	data_.dlHandle = LoadLibraryA(filename.c_str());
 	if(data_.dlHandle == NULL) {
 		DWORD errCode = GetLastError();
 		std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
