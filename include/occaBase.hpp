@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <unistd.h>
 #else
 #  include <io.h>
@@ -1016,6 +1016,14 @@ namespace occa {
 
     inline void addCompilerFlag(const std::string &f){
       flags += " " + f;
+    }
+
+    inline void addCompilerIncludePath(const std::string &path){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      flags += " -I \"" + path + "\"";
+#else
+      flags += " /I \"" + path + "\"";
+#endif
     }
   };
 

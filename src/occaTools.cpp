@@ -22,17 +22,17 @@ namespace occa {
     return ((double) 1.0e-9) * ((double) ( *((uint64_t*) &ct2) ));
 
 #elif OCCA_OS == WINDOWS_OS
-	LARGE_INTEGER timestamp, timerfreq;
-	QueryPerformanceFrequency(&timerfreq);
-	QueryPerformanceCounter(&timestamp);
+    LARGE_INTEGER timestamp, timerfreq;
+    QueryPerformanceFrequency(&timerfreq);
+    QueryPerformanceCounter(&timestamp);
 
-	return ((double)(timestamp.QuadPart))/((double)(timerfreq.QuadPart));
+    return ((double)(timestamp.QuadPart))/((double)(timerfreq.QuadPart));
 #endif
   }
 
   void getFilePrefixAndName(const std::string &fullFilename,
-                                   std::string &prefix,
-                                   std::string &filename){
+                            std::string &prefix,
+                            std::string &filename){
     int lastSlash = 0;
     const int chars = fullFilename.size();
 
@@ -55,7 +55,7 @@ namespace occa {
 
   bool haveFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int mkdirStatus = mkdir(lockDir.c_str(), 0755);
 
     // Someone else is making it
@@ -64,14 +64,14 @@ namespace occa {
 
     return true;
 #else
-	LPCSTR lockDirStr = lockDir.c_str(); 
-	BOOL mkdirStatus = CreateDirectoryA(lockDirStr, NULL);
+    LPCSTR lockDirStr = lockDir.c_str();
+    BOOL mkdirStatus = CreateDirectoryA(lockDirStr, NULL);
 
-	if( mkdirStatus == FALSE) {
+    if( mkdirStatus == FALSE) {
 		assert(GetLastError() == ERROR_ALREADY_EXISTS);
 		return false;
-	}
-	return true;
+    }
+    return true;
 #endif
   }
 
@@ -87,11 +87,11 @@ namespace occa {
 
   void releaseFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     rmdir(lockDir.c_str());
 #else
-	BOOL retStatus = RemoveDirectoryA(lockDir.c_str());
-	assert(retStatus == TRUE);
+    BOOL retStatus = RemoveDirectoryA(lockDir.c_str());
+    assert(retStatus == TRUE);
 #endif
   }
 
@@ -147,10 +147,10 @@ namespace occa {
     memset(buffer, '\0', chars);
 
     std::ifstream fs(filename.c_str());
-	if(!fs) {
-		std::cerr << "Unable to read file " << filename;
-		throw 1;
-	}
+    if(!fs) {
+      std::cerr << "Unable to read file " << filename;
+      throw 1;
+    }
 
     fs.read(buffer, chars);
 
@@ -169,24 +169,27 @@ namespace occa {
     std::string occaCachePath;
 
     if(c_cachePath == NULL){
-	  std::stringstream ss;
-#ifndef WIN32
+      std::stringstream ss;
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       char *c_home = getenv("HOME");
-	  ss << c_home << "/._occa";
-	  std::string defaultCacheDir = ss.str();
+      ss << c_home << "/._occa";
+
+      std::string defaultCacheDir = ss.str();
       mkdir(defaultCacheDir.c_str(), 0755);
 #else
-	  char *c_home = getenv("USERPROFILE");
-	  ss << c_home << "\\AppData\\Local\\._occa";
-#ifdef WIN64
-	  ss << "\\amd64";  // use different dir's fro 32 and 64 bit 
-#else
-	  ss << "\\x86";    // use different dir's fro 32 and 64 bit 
-#endif
-	  std::string defaultCacheDir = ss.str();
-      
-	  LPCSTR C_defaultCacheDir = defaultCacheDir.c_str(); 
-	  CreateDirectoryA(C_defaultCacheDir, NULL);
+      char *c_home = getenv("USERPROFILE");
+
+      ss << c_home << "\\AppData\\Local\\OCCA";
+#  if OCCA_64_BIT
+      ss << "\\amd64";  // use different dir's fro 32 and 64 bit
+#  else
+      ss << "\\x86";    // use different dir's fro 32 and 64 bit
+#  endif
+
+      std::string defaultCacheDir = ss.str();
+
+      LPCSTR C_defaultCacheDir = defaultCacheDir.c_str();
+      CreateDirectoryA(C_defaultCacheDir, NULL);
 #endif
       occaCachePath = defaultCacheDir;
     }

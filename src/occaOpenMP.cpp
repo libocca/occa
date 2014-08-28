@@ -76,11 +76,12 @@ namespace occa {
          << dev->dHandle->compilerFlags
          << functionName;
 
-	struct stat buffer;
+    struct stat buffer;
     std::string cachedBinary = getCachedName(filename, salt.str());
 
-#ifdef WIN32
-	cachedBinary = cachedBinary + ".dll"; // windows refuses to load dll's that do not end with '.dll'
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
 #endif
 
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -136,39 +137,41 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
+
     if(data_.dlHandle == NULL){
       releaseFile(cachedBinary);
       throw 1;
     }
 #else
-	data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
-	if(data_.dlHandle == NULL) {
-		DWORD errCode = GetLastError();
-		std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
+    data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
 
-		throw 1;
-	}
+    if(data_.dlHandle == NULL) {
+      DWORD errCode = GetLastError();
+      std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
+
+      throw 1;
+    }
 #endif
 
-
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-	char *dlError;
+
+    char *dlError;
     if ((dlError = dlerror()) != NULL)  {
       fputs(dlError, stderr);
       releaseFile(cachedBinary);
       throw 1;
     }
 #else
-	data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
-	if(data_.dlHandle == NULL) {
-		fputs("unable to load function", stderr);
-		throw 1;
-	}
-#endif
+    data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
 
+    if(data_.dlHandle == NULL) {
+      fputs("unable to load function", stderr);
+      throw 1;
+    }
+#endif
 
     releaseFile(cachedBinary);
 
@@ -183,21 +186,20 @@ namespace occa {
 
     functionName = functionName_;
 
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
 #else
-	data_.dlHandle = LoadLibraryA(filename.c_str());
-	if(data_.dlHandle == NULL) {
-		DWORD errCode = GetLastError();
-		std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
-		throw 1;
-	}
+    data_.dlHandle = LoadLibraryA(filename.c_str());
+    if(data_.dlHandle == NULL) {
+      DWORD errCode = GetLastError();
+      std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
+      throw 1;
+    }
 #endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
 
-
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
@@ -206,11 +208,11 @@ namespace occa {
       throw 1;
     }
 #else
-	data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
-	if(data_.dlHandle == NULL) {
-		fputs("unable to load function", stderr);
-		throw 1;
-	}
+    data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+    if(data_.dlHandle == NULL) {
+      fputs("unable to load function", stderr);
+      throw 1;
+    }
 #endif
 
     return this;
@@ -237,10 +239,10 @@ namespace occa {
   void kernel_t<OpenMP>::free(){
     // [-] Fix later
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
-#ifndef WIN32
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     dlclose(data_.dlHandle);
 #else
-	FreeLibrary((HMODULE) (data_.dlHandle));
+    FreeLibrary((HMODULE) (data_.dlHandle));
 #endif
   }
   //==================================
@@ -432,7 +434,11 @@ namespace occa {
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
     else
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       compiler = "g++";
+#else
+      compiler = "cl.exe";
+#endif
 
     char *c_compilerFlags = getenv("OCCA_OPENMP_COMPILER_FLAGS");
 
