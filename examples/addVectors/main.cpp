@@ -32,11 +32,6 @@ int main(int argc, char **argv){
   // occa::availableDevices<occa::OpenCL>();
   
   std::string mode = "OpenMP";
-
-<<<<<<< HEAD
-  std::string mode = "OpenMP";
-=======
->>>>>>> 4faa48ec859b34cebcf89c9c3d1df76f8c94cd5b
   int platformID = 0;
   int deviceID   = 0;
   
@@ -56,6 +51,8 @@ int main(int argc, char **argv){
 	  std::string occaDir(occaDir_);
 	  addVectors_occa = occaDir + "/examples/addVectors/" + addVectors_occa;
   }
+
+  //device.setCompilerEnvScript(
 
   addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
                                             "addVectors");
