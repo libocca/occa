@@ -200,22 +200,28 @@ namespace occa {
 
     OCCA_CHECK(chars > 0);
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    const char slashChar = '/';
+#else
+    const char slashChar = '\\';
+#endif
+
     // Take out the pesky //'s
     int pos = 0;
 
     for(int i = 0; i < chars; ++i){
-      if(occaCachePath[i] == '/')
-        while(i < (chars - 1) && occaCachePath[i + 1] == '/')
+      if(occaCachePath[i] == slashChar)
+        while(i < (chars - 1) && occaCachePath[i + 1] == slashChar)
           ++i;
 
       occaCachePath[pos++] = occaCachePath[i];
     }
 
-    if(occaCachePath[pos - 1] != '/'){
+    if(occaCachePath[pos - 1] != slashChar){
       if(pos != chars)
-        occaCachePath[pos] = '/';
+        occaCachePath[pos] = slashChar;
       else
-        occaCachePath += '/';
+        occaCachePath += slashChar;
     }
     //================================
 
