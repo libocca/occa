@@ -98,8 +98,10 @@ namespace occa {
 
     std::stringstream command;
 
-    command << dev->dHandle->compilerEnvScript << " && "
-            << dev->dHandle->compiler
+    if(dev->dHandle->compilerEnvScript.size())
+      command << dev->dHandle->compilerEnvScript << " && ";
+
+    command << dev->dHandle->compiler
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
 #else
