@@ -10,6 +10,8 @@
 #include <string.h>
 #include <errno.h>
 
+#include "occaDefines.hpp"
+
 #if   OCCA_OS == LINUX_OS
 #  include <sys/time.h>
 #  include <unistd.h>
