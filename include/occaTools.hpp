@@ -10,11 +10,6 @@
 #include <string.h>
 #include <errno.h>
 
-#ifdef WIN32
-#define OCCA_OS 4
-#define WINDOWS_OS 4
-#endif
-
 #if   OCCA_OS == LINUX_OS
 #  include <sys/time.h>
 #  include <unistd.h>
