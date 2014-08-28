@@ -75,8 +75,8 @@ namespace occa {
     BOOL mkdirStatus = CreateDirectoryA(lockDirStr, NULL);
 
     if( mkdirStatus == FALSE) {
-		assert(GetLastError() == ERROR_ALREADY_EXISTS);
-		return false;
+      assert(GetLastError() == ERROR_ALREADY_EXISTS);
+      return false;
     }
     return true;
 #endif
@@ -187,16 +187,33 @@ namespace occa {
       char *c_home = getenv("USERPROFILE");
 
       ss << c_home << "\\AppData\\Local\\OCCA";
+
+      std::string defaultCacheDir = ss.str();
+      LPCSTR w_defaultCacheDir = defaultCacheDir.c_str();
+      BOOL mkdirStatus = CreateDirectoryA(w_defaultCacheDir, NULL);
+
+      if(mkdirStatus == FALSE){
+        assert(GetLastError() == ERROR_ALREADY_EXISTS);
+        return false;
+      }
+      return true;
+
 #  if OCCA_64_BIT
       ss << "\\amd64";  // use different dir's fro 32 and 64 bit
 #  else
       ss << "\\x86";    // use different dir's fro 32 and 64 bit
 #  endif
 
-      std::string defaultCacheDir = ss.str();
+      defaultCacheDir = ss.str();
 
-      LPCSTR C_defaultCacheDir = defaultCacheDir.c_str();
-      CreateDirectoryA(C_defaultCacheDir, NULL);
+      w_defaultCacheDir = defaultCacheDir.c_str();
+      mkdirStatus = CreateDirectoryA(w_defaultCacheDir, NULL);
+
+      if(mkdirStatus == FALSE){
+        assert(GetLastError() == ERROR_ALREADY_EXISTS);
+        return false;
+      }
+      return true;
 #endif
       occaCachePath = defaultCacheDir;
     }
