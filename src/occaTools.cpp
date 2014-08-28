@@ -36,9 +36,16 @@ namespace occa {
     int lastSlash = 0;
     const int chars = fullFilename.size();
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     for(int i = 0; i < chars; ++i)
       if(fullFilename[i] == '/')
         lastSlash = i;
+#else
+    for(int i = 0; i < chars; ++i)
+      if((fullFilename[i] == '/') ||
+         (fullFilename[i] == '\\'))
+        lastSlash = i;
+#endif
 
     ++lastSlash;
 
