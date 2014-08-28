@@ -52,7 +52,7 @@ int main(int argc, char **argv){
 	  addVectors_occa = occaDir + "/examples/addVectors/" + addVectors_occa;
   }
 
-  //device.setCompilerEnvScript(
+  device.setCompilerEnvScript(
 
   addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
                                             "addVectors");

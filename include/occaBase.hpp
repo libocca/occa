@@ -371,7 +371,6 @@ namespace occa {
 #endif
 #endif
 
-
     inline kernelArg(const occa::memory &m);
 
     inline kernelArg(void *arg_){

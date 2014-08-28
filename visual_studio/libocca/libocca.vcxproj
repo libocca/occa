@@ -145,18 +145,12 @@
     <ClInclude Include="..\..\include\occa.hpp" />
     <ClInclude Include="..\..\include\occaBase.hpp" />
     <ClInclude Include="..\..\include\occaCOI.hpp" />
-    <ClInclude Include="..\..\include\occaCOIDefines.hpp" />
     <ClInclude Include="..\..\include\occaCOIMain.hpp" />
     <ClInclude Include="..\..\include\occaCUDA.hpp" />
-    <ClInclude Include="..\..\include\occaCUDADefines.hpp" />
     <ClInclude Include="..\..\include\occaDefines.hpp" />
-    <ClInclude Include="..\..\include\occaKernelDefines.hpp" />
     <ClInclude Include="..\..\include\occaOpenCL.hpp" />
-    <ClInclude Include="..\..\include\occaOpenCLDefines.hpp" />
     <ClInclude Include="..\..\include\occaOpenMP.hpp" />
-    <ClInclude Include="..\..\include\occaOpenMPDefines.hpp" />
     <ClInclude Include="..\..\include\occaPthreads.hpp" />
-    <ClInclude Include="..\..\include\occaPthreadsDefines.hpp" />
     <ClInclude Include="..\..\include\occaTools.hpp" />
     <ClInclude Include="..\..\include\ocl_preprocessor.hpp" />
   </ItemGroup>
