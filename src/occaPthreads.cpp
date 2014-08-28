@@ -466,7 +466,11 @@ namespace occa {
     if(c_compiler != NULL)
       compiler = std::string(c_compiler);
     else
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       compiler = "g++";
+#else
+      compiler = "cl.exe";
+#endif
 
     char *c_compilerFlags = getenv("OCCA_PTHREADS_COMPILER_FLAGS");
 
