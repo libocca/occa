@@ -335,12 +335,16 @@ namespace occa {
     setup(strToMode(m), arg1, arg2);
   }
 
-  void device::setCompiler(const std::string &compiler){
-    dHandle->setCompiler(compiler);
+  void device::setCompiler(const std::string &compiler_){
+    dHandle->setCompiler(compiler_);
   }
 
-  void device::setCompilerFlags(const std::string &compilerFlags){
-    dHandle->setCompilerFlags(compilerFlags);
+  void device::setCompilerEnvScript(const std::string &compilerEnvScript_){
+    dHandle->setCompilerEnvScript(compilerEnvScript_);
+  }
+
+  void device::setCompilerFlags(const std::string &compilerFlags_){
+    dHandle->setCompilerFlags(compilerFlags_);
   }
 
   std::string& device::mode(){

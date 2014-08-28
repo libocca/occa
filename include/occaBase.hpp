@@ -754,7 +754,7 @@ namespace occa {
     void* data;
     occa::device *dev;
 
-    std::string compiler, compilerFlags;
+    std::string compiler, compilerEnvScript, compilerFlags;
 
     int simdWidth_;
 
@@ -765,8 +765,9 @@ namespace occa {
 
     virtual void getEnvironmentVariables() = 0;
 
-    virtual void setCompiler(const std::string &compiler) = 0;
-    virtual void setCompilerFlags(const std::string &compilerFlags) = 0;
+    virtual void setCompiler(const std::string &compiler_) = 0;
+    virtual void setCompilerEnvScript(const std::string &compilerEnvScript_) = 0;
+    virtual void setCompilerFlags(const std::string &compilerFlags_) = 0;
 
     virtual void flush()  = 0;
     virtual void finish() = 0;
@@ -812,8 +813,9 @@ namespace occa {
 
     void getEnvironmentVariables();
 
-    void setCompiler(const std::string &compiler);
-    void setCompilerFlags(const std::string &compilerFlags);
+    void setCompiler(const std::string &compiler_);
+    void setCompilerEnvScript(const std::string &compilerEnvScript_);
+    void setCompilerFlags(const std::string &compilerFlags_);
 
     void flush();
     void finish();
@@ -866,8 +868,9 @@ namespace occa {
 
     std::string& mode();
 
-    void setCompiler(const std::string &compiler);
-    void setCompilerFlags(const std::string &compilerFlags);
+    void setCompiler(const std::string &compiler_);
+    void setCompilerEnvScript(const std::string &compilerEnvScript_);
+    void setCompilerFlags(const std::string &compilerFlags_);
 
     void flush();
     void finish();

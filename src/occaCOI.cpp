@@ -75,6 +75,7 @@ namespace occa {
     std::stringstream salt;
     salt << "COI"
          << info.salt()
+         << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
          << dev->dHandle->compilerFlags
          << functionName;
@@ -108,16 +109,26 @@ namespace occa {
 
     std::stringstream command;
 
-    command << dev->dHandle->compiler
-            << " -o " << cachedBinary
-            << " -x c++ -w -nodefaultlibs -shared -fPIC"
+    command << dev->dHandle->compilerEnvScript << " && "
+            << dev->dHandle->compiler
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+            << " -x c++ -w -nodefaultlibs -fPIC -shared"
+#else
+            << " /TP /LD /D MC_CL_EXE"
+#endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary;
+            << ' '    << iCachedBinary
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+            << " -o " << cachedBinary
+#else
+            << " /link /OUT:" << cachedBinary
+#endif
+            << std::endl;
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
     const int compileError = system(sCommand.c_str());
 
@@ -639,6 +650,11 @@ namespace occa {
   template <>
   void device_t<COI>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
+  }
+
+  template <>
+  void device_t<COI>::setCompilerEnvScript(const std::string &compilerEnvScript_){
+    compilerEnvScript = compilerEnvScript_;
   }
 
   template <>

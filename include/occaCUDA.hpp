@@ -138,10 +138,13 @@ namespace occa {
   void device_t<CUDA>::getEnvironmentVariables();
 
   template <>
-  void device_t<CUDA>::setCompiler(const std::string &compiler);
+  void device_t<CUDA>::setCompiler(const std::string &compiler_);
 
   template <>
-  void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags);
+  void device_t<CUDA>::setCompilerEnvScript(const std::string &compilerEnvScript_);
+
+  template <>
+  void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags_);
 
   template <>
   void device_t<CUDA>::flush();

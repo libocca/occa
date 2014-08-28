@@ -815,6 +815,11 @@ namespace occa {
   }
 
   template <>
+  void device_t<OpenCL>::setCompilerEnvScript(const std::string &compilerEnvScript_){
+    compilerEnvScript = compilerEnvScript_;
+  }
+
+  template <>
   void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
   }

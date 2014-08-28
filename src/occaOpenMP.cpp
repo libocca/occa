@@ -71,6 +71,7 @@ namespace occa {
     std::stringstream salt;
     salt << "OpenMP"
          << info.salt()
+         << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
          << dev->dHandle->compilerFlags
          << functionName;
@@ -103,35 +104,26 @@ namespace occa {
 
     std::stringstream command;
 
-#ifndef WIN32
-    command << dev->dHandle->compiler
-            << " -o " << cachedBinary
+    command << dev->dHandle->compilerEnvScript << " && "
+            << dev->dHandle->compiler
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
+#else
+            << " /TP /LD /D MC_CL_EXE"
+#endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary;
+            << ' '    << iCachedBinary
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+            << " -o " << cachedBinary
 #else
-	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl;
-
-#ifdef WIN64
-	std::string byteness("amd64");
-#else
-	std::string byteness("x86");
+            << " /link /OUT:" << cachedBinary
 #endif
+            << std::endl;
 
-	command
-    // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
-		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " << byteness
-		<< " && "
-		<< "cl.exe "
-    // << " /IC:\\Users\\florian\\Documents\\ALMOND "
-		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "
-		<< iCachedBinary << " "
-		<< "/link /OUT:" << cachedBinary;
-#endif
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
     const int compileError = system(sCommand.c_str());
 
@@ -456,6 +448,11 @@ namespace occa {
   template <>
   void device_t<OpenMP>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
+  }
+
+  template <>
+  void device_t<OpenMP>::setCompilerEnvScript(const std::string &compilerEnvScript_){
+    compilerEnvScript = compilerEnvScript_;
   }
 
   template <>

@@ -75,6 +75,7 @@ namespace occa {
     std::stringstream salt;
     salt << "CUDA"
          << info.salt()
+         << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
          << dev->dHandle->compilerFlags
          << functionName;
@@ -116,7 +117,8 @@ namespace occa {
     std::stringstream command;
 
     //---[ PTX Check Command ]----------
-    command << dev->dHandle->compiler
+    command << dev->dHandle->compilerEnvScript << " && "
+            << dev->dHandle->compiler
             << ' '          << dev->dHandle->compilerFlags
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
@@ -461,6 +463,11 @@ namespace occa {
   template <>
   void device_t<CUDA>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
+  }
+
+  template <>
+  void device_t<CUDA>::setCompilerEnvScript(const std::string &compilerEnvScript_){
+    compilerEnvScript = compilerEnvScript_;
   }
 
   template <>
