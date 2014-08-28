@@ -79,7 +79,7 @@ namespace occa {
     struct stat buffer;
     std::string cachedBinary = getCachedName(filename, salt.str());
 
-#ifdef WIN32
+#if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'
     cachedBinary = cachedBinary + ".dll";
 #endif

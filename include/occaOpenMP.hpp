@@ -7,11 +7,6 @@
 
 #include <fcntl.h>
 
-#ifdef WIN32
-#define OCCA_OS 4
-#define WINDOWS_OS 4
-#endif
-
 #if   OCCA_OS == LINUX_OS
 #include <dlfcn.h>
 #elif OCCA_OS == OSX_OS
