@@ -13,17 +13,17 @@
 #include <stdio.h>
 #include <fcntl.h>
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-#  include <unistd.h>
-#else
-#  include <io.h>
-#endif
-
 #include <sys/stat.h>
 #include <sys/types.h>
 
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  include <unistd.h>
+#else
+#  include <io.h>
+#endif
 
 #if OCCA_OPENCL_ENABLED
 #  if   OCCA_OS == LINUX_OS
