@@ -165,4 +165,36 @@
 #define occaPrivate( TYPE , NAME )             TYPE NAME
 //================================================
 
+
+//---[ Texture ]----------------------------------
+#define occaSampler(TEX) __occa__##TEX##__sampler__
+
+#define occaTexture1D(TEX) image1d_t TEX, occaConst sampler_t occaSampler(TEX),
+#define occaTexture2D(TEX) image2d_t TEX, occaConst sampler_t occaSampler(TEX),
+
+#define occaTexGet1D_int(TEX, X)    read_imagei(TEX, occaSampler(TEX), int2(X, 1))
+#define occaTexGet2D_int(TEX, X, Y) read_imagei(TEX, occaSampler(TEX), int2(X, Y))
+
+#define occaTexGet1D_uint(TEX, X)    read_imageui(TEX, occaSampler(TEX), int2(X, 1))
+#define occaTexGet2D_uint(TEX, X, Y) read_imageui(TEX, occaSampler(TEX), int2(X, Y))
+
+#define occaTexGet1D_float(TEX, X)    read_imagef(TEX, occaSampler(TEX), int2(X, 1))
+#define occaTexGet2D_float(TEX, X, Y) read_imagef(TEX, occaSampler(TEX), int2(X, Y))
+
+#define occaTexSet1D_int(TEX, VALUE, X)    write_imagei(TEX, occaSampler(TEX), int2(X, 1), VALUE)
+#define occaTexSet2D_int(TEX, VALUE, X, Y) write_imagei(TEX, occaSampler(TEX), int2(X, Y), VALUE)
+
+#define occaTexSet1D_uint(TEX, VALUE, X)    write_imageui(TEX, occaSampler(TEX), int2(X, 1), VALUE)
+#define occaTexSet2D_uint(TEX, VALUE, X, Y) write_imageui(TEX, occaSampler(TEX), int2(X, Y), VALUE)
+
+#define occaTexSet1D_float(TEX, VALUE, X)    write_imagef(TEX, occaSampler(TEX), int2(X, 1), VALUE)
+#define occaTexSet2D_float(TEX, VALUE, X, Y) write_imagef(TEX, occaSampler(TEX), int2(X, Y), VALUE)
+
+#define occaTexGet1D(TEX, TYPE, VALUE, X)    VALUE = occaTexGet1D_##TYPE(TEX, X)
+#define occaTexGet2D(TEX, TYPE, VALUE, X, Y) VALUE = occaTexGet2D_##TYPE(TEX, X, Y)
+
+#define occaTexSet1D(TEX, TYPE, VALUE, X)    occaTexSet1D_##TYPE(TEX, VALUE, X)
+#define occaTexSet2D(TEX, TYPE, VALUE, X, Y) occaTexSet2D_##TYPE(TEX, VALUE, X, Y)
+//================================================
+
 #endif

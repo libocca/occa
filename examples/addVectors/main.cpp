@@ -17,7 +17,7 @@ int main(int argc, char **argv){
 
   // occa::availableDevices<occa::OpenCL>();
 
-  std::string mode = "Pthreads";
+  std::string mode = "OpenMP";
   int platformID = 0;
   int deviceID   = 0;
 

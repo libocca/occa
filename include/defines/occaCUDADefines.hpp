@@ -244,4 +244,18 @@ __device__ inline double occaCuda_fastLog10(const double x){ return log10(x);   
 #define occaPrivate( TYPE , NAME )             TYPE NAME
 //================================================
 
+
+//---[ Texture ]----------------------------------
+#define occaSampler(TEX) __occa__##TEX##__sampler__
+
+#define occaTexture1D(TEX) cudaSurfaceObject_t TEX, occaConst cudaSurfaceBoundaryMode occaSampler(TEX),
+#define occaTexture2D(TEX) cudaSurfaceObject_t TEX, occaConst cudaSurfaceBoundaryMode occaSampler(TEX),
+
+#define occaTexGet1D(TEX, TYPE, VALUE, X)    surf1Dread(&(VALUE), TEX, X   , occaSampler(TEX))
+#define occaTexGet2D(TEX, TYPE, VALUE, X, Y) surf2Dread(&(VALUE), TEX, X, Y, occaSampler(TEX))
+
+#define occaTexSet1D(TEX, TYPE, VALUE, X)    surf1Dwrite(VALUE, TEX, X   , occaSampler(TEX))
+#define occaTexSet2D(TEX, TYPE, VALUE, X, Y) surf2Dwrite(VALUE, TEX, X, Y, occaSampler(TEX))
+//================================================
+
 #endif

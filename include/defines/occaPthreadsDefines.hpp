@@ -259,4 +259,21 @@ public:
                              occaInnerId0, occaInnerId1, occaInnerId2);
 //================================================
 
+
+//---[ Texture ]----------------------------------
+struct occaTexture {
+  void *data;
+  size_t w, h, d; // [W]idth, [H]eight, [D]epth
+};
+
+#define occaTexture1D(TEX) occaTexture &TEX
+#define occaTexture2D(TEX) occaTexture &TEX
+
+#define occaTexGet1D(TEX, TYPE, VALUE, X)    VALUE = ((TYPE*) TEX.data)[X]
+#define occaTexGet2D(TEX, TYPE, VALUE, X, Y) VALUE = ((TYPE*) TEX.data)[(Y * TEX.w) + X]
+
+#define occaTexSet1D(TEX, TYPE, VALUE, X)    ((TYPE*) TEX.data)[X]               = VALUE
+#define occaTexSet2D(TEX, TYPE, VALUE, X, Y) ((TYPE*) TEX.data)[(Y * TEX.w) + X] = VALUE
+//================================================
+
 #endif
