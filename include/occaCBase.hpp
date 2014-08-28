@@ -2,21 +2,22 @@
 #define OCCA_CBASE_HEADER
 
 #include "ocl_preprocessor.hpp"
+#include "occaDefines.hpp"
 
 #include "stdlib.h"
 
-#ifdef WIN32
-#define LIBOCCA_CALLINGCONV __stdcall
-#ifdef LIBOCCA_C_EXPORTS
-//#define LIBOCCA_API __declspec(dllexport) 
-#define LIBOCCA_API 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  define LIBOCCA_CALLINGCONV
+#  define LIBOCCA_API
 #else
-//#define LIBOCCA_API __declspec(dllimport) 
-#define LIBOCCA_API 
-#endif
-#else
-#define LIBOCCA_CALLINGCONV
-#define LIBOCCA_API  
+#  define LIBOCCA_CALLINGCONV __stdcall
+#  ifdef LIBOCCA_C_EXPORTS
+//#define LIBOCCA_API __declspec(dllexport)
+#    define LIBOCCA_API
+#  else
+//#define LIBOCCA_API __declspec(dllimport)
+#    define LIBOCCA_API
+#  endif
 #endif
 
 #define OCCA_TYPE_MEMORY 0
