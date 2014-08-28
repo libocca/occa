@@ -192,11 +192,8 @@ namespace occa {
       LPCSTR w_defaultCacheDir = defaultCacheDir.c_str();
       BOOL mkdirStatus = CreateDirectoryA(w_defaultCacheDir, NULL);
 
-      if(mkdirStatus == FALSE){
+      if(mkdirStatus == FALSE)
         assert(GetLastError() == ERROR_ALREADY_EXISTS);
-        return false;
-      }
-      return true;
 
 #  if OCCA_64_BIT
       ss << "\\amd64";  // use different dir's fro 32 and 64 bit
@@ -209,11 +206,8 @@ namespace occa {
       w_defaultCacheDir = defaultCacheDir.c_str();
       mkdirStatus = CreateDirectoryA(w_defaultCacheDir, NULL);
 
-      if(mkdirStatus == FALSE){
+      if(mkdirStatus == FALSE)
         assert(GetLastError() == ERROR_ALREADY_EXISTS);
-        return false;
-      }
-      return true;
 #endif
       occaCachePath = defaultCacheDir;
     }
