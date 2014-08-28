@@ -75,11 +75,15 @@ namespace occa {
          << dev->dHandle->compilerFlags
          << functionName;
 
+	struct stat buffer;
     std::string cachedBinary = getCachedName(filename, salt.str());
+	
+#ifdef WIN32
+	cachedBinary = cachedBinary + ".dll"; // windows refuses to load dll's that do not end with '.dll'
+#endif
 
-    struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
+    
     if(fileExists){
       std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
       return buildFromBinary(cachedBinary, functionName);
@@ -99,13 +103,32 @@ namespace occa {
 
     std::stringstream command;
 
+#ifndef WIN32
     command << dev->dHandle->compiler
             << " -o " << cachedBinary
             << " -x c++ -w -fPIC -shared"
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary;
+			*/
+#else
+	std::cout << "REM: faked usage of Microsoft compiler. " << std::endl; 
 
+#ifdef WIN64
+	std::string byteness("amd64");
+#else
+	std::string byteness("x86");
+#endif
+
+	command 
+		<< "\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " << byteness // set environment vars for compiler // option amd64 for the 64-bit environment/compiler
+		<< " && "
+		<< "cl.exe "
+//		<< " /IC:\\Users\\florian\\Documents\\ALMOND "
+		<< " /Ox /openmp /TP /LD /D MC_CL_EXE "
+		<< iCachedBinary << " "
+		<< "/link /OUT:" << cachedBinary;
+#endif
     const std::string &sCommand = command.str();
 
     std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
@@ -119,21 +142,39 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
+#ifndef WIN32
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
-
     if(data_.dlHandle == NULL){
       releaseFile(cachedBinary);
       throw 1;
     }
+#else 
+	data_.dlHandle = LoadLibraryA(cachedBinary.c_str()); 
+	if(data_.dlHandle == NULL) {
+		DWORD errCode = GetLastError();
+		std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
 
+		throw 1;
+	}
+#endif
+
+
+#ifndef WIN32
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-
-    char *dlError;
+	char *dlError;
     if ((dlError = dlerror()) != NULL)  {
       fputs(dlError, stderr);
       releaseFile(cachedBinary);
       throw 1;
     }
+#else
+	data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+	if(data_.dlHandle == NULL) {
+		fputs("unable to load function", stderr);
+		throw 1;
+	}
+#endif
+    
 
     releaseFile(cachedBinary);
 
@@ -148,10 +189,21 @@ namespace occa {
 
     functionName = functionName_;
 
+#ifndef WIN32
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
-
+#else 
+	data_.dlHandle = LoadLibraryA(filename.c_str()); 
+	if(data_.dlHandle == NULL) {
+		DWORD errCode = GetLastError();
+		std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
+		throw 1;
+	}
+#endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
+
+
+#ifndef WIN32
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
@@ -159,6 +211,13 @@ namespace occa {
       fputs(dlError, stderr);
       throw 1;
     }
+#else
+	data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+	if(data_.dlHandle == NULL) {
+		fputs("unable to load function", stderr);
+		throw 1;
+	}
+#endif
 
     return this;
   }
@@ -184,8 +243,11 @@ namespace occa {
   void kernel_t<OpenMP>::free(){
     // [-] Fix later
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
-
+#ifndef WIN32
     dlclose(data_.dlHandle);
+#else
+	FreeLibrary((HMODULE) (data_.dlHandle));
+#endif
   }
   //==================================
 
@@ -461,7 +523,6 @@ namespace occa {
 #elif OCCA_OS == OSX_OS
     mem->handle = ::malloc(bytes);
 #else
-#  warning "Aligned memory not supported in Windows yet"
     mem->handle = ::malloc(bytes);
 #endif
 
