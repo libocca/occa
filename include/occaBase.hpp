@@ -812,7 +812,7 @@ namespace occa {
 
     kernel_v* buildKernelFromSource(const std::string &filename,
                                     const std::string &functionName,
-                                    const kernelInfo &info_ = defaultKernelInfo);
+									const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);
