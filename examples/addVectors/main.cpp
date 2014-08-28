@@ -52,7 +52,10 @@ int main(int argc, char **argv){
 	  addVectors_occa = occaDir + "/examples/addVectors/" + addVectors_occa;
   }
 
-  device.setCompilerEnvScript(
+  std::string byteness("x86 ");
+  device.setCompilerEnvScript("\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " + byteness );
+  device.setCompiler("cl.exe");
+  device.setCompilerFlags("/Ox");
 
   addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
                                             "addVectors");

@@ -3,6 +3,39 @@
 
 #include "ocl_preprocessor.hpp"
 
+#ifndef LINUX_OS
+#  define LINUX_OS 1
+#endif
+
+#ifndef OSX_OS
+#  define OSX_OS 2
+#endif
+
+#ifndef WINDOWS_OS
+#  define WINDOWS_OS 4
+#endif
+
+#ifndef OCCA_OS
+#  ifdef WIN32 || WIN64
+#    define OCCA_OS WINDOWS_OS
+#  elif __APPLE__
+#    define OCCA_OS OSX_OS
+#  else
+#    define OCCA_OS LINUX_OS
+#  endif
+#endif
+
+#if defined(__x86_64__) || defined(_M_X64) // 64 Bit
+#  define OCCA_64_BIT 1
+#  define OCCA_32_BIT 0
+#elif defined(__i386) || defined(_M_IX86) // 32 Bit
+#  define OCCA_64_BIT 0
+#  define OCCA_32_BIT 1
+#elif defined(__ia64) || defined(__itanium__) || defined(_A_IA64) // Itanium
+#  define OCCA_64_BIT 1
+#  define OCCA_32_BIT 0
+#endif
+
 //---[ Checks and Info ]----------------
 #if OCCA_CHECK_ENABLED
 #  define OCCA_CHECK2( _expr , file , line , func )                     \
