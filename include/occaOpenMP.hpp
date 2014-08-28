@@ -7,18 +7,17 @@
 
 #include <fcntl.h>
 
-#if   OCCA_OS == LINUX_OS
-#include <dlfcn.h>
-#elif OCCA_OS == OSX_OS
-#include <dlfcn.h>
-#else
-#include <windows.h>
-#endif
-
-
 #include "occaBase.hpp"
 
 #include "occaKernelDefines.hpp"
+
+#if   OCCA_OS == LINUX_OS
+#  include <dlfcn.h>
+#elif OCCA_OS == OSX_OS
+#  include <dlfcn.h>
+#else
+#  include <windows.h>
+#endif
 
 namespace occa {
   //---[ Data Structs ]---------------
