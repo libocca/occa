@@ -14,7 +14,7 @@ int main(int argc, char **argv){
   for(int i = 0; i < entries; ++i){
     a[i]  = (float) i;
     b[i]  = (float) (1 - i);
-    ab[i] = 0;
+    ab[i] = 666;
   }
 
   int int_size = sizeof(int);
@@ -31,7 +31,7 @@ int main(int argc, char **argv){
 
   // occa::availableDevices<occa::OpenCL>();
   
-  std::string mode = "OpenMP";
+  std::string mode = "CUDA";
   int platformID = 0;
   int deviceID   = 0;
   
@@ -53,10 +53,9 @@ int main(int argc, char **argv){
   }
 
   std::string byteness("x86 ");
-  device.setCompilerEnvScript("\"\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\"\" " + byteness );
-  device.setCompiler("cl.exe");
-  device.setCompilerFlags("/Ox");
-
+  device.setCompilerEnvScript("\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\" " + byteness );
+  device.setCompiler("nvcc.exe");
+  
   addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
                                             "addVectors");
 

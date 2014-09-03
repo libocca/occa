@@ -112,7 +112,7 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
 #else
-            << " /TP /LD /D MC_CL_EXE"
+            << " /TP /LD /D MC_CL_EXE "
 #endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
@@ -128,7 +128,12 @@ namespace occa {
 
     std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
+#else
+
+    const int compileError = system(("\"" +  sCommand + "\"").c_str());
+#endif
 
     if(compileError){
       releaseFile(cachedBinary);

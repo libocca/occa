@@ -1022,7 +1022,7 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       flags += " -I \"" + path + "\"";
 #else
-      flags += " /I \"" + path + "\"";
+      flags += " /I\"" + path + "\"";
 #endif
     }
   };
