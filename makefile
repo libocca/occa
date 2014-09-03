@@ -17,8 +17,10 @@ occaLPath = ${OCCA_DIR}/$(lPath)
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(occaIPath)/*.hpp) $(wildcard $(occaIPath)/*.tpp)
 sources = $(wildcard $(occaSPath)/*.cpp)
+csources = $(wildcard $(occaSPath)/*.c)
 
-objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
+objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o)) \
+          $(subst $(occaSPath)/,$(occaOPath)/,$(csources:.c=.o))
 
 ifdef OCCA_DEVELOPER
 ifeq ($(OCCA_DEVELOPER), 1)
@@ -34,6 +36,9 @@ $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp))) $(developerDependencies)
+	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
+$(occaOPath)/%.o:$(occaSPath)/%.c $(occaIPath)/occaCBase.hpp $(developerDependencies)
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
