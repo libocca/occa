@@ -3,6 +3,93 @@
 
 #include "occaCBase.hpp"
 
+/*
+ * The code related to fortran string handling was adapted from petsc.  The
+ * license information for petsc can be found below.
+ *
+ *     Licensing Notification
+ *
+ *       Permission to use, reproduce, prepare derivative works, and to
+ *       redistribute to others this software, derivatives of this software, and
+ *       future versions of this software as well as its documentation is hereby
+ *       granted, provided that this notice is retained thereon and on all
+ *       copies or modifications. This permission is perpetual, world-wide, and
+ *       provided on a royalty-free basis. UChicago Argonne, LLC and all other
+ *       contributors make no representations as to the suitability and
+ *       operability of this software for any purpose. It is provided "as is"
+ *       without express or implied warranty.
+ *
+ *      Authors: http://www.mcs.anl.gov/petsc/miscellaneous/index.html
+ *
+ *
+ *      - Mathematics and Computer Science Division
+ *      - Argonne National Laboratory
+ *      - Argonne IL 60439
+ *
+ *
+ *       Portions of this software are copyright by UChicago Argonne, LLC.
+ *       Argonne National Laboratory with facilities in the state of Illinois,
+ *       is owned by The United States Government, and operated by UChicago
+ *       Argonne, LLC under provision of a contract with the Department of
+ *       Energy.
+ *
+ *     DISCLAIMER
+ *
+ *       PORTIONS OF THIS SOFTWARE WERE PREPARED AS AN ACCOUNT OF WORK SPONSORED
+ *       BY AN AGENCY OF THE UNITED STATES GOVERNMENT. NEITHER THE UNITED STATES
+ *       GOVERNMENT NOR ANY AGENCY THEREOF, NOR THE UNIVERSITY OF CHICAGO, NOR
+ *       ANY OF THEIR EMPLOYEES OR OFFICERS, MAKES ANY WARRANTY, EXPRESS OR
+ *       IMPLIED, OR ASSUMES ANY LEGAL LIABILITY OR RESPONSIBILITY FOR THE
+ *       ACCURACY, COMPLETENESS, OR USEFULNESS OF ANY INFORMATION, APPARATUS,
+ *       PRODUCT, OR PROCESS DISCLOSED, OR REPRESENTS THAT ITS USE WOULD NOT
+ *       INFRINGE PRIVATELY OWNED RIGHTS. REFERENCE HEREIN TO ANY SPECIFIC
+ *       COMMERCIAL PRODUCT, PROCESS, OR SERVICE BY TRADE NAME, TRADEMARK,
+ *       MANUFACTURER, OR OTHERWISE, DOES NOT NECESSARILY CONSTITUTE OR IMPLY
+ *       ITS ENDORSEMENT, RECOMMENDATION, OR FAVORING BY THE UNITED STATES
+ *       GOVERNMENT OR ANY AGENCY THEREOF. THE VIEW AND OPINIONS OF AUTHORS
+ *       EXPRESSED HEREIN DO NOT NECESSARILY STATE OR REFLECT THOSE OF THE
+ *       UNITED STATES GOVERNMENT OR ANY AGENCY THEREOF.
+ *
+ */
+
+#include <stdlib.h>
+#include <string.h>
+
+#define OCCA_F2C_NULL_CHARACTER_Fortran ((char *) 0)
+
+/* --------------------------------------------------------------------*/
+/*
+    This lets us map the str-len argument either, immediately following
+    the char argument (DVF on Win32) or at the end of the argument list
+    (general unix compilers)
+*/
+#if defined(OCCAF_HAVE_FORTRAN_MIXED_STR_ARG)
+#define OCCA_F2C_LSTR(len) ,int len
+#define OCCA_F2C_RSTR(len)
+#else
+#define OCCA_F2C_LSTR(len)
+#define OCCA_F2C_RSTR(len)   ,int len
+#endif
+
+/* --------------------------------------------------------------------*/
+#define OCCA_F2C_ALLOC_STR(a,n,b) \
+do {\
+  if (a == OCCA_F2C_NULL_CHARACTER_Fortran) { \
+    b = 0; \
+  } else { \
+    while((n > 0) && (a[n-1] == ' ')) n--; \
+    b = (char*)malloc((n+1)*sizeof(char)); \
+    if(b==NULL) abort(); \
+    strncpy(b,a,n); \
+    b[n] = '\0'; \
+  } \
+} while (0)
+
+#define OCCA_F2C_FREE_STR(a,b) \
+do {\
+  if (a != b) free(b);\
+} while (0)
+
 #  ifdef __cplusplus
 extern "C" {
 #  endif
@@ -64,7 +151,7 @@ extern "C" {
   }
 
   void occaDeviceSetCompiler_fc(occaDevice device,
-                                const char *compiler OCCA_F2C_LSTR(compiler_l),
+                                const char *compiler OCCA_F2C_LSTR(compiler_l)
                                 OCCA_F2C_RSTR(compiler_l)){
     char *compiler_c;
     OCCA_F2C_ALLOC_STR(compiler, compiler_l, compiler_c);
