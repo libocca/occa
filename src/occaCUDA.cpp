@@ -117,8 +117,10 @@ namespace occa {
     std::stringstream command;
 
     //---[ PTX Check Command ]----------
-    command << dev->dHandle->compilerEnvScript << " && "
-            << dev->dHandle->compiler
+    if(dev->dHandle->compilerEnvScript.size())
+      command << dev->dHandle->compilerEnvScript << " && ";
+
+    command << dev->dHandle->compiler
             << ' '          << dev->dHandle->compilerFlags
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
