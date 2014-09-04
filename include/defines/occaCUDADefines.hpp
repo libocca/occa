@@ -65,7 +65,7 @@
 #define occaPointer
 #define occaVariable
 #define occaRestrict __restrict__
-#define occaVolatile __volatile__
+#define occaVolatile volatile
 #define occaAligned
 #define occaFunctionShared
 // - - - - - - - - - - - - - - - - - - - - - - - -

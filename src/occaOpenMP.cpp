@@ -131,7 +131,6 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
 #else
-
     const int compileError = system(("\"" +  sCommand + "\"").c_str());
 #endif
 
@@ -471,6 +470,21 @@ namespace occa {
   template <>
   void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>

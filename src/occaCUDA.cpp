@@ -129,7 +129,12 @@ namespace occa {
 
     std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int ptxError = system(ptxCommand.c_str());
+#else
+    const int ptxError = system(("\"" +  ptxCommand + "\"").c_str());
+#endif
+    
 
     if(ptxError){
       releaseFile(cachedBinary);
@@ -473,6 +478,21 @@ namespace occa {
   template <>
   void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<CUDA>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<CUDA>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<CUDA>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>
