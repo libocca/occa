@@ -449,10 +449,18 @@ namespace occa {
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
 #else
       compilerFlags = "-D__extern_always_inline=inline -O3";
+#endif
+#else
+#if OCCA_DEBUG_ENABLED
+      compilerFlags = " /Od ";
+#else
+      compilerFlags = " /Ox /openmp ";
+#endif
 #endif
     }
   }
