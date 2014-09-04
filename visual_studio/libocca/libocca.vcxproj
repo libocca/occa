@@ -129,9 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\src\occaBase.cpp" />
     <ClCompile Include="..\..\src\occaCOI.cpp" />
     <ClCompile Include="..\..\src\occaCUDA.cpp" />
@@ -139,6 +136,7 @@
     <ClCompile Include="..\..\src\occaOpenCL.cpp" />
     <ClCompile Include="..\..\src\occaOpenMP.cpp" />
     <ClCompile Include="..\..\src\occaPthreads.cpp" />
+    <ClCompile Include="..\..\src\occaTimer.cpp" />
     <ClCompile Include="..\..\src\occaTools.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -156,6 +154,7 @@
     <ClInclude Include="..\..\include\occaOpenCL.hpp" />
     <ClInclude Include="..\..\include\occaOpenMP.hpp" />
     <ClInclude Include="..\..\include\occaPthreads.hpp" />
+    <ClInclude Include="..\..\include\occaTimer.hpp" />
     <ClInclude Include="..\..\include\occaTools.hpp" />
     <ClInclude Include="..\..\include\ocl_preprocessor.hpp" />
   </ItemGroup>
