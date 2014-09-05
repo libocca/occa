@@ -461,6 +461,20 @@ namespace occa {
 #else
       compilerFlags = " /Ox /openmp ";
 #endif
+      std::string byteness;
+      if(sizeof(void*) == 4)
+		    byteness = "x86 ";
+      else if(sizeof(void*) == 8) 
+        byteness = "amd64";
+	    else
+        throw 1;
+
+      char* visual_studio_tools = getenv("VS100COMNTOOLS");
+      if(visual_studio_tools != NULL) {
+        setCompilerEnvScript("\"" + std::string(visual_studio_tools) + "\\..\\..\\VC\\vcvarsall.bat\" " + byteness);
+      } else {
+        std::cout << "WARNING: VS100COMNTOOLS environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
+      }
 #endif
     }
   }
