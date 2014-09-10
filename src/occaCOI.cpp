@@ -495,33 +495,33 @@ namespace occa {
 
   //---[ Device ]---------------------
   template <>
-  device_t<COI>::device_t() :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<COI>::device_t(){
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<COI>::device_t(int platform, int device) :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<COI>::device_t(int platform, int device){
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<COI>::device_t(const device_t<COI> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
 

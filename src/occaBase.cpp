@@ -256,6 +256,8 @@ namespace occa {
   }
 
   void memory::free(){
+    mHandle->dev->dHandle->memoryAllocated -= mHandle->size;
+
     mHandle->free();
     delete mHandle;
   }
@@ -380,6 +382,10 @@ namespace occa {
     return dHandle->timeBetween(startTag, endTag);
   }
 
+  uintptr_t device::memoryAllocated(){
+    return dHandle->memoryAllocated;
+  }
+
   void device::free(stream s){
     dHandle->freeStream(s);
   }
@@ -478,6 +484,8 @@ namespace occa {
 
     mem.mHandle      = dHandle->malloc(bytes, source);
     mem.mHandle->dev = this;
+
+    dHandle->memoryAllocated += bytes;
 
     return mem;
   }

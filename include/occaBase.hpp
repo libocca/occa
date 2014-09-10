@@ -742,7 +742,9 @@ namespace occa {
   class device_v {
     template <occa::mode> friend class occa::device_t;
     template <occa::mode> friend class occa::kernel_t;
+
     friend class occa::device;
+    friend class occa::memory;
 
   private:
     void* data;
@@ -751,6 +753,8 @@ namespace occa {
     std::string compiler, compilerEnvScript, compilerFlags;
 
     int simdWidth_;
+
+    uintptr_t memoryAllocated;
 
   public:
     virtual inline ~device_v(){}
@@ -790,9 +794,6 @@ namespace occa {
   template <occa::mode mode>
   class device_t : public device_v {
     template <occa::mode> friend class occa::kernel_t;
-
-  private:
-    uintptr_t memoryUsed;
 
   public:
     device_t();
@@ -840,6 +841,8 @@ namespace occa {
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
 
+    friend class occa::memory;
+
   private:
     occa::mode mode_;
     std::string strMode;
@@ -875,6 +878,8 @@ namespace occa {
 
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);
+
+    uintptr_t memoryAllocated();
 
     void free(stream s);
 

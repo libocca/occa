@@ -745,33 +745,33 @@ namespace occa {
   }
 
   template <>
-  device_t<OpenCL>::device_t() :
-    memoryUsed(0) {
+  device_t<OpenCL>::device_t(){
     data = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<OpenCL>::device_t(int platform, int device) :
-    memoryUsed(0) {
+  device_t<OpenCL>::device_t(int platform, int device){
     data = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<OpenCL>& device_t<OpenCL>::operator = (const device_t<OpenCL> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
 
