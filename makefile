@@ -6,6 +6,7 @@ include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
 compilerFlags += -fPIC
+FcompilerFlags += -fPIC
 lPath = lib
 
 occaIPath = ${OCCA_DIR}/$(iPath)
