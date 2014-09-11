@@ -42,6 +42,8 @@
 |            OCCA_COI_COMPILER, OCCA_COI_COMPILER_FLAGS
 |
 |    (A) Running OCCA on Matlab
+|
+|    (B) Running OCCA on Fortran
 +===========================================================
 
 
@@ -140,5 +142,20 @@
 +--[ (A) MATLAB ]-------------------------------------------
 |
 |  path(strcat(getenv('OCCA_DIR'), '/lib'), path)
+|
++===========================================================
+
+
++--[ (B) Fortran ]-------------------------------------------
+|
+|  Info:
+|    OCCA_FORTRAN_ENABLED: Build Fortran wrappers
+|    FC                  : Fortran Compiler
+|    FCFLAGS             : Fortran Compiler Flags
+|
+|  Setting it:
+|    export OCCA_FORTRAN_ENABLED="1"
+|    export FC="gfortran"
+|    export FCFLAGS="-O3 -wAll"
 |
 +===========================================================
