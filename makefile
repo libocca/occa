@@ -6,6 +6,7 @@ include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
 compilerFlags += -fPIC
+FcompilerFlags += -fPIC
 lPath = lib
 
 occaIPath = ${OCCA_DIR}/$(iPath)
@@ -17,8 +18,17 @@ occaLPath = ${OCCA_DIR}/$(lPath)
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(occaIPath)/*.hpp) $(wildcard $(occaIPath)/*.tpp)
 sources = $(wildcard $(occaSPath)/*.cpp)
+csources = $(wildcard $(occaSPath)/*.c)
+fsources = $(wildcard $(occaSPath)/*.f90)
 
-objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
+objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o)) \
+          $(subst $(occaSPath)/,$(occaOPath)/,$(csources:.c=.o))
+
+ifdef OCCA_FORTRAN_ENABLED
+ifeq ($(OCCA_FORTRAN_ENABLED), 1)
+	objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
+endif
+endif
 
 ifdef OCCA_DEVELOPER
 ifeq ($(OCCA_DEVELOPER), 1)
@@ -34,6 +44,21 @@ $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp))) $(developerDependencies)
+	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
+$(occaOPath)/%.o:$(occaSPath)/%.c $(occaIPath)/occaCBase.hpp $(developerDependencies)
+	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
+$(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
+	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
+
+$(occaOPath)/occaFTypes.mod:$(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
+	@true
+
+$(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaOPath)/occaFTypes.mod
+	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
+
+$(occaOPath)/%.o:$(occaSPath)/%.c $(occaIPath)/occaCBase.hpp $(developerDependencies)
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
@@ -69,5 +94,6 @@ clean:
 	rm -f $(occaOPath)/*;
 	rm -f ${OCCA_DIR}/scripts/main;
 	rm -f $(occaLPath)/libocca.a;
+	rm -f $(occaLPath)/*.mod;
 	rm -f $(OCCA_DIR)/scripts/occaKernelDefinesGenerator
 #=================================================

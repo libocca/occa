@@ -28,6 +28,10 @@ ifndef CXX
 	CXX = g++
 endif
 
+ifndef FC
+	FC = gfortran
+endif
+
 ifndef CXXFLAGS
 	ifeq ($(DEBUG), 1)
 		CXXFLAGS = -g
@@ -36,8 +40,19 @@ ifndef CXXFLAGS
 	endif
 endif
 
+ifndef FCFLAGS
+	ifeq ($(DEBUG), 1)
+		FCFLAGS = -g
+	else
+		FCFLAGS = -O3
+	endif
+endif
+
 compiler      = $(CXX)
 compilerFlags = $(CXXFLAGS)
+
+Fcompiler      = $(FC)
+FcompilerFlags = $(FCFLAGS)
 #=================================================
 
 
@@ -76,9 +91,11 @@ endif
 ifeq ($(usingICPC), 1)
 	Debug_Flags   = -g
 	Release_Flags = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
+	FcompilerModFlag = -module
 else
 	Debug_Flags   = -g
 	Release_Flags = -msse -O3 -ftree-vectorize -funroll-all-loops -ffast-math -Wno-unused-value
+	FcompilerModFlag = -J
 endif
 
 ifeq ($(OS),OSX)
