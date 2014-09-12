@@ -13,9 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ReadMe.txt" />
+    <Filter Include="Header Files\defines">
+      <UniqueIdentifier>{c6852d12-5f3d-43f8-8bb8-82d17c887f36}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\occaBase.cpp">
@@ -42,6 +42,9 @@
     <ClCompile Include="..\..\src\occaTools.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\occaTimer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\occa.hpp">
@@ -50,40 +53,19 @@
     <ClInclude Include="..\..\include\occaCOI.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\occaCOIDefines.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\occaCOIMain.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\occaCUDA.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\occaCUDADefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\occaDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\occaKernelDefines.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\occaOpenCL.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\occaOpenCLDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\occaOpenMP.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\include\occaOpenMPDefines.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\include\occaPthreads.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\include\occaPthreadsDefines.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\occaTools.hpp">
@@ -93,6 +75,27 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\include\occaBase.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\defines\occaCOIDefines.hpp">
+      <Filter>Header Files\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\defines\occaCOIMain.hpp">
+      <Filter>Header Files\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\defines\occaCUDADefines.hpp">
+      <Filter>Header Files\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\defines\occaOpenCLDefines.hpp">
+      <Filter>Header Files\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\defines\occaOpenMPDefines.hpp">
+      <Filter>Header Files\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\defines\occaPthreadsDefines.hpp">
+      <Filter>Header Files\defines</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\include\occaTimer.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

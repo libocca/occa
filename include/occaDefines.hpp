@@ -18,6 +18,7 @@
 #ifndef OCCA_OS
 #  ifdef WIN32 || WIN64
 #    define OCCA_OS WINDOWS_OS
+#    define __PRETTY_FUNCTION__    __FUNCTION__
 #  elif __APPLE__
 #    define OCCA_OS OSX_OS
 #  else

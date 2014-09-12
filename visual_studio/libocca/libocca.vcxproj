@@ -69,8 +69,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OCCA_CHECK_ENABLED;OCCA_CUDA_ENABLED;OCCA_CUDA_ENABLED;WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CUDA_PATH)\include;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
@@ -84,8 +84,8 @@
       </PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OCCA_CHECK_ENABLED;OCCA_CUDA_ENABLED;OCCA_CUDA_ENABLED;WIN32;_DEBUG;_LIB;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CUDA_PATH)\include;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -100,8 +100,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OCCA_CUDA_ENABLED;WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CUDA_PATH)\include;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -118,8 +118,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>OCCA_CUDA_ENABLED;WIN32;NDEBUG;_LIB;WIN64;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(CUDA_PATH)\include;..\..\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -129,9 +129,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="ReadMe.txt" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\..\src\occaBase.cpp" />
     <ClCompile Include="..\..\src\occaCOI.cpp" />
     <ClCompile Include="..\..\src\occaCUDA.cpp" />
@@ -139,24 +136,25 @@
     <ClCompile Include="..\..\src\occaOpenCL.cpp" />
     <ClCompile Include="..\..\src\occaOpenMP.cpp" />
     <ClCompile Include="..\..\src\occaPthreads.cpp" />
+    <ClCompile Include="..\..\src\occaTimer.cpp" />
     <ClCompile Include="..\..\src\occaTools.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\defines\occaCOIDefines.hpp" />
+    <ClInclude Include="..\..\include\defines\occaCOIMain.hpp" />
+    <ClInclude Include="..\..\include\defines\occaCUDADefines.hpp" />
+    <ClInclude Include="..\..\include\defines\occaOpenCLDefines.hpp" />
+    <ClInclude Include="..\..\include\defines\occaOpenMPDefines.hpp" />
+    <ClInclude Include="..\..\include\defines\occaPthreadsDefines.hpp" />
     <ClInclude Include="..\..\include\occa.hpp" />
     <ClInclude Include="..\..\include\occaBase.hpp" />
     <ClInclude Include="..\..\include\occaCOI.hpp" />
-    <ClInclude Include="..\..\include\occaCOIDefines.hpp" />
-    <ClInclude Include="..\..\include\occaCOIMain.hpp" />
     <ClInclude Include="..\..\include\occaCUDA.hpp" />
-    <ClInclude Include="..\..\include\occaCUDADefines.hpp" />
     <ClInclude Include="..\..\include\occaDefines.hpp" />
-    <ClInclude Include="..\..\include\occaKernelDefines.hpp" />
     <ClInclude Include="..\..\include\occaOpenCL.hpp" />
-    <ClInclude Include="..\..\include\occaOpenCLDefines.hpp" />
     <ClInclude Include="..\..\include\occaOpenMP.hpp" />
-    <ClInclude Include="..\..\include\occaOpenMPDefines.hpp" />
     <ClInclude Include="..\..\include\occaPthreads.hpp" />
-    <ClInclude Include="..\..\include\occaPthreadsDefines.hpp" />
+    <ClInclude Include="..\..\include\occaTimer.hpp" />
     <ClInclude Include="..\..\include\occaTools.hpp" />
     <ClInclude Include="..\..\include\ocl_preprocessor.hpp" />
   </ItemGroup>

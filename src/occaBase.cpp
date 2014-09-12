@@ -349,6 +349,18 @@ namespace occa {
     dHandle->setCompilerFlags(compilerFlags_);
   }
 
+  std::string& device::getCompiler(){
+    return dHandle->getCompiler();
+  }
+
+  std::string& device::getCompilerEnvScript(){
+    return dHandle->getCompilerEnvScript();
+  }
+
+  std::string& device::getCompilerFlags(){
+    return dHandle->getCompilerFlags();
+  }
+
   std::string& device::mode(){
     return strMode;
   }

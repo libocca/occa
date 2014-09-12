@@ -76,7 +76,8 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #else
 // branch for Microsoft cl.exe - compiler: __restrict__ and __attribute__ ((aligned(...))) are not available there.
 #define occaRestrict 
-#define occaVolatile volatile
+// David suggedted that volatile is not required!!
+#define occaVolatile      
 #define occaAligned  
 #endif
 #define occaFunctionShared
@@ -226,7 +227,11 @@ public:
     data[index()][0] += t;
     return data[index()][0];
   }
-
+#if MC_CL_EXE
+  inline TM operator+(const TM &t){
+    return data[index()][0] + t;
+  }
+#endif
   inline TM& operator -= (const TM &t){
     data[index()][0] -= t;
     return data[index()][0];

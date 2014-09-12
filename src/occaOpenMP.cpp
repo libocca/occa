@@ -112,7 +112,7 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
 #else
-            << " /TP /LD /D MC_CL_EXE"
+            << " /TP /LD /D MC_CL_EXE "
 #endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
@@ -128,7 +128,11 @@ namespace occa {
 
     std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
+#else
+    const int compileError = system(("\"" +  sCommand + "\"").c_str());
+#endif
 
     if(compileError){
       releaseFile(cachedBinary);
@@ -445,10 +449,32 @@ namespace occa {
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
 #else
       compilerFlags = "-D__extern_always_inline=inline -O3";
+#endif
+#else
+#if OCCA_DEBUG_ENABLED
+      compilerFlags = " /Od ";
+#else
+      compilerFlags = " /Ox /openmp ";
+#endif
+      std::string byteness;
+      if(sizeof(void*) == 4)
+		    byteness = "x86 ";
+      else if(sizeof(void*) == 8) 
+        byteness = "amd64";
+	    else
+        throw 1;
+
+      char* visual_studio_tools = getenv("VS100COMNTOOLS");
+      if(visual_studio_tools != NULL) {
+        setCompilerEnvScript("\"" + std::string(visual_studio_tools) + "\\..\\..\\VC\\vcvarsall.bat\" " + byteness);
+      } else {
+        std::cout << "WARNING: VS100COMNTOOLS environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
+      }
 #endif
     }
   }
@@ -466,6 +492,21 @@ namespace occa {
   template <>
   void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>
