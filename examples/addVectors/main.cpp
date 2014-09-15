@@ -31,7 +31,7 @@ int main(int argc, char **argv){
 
   // occa::availableDevices<occa::OpenCL>();
   
-  std::string mode = "CUDA";
+  std::string mode = "OpenMP";
   int platformID = 0;
   int deviceID   = 0;
   
@@ -52,10 +52,7 @@ int main(int argc, char **argv){
 	  addVectors_occa = occaDir + "/examples/addVectors/" + addVectors_occa;
   }
 
-  std::string byteness("x86 ");
-  device.setCompilerEnvScript("\"c:\\Program Files (x86)\\Microsoft Visual Studio 10.0\\VC\\vcvarsall.bat\" " + byteness );
-  device.setCompiler("nvcc.exe");
-  
+   
   addVectors = device.buildKernelFromSource(addVectors_occa.c_str(),
                                             "addVectors");
 
