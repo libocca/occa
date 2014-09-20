@@ -119,8 +119,8 @@ ifeq ($(OS),LINUX)
 	CUDA_Flags    =
 	COI_Flags     =
 
-	links        += -llapack -lblas -lm -lgfortran -lrt -ldl
-	OpenGL_Links  =  -L/usr/lib/fglrx/ -lGL -lX11
+	links        += -lm -lrt -ldl
+	OpenGL_Links  = -L/usr/lib/fglrx/ -lGL -lX11
 	OpenCL_Links  = -lOpenCL
 	CUDA_Links    = -lcuda
 	COI_Links     = -lcoi_host
