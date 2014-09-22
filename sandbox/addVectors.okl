@@ -1,0 +1,35 @@
+#if 1
+kernel void addVectors(int occaVariable entries,
+                       const float * a,
+                       const float * b,
+                       float * ab){
+  for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
+    for(int item = 0; item < itemsPerGroup; ++item; inner0){
+      if((item + group*itemsPerGroup) < entries)
+        ab[item] = a[item] + b[item];
+    }
+  }
+
+  for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
+    for(int item = 0; item < itemsPerGroup; ++item; inner0){
+      if((item + group*itemsPerGroup) < entries)
+        ab[item] = a[item] + b[item];
+    }
+  }
+}
+#else
+occaKernel void addVectors(int occaVariable entries,
+                           const float * a,
+                           const float * b,
+                           float * ab){
+  occaOuterFor0{
+    occaInnerFor0{
+      for(int i = 0; i < 3; ++i)
+        if(i < 3)
+          ab[i] = a[i] + b[i];
+        else
+          ab[i] = a[i] + b[i];
+    }
+  }
+}
+#endif

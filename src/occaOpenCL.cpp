@@ -1105,16 +1105,18 @@ namespace occa {
     mem->handle = new cl_mem;
     mem->size   = bytes;
 
-    if(source == NULL)
+    if(source == NULL){
       *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,
                                                 CL_MEM_READ_WRITE,
                                                 bytes, NULL, &error);
-    else
+    }
+    else{
       *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,
                                                 CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
                                                 bytes, source, &error);
 
-    OCCA_CL_CHECK("Device: malloc", error);
+      finish();
+    }
 
     return mem;
   }
@@ -1243,6 +1245,8 @@ namespace occa {
 
     return mem;
 #endif
+
+    finish();
   }
 
   template <>

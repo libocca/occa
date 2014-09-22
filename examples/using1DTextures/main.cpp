@@ -18,9 +18,9 @@ int main(int argc, char **argv){
   for(int i=0; i<width; i++)
     perm[i] = width-i-1;
 
-  std::string mode = "CUDA";
+  std::string mode = "OpenCL";
   int platformID = 0;
-  int deviceID = 0;
+  int deviceID   = 0;
 
   occa::device device;
   occa::memory o_A, o_copyA;

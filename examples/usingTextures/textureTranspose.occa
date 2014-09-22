@@ -1,8 +1,8 @@
 occaKernel void textureTranspose(occaKernelInfoArg,
                                  occaConst int occaVariable width,
                                  occaConst int occaVariable height,
-                                 occaReadOnly occaTexture2D(A),
-                                 occaReadWrite occaTexture2D(transA)){
+                                 occaReadOnly  occaTexture2D(A),
+                                 occaWriteOnly occaTexture2D(transA)){
 
   occaOuterFor0{
     occaOuterFor1{

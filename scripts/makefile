@@ -14,9 +14,9 @@ OpenGL_Enabled = 0
 
 openclEnabled   = 0
 openmpEnabled   = 0
-cudaEnabled     = 1
+cudaEnabled     = 0
 coiEnabled      = 0
-pthreadsEnabled = 1
+pthreadsEnabled = 0
 
 ifeq ($(DEBUG), 1)
 	Debug_Enabled = 1
