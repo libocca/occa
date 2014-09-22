@@ -196,6 +196,20 @@ namespace occa {
       return dInfo;
     }
   };
+
+  const cl_channel_type clFormats[8] = {CL_UNSIGNED_INT8,
+                                        CL_UNSIGNED_INT16,
+                                        CL_UNSIGNED_INT32,
+                                        CL_SIGNED_INT8,
+                                        CL_SIGNED_INT16,
+                                        CL_SIGNED_INT32,
+                                        CL_HALF_FLOAT,
+                                        CL_FLOAT};
+
+  template <>
+  void* formatType::format<occa::OpenCL>() const {
+    return ((void*) &(clFormats[format_]));
+  }
   //==================================
 
 
@@ -274,6 +288,7 @@ namespace occa {
     salt << "OpenCL"
          << data_.platform << '-' << data_.device
          << info.salt()
+         << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
          << dev->dHandle->compilerFlags
          << functionName;
@@ -329,6 +344,8 @@ namespace occa {
 
     if(error)
       releaseFile(cachedBinary);
+
+    std::cout << "OpenCL compiling " << functionName << " from [" << iCachedBinary << "]\n";
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
 
@@ -533,6 +550,10 @@ namespace occa {
     handle = NULL;
     dev    = NULL;
     size = 0;
+
+    isTexture = false;
+    textureInfo.dim = 1;
+    textureInfo.w = textureInfo.h = textureInfo.d = 0;
   }
 
   template <>
@@ -540,6 +561,13 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
   }
 
   template <>
@@ -547,6 +575,13 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
 
     return *this;
   }
@@ -564,11 +599,31 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    OCCA_CL_CHECK("Memory: Copy From",
-                  clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
-                                       CL_TRUE,
-                                       offset, bytes_, source,
-                                       0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Copy From",
+                    clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
+                                         CL_TRUE,
+                                         offset, bytes_, source,
+                                         0, NULL, NULL));
+    else{
+      const int bie = textureInfo.bytesInEntry;
+
+      size_t offset_[3] = {      (offset / bie)      % textureInfo.w , 0, 0};
+      size_t pixels_[3] = {1 + (((bytes_ / bie) - 1) % textureInfo.w), 1, 1};
+
+      if(textureInfo.dim == 2){
+        offset_[1] = (offset / bie) / textureInfo.w;
+        pixels_[1] = (bytes_ / bie) / textureInfo.w;
+      }
+
+      OCCA_CL_CHECK("Texture Memory: Copy From",
+                    clEnqueueWriteImage(stream, *((cl_mem*) handle),
+                                        CL_TRUE,
+                                        offset_, pixels_,
+                                        0, 0,
+                                        source,
+                                        0, NULL, NULL));
+    }
   }
 
   template <>
@@ -583,13 +638,22 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    OCCA_CL_CHECK("Memory: Copy From",
-                  clEnqueueCopyBuffer(stream,
-                                      *((cl_mem*) source->handle),
-                                      *((cl_mem*) handle),
-                                      srcOffset, destOffset,
-                                      bytes_,
-                                      0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Copy From",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
+    else
+      OCCA_CL_CHECK("Texture Memory: Copy From",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
   }
 
   template <>
@@ -602,11 +666,37 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    OCCA_CL_CHECK("Memory: Copy To",
-                  clEnqueueReadBuffer(stream, *((cl_mem*) handle),
-                                      CL_TRUE,
-                                      offset, bytes_, dest,
-                                      0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Copy To",
+                    clEnqueueReadBuffer(stream, *((cl_mem*) handle),
+                                        CL_TRUE,
+                                        offset, bytes_, dest,
+                                        0, NULL, NULL));
+    else{
+      const int bie = textureInfo.bytesInEntry;
+
+      size_t offset_[3] = {      (offset / bie)      % textureInfo.w , 0, 0};
+      size_t pixels_[3] = {1 + (((bytes_ / bie) - 1) % textureInfo.w), 1, 1};
+
+      if(textureInfo.dim == 2){
+        offset_[1] = (offset / bie) / textureInfo.w;
+        pixels_[1] = (bytes_ / bie) / textureInfo.w;
+      }
+
+      for(int i = 0; i < 3; ++i)
+        std::cout << "offset[" << i << "] = " << offset_[i] << '\n';
+
+      for(int i = 0; i < 3; ++i)
+        std::cout << "pixels[" << i << "] = " << pixels_[i] << '\n';
+
+      OCCA_CL_CHECK("Texture Memory: Copy From",
+                    clEnqueueReadImage(stream, *((cl_mem*) handle),
+                                       CL_TRUE,
+                                       offset_, pixels_,
+                                       0, 0,
+                                       dest,
+                                       0, NULL, NULL));
+    }
   }
 
   template <>
@@ -621,13 +711,22 @@ namespace occa {
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    OCCA_CL_CHECK("Memory: Copy To",
-                  clEnqueueCopyBuffer(stream,
-                                      *((cl_mem*) handle),
-                                      *((cl_mem*) dest->handle),
-                                      srcOffset, destOffset,
-                                      bytes_,
-                                      0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Copy To",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) handle),
+                                        *((cl_mem*) dest->handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
+    else
+      OCCA_CL_CHECK("Texture Memory: Copy To",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) handle),
+                                        *((cl_mem*) dest->handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
   }
 
   template <>
@@ -640,11 +739,18 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    OCCA_CL_CHECK("Memory: Asynchronous Copy From",
-                  clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
-                                       CL_FALSE,
-                                       offset, bytes_, source,
-                                       0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Asynchronous Copy From",
+                    clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
+                                         CL_FALSE,
+                                         offset, bytes_, source,
+                                         0, NULL, NULL));
+    else
+      OCCA_CL_CHECK("Texture Memory: Asynchronous Copy From",
+                    clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
+                                         CL_FALSE,
+                                         offset, bytes_, source,
+                                         0, NULL, NULL));
   }
 
   template <>
@@ -659,13 +765,22 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    OCCA_CL_CHECK("Memory: Asynchronous Copy From",
-                  clEnqueueCopyBuffer(stream,
-                                      *((cl_mem*) source->handle),
-                                      *((cl_mem*) handle),
-                                      srcOffset, destOffset,
-                                      bytes_,
-                                      0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Asynchronous Copy From",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
+    else
+      OCCA_CL_CHECK("Texture Memory: Asynchronous Copy From",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
   }
 
   template <>
@@ -678,11 +793,18 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    OCCA_CL_CHECK("Memory: Asynchronous Copy To",
-                  clEnqueueReadBuffer(stream, *((cl_mem*) handle),
-                                      CL_FALSE,
-                                      offset, bytes_, dest,
-                                      0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Asynchronous Copy To",
+                    clEnqueueReadBuffer(stream, *((cl_mem*) handle),
+                                        CL_FALSE,
+                                        offset, bytes_, dest,
+                                        0, NULL, NULL));
+    else
+      OCCA_CL_CHECK("Texture Memory: Asynchronous Copy To",
+                    clEnqueueReadBuffer(stream, *((cl_mem*) handle),
+                                        CL_FALSE,
+                                        offset, bytes_, dest,
+                                        0, NULL, NULL));
   }
 
   template <>
@@ -697,19 +819,34 @@ namespace occa {
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    OCCA_CL_CHECK("Memory: Asynchronous Copy To",
-                  clEnqueueCopyBuffer(stream,
-                                      *((cl_mem*) handle),
-                                      *((cl_mem*) dest->handle),
-                                      srcOffset, destOffset,
-                                      bytes_,
-                                      0, NULL, NULL));
+    if(!isTexture)
+      OCCA_CL_CHECK("Memory: Asynchronous Copy To",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) handle),
+                                        *((cl_mem*) dest->handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
+    else
+      OCCA_CL_CHECK("Texture Memory: Asynchronous Copy To",
+                    clEnqueueCopyBuffer(stream,
+                                        *((cl_mem*) handle),
+                                        *((cl_mem*) dest->handle),
+                                        srcOffset, destOffset,
+                                        bytes_,
+                                        0, NULL, NULL));
   }
 
   template <>
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
     delete (cl_mem*) handle;
+
+    if(isTexture){
+      clReleaseSampler( *((cl_sampler*) textureInfo.arg) );
+      delete (cl_sampler*) textureInfo.arg;
+    }
+
     size = 0;
   }
   //==================================
@@ -745,33 +882,33 @@ namespace occa {
   }
 
   template <>
-  device_t<OpenCL>::device_t(){
+  device_t<OpenCL>::device_t() :
+    memoryUsed(0) {
     data = NULL;
-    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<OpenCL>::device_t(int platform, int device){
+  device_t<OpenCL>::device_t(int platform, int device) :
+    memoryUsed(0) {
     data = NULL;
-    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<OpenCL>& device_t<OpenCL>::operator = (const device_t<OpenCL> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compilerFlags = d.compilerFlags;
 
@@ -822,21 +959,6 @@ namespace occa {
   template <>
   void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
-  }
-    
-  template <>
-  std::string& device_t<OpenCL>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<OpenCL>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<OpenCL>::getCompilerFlags(){
-    return compilerFlags;
   }
 
   template <>
@@ -980,6 +1102,132 @@ namespace occa {
     OCCA_CL_CHECK("Device: malloc", error);
 
     return mem;
+  }
+
+  template <>
+  memory_v* device_t<OpenCL>::talloc(const int dim, const occa::dim &dims,
+                                     void *source,
+                                     occa::formatType type, const int permissions){
+#ifndef CL_VERSION_1_2
+    if(dim == 1)
+      return malloc(dims.x * type.bytes(), source);
+
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    memory_v *mem = new memory_t<OpenCL>;
+    cl_int error;
+
+    mem->dev    = dev;
+    mem->handle = new cl_mem;
+    mem->size   = (dims.x * dims.y) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.bytesInEntry = type.bytes();
+
+    cl_mem_flags flag = (CL_MEM_COPY_HOST_PTR |
+                         ((permissions == occa::readWrite) ?
+                          CL_MEM_READ_WRITE : CL_MEM_READ_ONLY));
+    cl_image_format imageFormat;
+
+    const int count = type.count();
+
+    switch(count){
+    case 1: imageFormat.image_channel_order = CL_R;    break;
+    case 2: imageFormat.image_channel_order = CL_RG;   break;
+    case 4: imageFormat.image_channel_order = CL_RGBA; break;
+    };
+
+    imageFormat.image_channel_data_type = *((cl_channel_type*) type.format<OpenCL>());
+
+    *((cl_mem*) mem->handle) = clCreateImage2D(data_.context, flag,
+                                               &imageFormat,
+                                               dims.x,
+                                               dims.y,
+                                               0,
+                                               source, &error);
+
+    OCCA_CL_CHECK("Device: Allocating texture", error);
+
+    mem->textureInfo.arg = new cl_sampler;
+
+    *((cl_sampler*) mem->textureInfo.arg) = clCreateSampler(data_.context,
+                                                            CL_FALSE,                 // Are args Normalized?
+                                                            CL_ADDRESS_CLAMP_TO_EDGE, // Clamp edges
+                                                            CL_FILTER_NEAREST,        // Point interpolation
+                                                            &error);
+
+    OCCA_CL_CHECK("Device: Creating texture sampler", error);
+
+    return mem;
+#else
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    memory_v *mem = new memory_t<OpenCL>;
+    cl_int error;
+
+    mem->dev    = dev;
+    mem->handle = new cl_mem;
+    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.bytesInEntry = type.bytes();
+
+    cl_mem_flags flag = (CL_MEM_COPY_HOST_PTR |
+                         ((permissions == occa::readWrite) ?
+                          CL_MEM_READ_WRITE : CL_MEM_READ_ONLY));
+    cl_image_format imageFormat;
+    cl_image_desc imageDesc;
+
+    const int count = type.count();
+
+    switch(count){
+    case 1: imageFormat.image_channel_order = CL_R;    break;
+    case 2: imageFormat.image_channel_order = CL_RG;   break;
+    case 4: imageFormat.image_channel_order = CL_RGBA; break;
+    };
+
+    imageFormat.image_channel_data_type = *((cl_channel_type*) type.format<OpenCL>());
+
+    imageDesc.image_type        = (dim == 1) ? CL_MEM_OBJECT_IMAGE1D : CL_MEM_OBJECT_IMAGE2D;
+    imageDesc.image_width       = dims.x;
+    imageDesc.image_height      = dims.y;
+    imageDesc.image_array_size  = 1;
+    imageDesc.image_row_pitch   = 0;
+    imageDesc.image_slice_pitch = 0;
+    imageDesc.num_mip_levels    = 0;
+    imageDesc.num_samples       = 0;
+    imageDesc.buffer            = NULL;
+
+    *((cl_mem*) mem->handle) = clCreateImage(data_.context, flag,
+                                             &imageFormat, &imageDesc,
+                                             source, &error);
+
+    OCCA_CL_CHECK("Device: Allocating texture", error);
+
+    mem->textureInfo.arg = new cl_sampler;
+
+    *((cl_sampler*) mem->textureInfo.arg) = clCreateSampler(data_.context,
+                                                            CL_FALSE,                 // Are args Normalized?
+                                                            CL_ADDRESS_CLAMP_TO_EDGE, // Clamp edges
+                                                            CL_FILTER_NEAREST,        // Point interpolation
+                                                            &error);
+
+    OCCA_CL_CHECK("Device: Creating texture sampler", error);
+
+    return mem;
+#endif
   }
 
   template <>

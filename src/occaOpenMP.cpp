@@ -76,14 +76,9 @@ namespace occa {
          << dev->dHandle->compilerFlags
          << functionName;
 
-    struct stat buffer;
     std::string cachedBinary = getCachedName(filename, salt.str());
 
-#if OCCA_OS == WINDOWS_OS
-    // Windows refuses to load dll's that do not end with '.dll'
-    cachedBinary = cachedBinary + ".dll";
-#endif
-
+    struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
@@ -112,7 +107,7 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
 #else
-            << " /TP /LD /D MC_CL_EXE "
+            << " /TP /LD /D MC_CL_EXE"
 #endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
@@ -126,13 +121,9 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
-#else
-    const int compileError = system(("\"" +  sCommand + "\"").c_str());
-#endif
 
     if(compileError){
       releaseFile(cachedBinary);
@@ -177,8 +168,6 @@ namespace occa {
     }
 #endif
 
-    releaseFile(cachedBinary);
-
     return this;
   }
 
@@ -186,6 +175,7 @@ namespace occa {
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName_){
     data = new OpenMPKernelData_t;
+
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
     functionName = functionName_;
@@ -243,6 +233,7 @@ namespace occa {
   void kernel_t<OpenMP>::free(){
     // [-] Fix later
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     dlclose(data_.dlHandle);
 #else
@@ -258,6 +249,11 @@ namespace occa {
     handle = NULL;
     dev    = NULL;
     size = 0;
+
+    isTexture = false;
+    textureInfo.arg = NULL;
+    textureInfo.dim = 1;
+    textureInfo.w = textureInfo.h = textureInfo.d = 0;
   }
 
   template <>
@@ -265,6 +261,17 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.arg  = m.textureInfo.arg;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
+
+    if(isTexture)
+      handle = &textureInfo;
   }
 
   template <>
@@ -272,6 +279,17 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.arg  = m.textureInfo.arg;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
+
+    if(isTexture)
+      handle = &textureInfo;
 
     return *this;
   }
@@ -287,7 +305,10 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    ::memcpy(((char*) handle) + offset, source, bytes_);
+    void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    const void *srcPtr = source;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -300,9 +321,10 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    ::memcpy(((char*) handle)         + destOffset,
-             ((char*) source->handle) + srcOffset,
-             bytes_);
+    void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
+    const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -313,7 +335,10 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    ::memcpy(dest, ((char*) handle) + offset, bytes_);
+    void *destPtr      = dest;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -326,9 +351,10 @@ namespace occa {
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    ::memcpy(((char*) dest->handle) + destOffset,
-             ((char*) handle)       + srcOffset,
-             bytes_);
+    void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -339,7 +365,11 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    ::memcpy(((char*) handle) + offset, source , bytes_);
+    void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    const void *srcPtr = source;
+
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -352,9 +382,10 @@ namespace occa {
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    ::memcpy(((char*) handle)         + destOffset,
-             ((char*) source->handle) + srcOffset,
-             bytes_);
+    void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
+    const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -365,7 +396,10 @@ namespace occa {
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    ::memcpy(dest, ((char*) handle) + offset, bytes_);
+    void *destPtr      = dest;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
@@ -378,14 +412,19 @@ namespace occa {
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    ::memcpy(((char*) dest->handle) + destOffset,
-             ((char*) handle)       + srcOffset,
-             bytes_);
+    void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
   void memory_t<OpenMP>::free(){
-    delete (char*) handle;
+    if(isTexture)
+      ::free(textureInfo.arg);
+    else
+      ::free(handle);
+
     size = 0;
   }
   //==================================
@@ -394,24 +433,24 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenMP>::device_t(){
-    data            = NULL;
-    memoryAllocated = 0;
+    data = NULL;
+    memoryUsed = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(int platform, int device){
-    data            = NULL;
-    memoryAllocated = 0;
+    data       = NULL;
+    memoryUsed = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(const device_t<OpenMP> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -419,8 +458,8 @@ namespace occa {
 
   template <>
   device_t<OpenMP>& device_t<OpenMP>::operator = (const device_t<OpenMP> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -449,32 +488,10 @@ namespace occa {
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
 #else
       compilerFlags = "-D__extern_always_inline=inline -O3";
-#endif
-#else
-#if OCCA_DEBUG_ENABLED
-      compilerFlags = " /Od ";
-#else
-      compilerFlags = " /Ox /openmp ";
-#endif
-      std::string byteness;
-      if(sizeof(void*) == 4)
-		    byteness = "x86 ";
-      else if(sizeof(void*) == 8) 
-        byteness = "amd64";
-	    else
-        throw 1;
-
-      char* visual_studio_tools = getenv("VS100COMNTOOLS");
-      if(visual_studio_tools != NULL) {
-        setCompilerEnvScript("\"" + std::string(visual_studio_tools) + "\\..\\..\\VC\\vcvarsall.bat\" " + byteness);
-      } else {
-        std::cout << "WARNING: VS100COMNTOOLS environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
-      }
 #endif
     }
   }
@@ -492,21 +509,6 @@ namespace occa {
   template <>
   void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
-  }
-
-  template <>
-  std::string& device_t<OpenMP>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<OpenMP>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<OpenMP>::getCompilerFlags(){
-    return compilerFlags;
   }
 
   template <>
@@ -574,6 +576,39 @@ namespace occa {
 
     if(source != NULL)
       ::memcpy(mem->handle, source, bytes);
+
+    return mem;
+  }
+
+  template <>
+  memory_v* device_t<OpenMP>::talloc(const int dim, const occa::dim &dims,
+                                     void *source,
+                                     occa::formatType type, const int permissions){
+    memory_v *mem = new memory_t<OpenMP>;
+
+    mem->dev  = dev;
+    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+#if   OCCA_OS == LINUX_OS
+    posix_memalign(&(mem->textureInfo.arg), OCCA_MEM_ALIGN, mem->size);
+#elif OCCA_OS == OSX_OS
+    mem->textureInfo.arg = ::malloc(mem->size);
+#else
+    mem->textureInfo.arg = ::malloc(mem->size);
+#endif
+
+    ::memcpy(mem->textureInfo.arg, source, mem->size);
+
+    std::cout << "Allocating: [" << (void*) mem->textureInfo.arg << "]\n";
+
+    mem->handle = &(mem->textureInfo);
 
     return mem;
   }

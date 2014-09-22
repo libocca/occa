@@ -11,7 +11,7 @@
               occaInnerId0, occaInnerId1, occaInnerId2,
               arg0.data());
   }
-  
+
   template <>
   void kernel_t<OpenMP>::operator () (const kernelArg &arg0,  const kernelArg &arg1){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);

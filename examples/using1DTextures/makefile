@@ -10,10 +10,7 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
-executables: main main_c
-
-main_c: main.c
-	$(compiler) $(compilerFlags) -o main_c $(flags) $(objects) main.c $(paths) $(links)
+executables: main
 
 main: $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
@@ -23,6 +20,5 @@ $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp
 
 clean:
 	rm -f $(oPath)/*;
-	rm -f main_c
 	rm -f main;
 #=================================================

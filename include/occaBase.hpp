@@ -8,6 +8,7 @@
 #include <vector>
 
 #include <xmmintrin.h>
+#include <unistd.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -18,12 +19,6 @@
 
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
-
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-#  include <unistd.h>
-#else
-#  include <io.h>
-#endif
 
 #if OCCA_OPENCL_ENABLED
 #  if   OCCA_OS == LINUX_OS
@@ -57,7 +52,7 @@ namespace occa {
   static const int NVIDIA    = (1 << 7);
   static const int anyVendor = (Intel | AMD | Altera | NVIDIA);
 
-  const int any = (anyType | anyVendor);
+  static const int any = (anyType | anyVendor);
 
   inline std::string deviceType(int type){
     if(type & CPU)     return "CPU";
@@ -320,31 +315,35 @@ namespace occa {
 
   class kernelArg {
   public:
-    kernelArg_t arg;
+    kernelArg_t arg, arg2;
 
     uintptr_t size;
-    bool pointer;
+    bool pointer, hasTwoArgs;
 
     inline kernelArg(){
       arg.void_ = NULL;
+      hasTwoArgs = false;
     }
 
     inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
       size(size_),
-      pointer(pointer_) {
+      pointer(pointer_),
+      hasTwoArgs(false) {
       arg.void_ = arg_.void_;
     }
 
     inline kernelArg(const kernelArg &k) :
       size(k.size),
-      pointer(k.pointer) {
+      pointer(k.pointer),
+      hasTwoArgs(k.hasTwoArgs) {
       arg.void_ = k.arg.void_;
     }
 
     inline kernelArg& operator = (const kernelArg &k){
-      arg.void_ = k.arg.void_;
-      size      = k.size;
-      pointer   = k.pointer;
+      arg.void_  = k.arg.void_;
+      size       = k.size;
+      pointer    = k.pointer;
+      hasTwoArgs = k.hasTwoArgs;
 
       return *this;
     }
@@ -361,10 +360,7 @@ namespace occa {
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
 
-    // 32 bit: uintptr_t == unsigned int
-#if OCCA_64_BIT
     OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
-#endif
 
     inline kernelArg(const occa::memory &m);
 
@@ -372,7 +368,8 @@ namespace occa {
       arg.void_ = arg_;
       size = sizeof(void*);
 
-      pointer = true;
+      pointer    = true;
+      hasTwoArgs = false;
     }
 
     inline void* data() const {
@@ -389,6 +386,52 @@ namespace occa {
     CUevent cuEvent;
 #endif
   };
+
+  struct textureInfo_t {
+    void *arg;
+    int dim;
+    int bytesInEntry;
+    uintptr_t w, h, d;
+  };
+
+  extern const int uint8FormatIndex;
+  extern const int uint16FormatIndex;
+  extern const int uint32FormatIndex;
+  extern const int int8FormatIndex;
+  extern const int int16FormatIndex;
+  extern const int int32FormatIndex;
+  extern const int halfFormatIndex;
+  extern const int floatFormatIndex;
+
+  extern const int sizeOfFormats[8];
+
+  class formatType {
+  private:
+    int format_;
+    int count_;
+
+  public:
+    formatType(const int format__, const int count__);
+
+    formatType(const formatType &ft);
+    formatType& operator = (const formatType &ft);
+
+    template <occa::mode>
+    void* format() const;
+
+    int count() const;
+    size_t bytes() const;
+  };
+
+  extern const int readOnly, readWrite;
+  extern const occa::formatType uint8Format , uint8x2Format , uint8x4Format;
+  extern const occa::formatType uint16Format, uint16x2Format, uint16x4Format;
+  extern const occa::formatType uint32Format, uint32x2Format, uint32x4Format;
+  extern const occa::formatType int8Format  , int8x2Format  , int8x4Format;
+  extern const occa::formatType int16Format , int16x2Format , int16x4Format;
+  extern const occa::formatType int32Format , int32x2Format , int32x4Format;
+  extern const occa::formatType halfFormat  , halfx2Format  , halfx4Format;
+  extern const occa::formatType floatFormat , floatx2Format , floatx4Format;
   //==================================
 
 
@@ -470,7 +513,7 @@ namespace occa {
     kernel_v *kHandle;
 
     int argumentCount;
-    kernelArg arguments[25];
+    kernelArg arguments[OCCA_MAX_ARGS];
 
   public:
     kernel();
@@ -564,6 +607,9 @@ namespace occa {
     occa::device *dev;
 
     uintptr_t size;
+
+    bool isTexture;
+    occa::textureInfo_t textureInfo;
 
   public:
     virtual inline ~memory_v(){}
@@ -684,6 +730,8 @@ namespace occa {
       return mHandle->size;
     }
 
+    void* textureArg() const;
+
     void copyFrom(const void *source,
                   const uintptr_t bytes = 0,
                   const uintptr_t offset = 0);
@@ -730,7 +778,11 @@ namespace occa {
     arg.void_ = m.mHandle->handle;
     size = sizeof(void*);
 
-    pointer = true;
+    pointer    = true;
+    hasTwoArgs = m.mHandle->isTexture;
+
+    if(hasTwoArgs)
+      arg2.void_ = m.textureArg();
   }
   //==================================
 
@@ -742,9 +794,7 @@ namespace occa {
   class device_v {
     template <occa::mode> friend class occa::device_t;
     template <occa::mode> friend class occa::kernel_t;
-
     friend class occa::device;
-    friend class occa::memory;
 
   private:
     void* data;
@@ -754,8 +804,6 @@ namespace occa {
 
     int simdWidth_;
 
-    uintptr_t memoryAllocated;
-
   public:
     virtual inline ~device_v(){}
 
@@ -763,12 +811,9 @@ namespace occa {
 
     virtual void getEnvironmentVariables() = 0;
 
-    virtual void setCompiler(const std::string &compiler_) = 0;
+    virtual void setCompiler(const std::string &compiler) = 0;
     virtual void setCompilerEnvScript(const std::string &compilerEnvScript_) = 0;
-    virtual void setCompilerFlags(const std::string &compilerFlags_) = 0;
-    virtual std::string& getCompiler() = 0;
-    virtual std::string& getCompilerEnvScript() = 0;
-    virtual std::string& getCompilerFlags() = 0;
+    virtual void setCompilerFlags(const std::string &compilerFlags) = 0;
 
     virtual void flush()  = 0;
     virtual void finish() = 0;
@@ -789,6 +834,10 @@ namespace occa {
     virtual memory_v* malloc(const uintptr_t bytes,
                              void* source) = 0;
 
+    virtual memory_v* talloc(const int dim, const occa::dim &dims,
+                             void *source,
+                             occa::formatType type, const int permissions) = 0;
+
     virtual void free() = 0;
 
     virtual int simdWidth() = 0;
@@ -797,6 +846,9 @@ namespace occa {
   template <occa::mode mode>
   class device_t : public device_v {
     template <occa::mode> friend class occa::kernel_t;
+
+  private:
+    uintptr_t memoryUsed;
 
   public:
     device_t();
@@ -811,12 +863,9 @@ namespace occa {
 
     void getEnvironmentVariables();
 
-    void setCompiler(const std::string &compiler_);
+    void setCompiler(const std::string &compiler);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
-    void setCompilerFlags(const std::string &compilerFlags_);
-    std::string& getCompiler();
-    std::string& getCompilerEnvScript();
-    std::string& getCompilerFlags();
+    void setCompilerFlags(const std::string &compilerFlags);
 
     void flush();
     void finish();
@@ -829,13 +878,17 @@ namespace occa {
 
     kernel_v* buildKernelFromSource(const std::string &filename,
                                     const std::string &functionName,
-									const kernelInfo &info_ = defaultKernelInfo);
+                                    const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);
 
     memory_v* malloc(const uintptr_t bytes,
                      void *source);
+
+    memory_v* talloc(const int dim, const occa::dim &dims,
+                     void *source,
+                     occa::formatType type, const int permissions);
 
     void free();
 
@@ -846,8 +899,6 @@ namespace occa {
     template <occa::mode> friend class occa::kernel_t;
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
-
-    friend class occa::memory;
 
   private:
     occa::mode mode_;
@@ -871,13 +922,10 @@ namespace occa {
 
     std::string& mode();
 
-    void setCompiler(const std::string &compiler_);
+    void setCompiler(const std::string &compiler);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
-    void setCompilerFlags(const std::string &compilerFlags_);
-    std::string& getCompiler();
-    std::string& getCompilerEnvScript();
-    std::string& getCompilerFlags();
-    
+    void setCompilerFlags(const std::string &compilerFlags);
+
     void flush();
     void finish();
 
@@ -887,8 +935,6 @@ namespace occa {
 
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);
-
-    uintptr_t memoryAllocated();
 
     void free(stream s);
 
@@ -910,6 +956,10 @@ namespace occa {
 
     memory malloc(const uintptr_t bytes,
                   void *source = NULL);
+
+    memory talloc(const int dim, const occa::dim &dims,
+                  void *source,
+                  occa::formatType type, const int permissions = readWrite);
 
     void free();
 
@@ -1030,14 +1080,6 @@ namespace occa {
 
     inline void addCompilerFlag(const std::string &f){
       flags += " " + f;
-    }
-
-    inline void addCompilerIncludePath(const std::string &path){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-      flags += " -I \"" + path + "\"";
-#else
-      flags += " /I\"" + path + "\"";
-#endif
     }
   };
 

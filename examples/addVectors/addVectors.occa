@@ -3,6 +3,7 @@ occaKernel void addVectors(occaKernelInfoArg,
                            occaConst occaPointer float * a,
                            occaConst occaPointer float * b,
                            occaPointer           float * ab){
+  occaParallelFor
   occaOuterFor0{
     occaInnerFor0{
       const int N = occaGlobalId0;

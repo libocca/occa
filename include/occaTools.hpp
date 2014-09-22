@@ -2,15 +2,11 @@
 #define OCCA_TOOLS_HEADER
 
 #include <iostream>
-#include <string>  // required by windows
 #include <stdlib.h>
-#include <assert.h>
 
 #include <sys/stat.h>
 #include <string.h>
 #include <errno.h>
-
-#include "occaDefines.hpp"
 
 #if   OCCA_OS == LINUX_OS
 #  include <sys/time.h>
@@ -19,7 +15,6 @@
 #  include <CoreServices/CoreServices.h>
 #  include <mach/mach_time.h>
 #else
-#  undef UNICODE
 #  include <windows.h>
 #endif
 
@@ -33,12 +28,6 @@ namespace occa {
                             std::string &filename);
 
   std::string getFileLock(const std::string &filename);
-
-
-
-  void getFilePrefixAndName(const std::string &fullFilename,
-                                   std::string &prefix,
-                                   std::string &filename);
 
   bool haveFile(const std::string &filename);
 

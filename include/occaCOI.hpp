@@ -168,13 +168,13 @@ namespace occa {
   void device_t<COI>::getEnvironmentVariables();
 
   template <>
-  void device_t<COI>::setCompiler(const std::string &compiler_);
+  void device_t<COI>::setCompiler(const std::string &compiler);
 
   template <>
   void device_t<COI>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<COI>::setCompilerFlags(const std::string &compilerFlags_);
+  void device_t<COI>::setCompilerFlags(const std::string &compilerFlags);
 
   template <>
   void device_t<COI>::flush();
@@ -206,6 +206,11 @@ namespace occa {
   template <>
   memory_v* device_t<COI>::malloc(const uintptr_t bytes,
                                   void *source);
+
+  template <>
+  memory_v* device_t<COI>::talloc(const int dim, const occa::dim &dims,
+                                  void *source,
+                                  occa::formatType type, const int permissions);
 
   template <>
   void device_t<COI>::free();

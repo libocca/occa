@@ -23,6 +23,22 @@ namespace occa {
     CUdevice  device;
     CUcontext context;
   };
+
+  struct CUDATextureData_t {
+    CUarray array;
+    CUsurfObject surface;
+  };
+  //==================================
+
+
+  //---[ Helper Functions ]-----------
+  extern const CUarray_format cudaFormats[8];
+
+  template <>
+  void* formatType::format<occa::CUDA>() const;
+
+  extern const int CUDA_ADDRESS_NONE;
+  extern const int CUDA_ADDRESS_CLAMP;
   //==================================
 
 
@@ -138,13 +154,13 @@ namespace occa {
   void device_t<CUDA>::getEnvironmentVariables();
 
   template <>
-  void device_t<CUDA>::setCompiler(const std::string &compiler_);
+  void device_t<CUDA>::setCompiler(const std::string &compiler);
 
   template <>
   void device_t<CUDA>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags_);
+  void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags);
 
   template <>
   void device_t<CUDA>::flush();
@@ -176,6 +192,11 @@ namespace occa {
   template <>
   memory_v* device_t<CUDA>::malloc(const uintptr_t bytes,
                                    void *source);
+
+  template <>
+  memory_v* device_t<CUDA>::talloc(const int dim, const occa::dim &dims,
+                                   void *source,
+                                   occa::formatType type, const int permissions);
 
   template <>
   void device_t<CUDA>::free();

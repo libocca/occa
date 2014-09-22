@@ -7,10 +7,6 @@
 
 inline std::string readFile(const std::string &filename){
   std::ifstream fs(filename.c_str());
-  if(!fs) {
-	  std::cerr << "unable to open file " << filename;
-	  throw 1;
-  }
   return std::string(std::istreambuf_iterator<char>(fs),
                      std::istreambuf_iterator<char>());
 }
@@ -20,18 +16,16 @@ inline std::string saveFileToVariable(std::string filename,
                                       int &chars,
                                       std::string indent = ""){
   std::stringstream occaDeviceDefines;
-  occaDeviceDefines << "#define OCCA_USING_CPU 0" << std::endl
-                    << "#define OCCA_USING_GPU 0" << std::endl
-					<< std::endl
-                    << "#define OCCA_USING_PTHREADS 0" << std::endl
-                    << "#define OCCA_USING_OPENMP   0" << std::endl
-                    << "#define OCCA_USING_OPENCL   0" << std::endl
-                    << "#define OCCA_USING_CUDA     0" << std::endl
-                    << "#define OCCA_USING_COI      0" << std::endl;
+  occaDeviceDefines << "#define OCCA_USING_CPU 0\n"
+                    << "#define OCCA_USING_GPU 0\n"
+                    << '\n'
+                    << "#define OCCA_USING_PTHREADS 0\n"
+                    << "#define OCCA_USING_OPENMP   0\n"
+                    << "#define OCCA_USING_OPENCL   0\n"
+                    << "#define OCCA_USING_CUDA     0\n"
+                    << "#define OCCA_USING_COI      0\n";
 
-  std::string occaDefinesFile = readFile(filename);
-  std::string fileContents = occaDeviceDefines.str();
-  fileContents = fileContents + occaDefinesFile;
+    std::string fileContents = occaDeviceDefines.str() + readFile(filename);
   chars = fileContents.size();
 
   std::stringstream headerSS;
@@ -54,10 +48,10 @@ inline std::string saveFileToVariable(std::string filename,
     ss << std::hex << std::setw(4) << (int) fileContents[i] << ", ";
 
     if((i % 8) == 7)
-      ss << std::endl << indent << tab;
+      ss << '\n' << indent << tab;
   }
 
-  ss << std::hex << std::setw(4) << 0 << "};" << std::endl;
+  ss << std::hex << std::setw(4) << 0 << "};\n";
 
   return ss.str();
 }
@@ -73,11 +67,11 @@ int main(int argc, char **argv){
 
   std::string ns = "namespace occa {";
 
+
   std::string pt = saveFileToVariable(occaDir + "/include/defines/occaPthreadsDefines.hpp",
                                       "occaPthreadsDefines",
                                       ptChars,
                                       "    ");
-
 
   std::string mp = saveFileToVariable(occaDir + "/include/defines/occaOpenMPDefines.hpp",
                                       "occaOpenMPDefines",
@@ -85,7 +79,6 @@ int main(int argc, char **argv){
                                       "    ");
 
   std::string cl = saveFileToVariable(occaDir + "/include/defines/occaOpenCLDefines.hpp",
-
                                       "occaOpenCLDefines",
                                       clChars,
                                       "    ");
@@ -110,32 +103,28 @@ int main(int argc, char **argv){
 
   std::ofstream fs;
   fs.open(occaKernelDefinesHeader.c_str());
-  if(!fs) {
-	  std::cerr << "unable to open file " << occaKernelDefinesHeader.c_str();
-	  throw 1;
-  }
 
-  fs << ns << std::endl
-	 << "    extern char occaPthreadsDefines[" << ptChars << "];" << std::endl
-     << "    extern char occaOpenMPDefines[" << mpChars  << "];" << std::endl
-     << "    extern char occaOpenCLDefines[" << clChars  << "];" << std::endl
-     << "    extern char occaCUDADefines["   << cuChars  << "];" << std::endl
-     << "    extern char occaCOIDefines["   << coiChars << "];" << std::endl
-     << "    extern char occaCOIMain["   << coiMainChars << "];" << std::endl
-     << "}" << std::endl;
+  fs << ns << '\n'
+     << "    extern char occaPthreadsDefines[" << ptChars << "];\n"
+     << "    extern char occaOpenMPDefines[" << mpChars  << "];\n"
+     << "    extern char occaOpenCLDefines[" << clChars  << "];\n"
+     << "    extern char occaCUDADefines["   << cuChars  << "];\n"
+     << "    extern char occaCOIDefines["   << coiChars << "];\n"
+     << "    extern char occaCOIMain["   << coiMainChars << "];\n"
+     << "}\n";
 
   fs.close();
 
   fs.open(occaKernelDefinesSource.c_str());
 
-  fs << ns << std::endl
-     << pt << std::endl
-     << mp << std::endl
-     << cl << std::endl
-     << cu << std::endl
-     << coi << std::endl
-     << coiMain << std::endl
-     << "}" << std::endl;
+  fs << ns << '\n'
+     << pt << '\n'
+     << mp << '\n'
+     << cl << '\n'
+     << cu << '\n'
+     << coi << '\n'
+     << coiMain << '\n'
+     << "}\n";
 
   fs.close();
 }

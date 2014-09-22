@@ -1,10 +1,11 @@
 #ifndef OCCA_PTHREADS_DEFINES_HEADER
 #define OCCA_PTHREADS_DEFINES_HEADER
 
+#include <stdint.h>
+
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
-
 
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
@@ -68,6 +69,8 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaGlobalMemFence
 
 #define occaBarrier(FENCE)
+#define occaInnerBarrier(FENCE) continue
+#define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue continue
 //================================================
@@ -99,9 +102,17 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Math ]-------------------------------------
+#define occaFabs       fabs
+#define occaFastFabs   fabs
+#define occaNativeFabs fabs
+
 #define occaSqrt       sqrt
 #define occaFastSqrt   sqrt
 #define occaNativeSqrt sqrt
+
+#define occaCbrt       cbrt
+#define occaFastCbrt   cbrt
+#define occaNativeCbrt cbrt
 
 #define occaSin       sin
 #define occaFastSin   sin
@@ -166,6 +177,11 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Misc ]-------------------------------------
+#define occaParallelFor2
+#define occaParallelFor1
+#define occaParallelFor0
+#define occaParallelFor
+// - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
@@ -263,8 +279,13 @@ public:
 //---[ Texture ]----------------------------------
 struct occaTexture {
   void *data;
-  size_t w, h, d; // [W]idth, [H]eight, [D]epth
+  int dim;
+
+  uintptr_t w, h, d;
 };
+
+#define occaReadOnly  const
+#define occaWriteOnly
 
 #define occaTexture1D(TEX) occaTexture &TEX
 #define occaTexture2D(TEX) occaTexture &TEX

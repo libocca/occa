@@ -4,9 +4,15 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[2] = {&occaKernelInfoArgs,
-                        arg0.data()};
+    void *args[2];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -21,10 +27,18 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[3] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data()};
+    void *args[4];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -39,11 +53,21 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[4] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data()};
+    void *args[6];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -59,12 +83,24 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[5] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data()};
+    void *args[8];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -80,13 +116,27 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[6] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data()};
+    void *args[10];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -102,14 +152,30 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[7] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data()};
+    void *args[12];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -126,15 +192,33 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[8] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data()};
+    void *args[14];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -151,16 +235,36 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[9] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data()};
+    void *args[16];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -177,17 +281,39 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[10] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data()};
+    void *args[18];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -205,18 +331,42 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[11] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data()};
+    void *args[20];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -234,19 +384,45 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[12] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data()};
+    void *args[22];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -264,20 +440,48 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[13] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data()};
+    void *args[24];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -296,21 +500,51 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[14] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data()};
+    void *args[26];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -329,22 +563,54 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[15] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data()};
+    void *args[28];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -363,23 +629,57 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[16] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data()};
+    void *args[30];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -399,24 +699,60 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[17] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data()};
+    void *args[32];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -436,25 +772,63 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[18] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data()};
+    void *args[34];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -474,26 +848,66 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[19] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data()};
+    void *args[36];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -514,27 +928,69 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[20] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data()};
+    void *args[38];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -555,28 +1011,72 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[21] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data()};
+    void *args[40];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -597,29 +1097,75 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[22] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data()};
+    void *args[42];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -641,30 +1187,78 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[23] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data()};
+    void *args[44];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -686,31 +1280,81 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[24] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data()};
+    void *args[46];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -732,32 +1376,84 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[25] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data()};
+    void *args[48];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -780,33 +1476,87 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[26] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data()};
+    void *args[50];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -829,34 +1579,90 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[27] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data()};
+    void *args[52];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -879,35 +1685,93 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[28] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data()};
+    void *args[54];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -931,36 +1795,96 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[29] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data()};
+    void *args[56];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -984,37 +1908,99 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[30] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data()};
+    void *args[58];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1038,38 +2024,102 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[31] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data()};
+    void *args[60];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1094,39 +2144,105 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[32] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data()};
+    void *args[62];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1151,40 +2267,108 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[33] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data()};
+    void *args[64];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1209,41 +2393,111 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[34] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data()};
+    void *args[66];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1269,42 +2523,114 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[35] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data()};
+    void *args[68];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1330,43 +2656,117 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[36] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data()};
+    void *args[70];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1392,44 +2792,120 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[37] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data()};
+    void *args[72];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1456,45 +2932,123 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[38] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data()};
+    void *args[74];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1521,46 +3075,126 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[39] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data()};
+    void *args[76];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1587,47 +3221,129 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[40] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data()};
+    void *args[78];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1655,48 +3371,132 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[41] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data()};
+    void *args[80];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1724,49 +3524,135 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[42] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data()};
+    void *args[82];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1794,50 +3680,138 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[43] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data()};
+    void *args[84];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1866,51 +3840,141 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[44] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data()};
+    void *args[86];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -1939,52 +4003,144 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[45] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data()};
+    void *args[88];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -2013,53 +4169,147 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[46] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data(),
-                        arg44.data()};
+    void *args[90];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
+    args[argCount++] = arg44.pointer ? (arg44.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg44.arg.void_)->surface) : arg44.arg.void_) : (void*) &arg44.arg;
+    if(arg44.hasTwoArgs)
+      args[argCount++] = arg44.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -2089,54 +4339,150 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[47] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data(),
-                        arg44.data(),
-                        arg45.data()};
+    void *args[92];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
+    args[argCount++] = arg44.pointer ? (arg44.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg44.arg.void_)->surface) : arg44.arg.void_) : (void*) &arg44.arg;
+    if(arg44.hasTwoArgs)
+      args[argCount++] = arg44.arg2.void_;
+    args[argCount++] = arg45.pointer ? (arg45.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg45.arg.void_)->surface) : arg45.arg.void_) : (void*) &arg45.arg;
+    if(arg45.hasTwoArgs)
+      args[argCount++] = arg45.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -2166,55 +4512,153 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[48] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data(),
-                        arg44.data(),
-                        arg45.data(),
-                        arg46.data()};
+    void *args[94];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
+    args[argCount++] = arg44.pointer ? (arg44.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg44.arg.void_)->surface) : arg44.arg.void_) : (void*) &arg44.arg;
+    if(arg44.hasTwoArgs)
+      args[argCount++] = arg44.arg2.void_;
+    args[argCount++] = arg45.pointer ? (arg45.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg45.arg.void_)->surface) : arg45.arg.void_) : (void*) &arg45.arg;
+    if(arg45.hasTwoArgs)
+      args[argCount++] = arg45.arg2.void_;
+    args[argCount++] = arg46.pointer ? (arg46.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg46.arg.void_)->surface) : arg46.arg.void_) : (void*) &arg46.arg;
+    if(arg46.hasTwoArgs)
+      args[argCount++] = arg46.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -2244,56 +4688,156 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[49] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data(),
-                        arg44.data(),
-                        arg45.data(),
-                        arg46.data(),
-                        arg47.data()};
+    void *args[96];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
+    args[argCount++] = arg44.pointer ? (arg44.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg44.arg.void_)->surface) : arg44.arg.void_) : (void*) &arg44.arg;
+    if(arg44.hasTwoArgs)
+      args[argCount++] = arg44.arg2.void_;
+    args[argCount++] = arg45.pointer ? (arg45.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg45.arg.void_)->surface) : arg45.arg.void_) : (void*) &arg45.arg;
+    if(arg45.hasTwoArgs)
+      args[argCount++] = arg45.arg2.void_;
+    args[argCount++] = arg46.pointer ? (arg46.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg46.arg.void_)->surface) : arg46.arg.void_) : (void*) &arg46.arg;
+    if(arg46.hasTwoArgs)
+      args[argCount++] = arg46.arg2.void_;
+    args[argCount++] = arg47.pointer ? (arg47.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg47.arg.void_)->surface) : arg47.arg.void_) : (void*) &arg47.arg;
+    if(arg47.hasTwoArgs)
+      args[argCount++] = arg47.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -2324,57 +4868,159 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[50] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data(),
-                        arg44.data(),
-                        arg45.data(),
-                        arg46.data(),
-                        arg47.data(),
-                        arg48.data()};
+    void *args[98];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
+    args[argCount++] = arg44.pointer ? (arg44.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg44.arg.void_)->surface) : arg44.arg.void_) : (void*) &arg44.arg;
+    if(arg44.hasTwoArgs)
+      args[argCount++] = arg44.arg2.void_;
+    args[argCount++] = arg45.pointer ? (arg45.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg45.arg.void_)->surface) : arg45.arg.void_) : (void*) &arg45.arg;
+    if(arg45.hasTwoArgs)
+      args[argCount++] = arg45.arg2.void_;
+    args[argCount++] = arg46.pointer ? (arg46.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg46.arg.void_)->surface) : arg46.arg.void_) : (void*) &arg46.arg;
+    if(arg46.hasTwoArgs)
+      args[argCount++] = arg46.arg2.void_;
+    args[argCount++] = arg47.pointer ? (arg47.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg47.arg.void_)->surface) : arg47.arg.void_) : (void*) &arg47.arg;
+    if(arg47.hasTwoArgs)
+      args[argCount++] = arg47.arg2.void_;
+    args[argCount++] = arg48.pointer ? (arg48.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg48.arg.void_)->surface) : arg48.arg.void_) : (void*) &arg48.arg;
+    if(arg48.hasTwoArgs)
+      args[argCount++] = arg48.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -2405,58 +5051,162 @@
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[51] = {&occaKernelInfoArgs,
-                        arg0.data(),
-                        arg1.data(),
-                        arg2.data(),
-                        arg3.data(),
-                        arg4.data(),
-                        arg5.data(),
-                        arg6.data(),
-                        arg7.data(),
-                        arg8.data(),
-                        arg9.data(),
-                        arg10.data(),
-                        arg11.data(),
-                        arg12.data(),
-                        arg13.data(),
-                        arg14.data(),
-                        arg15.data(),
-                        arg16.data(),
-                        arg17.data(),
-                        arg18.data(),
-                        arg19.data(),
-                        arg20.data(),
-                        arg21.data(),
-                        arg22.data(),
-                        arg23.data(),
-                        arg24.data(),
-                        arg25.data(),
-                        arg26.data(),
-                        arg27.data(),
-                        arg28.data(),
-                        arg29.data(),
-                        arg30.data(),
-                        arg31.data(),
-                        arg32.data(),
-                        arg33.data(),
-                        arg34.data(),
-                        arg35.data(),
-                        arg36.data(),
-                        arg37.data(),
-                        arg38.data(),
-                        arg39.data(),
-                        arg40.data(),
-                        arg41.data(),
-                        arg42.data(),
-                        arg43.data(),
-                        arg44.data(),
-                        arg45.data(),
-                        arg46.data(),
-                        arg47.data(),
-                        arg48.data(),
-                        arg49.data()};
+    void *args[100];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    args[argCount++] = arg0.pointer ? (arg0.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg0.arg.void_)->surface) : arg0.arg.void_) : (void*) &arg0.arg;
+    if(arg0.hasTwoArgs)
+      args[argCount++] = arg0.arg2.void_;
+    args[argCount++] = arg1.pointer ? (arg1.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg1.arg.void_)->surface) : arg1.arg.void_) : (void*) &arg1.arg;
+    if(arg1.hasTwoArgs)
+      args[argCount++] = arg1.arg2.void_;
+    args[argCount++] = arg2.pointer ? (arg2.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg2.arg.void_)->surface) : arg2.arg.void_) : (void*) &arg2.arg;
+    if(arg2.hasTwoArgs)
+      args[argCount++] = arg2.arg2.void_;
+    args[argCount++] = arg3.pointer ? (arg3.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg3.arg.void_)->surface) : arg3.arg.void_) : (void*) &arg3.arg;
+    if(arg3.hasTwoArgs)
+      args[argCount++] = arg3.arg2.void_;
+    args[argCount++] = arg4.pointer ? (arg4.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg4.arg.void_)->surface) : arg4.arg.void_) : (void*) &arg4.arg;
+    if(arg4.hasTwoArgs)
+      args[argCount++] = arg4.arg2.void_;
+    args[argCount++] = arg5.pointer ? (arg5.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg5.arg.void_)->surface) : arg5.arg.void_) : (void*) &arg5.arg;
+    if(arg5.hasTwoArgs)
+      args[argCount++] = arg5.arg2.void_;
+    args[argCount++] = arg6.pointer ? (arg6.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg6.arg.void_)->surface) : arg6.arg.void_) : (void*) &arg6.arg;
+    if(arg6.hasTwoArgs)
+      args[argCount++] = arg6.arg2.void_;
+    args[argCount++] = arg7.pointer ? (arg7.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg7.arg.void_)->surface) : arg7.arg.void_) : (void*) &arg7.arg;
+    if(arg7.hasTwoArgs)
+      args[argCount++] = arg7.arg2.void_;
+    args[argCount++] = arg8.pointer ? (arg8.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg8.arg.void_)->surface) : arg8.arg.void_) : (void*) &arg8.arg;
+    if(arg8.hasTwoArgs)
+      args[argCount++] = arg8.arg2.void_;
+    args[argCount++] = arg9.pointer ? (arg9.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg9.arg.void_)->surface) : arg9.arg.void_) : (void*) &arg9.arg;
+    if(arg9.hasTwoArgs)
+      args[argCount++] = arg9.arg2.void_;
+    args[argCount++] = arg10.pointer ? (arg10.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg10.arg.void_)->surface) : arg10.arg.void_) : (void*) &arg10.arg;
+    if(arg10.hasTwoArgs)
+      args[argCount++] = arg10.arg2.void_;
+    args[argCount++] = arg11.pointer ? (arg11.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg11.arg.void_)->surface) : arg11.arg.void_) : (void*) &arg11.arg;
+    if(arg11.hasTwoArgs)
+      args[argCount++] = arg11.arg2.void_;
+    args[argCount++] = arg12.pointer ? (arg12.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg12.arg.void_)->surface) : arg12.arg.void_) : (void*) &arg12.arg;
+    if(arg12.hasTwoArgs)
+      args[argCount++] = arg12.arg2.void_;
+    args[argCount++] = arg13.pointer ? (arg13.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg13.arg.void_)->surface) : arg13.arg.void_) : (void*) &arg13.arg;
+    if(arg13.hasTwoArgs)
+      args[argCount++] = arg13.arg2.void_;
+    args[argCount++] = arg14.pointer ? (arg14.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg14.arg.void_)->surface) : arg14.arg.void_) : (void*) &arg14.arg;
+    if(arg14.hasTwoArgs)
+      args[argCount++] = arg14.arg2.void_;
+    args[argCount++] = arg15.pointer ? (arg15.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg15.arg.void_)->surface) : arg15.arg.void_) : (void*) &arg15.arg;
+    if(arg15.hasTwoArgs)
+      args[argCount++] = arg15.arg2.void_;
+    args[argCount++] = arg16.pointer ? (arg16.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg16.arg.void_)->surface) : arg16.arg.void_) : (void*) &arg16.arg;
+    if(arg16.hasTwoArgs)
+      args[argCount++] = arg16.arg2.void_;
+    args[argCount++] = arg17.pointer ? (arg17.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg17.arg.void_)->surface) : arg17.arg.void_) : (void*) &arg17.arg;
+    if(arg17.hasTwoArgs)
+      args[argCount++] = arg17.arg2.void_;
+    args[argCount++] = arg18.pointer ? (arg18.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg18.arg.void_)->surface) : arg18.arg.void_) : (void*) &arg18.arg;
+    if(arg18.hasTwoArgs)
+      args[argCount++] = arg18.arg2.void_;
+    args[argCount++] = arg19.pointer ? (arg19.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg19.arg.void_)->surface) : arg19.arg.void_) : (void*) &arg19.arg;
+    if(arg19.hasTwoArgs)
+      args[argCount++] = arg19.arg2.void_;
+    args[argCount++] = arg20.pointer ? (arg20.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg20.arg.void_)->surface) : arg20.arg.void_) : (void*) &arg20.arg;
+    if(arg20.hasTwoArgs)
+      args[argCount++] = arg20.arg2.void_;
+    args[argCount++] = arg21.pointer ? (arg21.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg21.arg.void_)->surface) : arg21.arg.void_) : (void*) &arg21.arg;
+    if(arg21.hasTwoArgs)
+      args[argCount++] = arg21.arg2.void_;
+    args[argCount++] = arg22.pointer ? (arg22.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg22.arg.void_)->surface) : arg22.arg.void_) : (void*) &arg22.arg;
+    if(arg22.hasTwoArgs)
+      args[argCount++] = arg22.arg2.void_;
+    args[argCount++] = arg23.pointer ? (arg23.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg23.arg.void_)->surface) : arg23.arg.void_) : (void*) &arg23.arg;
+    if(arg23.hasTwoArgs)
+      args[argCount++] = arg23.arg2.void_;
+    args[argCount++] = arg24.pointer ? (arg24.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg24.arg.void_)->surface) : arg24.arg.void_) : (void*) &arg24.arg;
+    if(arg24.hasTwoArgs)
+      args[argCount++] = arg24.arg2.void_;
+    args[argCount++] = arg25.pointer ? (arg25.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg25.arg.void_)->surface) : arg25.arg.void_) : (void*) &arg25.arg;
+    if(arg25.hasTwoArgs)
+      args[argCount++] = arg25.arg2.void_;
+    args[argCount++] = arg26.pointer ? (arg26.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg26.arg.void_)->surface) : arg26.arg.void_) : (void*) &arg26.arg;
+    if(arg26.hasTwoArgs)
+      args[argCount++] = arg26.arg2.void_;
+    args[argCount++] = arg27.pointer ? (arg27.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg27.arg.void_)->surface) : arg27.arg.void_) : (void*) &arg27.arg;
+    if(arg27.hasTwoArgs)
+      args[argCount++] = arg27.arg2.void_;
+    args[argCount++] = arg28.pointer ? (arg28.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg28.arg.void_)->surface) : arg28.arg.void_) : (void*) &arg28.arg;
+    if(arg28.hasTwoArgs)
+      args[argCount++] = arg28.arg2.void_;
+    args[argCount++] = arg29.pointer ? (arg29.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg29.arg.void_)->surface) : arg29.arg.void_) : (void*) &arg29.arg;
+    if(arg29.hasTwoArgs)
+      args[argCount++] = arg29.arg2.void_;
+    args[argCount++] = arg30.pointer ? (arg30.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg30.arg.void_)->surface) : arg30.arg.void_) : (void*) &arg30.arg;
+    if(arg30.hasTwoArgs)
+      args[argCount++] = arg30.arg2.void_;
+    args[argCount++] = arg31.pointer ? (arg31.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg31.arg.void_)->surface) : arg31.arg.void_) : (void*) &arg31.arg;
+    if(arg31.hasTwoArgs)
+      args[argCount++] = arg31.arg2.void_;
+    args[argCount++] = arg32.pointer ? (arg32.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg32.arg.void_)->surface) : arg32.arg.void_) : (void*) &arg32.arg;
+    if(arg32.hasTwoArgs)
+      args[argCount++] = arg32.arg2.void_;
+    args[argCount++] = arg33.pointer ? (arg33.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg33.arg.void_)->surface) : arg33.arg.void_) : (void*) &arg33.arg;
+    if(arg33.hasTwoArgs)
+      args[argCount++] = arg33.arg2.void_;
+    args[argCount++] = arg34.pointer ? (arg34.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg34.arg.void_)->surface) : arg34.arg.void_) : (void*) &arg34.arg;
+    if(arg34.hasTwoArgs)
+      args[argCount++] = arg34.arg2.void_;
+    args[argCount++] = arg35.pointer ? (arg35.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg35.arg.void_)->surface) : arg35.arg.void_) : (void*) &arg35.arg;
+    if(arg35.hasTwoArgs)
+      args[argCount++] = arg35.arg2.void_;
+    args[argCount++] = arg36.pointer ? (arg36.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg36.arg.void_)->surface) : arg36.arg.void_) : (void*) &arg36.arg;
+    if(arg36.hasTwoArgs)
+      args[argCount++] = arg36.arg2.void_;
+    args[argCount++] = arg37.pointer ? (arg37.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg37.arg.void_)->surface) : arg37.arg.void_) : (void*) &arg37.arg;
+    if(arg37.hasTwoArgs)
+      args[argCount++] = arg37.arg2.void_;
+    args[argCount++] = arg38.pointer ? (arg38.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg38.arg.void_)->surface) : arg38.arg.void_) : (void*) &arg38.arg;
+    if(arg38.hasTwoArgs)
+      args[argCount++] = arg38.arg2.void_;
+    args[argCount++] = arg39.pointer ? (arg39.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg39.arg.void_)->surface) : arg39.arg.void_) : (void*) &arg39.arg;
+    if(arg39.hasTwoArgs)
+      args[argCount++] = arg39.arg2.void_;
+    args[argCount++] = arg40.pointer ? (arg40.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg40.arg.void_)->surface) : arg40.arg.void_) : (void*) &arg40.arg;
+    if(arg40.hasTwoArgs)
+      args[argCount++] = arg40.arg2.void_;
+    args[argCount++] = arg41.pointer ? (arg41.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg41.arg.void_)->surface) : arg41.arg.void_) : (void*) &arg41.arg;
+    if(arg41.hasTwoArgs)
+      args[argCount++] = arg41.arg2.void_;
+    args[argCount++] = arg42.pointer ? (arg42.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg42.arg.void_)->surface) : arg42.arg.void_) : (void*) &arg42.arg;
+    if(arg42.hasTwoArgs)
+      args[argCount++] = arg42.arg2.void_;
+    args[argCount++] = arg43.pointer ? (arg43.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg43.arg.void_)->surface) : arg43.arg.void_) : (void*) &arg43.arg;
+    if(arg43.hasTwoArgs)
+      args[argCount++] = arg43.arg2.void_;
+    args[argCount++] = arg44.pointer ? (arg44.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg44.arg.void_)->surface) : arg44.arg.void_) : (void*) &arg44.arg;
+    if(arg44.hasTwoArgs)
+      args[argCount++] = arg44.arg2.void_;
+    args[argCount++] = arg45.pointer ? (arg45.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg45.arg.void_)->surface) : arg45.arg.void_) : (void*) &arg45.arg;
+    if(arg45.hasTwoArgs)
+      args[argCount++] = arg45.arg2.void_;
+    args[argCount++] = arg46.pointer ? (arg46.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg46.arg.void_)->surface) : arg46.arg.void_) : (void*) &arg46.arg;
+    if(arg46.hasTwoArgs)
+      args[argCount++] = arg46.arg2.void_;
+    args[argCount++] = arg47.pointer ? (arg47.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg47.arg.void_)->surface) : arg47.arg.void_) : (void*) &arg47.arg;
+    if(arg47.hasTwoArgs)
+      args[argCount++] = arg47.arg2.void_;
+    args[argCount++] = arg48.pointer ? (arg48.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg48.arg.void_)->surface) : arg48.arg.void_) : (void*) &arg48.arg;
+    if(arg48.hasTwoArgs)
+      args[argCount++] = arg48.arg2.void_;
+    args[argCount++] = arg49.pointer ? (arg49.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg49.arg.void_)->surface) : arg49.arg.void_) : (void*) &arg49.arg;
+    if(arg49.hasTwoArgs)
+      args[argCount++] = arg49.arg2.void_;
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,

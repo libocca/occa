@@ -1,5 +1,9 @@
 #if OCCA_COI_ENABLED
 
+#if OCCA_OS == WINDOWS_OS
+#  error "[COI] Not supported in Windows"
+#endif
+
 #include "occaCOI.hpp"
 
 namespace occa {
@@ -109,28 +113,16 @@ namespace occa {
 
     std::stringstream command;
 
-    if(dev->dHandle->compilerEnvScript.size())
-      command << dev->dHandle->compilerEnvScript << " && ";
-
     command << dev->dHandle->compiler
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-            << " -x c++ -w -nodefaultlibs -fPIC -shared"
-#else
-            << " /TP /LD /D MC_CL_EXE"
-#endif
+            << " -o " << cachedBinary
+            << " -x c++ -w -nodefaultlibs -shared -fPIC"
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-            << " -o " << cachedBinary
-#else
-            << " /link /OUT:" << cachedBinary
-#endif
-            << std::endl;
+            << ' '    << iCachedBinary;
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
     const int compileError = system(sCommand.c_str());
 
@@ -240,6 +232,11 @@ namespace occa {
     handle = NULL;
     dev    = NULL;
     size = 0;
+
+    isTexture = false;
+    textureInfo.arg = NULL;
+    textureInfo.dim = 1;
+    textureInfo.w = textureInfo.h = textureInfo.d = 0;
   }
 
   template <>
@@ -247,6 +244,14 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.arg  = m.textureInfo.arg;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
   }
 
   template <>
@@ -254,6 +259,14 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.arg  = m.textureInfo.arg;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
 
     return *this;
   }
@@ -495,33 +508,33 @@ namespace occa {
 
   //---[ Device ]---------------------
   template <>
-  device_t<COI>::device_t(){
-    data            = NULL;
-    memoryAllocated = 0;
+  device_t<COI>::device_t() :
+    memoryUsed(0) {
+    data = NULL;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<COI>::device_t(int platform, int device){
-    data            = NULL;
-    memoryAllocated = 0;
+  device_t<COI>::device_t(int platform, int device) :
+    memoryUsed(0) {
+    data = NULL;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<COI>::device_t(const device_t<COI> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compilerFlags = d.compilerFlags;
 
@@ -663,20 +676,6 @@ namespace occa {
   void device_t<COI>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
   }
-  template <>
-  std::string& device_t<COI>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<COI>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<COI>::getCompilerFlags(){
-    return compilerFlags;
-  }
 
   template <>
   void device_t<COI>::flush(){}
@@ -788,6 +787,38 @@ namespace occa {
                                    1,
                                    &(data_.chiefID),
                                    (coiMemory*) mem->handle) );
+
+    return mem;
+  }
+
+  template <>
+  memory_v* device_t<COI>::talloc(const int dim, const occa::dim &dims,
+                                  void *source,
+                                  occa::formatType type, const int permissions){
+#warning "Textures not supported in COI yet"
+
+    memory_v *mem = new memory_t<COI>;
+
+    mem->dev  = dev;
+    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+    mem->textureInfo.dims = dims;
+
+#if   OCCA_OS == LINUX_OS
+    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, mem->size);
+#elif OCCA_OS == OSX_OS
+    mem->handle = ::malloc(mem->size);
+#else
+#  warning "Aligned memory not supported in Windows yet"
+    mem->handle = ::malloc(mem->size);
+#endif
+
+    ::memcpy(mem->handle, source, mem->size);
+
+    mem->textureInfo.arg = mem->handle;
+    mem->handle = &(mem->textureInfo);
 
     return mem;
   }

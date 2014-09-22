@@ -55,7 +55,9 @@
 #define occaLocalMemFence CLK_LOCAL_MEM_FENCE
 #define occaGlobalMemFence CLK_GLOBAL_MEM_FENCE
 
-#define occaBarrier(FENCE) barrier(FENCE)
+#define occaBarrier(FENCE)      barrier(FENCE)
+#define occaInnerBarrier(FENCE) barrier(FENCE)
+#define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue return
 //================================================
@@ -87,9 +89,17 @@
 
 
 //---[ Math ]-------------------------------------
+#define occaFabs       fabs
+#define occaFastFabs   fabs
+#define occaNativeFabs fabs
+
 #define occaSqrt       sqrt
 #define occaFastSqrt   half_sqrt
 #define occaNativeSqrt native_sqrt
+
+#define occaCbrt       cbrt
+#define occaFastCbrt   cbrt
+#define occaNativeCbrt cbrt
 
 #define occaSin       sin
 #define occaFastSin   half_sin
@@ -154,6 +164,11 @@
 
 
 //---[ Misc ]-------------------------------------
+#define occaParallelFor2
+#define occaParallelFor1
+#define occaParallelFor0
+#define occaParallelFor
+// - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
@@ -167,33 +182,82 @@
 
 
 //---[ Texture ]----------------------------------
+#define occaReadOnly  read_only
+#define occaWriteOnly write_only
+
 #define occaSampler(TEX) __occa__##TEX##__sampler__
 
-#define occaTexture1D(TEX) image1d_t TEX, occaConst sampler_t occaSampler(TEX),
-#define occaTexture2D(TEX) image2d_t TEX, occaConst sampler_t occaSampler(TEX),
+#if __OPENCL_VERSION__ < 120
+#  define occaTexture1D(TEX) __global void *TEX
+#else
+#  define occaTexture1D(TEX) image1d_t TEX, occaConst sampler_t occaSampler(TEX)
+#endif
 
-#define occaTexGet1D_int(TEX, X)    read_imagei(TEX, occaSampler(TEX), int2(X, 1))
-#define occaTexGet2D_int(TEX, X, Y) read_imagei(TEX, occaSampler(TEX), int2(X, Y))
+#define occaTexture2D(TEX) image2d_t TEX, occaConst sampler_t occaSampler(TEX)
 
-#define occaTexGet1D_uint(TEX, X)    read_imageui(TEX, occaSampler(TEX), int2(X, 1))
-#define occaTexGet2D_uint(TEX, X, Y) read_imageui(TEX, occaSampler(TEX), int2(X, Y))
+#define occaTexGet1D_int(TEX, X)    read_imagei(TEX, occaSampler(TEX), (int2) {X, 1}).x
+#define occaTexGet2D_int(TEX, X, Y) read_imagei(TEX, occaSampler(TEX), (int2) {X, Y}).x
 
-#define occaTexGet1D_float(TEX, X)    read_imagef(TEX, occaSampler(TEX), int2(X, 1))
-#define occaTexGet2D_float(TEX, X, Y) read_imagef(TEX, occaSampler(TEX), int2(X, Y))
+#define occaTexGet1D_int2(TEX, X)    read_imagei(TEX, occaSampler(TEX), (int2) {X, 1}).xy
+#define occaTexGet2D_int2(TEX, X, Y) read_imagei(TEX, occaSampler(TEX), (int2) {X, Y}).xy
 
-#define occaTexSet1D_int(TEX, VALUE, X)    write_imagei(TEX, occaSampler(TEX), int2(X, 1), VALUE)
-#define occaTexSet2D_int(TEX, VALUE, X, Y) write_imagei(TEX, occaSampler(TEX), int2(X, Y), VALUE)
+#define occaTexGet1D_int4(TEX, X)    read_imagei(TEX, occaSampler(TEX), (int2) {X, 1})
+#define occaTexGet2D_int4(TEX, X, Y) read_imagei(TEX, occaSampler(TEX), (int2) {X, Y})
 
-#define occaTexSet1D_uint(TEX, VALUE, X)    write_imageui(TEX, occaSampler(TEX), int2(X, 1), VALUE)
-#define occaTexSet2D_uint(TEX, VALUE, X, Y) write_imageui(TEX, occaSampler(TEX), int2(X, Y), VALUE)
+#define occaTexGet1D_uint(TEX, X)    read_imageui(TEX, occaSampler(TEX), (int2) {X, 1}).x
+#define occaTexGet2D_uint(TEX, X, Y) read_imageui(TEX, occaSampler(TEX), (int2) {X, Y}).x
 
-#define occaTexSet1D_float(TEX, VALUE, X)    write_imagef(TEX, occaSampler(TEX), int2(X, 1), VALUE)
-#define occaTexSet2D_float(TEX, VALUE, X, Y) write_imagef(TEX, occaSampler(TEX), int2(X, Y), VALUE)
+#define occaTexGet1D_uint2(TEX, X)    read_imageui(TEX, occaSampler(TEX), (int2) {X, 1}).xy
+#define occaTexGet2D_uint2(TEX, X, Y) read_imageui(TEX, occaSampler(TEX), (int2) {X, Y}).xy
 
-#define occaTexGet1D(TEX, TYPE, VALUE, X)    VALUE = occaTexGet1D_##TYPE(TEX, X)
+#define occaTexGet1D_uint4(TEX, X)    read_imageui(TEX, occaSampler(TEX), (int2) {X, 1})
+#define occaTexGet2D_uint4(TEX, X, Y) read_imageui(TEX, occaSampler(TEX), (int2) {X, Y})
+
+#define occaTexGet1D_float(TEX, X)    read_imagef(TEX, occaSampler(TEX), (int2) {X, 1}).x
+#define occaTexGet2D_float(TEX, X, Y) read_imagef(TEX, occaSampler(TEX), (int2) {X, Y}).x
+
+#define occaTexGet1D_float2(TEX, X)    read_imagef(TEX, occaSampler(TEX), (int2) {X, 1}).xy
+#define occaTexGet2D_float2(TEX, X, Y) read_imagef(TEX, occaSampler(TEX), (int2) {X, Y}).xy
+
+#define occaTexGet1D_float4(TEX, X)    read_imagef(TEX, occaSampler(TEX), (int2) {X, 1})
+#define occaTexGet2D_float4(TEX, X, Y) read_imagef(TEX, occaSampler(TEX), (int2) {X, Y})
+
+#define occaTexSet1D_int(TEX, VALUE, X)    write_imagei(TEX, (int2) {X, 1}, (int4) {VALUE, 0, 0, 0})
+#define occaTexSet2D_int(TEX, VALUE, X, Y) write_imagei(TEX, (int2) {X, Y}, (int4) {VALUE, 0, 0, 0})
+
+#define occaTexSet1D_int2(TEX, VALUE, X)    write_imagei(TEX, (int2) {X, 1}, (int4) {VALUE.x, VALUE.y, 0, 0})
+#define occaTexSet2D_int2(TEX, VALUE, X, Y) write_imagei(TEX, (int2) {X, Y}, (int4) {VALUE.x, VALUE.y, 0, 0})
+
+#define occaTexSet1D_int4(TEX, VALUE, X)    write_imagei(TEX, (int2) {X, 1}, VALUE)
+#define occaTexSet2D_int4(TEX, VALUE, X, Y) write_imagei(TEX, (int2) {X, Y}, VALUE)
+
+#define occaTexSet1D_uint(TEX, VALUE, X)    write_imageui(TEX, (int2) {X, 1}, (uint4) {VALUE, 0, 0, 0})
+#define occaTexSet2D_uint(TEX, VALUE, X, Y) write_imageui(TEX, (int2) {X, Y}, (uint4) {VALUE, 0, 0, 0})
+
+#define occaTexSet1D_uint2(TEX, VALUE, X)    write_imageui(TEX, (int2) {X, 1}, (uint4) {VALUE.x, VALUE.y, 0, 0})
+#define occaTexSet2D_uint2(TEX, VALUE, X, Y) write_imageui(TEX, (int2) {X, Y}, (uint4) {VALUE.x, VALUE.y, 0, 0})
+
+#define occaTexSet1D_uint4(TEX, VALUE, X)    write_imageui(TEX, (int2) {X, 1}, VALUE)
+#define occaTexSet2D_uint4(TEX, VALUE, X, Y) write_imageui(TEX, (int2) {X, Y}, VALUE)
+
+#define occaTexSet1D_float(TEX, VALUE, X)    write_imagef(TEX, (int2) {X, 1}, (float4) {VALUE, 0, 0, 0})
+#define occaTexSet2D_float(TEX, VALUE, X, Y) write_imagef(TEX, (int2) {X, Y}, (float4) {VALUE, 0, 0, 0})
+
+#define occaTexSet1D_float2(TEX, VALUE, X)    write_imagef(TEX, (int2) {X, 1}, (float4) {VALUE.x, VALUE.y, 0, 0})
+#define occaTexSet2D_float2(TEX, VALUE, X, Y) write_imagef(TEX, (int2) {X, Y}, (float4) {VALUE.x, VALUE.y, 0, 0})
+
+#define occaTexSet1D_float4(TEX, VALUE, X)    write_imagef(TEX, (int2) {X, 1}, VALUE)
+#define occaTexSet2D_float4(TEX, VALUE, X, Y) write_imagef(TEX, (int2) {X, Y}, VALUE)
+
+#if __OPENCL_VERSION__ < 120
+#  define occaTexGet1D(TEX, TYPE, VALUE, X) VALUE = ((TYPE*) TEX)[X]
+#  define occaTexSet1D(TEX, TYPE, VALUE, X) ((TYPE*) TEX)[X] = VALUE
+#else
+#  define occaTexGet1D(TEX, TYPE, VALUE, X) VALUE = occaTexGet1D_##TYPE(TEX, X)
+#  define occaTexSet1D(TEX, TYPE, VALUE, X) occaTexSet1D_##TYPE(TEX, VALUE, X)
+#endif
+
 #define occaTexGet2D(TEX, TYPE, VALUE, X, Y) VALUE = occaTexGet2D_##TYPE(TEX, X, Y)
-
-#define occaTexSet1D(TEX, TYPE, VALUE, X)    occaTexSet1D_##TYPE(TEX, VALUE, X)
 #define occaTexSet2D(TEX, TYPE, VALUE, X, Y) occaTexSet2D_##TYPE(TEX, VALUE, X, Y)
 //================================================
 

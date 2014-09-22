@@ -1,5 +1,8 @@
 #ifndef OCCA_COI_DEFINES_HEADER
 #define OCCA_COI_DEFINES_HEADER
+
+#include <stdint.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -69,6 +72,8 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaGlobalMemFence
 
 #define occaBarrier(FENCE)
+#define occaInnerBarrier(FENCE) continue
+#define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue continue
 //================================================
@@ -100,9 +105,17 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Math ]-------------------------------------
+#define occaFabs       fabs
+#define occaFastFabs   fabs
+#define occaNativeFabs fabs
+
 #define occaSqrt       sqrt
 #define occaFastSqrt   sqrt
 #define occaNativeSqrt sqrt
+
+#define occaCbrt       cbrt
+#define occaFastCbrt   cbrt
+#define occaNativeCbrt cbrt
 
 #define occaSin       sin
 #define occaFastSin   sin
@@ -167,6 +180,12 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Misc ]-------------------------------------
+#define occaParallelFor2 _Pragma("omp parallel for collapse(3) schedule(static)")
+#define occaParallelFor1 _Pragma("omp parallel for collapse(2) schedule(static)")
+#define occaParallelFor0 _Pragma("omp parallel for             schedule(static)")
+#define occaParallelFor  _Pragma("omp parallel for             schedule(static)")
+// - - - - - - - - - - 1 - - - - - - - - - - - - -
+#define occaUnroll3(N0 _Pragma(#N)
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
@@ -269,8 +288,12 @@ public:
 //---[ Texture ]----------------------------------
 struct occaTexture {
   void *data;
-  size_t w, h, d; // [W]idth, [H]eight, [D]epth
+  int dim;
+  uintptr_t w, h, d;
 };
+
+#define occaReadOnly  const
+#define occaWriteOnly
 
 #define occaTexture1D(TEX) occaTexture &TEX
 #define occaTexture2D(TEX) occaTexture &TEX

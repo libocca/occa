@@ -28,10 +28,6 @@ ifndef CXX
 	CXX = g++
 endif
 
-ifndef FC
-	FC = gfortran
-endif
-
 ifndef CXXFLAGS
 	ifeq ($(DEBUG), 1)
 		CXXFLAGS = -g
@@ -40,19 +36,8 @@ ifndef CXXFLAGS
 	endif
 endif
 
-ifndef FCFLAGS
-	ifeq ($(DEBUG), 1)
-		FCFLAGS = -g
-	else
-		FCFLAGS = -O3
-	endif
-endif
-
 compiler      = $(CXX)
 compilerFlags = $(CXXFLAGS)
-
-Fcompiler      = $(FC)
-FcompilerFlags = $(FCFLAGS)
 #=================================================
 
 
@@ -91,11 +76,9 @@ endif
 ifeq ($(usingICPC), 1)
 	Debug_Flags   = -g
 	Release_Flags = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
-	FcompilerModFlag = -module
 else
 	Debug_Flags   = -g
 	Release_Flags = -msse -O3 -ftree-vectorize -funroll-all-loops -ffast-math -Wno-unused-value
-	FcompilerModFlag = -J
 endif
 
 ifeq ($(OS),OSX)
@@ -119,8 +102,8 @@ ifeq ($(OS),LINUX)
 	CUDA_Flags    =
 	COI_Flags     =
 
-	links        += -lm -lrt -ldl
-	OpenGL_Links  = -L/usr/lib/fglrx/ -lGL -lX11
+	links        += -llapack -lblas -lm -lgfortran -lrt -ldl
+	OpenGL_Links  =  -L/usr/lib/fglrx/ -lGL -lX11
 	OpenCL_Links  = -lOpenCL
 	CUDA_Links    = -lcuda
 	COI_Links     = -lcoi_host
@@ -151,6 +134,9 @@ endif
 
 ifdef OCCA_OPENMP_ENABLED
 	OpenMP_Enabled = $(OCCA_OPENMP_ENABLED)
+ifeq ($(OCCA_OPENMP_ENABLED),1)
+	links += -fopenmp
+endif
 else
 	OpenMP_Enabled = openmpEnabled
 endif

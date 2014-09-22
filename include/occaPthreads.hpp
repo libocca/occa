@@ -1,5 +1,3 @@
-#if OCCA_PTHREADS_ENABLED
-
 #ifndef OCCA_PTHREADS_HEADER
 #define OCCA_PTHREADS_HEADER
 
@@ -29,12 +27,12 @@ namespace occa {
     int pThreadCount;
     int pinningInfo;
 
-    pthread_t tid[50];
+    pthread_t tid[OCCA_MAX_ARGS];
 
     int pendingJobs;
 
-    std::queue<PthreadLaunchHandle_t> kernelLaunch[50];
-    std::queue<PthreadKernelArg_t*> kernelArgs[50];
+    std::queue<PthreadLaunchHandle_t> kernelLaunch[OCCA_MAX_ARGS];
+    std::queue<PthreadKernelArg_t*> kernelArgs[OCCA_MAX_ARGS];
 
     pthread_mutex_t pendingJobsMutex, kernelMutex;
   };
@@ -192,13 +190,13 @@ namespace occa {
   void device_t<Pthreads>::getEnvironmentVariables();
 
   template <>
-  void device_t<Pthreads>::setCompiler(const std::string &compiler_);
+  void device_t<Pthreads>::setCompiler(const std::string &compiler);
 
   template <>
   void device_t<Pthreads>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_);
+  void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags);
 
   template <>
   void device_t<Pthreads>::flush();
@@ -233,6 +231,11 @@ namespace occa {
   template <>
   memory_v* device_t<Pthreads>::malloc(const uintptr_t bytes,
                                        void *source);
+
+  template <>
+  memory_v* device_t<Pthreads>::talloc(const int dim, const occa::dim &dims,
+                                       void *source,
+                                       occa::formatType type, const int permissions);
 
   template <>
   int device_t<Pthreads>::simdWidth();
@@ -286,7 +289,5 @@ namespace occa {
   }
   //==================================
 };
-
-#endif
 
 #endif

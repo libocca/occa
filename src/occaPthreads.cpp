@@ -1,5 +1,3 @@
-#if OCCA_PTHREADS_ENABLED
-
 #include "occaPthreads.hpp"
 
 namespace occa {
@@ -119,7 +117,7 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
     const int compileError = system(sCommand.c_str());
 
@@ -130,13 +128,25 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
 
     if(data_.dlHandle == NULL){
       releaseFile(cachedBinary);
       throw 1;
     }
+#else
+    data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
 
+    if(data_.dlHandle == NULL) {
+      DWORD errCode = GetLastError();
+      std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
+
+      throw 1;
+    }
+#endif
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
@@ -145,6 +155,14 @@ namespace occa {
       releaseFile(cachedBinary);
       throw 1;
     }
+#else
+    data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+
+    if(data_.dlHandle == NULL) {
+      fputs("unable to load function", stderr);
+      throw 1;
+    }
+#endif
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dev->dHandle)->data);
 
@@ -174,10 +192,21 @@ namespace occa {
 
     functionName = functionName_;
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
+#else
+    data_.dlHandle = LoadLibraryA(filename.c_str());
 
+    if(data_.dlHandle == NULL) {
+      DWORD errCode = GetLastError();
+      std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
+      throw 1;
+    }
+#endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
@@ -185,6 +214,14 @@ namespace occa {
       fputs(dlError, stderr);
       throw 1;
     }
+#else
+    data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
+
+    if(data_.dlHandle == NULL) {
+      fputs("unable to load function", stderr);
+      throw 1;
+    }
+#endif
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dev->dHandle)->data);
 
@@ -223,7 +260,11 @@ namespace occa {
     // [-] Fix later
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     dlclose(data_.dlHandle);
+#else
+    FreeLibrary((HMODULE) (data_.dlHandle));
+#endif
   }
   //==================================
 
@@ -234,6 +275,11 @@ namespace occa {
     handle = NULL;
     dev    = NULL;
     size = 0;
+
+    isTexture = false;
+    textureInfo.arg = NULL;
+    textureInfo.dim = 1;
+    textureInfo.w = textureInfo.h = textureInfo.d = 0;
   }
 
   template <>
@@ -241,6 +287,14 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.arg  = m.textureInfo.arg;
+    textureInfo.dim  = m.textureInfo.dim;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
   }
 
   template <>
@@ -248,6 +302,13 @@ namespace occa {
     handle = m.handle;
     dev    = m.dev;
     size   = m.size;
+
+    isTexture = m.isTexture;
+    textureInfo.arg  = m.textureInfo.arg;
+
+    textureInfo.w = m.textureInfo.w;
+    textureInfo.h = m.textureInfo.h;
+    textureInfo.d = m.textureInfo.d;
 
     return *this;
   }
@@ -257,119 +318,140 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::copyFrom(const void *source,
-                                    const uintptr_t bytes,
-                                    const uintptr_t offset){
+                                  const uintptr_t bytes,
+                                  const uintptr_t offset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    dev->finish();
+    void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    const void *srcPtr = source;
 
-    ::memcpy(((char*) handle) + offset, source, bytes_);
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::copyFrom(const memory_v *source,
-                                    const uintptr_t bytes,
-                                    const uintptr_t destOffset,
-                                    const uintptr_t srcOffset){
+                                  const uintptr_t bytes,
+                                  const uintptr_t destOffset,
+                                  const uintptr_t srcOffset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
     OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
 
-    dev->finish();
+    void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
+    const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
 
-    ::memcpy(((char*) handle)         + destOffset,
-             ((char*) source->handle) + srcOffset,
-             bytes_);
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::copyTo(void *dest,
-                                  const uintptr_t bytes,
-                                  const uintptr_t offset){
+                                const uintptr_t bytes,
+                                const uintptr_t offset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    dev->finish();
+    void *destPtr      = dest;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
 
-    ::memcpy(dest, ((char*) handle) + offset, bytes_);
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::copyTo(memory_v *dest,
-                                  const uintptr_t bytes,
-                                  const uintptr_t destOffset,
-                                  const uintptr_t srcOffset){
+                                const uintptr_t bytes,
+                                const uintptr_t destOffset,
+                                const uintptr_t srcOffset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    dev->finish();
+    void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
 
-    ::memcpy(((char*) dest->handle) + destOffset,
-             ((char*) handle)       + srcOffset,
-             bytes_);
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::asyncCopyFrom(const void *source,
-                                         const uintptr_t bytes,
-                                         const uintptr_t offset){
-    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
-
-    OCCA_CHECK((bytes_ + offset) <= size);
-
-    ::memcpy(((char*) handle) + offset, source , bytes_);
-  }
-
-  template <>
-  void memory_t<Pthreads>::asyncCopyFrom(const memory_v *source,
-                                         const uintptr_t bytes,
-                                         const uintptr_t destOffset,
-                                         const uintptr_t srcOffset){
-    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
-
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
-
-    ::memcpy(((char*) handle)         + destOffset,
-             ((char*) source->handle) + srcOffset,
-             bytes_);
-  }
-
-  template <>
-  void memory_t<Pthreads>::asyncCopyTo(void *dest,
                                        const uintptr_t bytes,
                                        const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
 
-    ::memcpy(dest, ((char*) handle) + offset, bytes_);
+    void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    const void *srcPtr = source;
+
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
-  void memory_t<Pthreads>::asyncCopyTo(memory_v *dest,
+  void memory_t<Pthreads>::asyncCopyFrom(const memory_v *source,
                                        const uintptr_t bytes,
                                        const uintptr_t destOffset,
                                        const uintptr_t srcOffset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
+    OCCA_CHECK((bytes_ + destOffset) <= size);
+    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+
+    void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
+    const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
+  }
+
+  template <>
+  void memory_t<Pthreads>::asyncCopyTo(void *dest,
+                                     const uintptr_t bytes,
+                                     const uintptr_t offset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
+
+    OCCA_CHECK((bytes_ + offset) <= size);
+
+    void *destPtr      = dest;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
+  }
+
+  template <>
+  void memory_t<Pthreads>::asyncCopyTo(memory_v *dest,
+                                     const uintptr_t bytes,
+                                     const uintptr_t destOffset,
+                                     const uintptr_t srcOffset){
+    const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
+
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
     OCCA_CHECK((bytes_ + destOffset) <= dest->size);
 
-    ::memcpy(((char*) dest->handle) + destOffset,
-             ((char*) handle)       + srcOffset,
-             bytes_);
+    void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
+    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
+
+    ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
   void memory_t<Pthreads>::free(){
-    delete (char*) handle;
+    if(isTexture)
+      ::free(textureInfo.arg);
+    else
+      ::free(handle);
+
     size = 0;
   }
   //==================================
@@ -378,24 +460,24 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<Pthreads>::device_t(){
-    data            = NULL;
-    memoryAllocated = 0;
+    data = NULL;
+    memoryUsed = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<Pthreads>::device_t(int platform, int device){
-    data            = NULL;
-    memoryAllocated = 0;
+    data       = NULL;
+    memoryUsed = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<Pthreads>::device_t(const device_t<Pthreads> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -403,8 +485,8 @@ namespace occa {
 
   template <>
   device_t<Pthreads>& device_t<Pthreads>::operator = (const device_t<Pthreads> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data       = d.data;
+    memoryUsed = d.memoryUsed;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -499,20 +581,6 @@ namespace occa {
   void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
   }
-  template <>
-  std::string& device_t<Pthreads>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<Pthreads>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<Pthreads>::getCompilerFlags(){
-    return compilerFlags;
-  }
 
   template <>
   void device_t<Pthreads>::flush(){}
@@ -580,12 +648,43 @@ namespace occa {
 #elif OCCA_OS == OSX_OS
     mem->handle = ::malloc(bytes);
 #else
-#  warning "Aligned memory not supported in Windows yet"
     mem->handle = ::malloc(bytes);
 #endif
 
     if(source != NULL)
       ::memcpy(mem->handle, source, bytes);
+
+    return mem;
+  }
+
+  template <>
+  memory_v* device_t<Pthreads>::talloc(const int dim, const occa::dim &dims,
+                                       void *source,
+                                       occa::formatType type, const int permissions){
+    memory_v *mem = new memory_t<Pthreads>;
+
+    mem->dev  = dev;
+    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+#if   OCCA_OS == LINUX_OS
+    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, mem->size);
+#elif OCCA_OS == OSX_OS
+    mem->handle = ::malloc(mem->size);
+#else
+    mem->handle = ::malloc(mem->size);
+#endif
+
+    ::memcpy(mem->handle, source, mem->size);
+
+    mem->textureInfo.arg = mem->handle;
+    mem->handle = &(mem->textureInfo);
 
     return mem;
   }
@@ -611,5 +710,3 @@ namespace occa {
 
 #include "operators/occaPthreadsKernelOperators.cpp"
 };
-
-#endif

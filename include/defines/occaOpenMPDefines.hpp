@@ -1,6 +1,8 @@
 #ifndef OCCA_OPENMP_DEFINES_HEADER
 #define OCCA_OPENMP_DEFINES_HEADER
 
+#include <stdint.h>
+
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
@@ -60,6 +62,8 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaGlobalMemFence
 
 #define occaBarrier(FENCE)
+#define occaInnerBarrier(FENCE) continue
+#define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue continue
 //================================================
@@ -69,17 +73,9 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaShared
 #define occaPointer
 #define occaVariable &
-#ifndef MC_CL_EXE
 #define occaRestrict __restrict__
 #define occaVolatile volatile
 #define occaAligned  __attribute__ ((aligned (OCCA_MEM_ALIGN)))
-#else
-// branch for Microsoft cl.exe - compiler: __restrict__ and __attribute__ ((aligned(...))) are not available there.
-#define occaRestrict 
-// David suggedted that volatile is not required!!
-#define occaVolatile      
-#define occaAligned  
-#endif
 #define occaFunctionShared
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaConst    const
@@ -92,21 +88,24 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaFunctionInfoArg const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
 #define occaFunctionInfo               occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#ifndef MC_CL_EXE
 #define occaKernel         extern "C"
-#else
-// branch for Microsoft cl.exe - compiler: each symbol that a dll (shared object) should export must be decorated with __declspec(dllexport)
-#define occaKernel         extern "C" __declspec(dllexport)
-#endif
 #define occaFunction
 #define occaDeviceFunction
 //================================================
 
 
 //---[ Math ]-------------------------------------
+#define occaFabs       fabs
+#define occaFastFabs   fabs
+#define occaNativeFabs fabs
+
 #define occaSqrt       sqrt
 #define occaFastSqrt   sqrt
 #define occaNativeSqrt sqrt
+
+#define occaCbrt       cbrt
+#define occaFastCbrt   cbrt
+#define occaNativeCbrt cbrt
 
 #define occaSin       sin
 #define occaFastSin   sin
@@ -171,6 +170,11 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 
 
 //---[ Misc ]-------------------------------------
+#define occaParallelFor2 _Pragma("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor1 _Pragma("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor0 _Pragma("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor  _Pragma("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+// - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
@@ -227,11 +231,7 @@ public:
     data[index()][0] += t;
     return data[index()][0];
   }
-#if MC_CL_EXE
-  inline TM operator+(const TM &t){
-    return data[index()][0] + t;
-  }
-#endif
+
   inline TM& operator -= (const TM &t){
     data[index()][0] -= t;
     return data[index()][0];
@@ -277,8 +277,13 @@ public:
 //---[ Texture ]----------------------------------
 struct occaTexture {
   void *data;
-  size_t w, h, d; // [W]idth, [H]eight, [D]epth
+  int dim;
+
+  uintptr_t w, h, d;
 };
+
+#define occaReadOnly  const
+#define occaWriteOnly
 
 #define occaTexture1D(TEX) occaTexture &TEX
 #define occaTexture2D(TEX) occaTexture &TEX

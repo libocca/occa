@@ -1,6 +1,7 @@
 #include "occaTimer.hpp"
+#include "occaTools.hpp"
 
-namespace occa{
+namespace occa {
   timerTraits::timerTraits(){
     timeTaken = 0.;
     selfTime = 0.;
@@ -10,14 +11,13 @@ namespace occa{
     treeDepth = 0;
   }
 
-
   timer::timer(){
 
     profileApplication = false;
     profileKernels = false;
     deviceInitialized = false;
 
-    const char *c_profilerOn = getenv("OCCA_PROFILE");
+    const char *c_profilerOn       = getenv("OCCA_PROFILE");
     const char *c_kernelProfilerOn = getenv("OCCA_KERNEL_PROFILE");
 
     if(c_profilerOn != NULL)
@@ -36,22 +36,6 @@ namespace occa{
     occaHandle = deviceHandle;
   }
 
-  double timer::getTime(){
-#ifndef WIN32
-    timeval t;
-    gettimeofday(&t, NULL);
-
-    return ((double) t.tv_sec + ((double) 1e-6)*t.tv_usec);
-    //  return clock()/(double) CLOCKS_PER_SEC;
-#else
-	LARGE_INTEGER timestamp, timerfreq;
-	QueryPerformanceFrequency(&timerfreq);
-	QueryPerformanceCounter(&timestamp);
-	
-	return ((double)(timestamp.QuadPart))/((double)(timerfreq.QuadPart));
-#endif
-  }
-
   void timer::tic(std::string key){
 
     if(profileApplication){
@@ -60,7 +44,7 @@ namespace occa{
       int treeDepth = keyStack.size() - 1;
       times[keyStack].treeDepth = treeDepth;
 
-      double currentTime = getTime();
+      double currentTime = occa::currentTime();
 
       timeStack.push(currentTime);
 
@@ -82,7 +66,9 @@ namespace occa{
   }
 
 
-  void timer::toc(std::string key){
+  double timer::toc(std::string key){
+
+    double elapsedTime = 0.;
 
     if(profileApplication){
       assert(key == keyStack.top());
@@ -92,17 +78,22 @@ namespace occa{
         throw 1;
       }
 
-      double currentTime = getTime();
+      double currentTime = occa::currentTime();
+      elapsedTime = (currentTime - timeStack.top());
 
-      times[keyStack].timeTaken += (currentTime - timeStack.top());
+      times[keyStack].timeTaken += elapsedTime;
       times[keyStack].numCalls++;
 
       keyStack.pop();
       timeStack.pop();
     }
+
+    return elapsedTime;
   }
 
-  void timer::toc(std::string key, occa::kernel &kernel){
+  double timer::toc(std::string key, occa::kernel &kernel){
+
+    double elapsedTime = 0.;
 
     if(profileApplication){
 
@@ -114,40 +105,50 @@ namespace occa{
       }
 
       if(profileKernels){
-	if(deviceInitialized)
-	  occaHandle.finish();
+        if(deviceInitialized)
+          occaHandle.finish();
 
-        double currentTime = getTime();
+        double currentTime = occa::currentTime();
+        elapsedTime = (currentTime - timeStack.top());
         // times[keyStack].timeTaken += kernel.timeTaken();
-        times[keyStack].timeTaken += (currentTime - timeStack.top());
+        times[keyStack].timeTaken += elapsedTime;
         times[keyStack].numCalls++;
       }
 
       keyStack.pop();
       timeStack.pop();
     }
+
+    return elapsedTime;
   }
 
 
-  void timer::toc(std::string key, double flops){
+  double timer::toc(std::string key, double flops){
+
+    double elapsedTime = 0.;
 
     if(profileApplication){
 
       assert(key == keyStack.top());
 
-      double currentTime = getTime();
+      double currentTime = occa::currentTime();
+      elapsedTime = (currentTime - timeStack.top());
 
-      times[keyStack].timeTaken += (currentTime - timeStack.top());
+      times[keyStack].timeTaken += elapsedTime;
       times[keyStack].numCalls++;
       times[keyStack].flopCount += flops;
 
       keyStack.pop();
       timeStack.pop();
     }
+
+    return elapsedTime;
   }
 
 
-  void timer::toc(std::string key, occa::kernel &kernel, double flops){
+  double timer::toc(std::string key, occa::kernel &kernel, double flops){
+
+    double elapsedTime = 0.;
 
     if(profileApplication){
 
@@ -155,9 +156,10 @@ namespace occa{
 
       if(profileKernels){
         occaHandle.finish();
-        double currentTime = getTime();
+        double currentTime = occa::currentTime();
+        elapsedTime = (currentTime - timeStack.top());
         // times[keyStack].timeTaken += kernel.timeTaken();
-        times[keyStack].timeTaken += (currentTime - timeStack.top());
+        times[keyStack].timeTaken += elapsedTime;
         times[keyStack].numCalls++;
         times[keyStack].flopCount += flops;
       }
@@ -165,17 +167,22 @@ namespace occa{
       keyStack.pop();
       timeStack.pop();
     }
+
+    return elapsedTime;
   }
 
-  void timer::toc(std::string key, double flops, double bw){
+  double timer::toc(std::string key, double flops, double bw){
+
+    double elapsedTime = 0.;
 
     if(profileApplication){
 
       assert(key == keyStack.top());
 
-      double currentTime = getTime();
+      double currentTime = occa::currentTime();
+      elapsedTime = (currentTime - timeStack.top());
 
-      times[keyStack].timeTaken += (currentTime - timeStack.top());
+      times[keyStack].timeTaken += elapsedTime;
       times[keyStack].numCalls++;
       times[keyStack].flopCount += flops;
       times[keyStack].bandWidthCount += bw;
@@ -185,11 +192,15 @@ namespace occa{
       keyStack.pop();
       timeStack.pop();
     }
+
+    return elapsedTime;
   }
 
 
-  void timer::toc(std::string key, occa::kernel &kernel,
-                  double flops, double bw){
+  double timer::toc(std::string key, occa::kernel &kernel,
+                    double flops, double bw){
+
+    double elapsedTime = 0.;
 
     if(profileApplication){
 
@@ -197,9 +208,10 @@ namespace occa{
 
       if(profileKernels){
         occaHandle.finish();
-        double currentTime = getTime();
+        double currentTime = occa::currentTime();
+        elapsedTime = (currentTime - timeStack.top());
         // times[keyStack].timeTaken += kernel.timeTaken();
-        times[keyStack].timeTaken += (currentTime - timeStack.top());
+        times[keyStack].timeTaken += elapsedTime;
         times[keyStack].numCalls++;
         times[keyStack].flopCount += flops;
         times[keyStack].bandWidthCount += bw;
@@ -210,6 +222,8 @@ namespace occa{
       keyStack.pop();
       timeStack.pop();
     }
+
+    return elapsedTime;
   }
 
   double timer::print_recursively(std::vector<std::string> &childs,
@@ -410,32 +424,31 @@ namespace occa{
     globalTimer.tic(key);
   }
 
-  void toc(std::string key){
-    globalTimer.toc(key);
+  double toc(std::string key){
+    return globalTimer.toc(key);
   }
 
-  void toc(std::string key, occa::kernel &kernel){
-    globalTimer.toc(key, kernel);
+  double toc(std::string key, occa::kernel &kernel){
+    return globalTimer.toc(key, kernel);
   }
 
-  void toc(std::string key, double fp){
-    globalTimer.toc(key, fp);
+  double toc(std::string key, double fp){
+    return globalTimer.toc(key, fp);
   }
 
-  void toc(std::string key, occa::kernel &kernel, double fp){
-    globalTimer.toc(key, kernel, fp);
+  double toc(std::string key, occa::kernel &kernel, double fp){
+    return globalTimer.toc(key, kernel, fp);
   }
 
-  void toc(std::string key, double fp, double bw){
-    globalTimer.toc(key, fp, bw);
+  double toc(std::string key, double fp, double bw){
+    return globalTimer.toc(key, fp, bw);
   }
 
-  void toc(std::string key, occa::kernel &kernel, double fp, double bw){
-    globalTimer.toc(key, kernel, fp, bw);
+  double toc(std::string key, occa::kernel &kernel, double fp, double bw){
+    return globalTimer.toc(key, kernel, fp, bw);
   }
 
   void printTimer(){
     globalTimer.printTimer();
   }
-
 }

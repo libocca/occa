@@ -54,7 +54,9 @@
 #define occaLocalMemFence
 #define occaGlobalMemFence
 
-#define occaBarrier(FENCE) __syncthreads()
+#define occaBarrier(FENCE)      __syncthreads()
+#define occaInnerBarrier(FENCE) __syncthreads()
+#define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue return
 //================================================
@@ -86,6 +88,15 @@
 
 
 //---[ Math ]-------------------------------------
+__device__ inline float  occaCuda_fabs(const float x){      return fabsf(x); }
+__device__ inline double occaCuda_fabs(const double x){     return fabs(x);  }
+__device__ inline float  occaCuda_fastFabs(const float x){  return fabsf(x); }
+__device__ inline double occaCuda_fastFabs(const double x){ return fabs(x);  }
+
+#define occaFabs       occaCuda_fabs
+#define occaFastFabs   occaCuda_fastFabs
+#define occaNativeFabs occaFabs
+
 __device__ inline float  occaCuda_sqrt(const float x){      return sqrtf(x);      }
 __device__ inline double occaCuda_sqrt(const double x){     return sqrt(x);       }
 __device__ inline float  occaCuda_fastSqrt(const float x){  return __fsqrt_rn(x); }
@@ -94,6 +105,15 @@ __device__ inline double occaCuda_fastSqrt(const double x){ return __dsqrt_rn(x)
 #define occaSqrt       occaCuda_sqrt
 #define occaFastSqrt   occaCuda_fastSqrt
 #define occaNativeSqrt occaSqrt
+
+__device__ inline float  occaCuda_cbrt(const float x){      return cbrtf(x); }
+__device__ inline double occaCuda_cbrt(const double x){     return cbrt(x);  }
+__device__ inline float  occaCuda_fastCbrt(const float x){  return cbrtf(x); }
+__device__ inline double occaCuda_fastCbrt(const double x){ return cbrt(x);  }
+
+#define occaCbrt       occaCuda_cbrt
+#define occaFastCbrt   occaCuda_fastCbrt
+#define occaNativeCbrt occaCbrt
 
 __device__ inline float  occaCuda_sin(const float x){      return sinf(x);   }
 __device__ inline double occaCuda_sin(const double x){     return sin(x);    }
@@ -233,6 +253,11 @@ __device__ inline double occaCuda_fastLog10(const double x){ return log10(x);   
 
 
 //---[ Misc ]-------------------------------------
+#define occaParallelFor2
+#define occaParallelFor1
+#define occaParallelFor0
+#define occaParallelFor
+// - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) _Pragma(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
@@ -246,16 +271,19 @@ __device__ inline double occaCuda_fastLog10(const double x){ return log10(x);   
 
 
 //---[ Texture ]----------------------------------
+#define occaReadOnly  const
+#define occaWriteOnly
+
 #define occaSampler(TEX) __occa__##TEX##__sampler__
 
-#define occaTexture1D(TEX) cudaSurfaceObject_t TEX, occaConst cudaSurfaceBoundaryMode occaSampler(TEX),
-#define occaTexture2D(TEX) cudaSurfaceObject_t TEX, occaConst cudaSurfaceBoundaryMode occaSampler(TEX),
+#define occaTexture1D(TEX) cudaSurfaceObject_t TEX, int occaSampler(TEX)
+#define occaTexture2D(TEX) cudaSurfaceObject_t TEX, int occaSampler(TEX)
 
-#define occaTexGet1D(TEX, TYPE, VALUE, X)    surf1Dread(&(VALUE), TEX, X   , occaSampler(TEX))
-#define occaTexGet2D(TEX, TYPE, VALUE, X, Y) surf2Dread(&(VALUE), TEX, X, Y, occaSampler(TEX))
+#define occaTexGet1D(TEX, TYPE, VALUE, X)    surf1Dread(&(VALUE), TEX, X*sizeof(TYPE)   , (cudaSurfaceBoundaryMode) occaSampler(TEX))
+#define occaTexGet2D(TEX, TYPE, VALUE, X, Y) surf2Dread(&(VALUE), TEX, X*sizeof(TYPE), Y, (cudaSurfaceBoundaryMode) occaSampler(TEX))
 
-#define occaTexSet1D(TEX, TYPE, VALUE, X)    surf1Dwrite(VALUE, TEX, X   , occaSampler(TEX))
-#define occaTexSet2D(TEX, TYPE, VALUE, X, Y) surf2Dwrite(VALUE, TEX, X, Y, occaSampler(TEX))
+#define occaTexSet1D(TEX, TYPE, VALUE, X)    surf1Dwrite(VALUE, TEX, X*sizeof(TYPE)   , (cudaSurfaceBoundaryMode) occaSampler(TEX))
+#define occaTexSet2D(TEX, TYPE, VALUE, X, Y) surf2Dwrite(VALUE, TEX, X*sizeof(TYPE), Y, (cudaSurfaceBoundaryMode) occaSampler(TEX))
 //================================================
 
 #endif

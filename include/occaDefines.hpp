@@ -16,9 +16,8 @@
 #endif
 
 #ifndef OCCA_OS
-#  ifdef WIN32 || WIN64
+#  if defined(WIN32) || defined(WIN64)
 #    define OCCA_OS WINDOWS_OS
-#    define __PRETTY_FUNCTION__    __FUNCTION__
 #  elif __APPLE__
 #    define OCCA_OS OSX_OS
 #  else
@@ -73,17 +72,19 @@
 #define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)       \
   inline kernelArg(const TYPE &arg_){           \
     arg.TYPE##_ = arg_;                         \
-      size = sizeof(TYPE);                      \
+    size = sizeof(TYPE);                        \
                                                 \
-      pointer = false;                          \
+    pointer    = false;                         \
+    hasTwoArgs = false;                         \
   }
 
 #define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
   inline kernelArg(const TYPE &arg_){                   \
     arg.ALIAS##_ = arg_;                                \
-      size = sizeof(TYPE);                              \
+    size = sizeof(TYPE);                                \
                                                         \
-      pointer = false;                                  \
+    pointer    = false;                                 \
+    hasTwoArgs = false;                                 \
   }
 
 #define OCCA_EXTRACT_DATA(MODE, CLASS)                          \
@@ -117,10 +118,10 @@
                 << "    Message : " << _str << '\n';                    \
       throw 1;                                                          \
     }                                                                   \
-  } while(0);
+  } while(0)
 
 #else
-#  define OCCA_CL_CHECK( _str , _statement ) do { _statement; } while(0);
+#  define OCCA_CL_CHECK( _str , _statement ) do { _statement; } while(0)
 #endif
 //======================================
 
@@ -139,9 +140,9 @@
                 << "    Message : " << _str << '\n';                    \
       throw 1;                                                          \
     }                                                                   \
-  } while(0);
+  } while(0)
 #else
-#  define OCCA_CUDA_CHECK( _str , _statement ) do { _statement; } while(0);
+#  define OCCA_CUDA_CHECK( _str , _statement ) do { _statement; } while(0)
 #endif
 //======================================
 

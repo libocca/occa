@@ -3,21 +3,16 @@
 
 #include "occaBase.hpp"
 
-#include<iostream>
-#include<fstream>
-#include<assert.h>
-#include<vector>
-#include<stack>
-#include<map>
-#include<iomanip>
-#include<utility>
-#include<algorithm>
-#ifndef WIN32
-#  include <sys/time.h>
-#else
-#  undef UNICODE
-#  include <windows.h>
-#endif
+#include <iostream>
+#include <fstream>
+#include <assert.h>
+#include <vector>
+#include <stack>
+#include <map>
+#include <iomanip>
+#include <utility>
+#include <algorithm>
+#include <sys/time.h>
 
 namespace occa {
 
@@ -53,27 +48,23 @@ namespace occa {
 
     std::map<std::stack<std::string>, timerTraits> times;
 
-    double getTime();
-
     void tic(std::string key);
 
-    void toc(std::string key);
+    double toc(std::string key);
 
-    void toc(std::string key, double flops);
+    double toc(std::string key, double flops);
 
-    void toc(std::string key, occa::kernel &kernel);
+    double toc(std::string key, occa::kernel &kernel);
 
-    void toc(std::string key, occa::kernel &kernel, double flops);
+    double toc(std::string key, occa::kernel &kernel, double flops);
 
-    void toc(std::string key, double flops, double bw);
+    double toc(std::string key, double flops, double bw);
 
-    void toc(std::string key, occa::kernel &kernel, double flops, double bw);
+    double toc(std::string key, occa::kernel &kernel, double flops, double bw);
 
     double print_recursively(std::vector<std::string> &childs,
                              double parentTime,
                              double overallTime);
-
-
 
     // struct myclass {
     //   bool operator() (std::pair<std::string, timerTraits> &a,
@@ -95,20 +86,19 @@ namespace occa {
 
   void tic(std::string key);
 
-  void toc(std::string key);
+  double toc(std::string key);
 
-  void toc(std::string key, occa::kernel &kernel);
+  double toc(std::string key, occa::kernel &kernel);
 
-  void toc(std::string key, double fp);
+  double toc(std::string key, double fp);
 
-  void toc(std::string key, occa::kernel &kernel, double fp);
+  double toc(std::string key, occa::kernel &kernel, double fp);
 
-  void toc(std::string key, double fp, double bw);
+  double toc(std::string key, double fp, double bw);
 
-  void toc(std::string key, occa::kernel &kernel, double fp, double bw);
+  double toc(std::string key, occa::kernel &kernel, double fp, double bw);
 
   void printTimer();
-
 }
 
 #endif

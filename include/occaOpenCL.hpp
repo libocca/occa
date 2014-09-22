@@ -63,6 +63,11 @@ namespace occa {
 
     occa::deviceInfo deviceInfo(int pID, int dID);
   };
+
+  extern const cl_channel_type clFormats[8];
+
+  template <>
+  void* formatType::format<occa::OpenCL>() const;
   //==================================
 
 
@@ -181,13 +186,13 @@ namespace occa {
   void device_t<OpenCL>::getEnvironmentVariables();
 
   template <>
-  void device_t<OpenCL>::setCompiler(const std::string &compiler_);
+  void device_t<OpenCL>::setCompiler(const std::string &compiler);
 
   template <>
   void device_t<OpenCL>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags_);
+  void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags);
 
   template <>
   void device_t<OpenCL>::flush();
@@ -219,6 +224,11 @@ namespace occa {
   template <>
   memory_v* device_t<OpenCL>::malloc(const uintptr_t bytes,
                                      void *source);
+
+  template <>
+  memory_v* device_t<OpenCL>::talloc(const int dim, const occa::dim &dims,
+                                     void *source,
+                                     occa::formatType type, const int permissions);
 
   template <>
   void device_t<OpenCL>::free();

@@ -159,11 +159,16 @@ def clOperatorDefinition(N):
 
     occa::dim fullOuter = outer*inner;
 
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, 0, sizeof(void*), NULL));
+    int argPos = 0;
 
-    """ + '\n\n    '.join(["""OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [{1}]",
-                  clSetKernelArg(kernel_, {1}, arg{0}.size, arg{0}.data()));""".format(n, n + 1) for n in xrange(N)]) + """
+    OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [0]",
+                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+
+    """ + '\n\n    '.join(["""OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [" << argPos << "]",
+                  clSetKernelArg(kernel_, argPos++, arg{0}.size, arg{0}.data()));
+    if(arg{0}.hasTwoArgs)
+      OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Texture Kernel Argument for [" << (argPos - 1) << "]",
+                    clSetKernelArg(kernel_, argPos++, sizeof(void*), arg{0}.arg2.void_));""".format(n) for n in xrange(N)]) + """
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
                   clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
@@ -180,9 +185,15 @@ def cudaOperatorDefinition(N):
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
+    int argCount = 0;
 
-    void *args[""" + str(N + 1) + """] = {&occaKernelInfoArgs,
-                        """ + ',\n                        '.join(['arg{0}.data()'.format(n) for n in xrange(N)]) + """};
+    void *args[""" + str(2 * N) + """];
+
+    args[argCount++] = &occaKernelInfoArgs;
+
+    """ + '\n    '.join([('args[argCount++] = arg{0}.pointer ? (arg{0}.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg{0}.arg.void_)->surface) : arg{0}.arg.void_) : (void*) &arg{0}.arg;\n    ' + \
+                          'if(arg{0}.hasTwoArgs)\n    '             + \
+                          '  args[argCount++] = arg{0}.arg2.void_;').format(n) for n in xrange(N)]) + """
 
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
@@ -243,35 +254,35 @@ operatorModeDefinition = { 'Pthreads' : pthreadOperatorDefinition,
                            'CUDA'     : cudaOperatorDefinition,
                            'COI'      : coiOperatorDefinition }
 
-hpp = open('./tmp/includes/occaVirtualOperatorDeclarations.hpp', 'w')
+hpp = open('../include/operators/occaVirtualOperatorDeclarations.hpp', 'w')
 hpp.write(virtualOperatorDeclarations(maxN));
 hpp.close()
 
-hpp = open('./tmp/includes/occaOperatorDeclarations.hpp', 'w')
+hpp = open('../include/operators/occaOperatorDeclarations.hpp', 'w')
 hpp.write(operatorDeclarations('Base', maxN));
 hpp.close()
 
-hpp = open('./tmp/includes/occaFunctionPointerTypeDefs.hpp', 'w')
+hpp = open('../include/operators/occaFunctionPointerTypeDefs.hpp', 'w')
 hpp.write(functionPointerTypeDefs(maxN));
 hpp.close()
 
-hpp = open('./tmp/includes/occaCOIFunctionPointerTypeDefs.hpp', 'w')
+hpp = open('../include/operators/occaCOIFunctionPointerTypeDefs.hpp', 'w')
 hpp.write(coiFunctionPointerTypeDefs(maxN));
 hpp.close()
 
-hpp = open('./tmp/src/occaOperatorDefinitions.cpp', 'w')
+hpp = open('../src/operators/occaOperatorDefinitions.cpp', 'w')
 hpp.write(operatorDefinitions('Base', maxN));
 hpp.close()
 
-hpp = open('./tmp/src/occaRunFromArguments.cpp', 'w')
+hpp = open('../src/operators/occaRunFromArguments.cpp', 'w')
 hpp.write(runFromArguments(maxN));
 hpp.close()
 
 for mode in operatorModeDefinition:
-    hpp = open('./tmp/includes/occa' + mode + 'KernelOperators.hpp', 'w')
+    hpp = open('../include/operators/occa' + mode + 'KernelOperators.hpp', 'w')
     hpp.write(operatorDeclarations(mode, maxN));
     hpp.close()
 
-    cpp = open('./tmp/src/occa' + mode + 'KernelOperators.cpp', 'w')
+    cpp = open('../src/operators/occa' + mode + 'KernelOperators.cpp', 'w')
     cpp.write(operatorDefinitions(mode, maxN));
     cpp.close()
