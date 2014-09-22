@@ -1,5 +1,6 @@
-#ifndef OCCA_PTHREADS_HEADER
-#define OCCA_PTHREADS_HEADER
+#if OCCA_PTHREADS_ENABLED
+#  ifndef OCCA_PTHREADS_HEADER
+#  define OCCA_PTHREADS_HEADER
 
 #include <sys/sysctl.h>
 #include <sys/types.h>
@@ -190,13 +191,22 @@ namespace occa {
   void device_t<Pthreads>::getEnvironmentVariables();
 
   template <>
-  void device_t<Pthreads>::setCompiler(const std::string &compiler);
+  void device_t<Pthreads>::setCompiler(const std::string &compiler_);
 
   template <>
   void device_t<Pthreads>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags);
+  void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_);
+
+  template <>
+  std::string& device_t<Pthreads>::getCompiler();
+
+  template <>
+  std::string& device_t<Pthreads>::getCompilerEnvScript();
+
+  template <>
+  std::string& device_t<Pthreads>::getCompilerFlags();
 
   template <>
   void device_t<Pthreads>::flush();
@@ -290,4 +300,5 @@ namespace occa {
   //==================================
 };
 
+#  endif
 #endif

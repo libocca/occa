@@ -28,6 +28,10 @@ ifndef CXX
 	CXX = g++
 endif
 
+ifndef FC
+	FC = gfortran
+endif
+
 ifndef CXXFLAGS
 	ifeq ($(DEBUG), 1)
 		CXXFLAGS = -g
@@ -36,8 +40,19 @@ ifndef CXXFLAGS
 	endif
 endif
 
+ifndef FCFLAGS
+	ifeq ($(DEBUG), 1)
+		FCFLAGS = -g
+	else
+		FCFLAGS = -O3
+	endif
+endif
+
 compiler      = $(CXX)
 compilerFlags = $(CXXFLAGS)
+
+Fcompiler      = $(FC)
+FcompilerFlags = $(FCFLAGS)
 #=================================================
 
 
@@ -74,11 +89,13 @@ endif
 
 #---[ OS-Based Dependencies ]---------------------
 ifeq ($(usingICPC), 1)
-	Debug_Flags   = -g
-	Release_Flags = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
+	Debug_Flags      = -g
+	Release_Flags    = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
+	FcompilerModFlag = -module
 else
-	Debug_Flags   = -g
-	Release_Flags = -msse -O3 -ftree-vectorize -funroll-all-loops -ffast-math -Wno-unused-value
+	Debug_Flags      = -g
+	Release_Flags    = -msse -O3 -ftree-vectorize -funroll-all-loops -ffast-math -Wno-unused-value
+	FcompilerModFlag = -J
 endif
 
 ifeq ($(OS),OSX)
@@ -102,7 +119,7 @@ ifeq ($(OS),LINUX)
 	CUDA_Flags    =
 	COI_Flags     =
 
-	links        += -llapack -lblas -lm -lgfortran -lrt -ldl
+	links        += -lm -lrt -ldl
 	OpenGL_Links  =  -L/usr/lib/fglrx/ -lGL -lX11
 	OpenCL_Links  = -lOpenCL
 	CUDA_Links    = -lcuda
@@ -114,13 +131,13 @@ ifeq ($(OS),WINDOWS)
 	OpenGL_Flags  =
 	OpenCL_Flags  =
 	CUDA_Flags    =
-	COI_Flags    =
+	COI_Flags     =
 
 	links        +=
 	OpenGL_Links  =
 	OpenCL_Links  =
 	CUDA_Links    =
-	COI_Links    =
+	COI_Links     =
 endif
 #=================================================
 

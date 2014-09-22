@@ -117,7 +117,7 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
     const int compileError = system(sCommand.c_str());
 
@@ -460,24 +460,24 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<Pthreads>::device_t(){
-    data = NULL;
-    memoryUsed = 0;
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<Pthreads>::device_t(int platform, int device){
-    data       = NULL;
-    memoryUsed = 0;
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<Pthreads>::device_t(const device_t<Pthreads> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -485,8 +485,8 @@ namespace occa {
 
   template <>
   device_t<Pthreads>& device_t<Pthreads>::operator = (const device_t<Pthreads> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -580,6 +580,21 @@ namespace occa {
   template <>
   void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<Pthreads>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<Pthreads>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<Pthreads>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>

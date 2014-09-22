@@ -113,16 +113,28 @@ namespace occa {
 
     std::stringstream command;
 
+    if(dev->dHandle->compilerEnvScript.size())
+      command << dev->dHandle->compilerEnvScript << " && ";
+
     command << dev->dHandle->compiler
-            << " -o " << cachedBinary
-            << " -x c++ -w -nodefaultlibs -shared -fPIC"
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+            << " -x c++ -w -fPIC -shared"
+#else
+            << " /TP /LD /D MC_CL_EXE"
+#endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary;
+            << ' '    << iCachedBinary
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+            << " -o " << cachedBinary
+#else
+            << " /link /OUT:" << cachedBinary
+#endif
+            << std::endl;
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
     const int compileError = system(sCommand.c_str());
 
@@ -508,33 +520,33 @@ namespace occa {
 
   //---[ Device ]---------------------
   template <>
-  device_t<COI>::device_t() :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<COI>::device_t() {
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<COI>::device_t(int platform, int device) :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<COI>::device_t(int platform, int device) {
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<COI>::device_t(const device_t<COI> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
 
@@ -675,6 +687,21 @@ namespace occa {
   template <>
   void device_t<COI>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<COI>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<COI>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<COI>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>

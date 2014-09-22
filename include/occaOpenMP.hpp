@@ -4,12 +4,17 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
-#include <dlfcn.h>
 #include <fcntl.h>
 
 #include "occaBase.hpp"
 
 #include "occaKernelDefines.hpp"
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  include <dlfcn.h>
+#else
+#  include <windows.h>
+#endif
 
 namespace occa {
   //---[ Data Structs ]---------------
@@ -131,13 +136,22 @@ namespace occa {
   void device_t<OpenMP>::getEnvironmentVariables();
 
   template <>
-  void device_t<OpenMP>::setCompiler(const std::string &compiler);
+  void device_t<OpenMP>::setCompiler(const std::string &compiler_);
 
   template <>
   void device_t<OpenMP>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags);
+  void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_);
+
+  template <>
+  std::string& device_t<OpenMP>::getCompiler();
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerEnvScript();
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerFlags();
 
   template <>
   void device_t<OpenMP>::flush();

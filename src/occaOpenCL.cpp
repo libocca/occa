@@ -882,33 +882,33 @@ namespace occa {
   }
 
   template <>
-  device_t<OpenCL>::device_t() :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<OpenCL>::device_t() {
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<OpenCL>::device_t(int platform, int device) :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<OpenCL>::device_t(int platform, int device){
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<OpenCL>& device_t<OpenCL>::operator = (const device_t<OpenCL> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compilerFlags = d.compilerFlags;
 
@@ -959,6 +959,21 @@ namespace occa {
   template <>
   void device_t<OpenCL>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<OpenCL>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<OpenCL>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<OpenCL>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>

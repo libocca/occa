@@ -7,6 +7,9 @@
 #include <sys/stat.h>
 #include <string.h>
 #include <errno.h>
+#include <assert.h>
+
+#include "occaDefines.hpp"
 
 #if   OCCA_OS == LINUX_OS
 #  include <sys/time.h>
@@ -15,7 +18,9 @@
 #  include <CoreServices/CoreServices.h>
 #  include <mach/mach_time.h>
 #else
+#  undef UNICODE
 #  include <windows.h>
+#  include <string>
 #endif
 
 namespace occa {

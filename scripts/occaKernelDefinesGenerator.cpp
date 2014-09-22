@@ -7,6 +7,12 @@
 
 inline std::string readFile(const std::string &filename){
   std::ifstream fs(filename.c_str());
+
+  if(!fs) {
+	  std::cerr << "unable to open file " << filename;
+	  throw 1;
+  }
+
   return std::string(std::istreambuf_iterator<char>(fs),
                      std::istreambuf_iterator<char>());
 }
@@ -16,14 +22,14 @@ inline std::string saveFileToVariable(std::string filename,
                                       int &chars,
                                       std::string indent = ""){
   std::stringstream occaDeviceDefines;
-  occaDeviceDefines << "#define OCCA_USING_CPU 0\n"
-                    << "#define OCCA_USING_GPU 0\n"
-                    << '\n'
-                    << "#define OCCA_USING_PTHREADS 0\n"
-                    << "#define OCCA_USING_OPENMP   0\n"
-                    << "#define OCCA_USING_OPENCL   0\n"
-                    << "#define OCCA_USING_CUDA     0\n"
-                    << "#define OCCA_USING_COI      0\n";
+  occaDeviceDefines << "#define OCCA_USING_CPU 0" << std::endl
+                    << "#define OCCA_USING_GPU 0" << std::endl
+                    << '' << std::endl
+                    << "#define OCCA_USING_PTHREADS 0" << std::endl
+                    << "#define OCCA_USING_OPENMP   0" << std::endl
+                    << "#define OCCA_USING_OPENCL   0" << std::endl
+                    << "#define OCCA_USING_CUDA     0" << std::endl
+                    << "#define OCCA_USING_COI      0" << std::endl;
 
     std::string fileContents = occaDeviceDefines.str() + readFile(filename);
   chars = fileContents.size();
@@ -48,10 +54,10 @@ inline std::string saveFileToVariable(std::string filename,
     ss << std::hex << std::setw(4) << (int) fileContents[i] << ", ";
 
     if((i % 8) == 7)
-      ss << '\n' << indent << tab;
+      ss << std::endl << indent << tab;
   }
 
-  ss << std::hex << std::setw(4) << 0 << "};\n";
+  ss << std::hex << std::setw(4) << 0 << "};" << std::endl;
 
   return ss.str();
 }
@@ -104,27 +110,27 @@ int main(int argc, char **argv){
   std::ofstream fs;
   fs.open(occaKernelDefinesHeader.c_str());
 
-  fs << ns << '\n'
-     << "    extern char occaPthreadsDefines[" << ptChars << "];\n"
-     << "    extern char occaOpenMPDefines[" << mpChars  << "];\n"
-     << "    extern char occaOpenCLDefines[" << clChars  << "];\n"
-     << "    extern char occaCUDADefines["   << cuChars  << "];\n"
-     << "    extern char occaCOIDefines["   << coiChars << "];\n"
-     << "    extern char occaCOIMain["   << coiMainChars << "];\n"
-     << "}\n";
+  fs << ns << std::endl
+     << "    extern char occaPthreadsDefines[" << ptChars << "];" << std::endl
+     << "    extern char occaOpenMPDefines[" << mpChars  << "];"  << std::endl
+     << "    extern char occaOpenCLDefines[" << clChars  << "];"  << std::endl
+     << "    extern char occaCUDADefines["   << cuChars  << "];"  << std::endl
+     << "    extern char occaCOIDefines["   << coiChars << "];"   << std::endl
+     << "    extern char occaCOIMain["   << coiMainChars << "];"  << std::endl
+     << "}" << std::endl;
 
   fs.close();
 
   fs.open(occaKernelDefinesSource.c_str());
 
-  fs << ns << '\n'
-     << pt << '\n'
-     << mp << '\n'
-     << cl << '\n'
-     << cu << '\n'
-     << coi << '\n'
-     << coiMain << '\n'
-     << "}\n";
+  fs << ns      << std::endl
+     << pt      << std::endl
+     << mp      << std::endl
+     << cl      << std::endl
+     << cu      << std::endl
+     << coi     << std::endl
+     << coiMain << std::endl
+     << "}"     << std::endl;
 
   fs.close();
 }

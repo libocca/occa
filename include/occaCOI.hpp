@@ -168,13 +168,22 @@ namespace occa {
   void device_t<COI>::getEnvironmentVariables();
 
   template <>
-  void device_t<COI>::setCompiler(const std::string &compiler);
+  void device_t<COI>::setCompiler(const std::string &compiler_);
 
   template <>
   void device_t<COI>::setCompilerEnvScript(const std::string &compilerEnvScript_);
 
   template <>
-  void device_t<COI>::setCompilerFlags(const std::string &compilerFlags);
+  void device_t<COI>::setCompilerFlags(const std::string &compilerFlags_);
+
+  template <>
+  std::string& device_t<COI>::getCompiler();
+
+  template <>
+  std::string& device_t<COI>::getCompilerEnvScript();
+
+  template <>
+  std::string& device_t<COI>::getCompilerFlags();
 
   template <>
   void device_t<COI>::flush();

@@ -362,7 +362,12 @@ namespace occa {
 
     switch(m){
     case Pthreads:
+#if OCCA_PTHREADS_ENABLED
       dHandle = new device_t<Pthreads>(); break;
+#else
+      std::cout << "OCCA mode [Pthreads] is not enabled\n";
+      throw 1;
+#endif
 
     case OpenMP:
       dHandle = new device_t<OpenMP>(); break;
@@ -407,16 +412,28 @@ namespace occa {
     setup(strToMode(m), arg1, arg2);
   }
 
-  void device::setCompiler(const std::string &compiler){
-    dHandle->setCompiler(compiler);
+  void device::setCompiler(const std::string &compiler_){
+    dHandle->setCompiler(compiler_);
   }
 
   void device::setCompilerEnvScript(const std::string &compilerEnvScript_){
     dHandle->setCompilerEnvScript(compilerEnvScript_);
   }
 
-  void device::setCompilerFlags(const std::string &compilerFlags){
-    dHandle->setCompilerFlags(compilerFlags);
+  void device::setCompilerFlags(const std::string &compilerFlags_){
+    dHandle->setCompilerFlags(compilerFlags_);
+  }
+
+  std::string device::getCompiler(){
+    return dHandle->getCompiler();
+  }
+
+  std::string device::getCompilerEnvScript(){
+    return dHandle->getCompilerEnvScript();
+  }
+
+  std::string device::getCompilerFlags(){
+    return dHandle->getCompilerFlags();
   }
 
   std::string& device::mode(){

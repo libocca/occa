@@ -80,9 +80,19 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaShared
 #define occaPointer
 #define occaVariable &
-#define occaRestrict __restrict__
-#define occaVolatile volatile
-#define occaAligned  __attribute__ ((aligned (OCCA_MEM_ALIGN)))
+
+#ifndef MC_CL_EXE
+#  define occaRestrict __restrict__
+#  define occaVolatile volatile
+#  define occaAligned  __attribute__ ((aligned (OCCA_MEM_ALIGN)))
+#else
+// branch for Microsoft cl.exe - compiler: __restrict__ and __attribute__ ((aligned(...))) are not available there.
+#  define occaRestrict
+// [dsm5] Volatile doesn't work on WIN, it's not that important anyway (for now)
+#  define occaVolatile
+#  define occaAligned
+#endif
+
 #define occaFunctionShared
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaConst    const
@@ -95,7 +105,13 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaFunctionInfoArg const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
 #define occaFunctionInfo               occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaKernel         extern "C"
+#ifndef MC_CL_EXE
+#  define occaKernel extern "C"
+#else
+// branch for Microsoft cl.exe - compiler: each symbol that a dll (shared object) should export must be decorated with __declspec(dllexport)
+#  define occaKernel extern "C" __declspec(dllexport)
+#endif
+
 #define occaFunction
 #define occaDeviceFunction
 //================================================
@@ -247,6 +263,22 @@ public:
   inline TM& operator *= (const TM &t){
     data[index()][0] *= t;
     return data[index()][0];
+  }
+
+  inline TM& operator + (const TM &t){
+    return (data[index()][0] + t);
+  }
+
+  inline TM& operator - (const TM &t){
+    return (data[index()][0] - t);
+  }
+
+  inline TM& operator / (const TM &t){
+    return (data[index()][0] / t);
+  }
+
+  inline TM& operator * (const TM &t){
+    return (data[index()][0] * t);
   }
 
   inline TM& operator ++ (){

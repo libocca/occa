@@ -25,6 +25,10 @@
 #  endif
 #endif
 
+#ifndef __PRETTY_FUNCTION__
+#  define __PRETTY_FUNCTION__ __FUNCTION__
+#endif
+
 #if defined(__x86_64__) || defined(_M_X64) // 64 Bit
 #  define OCCA_64_BIT 1
 #  define OCCA_32_BIT 0

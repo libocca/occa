@@ -83,9 +83,19 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaShared
 #define occaPointer
 #define occaVariable &
-#define occaRestrict __restrict__
-#define occaVolatile volatile
-#define occaAligned  __attribute__ ((aligned (OCCA_MEM_ALIGN)))
+
+#ifndef MC_CL_EXE
+#  define occaRestrict __restrict__
+#  define occaVolatile volatile
+#  define occaAligned  __attribute__ ((aligned (OCCA_MEM_ALIGN)))
+#else
+// branch for Microsoft cl.exe - compiler: __restrict__ and __attribute__ ((aligned(...))) are not available there.
+#  define occaRestrict
+// [dsm5] Volatile doesn't work on WIN, it's not that important anyway (for now)
+#  define occaVolatile
+#  define occaAligned
+#endif
+
 #define occaFunctionShared
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaConst    const
@@ -256,6 +266,22 @@ public:
   inline TM& operator *= (const TM &t){
     data[index()][0] *= t;
     return data[index()][0];
+  }
+
+  inline TM& operator + (const TM &t){
+    return (data[index()][0] + t);
+  }
+
+  inline TM& operator - (const TM &t){
+    return (data[index()][0] - t);
+  }
+
+  inline TM& operator / (const TM &t){
+    return (data[index()][0] / t);
+  }
+
+  inline TM& operator * (const TM &t){
+    return (data[index()][0] * t);
   }
 
   inline TM& operator ++ (){

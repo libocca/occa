@@ -8,7 +8,6 @@
 #include <vector>
 
 #include <xmmintrin.h>
-#include <unistd.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -19,6 +18,12 @@
 
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  include <unistd.h>
+#else
+#  include <io.h>
+#endif
 
 #if OCCA_OPENCL_ENABLED
 #  if   OCCA_OS == LINUX_OS
@@ -359,8 +364,10 @@ namespace occa {
 
     OCCA_KERNEL_ARG_CONSTRUCTOR(float);
     OCCA_KERNEL_ARG_CONSTRUCTOR(double);
-
+    // 32 bit: uintptr_t == unsigned int
+#if OCCA_64_BIT
     OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+#endif
 
     inline kernelArg(const occa::memory &m);
 
@@ -802,6 +809,8 @@ namespace occa {
 
     std::string compiler, compilerEnvScript, compilerFlags;
 
+    uintptr_t memoryAllocated;
+
     int simdWidth_;
 
   public:
@@ -814,6 +823,10 @@ namespace occa {
     virtual void setCompiler(const std::string &compiler) = 0;
     virtual void setCompilerEnvScript(const std::string &compilerEnvScript_) = 0;
     virtual void setCompilerFlags(const std::string &compilerFlags) = 0;
+
+    virtual std::string getCompiler() = 0;
+    virtual std::string getCompilerEnvScript() = 0;
+    virtual std::string getCompilerFlags() = 0;
 
     virtual void flush()  = 0;
     virtual void finish() = 0;
@@ -846,9 +859,6 @@ namespace occa {
   template <occa::mode mode>
   class device_t : public device_v {
     template <occa::mode> friend class occa::kernel_t;
-
-  private:
-    uintptr_t memoryUsed;
 
   public:
     device_t();
@@ -1080,6 +1090,14 @@ namespace occa {
 
     inline void addCompilerFlag(const std::string &f){
       flags += " " + f;
+    }
+
+    inline void addCompilerIncludePath(const std::string &path){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      flags += " -I \"" + path + "\"";
+#else
+      flags += " /I\"" + path + "\"";
+#endif
     }
   };
 

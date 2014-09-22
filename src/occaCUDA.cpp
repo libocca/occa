@@ -142,6 +142,9 @@ namespace occa {
     std::stringstream command;
 
     //---[ PTX Check Command ]----------
+    if(dev->dHandle->compilerEnvScript.size())
+      command << dev->dHandle->compilerEnvScript << " && ";
+
     command << dev->dHandle->compiler
             << ' '          << dev->dHandle->compilerFlags
             << archSM
@@ -154,7 +157,12 @@ namespace occa {
 
     std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int ptxError = system(ptxCommand.c_str());
+#else
+    const int ptxError = system(("\"" +  ptxCommand + "\"").c_str());
+#endif
+
 
     if(ptxError){
       releaseFile(cachedBinary);
@@ -625,25 +633,25 @@ namespace occa {
 
   //---[ Device ]---------------------
   template <>
-  device_t<CUDA>::device_t() :
-    memoryUsed(0) {
-    data = NULL;
+  device_t<CUDA>::device_t() {
+    data            = NULL;
+    memoryAllocated            = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
-  device_t<CUDA>::device_t(int platform, int device) :
-    memoryUsed(0) {
+  device_t<CUDA>::device_t(int platform, int device){
     data = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<CUDA>::device_t(const device_t<CUDA> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -651,8 +659,8 @@ namespace occa {
 
   template <>
   device_t<CUDA>& device_t<CUDA>::operator = (const device_t<CUDA> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -715,6 +723,21 @@ namespace occa {
   template <>
   void device_t<CUDA>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<CUDA>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<CUDA>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<CUDA>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>

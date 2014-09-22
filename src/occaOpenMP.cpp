@@ -78,6 +78,11 @@ namespace occa {
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
@@ -121,9 +126,13 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
+#else
+    const int compileError = system(("\"" +  sCommand + "\"").c_str());
+#endif
 
     if(compileError){
       releaseFile(cachedBinary);
@@ -164,9 +173,12 @@ namespace occa {
 
     if(data_.dlHandle == NULL) {
       fputs("unable to load function", stderr);
+      releaseFile(cachedBinary);
       throw 1;
     }
 #endif
+
+    releaseFile(cachedBinary);
 
     return this;
   }
@@ -301,6 +313,8 @@ namespace occa {
   void memory_t<OpenMP>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
@@ -316,6 +330,8 @@ namespace occa {
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size);
@@ -331,6 +347,8 @@ namespace occa {
   void memory_t<OpenMP>::copyTo(void *dest,
                                 const uintptr_t bytes,
                                 const uintptr_t offset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size);
@@ -346,6 +364,8 @@ namespace occa {
                                 const uintptr_t bytes,
                                 const uintptr_t destOffset,
                                 const uintptr_t srcOffset){
+    dev->finish();
+
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset)  <= size);
@@ -433,24 +453,24 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenMP>::device_t(){
-    data = NULL;
-    memoryUsed = 0;
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(int platform, int device){
-    data       = NULL;
-    memoryUsed = 0;
+    data            = NULL;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(const device_t<OpenMP> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -458,8 +478,8 @@ namespace occa {
 
   template <>
   device_t<OpenMP>& device_t<OpenMP>::operator = (const device_t<OpenMP> &d){
-    data       = d.data;
-    memoryUsed = d.memoryUsed;
+    data            = d.data;
+    memoryAllocated = d.memoryAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -485,15 +505,38 @@ namespace occa {
 
     char *c_compilerFlags = getenv("OCCA_OPENMP_COMPILER_FLAGS");
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
-#if OCCA_DEBUG_ENABLED
+#  if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
-#else
+#  else
       compilerFlags = "-D__extern_always_inline=inline -O3";
-#endif
+#  endif
     }
+#else
+#  if OCCA_DEBUG_ENABLED
+    compilerFlags = " /Od ";
+#  else
+    compilerFlags = " /Ox /openmp ";
+#  endif
+    std::string byteness;
+    if(sizeof(void*) == 4)
+      byteness = "x86 ";
+    else if(sizeof(void*) == 8)
+      byteness = "amd64";
+    else
+      throw 1;
+
+    char* visual_studio_tools = getenv("VS100COMNTOOLS");
+    if(visual_studio_tools != NULL){
+      setCompilerEnvScript("\"" + std::string(visual_studio_tools) + "\\..\\..\\VC\\vcvarsall.bat\" " + byteness);
+    }
+    else{
+      std::cout << "WARNING: VS100COMNTOOLS environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
+    }
+#endif
   }
 
   template <>
@@ -509,6 +552,21 @@ namespace occa {
   template <>
   void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
     compilerFlags = compilerFlags_;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompiler(){
+    return compiler;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerEnvScript(){
+    return compilerEnvScript;
+  }
+
+  template <>
+  std::string& device_t<OpenMP>::getCompilerFlags(){
+    return compilerFlags;
   }
 
   template <>

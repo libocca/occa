@@ -12,11 +12,20 @@ objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
 executables: main main_c
 
-main_c: main.c
-	$(compiler) $(compilerFlags) -o main_c $(flags) $(objects) main.c $(paths) $(links)
+ifdef OCCA_FORTRAN_ENABLED
+ifeq ($(OCCA_FORTRAN_ENABLED), 1)
+	executables += main_f90
+endif
+endif
 
 main: $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
+
+main_c: main.c
+	$(compiler) $(compilerFlags) -o main_c $(flags) $(objects) main.c $(paths) $(links)
+
+main_f90: main.f90
+	$(Fcompiler) $(FcompilerFlags) -o main_f90 $(flags) $(objects) main.f90 $(paths) $(links)
 
 $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
