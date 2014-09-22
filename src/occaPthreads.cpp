@@ -477,7 +477,7 @@ namespace occa {
   template <>
   device_t<Pthreads>::device_t(const device_t<Pthreads> &d){
     data            = d.data;
-    memoryAllocated = d.memoryAllocated
+    memoryAllocated = d.memoryAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;

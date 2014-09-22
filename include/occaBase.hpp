@@ -824,9 +824,9 @@ namespace occa {
     virtual void setCompilerEnvScript(const std::string &compilerEnvScript_) = 0;
     virtual void setCompilerFlags(const std::string &compilerFlags) = 0;
 
-    virtual std::string getCompiler() = 0;
-    virtual std::string getCompilerEnvScript() = 0;
-    virtual std::string getCompilerFlags() = 0;
+    virtual std::string& getCompiler() = 0;
+    virtual std::string& getCompilerEnvScript() = 0;
+    virtual std::string& getCompilerFlags() = 0;
 
     virtual void flush()  = 0;
     virtual void finish() = 0;
@@ -876,6 +876,10 @@ namespace occa {
     void setCompiler(const std::string &compiler);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
     void setCompilerFlags(const std::string &compilerFlags);
+
+    std::string& getCompiler();
+    std::string& getCompilerEnvScript();
+    std::string& getCompilerFlags();
 
     void flush();
     void finish();
@@ -935,6 +939,10 @@ namespace occa {
     void setCompiler(const std::string &compiler);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
     void setCompilerFlags(const std::string &compilerFlags);
+
+    std::string& getCompiler();
+    std::string& getCompilerEnvScript();
+    std::string& getCompilerFlags();
 
     void flush();
     void finish();

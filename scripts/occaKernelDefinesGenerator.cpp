@@ -24,7 +24,7 @@ inline std::string saveFileToVariable(std::string filename,
   std::stringstream occaDeviceDefines;
   occaDeviceDefines << "#define OCCA_USING_CPU 0" << std::endl
                     << "#define OCCA_USING_GPU 0" << std::endl
-                    << '' << std::endl
+                    << std::endl
                     << "#define OCCA_USING_PTHREADS 0" << std::endl
                     << "#define OCCA_USING_OPENMP   0" << std::endl
                     << "#define OCCA_USING_OPENCL   0" << std::endl
