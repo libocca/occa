@@ -3929,7 +3929,6 @@ namespace occa {
                         << *(sn->value)
                         << "========================================\n";
 
-
               statement *newS = new statement(sn->value->depth,
                                               declareStatementType, sn->value->up,
                                               NULL, NULL);
@@ -5982,6 +5981,7 @@ namespace occa {
 
       addOccaFors(globalScope);
 
+      // Also auto-adds barriers if needed
       applyToAllStatements(globalScope, &parserBase::fixOccaForOrder);
       applyToAllStatements(globalScope, &parserBase::addParallelFors);
 
