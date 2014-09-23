@@ -3920,6 +3920,7 @@ namespace occa {
           }
         }
         else{
+          // Re-order inner loops
           fixOccaForStatementOrder(origin, (sp->up->statementStart));
         }
 
