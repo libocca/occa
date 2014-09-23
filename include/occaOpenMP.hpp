@@ -68,6 +68,21 @@ namespace occa {
   memory_t<OpenMP>& memory_t<OpenMP>::operator = (const memory_t &m);
 
   template <>
+  void memory_t<OpenMP>::setMemoryHandle(void *handle_,
+                                         const uintptr_t size);
+
+  template <>
+  void memory_t<OpenMP>::setTextureHandle(void *handle_,
+                                          const int dim, const occa::dim &dims,
+                                          occa::formatType type, const int permissions);
+
+  template <>
+  void* memory_t<OpenMP>::getMemoryHandle();
+
+  template <>
+  void* memory_t<OpenMP>::getTextureHandle();
+
+  template <>
   void memory_t<OpenMP>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset);

@@ -206,6 +206,27 @@ namespace occa {
     return (void*) ((mHandle->textureInfo).arg);
   }
 
+  void memory::setMemoryHandle(void *handle_,
+                               const uintptr_t size){
+    mHandle->setMemoryHandle(handle_, size);
+  }
+
+  void memory::setTextureHandle(void *handle_,
+                                const int dim, const occa::dim &dims,
+                                occa::formatType type, const int permissions){
+    mHandle->setTextureHandle(handle_,
+                              dim, dims,
+                              type, permissions);
+  }
+
+  void* memory::getMemoryHandle(){
+    return mHandle->getMemoryHandle();
+  }
+
+  void* memory::getTextureHandle(){
+    return mHandle->getTextureHandle();
+  }
+
   void memory::copyFrom(const void *source,
                         const uintptr_t bytes,
                         const uintptr_t offset){

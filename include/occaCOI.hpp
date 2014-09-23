@@ -100,6 +100,21 @@ namespace occa {
   memory_t<COI>& memory_t<COI>::operator = (const memory_t &m);
 
   template <>
+  void memory_t<COI>::setMemoryHandle(void *handle_,
+                                      const uintptr_t size);
+
+  template <>
+  void memory_t<COI>::setTextureHandle(void *handle_,
+                                       const int dim, const occa::dim &dims,
+                                       occa::formatType type, const int permissions);
+
+  template <>
+  void* memory_t<COI>::getMemoryHandle();
+
+  template <>
+  void* memory_t<COI>::getTextureHandle();
+
+  template <>
   void memory_t<COI>::copyFrom(const void *source,
                                const uintptr_t bytes,
                                const uintptr_t offset);

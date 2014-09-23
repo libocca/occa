@@ -590,6 +590,25 @@ namespace occa {
   memory_t<OpenCL>::~memory_t(){}
 
   template <>
+  void memory_t<OpenCL>::setMemoryHandle(void *handle_,
+                                         const uintptr_t size){
+  }
+
+  template <>
+  void memory_t<OpenCL>::setTextureHandle(void *handle_,
+                                          const int dim, const occa::dim &dims,
+                                          occa::formatType type, const int permissions){
+  }
+
+  template <>
+  void* memory_t<OpenCL>::getMemoryHandle(){
+  }
+
+  template <>
+  void* memory_t<OpenCL>::getTextureHandle(){
+  }
+
+  template <>
   void memory_t<OpenCL>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
