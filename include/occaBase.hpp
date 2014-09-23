@@ -621,6 +621,16 @@ namespace occa {
   public:
     virtual inline ~memory_v(){}
 
+    virtual void setMemoryHandle(void *handle_,
+                                 const uintptr_t size_) = 0;
+
+    virtual void setTextureHandle(void *handle_,
+                                  const int dim, const occa::dim &dims,
+                                  occa::formatType type, const int permissions);
+
+    virtual void* getMemoryHandle();
+    virtual void* getTextureHandle();
+
     virtual void copyFrom(const void *source,
                           const uintptr_t bytes = 0,
                           const uintptr_t offset = 0) = 0;
@@ -671,6 +681,16 @@ namespace occa {
     memory_t& operator = (const memory_t &m);
 
     inline ~memory_t(){};
+
+    void setMemoryHandle(void *handle_,
+                         const uintptr_t size_);
+
+    void setTextureHandle(void *handle_,
+                          const int dim, const occa::dim &dims,
+                          occa::formatType type, const int permissions);
+
+    void* getMemoryHandle();
+    void* getTextureHandle();
 
     void copyFrom(const void *source,
                   const uintptr_t bytes = 0,
@@ -738,6 +758,16 @@ namespace occa {
     }
 
     void* textureArg() const;
+
+    void setMemoryHandle(void *handle_,
+                         const uintptr_t size_);
+
+    void setTextureHandle(void *handle_,
+                          const int dim, const occa::dim &dims,
+                          occa::formatType type, const int permissions);
+
+    void* getMemoryHandle();
+    void* getTextureHandle();
 
     void copyFrom(const void *source,
                   const uintptr_t bytes = 0,
@@ -844,6 +874,13 @@ namespace occa {
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                             const std::string &functionName_) = 0;
 
+    virtual memory_v* wrapMemory(void *handle_,
+                                 const uintptr_t bytes) = 0;
+
+    virtual memory_v* wrapTexture(void *handle_,
+                                  const int dim, const occa::dim &dims,
+                                  occa::formatType type, const int permissions) = 0;
+
     virtual memory_v* malloc(const uintptr_t bytes,
                              void* source) = 0;
 
@@ -896,6 +933,13 @@ namespace occa {
 
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);
+
+    memory_v* wrapMemory(void *handle_,
+                         const uintptr_t bytes);
+
+    memory_v* wrapTexture(void *handle_,
+                          const int dim, const occa::dim &dims,
+                          occa::formatType type, const int permissions);
 
     memory_v* malloc(const uintptr_t bytes,
                      void *source);
@@ -971,6 +1015,13 @@ namespace occa {
                                 const std::string &functionName,
                                 const std::string &pythonCode = "",
                                 int loopyOrFloopy = occa::useLoopy);
+
+    memory wrapMemory(void *handle_,
+                      const uintptr_t bytes);
+
+    memory wrapTexture(void *handle_,
+                       const int dim, const occa::dim &dims,
+                       occa::formatType type, const int permissions);
 
     memory malloc(const uintptr_t bytes,
                   void *source = NULL);

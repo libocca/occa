@@ -206,6 +206,27 @@ namespace occa {
     return (void*) ((mHandle->textureInfo).arg);
   }
 
+  void memory::setMemoryHandle(void *handle_,
+                               const uintptr_t size){
+    mHandle->setMemoryHandle(handle_, size);
+  }
+
+  void memory::setTextureHandle(void *handle_,
+                                const int dim, const occa::dim &dims,
+                                occa::formatType type, const int permissions){
+    mHandle->setTextureHandle(handle_,
+                              dim, dims,
+                              type, permissions);
+  }
+
+  void* memory::getMemoryHandle(){
+    return mHandle->getMemoryHandle();
+  }
+
+  void* memory::getTextureHandle(){
+    return mHandle->getTextureHandle();
+  }
+
   void memory::copyFrom(const void *source,
                         const uintptr_t bytes,
                         const uintptr_t offset){
@@ -556,6 +577,40 @@ namespace occa {
     system(sCommand.c_str());
 
     return buildKernelFromSource(iCachedBinary, functionName);
+  }
+
+  memory device::wrapMemory(void *handle_,
+                            const uintptr_t bytes){
+    memory mem;
+
+    mem.mode_   = mode_;
+    mem.strMode = strMode;
+
+    mem.mHandle = dHandle->wrapMemory(handle_, bytes);
+    mem.mHandle->dev = this;
+
+    return mem;
+  }
+
+  memory device::wrapTexture(void *handle_,
+                             const int dim, const occa::dim &dims,
+                             occa::formatType type, const int permissions){
+    if((dim != 1) && (dim != 2)){
+      printf("Textures of [%dD] are not supported, only 1D or 2D are supported at the moment.\n", dim);
+      throw 1;
+    }
+
+    memory mem;
+
+    mem.mode_   = mode_;
+    mem.strMode = strMode;
+
+    mem.mHandle = dHandle->wrapTexture(handle_,
+                                       dim, dims,
+                                       type, permissions);
+    mem.mHandle->dev = this;
+
+    return mem;
   }
 
   memory device::malloc(const uintptr_t bytes,

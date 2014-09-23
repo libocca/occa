@@ -319,6 +319,16 @@ namespace occa {
   memory_t<Pthreads>::~memory_t(){}
 
   template <>
+  void* memory_t<Pthreads>::getMemoryHandle(){
+    return handle;
+  }
+
+  template <>
+  void* memory_t<Pthreads>::getTextureHandle(){
+    return textureInfo.arg;
+  }
+
+  template <>
   void memory_t<Pthreads>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
@@ -650,6 +660,41 @@ namespace occa {
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  memory_v* device_t<Pthreads>::wrapMemory(void *handle_,
+                                           const uintptr_t bytes){
+    memory_v *mem = new memory_t<Pthreads>;
+
+    mem->dev    = dev;
+    mem->size   = bytes;
+    mem->handle = handle_;
+
+    return mem;
+  }
+
+  template <>
+  memory_v* device_t<Pthreads>::wrapTexture(void *handle_,
+                                            const int dim, const occa::dim &dims,
+                                            occa::formatType type, const int permissions){
+    memory_v *mem = new memory_t<Pthreads>;
+
+    mem->dev  = dev;
+    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.arg = handle_;
+
+    mem->handle = &(mem->textureInfo);
+
+    return mem;
   }
 
   template <>

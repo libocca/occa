@@ -590,6 +590,16 @@ namespace occa {
   memory_t<OpenCL>::~memory_t(){}
 
   template <>
+  void* memory_t<OpenCL>::getMemoryHandle(){
+    return handle;
+  }
+
+  template <>
+  void* memory_t<OpenCL>::getTextureHandle(){
+    return textureInfo.arg;
+  }
+
+  template <>
   void memory_t<OpenCL>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
@@ -1091,6 +1101,88 @@ namespace occa {
 
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  memory_v* device_t<OpenCL>::wrapMemory(void *handle_,
+                                         const uintptr_t bytes){
+    memory_v *mem = new memory_t<OpenCL>;
+
+    mem->dev    = dev;
+    mem->size   = bytes;
+    mem->handle = handle_;
+
+    return mem;
+  }
+
+  template <>
+  memory_v* device_t<OpenCL>::wrapTexture(void *handle_,
+                                          const int dim, const occa::dim &dims,
+                                          occa::formatType type, const int permissions){
+#ifndef CL_VERSION_1_2
+    if(dim == 1)
+      return wrapMemory(handle_, dims.x * type.bytes());
+
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    memory_v *mem = new memory_t<OpenCL>;
+    cl_int error;
+
+    mem->dev    = dev;
+    mem->size   = (dims.x * dims.y) * type.bytes();
+    mem->handle = handle_;
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.bytesInEntry = type.bytes();
+
+    mem->textureInfo.arg = new cl_sampler;
+
+    *((cl_sampler*) mem->textureInfo.arg) = clCreateSampler(data_.context,
+                                                            CL_FALSE,                 // Are args Normalized?
+                                                            CL_ADDRESS_CLAMP_TO_EDGE, // Clamp edges
+                                                            CL_FILTER_NEAREST,        // Point interpolation
+                                                            &error);
+
+    OCCA_CL_CHECK("Device: Creating texture sampler", error);
+
+    return mem;
+#else
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+    cl_int error;
+
+    memory_v *mem = new memory_t<OpenCL>;
+
+    mem->dev    = dev;
+    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->handle = handle_;
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.bytesInEntry = type.bytes();
+
+    mem->textureInfo.arg = new cl_sampler;
+
+    *((cl_sampler*) mem->textureInfo.arg) = clCreateSampler(data_.context,
+                                                            CL_FALSE,                 // Are args Normalized?
+                                                            CL_ADDRESS_CLAMP_TO_EDGE, // Clamp edges
+                                                            CL_FILTER_NEAREST,        // Point interpolation
+                                                            &error);
+
+    OCCA_CL_CHECK("Device: Creating texture sampler", error);
+
+    return mem;
+#endif
   }
 
   template <>

@@ -259,9 +259,15 @@ namespace occa {
 
       void loadScopeVarMap(statement &s);
 
+      bool statementHasOccaOuterFor(statement &s);
       bool statementHasOccaFor(statement &s);
 
       bool statementHasOklFor(statement &s);
+
+      bool nodesHaveOccaStuff(strNode *n);
+      bool statementHasOccaStuff(statement &s);
+
+      void markKernelFunctions(statement &s);
 
       void labelKernelsAsNativeOrNot(statement &s);
 
@@ -3550,6 +3556,31 @@ namespace occa {
       }
     }
 
+    inline bool parserBase::statementHasOccaOuterFor(statement &s){
+      if(s.type == keywordType["occaOuterFor0"]){
+        std::string &forName = s.nodeStart->value;
+
+        if((forName.find("occaOuterFor") != std::string::npos) &&
+           ((forName == "occaOuterFor0") ||
+            (forName == "occaOuterFor1") ||
+            (forName == "occaOuterFor2"))){
+
+          return true;
+        }
+      }
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        if( statementHasOccaOuterFor(*(statementPos->value)) )
+          return true;
+
+        statementPos = statementPos->right;
+      }
+
+      return false;
+    }
+
     inline bool parserBase::statementHasOccaFor(statement &s){
       if(s.type == keywordType["occaOuterFor0"])
         return true;
@@ -3603,6 +3634,72 @@ namespace occa {
       }
 
       return false;
+    }
+
+    inline bool parserBase::nodesHaveOccaStuff(strNode *n){
+      while(n){
+        if(n->type & (occaKeywordType | cudaKeywordType))
+          return true;
+
+        const int downCount = n->down.size();
+
+        for(int i = 0; i < downCount; ++i)
+          if(nodesHaveOccaStuff(n->down[i]))
+            return true;
+
+        n = n->right;
+      }
+
+      return false;
+    }
+
+    inline bool parserBase::statementHasOccaStuff(statement &s){
+      if(statementHasOklFor(s))
+        return true;
+
+      if(statementHasOccaOuterFor(s))
+        return true;
+
+      if(nodesHaveOccaStuff(s.nodeStart))
+        return true;
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        if( statementHasOccaStuff(*(statementPos->value)) )
+          return true;
+
+        statementPos = statementPos->right;
+      }
+
+      return false;
+    }
+
+    inline void parserBase::markKernelFunctions(statement &s){
+      statementNode *snPos = s.statementStart;
+
+      while(snPos){
+        statement &s2 = *(snPos->value);
+
+        if( !(s2.type & functionStatementType) ||
+            statementIsAKernel(s2) ){
+
+          snPos = snPos->right;
+          continue;
+        }
+
+        if(statementHasOccaStuff(s2)){
+          strNode *kernelMark = new strNode("occaKernel");
+          kernelMark->type    = keywordType["occaKernel"];
+
+          s2.nodeStart->left = kernelMark;
+          kernelMark->right  = s2.nodeStart;
+
+          s2.nodeStart = kernelMark;
+        }
+
+        snPos = snPos->right;
+      }
     }
 
     inline void parserBase::labelKernelsAsNativeOrNot(statement &s){
@@ -5098,7 +5195,7 @@ namespace occa {
           continue;
         }
 
-        varInfo &info     = *(varPos->value);
+        varInfo &info = *(varPos->value);
 
         bool initWithValue = false;
         bool infoHasShared = info.hasDescriptor("occaShared");
@@ -5820,51 +5917,51 @@ namespace occa {
       keywordType["occaKernelInfoArg"] = (presetValue | occaKeywordType);
       keywordType["occaKernelInfo"]    = (presetValue | occaKeywordType);
 
-      keywordType["barrier"]        = (occaKeywordType | presetValue);
-      keywordType["localMemFence"]  = (occaKeywordType | presetValue);
-      keywordType["globalMemFence"] = (occaKeywordType | presetValue);
+      keywordType["barrier"]        = (presetValue | occaKeywordType);
+      keywordType["localMemFence"]  = (presetValue | occaKeywordType);
+      keywordType["globalMemFence"] = (presetValue | occaKeywordType);
 
-      keywordType["occaBarrier"]        = (occaKeywordType | presetValue);
-      keywordType["occaLocalMemFence"]  = (occaKeywordType | presetValue);
-      keywordType["occaGlobalMemFence"] = (occaKeywordType | presetValue);
+      keywordType["occaBarrier"]        = (presetValue | occaKeywordType);
+      keywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
+      keywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
 
-      keywordType["occaInnerFor0"] = (occaStatementType | forStatementType);
-      keywordType["occaInnerFor1"] = (occaStatementType | forStatementType);
-      keywordType["occaInnerFor2"] = (occaStatementType | forStatementType);
+      keywordType["occaInnerFor0"] = (forStatementType | occaStatementType);
+      keywordType["occaInnerFor1"] = (forStatementType | occaStatementType);
+      keywordType["occaInnerFor2"] = (forStatementType | occaStatementType);
 
-      keywordType["occaOuterFor0"] = (occaStatementType | forStatementType);
-      keywordType["occaOuterFor1"] = (occaStatementType | forStatementType);
-      keywordType["occaOuterFor2"] = (occaStatementType | forStatementType);
+      keywordType["occaOuterFor0"] = (forStatementType | occaStatementType);
+      keywordType["occaOuterFor1"] = (forStatementType | occaStatementType);
+      keywordType["occaOuterFor2"] = (forStatementType | occaStatementType);
 
-      keywordType["occaInnerId0"] = (occaKeywordType | presetValue);
-      keywordType["occaInnerId1"] = (occaKeywordType | presetValue);
-      keywordType["occaInnerId2"] = (occaKeywordType | presetValue);
+      keywordType["occaInnerId0"] = (presetValue | occaKeywordType);
+      keywordType["occaInnerId1"] = (presetValue | occaKeywordType);
+      keywordType["occaInnerId2"] = (presetValue | occaKeywordType);
 
-      keywordType["occaOuterId0"] = (occaKeywordType | presetValue);
-      keywordType["occaOuterId1"] = (occaKeywordType | presetValue);
-      keywordType["occaOuterId2"] = (occaKeywordType | presetValue);
+      keywordType["occaOuterId0"] = (presetValue | occaKeywordType);
+      keywordType["occaOuterId1"] = (presetValue | occaKeywordType);
+      keywordType["occaOuterId2"] = (presetValue | occaKeywordType);
 
-      keywordType["occaGlobalId0"] = (occaKeywordType | presetValue);
-      keywordType["occaGlobalId1"] = (occaKeywordType | presetValue);
-      keywordType["occaGlobalId2"] = (occaKeywordType | presetValue);
+      keywordType["occaGlobalId0"] = (presetValue | occaKeywordType);
+      keywordType["occaGlobalId1"] = (presetValue | occaKeywordType);
+      keywordType["occaGlobalId2"] = (presetValue | occaKeywordType);
 
-      keywordType["occaInnerDim0"] = (occaKeywordType | presetValue);
-      keywordType["occaInnerDim1"] = (occaKeywordType | presetValue);
-      keywordType["occaInnerDim2"] = (occaKeywordType | presetValue);
+      keywordType["occaInnerDim0"] = (presetValue | occaKeywordType);
+      keywordType["occaInnerDim1"] = (presetValue | occaKeywordType);
+      keywordType["occaInnerDim2"] = (presetValue | occaKeywordType);
 
-      keywordType["occaOuterDim0"] = (occaKeywordType | presetValue);
-      keywordType["occaOuterDim1"] = (occaKeywordType | presetValue);
-      keywordType["occaOuterDim2"] = (occaKeywordType | presetValue);
+      keywordType["occaOuterDim0"] = (presetValue | occaKeywordType);
+      keywordType["occaOuterDim1"] = (presetValue | occaKeywordType);
+      keywordType["occaOuterDim2"] = (presetValue | occaKeywordType);
 
-      keywordType["occaGlobalDim0"] = (occaKeywordType | presetValue);
-      keywordType["occaGlobalDim1"] = (occaKeywordType | presetValue);
-      keywordType["occaGlobalDim2"] = (occaKeywordType | presetValue);
+      keywordType["occaGlobalDim0"] = (presetValue | occaKeywordType);
+      keywordType["occaGlobalDim1"] = (presetValue | occaKeywordType);
+      keywordType["occaGlobalDim2"] = (presetValue | occaKeywordType);
 
       //---[ CUDA Keywords ]--------------
-      keywordType["threadIdx"] = (cudaKeywordType | presetValue);
-      keywordType["blockDim"]  = (cudaKeywordType | presetValue);
-      keywordType["blockIdx"]  = (cudaKeywordType | presetValue);
-      keywordType["gridDim"]   = (cudaKeywordType | presetValue);
+      keywordType["threadIdx"] = (presetValue | cudaKeywordType);
+      keywordType["blockDim"]  = (presetValue | cudaKeywordType);
+      keywordType["blockIdx"]  = (presetValue | cudaKeywordType);
+      keywordType["gridDim"]   = (presetValue | cudaKeywordType);
 
       std::string mathFunctions[16] = {
         "sqrt", "sin"  , "asin" ,
@@ -5968,6 +6065,7 @@ namespace occa {
       statement globalScope(*this);
       globalScope.loadAllFromNode(nodeRoot);
 
+      markKernelFunctions(globalScope);
       applyToAllStatements(globalScope, &parserBase::labelKernelsAsNativeOrNot);
 
       applyToAllStatements(globalScope, &parserBase::setupCudaVariables);
