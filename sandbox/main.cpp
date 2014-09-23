@@ -262,6 +262,10 @@ namespace occa {
 
       void addFunctionPrototypes(statement &s);
 
+      void fixOccaForOrder(statement &s);
+
+      void addParallelFors(statement &s);
+
       void updateConstToConstant(statement &s);
 
       strNode* occaExclusiveStrNode(varInfo &info,
@@ -3293,21 +3297,15 @@ namespace occa {
           ((nodePos->value.find("outer") == std::string::npos) ||
            ((nodePos->value != "outer0") &&
             (nodePos->value != "outer1") &&
-            (nodePos->value != "outer2")))                     &&
-          ((nodePos->value.find("global") == std::string::npos) ||
-           ((nodePos->value != "global0") &&
-            (nodePos->value != "global1") &&
-            (nodePos->value != "global2"))) ){
+            (nodePos->value != "outer2"))) ){
 
         std::cout << "Wrong 4th statement for:\n  " << prettyString(s.nodeStart) << '\n';
         throw 1;
       }
 
-      bool isGlobal = (nodePos->value.find("global") != std::string::npos);
-
       // [-----][#]
-      std::string ioLoop   = !isGlobal ? nodePos->value.substr(0,5) : "global";
-      std::string loopNest = nodePos->value.substr(5 + isGlobal,1);
+      std::string ioLoop   = nodePos->value.substr(0,5);
+      std::string loopNest = nodePos->value.substr(5,1);
 
       ioLoop[0] += ('A' - 'a');
 
@@ -3406,6 +3404,7 @@ namespace occa {
         // Un-link node chain
         commaNodes[2]->left->right = NULL;
 
+        // Manual bounds
         bool errorFound = nodeHasUnknownVariable(nodePos);
 
         if(!errorFound){
@@ -3569,11 +3568,7 @@ namespace occa {
               ((nodePos->value.find("outer") != std::string::npos) &&
                ((nodePos->value == "outer0") ||
                 (nodePos->value == "outer1") ||
-                (nodePos->value == "outer2")))                      ||
-              ((nodePos->value.find("global") != std::string::npos) &&
-               ((nodePos->value == "global0") ||
-                (nodePos->value == "global1") ||
-                (nodePos->value == "global2"))) ){
+                (nodePos->value == "outer2"))) ){
 
             return true;
           }
@@ -3818,6 +3813,66 @@ namespace occa {
         }
 
         statementPos = statementPos->right;
+      }
+    }
+
+    // [-]
+    inline void parserBase::fixOccaForOrder(statement &s){
+
+    }
+
+    inline void parserBase::addParallelFors(statement &s){
+      if( !(s.type & functionDefinitionType) )
+        return;
+
+      statementNode *snPos = s.statementStart;
+
+      while(snPos){
+        statement &s2 = *(snPos->value);
+
+        if(s2.type & (forStatementType | occaStatementType)){
+          const std::string &forName = s2.nodeStart->value;
+
+          char outerDim;
+
+          if((forName.find("occaOuterFor") != std::string::npos) &&
+             ((forName == "occaOuterFor0") ||
+              (forName == "occaOuterFor1") ||
+              (forName == "occaOuterFor2"))){
+
+            outerDim = forName[12];
+          }
+          else{
+            std::cout << "Wrong occa-for:\n" << s2;
+            throw 1;
+          }
+
+          statement *parallelStatement = new statement(s.depth + 1,
+                                                       occaStatementType, &s,
+                                                       NULL, NULL);
+
+          statementNode *parallelSN = new statementNode(parallelStatement);
+
+          parallelStatement->nodeStart         = new strNode("occaParallelFor");
+          parallelStatement->nodeStart->value += outerDim;
+          parallelStatement->nodeStart->value += '\n';
+          parallelStatement->type              = occaStatementType;
+
+          if(s.statementStart == snPos)
+            s.statementStart = parallelSN;
+
+          statementNode *leftSN  = snPos->left;
+
+          parallelSN->right = snPos;
+          parallelSN->left  = leftSN;
+
+          snPos->left = parallelSN->right;
+
+          if(leftSN)
+            leftSN->right = parallelSN;
+        }
+
+        snPos = snPos->right;
       }
     }
 
@@ -4978,21 +5033,6 @@ namespace occa {
 
         sPos = newStatement;
       }
-
-      statement *parallelStatement = new statement(s.depth + 1,
-                                                   occaStatementType, &s,
-                                                   NULL, NULL);
-
-      statementNode *parallelSN = new statementNode(parallelStatement);
-
-      parallelStatement->nodeStart         = new strNode("occaParallelFor");
-      parallelStatement->nodeStart->value += '0' + outerDim;
-      parallelStatement->nodeStart->value += '\n';
-      parallelStatement->type              = occaStatementType;
-
-      parallelSN->right      = s.statementStart;
-      s.statementStart->left = parallelSN;
-      s.statementStart       = parallelSN;
     }
 
     inline void parserBase::addOccaForsToKernel(statement &s){
@@ -5780,6 +5820,9 @@ namespace occa {
       applyToAllStatements(globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors(globalScope);
+
+      applyToAllStatements(globalScope, &parserBase::fixOccaForOrder);
+      applyToAllStatements(globalScope, &parserBase::addParallelFors);
 
       applyToAllStatements(globalScope, &parserBase::modifyExclusiveVariables);
 
