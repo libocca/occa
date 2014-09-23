@@ -163,11 +163,11 @@ namespace occa {
     const int ptxError = system(("\"" +  ptxCommand + "\"").c_str());
 #endif
 
-
-    if(ptxError){
-      releaseFile(cachedBinary);
-      throw 1;
-    }
+    // Not needed here I guess
+    // if(ptxError){
+    //   releaseFile(cachedBinary);
+    //   throw 1;
+    // }
 
     //---[ Compiling Command ]----------
     command.str("");
