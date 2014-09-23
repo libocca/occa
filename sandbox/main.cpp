@@ -188,13 +188,13 @@ namespace occa {
 
     class parserBase {
     public:
-      varOriginMap_t varOriginMap;
-      varUsedMap_t varUsedMap;     // Statements are placed backwards
-
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
 
       bool macrosAreInitialized;
+
+      varOriginMap_t varOriginMap;
+      varUsedMap_t varUsedMap;     // Statements are placed backwards
 
       inline parserBase(){};
 
@@ -2915,7 +2915,7 @@ namespace occa {
 
         // <>
         if((downCount == 1) ||
-           (st == elseStatementType)){
+           ((downCount == 0) && (st == elseStatementType))){
           // for(;;)    or    else {
           //   stuff;         }
 
@@ -3189,8 +3189,8 @@ namespace occa {
     }
 
     inline void parserBase::addOccaForCounter(statement &s,
-                                  const std::string &ioLoop,
-                                  const std::string &loopNest){
+                                              const std::string &ioLoop,
+                                              const std::string &loopNest){
       varInfo ioDimVar;
       ioDimVar.name = obfuscate(ioLoop);
       ioDimVar.extraInfo.push_back(loopNest);
@@ -3689,7 +3689,7 @@ namespace occa {
     }
 
     inline void parserBase::loadVariableInformation(statement &s,
-                                        strNode *n){
+                                                    strNode *n){
       if(s.type & functionPrototypeType)
         return;
 
@@ -3836,8 +3836,8 @@ namespace occa {
     }
 
     inline strNode* parserBase::occaExclusiveStrNode(varInfo &info,
-                                         const int depth,
-                                         const int sideDepth){
+                                                     const int depth,
+                                                     const int sideDepth){
       strNode *nodeRoot;
 
       const int typeInfo = info.typeInfo;
@@ -4107,7 +4107,7 @@ namespace occa {
     }
 
     inline void parserBase::modifyStatementOccaForVariables(varInfo &var,
-                                                strNode *n){
+                                                            strNode *n){
       const int extras = var.extraInfo.size();
 
       while(n){
@@ -4421,7 +4421,7 @@ namespace occa {
     }
 
     inline bool parserBase::varInTwoSegments(varInfo &info,
-                                 loopSection_t &loopSection){
+                                             loopSection_t &loopSection){
       varUsedMapIterator it = varUsedMap.find(&info);
 
       // Variable is not used
@@ -4444,7 +4444,7 @@ namespace occa {
     }
 
     inline varInfoNode* parserBase::findVarsMovingToTop(statement &s,
-                                            loopSection_t &loopSection){
+                                                        loopSection_t &loopSection){
       // Statement defines have doubles (to know how many variables
       //                                 were defined)
       //    so ... ignore duplicates
@@ -4492,8 +4492,8 @@ namespace occa {
     }
 
     inline void parserBase::splitDefineForVariable(statement *&origin,
-                                       varInfo &var, strNode *varNode,
-                                       const int declPos){
+                                                   varInfo &var, strNode *varNode,
+                                                   const int declPos){
       const int declarationCount = (origin->scopeVarMap.size() == 1);
       const bool addingStatement = !((declPos == 0) &&
                                      (declarationCount == 1));
@@ -4729,8 +4729,8 @@ namespace occa {
     }
 
     inline void parserBase::addInnerForsBetweenBarriers(statement &origin,
-                                            statementNode *s,
-                                            const int innerDim){
+                                                        statementNode *s,
+                                                        const int innerDim){
       const int occaForType = keywordType["occaInnerFor0"];
 
       statement *outerMostLoop = NULL;
@@ -6393,23 +6393,23 @@ namespace occa {
 };
 
 int main(int argc, char **argv){
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("test.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("openclTest.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("openclTest.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("cudaTest.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("cudaTest.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   {
     occa::parser parser;
