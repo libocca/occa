@@ -10,15 +10,21 @@ kernel void addVectors(int occaVariable entries,
     }
   }
 
-  for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
-    for(int item = 0; item < itemsPerGroup; ++item; inner0){
-      if((item + group*itemsPerGroup) < entries)
-        ab[item] = a[item] + b[item];
-      else {
-        int i = 0;
+  for(int groupB = 0; groupB < (20 + 3 - 1); ++groupB; outer1){
+    for(int groupA = 0; groupA < (20 + 3 - 1); ++groupA; outer0){
+      for(int itemB = 0; itemB < itemsPerGroupB; ++itemB; inner0){
+        for(int itemA = 0; itemA < itemsPerGroupA; ++itemA; inner1){
+          if((itemA + groupA*itemsPerGroupA) < entries)
+            ab[itemA] = a[itemA] + b[itemA];
+        }
       }
 
-      {int i = 0;}
+      for(int itemB = 0; itemB < itemsPerGroupB; ++itemB; inner0){
+        for(int itemA = 0; itemA < itemsPerGroupA; ++itemA; inner1){
+          if((itemA + groupA*itemsPerGroupA) < entries)
+            ab[itemA] = a[itemA] + b[itemA];
+        }
+      }
     }
   }
 }
