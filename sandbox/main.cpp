@@ -2913,33 +2913,40 @@ namespace occa {
 
         const int downCount = nodeRootEnd->down.size();
 
-        // <>
         if((downCount == 1) ||
            ((downCount == 0) && (st == elseStatementType))){
-          // for(;;)    or    else {
-          //   stuff;         }
+          // for(;;)    or    else
+          //   statement;       statement;
 
           nextNode = newStatement->loadFromNode(nextNode);
+
+          if(st == elseStatementType)
+            break;
         }
         else{
-          strNode *blockStart = nodeRoot->down[1];
-          strNode *blockEnd   = lastNode(blockStart);
+          int blockPos = (st != elseStatementType) ? 1 : 0;
 
-          nodeRoot->down.erase(nodeRoot->down.begin() + 1,
-                               nodeRoot->down.begin() + 2);
+          strNode *blockStart = nodeRoot->down[blockPos];
+          strNode *blockEnd   = lastNode(blockStart);
 
           // Load all down's before popping [{] and [}]'s
           const int blockDownCount = blockStart->down.size();
 
           for(int i = 0; i < blockDownCount; ++i)
-            newStatement->loadAllFromNode( blockStart->down[i] );
+            loadAllFromNode( blockStart->down[i] );
+
+          for(int i = (blockPos + 1); i < downCount; ++i)
+            loadAllFromNode(nodeRoot->down[i]);
+
+          nodeRoot->down.clear();
 
           popAndGoRight(blockStart);
           popAndGoLeft(blockEnd);
 
           newStatement->loadAllFromNode(blockStart);
+
+          break;
         }
-        // <>
 
         if(nextNode == NULL)
           break;
