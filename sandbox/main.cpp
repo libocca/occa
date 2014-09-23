@@ -5231,7 +5231,9 @@ namespace occa {
                 if((nodePos->type & flowControlType)       &&
                    (nodePos->left)                         &&
                    (nodePos->left->type & flowControlType) &&
-                   (nodePos->value == "if") && (nodePos->left->value == "else")){
+                   ((nodePos->value == "if")         &&
+                    (nodePos->left->value == "else") &&
+                    (nodePos->left->down.size() == 0))){
 
                   nodePos->value = "else if";
 
@@ -5299,10 +5301,10 @@ namespace occa {
         nodePos = nodePos->right;
       }
 
-      info.name = *nodePos;
-
       if(nodePos == NULL)
         return info;
+
+      info.name = *nodePos;
 
       const int downCount = nodePos->down.size();
 
