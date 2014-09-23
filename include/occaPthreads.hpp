@@ -123,15 +123,6 @@ namespace occa {
   memory_t<Pthreads>& memory_t<Pthreads>::operator = (const memory_t &m);
 
   template <>
-  void memory_t<Pthreads>::setMemoryHandle(void *handle_,
-                                           const uintptr_t size);
-
-  template <>
-  void memory_t<Pthreads>::setTextureHandle(void *handle_,
-                                            const int dim, const occa::dim &dims,
-                                            occa::formatType type, const int permissions);
-
-  template <>
   void* memory_t<Pthreads>::getMemoryHandle();
 
   template <>
@@ -252,6 +243,15 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::free();
+
+  template <>
+  memory_v* device_t<Pthreads>::wrapMemory(void *handle_,
+                                           const uintptr_t bytes);
+
+  template <>
+  memory_v* device_t<Pthreads>::wrapTexture(void *handle_,
+                                            const int dim, const occa::dim &dims,
+                                            occa::formatType type, const int permissions);
 
   template <>
   memory_v* device_t<Pthreads>::malloc(const uintptr_t bytes,

@@ -68,15 +68,6 @@ namespace occa {
   memory_t<OpenMP>& memory_t<OpenMP>::operator = (const memory_t &m);
 
   template <>
-  void memory_t<OpenMP>::setMemoryHandle(void *handle_,
-                                         const uintptr_t size);
-
-  template <>
-  void memory_t<OpenMP>::setTextureHandle(void *handle_,
-                                          const int dim, const occa::dim &dims,
-                                          occa::formatType type, const int permissions);
-
-  template <>
   void* memory_t<OpenMP>::getMemoryHandle();
 
   template <>
@@ -194,6 +185,15 @@ namespace occa {
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
                                                     const std::string &functionName_);
+
+  template <>
+  memory_v* device_t<OpenMP>::wrapMemory(void *handle_,
+                                         const uintptr_t bytes);
+
+  template <>
+  memory_v* device_t<OpenMP>::wrapTexture(void *handle_,
+                                          const int dim, const occa::dim &dims,
+                                          occa::formatType type, const int permissions);
 
   template <>
   memory_v* device_t<OpenMP>::malloc(const uintptr_t bytes,

@@ -310,22 +310,13 @@ namespace occa {
   memory_t<OpenMP>::~memory_t(){}
 
   template <>
-  void memory_t<OpenMP>::setMemoryHandle(void *handle_,
-                                         const uintptr_t size){
-  }
-
-  template <>
-  void memory_t<OpenMP>::setTextureHandle(void *handle_,
-                                          const int dim, const occa::dim &dims,
-                                          occa::formatType type, const int permissions){
-  }
-
-  template <>
   void* memory_t<OpenMP>::getMemoryHandle(){
+    return handle;
   }
 
   template <>
   void* memory_t<OpenMP>::getTextureHandle(){
+    return textureInfo.arg;
   }
 
   template <>
@@ -633,6 +624,17 @@ namespace occa {
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  memory_v* device_t<OpenMP>::wrapMemory(void *handle_,
+                                         const uintptr_t bytes){
+  }
+
+  template <>
+  memory_v* device_t<OpenMP>::wrapTexture(void *handle_,
+                                          const int dim, const occa::dim &dims,
+                                          occa::formatType type, const int permissions){
   }
 
   template <>

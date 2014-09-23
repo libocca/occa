@@ -100,15 +100,6 @@ namespace occa {
   memory_t<COI>& memory_t<COI>::operator = (const memory_t &m);
 
   template <>
-  void memory_t<COI>::setMemoryHandle(void *handle_,
-                                      const uintptr_t size);
-
-  template <>
-  void memory_t<COI>::setTextureHandle(void *handle_,
-                                       const int dim, const occa::dim &dims,
-                                       occa::formatType type, const int permissions);
-
-  template <>
   void* memory_t<COI>::getMemoryHandle();
 
   template <>
@@ -226,6 +217,15 @@ namespace occa {
   template <>
   kernel_v* device_t<COI>::buildKernelFromBinary(const std::string &filename,
                                                  const std::string &functionName_);
+
+  template <>
+  memory_v* device_t<COI>::wrapMemory(void *handle_,
+                                      const uintptr_t bytes);
+
+  template <>
+  memory_v* device_t<COI>::wrapTexture(void *handle_,
+                                       const int dim, const occa::dim &dims,
+                                       occa::formatType type, const int permissions);
 
   template <>
   memory_v* device_t<COI>::malloc(const uintptr_t bytes,

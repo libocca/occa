@@ -304,22 +304,13 @@ namespace occa {
   memory_t<CUDA>::~memory_t(){}
 
   template <>
-  void memory_t<CUDA>::setMemoryHandle(void *handle_,
-                                       const uintptr_t size){
-  }
-
-  template <>
-  void memory_t<CUDA>::setTextureHandle(void *handle_,
-                                        const int dim, const occa::dim &dims,
-                                        occa::formatType type, const int permissions){
-  }
-
-  template <>
   void* memory_t<CUDA>::getMemoryHandle(){
+    return handle;
   }
 
   template <>
   void* memory_t<CUDA>::getTextureHandle(){
+    return textureInfo.arg;
   }
 
   template <>
@@ -844,6 +835,17 @@ namespace occa {
 
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  memory_v* device_t<CUDA>::wrapMemory(void *handle_,
+                                       const uintptr_t bytes){
+  }
+
+  template <>
+  memory_v* device_t<CUDA>::wrapTexture(void *handle_,
+                                        const int dim, const occa::dim &dims,
+                                        occa::formatType type, const int permissions){
   }
 
   template <>

@@ -319,22 +319,13 @@ namespace occa {
   memory_t<Pthreads>::~memory_t(){}
 
   template <>
-  void memory_t<Pthreads>::setMemoryHandle(void *handle_,
-                                           const uintptr_t size){
-  }
-
-  template <>
-  void memory_t<Pthreads>::setTextureHandle(void *handle_,
-                                            const int dim, const occa::dim &dims,
-                                            occa::formatType type, const int permissions){
-  }
-
-  template <>
   void* memory_t<Pthreads>::getMemoryHandle(){
+    return handle;
   }
 
   template <>
   void* memory_t<Pthreads>::getTextureHandle(){
+    return textureInfo.arg;
   }
 
   template <>
@@ -669,6 +660,17 @@ namespace occa {
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  memory_v* device_t<Pthreads>::wrapMemory(void *handle_,
+                                           const uintptr_t bytes){
+  }
+
+  template <>
+  memory_v* device_t<Pthreads>::wrapTexture(void *handle_,
+                                            const int dim, const occa::dim &dims,
+                                            occa::formatType type, const int permissions){
   }
 
   template <>
