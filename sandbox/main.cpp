@@ -184,6 +184,15 @@ namespace occa {
     static const int structStatementType    = (1 << 14);
 
     static const int occaStatementType      = (1 << 15);
+
+    //   ---[ OCCA Fors ]------
+    static const int occaOuterForShift = 0;
+    static const int occaInnerForShift = 3;
+
+    static const int occaOuterForMask = 7;
+    static const int occaInnerForMask = 56;
+
+    static const int notAnOccaFor = 64;
     //==============================================
 
     class parserBase {
@@ -262,6 +271,10 @@ namespace occa {
 
       void addFunctionPrototypes(statement &s);
 
+      int statementOccaForNest(statement &s);
+      bool statementIsAnOccaFor(statement &s);
+
+      void fixOccaForStatementOrder(statement &origin, statementNode *sn);
       void fixOccaForOrder(statement &s);
 
       void addParallelFors(statement &s);
@@ -3816,13 +3829,134 @@ namespace occa {
       }
     }
 
-    // [-]
-    inline void parserBase::fixOccaForOrder(statement &s){
+    inline int parserBase::statementOccaForNest(statement &s){
+      if( !(s.type & (forStatementType | occaStatementType)) )
+        return notAnOccaFor;
 
+      int ret = notAnOccaFor;
+
+      const std::string &forName = s.nodeStart->value;
+
+      if((forName.find("occaOuterFor") != std::string::npos) &&
+         ((forName == "occaOuterFor0") ||
+          (forName == "occaOuterFor1") ||
+          (forName == "occaOuterFor2"))){
+
+        ret = ((1 + forName[12] - '0') << occaOuterForShift);
+      }
+      else if((forName.find("occaInnerFor") != std::string::npos) &&
+              ((forName == "occaInnerFor0") ||
+               (forName == "occaInnerFor1") ||
+               (forName == "occaInnerFor2"))){
+
+        ret = ((1 + forName[12] - '0') << occaInnerForShift);
+      }
+
+      return ret;
+    }
+
+    inline bool parserBase::statementIsAnOccaFor(statement &s){
+      const int nest = statementOccaForNest(s);
+
+      return !(nest & notAnOccaFor);
+    }
+
+    inline void parserBase::fixOccaForStatementOrder(statement &origin,
+                                                     statementNode *sn){
+      int innerLoopCount = -1;
+
+      while(sn){
+        std::vector<statement*> statStack;
+        std::vector<int> nestStack;
+
+        statement &s = *(sn->value);
+
+        const int sNest = statementOccaForNest(s);
+
+        if(sNest & notAnOccaFor){
+          sn = sn->right;
+          continue;
+        }
+
+        const bool isAnInnerLoop = (sNest & occaInnerForMask);
+
+        const int shift = (isAnInnerLoop ? occaInnerForShift : occaOuterForShift);
+        const int mask  = (isAnInnerLoop ? occaInnerForMask  : occaOuterForMask);
+
+        statement *sp = &s;
+
+        statStack.push_back(sp);
+        nestStack.push_back((sNest >> shift) - 1);
+
+        int loopCount = 1;
+
+        sp = sp->statementStart->value;
+
+        while(sp){
+          const int nest = statementOccaForNest(*sp);
+
+          if(nest & (~mask))
+            break;
+
+          statStack.push_back(sp);
+          nestStack.push_back((nest >> shift) - 1);
+
+          ++loopCount;
+
+          sp = sp->statementStart->value;
+        }
+
+        if(isAnInnerLoop){
+          if(innerLoopCount == -1){
+            innerLoopCount = loopCount;
+          }
+          else{
+            if(loopCount != innerLoopCount){
+              std::cout << "Inner loops are inconsistent in:\n"
+                        << origin << '\n';
+
+              throw 1;
+            }
+          }
+        }
+
+        std::sort(nestStack.begin(), nestStack.end());
+
+        for(int i = (loopCount - 1); 0 <= i; --i){
+          if(nestStack[i] != i){
+            std::cout << "Inner loops ";
+
+            for(int i2 = 0; i2 < loopCount; ++i2)
+              std::cout << (i2 ? ", " : "[") << nestStack[i2];
+
+            std::cout << "] have duplicates or gaps:\n"
+                      << origin << '\n';
+
+            throw 1;
+          }
+
+          sp = statStack[loopCount - i - 1];
+
+          sp->nodeStart->value  = "occa";
+          sp->nodeStart->value += (isAnInnerLoop ? "Inner" : "Outer");
+          sp->nodeStart->value += "For0";
+
+          sp->nodeStart->value[12] += i;
+        }
+
+        sn = sn->right;
+      }
+    }
+
+    inline void parserBase::fixOccaForOrder(statement &s){
+      if( !statementIsAKernel(s) )
+        return;
+
+      fixOccaForStatementOrder(s, s.statementStart);
     }
 
     inline void parserBase::addParallelFors(statement &s){
-      if( !(s.type & functionDefinitionType) )
+      if( !statementIsAKernel(s) )
         return;
 
       statementNode *snPos = s.statementStart;
@@ -3830,47 +3964,39 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if(s2.type & (forStatementType | occaStatementType)){
-          const std::string &forName = s2.nodeStart->value;
+        const int nest = statementOccaForNest(s2);
 
-          char outerDim;
+        if(nest & (notAnOccaFor | occaInnerForMask)){
 
-          if((forName.find("occaOuterFor") != std::string::npos) &&
-             ((forName == "occaOuterFor0") ||
-              (forName == "occaOuterFor1") ||
-              (forName == "occaOuterFor2"))){
-
-            outerDim = forName[12];
-          }
-          else{
-            std::cout << "Wrong occa-for:\n" << s2;
-            throw 1;
-          }
-
-          statement *parallelStatement = new statement(s.depth + 1,
-                                                       occaStatementType, &s,
-                                                       NULL, NULL);
-
-          statementNode *parallelSN = new statementNode(parallelStatement);
-
-          parallelStatement->nodeStart         = new strNode("occaParallelFor");
-          parallelStatement->nodeStart->value += outerDim;
-          parallelStatement->nodeStart->value += '\n';
-          parallelStatement->type              = occaStatementType;
-
-          if(s.statementStart == snPos)
-            s.statementStart = parallelSN;
-
-          statementNode *leftSN  = snPos->left;
-
-          parallelSN->right = snPos;
-          parallelSN->left  = leftSN;
-
-          snPos->left = parallelSN->right;
-
-          if(leftSN)
-            leftSN->right = parallelSN;
+          snPos = snPos->right;
+          continue;
         }
+
+        const char outerDim = '0' + (nest - 1);
+
+        statement *parallelStatement = new statement(s.depth + 1,
+                                                     occaStatementType, &s,
+                                                     NULL, NULL);
+
+        statementNode *parallelSN = new statementNode(parallelStatement);
+
+        parallelStatement->nodeStart         = new strNode("occaParallelFor");
+        parallelStatement->nodeStart->value += outerDim;
+        parallelStatement->nodeStart->value += '\n';
+        parallelStatement->type              = occaStatementType;
+
+        if(s.statementStart == snPos)
+          s.statementStart = parallelSN;
+
+        statementNode *leftSN  = snPos->left;
+
+        parallelSN->right = snPos;
+        parallelSN->left  = leftSN;
+
+        snPos->left = parallelSN->right;
+
+        if(leftSN)
+          leftSN->right = parallelSN;
 
         snPos = snPos->right;
       }
