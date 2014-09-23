@@ -6065,7 +6065,7 @@ namespace occa {
       statement globalScope(*this);
       globalScope.loadAllFromNode(nodeRoot);
 
-      // markKernelFunctions(globalScope);
+      markKernelFunctions(globalScope);
       applyToAllStatements(globalScope, &parserBase::labelKernelsAsNativeOrNot);
 
       applyToAllStatements(globalScope, &parserBase::setupCudaVariables);

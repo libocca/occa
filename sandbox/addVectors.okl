@@ -1,4 +1,4 @@
-#if 0
+#if 1
 void addVectors(int entries,
                 const float * a,
                 const float * b,
