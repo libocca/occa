@@ -840,12 +840,35 @@ namespace occa {
   template <>
   memory_v* device_t<CUDA>::wrapMemory(void *handle_,
                                        const uintptr_t bytes){
+    memory_v *mem = new memory_t<CUDA>;
+
+    mem->dev    = dev;
+    mem->size   = bytes;
+    mem->handle = handle_;
+
+    return mem;
   }
 
   template <>
   memory_v* device_t<CUDA>::wrapTexture(void *handle_,
                                         const int dim, const occa::dim &dims,
                                         occa::formatType type, const int permissions){
+    memory_v *mem = new memory_t<CUDA>;
+
+    mem->dev    = dev;
+    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->handle = handle_;
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.bytesInEntry = type.bytes();
+
+    return mem;
   }
 
   template <>

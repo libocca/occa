@@ -629,12 +629,36 @@ namespace occa {
   template <>
   memory_v* device_t<OpenMP>::wrapMemory(void *handle_,
                                          const uintptr_t bytes){
+    memory_v *mem = new memory_t<OpenMP>;
+
+    mem->dev    = dev;
+    mem->size   = bytes;
+    mem->handle = handle_;
+
+    return mem;
   }
 
   template <>
   memory_v* device_t<OpenMP>::wrapTexture(void *handle_,
                                           const int dim, const occa::dim &dims,
                                           occa::formatType type, const int permissions){
+    memory_v *mem = new memory_t<OpenMP>;
+
+    mem->dev  = dev;
+    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+
+    mem->isTexture = true;
+    mem->textureInfo.dim  = dim;
+
+    mem->textureInfo.w = dims.x;
+    mem->textureInfo.h = dims.y;
+    mem->textureInfo.d = dims.z;
+
+    mem->textureInfo.arg = handle_;
+
+    mem->handle = &(mem->textureInfo);
+
+    return mem;
   }
 
   template <>

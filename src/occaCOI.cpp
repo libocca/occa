@@ -808,12 +808,23 @@ namespace occa {
   template <>
   memory_v* device_t<COI>::wrapMemory(void *handle_,
                                       const uintptr_t bytes){
+    memory_v *mem = new memory_t<COI>;
+
+    mem->dev    = dev;
+    mem->size   = bytes;
+    mem->handle = handle_;
+
+    return mem;
   }
 
   template <>
   memory_v* device_t<COI>::wrapTexture(void *handle_,
                                        const int dim, const occa::dim &dims,
                                        occa::formatType type, const int permissions){
+#warning "Textures not supported in COI yet"
+
+    memory_v *mem = new memory_t<COI>;
+    return mem;
   }
 
   template <>
