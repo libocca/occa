@@ -195,6 +195,9 @@ namespace occa {
     static const int notAnOccaFor = 64;
     //==============================================
 
+    strNode* splitFileContents(const char *cRoot);
+    strNode* labelCode(strNode *lineNodeRoot);
+
     class parserBase {
     public:
       macroMap_t macroMap;
@@ -3916,6 +3919,34 @@ namespace occa {
                         << origin << '\n';
 
               throw 1;
+            }
+
+            if(!statementHasBarrier( *(sn->left->value) )){
+              std::cout << "Warning: Placing a local barrier between:\n"
+                        << "---[ A ]--------------------------------\n"
+                        << *(sn->left->value)
+                        << "---[ B ]--------------------------------\n"
+                        << *(sn->value)
+                        << "========================================\n";
+
+
+              statement *newS = new statement(sn->value->depth,
+                                              declareStatementType, sn->value->up,
+                                              NULL, NULL);
+
+              statementNode *newSN = new statementNode(newS);
+
+              newS->nodeStart = splitFileContents("occaBarrier(occaLocalMemFence);\0");
+              newS->nodeStart = labelCode(newS->nodeStart);
+              newS->nodeEnd   = lastNode(newS->nodeStart);
+
+              if(sn->left)
+                sn->left->right = newSN;
+
+              newSN->left  = sn->left;
+              newSN->right = sn;
+
+              sn->left = newSN;
             }
           }
         }

@@ -18,6 +18,13 @@ kernel void addVectors(int occaVariable entries,
             ab[itemA] = a[itemA] + b[itemA];
         }
       }
+
+      for(int itemB = 0; itemB < itemsPerGroupB; ++itemB; inner0){
+        for(int itemA = 0; itemA < itemsPerGroupA; ++itemA; inner1){
+          if((itemA + groupA*itemsPerGroupA) < entries)
+            ab[itemA] = a[itemA] + b[itemA];
+        }
+      }
     }
   }
 }
