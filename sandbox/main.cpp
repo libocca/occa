@@ -3919,6 +3919,9 @@ namespace occa {
             }
           }
         }
+        else{
+          fixOccaForStatementOrder(origin, (sp->up->statementStart));
+        }
 
         std::sort(nestStack.begin(), nestStack.end());
 
