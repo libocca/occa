@@ -5925,13 +5925,13 @@ namespace occa {
       keywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
       keywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
 
-      keywordType["occaInnerFor0"] = (forStatementType | occaKeywordType);
-      keywordType["occaInnerFor1"] = (forStatementType | occaKeywordType);
-      keywordType["occaInnerFor2"] = (forStatementType | occaKeywordType);
+      keywordType["occaInnerFor0"] = (forStatementType | occaStatementType);
+      keywordType["occaInnerFor1"] = (forStatementType | occaStatementType);
+      keywordType["occaInnerFor2"] = (forStatementType | occaStatementType);
 
-      keywordType["occaOuterFor0"] = (forStatementType | occaKeywordType);
-      keywordType["occaOuterFor1"] = (forStatementType | occaKeywordType);
-      keywordType["occaOuterFor2"] = (forStatementType | occaKeywordType);
+      keywordType["occaOuterFor0"] = (forStatementType | occaStatementType);
+      keywordType["occaOuterFor1"] = (forStatementType | occaStatementType);
+      keywordType["occaOuterFor2"] = (forStatementType | occaStatementType);
 
       keywordType["occaInnerId0"] = (presetValue | occaKeywordType);
       keywordType["occaInnerId1"] = (presetValue | occaKeywordType);
