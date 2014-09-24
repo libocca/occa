@@ -1188,6 +1188,8 @@ namespace occa {
       std::string value;
       int type, depth, sideDepth;
 
+      int originalLine;
+
       inline strNode() :
         left(NULL),
         right(NULL),
@@ -5457,6 +5459,8 @@ namespace occa {
 
       int status = readingCode;
 
+      int lineCount = 0;
+
       while(*c != '\0'){
         const char *cEnd = readLine(c);
 
@@ -5467,19 +5471,24 @@ namespace occa {
             status = stripComments(line);
             strip(line);
 
-            if(line.size())
+            if(line.size()){
+              nodePos->originalLine = lineCount;
               nodePos = nodePos->push(line);
+            }
           }
           else{
             status = stripComments(line);
             strip(line);
 
-            if((status == finishedCommentBlock) && line.size())
+            if((status == finishedCommentBlock) && line.size()){
+              nodePos->originalLine = lineCount;
               nodePos = nodePos->push(line);
+            }
           }
         }
 
         c = cEnd;
+        ++lineCount;
       }
 
       popAndGoRight(nodeRoot);

@@ -453,6 +453,10 @@ namespace occa {
     void* data;
     occa::device *dev;
 
+    int nestedKernelCount;
+    kernel_v *setDimsKernels;
+    kernel_v *nestedKernels;
+
     std::string functionName;
 
     int dims;
@@ -621,15 +625,8 @@ namespace occa {
   public:
     virtual inline ~memory_v(){}
 
-    virtual void setMemoryHandle(void *handle_,
-                                 const uintptr_t size_) = 0;
-
-    virtual void setTextureHandle(void *handle_,
-                                  const int dim, const occa::dim &dims,
-                                  occa::formatType type, const int permissions);
-
-    virtual void* getMemoryHandle();
-    virtual void* getTextureHandle();
+    virtual void* getMemoryHandle() = 0;
+    virtual void* getTextureHandle() = 0;
 
     virtual void copyFrom(const void *source,
                           const uintptr_t bytes = 0,
@@ -681,13 +678,6 @@ namespace occa {
     memory_t& operator = (const memory_t &m);
 
     inline ~memory_t(){};
-
-    void setMemoryHandle(void *handle_,
-                         const uintptr_t size_);
-
-    void setTextureHandle(void *handle_,
-                          const int dim, const occa::dim &dims,
-                          occa::formatType type, const int permissions);
 
     void* getMemoryHandle();
     void* getTextureHandle();
@@ -758,13 +748,6 @@ namespace occa {
     }
 
     void* textureArg() const;
-
-    void setMemoryHandle(void *handle_,
-                         const uintptr_t size_);
-
-    void setTextureHandle(void *handle_,
-                          const int dim, const occa::dim &dims,
-                          occa::formatType type, const int permissions);
 
     void* getMemoryHandle();
     void* getTextureHandle();
