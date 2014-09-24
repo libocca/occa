@@ -117,6 +117,8 @@ namespace occa {
 
     static const int specialKeywordType   = (1 << 19);
 
+    static const int macroKeywordType     = (1 << 20);
+
     static const int apiKeywordType       = (7 << 21);
     static const int occaKeywordType      = (1 << 21);
     static const int cudaKeywordType      = (1 << 22);
@@ -156,6 +158,8 @@ namespace occa {
     static const int doneIgnoring        = (1 << 4);
     static const int startHash           = (1 << 5);
 
+    static const int keepMacro           = (1 << 6);
+
     static const int readingCode          = 0;
     static const int insideCommentBlock   = 1;
     static const int finishedCommentBlock = 2;
@@ -184,6 +188,8 @@ namespace occa {
     static const int structStatementType    = (1 << 14);
 
     static const int occaStatementType      = (1 << 15);
+
+    static const int macroStatementType     = (1 << 16);
 
     //   ---[ OCCA Fors ]------
     static const int occaOuterForShift = 0;
@@ -1764,6 +1770,11 @@ namespace occa {
           else
             ret += *nodePos;
         }
+        else if(nodePos->type & macroKeywordType){
+          ret += *nodePos;
+
+          ret += '\n' + tab;
+        }
         else
           ret += *nodePos;
 
@@ -2039,6 +2050,11 @@ namespace occa {
                                  strNode *nodeRoot,
                                  strNode *nodeRootEnd);
 
+      // [-] Missing
+      strNode* loadMacroFromNode(const int st,
+                                 strNode *nodeRoot,
+                                 strNode *nodeRootEnd);
+
       varInfo* addVariable(const varInfo &info,
                            statement *origin = NULL);
 
@@ -2174,8 +2190,12 @@ namespace occa {
 
           return ret;
         }
-        else if(type & structStatementType)
+        else if(type & structStatementType){
           return tab + prettyString(nodeStart, "", false);
+        }
+        else if(type & macroStatementType){
+          return tab + prettyString(nodeStart, "", false);
+        }
 
         return tab + prettyString(nodeStart, "", false);
       }
@@ -2800,6 +2820,11 @@ namespace occa {
                                                       nodeRoot,
                                                       nodeRootEnd);
 
+      else if(st & macroStatementType)
+        nodeRootEnd = newStatement->loadMacroFromNode(st,
+                                                      nodeRoot,
+                                                      nodeRootEnd);
+
       if(newStatement)
         addStatement(newStatement);
 
@@ -3110,6 +3135,20 @@ namespace occa {
 
     // [-] Missing
     inline strNode* statement::loadBlankFromNode(const int st,
+                                                 strNode *nodeRoot,
+                                                 strNode *nodeRootEnd){
+      strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
+
+      if(nodeRoot)
+        nodeRoot->left = NULL;
+      if(nodeRootEnd)
+        nodeRootEnd->right = NULL;
+
+      return nextNode;
+    }
+
+    // [-] Missing
+    inline strNode* statement::loadMacroFromNode(const int st,
                                                  strNode *nodeRoot,
                                                  strNode *nodeRootEnd){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
@@ -3831,6 +3870,9 @@ namespace occa {
     }
 
     inline void parserBase::loadVariableInformation(statement &s){
+      if(s.type & macroStatementType)
+        return;
+
       loadScopeVarMap(s);
 
       loadVariableInformation(s, s.nodeStart);
@@ -5505,6 +5547,12 @@ namespace occa {
                 --depth;
                 nodePos = nodePos->up;
               }
+              else if(newNode->type & macroKeywordType){
+                newNode->value = line;
+                nodePos = nodePos->push(newNode);
+
+                cLeft = line.c_str() + strlen(line.c_str()) - delimeterChars;
+              }
               else
                 nodePos = nodePos->push(newNode);
 
@@ -5646,6 +5694,9 @@ namespace occa {
         std::cout << "Not a valid statement\n";
         throw 1;
       }
+
+      if(nodeRoot->type == macroKeywordType)
+        return macroStatementType;
 
       if(nodeRoot->type == keywordType["occaOuterFor0"])
         return keywordType["occaOuterFor0"];
@@ -5827,6 +5878,8 @@ namespace occa {
       keywordType["^="] = assOperatorType;
       keywordType["|="] = assOperatorType;
       keywordType["||"] = binaryOperatorType;
+
+      keywordType["#"] = macroKeywordType;
 
       //---[ Types & Specifiers ]---------
       std::string suffix[7] = {"", "1", "2", "3", "4", "8", "16"};
@@ -6059,8 +6112,8 @@ namespace occa {
 
       nodeRoot = preprocessMacros(nodeRoot);
       nodeRoot = labelCode(nodeRoot);
-      // nodeRoot->print();
-      // throw 1;
+      nodeRoot->print();
+      throw 1;
 
       statement globalScope(*this);
       globalScope.loadAllFromNode(nodeRoot);
@@ -6471,6 +6524,8 @@ namespace occa {
           if(state & ignoring)
             return state;
         }
+        else if(stringsAreEqual(c, (cEnd - c), "pragma"))
+          return (state | keepMacro);
 
         c = cEnd;
       }
@@ -6594,22 +6649,31 @@ namespace occa {
 
           currentState = loadMacro(line, currentState);
 
-          // Nested #if's
-          if(currentState & startHash){
-            currentState &= ~startHash;
-            statusStack.push(oldState);
+          if(currentState & keepMacro){
+            currentState &= ~keepMacro;
+
+            if( !(currentState & ignoring) ){
+              nodePos->type = macroKeywordType;
+            }
           }
+          else{
+            // Nested #if's
+            if(currentState & startHash){
+              currentState &= ~startHash;
+              statusStack.push(oldState);
+            }
 
-          if(currentState & doneIgnoring){
-            statusStack.pop();
+            if(currentState & doneIgnoring){
+              statusStack.pop();
 
-            if(statusStack.size())
-              currentState = statusStack.top();
-            else
-              currentState = doNothing;
+              if(statusStack.size())
+                currentState = statusStack.top();
+              else
+                currentState = doNothing;
+            }
+
+            ignoreLine = true;
           }
-
-          ignoreLine = true;
         }
         else{
           if(!(currentState & ignoring))
