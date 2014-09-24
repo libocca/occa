@@ -292,7 +292,7 @@ namespace occa {
 
       void loadVariableInformation(statement &s);
 
-      void addFunctionPrototypes(statement &s);
+      void addFunctionPrototypes();
 
       int statementOccaForNest(statement &s);
       bool statementIsAnOccaFor(statement &s);
@@ -3883,14 +3883,10 @@ namespace occa {
       loadVariableInformation(s, s.nodeStart);
     }
 
-    inline void parserBase::addFunctionPrototypes(statement &s){
-      // Global scope only
-      if(0 <= s.depth)
-        return;
-
+    inline void parserBase::addFunctionPrototypes(){
       std::map<std::string,bool> prototypes;
 
-      statementNode *statementPos = s.statementStart;
+      statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement *s2 = statementPos->value;
@@ -3905,7 +3901,7 @@ namespace occa {
         statementPos = statementPos->right;
       }
 
-      statementPos = s.statementStart;
+      statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement *s2 = statementPos->value;
@@ -3961,14 +3957,18 @@ namespace occa {
 
             statementNode *left = statementPos->left;
 
-            newNode->left = left;
+            if(globalScope->statementStart == statementPos)
+              globalScope->statementStart = newNode;
+
             if(left)
               left->right = newNode;
+
+            newNode->left = left;
 
             newNode->right     = statementPos;
             statementPos->left = newNode;
 
-            ++(s.statementCount);
+            ++(globalScope->statementCount);
           }
         }
 
@@ -6306,7 +6306,7 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       applyToAllStatements(*globalScope, &parserBase::loadVariableInformation);
 
-      applyToAllStatements(*globalScope, &parserBase::addFunctionPrototypes);
+      addFunctionPrototypes();
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
