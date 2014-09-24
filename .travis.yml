@@ -14,3 +14,10 @@ script:
   - LD_LIBRARY_PATH=../../lib:$LD_LIBRARY_PATH ./main
 # - LD_LIBRARY_PATH=../../lib:$LD_LIBRARY_PATH ./main_c
   - LD_LIBRARY_PATH=../../lib:$LD_LIBRARY_PATH ./main_f90
+
+notifications:
+  email:
+    recipients:
+      - dmed256@gmail.com
+    on_success: [never]
+    on_failure: [always]
