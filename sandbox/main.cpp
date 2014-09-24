@@ -18,8 +18,6 @@
 
 namespace occa {
   namespace parserNamespace {
-    const int version = 100;
-
     class opHolder;
     class typeHolder;
 
@@ -69,10 +67,10 @@ namespace occa {
 
     typedef bool (parserBase::*findStatementWith_t)(statement &s);
 
-    keywordTypeMap_t keywordType;
-    opTypeMap_t opPrecedence;
+    static keywordTypeMap_t keywordType;
+    static opTypeMap_t opPrecedence;
 
-    bool keywordsAreInitialized = false;
+    static bool keywordsAreInitialized = false;
 
     //   ---[ Delimeters ]---------
     static const char whitespace[]       = " \t\r\n\v\f\0";
@@ -213,6 +211,8 @@ namespace occa {
 
     class parserBase {
     public:
+      static const int version = 100;
+
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
 
@@ -404,11 +404,11 @@ namespace occa {
     bool isAnInt(const char *c);
     bool isAFloat(const char *c);
 
-    int toInt(const char *c){
+    inline int toInt(const char *c){
       return atoi(c);
     }
 
-    bool toBool(const char *c){
+    inline bool toBool(const char *c){
       if(isAnInt(c))
         return (atoi(c) != 0);
       else if(isAFloat(c))
@@ -424,27 +424,27 @@ namespace occa {
       return false;
     }
 
-    char toChar(const char *c){
+    inline char toChar(const char *c){
       return (char) atoi(c);
     }
 
-    long toLong(const char *c){
+    inline long toLong(const char *c){
       return atol(c);
     }
 
-    short toShort(const char *c){
+    inline short toShort(const char *c){
       return (short) atoi(c);
     }
 
-    float toFloat(const char *c){
+    inline float toFloat(const char *c){
       return atof(c);
     }
 
-    double toDouble(const char *c){
+    inline double toDouble(const char *c){
       return (double) atof(c);
     }
 
-    std::string typeInfoToStr(const int typeInfo){
+    inline std::string typeInfoToStr(const int typeInfo){
       std::string ret = "";
 
       if(typeInfo & heapPointerType){
@@ -479,12 +479,12 @@ namespace occa {
 
       int type;
 
-      typeHolder(){
+      inline typeHolder(){
         value.double_ = 0;
         type = noType;
       }
 
-      typeHolder(const std::string strValue, int type_ = noType){
+      inline typeHolder(const std::string strValue, int type_ = noType){
         if(type_ == noType){
           if( parserNamespace::isAnInt(strValue.c_str()) )
             type = longType;
@@ -510,7 +510,7 @@ namespace occa {
         }
       }
 
-      bool isAFloat() const {
+      inline bool isAFloat() const {
         switch(type){
         case intType   : return false; break;
         case boolType  : return false; break;
@@ -525,7 +525,7 @@ namespace occa {
         }
       }
 
-      bool boolValue() const {
+      inline bool boolValue() const {
         switch(type){
         case intType   : return (bool) value.int_;    break;
         case boolType  : return (bool) value.bool_;   break;
@@ -540,7 +540,7 @@ namespace occa {
         }
       }
 
-      long longValue() const {
+      inline long longValue() const {
         switch(type){
         case intType   : return (long) value.int_;    break;
         case boolType  : return (long) value.bool_;   break;
@@ -555,7 +555,7 @@ namespace occa {
         }
       }
 
-      double doubleValue() const {
+      inline double doubleValue() const {
         switch(type){
         case intType   : return (double) value.int_;    break;
         case boolType  : return (double) value.bool_;   break;
@@ -570,7 +570,7 @@ namespace occa {
         }
       }
 
-      void setLongValue(const long &l){
+      inline void setLongValue(const long &l){
         switch(type){
         case intType   : value.int_    = (int)    l; break;
         case boolType  : value.bool_   = (bool)   l; break;
@@ -585,7 +585,7 @@ namespace occa {
         }
       }
 
-      void setDoubleValue(const double &d){
+      inline void setDoubleValue(const double &d){
         switch(type){
         case intType   : value.int_    = (int)    d; break;
         case boolType  : value.bool_   = (bool)   d; break;
@@ -600,7 +600,7 @@ namespace occa {
         }
       }
 
-      friend std::ostream& operator << (std::ostream &out, const typeHolder &th){
+      inline friend std::ostream& operator << (std::ostream &out, const typeHolder &th){
         switch(th.type){
         case intType   : out << th.value.int_;    break;
         case boolType  : out << th.value.bool_;   break;
@@ -617,14 +617,14 @@ namespace occa {
         return out;
       }
 
-      operator std::string () {
+      inline operator std::string () {
         std::stringstream ss;
         ss << *this;
         return ss.str();
       }
     };
 
-    typeHolder applyOperator(std::string op, const typeHolder a){
+    inline typeHolder applyOperator(std::string op, const typeHolder a){
       typeHolder ret;
 
       if(op == "!"){
@@ -657,13 +657,13 @@ namespace occa {
       return ret;
     }
 
-    int typePrecedence(const typeHolder a, const typeHolder b){
+    inline int typePrecedence(const typeHolder a, const typeHolder b){
       return ((a.type < b.type) ? b.type : a.type);
     }
 
-    typeHolder applyOperator(const typeHolder a,
-                             std::string op,
-                             const typeHolder b){
+    inline typeHolder applyOperator(const typeHolder a,
+                                    std::string op,
+                                    const typeHolder b){
       typeHolder ret;
       ret.type  = typePrecedence(a,b);
       ret.value = a.value;
@@ -997,10 +997,10 @@ namespace occa {
       return ret;
     }
 
-    typeHolder applyOperator(const typeHolder a,
-                             std::string op,
-                             const typeHolder b,
-                             const typeHolder c){
+    inline typeHolder applyOperator(const typeHolder a,
+                                    std::string op,
+                                    const typeHolder b,
+                                    const typeHolder c){
       bool pickC;
 
       if(a.isAFloat())
@@ -1167,7 +1167,7 @@ namespace occa {
     }
 
     template <class TM>
-    node<TM>* firstNode(node<TM> *n){
+    inline node<TM>* firstNode(node<TM> *n){
       if((n == NULL) ||
          (n->left == NULL))
         return n;
@@ -1181,7 +1181,7 @@ namespace occa {
     }
 
     template <class TM>
-    node<TM>* lastNode(node<TM> *n){
+    inline node<TM>* lastNode(node<TM> *n){
       if((n == NULL) ||
          (n->right == NULL))
         return n;
@@ -1524,7 +1524,7 @@ namespace occa {
       return pushDown(newNode);
     };
 
-    strNode* firstNode(strNode *node){
+    inline strNode* firstNode(strNode *node){
       if((node == NULL) ||
          (node->left == NULL))
         return node;
@@ -1537,7 +1537,7 @@ namespace occa {
       return end;
     }
 
-    strNode* lastNode(strNode *node){
+    inline strNode* lastNode(strNode *node){
       if((node == NULL) ||
          (node->right == NULL))
         return node;
@@ -2388,16 +2388,16 @@ namespace occa {
 
 
     //---[ Helper Functions ]-----------------------
-    std::string obfuscate(const std::string s1){
+    inline std::string obfuscate(const std::string s1){
       return "__occa__variable__" + s1 + "__";
     }
 
-    std::string obfuscate(const std::string s1, const std::string s2){
+    inline std::string obfuscate(const std::string s1, const std::string s2){
       return "__occa__variable__" + s1 + "__" + s2 + "__";
     }
 
-    bool stringsAreEqual(const char *cStart, const size_t chars,
-                         const char *c2){
+    inline bool stringsAreEqual(const char *cStart, const size_t chars,
+                                const char *c2){
       for(size_t c = 0; c < chars; ++c){
         if(cStart[c] != c2[c])
           return false;
@@ -2409,7 +2409,7 @@ namespace occa {
       return true;
     }
 
-    bool charIsIn(const char c, const char *delimeters){
+    inline bool charIsIn(const char c, const char *delimeters){
       while((*delimeters) != '\0')
         if(c == *(delimeters++))
           return true;
@@ -2417,7 +2417,7 @@ namespace occa {
       return false;
     }
 
-    bool charIsIn2(const char *c, const char *delimeters){
+    inline bool charIsIn2(const char *c, const char *delimeters){
       const char c0 = c[0];
       const char c1 = c[1];
 
@@ -2431,25 +2431,25 @@ namespace occa {
       return false;
     }
 
-    bool isWhitespace(const char c){
+    inline bool isWhitespace(const char c){
       return charIsIn(c, whitespace);
     }
 
-    void skipWhitespace(const char *&c){
+    inline void skipWhitespace(const char *&c){
       while(charIsIn(*c, whitespace) && (*c != '\0'))
         ++c;
     }
 
-    void skipToWhitespace(const char *&c){
+    inline void skipToWhitespace(const char *&c){
       while(!charIsIn(*c, whitespace) && (*c != '\0'))
         ++c;
     }
 
-    bool isAString(const char *c){
+    inline bool isAString(const char *c){
       return ((*c == '\'') || (*c == '"'));
     }
 
-    bool isAnInt(const char *c){
+    inline bool isAnInt(const char *c){
       const char *cEnd = c;
       skipToWhitespace(cEnd);
 
@@ -2463,7 +2463,7 @@ namespace occa {
       return true;
     }
 
-    bool isAFloat(const char *c){
+    inline bool isAFloat(const char *c){
       if(('0' <= *c) && (*c <= '9'))
         return true;
 
@@ -2480,17 +2480,17 @@ namespace occa {
       return false;
     }
 
-    bool isANumber(const char *c){
+    inline bool isANumber(const char *c){
       return (isAnInt(c) || isAFloat(c));
     }
 
-    void skipInt(const char *&c){
+    inline void skipInt(const char *&c){
       while((c != '\0') &&
             ('0' <= *c) && (*c <= '9'))
         ++c;
     }
 
-    void skipNumber(const char *&c){
+    inline void skipNumber(const char *&c){
       if((*c == '+') || (*c == '-'))
         ++c;
 
@@ -2513,7 +2513,7 @@ namespace occa {
         ++c;
     }
 
-    void skipString(const char *&c){
+    inline void skipString(const char *&c){
       if(!isAString(c))
         return;
 
@@ -2531,7 +2531,7 @@ namespace occa {
       }
     }
 
-    char isAWordDelimeter(const char *c){
+    inline char isAWordDelimeter(const char *c){
       if( charIsIn(c[0], wordDelimeter) ){
         if(charIsIn2(c, wordDelimeterExt))
           return 2;
@@ -2542,7 +2542,7 @@ namespace occa {
       return 0;
     }
 
-    int skipWord(const char *&c){
+    inline int skipWord(const char *&c){
       while(!charIsIn(*c, whitespace) && (*c != '\0')){
         const int delimeterChars = isAWordDelimeter(c);
 
@@ -2555,7 +2555,7 @@ namespace occa {
       return 0;
     }
 
-    const char* readLine(const char *c){
+    inline const char* readLine(const char *c){
       const char *c0 = c;
       bool breakNextLine = true;
 
@@ -2582,7 +2582,7 @@ namespace occa {
       return (c + 1);
     }
 
-    std::string compressWhitespace(const std::string &str){
+    inline std::string compressWhitespace(const std::string &str){
       const size_t chars = str.size();
       std::string ret = str;
 
@@ -2604,7 +2604,7 @@ namespace occa {
       return ret;
     }
 
-    std::string strip(const char *c, const size_t chars){
+    inline std::string strip(const char *c, const size_t chars){
       if(chars == 0)
         return "";
 
@@ -2643,11 +2643,11 @@ namespace occa {
       return compressWhitespace(ret);
     }
 
-    void strip(std::string &str){
+    inline void strip(std::string &str){
       str = strip(str.c_str(), str.size());
     }
 
-    char* cReadFile(const std::string &filename){
+    inline char* cReadFile(const std::string &filename){
       int fileHandle = ::open(filename.c_str(), O_RDWR);
 
       if(fileHandle == 0){
@@ -2675,7 +2675,7 @@ namespace occa {
       return fileContents;
     }
 
-    int stripComments(std::string &line){
+    inline int stripComments(std::string &line){
       std::string line2  = line;
       line = "";
 
@@ -5619,7 +5619,7 @@ namespace occa {
     void initKeywords();
     void initMacros();
 
-    strNode* splitFileContents(const char *cRoot){
+    inline strNode* splitFileContents(const char *cRoot){
       const char *c = cRoot;
 
       strNode *nodeRoot = new strNode();
@@ -5664,7 +5664,7 @@ namespace occa {
       return nodeRoot;
     }
 
-    strNode* labelCode(strNode *lineNodeRoot){
+    inline strNode* labelCode(strNode *lineNodeRoot){
       strNode *nodeRoot = new strNode();
       strNode *nodePos  = nodeRoot;
 
@@ -5789,7 +5789,7 @@ namespace occa {
       return nodeRoot;
     }
 
-    varInfo loadVarInfo(strNode *&nodePos){
+    inline varInfo loadVarInfo(strNode *&nodePos){
       varInfo info;
 
       while(nodePos &&
@@ -5851,7 +5851,7 @@ namespace occa {
           info.typeInfo |= (variableType | stackPointerType);
 
           for(int i = 0; i < downCount; ++i){
-            nodePos->down[i]->type == startBracket;
+            nodePos->down[i]->type = startBracket;
 
             std::string sps = prettyString(nodePos->down[i]);
             sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
@@ -5868,7 +5868,7 @@ namespace occa {
       return info;
     }
 
-    int statementType(strNode *&nodeRoot){
+    inline int statementType(strNode *&nodeRoot){
       if(nodeRoot == NULL){
         std::cout << "Not a valid statement\n";
         throw 1;
@@ -6009,7 +6009,7 @@ namespace occa {
       return declareStatementType;
     }
 
-    void initKeywords(){
+    inline void initKeywords(){
       keywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
@@ -6281,11 +6281,11 @@ namespace occa {
     }
     //==============================================
 
-    parserBase::parserBase(){
+    inline parserBase::parserBase(){
       globalScope = new statement(*this);
     }
 
-    const std::string parserBase::parseSource(const char *cRoot){
+    inline const std::string parserBase::parseSource(const char *cRoot){
       if(!keywordsAreInitialized){
         initKeywords();
         initMacros();
@@ -6330,7 +6330,7 @@ namespace occa {
       return (std::string) *globalScope;
     }
 
-    const std::string parserBase::parseFile(const std::string &filename){
+    inline const std::string parserBase::parseFile(const std::string &filename){
       if(!macrosAreInitialized)
         initMacros();
 
@@ -6344,7 +6344,7 @@ namespace occa {
     }
 
     //---[ Macro Parser Functions ]-------
-    std::string parserBase::getMacroName(const char *&c){
+    inline std::string parserBase::getMacroName(const char *&c){
       const char *cStart = c;
       skipWord(cStart);
       skipWhitespace(cStart);
@@ -6354,7 +6354,7 @@ namespace occa {
       return std::string(cStart, c - cStart);
     }
 
-    bool parserBase::evaluateMacroStatement(const char *&c){
+    inline bool parserBase::evaluateMacroStatement(const char *&c){
       skipWhitespace(c);
 
       if(*c == '\0')
@@ -6382,7 +6382,7 @@ namespace occa {
       return (th.doubleValue() != 0);
     }
 
-    typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
+    inline typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
       if(labelNodeRoot->type & presetValue)
         return typeHolder(*labelNodeRoot);
 
@@ -6537,7 +6537,7 @@ namespace occa {
       return th;
     }
 
-    void parserBase::loadMacroInfo(macroInfo &info, const char *&c){
+    inline void parserBase::loadMacroInfo(macroInfo &info, const char *&c){
       skipWhitespace(c);
 
       info.argc = 0;
@@ -6619,7 +6619,7 @@ namespace occa {
       }
     }
 
-    int parserBase::loadMacro(const std::string &line, const int state){
+    inline int parserBase::loadMacro(const std::string &line, const int state){
       const char *c = (line.c_str() + 1); // 1 = #
 
       while(*c != '\0'){
@@ -6719,7 +6719,7 @@ namespace occa {
       return state;
     }
 
-    void parserBase::applyMacros(std::string &line){
+    inline void parserBase::applyMacros(std::string &line){
       const char *c = line.c_str();
       std::string newLine = "";
 
@@ -6819,7 +6819,7 @@ namespace occa {
         applyMacros(line);
     }
 
-    strNode* parserBase::preprocessMacros(strNode *nodeRoot){
+    inline strNode* parserBase::preprocessMacros(strNode *nodeRoot){
       strNode *nodePos  = nodeRoot;
 
       std::stack<int> statusStack;
@@ -6882,7 +6882,7 @@ namespace occa {
     }
     //====================================
 
-    void parserBase::initMacros(){
+    inline void parserBase::initMacros(){
       //---[ Macros ]---------------------
       loadMacro("#define kernel occaKernel");
 
