@@ -3336,10 +3336,15 @@ namespace occa {
       if( !(s.type & forStatementType) )
         return;
 
+      statement *spKernel = getStatementKernel(s);
+
+      if(spKernel == NULL)
+        return;
+
       if(statementKernelUsesNativeOCCA(s))
         return;
 
-      statement &sKernel = *(getStatementKernel(s));
+      statement &sKernel = *spKernel;
 
       strNode *nodePos = s.nodeStart;
       strNode *lastNode;
@@ -6087,6 +6092,7 @@ namespace occa {
       keywordType["restrict"] = (qualifierType | occaKeywordType);
       keywordType["volatile"] = (qualifierType | occaKeywordType);
       keywordType["aligned"]  = (qualifierType | occaKeywordType);
+      keywordType["register"] = qualifierType;
 
       keywordType["occaConst"]    = (qualifierType | occaKeywordType);
       keywordType["occaRestrict"] = (qualifierType | occaKeywordType);
