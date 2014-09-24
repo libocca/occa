@@ -242,6 +242,14 @@ namespace occa {
   }
 
   template <>
+  double kernel_t<OpenMP>::timeTakenBetween(void *start, void *end){
+    const double &start_ = *((double*) start);
+    const double &end_   = *((double*) end);
+
+    return 1.0e3*(end_ - start_);
+  }
+
+  template <>
   void kernel_t<OpenMP>::free(){
     // [-] Fix later
     OCCA_EXTRACT_DATA(OpenMP, Kernel);

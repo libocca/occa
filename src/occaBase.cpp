@@ -90,18 +90,32 @@ namespace occa {
   kernel::kernel() :
     mode_(),
     strMode(""),
-    kHandle(NULL) {}
+
+    kHandle(NULL),
+
+    nestedKernelCount(1),
+    setDimsKernels(NULL),
+    nestedKernels(NULL) {}
 
   kernel::kernel(const kernel &k) :
     mode_(k.mode_),
     strMode(k.strMode),
-    kHandle(k.kHandle) {}
+
+    kHandle(k.kHandle),
+
+    nestedKernelCount(k.nestedKernelCount),
+    setDimsKernels(k.setDimsKernels),
+    nestedKernels(k.nestedKernels) {}
 
   kernel& kernel::operator = (const kernel &k){
     mode_   = k.mode_;
     strMode = k.strMode;
 
     kHandle = k.kHandle;
+
+    nestedKernelCount = k.nestedKernelCount;
+    setDimsKernels    = k.setDimsKernels;
+    nestedKernels     = k.nestedKernels;
 
     return *this;
   }
@@ -140,7 +154,15 @@ namespace occa {
   }
 
   int kernel::preferredDimSize(){
-    return kHandle->preferredDimSize();
+    if(nestedKernelCount == 1){
+      return kHandle->preferredDimSize();
+    }
+    else{
+      std::cout << "Cannot get preferred size for fused kernels\n";
+      throw 1;
+    }
+
+    return 1;
   }
 
   void kernel::clearArgumentList(){
@@ -168,12 +190,34 @@ namespace occa {
 #include "operators/occaOperatorDefinitions.cpp"
 
   double kernel::timeTaken(){
-    return kHandle->timeTaken();
+    if(nestedKernelCount == 1){
+      return kHandle->timeTaken();
+    }
+    else{
+      void *start = nestedKernels[0]->startTime;
+      void *end   = nestedKernels[nestedKernelCount - 1]->endTime;
+
+      return nestedKernels[0]->timeTakenBetween(start, end);
+    }
   }
 
   void kernel::free(){
-    kHandle->free();
-    delete kHandle;
+    if(nestedKernelCount == 1){
+      kHandle->free();
+      delete kHandle;
+    }
+    else{
+      for(int k = 0; k < nestedKernelCount; ++k){
+        setDimsKernels[k]->free();
+        delete setDimsKernels[k];
+
+        nestedKernels[k]->free();
+        delete nestedKernels[k];
+      }
+
+      delete setDimsKernels;
+      delete nestedKernels;
+    }
   }
   //==================================
 

@@ -258,6 +258,14 @@ namespace occa {
   }
 
   template <>
+  double kernel_t<Pthreads>::timeTakenBetween(void *start, void *end){
+    const double &start_ = *((double*) start);
+    const double &end_   = *((double*) end);
+
+    return 1.0e3*(end_ - start_);
+  }
+
+  template <>
   void kernel_t<Pthreads>::free(){
     // [-] Fix later
     OCCA_EXTRACT_DATA(Pthreads, Kernel);

@@ -453,10 +453,6 @@ namespace occa {
     void* data;
     occa::device *dev;
 
-    int nestedKernelCount;
-    kernel_v *setDimsKernels;
-    kernel_v *nestedKernels;
-
     std::string functionName;
 
     int dims;
@@ -481,6 +477,7 @@ namespace occa {
 #include "operators/occaVirtualOperatorDeclarations.hpp"
 
     virtual double timeTaken() = 0;
+    virtual double timeTakenBetween(void *start, void *end) = 0;
 
     virtual void free() = 0;
   };
@@ -510,6 +507,7 @@ namespace occa {
 #include "operators/occaOperatorDeclarations.hpp"
 
     double timeTaken();
+    double timeTakenBetween(void *start, void *end);
 
     void free();
   };
@@ -522,6 +520,10 @@ namespace occa {
     std::string strMode;
 
     kernel_v *kHandle;
+
+    int nestedKernelCount;
+    kernel_v **setDimsKernels;
+    kernel_v **nestedKernels;
 
     int argumentCount;
     kernelArg arguments[OCCA_MAX_ARGS];
@@ -555,6 +557,7 @@ namespace occa {
 #include "operators/occaOperatorDeclarations.hpp"
 
     double timeTaken();
+    double timeTakenBetween(void *start, void *end);
 
     void free();
   };

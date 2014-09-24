@@ -37,7 +37,17 @@ def runFromArguments(N):
     return 'switch(argumentCount){\n' + '\n'.join([runFromArgument(n + 1) for n in xrange(N)]) + '}'
 
 def runFromArgument(N):
-    return 'case ' + str(N) + ': (*kHandle)(' + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + '); break;'
+    return '  case ' + str(N) + """:
+  if(nestedKernelCount == 1){
+    (*kHandle)(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
+  }
+  else{
+    for(int k = 0; k < nestedKernelCount; ++k){
+      (*setDimsKernels[k])(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
+      (*nestedKernels[k])(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
+    }
+  }
+  break;"""
 
 def virtualOperatorDeclarations(N):
     return '\n\n'.join([virtualOperatorDeclaration(n + 1) for n in xrange(N)])
@@ -66,7 +76,15 @@ def operatorDefinitions(mode, N):
 def operatorDefinition(mode, N):
     if mode == 'Base':
         return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+    if(nestedKernelCount == 1){
+      (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+    }
+    else{
+      for(int k = 0; k < nestedKernelCount; ++k){
+        (*setDimsKernels[k])(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+        (*nestedKernels[k])(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+      }
+    }
   }"""
     else:
         header = operatorDefinitionHeader(mode, N)
