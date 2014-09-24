@@ -2600,6 +2600,8 @@ namespace occa {
       while(cMid < cRight){
         if((cMid[0] == '\\') && isWhitespace(cMid[1])){
           ret += strip(cLeft, cMid - cLeft);
+          ret += ' ';
+
           ++cMid;
 
           cLeft = (cMid + 1);
@@ -6112,8 +6114,8 @@ namespace occa {
 
       nodeRoot = preprocessMacros(nodeRoot);
       nodeRoot = labelCode(nodeRoot);
-      nodeRoot->print();
-      throw 1;
+      // nodeRoot->print();
+      // throw 1;
 
       statement globalScope(*this);
       globalScope.loadAllFromNode(nodeRoot);
