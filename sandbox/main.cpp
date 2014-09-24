@@ -4621,6 +4621,11 @@ namespace occa {
 
       info.nestedKernels.clear();
 
+      scopeVarMapIterator it = globalScope->scopeVarMap.find(info.name);
+      varInfo &originalVar   = *(it->second);
+
+      globalScope->scopeVarMap.erase(it);
+
       for(int k = 0; k < kernelCount; ++k){
         strNode *newNodeRoot = s.nodeStart->clone();
         strNode *newNodeEnd  = lastNode(newNodeRoot);
@@ -4634,7 +4639,10 @@ namespace occa {
 
         ss << k;
         newNodeRoot->value = info.baseName + ss.str();
+        originalVar.name   = newNodeRoot->value;
         ss.str("");
+
+        globalScope->addVariable(originalVar);
 
         if(k)
           newSNEnd = newSNEnd->push(new statementNode(info.nestedKernels.back()));
@@ -4658,15 +4666,9 @@ namespace occa {
 
       kernelCount = 0;
 
+      // Add kernel bodies
       while(snPos){
         statement &s2 = *(snPos->value);
-
-        if( (s2.type != (forStatementType | occaStatementType)) &&
-            !(s2.type & macroStatementType) ){
-
-          std::cout << "Only outer-loops are supported at the kernel scope\n";
-          throw 1;
-        }
 
         if((s2.type == (forStatementType | occaStatementType)) ||
            (snPos->right == NULL)){
@@ -4695,6 +4697,8 @@ namespace occa {
         else
           snPos = snPos->right;
       }
+
+      // [-] Free sn and s
 
       return newSNEnd->right;
     }
