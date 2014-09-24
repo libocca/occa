@@ -1,6 +1,7 @@
 #ifndef OCCA_PARSER_HEADER
 #define OCCA_PARSER_HEADER
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -11,6 +12,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#include <stdint.h>
 #include <unistd.h>
 #include <fcntl.h>
 #include <sys/types.h>

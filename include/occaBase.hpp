@@ -1,6 +1,7 @@
 #ifndef OCCA_BASE_HEADER
 #define OCCA_BASE_HEADER
 
+#include <algorithm>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
