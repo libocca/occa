@@ -10,6 +10,7 @@
 #include <assert.h>
 
 #include "occaDefines.hpp"
+#include "occaParser.hpp"
 
 #if   OCCA_OS == LINUX_OS
 #  include <sys/time.h>
@@ -27,6 +28,8 @@ namespace occa {
   class kernelInfo;
 
   double currentTime();
+
+  std::string getFileExtension(const std::string &filename);
 
   void getFilePrefixAndName(const std::string &fullFilename,
                             std::string &prefix,

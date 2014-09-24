@@ -31,6 +31,23 @@ namespace occa {
 #endif
   }
 
+  std::string getFileExtension(const std::string &filename){
+    const char *c = filename.c_str();
+    const char *i = NULL;
+
+    while(*c != '\0'){
+      if(*c == '.')
+        i = c;
+
+      ++c;
+    }
+
+    if(i != NULL)
+      return filename.substr(i - filename.c_str() + 1);
+
+    return "";
+  }
+
   void getFilePrefixAndName(const std::string &fullFilename,
                             std::string &prefix,
                             std::string &filename){
@@ -257,14 +274,34 @@ namespace occa {
     std::string prefix, name;
     getFilePrefixAndName(cachedBinary, prefix, name);
 
+    std::string extension = getFileExtension(filename);
+
     const std::string iCachedBinary = prefix + "i_" + name;
 
-    std::ofstream fs;
-    fs.open(iCachedBinary.c_str());
+    if(extension == "okl"){
+      const std::string pCachedBinary = prefix + "p_" + name;
+      parser fileParser;
 
-    fs << info.occaKeywords << info.header << readFile(filename);
+      std::ofstream fs;
+      fs.open(pCachedBinary.c_str());
 
-    fs.close();
+      fs << info.header << readFile(filename);
+
+      fs.close();
+
+      fs.open(iCachedBinary.c_str());
+      fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
+
+      fs.close();
+    }
+    else{
+      std::ofstream fs;
+      fs.open(iCachedBinary.c_str());
+
+      fs << info.occaKeywords << info.header << readFile(filename);
+
+      fs.close();
+    }
 
     return iCachedBinary;
   }

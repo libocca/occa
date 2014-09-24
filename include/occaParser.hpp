@@ -6953,30 +6953,4 @@ namespace occa {
   class parser : public parserNamespace::parserBase {};
 };
 
-int main(int argc, char **argv){
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("test.cpp");
-  //   std::cout << parsedContent << '\n';
-  // }
-
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("openclTest.cpp");
-  //   std::cout << parsedContent << '\n';
-  // }
-
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("cudaTest.cpp");
-  //   std::cout << parsedContent << '\n';
-  // }
-
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("addVectors.okl");
-    std::cout << parsedContent << '\n';
-  }
-}
-
 #endif
