@@ -232,6 +232,15 @@ __device__ inline double occaCuda_fastExp(const double x){ return exp(x);    }
 #define occaFastExp   occaCuda_fastExp
 #define occaNativeExp occaExp
 
+__device__ inline float  occaCuda_pow(const float x){      return powf(x);   }
+__device__ inline double occaCuda_pow(const double x){     return pow(x);    }
+__device__ inline float  occaCuda_fastPow(const float x){  return __powf(x); }
+__device__ inline double occaCuda_fastPow(const double x){ return pow(x);    }
+
+#define occaPow       occaCuda_pow
+#define occaFastPow   occaCuda_fastPow
+#define occaNativePow occaPow
+
 __device__ inline float  occaCuda_log2(const float x){      return log2f(x);   }
 __device__ inline double occaCuda_log2(    const double x){ return log2(x);    }
 __device__ inline float  occaCuda_fastLog2(const float x){  return __log2f(x); }
