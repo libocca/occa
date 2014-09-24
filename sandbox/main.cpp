@@ -292,7 +292,7 @@ namespace occa {
 
       void loadVariableInformation(statement &s);
 
-      void addFunctionPrototypes(statement &s);
+      void addFunctionPrototypes();
 
       int statementOccaForNest(statement &s);
       bool statementIsAnOccaFor(statement &s);
@@ -321,8 +321,7 @@ namespace occa {
 
       void modifyTextureVariables();
 
-      statementNode* splitKernelStatement(statement &origin,
-                                          statementNode *sn,
+      statementNode* splitKernelStatement(statementNode *sn,
                                           kernelInfo &info);
       void loadKernelInfos();
 
@@ -3883,14 +3882,10 @@ namespace occa {
       loadVariableInformation(s, s.nodeStart);
     }
 
-    inline void parserBase::addFunctionPrototypes(statement &s){
-      // Global scope only
-      if(0 <= s.depth)
-        return;
-
+    inline void parserBase::addFunctionPrototypes(){
       std::map<std::string,bool> prototypes;
 
-      statementNode *statementPos = s.statementStart;
+      statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement *s2 = statementPos->value;
@@ -3905,7 +3900,7 @@ namespace occa {
         statementPos = statementPos->right;
       }
 
-      statementPos = s.statementStart;
+      statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement *s2 = statementPos->value;
@@ -3961,14 +3956,18 @@ namespace occa {
 
             statementNode *left = statementPos->left;
 
-            newNode->left = left;
+            if(globalScope->statementStart == statementPos)
+              globalScope->statementStart = newNode;
+
             if(left)
               left->right = newNode;
+
+            newNode->left = left;
 
             newNode->right     = statementPos;
             statementPos->left = newNode;
 
-            ++(s.statementCount);
+            ++(globalScope->statementCount);
           }
         }
 
@@ -4570,8 +4569,7 @@ namespace occa {
       }
     }
 
-    inline statementNode* parserBase::splitKernelStatement(statement &origin,
-                                                           statementNode *sn,
+    inline statementNode* parserBase::splitKernelStatement(statementNode *sn,
                                                            kernelInfo &info){
       int kernelCount = 0;
 
@@ -4631,7 +4629,7 @@ namespace occa {
         strNode *newNodeEnd  = lastNode(newNodeRoot);
 
         info.nestedKernels.push_back(new statement(s.depth,
-                                                   s.type, &origin,
+                                                   s.type, globalScope,
                                                    newNodeRoot, newNodeEnd));
 
         while( !(newNodeRoot->type & unknownVariable) )
@@ -4650,8 +4648,8 @@ namespace occa {
           newSNRoot = newSNEnd = new statementNode(info.nestedKernels.back());
       }
 
-      if(origin.statementStart == sn)
-        origin.statementStart = newSNRoot;
+      if(globalScope->statementStart == sn)
+        globalScope->statementStart = newSNRoot;
 
       if(sn->left)
         sn->left->right = newSNRoot;
@@ -4659,6 +4657,7 @@ namespace occa {
       if(sn->right)
         sn->right->left = newSNEnd;
 
+      newSNRoot->left = sn->left;
       newSNEnd->right = sn->right;
 
       statementNode *snPosStart = s.statementStart;
@@ -4696,6 +4695,8 @@ namespace occa {
         }
         else
           snPos = snPos->right;
+
+        globalScope->statementCount += (kernelCount - 1);
       }
 
       // [-] Free sn and s
@@ -4725,7 +4726,7 @@ namespace occa {
           kernelInfoMap[info.name] = &info;
           //============================
 
-          snPos = splitKernelStatement(s, snPos, info);
+          snPos = splitKernelStatement(snPos, info);
         }
         else
           snPos = snPos->right;
@@ -6306,7 +6307,7 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       applyToAllStatements(*globalScope, &parserBase::loadVariableInformation);
 
-      applyToAllStatements(*globalScope, &parserBase::addFunctionPrototypes);
+      addFunctionPrototypes();
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
