@@ -71,6 +71,7 @@ namespace occa {
     std::stringstream salt;
     salt << "OpenMP"
          << info.salt()
+         << parser::version
          << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
          << dev->dHandle->compilerFlags
