@@ -66,7 +66,15 @@ def operatorDefinitions(mode, N):
 def operatorDefinition(mode, N):
     if mode == 'Base':
         return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+    if(nestedKernelCount == 1){
+      (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+    }
+    else{
+      for(int k = 0; k < nestedKernelCount; ++k){
+        (*setDimsKernels[k])(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+        (*nestedKernels[k])(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+      }
+    }
   }"""
     else:
         header = operatorDefinitionHeader(mode, N)
