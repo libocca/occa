@@ -1,16 +1,4 @@
 #if 1
-void addVectors0(int entries,
-                const float * a,
-                const float * b,
-                float * ab){
-}
-
-void addVectors_1(int entries,
-                const float * a,
-                const float * b,
-                float * ab){
-}
-
 void addVectors(int entries,
                 const float * a,
                 const float * b,
