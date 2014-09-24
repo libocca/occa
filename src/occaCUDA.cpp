@@ -249,7 +249,20 @@ namespace occa {
     float msTimeTaken;
     cuEventElapsedTime(&msTimeTaken, startEvent, endEvent);
 
-    return 1.0e-3*msTimeTaken;
+    return (1.0e-3 * msTimeTaken);
+  }
+
+  template <>
+  double kernel_t<CUDA>::timeTakenBetween(void *start, void *end){
+    CUevent &startEvent = *((CUevent*) start);
+    CUevent &endEvent   = *((CUevent*) end);
+
+    cuEventSynchronize(endEvent);
+
+    float msTimeTaken;
+    cuEventElapsedTime(&msTimeTaken, startEvent, endEvent);
+
+    return (1.0e-3 * msTimeTaken);
   }
 
   template <>
