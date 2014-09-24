@@ -6537,6 +6537,8 @@ namespace occa {
         }
         else if(stringsAreEqual(c, (cEnd - c), "pragma"))
           return (state | keepMacro);
+        else
+          return (state | keepMacro);
 
         c = cEnd;
       }
