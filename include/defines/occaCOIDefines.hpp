@@ -179,6 +179,10 @@ typedef struct double4_t { double  x,y,z,w; } double4;
 #define occaFastExp   exp
 #define occaNativeExp exp
 
+#define occaPow       pow
+#define occaFastPow   pow
+#define occaNativePow pow
+
 #define occaLog2       log2
 #define occaFastLog2   log2
 #define occaNativeLog2 log2
