@@ -10,6 +10,8 @@ void addVectors(int entries,
     }
   }
 
+#pragma hello omp()  \
+  blah ()
   for(int groupB = 0; groupB < (20 + 3 - 1); ++groupB; outer1){
     for(int groupA = 0; groupA < (20 + 3 - 1); ++groupA; outer0){
       for(int itemB = 0; itemB < itemsPerGroupB; ++itemB; inner0){
