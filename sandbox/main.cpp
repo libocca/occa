@@ -4653,7 +4653,10 @@ namespace occa {
 
       newSNEnd->right = sn->right;
 
-      snPos = s.statementStart;
+      statementNode *snPosStart = s.statementStart;
+      snPos = snPosStart;
+
+      kernelCount = 0;
 
       while(snPos){
         statement &s2 = *(snPos->value);
@@ -4665,10 +4668,32 @@ namespace occa {
           throw 1;
         }
 
-        if(s2.type == (forStatementType | occaStatementType))
-          ++kernelCount;
+        if((s2.type == (forStatementType | occaStatementType)) ||
+           (snPos->right == NULL)){
 
-        snPos = snPos->right;
+          statement &s3 = *(info.nestedKernels[kernelCount]);
+
+          if( !(s2.type == (forStatementType | occaStatementType)) )
+            snPos = NULL;
+
+          s3.statementStart = snPosStart;
+          s3.statementEnd   = snPos;
+
+          if(snPosStart)
+            snPosStart->left = NULL;
+
+          if(snPos){
+            statementNode *snPosRight = snPos->right;
+            snPos->right = NULL;
+            snPos        = snPosRight;
+
+            snPosStart = snPosRight;
+          }
+
+          ++kernelCount;
+        }
+        else
+          snPos = snPos->right;
       }
 
       return newSNEnd->right;
