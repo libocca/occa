@@ -214,7 +214,9 @@ namespace occa {
       varOriginMap_t varOriginMap;
       varUsedMap_t varUsedMap;     // Statements are placed backwards
 
-      inline parserBase(){};
+      statement *globalScope;
+
+      parserBase();
 
       const std::string parseSource(const char *cRoot);
       const std::string parseFile(const std::string &filename);
@@ -313,6 +315,8 @@ namespace occa {
 
       void modifyTextureVariables();
 
+      void splitKernels();
+
       std::string occaScope(statement &s);
 
       void incrementDepth(statement &s);
@@ -355,7 +359,7 @@ namespace occa {
 
       void addOccaForsToKernel(statement &s);
 
-      void addOccaFors(statement &globalScope);
+      void addOccaFors();
 
       void setupOccaVariables(statement &s);
       // <<>>
@@ -1918,9 +1922,6 @@ namespace occa {
 
 
     //---[ Statement ]------------------------------
-    class varInfo;
-    class statement;
-
     int statementType(strNode *&nodeRoot);
     varInfo loadVarInfo(strNode *&nodePos);
 
@@ -1957,8 +1958,6 @@ namespace occa {
         statementStart(NULL),
         statementEnd(NULL) {}
 
-      inline ~statement(){};
-
       inline statement(const int depth_,
                        const int type_,
                        statement *up_,
@@ -1977,6 +1976,8 @@ namespace occa {
         statementCount(0),
         statementStart(NULL),
         statementEnd(NULL) {}
+
+      inline ~statement(){};
 
       inline std::string getTab() const {
         std::string ret = "";
@@ -4567,6 +4568,9 @@ namespace occa {
       }
     }
 
+    inline void parserBase::splitKernels(){
+    }
+
     inline std::string parserBase::occaScope(statement &s){
       statement *currentS = &s;
 
@@ -5381,8 +5385,8 @@ namespace occa {
       addOuterFors(s);
     }
 
-    inline void parserBase::addOccaFors(statement &globalScope){
-      statementNode *statementPos = globalScope.statementStart;
+    inline void parserBase::addOccaFors(){
+      statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement *s = statementPos->value;
@@ -6113,6 +6117,10 @@ namespace occa {
     }
     //==============================================
 
+    parserBase::parserBase(){
+      globalScope = new statement(*this);
+    }
+
     const std::string parserBase::parseSource(const char *cRoot){
       if(!keywordsAreInitialized){
         initKeywords();
@@ -6126,35 +6134,36 @@ namespace occa {
       // nodeRoot->print();
       // throw 1;
 
-      statement globalScope(*this);
-      globalScope.loadAllFromNode(nodeRoot);
+      globalScope->loadAllFromNode(nodeRoot);
 
-      markKernelFunctions(globalScope);
-      applyToAllStatements(globalScope, &parserBase::labelKernelsAsNativeOrNot);
+      markKernelFunctions(*globalScope);
+      applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
 
-      applyToAllStatements(globalScope, &parserBase::setupCudaVariables);
-      applyToAllStatements(globalScope, &parserBase::setupOccaVariables);
+      applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
+      applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
 
-      applyToAllStatements(globalScope, &parserBase::setupOccaFors);
-      applyToAllStatements(globalScope, &parserBase::loadVariableInformation);
+      applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
+      applyToAllStatements(*globalScope, &parserBase::loadVariableInformation);
 
-      applyToAllStatements(globalScope, &parserBase::addFunctionPrototypes);
-      applyToAllStatements(globalScope, &parserBase::updateConstToConstant);
+      applyToAllStatements(*globalScope, &parserBase::addFunctionPrototypes);
+      applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
-      addOccaFors(globalScope);
+      addOccaFors();
 
       // Also auto-adds barriers if needed
-      applyToAllStatements(globalScope, &parserBase::fixOccaForOrder);
-      applyToAllStatements(globalScope, &parserBase::addParallelFors);
+      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
+      applyToAllStatements(*globalScope, &parserBase::addParallelFors);
 
-      applyToAllStatements(globalScope, &parserBase::modifyExclusiveVariables);
+      applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
 
       modifyOccaForVariables();
       modifyTextureVariables();
 
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
 
-      return (std::string) globalScope;
+      splitKernels();
+
+      return (std::string) *globalScope;
     }
 
     const std::string parserBase::parseFile(const std::string &filename){
