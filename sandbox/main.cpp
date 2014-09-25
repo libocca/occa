@@ -1,6 +1,7 @@
 #ifndef OCCA_PARSER_HEADER
 #define OCCA_PARSER_HEADER
 
+#include <algorithm>
 #include <iostream>
 #include <sstream>
 #include <vector>
@@ -9,6 +10,7 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <stdio.h>
 
 #include <unistd.h>
@@ -6162,6 +6164,11 @@ namespace occa {
       keywordType["typedef"] = (specifierType | structType);
       keywordType["extern"]  = (specifierType | structType);
 
+      //---[ C++ ]----------------------
+      keywordType["virtual"]   = qualifierType;
+
+      keywordType["namespace"] = (specifierType | structType);
+
       //---[ Constants ]------------------
       keywordType["true"]  = presetValue;
       keywordType["false"] = presetValue;
@@ -6183,19 +6190,6 @@ namespace occa {
       keywordType["continue"] = specialKeywordType;
       keywordType["return"]   = specialKeywordType;
       keywordType["goto"]     = specialKeywordType;
-
-      // barrier: auto close if it's not properly done
-      //          or give an error
-
-      // const -> constant if it's in global space
-      // keywordType["constant"] = occaKeywordType;
-
-      // occaDeviceFunction if not specified as a kernel
-      // Add prototype before it
-
-      // Kernel:
-      //   Arg is     a pointer -> occaPointer  before type
-      //   Arg is not a pointer -> occavariable before name
 
       //---[ OCCA Keywords ]--------------
       keywordType["kernel"]    = (qualifierType | occaKeywordType);
