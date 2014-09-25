@@ -17,15 +17,13 @@ void midg(  int K,
 	    float * __restrict__ f_outQ,
 	    float frka, float frkb, float fdt){
   
-  /* registers and temporary */
-  register unsigned int k;
-
-  /* mesh parameters */
-  const int K = mesh->K;
-
-
   int p;
   register unsigned int n, m;
+
+  const int p_Np = 10;
+  const int p_Nfp = 6;
+  const int p_Nfaces = 4;
+  const int p_Nfields = 6;
 
   float  f_DrT[p_Np][p_Np] __attribute__ ((__aligned__));
   float  f_DsT[p_Np][p_Np] __attribute__ ((__aligned__));
@@ -55,7 +53,7 @@ void midg(  int K,
   float rhsEy[p_Np] __attribute__ ((__aligned__));
   float rhsEz[p_Np] __attribute__ ((__aligned__));
 
-  for(k=0;k<K;++k){
+  for(int k=0;k<K;++k){
     
     /* NOTE: once k is known, all other indexing variables etc are derived */
 
