@@ -170,31 +170,33 @@ namespace occa {
     static const int finishedCommentBlock = 2;
 
     //   ---[ Statements ]------
-    static const int simpleStatementType    = (3 << 0);
-    static const int declareStatementType   = (1 << 0);
-    static const int updateStatementType    = (1 << 1);
+    static const int invalidStatementType   = (1 << 0);
 
-    static const int flowStatementType      = (255 << 2);
-    static const int forStatementType       = (1   << 2);
-    static const int whileStatementType     = (1   << 3);
-    static const int doWhileStatementType   = (3   << 3);
-    static const int ifStatementType        = (1   << 5);
-    static const int elseIfStatementType    = (3   << 5);
-    static const int elseStatementType      = (5   << 5);
-    static const int switchStatementType    = (1   << 8);
-    static const int gotoStatementType      = (1   << 9);
+    static const int simpleStatementType    = (3 << 1);
+    static const int declareStatementType   = (1 << 1);
+    static const int updateStatementType    = (1 << 2);
 
-    static const int blankStatementType     = (1 << 10);
+    static const int flowStatementType      = (255 << 3);
+    static const int forStatementType       = (1   << 3);
+    static const int whileStatementType     = (1   << 4);
+    static const int doWhileStatementType   = (3   << 4);
+    static const int ifStatementType        = (1   << 6);
+    static const int elseIfStatementType    = (3   << 6);
+    static const int elseStatementType      = (5   << 6);
+    static const int switchStatementType    = (1   << 9);
+    static const int gotoStatementType      = (1   << 10);
 
-    static const int functionStatementType  = (3 << 11);
-    static const int functionDefinitionType = (1 << 11);
-    static const int functionPrototypeType  = (1 << 12);
-    static const int blockStatementType     = (1 << 13);
-    static const int structStatementType    = (1 << 14);
+    static const int blankStatementType     = (1 << 11);
 
-    static const int occaStatementType      = (1 << 15);
+    static const int functionStatementType  = (3 << 12);
+    static const int functionDefinitionType = (1 << 12);
+    static const int functionPrototypeType  = (1 << 13);
+    static const int blockStatementType     = (1 << 14);
+    static const int structStatementType    = (1 << 15);
 
-    static const int macroStatementType     = (1 << 16);
+    static const int occaStatementType      = (1 << 16);
+
+    static const int macroStatementType     = (1 << 17);
 
     //   ---[ OCCA Fors ]------
     static const int occaOuterForShift = 0;
@@ -2780,6 +2782,11 @@ namespace occa {
       //    last strNode in that statement
       const int st = statementType(nodeRootEnd);
 
+      if(st & invalidStatementType){
+        std::cout << "Not a valid statement\n";
+        throw 1;
+      }
+
       statement *newStatement = new statement(depth + 1,
                                               st, this,
                                               nodeRoot, nodeRootEnd);
@@ -2990,10 +2997,10 @@ namespace occa {
 
         const int downCount = nodeRootEnd->down.size();
 
-        if((downCount == 1) ||
+        if(((downCount == 1) && (st != elseStatementType)) ||
            ((downCount == 0) && (st == elseStatementType))){
-          // for(;;)    or    else
-          //   statement;       statement;
+          // if()         or    else
+          //   statement;         statement;
 
           nextNode = newStatement->loadFromNode(nextNode);
 
@@ -3015,7 +3022,8 @@ namespace occa {
           for(int i = (blockPos + 1); i < downCount; ++i)
             loadAllFromNode(nodeRoot->down[i]);
 
-          nodeRoot->down.clear();
+          nodeRoot->down.erase(nodeRoot->down.begin() + blockPos,
+                               nodeRoot->down.end());
 
           popAndGoRight(blockStart);
           popAndGoLeft(blockEnd);
@@ -3031,6 +3039,12 @@ namespace occa {
         nodeRoot = nodeRootEnd = nextNode;
 
         st = statementType(nodeRootEnd);
+
+        if(st & invalidStatementType){
+          std::cout << "Not a valid statement:\n";
+          prettyString(nodeRoot, "", false);
+          throw 1;
+        }
 
       } while((st == elseIfStatementType) ||
               (st == elseStatementType));
@@ -5869,10 +5883,8 @@ namespace occa {
     }
 
     inline int statementType(strNode *&nodeRoot){
-      if(nodeRoot == NULL){
-        std::cout << "Not a valid statement\n";
-        throw 1;
-      }
+      if(nodeRoot == NULL)
+        return invalidStatementType;
 
       if(nodeRoot->type == macroKeywordType)
         return macroStatementType;
@@ -6085,6 +6097,7 @@ namespace occa {
       keywordType["restrict"] = (qualifierType | occaKeywordType);
       keywordType["volatile"] = (qualifierType | occaKeywordType);
       keywordType["aligned"]  = (qualifierType | occaKeywordType);
+      keywordType["register"] = qualifierType;
 
       keywordType["occaConst"]    = (qualifierType | occaKeywordType);
       keywordType["occaRestrict"] = (qualifierType | occaKeywordType);
@@ -6299,6 +6312,7 @@ namespace occa {
       // throw 1;
 
       globalScope->loadAllFromNode(nodeRoot);
+      std::cout << *globalScope << '\n';
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -6694,6 +6708,8 @@ namespace occa {
           info.name = name;
 
           loadMacroInfo(info, c);
+
+          return state;
         }
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
           if(state & ignoring)
@@ -6703,6 +6719,8 @@ namespace occa {
 
           if(macroMap.find(name) != macroMap.end())
             macroMap.erase(name);
+
+          return state;
         }
         else if(stringsAreEqual(c, (cEnd - c), "include")){
           if(state & ignoring)
@@ -6974,9 +6992,15 @@ int main(int argc, char **argv){
 
   {
     occa::parser parser;
-    std::string parsedContent = parser.parseFile("addVectors.okl");
+    std::string parsedContent = parser.parseFile("midg.okl");
     std::cout << parsedContent << '\n';
   }
+
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("addVectors.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 }
 
 #endif
