@@ -37,8 +37,8 @@ int main(int argc, char **argv){
   //  addVectors = device.buildKernelFromSource("addVectors.okl",
   // "addVectors");
 
-  addVectors = device.buildKernelFromSource("foo.okl",
-					    "foo");
+  addVectors = device.buildKernelFromSource("midg.okl",
+					    "midg");
   exit(-1);
 
 
