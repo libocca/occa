@@ -24,6 +24,7 @@ void MaxwellsRHS3d(  int K,
   int p_Np = 10;
   int p_Nfaces = 10;
   int p_Nfp = 10;
+  int p_Nfields = 10;
 
   int p;
   register unsigned int n, m;

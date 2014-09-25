@@ -2093,8 +2093,10 @@ namespace occa {
                                                 type, up,
                                                 NULL, NULL);
 
-        newStatement->nodeStart = nodeStart->clone();
-        newStatement->nodeEnd   = lastNode(newStatement->nodeStart);
+        if(nodeStart){
+          newStatement->nodeStart = nodeStart->clone();
+          newStatement->nodeEnd   = lastNode(newStatement->nodeStart);
+        }
 
         newStatement->scopeVarMap = scopeVarMap;
 
@@ -2750,11 +2752,14 @@ namespace occa {
     inline varInfo* statement::addVariable(const varInfo &info,
                                            statement *origin){
       scopeVarMapIterator it = scopeVarMap.find(info.name);
+
       if(it != scopeVarMap.end()       &&
          !info.hasDescriptor("extern") &&
          !((info.typeInfo & functionType) && ((it->second)->typeInfo & protoType))){
 
-        std::cout << "Variable [" << info.name << "] already defined on:"
+        std::cout << "Variable [" << info.name << "] defined in:\n"
+                  << *origin
+                  << "is already defined in:\n"
                   << *this;
         throw 1;
       }
@@ -3378,10 +3383,15 @@ namespace occa {
       if( !(s.type & forStatementType) )
         return;
 
+      statement *spKernel = getStatementKernel(s);
+
+      if(spKernel == NULL)
+        return;
+
       if(statementKernelUsesNativeOCCA(s))
         return;
 
-      statement &sKernel = *(getStatementKernel(s));
+      statement &sKernel = *spKernel;
 
       strNode *nodePos = s.nodeStart;
       strNode *lastNode;
@@ -5916,14 +5926,17 @@ namespace occa {
       if(nodeRoot == NULL)
         return invalidStatementType;
 
-      if(nodeRoot->type == macroKeywordType)
+      else if(nodeRoot->type == macroKeywordType)
         return macroStatementType;
 
-      if(nodeRoot->type == keywordType["occaOuterFor0"])
+      else if(nodeRoot->type == keywordType["occaOuterFor0"])
         return keywordType["occaOuterFor0"];
 
-      if(nodeRoot->type & structType)
+      else if(nodeRoot->type & structType)
         return structStatementType;
+
+      else if(nodeRoot->type & operatorType)
+        return updateStatementType;
 
       else if(nodeRoot->type & unknownVariable){
         if(nodeRoot->right &&
@@ -6025,7 +6038,7 @@ namespace occa {
 
           return keywordType["occaOuterFor0"];
       }
-      if(nodeRoot->type & specialKeywordType){
+      else if(nodeRoot->type & specialKeywordType){
         while(nodeRoot){
           if(nodeRoot->type & endStatement)
             break;
@@ -6035,7 +6048,8 @@ namespace occa {
 
         return blankStatementType;
       }
-      if((nodeRoot->type == startBrace) &&
+
+      else if((nodeRoot->type == startBrace) &&
          (nodeRoot->up)                 &&
          !(nodeRoot->up->type & operatorType)){
 
