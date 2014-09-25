@@ -2018,6 +2018,9 @@ namespace occa {
       void loadAllFromNode(strNode *nodeRoot);
       strNode* loadFromNode(strNode *nodeRoot);
 
+      void loadBlocksFromLastNode(strNode *end,
+                                  const int startBlockPos = 0);
+
       strNode* loadSimpleFromNode(const int st,
                                   strNode *nodeRoot,
                                   strNode *nodeRootEnd);
@@ -2863,6 +2866,19 @@ namespace occa {
       return nodeRootEnd;
     }
 
+    inline void statement::loadBlocksFromLastNode(strNode *end,
+                                                  const int startBlockPos){
+      const int downCount = end->down.size();
+
+      if(startBlockPos <= downCount){
+        for(int i = startBlockPos; i < downCount; ++i)
+          up->loadAllFromNode(end->down[i]);
+
+        end->down.erase(end->down.begin() + startBlockPos,
+                        end->down.end());
+      }
+    }
+
     inline strNode* statement::loadSimpleFromNode(const int st,
                                                   strNode *nodeRoot,
                                                   strNode *nodeRootEnd){
@@ -2872,6 +2888,8 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
+
+      loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
     }
@@ -2919,17 +2937,16 @@ namespace occa {
         strNode *blockStart = nodeRootEnd->down[1];
         strNode *blockEnd   = lastNode(blockStart);
 
+        nodeRootEnd->down.erase(nodeRootEnd->down.begin() + 1,
+                                nodeRootEnd->down.begin() + 2);
+
         // Load all down's before popping [{] and [}]'s
         const int blockDownCount = blockStart->down.size();
 
         for(int i = 0; i < blockDownCount; ++i)
           loadAllFromNode( blockStart->down[i] );
 
-        for(int i = 2; i < downCount; ++i)
-          up->loadAllFromNode(nodeRootEnd->down[i]);
-
-        nodeRootEnd->down.erase(nodeRootEnd->down.begin() + 1,
-                                nodeRootEnd->down.end());
+        loadBlocksFromLastNode(nodeRootEnd, 1);
 
         popAndGoRight(blockStart);
         popAndGoLeft(blockEnd);
@@ -2967,6 +2984,8 @@ namespace occa {
 
         for(int i = 0; i < downCount; ++i)
           loadAllFromNode( blockStart->down[i] );
+
+        loadBlocksFromLastNode(nodeRootEnd, 1);
 
         popAndGoRight(blockStart);
         popAndGoLeft(blockEnd);
@@ -3015,17 +3034,16 @@ namespace occa {
           strNode *blockStart = nodeRoot->down[blockPos];
           strNode *blockEnd   = lastNode(blockStart);
 
+          nodeRoot->down.erase(nodeRoot->down.begin() + blockPos,
+                               nodeRoot->down.begin() + blockPos + 1);
+
           // Load all down's before popping [{] and [}]'s
           const int blockDownCount = blockStart->down.size();
 
           for(int i = 0; i < blockDownCount; ++i)
             newStatement->loadAllFromNode( blockStart->down[i] );
 
-          for(int i = (blockPos + 1); i < downCount; ++i)
-            loadAllFromNode(nodeRoot->down[i]);
-
-          nodeRoot->down.erase(nodeRoot->down.begin() + blockPos,
-                               nodeRoot->down.end());
+          loadBlocksFromLastNode(nodeRootEnd, blockPos);
 
           popAndGoRight(blockStart);
           popAndGoLeft(blockEnd);
@@ -3065,6 +3083,8 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
+      loadBlocksFromLastNode(nodeRootEnd);
+
       return nextNode;
     }
 
@@ -3077,6 +3097,8 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
+
+      loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
     }
@@ -3172,6 +3194,8 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
+      loadBlocksFromLastNode(nodeRootEnd);
+
       return nextNode;
     }
 
@@ -3186,6 +3210,8 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
+      loadBlocksFromLastNode(nodeRootEnd);
+
       return nextNode;
     }
 
@@ -3199,6 +3225,8 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
+
+      loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
     }

@@ -110,6 +110,7 @@ void MaxwellsRHS3d(  int K,
         rhsEy[n] += dz*nHx-dx*nHz;
         rhsEz[n] += dx*nHy-dy*nHx;
       }
+      #pragma hello
       {int i = 0;}
     }
 
