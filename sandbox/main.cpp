@@ -7033,17 +7033,17 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("midg.okl");
-    std::cout << parsedContent << '\n';
-  }
-
   // {
   //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("addVectors.okl");
+  //   std::string parsedContent = parser.parseFile("midg.okl");
   //   std::cout << parsedContent << '\n';
   // }
+
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("addVectors.okl");
+    std::cout << parsedContent << '\n';
+  }
 }
 
 #endif
