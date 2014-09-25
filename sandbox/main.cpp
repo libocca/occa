@@ -5932,12 +5932,21 @@ namespace occa {
       else if(nodeRoot->type & structType)
         return structStatementType;
 
-      else if(nodeRoot->type & operatorType)
+      else if(nodeRoot->type & operatorType){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
         return updateStatementType;
+      }
 
       else if(nodeRoot->type & unknownVariable){
         if(nodeRoot->right &&
            nodeRoot->right->value == ":"){
+
           nodeRoot = nodeRoot->right;
           return gotoStatementType;
         }
