@@ -110,6 +110,7 @@ void MaxwellsRHS3d(  int K,
         rhsEy[n] += dz*nHx-dx*nHz;
         rhsEz[n] += dx*nHy-dy*nHx;
       }
+      {int i = 0;}
     }
 
     /* NOTE: index into geometric factors */
@@ -135,14 +136,14 @@ void MaxwellsRHS3d(  int K,
         dEy = FSc*(f_inQ[idP++]  -f_Q[idM++]);
         dEz = FSc*(f_inQ[idP]    -f_Q[idM]);
       }
-      else{
-        dHx = FSc*(    f_Q[idP++]  -f_Q[idM++]);
-        dHy = FSc*(    f_Q[idP++]  -f_Q[idM++]);
-        dHz = FSc*(    f_Q[idP++]  -f_Q[idM++]);
-        dEx = FSc*(BSc*f_Q[idP++]  -f_Q[idM++]);
-        dEy = FSc*(BSc*f_Q[idP++]  -f_Q[idM++]);
-        dEz = FSc*(BSc*f_Q[idP]    -f_Q[idM]);
-      }
+      /* else{ */
+      /*   dHx = FSc*(    f_Q[idP++]  -f_Q[idM++]); */
+      /*   dHy = FSc*(    f_Q[idP++]  -f_Q[idM++]); */
+      /*   dHz = FSc*(    f_Q[idP++]  -f_Q[idM++]); */
+      /*   dEx = FSc*(BSc*f_Q[idP++]  -f_Q[idM++]); */
+      /*   dEy = FSc*(BSc*f_Q[idP++]  -f_Q[idM++]); */
+      /*   dEz = FSc*(BSc*f_Q[idP]    -f_Q[idM]); */
+      /* } */
 
       const float ndotdH = NXf*dHx + NYf*dHy + NZf*dHz;
       const float ndotdE = NXf*dEx + NYf*dEy + NZf*dEz;
@@ -189,14 +190,13 @@ void MaxwellsRHS3d(  int K,
         f_resQk[sk] +=  fdt*rhsEz[n]; ++sk;
       }
     }
-  }
 
-  for(k=0;k<K;++k){
-    const int sk = k*p_Np*p_Nfields;
+    for(k=0;k<K;++k){
+      const int sk = k*p_Np*p_Nfields;
 
-    for(n=0;n<p_Np*p_Nfields;++n){
-      f_Q[sk+n] += frkb*f_resQ[sk+n];
+      for(n=0;n<p_Np*p_Nfields;++n){
+        f_Q[sk+n] += frkb*f_resQ[sk+n];
+      }
     }
   }
-
 }

@@ -2791,6 +2791,9 @@ namespace occa {
                                               st, this,
                                               nodeRoot, nodeRootEnd);
 
+      if( !(st & ifStatementType) )
+        addStatement(newStatement);
+
       if(st & simpleStatementType){
         nodeRootEnd = newStatement->loadSimpleFromNode(st,
                                                        nodeRoot,
@@ -2810,7 +2813,6 @@ namespace occa {
 
         else if(st & ifStatementType){
           delete newStatement;
-          newStatement = NULL;
 
           nodeRootEnd = loadIfFromNode(st,
                                        nodeRoot,
@@ -2858,9 +2860,6 @@ namespace occa {
                                                       nodeRoot,
                                                       nodeRootEnd);
 
-      if(newStatement)
-        addStatement(newStatement);
-
       return nodeRootEnd;
     }
 
@@ -2905,9 +2904,9 @@ namespace occa {
                                   nodeRootEnd->down.begin() + 1);
 
           // Load all down's before popping [{] and [}]'s
-          const int downCount = blockStart->down.size();
+          const int blockDownCount = blockStart->down.size();
 
-          for(int i = 0; i < downCount; ++i)
+          for(int i = 0; i < blockDownCount; ++i)
             loadAllFromNode( blockStart->down[i] );
 
           popAndGoRight(blockStart);
@@ -2920,14 +2919,17 @@ namespace occa {
         strNode *blockStart = nodeRoot->down[1];
         strNode *blockEnd   = lastNode(blockStart);
 
-        nodeRoot->down.erase(nodeRoot->down.begin() + 1,
-                             nodeRoot->down.begin() + 2);
-
         // Load all down's before popping [{] and [}]'s
-        const int downCount = blockStart->down.size();
+        const int blockDownCount = blockStart->down.size();
 
-        for(int i = 0; i < downCount; ++i)
+        for(int i = 0; i < blockDownCount; ++i)
           loadAllFromNode( blockStart->down[i] );
+
+        for(int i = 2; i < downCount; ++i)
+          up->loadAllFromNode(nodeRoot->down[i]);
+
+        nodeRoot->down.erase(nodeRoot->down.begin() + 1,
+                             nodeRoot->down.end());
 
         popAndGoRight(blockStart);
         popAndGoLeft(blockEnd);
