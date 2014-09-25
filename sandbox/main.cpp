@@ -1607,8 +1607,6 @@ namespace occa {
               ret += ", ";
             }
             else if((nodePos->value == ".") || (nodePos->value == "::")){
-              // [-] This check fails for current node loader
-#if 0
               if(((nodePos->left == NULL) ||
                   !(nodePos->left->type & unknownVariable)) ||
                  ((nodePos->right == NULL) ||
@@ -1624,7 +1622,6 @@ namespace occa {
 
                 throw 1;
               }
-#endif
 
               ret += *nodePos;
             }
@@ -6247,10 +6244,10 @@ namespace occa {
       keywordType["occaGlobalDim2"] = (presetValue | occaKeywordType);
 
       //---[ CUDA Keywords ]--------------
-      keywordType["threadIdx"] = (presetValue | cudaKeywordType);
-      keywordType["blockDim"]  = (presetValue | cudaKeywordType);
-      keywordType["blockIdx"]  = (presetValue | cudaKeywordType);
-      keywordType["gridDim"]   = (presetValue | cudaKeywordType);
+      keywordType["threadIdx"] = (unknownVariable | cudaKeywordType);
+      keywordType["blockDim"]  = (unknownVariable | cudaKeywordType);
+      keywordType["blockIdx"]  = (unknownVariable | cudaKeywordType);
+      keywordType["gridDim"]   = (unknownVariable | cudaKeywordType);
 
       std::string mathFunctions[16] = {
         "sqrt", "sin"  , "asin" ,
@@ -6356,7 +6353,6 @@ namespace occa {
       // throw 1;
 
       globalScope->loadAllFromNode(nodeRoot);
-      std::cout << *globalScope << '\n';
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
