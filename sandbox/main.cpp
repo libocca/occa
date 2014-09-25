@@ -2916,7 +2916,7 @@ namespace occa {
         }
       }
       else{
-        strNode *blockStart = nodeRoot->down[1];
+        strNode *blockStart = nodeRootEnd->down[1];
         strNode *blockEnd   = lastNode(blockStart);
 
         // Load all down's before popping [{] and [}]'s
@@ -2926,10 +2926,10 @@ namespace occa {
           loadAllFromNode( blockStart->down[i] );
 
         for(int i = 2; i < downCount; ++i)
-          up->loadAllFromNode(nodeRoot->down[i]);
+          up->loadAllFromNode(nodeRootEnd->down[i]);
 
-        nodeRoot->down.erase(nodeRoot->down.begin() + 1,
-                             nodeRoot->down.end());
+        nodeRootEnd->down.erase(nodeRootEnd->down.begin() + 1,
+                                nodeRootEnd->down.end());
 
         popAndGoRight(blockStart);
         popAndGoLeft(blockEnd);
