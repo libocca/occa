@@ -19,5 +19,6 @@ notifications:
   email:
     recipients:
       - dmed256@gmail.com
+      - spam.warburton@gmail.com
     on_success: [never]
     on_failure: [always]
