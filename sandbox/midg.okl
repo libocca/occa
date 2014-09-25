@@ -126,7 +126,7 @@ void MaxwellsRHS3d(  int K,
 
       float dHx, dHy, dHz, dEx, dEy, dEz;
 
-      if(true){//if(idP<0){
+      if(idP<0){
         idP = p_Nfields*(-1-idP);
         dHx = FSc*(f_inQ[idP++]  -f_Q[idM++]);
         dHy = FSc*(f_inQ[idP++]  -f_Q[idM++]);

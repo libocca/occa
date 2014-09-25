@@ -3017,7 +3017,7 @@ namespace occa {
           const int blockDownCount = blockStart->down.size();
 
           for(int i = 0; i < blockDownCount; ++i)
-            loadAllFromNode( blockStart->down[i] );
+            newStatement->loadAllFromNode( blockStart->down[i] );
 
           for(int i = (blockPos + 1); i < downCount; ++i)
             loadAllFromNode(nodeRoot->down[i]);
