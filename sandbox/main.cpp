@@ -40,29 +40,37 @@ namespace occa {
     typedef node<statement*> statementNode;
     typedef node<varInfo*>   varInfoNode;
 
-    typedef std::map<std::string,int> macroMap_t;
-    typedef macroMap_t::iterator      macroMapIterator;
+    typedef std::map<std::string,int>  macroMap_t;
+    typedef macroMap_t::iterator       macroMapIterator;
+    typedef macroMap_t::const_iterator cMacroMapIterator;
 
-    typedef std::map<std::string,int>  keywordTypeMap_t;
-    typedef keywordTypeMap_t::iterator keywordTypeMapIterator;
+    typedef std::map<std::string,int>        keywordTypeMap_t;
+    typedef keywordTypeMap_t::iterator       keywordTypeMapIterator;
+    typedef keywordTypeMap_t::const_iterator cKeywordTypeMapIterator;
 
-    typedef std::map<opHolder,int> opTypeMap_t;
-    typedef opTypeMap_t::iterator  opTypeMapIterator;
+    typedef std::map<opHolder,int>       opTypeMap_t;
+    typedef opTypeMap_t::iterator        opTypeMapIterator;
+    typedef opTypeMap_t::const_iterator  cOpTypeMapIterator;
 
     typedef std::map<std::string,typeDef*> scopeTypeMap_t;
     typedef scopeTypeMap_t::iterator       scopeTypeMapIterator;
+    typedef scopeTypeMap_t::const_iterator cScopeTypeMapIterator;
 
     typedef std::map<std::string,varInfo*> scopeVarMap_t;
     typedef scopeVarMap_t::iterator        scopeVarMapIterator;
+    typedef scopeVarMap_t::const_iterator  cScopeVarMapIterator;
 
-    typedef std::map<varInfo*,statement*> varOriginMap_t;
-    typedef varOriginMap_t::iterator      varOriginMapIterator;
+    typedef std::map<varInfo*,statement*>  varOriginMap_t;
+    typedef varOriginMap_t::iterator       varOriginMapIterator;
+    typedef varOriginMap_t::const_iterator cVarOriginMapIterator;
 
     typedef std::map<varInfo*,statementNode> varUsedMap_t;
     typedef varUsedMap_t::iterator           varUsedMapIterator;
+    typedef varUsedMap_t::const_iterator     cVarUsedMapIterator;
 
     typedef std::map<std::string,kernelInfo*> kernelInfoMap_t;
     typedef kernelInfoMap_t::iterator         kernelInfoIterator;
+    typedef kernelInfoMap_t::const_iterator   cKernelInfoIterator;
 
     typedef std::map<statement*,int> loopSection_t;
     typedef loopSection_t::iterator  loopSectionIterator;
@@ -2274,17 +2282,28 @@ namespace occa {
     public:
       std::string typeName, varName;
       int typeInfo;
-      std::vector<typeDef*> members;
+      scopeTypeMap_t members;
+      std::vector<typeDef*> namelessMembers;
 
       inline typeDef() :
         typeName(""),
         varName(""),
         typeInfo(podTypeDef) {}
 
-      inline typeDef& addType(typeDef *def = NULL){
-        typeDef *t = (def == NULL) ? (new typeDef) : def;
-        members.push_back(t);
-        return *t;
+      inline void addType(typeDef *def){
+        if(def->typeName.size())
+          members[typeName] = def;
+        else
+          namelessMembers.push_back(def);
+      }
+
+      inline typeDef& addType(const std::string &newVarName){
+        typeDef &def = *(new typeDef);
+        def.varName = newVarName;
+
+        members[newVarName] = &def;
+
+        return def;
       }
 
       inline std::string print(const std::string &tab = "") const {
@@ -2300,10 +2319,17 @@ namespace occa {
 
         ret += (typeName.size() ? (typeName + " {\n") : "{\n");
 
-        const int memberCount = members.size();
+        cScopeTypeMapIterator it = members.begin();
 
-        for(int i = 0; i < memberCount; ++i)
-          ret += members[i]->print(tab + "  ") + "\n";
+        while(it != members.end()){
+          ret += ((it->second)->print(tab + "  ")) + "\n";
+          ++it;
+        }
+
+        const int namelessCount = namelessMembers.size();
+
+        for(int i = 0; i < namelessCount; ++i)
+          ret += namelessMembers[i]->print(tab + "  ") + "\n";
 
         ret += tab + (varName.size() ? ("} " + varName + ";") : "};");
 
@@ -7149,27 +7175,28 @@ namespace occa {
               uDef.typeInfo = unionTypeDef;
 
               if(n2 < 4){
-                typeDef &sDef = uDef.addType();
+                std::string varName = "w";
+                varName[0] += ((n2 + 1) % 4);
+
+                typeDef &sDef = uDef.addType(varName);
                 sDef.typeName = baseType[t];
-                sDef.varName = 'w' + (n2 + 1) % 4;
               }
 
               if(n2 < 10){
-                typeDef &sDef = (n2 < 4) ? uDef.addType() : def.addType();
+                std::string varName = "s";
+                varName += '0' + n2;
+
+                typeDef &sDef = (n2 < 4) ? uDef.addType(varName) : def.addType(varName);
                 sDef.typeName = baseType[t];
-                sDef.varName  = "s";
-                sDef.varName += '0' + n2;
               }
               else{
-                typeDef &sDef1 = uDef.addType();
-                sDef1.typeName = baseType[t];
-                sDef1.varName  = "s";
-                sDef1.varName += 'a' + (n2 - 10);
+                std::string varName = "s";
 
-                typeDef &sDef2 = uDef.addType();
+                typeDef &sDef1 = uDef.addType(varName + (char) ('a' + (n2 - 10)));
+                sDef1.typeName = baseType[t];
+
+                typeDef &sDef2 = uDef.addType(varName + (char) ('A' + (n2 - 10)));
                 sDef2.typeName = baseType[t];
-                sDef2.varName  = "s";
-                sDef2.varName += 'A' + (n2 - 10);
               }
 
               if((n2 < 4) || (10 <= n2))
@@ -7185,6 +7212,7 @@ namespace occa {
       def.typeName = "void";
 
       globalScope->scopeTypeMap[def.typeName] = &def;
+      globalScope->printTypesInStatement();
     }
   };
 
