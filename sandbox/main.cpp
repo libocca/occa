@@ -27,6 +27,7 @@ namespace occa {
 
     class statement;
 
+    class typeDef;
     class varInfo;
     class kernelInfo;
 
@@ -47,6 +48,9 @@ namespace occa {
 
     typedef std::map<opHolder,int> opTypeMap_t;
     typedef opTypeMap_t::iterator  opTypeMapIterator;
+
+    typedef std::map<std::string,typeDef*> scopeTypeMap_t;
+    typedef scopeTypeMap_t::iterator       scopeTypeMapIterator;
 
     typedef std::map<std::string,varInfo*> scopeVarMap_t;
     typedef scopeVarMap_t::iterator        scopeVarMapIterator;
@@ -156,6 +160,15 @@ namespace occa {
 
     static const int textureType      = (1 << 18);
 
+    //   ---[ Type Def Info ]---
+    static const int podTypeDef      = (1 << 1);
+
+    static const int structTypeDef   = (1 << 2);
+    static const int unionTypeDef    = (1 << 3);
+    static const int classTypeDef    = (1 << 4);
+
+    static const int templateTypeDef = (1 << 5);
+
     //   ---[ Instructions ]----
     static const int doNothing           = (1 << 0);
     static const int ignoring            = (3 << 1);
@@ -249,6 +262,7 @@ namespace occa {
       //====================================
 
       void initMacros();
+      void loadLanguageTypes();
 
       void applyToAllStatements(statement &s,
                                 applyToAllStatements_t func);
@@ -1934,12 +1948,16 @@ namespace occa {
 
     //---[ Statement ]------------------------------
     int statementType(strNode *&nodeRoot);
-    varInfo loadVarInfo(strNode *&nodePos);
+
+    std::ostream& operator << (std::ostream &out, const varInfo &info);
+    std::ostream& operator << (std::ostream &out, const typeDef &def);
 
     class statement {
     public:
+      scopeTypeMap_t scopeTypeMap;
+
       varOriginMap_t &varOriginMap;
-      varUsedMap_t &varUsedMap;
+      varUsedMap_t   &varUsedMap;
 
       int depth;
       statement *up;
@@ -1999,7 +2017,21 @@ namespace occa {
         return ret;
       }
 
-      varInfo* hasVariableInScope(const std::string &varName){
+      inline varInfo loadVarInfo(strNode *&nodePos);
+
+      inline typeDef* hasTypeInScope(const std::string &typeName){
+        scopeTypeMapIterator it = scopeTypeMap.find(typeName);
+
+        if(it != scopeTypeMap.end())
+          return it->second;
+
+        if(up)
+          return up->hasTypeInScope(typeName);
+
+        return NULL;
+      }
+
+      inline varInfo* hasVariableInScope(const std::string &varName){
         scopeVarMapIterator it = scopeVarMap.find(varName);
 
         if(it != scopeVarMap.end())
@@ -2117,21 +2149,30 @@ namespace occa {
         return newStatement;
       }
 
-      void printVariablesInStatement(){
+      inline void printVariablesInStatement(){
         scopeVarMapIterator it = scopeVarMap.begin();
 
         while(it != scopeVarMap.end()){
-          std::cout << "  " << it->first << '\n';
+          std::cout << "  " << *(it->second) << '\n';
 
           ++it;
         }
       }
 
-      void printVariablesInScope(){
+      inline void printVariablesInScope(){
         if(up)
           up->printVariablesInScope();
 
         printVariablesInStatement();
+      }
+
+      void printTypesInStatement();
+
+      inline void printTypesInScope(){
+        if(up)
+          up->printTypesInScope();
+
+        printTypesInStatement();
       }
 
       operator std::string() const {
@@ -2228,10 +2269,76 @@ namespace occa {
     //==============================================
 
 
+    //---[ Type Definitions ]-----------------------
+    class typeDef {
+    public:
+      std::string typeName, varName;
+      int typeInfo;
+      std::vector<typeDef*> members;
+
+      inline typeDef() :
+        typeName(""),
+        varName(""),
+        typeInfo(podTypeDef) {}
+
+      inline typeDef& addType(typeDef *def = NULL){
+        typeDef *t = (def == NULL) ? (new typeDef) : def;
+        members.push_back(t);
+        return *t;
+      }
+
+      inline std::string print(const std::string &tab = "") const {
+        if(typeInfo & podTypeDef)
+          return tab + (varName.size() ? (typeName + " " + varName + ";") : typeName);
+
+        std::string ret;
+
+        if(typeInfo & structTypeDef)
+          ret += tab + "struct ";
+        else if(typeInfo & unionTypeDef)
+          ret += tab + "union ";
+
+        ret += (typeName.size() ? (typeName + " {\n") : "{\n");
+
+        const int memberCount = members.size();
+
+        for(int i = 0; i < memberCount; ++i)
+          ret += members[i]->print(tab + "  ") + "\n";
+
+        ret += tab + (varName.size() ? ("} " + varName + ";") : "};");
+
+        return ret;
+      }
+
+      operator std::string() const {
+        return print();
+      }
+
+      inline friend std::ostream& operator << (std::ostream &out, const typeDef &def){
+        out << (std::string) def;
+
+        return out;
+      }
+    };
+
+
+    inline void statement::printTypesInStatement(){
+      scopeTypeMapIterator it = scopeTypeMap.begin();
+
+      while(it != scopeTypeMap.end()){
+        std::cout << (it->second)->print("  ") << '\n';
+
+        ++it;
+      }
+    }
+    //==============================================
+
+
     //---[ Variable Info ]--------------------------
     class varInfo {
     public:
-      std::string type, name;
+      typeDef *type;
+      std::string altType, name;
       int typeInfo;
 
       int pointerCount;
@@ -2241,7 +2348,7 @@ namespace occa {
       std::vector<std::string> extraInfo;
 
       inline varInfo() :
-        type(""),
+        type(NULL),
         name(""),
         typeInfo(0),
 
@@ -2286,8 +2393,8 @@ namespace occa {
           nodePos->type = qualifierType;
         }
 
-        if(type.size()){
-          nodePos       = nodePos->push(type);
+        if(type){
+          nodePos       = nodePos->push(type->typeName);
           nodePos->type = specifierType;
         }
 
@@ -2349,8 +2456,8 @@ namespace occa {
       for(int i = 0; i < descriptorCount; ++i)
         out << info.descriptors[i] << ' ';
 
-      if(info.type.size())
-        out << info.type << ' ';
+      if(info.type)
+        out << info.type->typeName << ' ';
 
       if(info.typeInfo & pointerType){
         if(info.typeInfo & heapPointerType){
@@ -2725,6 +2832,92 @@ namespace occa {
 
 
     //---[ Statement Functions ]--------------------{
+    inline varInfo statement::loadVarInfo(strNode *&nodePos){
+      varInfo info;
+
+      while(nodePos &&
+            !(nodePos->type & (presetValue | unknownVariable))){
+
+        if(nodePos->type & qualifierType){
+
+          if(nodePos->value == "*"){
+            info.typeInfo |= heapPointerType;
+            ++info.pointerCount;
+
+            if(nodePos->right &&
+               nodePos->right->value == "const"){
+              info.typeInfo |= constPointerType;
+              nodePos = nodePos->right;
+            }
+          }
+          else if(nodePos->value == "&")
+            info.typeInfo |= referenceType;
+          else{
+            if((nodePos->value  == "texture")              ||
+               ((nodePos->value == "image1d_t")            ||
+                (nodePos->value == "image2d_t"))           ||
+               (nodePos->value  == "cudaSurfaceObject_t"))
+              info.typeInfo |= textureType;
+
+            info.descriptors.push_back(*nodePos);
+          }
+        }
+        else if(nodePos->type & specifierType){
+          info.type = hasTypeInScope(*nodePos);
+
+          if(info.type == NULL){
+            std::cout << "Type [" << *nodePos << "] is not defined.\nFound in:\n";
+            nodePos->print();
+            throw 1;
+          }
+        }
+
+        nodePos = nodePos->right;
+      }
+
+      if(nodePos == NULL)
+        return info;
+
+      info.name = *nodePos;
+
+      const int downCount = nodePos->down.size();
+
+      if(downCount){
+        if(nodePos->down[0]->type == startParentheses){
+          strNode *argPos = nodePos->down[0];
+          info.typeInfo |= functionType;
+
+          strNode *lastPos = lastNode(nodePos);
+
+          // Distinguish between prototypes and function calls
+          if(lastPos->value == ";"){
+            if(info.type)
+              info.typeInfo |= protoType;
+            else
+              info.typeInfo |= functionCallType;
+          }
+        }
+        else if(nodePos->down[0]->type == startBracket){
+          info.typeInfo |= (variableType | stackPointerType);
+
+          for(int i = 0; i < downCount; ++i){
+            nodePos->down[i]->type = startBracket;
+
+            std::string sps = prettyString(nodePos->down[i]);
+            sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
+
+            info.stackPointerSizes.push_back(sps);
+          }
+        }
+      }
+      else{
+        info.typeInfo |= variableType;
+        nodePos = nodePos->right;
+      }
+
+      return info;
+    }
+
     inline bool statement::hasDescriptorVariable(const std::string descriptor){
       scopeVarMapIterator it = scopeVarMap.begin();
 
@@ -3455,7 +3648,7 @@ namespace occa {
       std::string idName, dimName, dimSubName, loopName;
 
       nodePos = commaNodes[0];
-      idVar = loadVarInfo(nodePos);
+      idVar = s.loadVarInfo(nodePos);
 
       idName = idVar.name;
       idVar.extraInfo.push_back("occa" + ioLoop + "Id" + loopNest);
@@ -3632,7 +3825,7 @@ namespace occa {
       statement *up = s.up;
 
       if(s.type & functionStatementType){
-        varInfo info = loadVarInfo(nodePos);
+        varInfo info = s.loadVarInfo(nodePos);
         (s.up)->addVariable(info, &s);
       }
 
@@ -3647,7 +3840,7 @@ namespace occa {
       }
 
       if( !(s.type & functionPrototypeType) ){
-        varInfo info = loadVarInfo(nodePos);
+        varInfo info = s.loadVarInfo(nodePos);
 
         if(info.typeInfo & functionCallType)
           return;
@@ -3658,7 +3851,7 @@ namespace occa {
           if(nodePos->value == ","){
             nodePos = nodePos->right;
 
-            varInfo info2 = loadVarInfo(nodePos);
+            varInfo info2 = s.loadVarInfo(nodePos);
 
             // Functions have types for each argument
             if( !(s.type & functionStatementType) ){
@@ -3842,7 +4035,7 @@ namespace occa {
 
       // Go to [(]
       if(s.type & functionStatementType)
-        loadVarInfo(nodePos);
+        s.loadVarInfo(nodePos);
 
       if(s.type & (forStatementType |
                    functionStatementType)){
@@ -3947,7 +4140,7 @@ namespace occa {
 
         if(s2->type & functionPrototypeType){
           strNode *nodePos = s2->nodeStart;
-          varInfo info = loadVarInfo(nodePos);
+          varInfo info = globalScope->loadVarInfo(nodePos);
 
           prototypes[info.name] = true;
         }
@@ -3962,7 +4155,7 @@ namespace occa {
 
         if(s2->type & functionStatementType){
           strNode *nodePos = s2->nodeStart;
-          varInfo info = loadVarInfo(nodePos);
+          varInfo info = globalScope->loadVarInfo(nodePos);
 
           if(info.hasDescriptor("occaKernel") ||
              info.hasDescriptor("kernel")){
@@ -4286,10 +4479,8 @@ namespace occa {
         nodePos->type = qualifierType;
       }
 
-      if(info.type.size()){
-        std::string infoType = info.type;
-
-        nodePos       = nodePos->push(infoType);
+      if(info.type){
+        nodePos       = nodePos->push(info.type->typeName);
         nodePos->type = specifierType;
 
         if(typeInfo & heapPointerType){
@@ -4417,7 +4608,7 @@ namespace occa {
             nodePos = nodePos->right;
 
             strNode *nextVar = nodePos;
-            varInfo info = loadVarInfo(nextVar);
+            varInfo info = s.loadVarInfo(nextVar);
 
             if((info.typeInfo & pointerType)        &&
                (!info.hasDescriptor("occaPointer")) &&
@@ -4457,7 +4648,7 @@ namespace occa {
         return;
 
       strNode *nodePos = s.nodeStart;
-      varInfo info = loadVarInfo(nodePos);
+      varInfo info = s.loadVarInfo(nodePos);
 
       if(!info.hasDescriptor("exclusive"))
         return;
@@ -4503,7 +4694,7 @@ namespace occa {
         if(nodePos->value == ","){
           nodePos = nodePos->right;
 
-          varInfo info2 = loadVarInfo(nodePos);
+          varInfo info2 = s.loadVarInfo(nodePos);
 
           info2.type        = info.type;
           info2.descriptors = info.descriptors;
@@ -5842,85 +6033,6 @@ namespace occa {
       return nodeRoot;
     }
 
-    inline varInfo loadVarInfo(strNode *&nodePos){
-      varInfo info;
-
-      while(nodePos &&
-            !(nodePos->type & (presetValue | unknownVariable))){
-
-        if(nodePos->type & qualifierType){
-
-          if(nodePos->value == "*"){
-            info.typeInfo |= heapPointerType;
-            ++info.pointerCount;
-
-            if(nodePos->right &&
-               nodePos->right->value == "const"){
-              info.typeInfo |= constPointerType;
-              nodePos = nodePos->right;
-            }
-          }
-          else if(nodePos->value == "&")
-            info.typeInfo |= referenceType;
-          else{
-            if((nodePos->value  == "texture")              ||
-               ((nodePos->value == "image1d_t")            ||
-                (nodePos->value == "image2d_t"))           ||
-               (nodePos->value  == "cudaSurfaceObject_t"))
-              info.typeInfo |= textureType;
-
-            info.descriptors.push_back(*nodePos);
-          }
-        }
-        else if(nodePos->type & specifierType)
-          info.type = *nodePos;
-
-        nodePos = nodePos->right;
-      }
-
-      if(nodePos == NULL)
-        return info;
-
-      info.name = *nodePos;
-
-      const int downCount = nodePos->down.size();
-
-      if(downCount){
-        if(nodePos->down[0]->type == startParentheses){
-          strNode *argPos = nodePos->down[0];
-          info.typeInfo |= functionType;
-
-          strNode *lastPos = lastNode(nodePos);
-
-          // Distinguish between prototypes and function calls
-          if(lastPos->value == ";"){
-            if(info.type.size())
-              info.typeInfo |= protoType;
-            else
-              info.typeInfo |= functionCallType;
-          }
-        }
-        else if(nodePos->down[0]->type == startBracket){
-          info.typeInfo |= (variableType | stackPointerType);
-
-          for(int i = 0; i < downCount; ++i){
-            nodePos->down[i]->type = startBracket;
-
-            std::string sps = prettyString(nodePos->down[i]);
-            sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
-
-            info.stackPointerSizes.push_back(sps);
-          }
-        }
-      }
-      else{
-        info.typeInfo |= variableType;
-        nodePos = nodePos->right;
-      }
-
-      return info;
-    }
-
     inline int statementType(strNode *&nodeRoot){
       if(nodeRoot == NULL)
         return invalidStatementType;
@@ -6354,6 +6466,8 @@ namespace occa {
       nodeRoot = labelCode(nodeRoot);
       // nodeRoot->print();
       // throw 1;
+
+      loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
 
@@ -7008,6 +7122,70 @@ namespace occa {
       loadMacro("#define get_global_size(X) occaGlobalDim##X");
       loadMacro("#define get_global_id(X)   occaGlobalId##X ");
     }
+
+    inline void parserBase::loadLanguageTypes(){
+      int parts[6]            = {1, 2, 3, 4, 8, 16};
+      std::string suffix[6]   = {"", "2", "3", "4", "8", "16"};
+      std::string baseType[7] = {"int"  ,
+                                 "bool" ,
+                                 "char" ,
+                                 "long" ,
+                                 "short",
+                                 "float",
+                                 "double"};
+
+      for(int t = 0; t < 7; ++t){
+        for(int n = 0; n < 6; ++n){
+          typeDef &def = *(new typeDef);
+          def.typeName = baseType[t] + suffix[n];
+
+          globalScope->scopeTypeMap[def.typeName] = &def;
+
+          if(n){
+            def.typeInfo = structTypeDef;
+
+            for(int n2 = 0; n2 < parts[n]; ++n2){
+              typeDef &uDef = *(new typeDef);
+              uDef.typeInfo = unionTypeDef;
+
+              if(n2 < 4){
+                typeDef &sDef = uDef.addType();
+                sDef.typeName = baseType[t];
+                sDef.varName = 'w' + (n2 + 1) % 4;
+              }
+
+              if(n2 < 10){
+                typeDef &sDef = (n2 < 4) ? uDef.addType() : def.addType();
+                sDef.typeName = baseType[t];
+                sDef.varName  = "s";
+                sDef.varName += '0' + n2;
+              }
+              else{
+                typeDef &sDef1 = uDef.addType();
+                sDef1.typeName = baseType[t];
+                sDef1.varName  = "s";
+                sDef1.varName += 'a' + (n2 - 10);
+
+                typeDef &sDef2 = uDef.addType();
+                sDef2.typeName = baseType[t];
+                sDef2.varName  = "s";
+                sDef2.varName += 'A' + (n2 - 10);
+              }
+
+              if((n2 < 4) || (10 <= n2))
+                def.addType(&uDef);
+              else
+                delete &uDef;
+            }
+          }
+        }
+      }
+
+      typeDef &def = *(new typeDef);
+      def.typeName = "void";
+
+      globalScope->scopeTypeMap[def.typeName] = &def;
+    }
   };
 
   // Just to ignore the namespace
@@ -7033,17 +7211,17 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("midg.okl");
-  //   std::cout << parsedContent << '\n';
-  // }
-
   {
     occa::parser parser;
-    std::string parsedContent = parser.parseFile("addVectors.okl");
+    std::string parsedContent = parser.parseFile("midg.okl");
     std::cout << parsedContent << '\n';
   }
+
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("addVectors.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 }
 
 #endif
