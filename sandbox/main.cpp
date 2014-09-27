@@ -2323,8 +2323,9 @@ namespace occa {
             typeInfo = enumTypeDef;
 
           if( !(typeInfo & podTypeDef) ){
-            std::cout << "1. HERE\n";
-            n->print();
+            // [--]
+            // std::cout << "1. HERE\n";
+            // n->print();
 
             if(n->down.size() == 0){
               n = n->right;
@@ -2337,8 +2338,8 @@ namespace occa {
               varName = n->right->value;
           }
           else{
-            std::cout << "2. HERE\n";
-            n->print();
+            // std::cout << "2. HERE\n";
+            // n->print();
           }
         }
       }
@@ -3631,7 +3632,8 @@ namespace occa {
       typePtr = new typeDef;
       typePtr->loadFromNode(*this, nodeRoot);
 
-      std::cout << "typePtr = " << *typePtr << '\n';
+      // [--]
+      // std::cout << "typePtr = " << *typePtr << '\n';
 
       if(typePtr->typedefing != NULL){
         if(typePtr->typedefUsesName)
@@ -4353,7 +4355,9 @@ namespace occa {
         return;
 
       while(n){
-        if(s.nodeHasDescriptor(n)){
+        if((n->type & unknownVariable) &&
+           !s.hasTypeInScope(n->value)){
+
           varInfo *infoPtr = s.hasVariableInScope(n->value);
 
           if(infoPtr == NULL){
@@ -6750,9 +6754,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-
-      std::cout << *globalScope << '\n';
-      throw 1;
+      // std::cout << *globalScope << '\n';
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
