@@ -2242,6 +2242,8 @@ namespace occa {
     */
     class typeDef {
     public:
+      typeDef *up;
+
       std::string typeName, varName;
       int typeInfo;
 
@@ -2252,6 +2254,8 @@ namespace occa {
       bool typedefUsesName;
 
       inline typeDef() :
+        up(NULL),
+
         typeName(""),
         varName(""),
         typeInfo(podTypeDef),
@@ -2259,6 +2263,8 @@ namespace occa {
         typedefing(NULL) {}
 
       inline void addType(typeDef *def){
+        def->up = this;
+
         if(def->typeName.size())
           members[typeName] = def;
 
@@ -2267,6 +2273,8 @@ namespace occa {
 
       inline typeDef& addType(const std::string &newVarName){
         typeDef &def = *(new typeDef);
+
+        def.up      = this;
         def.varName = newVarName;
 
         members[newVarName] = &def;
@@ -2306,15 +2314,23 @@ namespace occa {
             varName += n->right->value;
 
             typedefUsesName = true;
+
+            s.up->scopeTypeMap[varName] = this;
           }
           else{
+            typedefing->up = this;
             typedefing->loadFromNode(s, n);
+
             typedefUsesName = false;
+
+            s.up->scopeTypeMap[typedefing->varName] = this;
           }
         }
         else{
-          if(n->value == "struct")
-            typeInfo = structTypeDef;
+          if(n->value == "struct"){
+            if(!s.nodeHasDescriptor(n->right))
+              typeInfo = structTypeDef;
+          }
           else if(n->value == "class")
             typeInfo = classTypeDef;
           else if(n->value == "union")
@@ -2324,12 +2340,15 @@ namespace occa {
 
           if( !(typeInfo & podTypeDef) ){
             // [--]
-            // std::cout << "1. HERE\n";
-            // n->print();
+            std::cout << "1. HERE\n";
+            n->print();
 
             if(n->down.size() == 0){
               n = n->right;
               typeName = n->value;
+
+              if(up == NULL)
+                s.up->scopeTypeMap[typeName] = this;
             }
 
             loadPartsFromNode(s, n->down[0]);
@@ -2338,8 +2357,8 @@ namespace occa {
               varName = n->right->value;
           }
           else{
-            // std::cout << "2. HERE\n";
-            // n->print();
+            std::cout << "2. HERE\n";
+            n->print();
           }
         }
       }
@@ -2702,6 +2721,8 @@ namespace occa {
         }
         else{
           typeDef &sDef= *(new typeDef);
+          sDef.up = this;
+
           sDef.loadFromNode(s, n);
 
           addType(&sDef);
@@ -3633,17 +3654,7 @@ namespace occa {
       typePtr->loadFromNode(*this, nodeRoot);
 
       // [--]
-      // std::cout << "typePtr = " << *typePtr << '\n';
-
-      if(typePtr->typedefing != NULL){
-        if(typePtr->typedefUsesName)
-          up->scopeTypeMap[typePtr->varName] = typePtr;
-        else
-          up->scopeTypeMap[typePtr->typedefing->varName] = typePtr;
-      }
-      else{
-          up->scopeTypeMap[typePtr->typeName] = typePtr;
-      }
+      std::cout << "typePtr = " << *typePtr << '\n';
 
       loadBlocksFromLastNode(nodeRootEnd);
 
@@ -6754,8 +6765,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      // std::cout << *globalScope << '\n';
-      // throw 1;
+      std::cout << *globalScope << '\n';
+      throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -7501,17 +7512,17 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("test.c");
-  //   std::cout << parsedContent << '\n';
-  // }
-
   {
     occa::parser parser;
-    std::string parsedContent = parser.parseFile("addVectors.okl");
+    std::string parsedContent = parser.parseFile("test.c");
     std::cout << parsedContent << '\n';
   }
+
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("addVectors.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 }
 
 #endif
