@@ -1783,8 +1783,8 @@ namespace occa {
 
       varInfo loadVarInfo(strNode *&nodePos);
 
-      inline typeDef* hasTypeInScope(const std::string &typeName){
-        scopeTypeMapIterator it = scopeTypeMap.find(typeName);
+      inline typeDef* hasTypeInScope(const std::string &typeName) const {
+        cScopeTypeMapIterator it = scopeTypeMap.find(typeName);
 
         if(it != scopeTypeMap.end())
           return it->second;
@@ -1795,8 +1795,8 @@ namespace occa {
         return NULL;
       }
 
-      inline varInfo* hasVariableInScope(const std::string &varName){
-        scopeVarMapIterator it = scopeVarMap.find(varName);
+      inline varInfo* hasVariableInScope(const std::string &varName) const {
+        cScopeVarMapIterator it = scopeVarMap.find(varName);
 
         if(it != scopeVarMap.end())
           return it->second;
@@ -1807,8 +1807,8 @@ namespace occa {
         return NULL;
       }
 
-      bool hasDescriptorVariable(const std::string descriptor);
-      bool hasDescriptorVariableInScope(const std::string descriptor);
+      bool hasDescriptorVariable(const std::string descriptor) const;
+      bool hasDescriptorVariableInScope(const std::string descriptor) const;
 
       void loadAllFromNode(strNode *nodeRoot);
       strNode* loadFromNode(strNode *nodeRoot);
@@ -2135,7 +2135,9 @@ namespace occa {
             else
               ret += " ";
           }
-          else if(nodePos->type & descriptorType){
+          else if((nodePos->type & descriptorType) ||
+                  ((nodeRoot->type & unknownVariable) &&
+                   ( hasTypeInScope(nodeRoot->value) ))){
             ret += *nodePos;
 
             if(nodePos->right &&
@@ -3088,8 +3090,8 @@ namespace occa {
       return info;
     }
 
-    inline bool statement::hasDescriptorVariable(const std::string descriptor){
-      scopeVarMapIterator it = scopeVarMap.begin();
+    inline bool statement::hasDescriptorVariable(const std::string descriptor) const {
+      cScopeVarMapIterator it = scopeVarMap.begin();
 
       while(it != scopeVarMap.end()){
         if((it->second)->hasDescriptor(descriptor))
@@ -3101,7 +3103,7 @@ namespace occa {
       return false;
     }
 
-    inline bool statement::hasDescriptorVariableInScope(const std::string descriptor){
+    inline bool statement::hasDescriptorVariableInScope(const std::string descriptor) const {
       if(hasDescriptorVariable(descriptor))
         return true;
 
