@@ -1,6 +1,10 @@
 #if 1
 struct blah {
-  int i = 0;
+  struct b {
+    int j;
+  };
+
+  int i;
 } b;
 
 typedef struct blah2 { int j = 0; } b2;

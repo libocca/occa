@@ -2290,9 +2290,7 @@ namespace occa {
         }
       }
 
-      inline void loadPartsFromNode(statement &s,
-                                    strNode *&n){
-      }
+      void loadPartsFromNode(statement &s, strNode *n);
 
       inline std::string print(const std::string &tab = "", const int printStyle = 0) const {
         std::string ret = "";
@@ -2618,6 +2616,41 @@ namespace occa {
         out << ':';
 
       return out;
+    }
+
+
+    inline void typeDef::loadPartsFromNode(statement &s,
+                                           strNode *n){
+      strNode *nLast = lastNode(n);
+
+      popAndGoRight(n);
+      popAndGoLeft(nLast);
+
+      while(n){
+        strNode *nEnd = n;
+
+        while(nEnd){
+          if(nEnd->type & endStatement)
+            break;
+
+          nEnd = nEnd->right;
+        }
+
+        if( !(n->type & structType) ){
+          varInfo info = s.loadVarInfo(n);
+
+          typeDef &sDef = addType(info.name);
+          sDef.typeName = info.type->typeName;
+        }
+        else{
+          typeDef &sDef= *(new typeDef);
+          sDef.loadFromNode(s, n);
+
+          addType(&sDef);
+        }
+
+        n = (nEnd ? nEnd->right : NULL);
+      }
     }
     //==============================================
 
