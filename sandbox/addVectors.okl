@@ -1,4 +1,11 @@
 #if 1
+struct blah {
+  int i = 0;
+} b;
+
+typedef struct blah2 { int j = 0; } b2;
+typedef double d3;
+
 void addVectors(int entries,
                 const float * a,
                 const float * b,

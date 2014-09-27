@@ -52,6 +52,8 @@ namespace occa {
     typedef opTypeMap_t::iterator        opTypeMapIterator;
     typedef opTypeMap_t::const_iterator  cOpTypeMapIterator;
 
+    typedef std::vector<typeDef*> anonymousTypeMap_t;
+
     typedef std::map<std::string,typeDef*> scopeTypeMap_t;
     typedef scopeTypeMap_t::iterator       scopeTypeMapIterator;
     typedef scopeTypeMap_t::const_iterator cScopeTypeMapIterator;
@@ -107,16 +109,12 @@ namespace occa {
     static const int assOperatorType      = (1    << 6); // hehe
     static const int ternaryOperatorType  = (1    << 7);
 
-    static const int nameType             = (3 << 8);
-    static const int variableNameType     = (1 << 8);
-    static const int functionNameType     = (1 << 9);
+    static const int parentheses          = (1 << 8);
+    static const int brace                = (1 << 9);
+    static const int bracket              = (1 << 10);
 
-    static const int parentheses          = (1 << 10);
-    static const int brace                = (1 << 11);
-    static const int bracket              = (1 << 12);
-
-    static const int startSection         = (1 << 13);
-    static const int endSection           = (1 << 14);
+    static const int startSection         = (1 << 11);
+    static const int endSection           = (1 << 12);
 
     static const int startParentheses     = (parentheses | startSection);
     static const int endParentheses       = (parentheses | endSection);
@@ -127,21 +125,21 @@ namespace occa {
     static const int startBracket         = (bracket | startSection);
     static const int endBracket           = (bracket | endSection);
 
-    static const int endStatement         = (1 << 15);
+    static const int endStatement         = (1 << 13);
 
-    static const int flowControlType      = (1 << 16);
+    static const int flowControlType      = (1 << 14);
 
-    static const int presetValue          = (1 << 17);
-    static const int unknownVariable      = (1 << 18);
+    static const int presetValue          = (1 << 15);
+    static const int unknownVariable      = (1 << 16);
 
-    static const int specialKeywordType   = (1 << 19);
+    static const int specialKeywordType   = (1 << 17);
 
-    static const int macroKeywordType     = (1 << 20);
+    static const int macroKeywordType     = (1 << 18);
 
-    static const int apiKeywordType       = (7 << 21);
-    static const int occaKeywordType      = (1 << 21);
-    static const int cudaKeywordType      = (1 << 22);
-    static const int openclKeywordType    = (1 << 23);
+    static const int apiKeywordType       = (7 << 19);
+    static const int occaKeywordType      = (1 << 19);
+    static const int cudaKeywordType      = (1 << 20);
+    static const int openclKeywordType    = (1 << 21);
 
     //   ---[ Types ]-----------
     static const int noType           = (1 << 1);
@@ -172,10 +170,16 @@ namespace occa {
     static const int podTypeDef      = (1 << 1);
 
     static const int structTypeDef   = (1 << 2);
-    static const int unionTypeDef    = (1 << 3);
-    static const int classTypeDef    = (1 << 4);
+    static const int classTypeDef    = (1 << 3);
+    static const int unionTypeDef    = (1 << 4);
+    static const int enumTypeDef     = (1 << 5);
 
-    static const int templateTypeDef = (1 << 5);
+    static const int templateTypeDef = (1 << 6);
+
+    namespace typeDefStyle {
+      static const int skipFirstLineIndent = (1 << 0);
+      static const int skipSemicolon       = (1 << 1);
+    };
 
     //   ---[ Instructions ]----
     static const int doNothing           = (1 << 0);
@@ -1963,6 +1967,9 @@ namespace occa {
     class statement {
     public:
       scopeTypeMap_t scopeTypeMap;
+      scopeVarMap_t scopeVarMap;
+
+      anonymousTypeMap_t anonymousTypeMaps;
 
       varOriginMap_t &varOriginMap;
       varUsedMap_t   &varUsedMap;
@@ -1974,10 +1981,10 @@ namespace occa {
 
       strNode *nodeStart, *nodeEnd;
 
-      scopeVarMap_t scopeVarMap;
-
       int statementCount;
       statementNode *statementStart, *statementEnd;
+
+      typeDef *typePtr;
 
       inline statement(parserBase &pb) :
         depth(-1),
@@ -1993,7 +2000,9 @@ namespace occa {
 
         statementCount(0),
         statementStart(NULL),
-        statementEnd(NULL) {}
+        statementEnd(NULL),
+
+        typePtr(NULL) {}
 
       inline statement(const int depth_,
                        const int type_,
@@ -2012,7 +2021,9 @@ namespace occa {
 
         statementCount(0),
         statementStart(NULL),
-        statementEnd(NULL) {}
+        statementEnd(NULL),
+
+        typePtr(NULL) {}
 
       inline ~statement(){};
 
@@ -2144,6 +2155,8 @@ namespace occa {
         newStatement->statementStart = NULL;
         newStatement->statementEnd   = NULL;
 
+        newStatement->typePtr = typePtr;
+
         if(statementCount == 0)
           return newStatement;
 
@@ -2183,90 +2196,7 @@ namespace occa {
         printTypesInStatement();
       }
 
-      operator std::string() const {
-        const std::string tab = getTab();
-
-        statementNode *statementPos = statementStart;
-
-        // OCCA For's
-        if(type == (occaStatementType | forStatementType)){
-          std::string ret = tab + nodeStart->value + " {\n";
-
-          while(statementPos){
-            ret += (std::string) *(statementPos->value);
-            statementPos = statementPos->right;
-          }
-
-          ret += tab + "}\n";
-
-          return ret;
-        }
-        else if(type & (simpleStatementType | gotoStatementType)){
-          return tab + prettyString(nodeStart, "", false);
-        }
-
-        else if(type & flowStatementType){
-          std::string ret = tab + prettyString(nodeStart, "", false);
-
-          if(statementCount > 1)
-            ret += " {";
-
-          ret += '\n';
-
-          while(statementPos){
-            ret += (std::string) *(statementPos->value);
-            statementPos = statementPos->right;
-          }
-
-          if(statementCount > 1)
-            ret += tab + "}\n";
-
-          return ret;
-        }
-
-        else if(type & functionStatementType){
-          if(type & functionDefinitionType){
-            std::string ret = prettyString(nodeStart, "", false);
-
-            ret += " {\n";
-
-            while(statementPos){
-              ret += (std::string) *(statementPos->value);
-              statementPos = statementPos->right;
-            }
-
-            ret += tab + "}\n";
-
-            return ret;
-          }
-          else if(type & functionPrototypeType)
-            return tab + prettyString(nodeStart, "", false);
-        }
-        else if(type & blockStatementType){
-          std::string ret = "";
-
-          if(0 <= depth)
-            ret += tab + "{\n";
-
-          while(statementPos){
-            ret += (std::string) *(statementPos->value);
-            statementPos = statementPos->right;
-          }
-
-          if(0 <= depth)
-            ret += tab + "}\n";
-
-          return ret;
-        }
-        else if(type & structStatementType){
-          return tab + prettyString(nodeStart, "", false);
-        }
-        else if(type & macroStatementType){
-          return tab + prettyString(nodeStart, "", false);
-        }
-
-        return tab + prettyString(nodeStart, "", false);
-      }
+      operator std::string() const;
     };
 
     inline std::ostream& operator << (std::ostream &out, const statement &s){
@@ -2282,19 +2212,25 @@ namespace occa {
     public:
       std::string typeName, varName;
       int typeInfo;
-      scopeTypeMap_t members;
-      std::vector<typeDef*> namelessMembers;
+
+      scopeTypeMap_t members;           // Only contains stuff with names
+      std::vector<typeDef*> allMembers; // Keeps order
+
+      typeDef *typedefing;
+      bool typedefingIsSimple;
 
       inline typeDef() :
         typeName(""),
         varName(""),
-        typeInfo(podTypeDef) {}
+        typeInfo(podTypeDef),
+
+        typedefing(NULL) {}
 
       inline void addType(typeDef *def){
         if(def->typeName.size())
           members[typeName] = def;
-        else
-          namelessMembers.push_back(def);
+
+        allMembers.push_back(def);
       }
 
       inline typeDef& addType(const std::string &newVarName){
@@ -2302,36 +2238,122 @@ namespace occa {
         def.varName = newVarName;
 
         members[newVarName] = &def;
+        allMembers.push_back(&def);
 
         return def;
       }
 
-      inline std::string print(const std::string &tab = "") const {
-        if(typeInfo & podTypeDef)
-          return tab + (varName.size() ? (typeName + " " + varName + ";") : typeName);
+      inline void loadFromNode(statement &s,
+                               strNode *&n){
 
-        std::string ret;
+        if(n->value == "typedef"){
+          typedefing = new typeDef;
 
-        if(typeInfo & structTypeDef)
-          ret += tab + "struct ";
-        else if(typeInfo & unionTypeDef)
-          ret += tab + "union ";
+          n = n->right;
 
-        ret += (typeName.size() ? (typeName + " {\n") : "{\n");
+          if( !(n->type & structType) ){
+            typedefing = s.hasTypeInScope(n->value);
 
-        cScopeTypeMapIterator it = members.begin();
+            if(typedefing == NULL){
+              std::cout << "Type [" << n->value << "] not defined in scope\n";
+              throw 1;
+            }
 
-        while(it != members.end()){
-          ret += ((it->second)->print(tab + "  ")) + "\n";
-          ++it;
+            varName = n->right->value;
+
+            typedefingIsSimple = true;
+          }
+          else{
+            typedefing->loadFromNode(s, n);
+            typedefingIsSimple = false;
+          }
+        }
+        else{
+          if(n->value == "struct")
+            typeInfo = structTypeDef;
+          else if(n->value == "class")
+            typeInfo = classTypeDef;
+          else if(n->value == "union")
+            typeInfo = unionTypeDef;
+          else if(n->value == "enum")
+            typeInfo = enumTypeDef;
+
+          if(n->down.size() == 0){
+            n = n->right;
+            typeName = n->value;
+          }
+
+          loadPartsFromNode(s, n->down[0]);
+
+          if(n->right->type & unknownVariable)
+            varName = n->right->value;
+        }
+      }
+
+      inline void loadPartsFromNode(statement &s,
+                                    strNode *&n){
+      }
+
+      inline std::string print(const std::string &tab = "", const int printStyle = 0) const {
+        std::string ret = "";
+
+        if(!typedefing && (typeInfo & podTypeDef)){
+          if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
+            ret += tab;
+          else
+            ret = "";
+
+          ret += (varName.size() ? (typeName + " " + varName) : typeName);
+
+          if( !(printStyle & typeDefStyle::skipSemicolon) )
+            ret += ";";
+
+          return ret;
         }
 
-        const int namelessCount = namelessMembers.size();
+        if(typedefing){
+          ret += "typedef ";
 
-        for(int i = 0; i < namelessCount; ++i)
-          ret += namelessMembers[i]->print(tab + "  ") + "\n";
+          if(typedefingIsSimple)
+            ret += typedefing->typeName + " " + varName;
+          else
+            ret += typedefing->print(tab, (typeDefStyle::skipFirstLineIndent |
+                                           typeDefStyle::skipSemicolon));
 
-        ret += tab + (varName.size() ? ("} " + varName + ";") : "};");
+          ret += ";";
+
+          return ret;
+        }
+
+        if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
+          ret += tab;
+
+        if(typeInfo & structTypeDef)
+          ret += "struct ";
+        else if(typeInfo & classTypeDef)
+          ret += "class ";
+        else if(typeInfo & unionTypeDef)
+          ret += "union ";
+        else if(typeInfo & enumTypeDef)
+          ret += "enum ";
+
+        ret += (typeName.size() ? (typeName + " {") : "{");
+
+        const int memberCount = allMembers.size();
+
+        if(memberCount)
+          ret += "\n";
+
+        for(int i = 0; i < memberCount; ++i)
+          ret += allMembers[i]->print(tab + "  ") + "\n";
+
+        if(memberCount)
+          ret += tab;
+
+        ret += (varName.size() ? ("} " + varName) : "}");
+
+        if( !(printStyle & typeDefStyle::skipSemicolon) )
+          ret += ";";
 
         return ret;
       }
@@ -2347,7 +2369,6 @@ namespace occa {
       }
     };
 
-
     inline void statement::printTypesInStatement(){
       scopeTypeMapIterator it = scopeTypeMap.begin();
 
@@ -2356,6 +2377,92 @@ namespace occa {
 
         ++it;
       }
+    }
+
+    inline statement::operator std::string() const {
+      const std::string tab = getTab();
+
+      statementNode *statementPos = statementStart;
+
+      // OCCA For's
+      if(type == (occaStatementType | forStatementType)){
+        std::string ret = tab + nodeStart->value + " {\n";
+
+        while(statementPos){
+          ret += (std::string) *(statementPos->value);
+          statementPos = statementPos->right;
+        }
+
+        ret += tab + "}\n";
+
+        return ret;
+      }
+
+      else if(type & (simpleStatementType | gotoStatementType)){
+        return tab + prettyString(nodeStart, "", false);
+      }
+
+      else if(type & flowStatementType){
+        std::string ret = tab + prettyString(nodeStart, "", false);
+
+        if(statementCount > 1)
+          ret += " {";
+
+        ret += '\n';
+
+        while(statementPos){
+          ret += (std::string) *(statementPos->value);
+          statementPos = statementPos->right;
+        }
+
+        if(statementCount > 1)
+          ret += tab + "}\n";
+
+        return ret;
+      }
+
+      else if(type & functionStatementType){
+        if(type & functionDefinitionType){
+          std::string ret = prettyString(nodeStart, "", false);
+
+          ret += " {\n";
+
+          while(statementPos){
+            ret += (std::string) *(statementPos->value);
+            statementPos = statementPos->right;
+          }
+
+          ret += tab + "}\n";
+
+          return ret;
+        }
+        else if(type & functionPrototypeType)
+          return tab + prettyString(nodeStart, "", false);
+      }
+      else if(type & blockStatementType){
+        std::string ret = "";
+
+        if(0 <= depth)
+          ret += tab + "{\n";
+
+        while(statementPos){
+          ret += (std::string) *(statementPos->value);
+          statementPos = statementPos->right;
+        }
+
+        if(0 <= depth)
+          ret += tab + "}\n";
+
+        return ret;
+      }
+      else if(type & structStatementType){
+        return typePtr->print(tab) + "\n";
+      }
+      else if(type & macroStatementType){
+        return tab + prettyString(nodeStart, "", false);
+      }
+
+      return tab + prettyString(nodeStart, "", false);
     }
     //==============================================
 
@@ -3417,6 +3524,9 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
+      typePtr = new typeDef;
+      typePtr->loadFromNode(*this, nodeRoot);
+
       loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
@@ -4122,7 +4232,8 @@ namespace occa {
 
     inline void parserBase::loadVariableInformation(statement &s,
                                                     strNode *n){
-      if(s.type & functionPrototypeType)
+      if(s.type & (functionPrototypeType |
+                   structStatementType))
         return;
 
       while(n){
@@ -6069,8 +6180,16 @@ namespace occa {
       else if(nodeRoot->type == keywordType["occaOuterFor0"])
         return keywordType["occaOuterFor0"];
 
-      else if(nodeRoot->type & structType)
+      else if(nodeRoot->type & structType){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
         return structStatementType;
+      }
 
       else if(nodeRoot->type & operatorType){
         while(nodeRoot){
@@ -6282,6 +6401,7 @@ namespace occa {
 
       keywordType["inline"] = qualifierType;
       keywordType["static"] = qualifierType;
+      keywordType["extern"] = qualifierType;
 
       keywordType["const"]    = (qualifierType | occaKeywordType);
       keywordType["restrict"] = (qualifierType | occaKeywordType);
@@ -6300,7 +6420,6 @@ namespace occa {
       keywordType["union"]   = (specifierType | structType);
       keywordType["struct"]  = (specifierType | structType);
       keywordType["typedef"] = (specifierType | structType);
-      keywordType["extern"]  = (specifierType | structType);
 
       //---[ C++ ]----------------------
       keywordType["virtual"]   = qualifierType;
@@ -7212,7 +7331,6 @@ namespace occa {
       def.typeName = "void";
 
       globalScope->scopeTypeMap[def.typeName] = &def;
-      globalScope->printTypesInStatement();
     }
   };
 
@@ -7239,17 +7357,17 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("midg.okl");
-    std::cout << parsedContent << '\n';
-  }
-
   // {
   //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("addVectors.okl");
+  //   std::string parsedContent = parser.parseFile("midg.okl");
   //   std::cout << parsedContent << '\n';
   // }
+
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("addVectors.okl");
+    std::cout << parsedContent << '\n';
+  }
 }
 
 #endif
