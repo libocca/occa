@@ -2254,6 +2254,11 @@ namespace occa {
           n = n->right;
 
           if( !(n->type & structType) ){
+            strNode *nRoot = n;
+
+            while(n->type & qualifierType)
+              n = n->right;
+
             typedefing = s.hasTypeInScope(n->value);
 
             if(typedefing == NULL){
@@ -2261,7 +2266,12 @@ namespace occa {
               throw 1;
             }
 
-            varName = n->right->value;
+            while(nRoot != n){
+              varName += nRoot->value + " ";
+              nRoot = nRoot->right;
+            }
+
+            varName += n->value;
 
             typedefingIsSimple = true;
           }
@@ -6674,9 +6684,8 @@ namespace occa {
 
       globalScope->loadAllFromNode(nodeRoot);
 
-      // globalScope->printTypesInStatement();
-      // std::cout << *globalScope << '\n';
-      // throw 1;
+      std::cout << *globalScope << '\n';
+      throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -7421,6 +7430,12 @@ int main(int argc, char **argv){
   // {
   //   occa::parser parser;
   //   std::string parsedContent = parser.parseFile("midg.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
+
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("test.c");
   //   std::cout << parsedContent << '\n';
   // }
 
