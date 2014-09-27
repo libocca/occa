@@ -1959,8 +1959,6 @@ namespace occa {
 
 
     //---[ Statement ]------------------------------
-    int statementType(strNode *&nodeRoot);
-
     std::ostream& operator << (std::ostream &out, const varInfo &info);
     std::ostream& operator << (std::ostream &out, const typeDef &def);
 
@@ -2036,7 +2034,9 @@ namespace occa {
         return ret;
       }
 
-      inline varInfo loadVarInfo(strNode *&nodePos);
+      int statementType(strNode *&nodeRoot);
+
+      varInfo loadVarInfo(strNode *&nodePos);
 
       inline typeDef* hasTypeInScope(const std::string &typeName){
         scopeTypeMapIterator it = scopeTypeMap.find(typeName);
@@ -3559,6 +3559,16 @@ namespace occa {
 
       typePtr = new typeDef;
       typePtr->loadFromNode(*this, nodeRoot);
+
+      if(typePtr->typedefing != NULL){
+        if(typePtr->typedefingIsSimple)
+          scopeTypeMap[typePtr->varName]  = typePtr;
+        else
+          scopeTypeMap[typePtr->typedefing->varName]  = typePtr;
+      }
+      else{
+        scopeTypeMap[typePtr->typeName] = typePtr;
+      }
 
       loadBlocksFromLastNode(nodeRootEnd);
 
@@ -6026,6 +6036,171 @@ namespace occa {
         nodePos = nodePos->right;
       }
     }
+
+    inline int statement::statementType(strNode *&nodeRoot){
+      if(nodeRoot == NULL)
+        return invalidStatementType;
+
+      else if(nodeRoot->type == macroKeywordType)
+        return macroStatementType;
+
+      else if(nodeRoot->type == keywordType["occaOuterFor0"])
+        return keywordType["occaOuterFor0"];
+
+      else if(nodeRoot->type & structType){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
+        return structStatementType;
+      }
+
+      else if(nodeRoot->type & operatorType){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
+        return updateStatementType;
+      }
+
+      else if((nodeRoot->type & descriptorType) ||
+              ((nodeRoot->type & unknownVariable) &&
+               ( hasTypeInScope(nodeRoot->value) ))){
+
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            return declareStatementType;
+
+          // Case:
+          //   const varName = ();
+          if(nodeRoot->type & operatorType){
+            while(nodeRoot){
+              if(nodeRoot->type & endStatement)
+                break;
+
+              nodeRoot = nodeRoot->right;
+            }
+
+            return declareStatementType;
+          }
+
+          else if(nodeRoot->down.size() &&
+                  (nodeRoot->down[0]->type & parentheses)){
+
+            const int downCount = nodeRoot->down.size();
+
+            if(downCount == 1){
+              while(nodeRoot){
+                if(nodeRoot->type & endStatement)
+                  break;
+
+                if(nodeRoot->right == NULL){
+                  std::cout << "Missing a [;] after:\n"
+                            << prettyString(nodeRoot, "  ");
+                  throw 1;
+                }
+
+                nodeRoot = nodeRoot->right;
+              }
+
+              return functionPrototypeType;
+            }
+            else
+              return functionDefinitionType;
+          }
+
+          if(nodeRoot->right == NULL)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
+        return declareStatementType;
+      }
+
+      else if(nodeRoot->type & unknownVariable){
+        if(nodeRoot->right &&
+           nodeRoot->right->value == ":"){
+
+          nodeRoot = nodeRoot->right;
+          return gotoStatementType;
+        }
+
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
+        return updateStatementType;
+      }
+
+      else if(nodeRoot->type & flowControlType){
+        if(nodeRoot->value == "for")
+          return forStatementType;
+        else if(nodeRoot->value == "while")
+          return whileStatementType;
+        else if(nodeRoot->value == "do")
+          return doWhileStatementType;
+        else if(nodeRoot->value == "if")
+          return ifStatementType;
+        else if(nodeRoot->value == "else if")
+          return elseIfStatementType;
+        else if(nodeRoot->value == "else")
+          return elseStatementType;
+        else if(nodeRoot->value == "switch")
+          return switchStatementType;
+      }
+
+      else if(nodeRoot->type & occaKeywordType){
+        if((nodeRoot->value.find("occaInnerFor") != std::string::npos) &&
+           ((nodeRoot->value == "occaInnerFor0") ||
+            (nodeRoot->value == "occaInnerFor1") ||
+            (nodeRoot->value == "occaInnerFor2")))
+
+          return keywordType["occaInnerFor0"];
+
+        else if((nodeRoot->value.find("occaOuterFor") != std::string::npos) &&
+                ((nodeRoot->value == "occaOuterFor0") ||
+                 (nodeRoot->value == "occaOuterFor1") ||
+                 (nodeRoot->value == "occaOuterFor2")))
+
+          return keywordType["occaOuterFor0"];
+      }
+
+      else if(nodeRoot->type & specialKeywordType){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
+        return blankStatementType;
+      }
+
+      else if((nodeRoot->type == startBrace) &&
+         (nodeRoot->up)                 &&
+         !(nodeRoot->up->type & operatorType)){
+
+        nodeRoot = lastNode(nodeRoot);
+
+        return blockStatementType;
+      }
+
+      while(nodeRoot &&
+            !(nodeRoot->type & endStatement))
+        nodeRoot = nodeRoot->right;
+
+      return declareStatementType;
+    }
     //==============================================
 
 
@@ -6201,166 +6376,6 @@ namespace occa {
       free(lineNodeRoot);
 
       return nodeRoot;
-    }
-
-    inline int statementType(strNode *&nodeRoot){
-      if(nodeRoot == NULL)
-        return invalidStatementType;
-
-      else if(nodeRoot->type == macroKeywordType)
-        return macroStatementType;
-
-      else if(nodeRoot->type == keywordType["occaOuterFor0"])
-        return keywordType["occaOuterFor0"];
-
-      else if(nodeRoot->type & structType){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return structStatementType;
-      }
-
-      else if(nodeRoot->type & operatorType){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return updateStatementType;
-      }
-
-      else if(nodeRoot->type & unknownVariable){
-        if(nodeRoot->right &&
-           nodeRoot->right->value == ":"){
-
-          nodeRoot = nodeRoot->right;
-          return gotoStatementType;
-        }
-
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return updateStatementType;
-      }
-
-      else if(nodeRoot->type & descriptorType){
-
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            return declareStatementType;
-
-          // Case:
-          //   const varName = ();
-          if(nodeRoot->type & operatorType){
-            while(nodeRoot){
-              if(nodeRoot->type & endStatement)
-                break;
-
-              nodeRoot = nodeRoot->right;
-            }
-
-            return declareStatementType;
-          }
-
-          else if(nodeRoot->down.size() &&
-                  (nodeRoot->down[0]->type & parentheses)){
-
-            const int downCount = nodeRoot->down.size();
-
-            if(downCount == 1){
-              while(nodeRoot){
-                if(nodeRoot->type & endStatement)
-                  break;
-
-                if(nodeRoot->right == NULL){
-                  std::cout << "Missing a [;] after:\n"
-                            << prettyString(nodeRoot, "  ");
-                  throw 1;
-                }
-
-                nodeRoot = nodeRoot->right;
-              }
-
-              return functionPrototypeType;
-            }
-            else
-              return functionDefinitionType;
-          }
-
-          if(nodeRoot->right == NULL)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return declareStatementType;
-      }
-      else if(nodeRoot->type & flowControlType){
-        if(nodeRoot->value == "for")
-          return forStatementType;
-        else if(nodeRoot->value == "while")
-          return whileStatementType;
-        else if(nodeRoot->value == "do")
-          return doWhileStatementType;
-        else if(nodeRoot->value == "if")
-          return ifStatementType;
-        else if(nodeRoot->value == "else if")
-          return elseIfStatementType;
-        else if(nodeRoot->value == "else")
-          return elseStatementType;
-        else if(nodeRoot->value == "switch")
-          return switchStatementType;
-      }
-      else if(nodeRoot->type & occaKeywordType){
-        if((nodeRoot->value.find("occaInnerFor") != std::string::npos) &&
-           ((nodeRoot->value == "occaInnerFor0") ||
-            (nodeRoot->value == "occaInnerFor1") ||
-            (nodeRoot->value == "occaInnerFor2")))
-
-          return keywordType["occaInnerFor0"];
-
-        else if((nodeRoot->value.find("occaOuterFor") != std::string::npos) &&
-                ((nodeRoot->value == "occaOuterFor0") ||
-                 (nodeRoot->value == "occaOuterFor1") ||
-                 (nodeRoot->value == "occaOuterFor2")))
-
-          return keywordType["occaOuterFor0"];
-      }
-      else if(nodeRoot->type & specialKeywordType){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return blankStatementType;
-      }
-
-      else if((nodeRoot->type == startBrace) &&
-         (nodeRoot->up)                 &&
-         !(nodeRoot->up->type & operatorType)){
-
-        nodeRoot = lastNode(nodeRoot);
-
-        return blockStatementType;
-      }
-
-      while(nodeRoot &&
-            !(nodeRoot->type & endStatement))
-        nodeRoot = nodeRoot->right;
-
-      return declareStatementType;
     }
 
     inline void initKeywords(){
@@ -6648,6 +6663,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
+      std::cout << *globalScope << '\n';
+      throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
