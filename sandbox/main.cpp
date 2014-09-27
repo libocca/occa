@@ -3007,8 +3007,10 @@ namespace occa {
     inline varInfo statement::loadVarInfo(strNode *&nodePos){
       varInfo info;
 
-      while(nodePos &&
-            !(nodePos->type & (presetValue | unknownVariable))){
+      while(nodePos                        &&
+            !(nodePos->type & presetValue) &&
+            (!(nodePos->type & unknownVariable) ||
+             hasTypeInScope(nodePos->value))){
 
         if(nodePos->type & qualifierType){
 
@@ -4286,7 +4288,9 @@ namespace occa {
         return;
 
       while(n){
-        if(n->type & unknownVariable){
+        if((n->type & unknownVariable) &&
+           !s.hasTypeInScope(n->value)){
+
           varInfo *infoPtr = s.hasVariableInScope(n->value);
 
           if(infoPtr == NULL){
@@ -6671,8 +6675,8 @@ namespace occa {
       globalScope->loadAllFromNode(nodeRoot);
 
       // globalScope->printTypesInStatement();
-      std::cout << *globalScope << '\n';
-      throw 1;
+      // std::cout << *globalScope << '\n';
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);

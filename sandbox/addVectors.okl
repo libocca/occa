@@ -1,21 +1,8 @@
 #if 1
-struct blah {
-  struct {
-    int j;
-  };
-
-  int i;
-} b;
-
-typedef struct blah2 { int j = 0; } b2;
-typedef double d3;
-
 void addVectors(int entries,
                 const float * a,
                 const float * b,
                 float * ab){
-  blah blkasjdf;
-
   for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
     for(int item = 0; item < itemsPerGroup; ++item; inner0){
       if((item + group*itemsPerGroup) < entries)
