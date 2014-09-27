@@ -1580,261 +1580,6 @@ namespace occa {
       return end;
     }
 
-    // autoMode: Handles newlines and tabs
-    inline std::string prettyString(strNode *nodeRoot,
-                                    const std::string &tab_ = "",
-                                    const bool autoMode = true){
-      strNode *nodePos = nodeRoot;
-
-      std::string tab = tab_;
-      std::string ret = "";
-
-      while(nodePos){
-        if(nodePos->type & operatorType){
-
-          if(nodePos->type & binaryOperatorType){
-
-            // char *blah
-            if(nodePos->type & qualifierType){
-
-              // [char ][*][blah]
-              // or
-              // [int ][a][ = ][0][, ][*][b][ = ][1][;]
-              //                       ^
-              if(nodePos->left &&
-                 ((nodePos->left->type & descriptorType) ||
-                  (nodePos->left->value == ","))){
-                ret += *nodePos;
-
-                // [const ][*][ const]
-                if(nodePos->right &&
-                   (nodePos->right->type & descriptorType) &&
-                   !(nodePos->right->value == "*"))
-                  ret += ' ';
-              }
-              else{
-                ret += " ";
-                ret += *nodePos;
-                ret += " ";
-              }
-            }
-            // [+] and [-]
-            else if(nodePos->type & unitaryOperatorType){
-              // (-blah ... )
-              if(nodePos->left &&
-                 !(nodePos->left->type & (presetValue | unknownVariable)) )
-                ret += *nodePos;
-              // a - b
-              else{
-                ret += " ";
-                ret += *nodePos;
-                ret += " ";
-              }
-            }
-            else if(nodePos->value == ","){
-              ret += ", ";
-            }
-            else if((nodePos->value == ".") || (nodePos->value == "::")){
-              if(((nodePos->left == NULL) ||
-                  !(nodePos->left->type & unknownVariable)) ||
-                 ((nodePos->right == NULL) ||
-                  !(nodePos->right->type & unknownVariable))){
-                if(nodePos->left){
-                  std::cout << "1. Error on:\n";
-                  nodePos->left->print("  ");
-                }
-                else{
-                  std::cout << "2. Error on:\n";
-                  nodePos->print("  ");
-                }
-
-                throw 1;
-              }
-
-              ret += *nodePos;
-            }
-            else{
-              ret += " ";
-              ret += *nodePos;
-              ret += " ";
-            }
-
-          }
-          // [++] and [--]
-          else if(nodePos->type & unitaryOperatorType){
-            ret += *nodePos;
-          }
-          else if(nodePos->type & ternaryOperatorType){
-            ret += " ? ";
-
-            nodePos = nodePos->right;
-
-            if((nodePos->right) == NULL){
-              std::cout << "3. Error on:\n";
-              nodePos->left->print("  ");
-              throw 1;
-            }
-
-            if((nodePos->down).size())
-              ret += prettyString(nodePos, "", autoMode);
-            else
-              ret += *nodePos;
-
-            ret += " : ";
-
-            if(((nodePos->right) == NULL)       ||
-               ((nodePos->right->right) == NULL)){
-              std::cout << "4. Error on:\n";
-              nodePos->left->left->print("  ");
-              throw 1;
-            }
-
-            nodePos = nodePos->right->right;
-
-            if((nodePos->down).size())
-              ret += prettyString(nodePos, "", autoMode);
-            else
-              ret += *nodePos;
-          }
-        }
-        else if(nodePos->type & brace){
-          if(nodePos->type & startSection){
-            // a[] = {};
-            if(nodePos->up->type & binaryOperatorType){
-              ret += "{ ";
-            }
-            else{
-              // Case: function(...) const {
-              if( (((nodePos->sideDepth) != 0) &&
-                   ((nodePos->up->down[nodePos->sideDepth - 1]->type & parentheses) ||
-                    (nodePos->up->down[nodePos->sideDepth - 1]->value == "const")) )
-
-                  || (nodePos->up->type & (occaKeywordType | flowControlType)))
-                ret += " {\n" + tab + "  ";
-              else
-                ret += tab + "{\n";
-            }
-
-            tab += "  ";
-          }
-          else{
-            tab = tab.substr(0, tab.size() - 2);
-
-            // a[] = {};
-            if(nodePos->up &&
-               (nodePos->up->type & binaryOperatorType))
-              ret += " }";
-            else{
-              ret += '}';
-
-              //   }
-              // }
-              if((nodePos->up == NULL) ||
-                 ((nodePos->up->right) &&
-                  (nodePos->up->right->type == endBrace)))
-                ret += "\n" + tab.substr(0, tab.size() - 2);
-              else
-                ret += "\n" + tab;
-            }
-          }
-        }
-        else if(nodePos->type == endParentheses){
-          ret += ")";
-
-          // if(...) statement
-          if(autoMode)
-            if((nodePos->up->type & flowControlType) &&
-               (((nodePos->sideDepth) >= (nodePos->up->down.size() - 1)) ||
-                !(nodePos->up->down[nodePos->sideDepth + 1]->type & brace))){
-
-              ret += "\n" + tab + "  ";
-            }
-        }
-        else if(nodePos->type & endStatement){
-          ret += *nodePos;
-
-          // for(){
-          //   ...;
-          // }
-          if((nodePos->right == NULL) ||
-             ((nodePos->right) &&
-              (nodePos->right->type & brace))){
-
-            ret += "\n" + tab.substr(0, tab.size() - 2);
-          }
-          //   blah;
-          // }
-          else if(!(nodePos->up)                    ||
-                  !(nodePos->up->type & flowControlType) ||
-                  !(nodePos->up->value == "for")){
-
-            ret += "\n" + tab;
-          }
-          // Don't add newlines to for(A;B;C)
-          else
-            ret += " ";
-        }
-        else if(nodePos->type & descriptorType){
-          ret += *nodePos;
-
-          if(nodePos->right &&
-             // [static ][const ][float ][variable]
-             nodePos->right->type & (descriptorType |
-                                     presetValue    |
-                                     unknownVariable)){
-
-            ret += " ";
-          }
-        }
-        else if(nodePos->type & flowControlType){
-          ret += *nodePos;
-
-          if(autoMode)
-            if(nodePos->down.size() == 0)
-              ret += '\n' + tab + "  ";
-        }
-        else if(nodePos->type & specialKeywordType){
-          if(nodePos->value == "case")
-            ret += "case";
-          else if(nodePos->value == "default")
-            ret += "default";
-          else if(nodePos->value == "break")
-            ret += "break";
-          else if(nodePos->value == "continue")
-            ret += "continue";
-          else if(nodePos->value == "return"){
-            ret += "return";
-
-            if(nodePos->right || nodePos->down.size())
-              ret += ' ';
-          }
-          else if(nodePos->value == "goto")
-            ret += "goto ";
-          else
-            ret += *nodePos;
-        }
-        else if(nodePos->type & macroKeywordType){
-          ret += *nodePos;
-
-          ret += '\n' + tab;
-        }
-        else
-          ret += *nodePos;
-
-        const int downCount = (nodePos->down).size();
-
-        for(int i = 0; i < downCount; ++i){
-          strNode *downNode = nodePos->down[i];
-
-          ret += prettyString(downNode, tab, autoMode);
-        }
-
-        nodePos = nodePos->right;
-      }
-
-      return ret;
-    }
-
     inline void strNode::print(const std::string &tab){
       strNode *nodePos = this;
 
@@ -2196,6 +1941,261 @@ namespace occa {
         printTypesInStatement();
       }
 
+      // autoMode: Handles newlines and tabs
+      inline std::string prettyString(strNode *nodeRoot,
+                                      const std::string &tab_ = "",
+                                      const bool autoMode = true) const {
+        strNode *nodePos = nodeRoot;
+
+        std::string tab = tab_;
+        std::string ret = "";
+
+        while(nodePos){
+          if(nodePos->type & operatorType){
+
+            if(nodePos->type & binaryOperatorType){
+
+              // char *blah
+              if(nodePos->type & qualifierType){
+
+                // [char ][*][blah]
+                // or
+                // [int ][a][ = ][0][, ][*][b][ = ][1][;]
+                //                       ^
+                if(nodePos->left &&
+                   ((nodePos->left->type & descriptorType) ||
+                    (nodePos->left->value == ","))){
+                  ret += *nodePos;
+
+                  // [const ][*][ const]
+                  if(nodePos->right &&
+                     (nodePos->right->type & descriptorType) &&
+                     !(nodePos->right->value == "*"))
+                    ret += ' ';
+                }
+                else{
+                  ret += " ";
+                  ret += *nodePos;
+                  ret += " ";
+                }
+              }
+              // [+] and [-]
+              else if(nodePos->type & unitaryOperatorType){
+                // (-blah ... )
+                if(nodePos->left &&
+                   !(nodePos->left->type & (presetValue | unknownVariable)) )
+                  ret += *nodePos;
+                // a - b
+                else{
+                  ret += " ";
+                  ret += *nodePos;
+                  ret += " ";
+                }
+              }
+              else if(nodePos->value == ","){
+                ret += ", ";
+              }
+              else if((nodePos->value == ".") || (nodePos->value == "::")){
+                if(((nodePos->left == NULL) ||
+                    !(nodePos->left->type & unknownVariable)) ||
+                   ((nodePos->right == NULL) ||
+                    !(nodePos->right->type & unknownVariable))){
+                  if(nodePos->left){
+                    std::cout << "1. Error on:\n";
+                    nodePos->left->print("  ");
+                  }
+                  else{
+                    std::cout << "2. Error on:\n";
+                    nodePos->print("  ");
+                  }
+
+                  throw 1;
+                }
+
+                ret += *nodePos;
+              }
+              else{
+                ret += " ";
+                ret += *nodePos;
+                ret += " ";
+              }
+
+            }
+            // [++] and [--]
+            else if(nodePos->type & unitaryOperatorType){
+              ret += *nodePos;
+            }
+            else if(nodePos->type & ternaryOperatorType){
+              ret += " ? ";
+
+              nodePos = nodePos->right;
+
+              if((nodePos->right) == NULL){
+                std::cout << "3. Error on:\n";
+                nodePos->left->print("  ");
+                throw 1;
+              }
+
+              if((nodePos->down).size())
+                ret += prettyString(nodePos, "", autoMode);
+              else
+                ret += *nodePos;
+
+              ret += " : ";
+
+              if(((nodePos->right) == NULL)       ||
+                 ((nodePos->right->right) == NULL)){
+                std::cout << "4. Error on:\n";
+                nodePos->left->left->print("  ");
+                throw 1;
+              }
+
+              nodePos = nodePos->right->right;
+
+              if((nodePos->down).size())
+                ret += prettyString(nodePos, "", autoMode);
+              else
+                ret += *nodePos;
+            }
+          }
+          else if(nodePos->type & brace){
+            if(nodePos->type & startSection){
+              // a[] = {};
+              if(nodePos->up->type & binaryOperatorType){
+                ret += "{ ";
+              }
+              else{
+                // Case: function(...) const {
+                if( (((nodePos->sideDepth) != 0) &&
+                     ((nodePos->up->down[nodePos->sideDepth - 1]->type & parentheses) ||
+                      (nodePos->up->down[nodePos->sideDepth - 1]->value == "const")) )
+
+                    || (nodePos->up->type & (occaKeywordType | flowControlType)))
+                  ret += " {\n" + tab + "  ";
+                else
+                  ret += tab + "{\n";
+              }
+
+              tab += "  ";
+            }
+            else{
+              tab = tab.substr(0, tab.size() - 2);
+
+              // a[] = {};
+              if(nodePos->up &&
+                 (nodePos->up->type & binaryOperatorType))
+                ret += " }";
+              else{
+                ret += '}';
+
+                //   }
+                // }
+                if((nodePos->up == NULL) ||
+                   ((nodePos->up->right) &&
+                    (nodePos->up->right->type == endBrace)))
+                  ret += "\n" + tab.substr(0, tab.size() - 2);
+                else
+                  ret += "\n" + tab;
+              }
+            }
+          }
+          else if(nodePos->type == endParentheses){
+            ret += ")";
+
+            // if(...) statement
+            if(autoMode)
+              if((nodePos->up->type & flowControlType) &&
+                 (((nodePos->sideDepth) >= (nodePos->up->down.size() - 1)) ||
+                  !(nodePos->up->down[nodePos->sideDepth + 1]->type & brace))){
+
+                ret += "\n" + tab + "  ";
+              }
+          }
+          else if(nodePos->type & endStatement){
+            ret += *nodePos;
+
+            // for(){
+            //   ...;
+            // }
+            if((nodePos->right == NULL) ||
+               ((nodePos->right) &&
+                (nodePos->right->type & brace))){
+
+              ret += "\n" + tab.substr(0, tab.size() - 2);
+            }
+            //   blah;
+            // }
+            else if(!(nodePos->up)                    ||
+                    !(nodePos->up->type & flowControlType) ||
+                    !(nodePos->up->value == "for")){
+
+              ret += "\n" + tab;
+            }
+            // Don't add newlines to for(A;B;C)
+            else
+              ret += " ";
+          }
+          else if(nodePos->type & descriptorType){
+            ret += *nodePos;
+
+            if(nodePos->right &&
+               // [static ][const ][float ][variable]
+               nodePos->right->type & (descriptorType |
+                                       presetValue    |
+                                       unknownVariable)){
+
+              ret += " ";
+            }
+          }
+          else if(nodePos->type & flowControlType){
+            ret += *nodePos;
+
+            if(autoMode)
+              if(nodePos->down.size() == 0)
+                ret += '\n' + tab + "  ";
+          }
+          else if(nodePos->type & specialKeywordType){
+            if(nodePos->value == "case")
+              ret += "case";
+            else if(nodePos->value == "default")
+              ret += "default";
+            else if(nodePos->value == "break")
+              ret += "break";
+            else if(nodePos->value == "continue")
+              ret += "continue";
+            else if(nodePos->value == "return"){
+              ret += "return";
+
+              if(nodePos->right || nodePos->down.size())
+                ret += ' ';
+            }
+            else if(nodePos->value == "goto")
+              ret += "goto ";
+            else
+              ret += *nodePos;
+          }
+          else if(nodePos->type & macroKeywordType){
+            ret += *nodePos;
+
+            ret += '\n' + tab;
+          }
+          else
+            ret += *nodePos;
+
+          const int downCount = (nodePos->down).size();
+
+          for(int i = 0; i < downCount; ++i){
+            strNode *downNode = nodePos->down[i];
+
+            ret += prettyString(downNode, tab, autoMode);
+          }
+
+          nodePos = nodePos->right;
+        }
+
+        return ret;
+      }
+
       operator std::string() const;
     };
 
@@ -2310,6 +2310,9 @@ namespace occa {
         }
 
         if(typedefing){
+          if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
+            ret += tab;
+
           ret += "typedef ";
 
           if(typedefingIsSimple)
@@ -2371,7 +2374,8 @@ namespace occa {
       scopeTypeMapIterator it = scopeTypeMap.begin();
 
       while(it != scopeTypeMap.end()){
-        std::cout << (it->second)->print("  ") << '\n';
+        std::cout << (it->first) << '\n';
+        // std::cout << (it->second)->print("  ") << '\n';
 
         ++it;
       }
@@ -3562,12 +3566,12 @@ namespace occa {
 
       if(typePtr->typedefing != NULL){
         if(typePtr->typedefingIsSimple)
-          scopeTypeMap[typePtr->varName]  = typePtr;
+          up->scopeTypeMap[typePtr->varName] = typePtr;
         else
-          scopeTypeMap[typePtr->typedefing->varName]  = typePtr;
+          up->scopeTypeMap[typePtr->typedefing->varName] = typePtr;
       }
       else{
-        scopeTypeMap[typePtr->typeName] = typePtr;
+        up->scopeTypeMap[typePtr->typeName] = typePtr;
       }
 
       loadBlocksFromLastNode(nodeRootEnd);
@@ -3786,7 +3790,7 @@ namespace occa {
       while(nodePos){
         if(nodePos->value == ";"){
           if(segmentCount == 4){
-            std::cout << "More than 4 statements for:\n  " << prettyString(s.nodeStart) << '\n';
+            std::cout << "More than 4 statements for:\n  " << s.prettyString(s.nodeStart) << '\n';
             throw 1;
           }
 
@@ -3811,7 +3815,7 @@ namespace occa {
             (nodePos->value != "outer1") &&
             (nodePos->value != "outer2"))) ){
 
-        std::cout << "Wrong 4th statement for:\n  " << prettyString(s.nodeStart) << '\n';
+        std::cout << "Wrong 4th statement for:\n  " << s.prettyString(s.nodeStart) << '\n';
         throw 1;
       }
 
@@ -3834,7 +3838,7 @@ namespace occa {
 
       if(nodePos->value != "="){
         std::cout << "The first statement of:\n"
-                  << "  " << prettyString(s.nodeStart, "  ", false) << '\n'
+                  << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
                   << "should look like:\n"
                   << "  for(int var = off; ...; ...; ...)\n";
         throw 1;
@@ -3848,7 +3852,7 @@ namespace occa {
       while(nodePos != commaNodes[1]){
         if( nodePos->hasType(unknownVariable) ){
           std::cout << "The first statement of:\n"
-                    << "  " << prettyString(s.nodeStart, "  ", false) << '\n'
+                    << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
                     << "should look like:\n"
                     << "  for(int var = off; ...; ...; ...)\n"
                     << "where [off] needs to be known at compile time\n";
@@ -3865,7 +3869,7 @@ namespace occa {
       idOffEnd->left = NULL;
       free(idOffEnd);
 
-      idVar.extraInfo.push_back( prettyString(idOffStart) );
+      idVar.extraInfo.push_back( s.prettyString(idOffStart) );
 
       // [-] ?
       if(!sKernel.hasVariableInScope(idVar.name))
@@ -3877,7 +3881,7 @@ namespace occa {
 
       if(nodePos->value != idName){
         std::cout << "The second statement of:\n"
-                  << "  " << prettyString(s.nodeStart, "  ", false) << '\n'
+                  << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
                   << "should look like:\n"
                   << "  for(int [var] = off; [var] < dim; ...; ...)\n"
                   << "           ^____________^ are the same\n";
@@ -3888,7 +3892,7 @@ namespace occa {
 
       if(nodePos->value != "<"){
         std::cout << "The second statement of:\n"
-                  << "  " << prettyString(s.nodeStart, "  ", false) << '\n'
+                  << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
                   << "should look like:\n"
                   << "  for(int var = off; var [<] dim; ...; ...)\n"
                   << "                          ^ less than\n";
@@ -3938,7 +3942,7 @@ namespace occa {
         }
         else{
           std::cout << "The second statement of:\n"
-                    << "  " << prettyString(s.nodeStart, "  ", false) << '\n'
+                    << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
                     << "should look like:\n"
                     << "  for(int var = off; var < [dim]; ...; ...)\n"
                     << "                            ^ only one variable name\n"
@@ -6663,6 +6667,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
+
+      // globalScope->printTypesInStatement();
       std::cout << *globalScope << '\n';
       throw 1;
 

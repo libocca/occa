@@ -14,7 +14,7 @@ void addVectors(int entries,
                 const float * a,
                 const float * b,
                 float * ab){
-  b blkasjdf;
+  blah blkasjdf;
 
   for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
     for(int item = 0; item < itemsPerGroup; ++item; inner0){
