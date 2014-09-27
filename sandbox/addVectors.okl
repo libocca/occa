@@ -1,10 +1,28 @@
 #if 1
+#  if 1
+union blah {
+  int i;
+};
+#  else
+struct blah {
+  struct {
+    int j;
+  };
+
+  int i;
+} b;
+#  endif
+
+typedef struct blah2 { int j = 0; } b2;
+typedef double d3;
+
 void addVectors(int entries,
                 const float * a,
                 const float * b,
                 float * ab){
   for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
     for(int item = 0; item < itemsPerGroup; ++item; inner0){
+      blah blkasjdf;
       if((item + group*itemsPerGroup) < entries)
         ab[item] = a[item] + b[item];
     }

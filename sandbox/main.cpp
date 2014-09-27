@@ -7220,9 +7220,8 @@ namespace occa {
           if(currentState & keepMacro){
             currentState &= ~keepMacro;
 
-            if( !(currentState & ignoring) ){
+            if( !(currentState & ignoring) )
               nodePos->type = macroKeywordType;
-            }
           }
           else{
             // Nested #if's
@@ -7232,10 +7231,10 @@ namespace occa {
             }
 
             if(currentState & doneIgnoring){
-              statusStack.pop();
-
-              if(statusStack.size())
+              if(statusStack.size()){
                 currentState = statusStack.top();
+                statusStack.pop();
+              }
               else
                 currentState = doNothing;
             }
