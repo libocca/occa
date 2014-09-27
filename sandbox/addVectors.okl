@@ -23,6 +23,8 @@ void addVectors(int entries,
   for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
     for(int item = 0; item < itemsPerGroup; ++item; inner0){
       blah blkasjdf;
+      struct blah ajskdlf;
+
       if((item + group*itemsPerGroup) < entries)
         ab[item] = a[item] + b[item];
     }

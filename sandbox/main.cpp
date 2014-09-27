@@ -97,9 +97,9 @@ namespace occa {
     static const int everythingType       = 0xFFFFFFFF;
 
     static const int descriptorType       = (7 << 0);
-    static const int specifierType        = (1 << 0); // void, char, short, int
-    static const int qualifierType        = (1 << 1); // const, restrict, volatile
-    static const int structType           = (1 << 2); // struct, class, typedef
+    static const int structType           = (1 << 0); // struct, class, typedef
+    static const int specifierType        = (1 << 1); // void, char, short, int
+    static const int qualifierType        = (1 << 2); // const, restrict, volatile
 
     static const int operatorType         = (0x1F << 3);
     static const int unitaryOperatorType  = (3    << 3);
@@ -142,6 +142,7 @@ namespace occa {
     static const int openclKeywordType    = (1 << 21);
 
     //   ---[ Types ]-----------
+    // static const int structType    = (1 << 0); (Defined on top)
     static const int noType           = (1 << 1);
     static const int boolType         = (1 << 2);
     static const int charType         = (1 << 3);
@@ -151,20 +152,20 @@ namespace occa {
     static const int floatType        = (1 << 7);
     static const int doubleType       = (1 << 8);
 
-    static const int pointerType      = (3 << 9);
-    static const int heapPointerType  = (1 << 9);
-    static const int stackPointerType = (1 << 10);
-    static const int constPointerType = (1 << 11);
+    static const int pointerType      = (3 << 10);
+    static const int heapPointerType  = (1 << 10);
+    static const int stackPointerType = (1 << 11);
+    static const int constPointerType = (1 << 12);
 
-    static const int referenceType    = (1 << 12);
+    static const int referenceType    = (1 << 13);
 
-    static const int variableType     = (1 << 13);
-    static const int functionType     = (1 << 14);
-    static const int protoType        = (1 << 15); // =P
-    static const int functionCallType = (1 << 16);
-    static const int gotoType         = (1 << 17);
+    static const int variableType     = (1 << 14);
+    static const int functionType     = (1 << 15);
+    static const int protoType        = (1 << 16); // =P
+    static const int functionCallType = (1 << 17);
+    static const int gotoType         = (1 << 18);
 
-    static const int textureType      = (1 << 18);
+    static const int textureType      = (1 << 19);
 
     //   ---[ Type Def Info ]---
     static const int podTypeDef      = (1 << 1);
@@ -174,7 +175,9 @@ namespace occa {
     static const int unionTypeDef    = (1 << 4);
     static const int enumTypeDef     = (1 << 5);
 
-    static const int templateTypeDef = (1 << 6);
+    static const int functionTypeDef = (1 << 6);
+
+    static const int templateTypeDef = (1 << 7);
 
     namespace typeDefStyle {
       static const int skipFirstLineIndent = (1 << 0);
@@ -1781,6 +1784,24 @@ namespace occa {
 
       int statementType(strNode *&nodeRoot);
 
+      int checkMacroStatementType(strNode *&nodeRoot);
+      int checkOccaForStatementType(strNode *&nodeRoot);
+      int checkStructStatementType(strNode *&nodeRoot);
+      int checkUpdateStatementType(strNode *&nodeRoot);
+      int checkDescriptorStatementType(strNode *&nodeRoot);
+      int checkGotoStatementType(strNode *&nodeRoot);
+      int checkFlowStatementType(strNode *&nodeRoot);
+      int checkSpecialStatementType(strNode *&nodeRoot);
+      int checkBlockStatementType(strNode *&nodeRoot);
+
+      void addTypeDef(const std::string &typeDefName);
+
+      inline bool nodeHasDescriptor(strNode *n) const {
+        return ((n->type & descriptorType) ||
+                ((n->type & unknownVariable) &&
+                 ( hasTypeInScope(n->value) )));
+      }
+
       varInfo loadVarInfo(strNode *&nodePos);
 
       inline typeDef* hasTypeInScope(const std::string &typeName) const {
@@ -2135,16 +2156,14 @@ namespace occa {
             else
               ret += " ";
           }
-          else if((nodePos->type & descriptorType) ||
-                  ((nodeRoot->type & unknownVariable) &&
-                   ( hasTypeInScope(nodeRoot->value) ))){
+          else if(nodeHasDescriptor(nodePos)){
             ret += *nodePos;
 
             if(nodePos->right &&
                // [static ][const ][float ][variable]
-               nodePos->right->type & (descriptorType |
-                                       presetValue    |
-                                       unknownVariable)){
+               ((nodePos->right->type & (presetValue    |
+                                         unknownVariable)) ||
+                nodeHasDescriptor(nodePos->right))){
 
               ret += " ";
             }
@@ -2210,16 +2229,27 @@ namespace occa {
 
 
     //---[ Type Definitions ]-----------------------
+    /*
+      struct {          |  members    = {float x, float y, float z}
+      union {         |  allMembers = {union{float x, float y}, float z}
+      float x;      |
+      float y;      |
+      }               |
+      float z;        |
+      }                 |
+      |
+      int (*f)(void *a) | allMembers = {int, void* a}
+    */
     class typeDef {
     public:
       std::string typeName, varName;
       int typeInfo;
 
-      scopeTypeMap_t members;           // Only contains stuff with names
-      std::vector<typeDef*> allMembers; // Keeps order
+      scopeTypeMap_t members;
+      std::vector<typeDef*> allMembers;
 
       typeDef *typedefing;
-      bool typedefingIsSimple;
+      bool typedefUsesName;
 
       inline typeDef() :
         typeName(""),
@@ -2267,17 +2297,19 @@ namespace occa {
             }
 
             while(nRoot != n){
-              varName += nRoot->value + " ";
+              typeName += nRoot->value + " ";
               nRoot = nRoot->right;
             }
 
-            varName += n->value;
+            typeName += n->value;
 
-            typedefingIsSimple = true;
+            varName += n->right->value;
+
+            typedefUsesName = true;
           }
           else{
             typedefing->loadFromNode(s, n);
-            typedefingIsSimple = false;
+            typedefUsesName = false;
           }
         }
         else{
@@ -2290,15 +2322,24 @@ namespace occa {
           else if(n->value == "enum")
             typeInfo = enumTypeDef;
 
-          if(n->down.size() == 0){
-            n = n->right;
-            typeName = n->value;
+          if( !(typeInfo & podTypeDef) ){
+            std::cout << "1. HERE\n";
+            n->print();
+
+            if(n->down.size() == 0){
+              n = n->right;
+              typeName = n->value;
+            }
+
+            loadPartsFromNode(s, n->down[0]);
+
+            if(n->right->type & unknownVariable)
+              varName = n->right->value;
           }
-
-          loadPartsFromNode(s, n->down[0]);
-
-          if(n->right->type & unknownVariable)
-            varName = n->right->value;
+          else{
+            std::cout << "2. HERE\n";
+            n->print();
+          }
         }
       }
 
@@ -2327,7 +2368,7 @@ namespace occa {
 
           ret += "typedef ";
 
-          if(typedefingIsSimple)
+          if(typedefUsesName)
             ret += typedefing->typeName + " " + varName;
           else
             ret += typedefing->print(tab, (typeDefStyle::skipFirstLineIndent |
@@ -3014,6 +3055,12 @@ namespace occa {
 
 
     //---[ Statement Functions ]--------------------{
+    inline void statement::addTypeDef(const std::string &typeDefName){
+      typeDef &def = *(new typeDef);
+      def.typeName = typeDefName;
+      scopeTypeMap[typeDefName] = &def;
+    }
+
     inline varInfo statement::loadVarInfo(strNode *&nodePos){
       varInfo info;
 
@@ -3022,7 +3069,12 @@ namespace occa {
             (!(nodePos->type & unknownVariable) ||
              hasTypeInScope(nodePos->value))){
 
-        if(nodePos->type & qualifierType){
+        if(nodePos->type & structType){
+          info.descriptors.push_back(*nodePos);
+          info.typeInfo |= structType;
+        }
+
+        else if(nodePos->type & qualifierType){
 
           if(nodePos->value == "*"){
             info.typeInfo |= heapPointerType;
@@ -3046,6 +3098,7 @@ namespace occa {
             info.descriptors.push_back(*nodePos);
           }
         }
+
         else if(nodePos->type & specifierType){
           info.type = hasTypeInScope(*nodePos);
 
@@ -3578,14 +3631,16 @@ namespace occa {
       typePtr = new typeDef;
       typePtr->loadFromNode(*this, nodeRoot);
 
+      std::cout << "typePtr = " << *typePtr << '\n';
+
       if(typePtr->typedefing != NULL){
-        if(typePtr->typedefingIsSimple)
+        if(typePtr->typedefUsesName)
           up->scopeTypeMap[typePtr->varName] = typePtr;
         else
           up->scopeTypeMap[typePtr->typedefing->varName] = typePtr;
       }
       else{
-        up->scopeTypeMap[typePtr->typeName] = typePtr;
+          up->scopeTypeMap[typePtr->typeName] = typePtr;
       }
 
       loadBlocksFromLastNode(nodeRootEnd);
@@ -4298,9 +4353,7 @@ namespace occa {
         return;
 
       while(n){
-        if((n->type & unknownVariable) &&
-           !s.hasTypeInScope(n->value)){
-
+        if(s.nodeHasDescriptor(n)){
           varInfo *infoPtr = s.hasVariableInScope(n->value);
 
           if(infoPtr == NULL){
@@ -6062,164 +6115,178 @@ namespace occa {
         return invalidStatementType;
 
       else if(nodeRoot->type == macroKeywordType)
-        return macroStatementType;
+        return checkMacroStatementType(nodeRoot);
 
       else if(nodeRoot->type == keywordType["occaOuterFor0"])
-        return keywordType["occaOuterFor0"];
+        return checkOccaForStatementType(nodeRoot);
 
-      else if(nodeRoot->type & structType){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
+      else if(nodeRoot->type & structType)
+        return checkStructStatementType(nodeRoot);
 
-          nodeRoot = nodeRoot->right;
-        }
+      else if(nodeRoot->type & operatorType)
+        return checkUpdateStatementType(nodeRoot);
 
-        return structStatementType;
-      }
-
-      else if(nodeRoot->type & operatorType){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return updateStatementType;
-      }
-
-      else if((nodeRoot->type & descriptorType) ||
-              ((nodeRoot->type & unknownVariable) &&
-               ( hasTypeInScope(nodeRoot->value) ))){
-
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            return declareStatementType;
-
-          // Case:
-          //   const varName = ();
-          if(nodeRoot->type & operatorType){
-            while(nodeRoot){
-              if(nodeRoot->type & endStatement)
-                break;
-
-              nodeRoot = nodeRoot->right;
-            }
-
-            return declareStatementType;
-          }
-
-          else if(nodeRoot->down.size() &&
-                  (nodeRoot->down[0]->type & parentheses)){
-
-            const int downCount = nodeRoot->down.size();
-
-            if(downCount == 1){
-              while(nodeRoot){
-                if(nodeRoot->type & endStatement)
-                  break;
-
-                if(nodeRoot->right == NULL){
-                  std::cout << "Missing a [;] after:\n"
-                            << prettyString(nodeRoot, "  ");
-                  throw 1;
-                }
-
-                nodeRoot = nodeRoot->right;
-              }
-
-              return functionPrototypeType;
-            }
-            else
-              return functionDefinitionType;
-          }
-
-          if(nodeRoot->right == NULL)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return declareStatementType;
-      }
+      else if(nodeHasDescriptor(nodeRoot))
+        return checkDescriptorStatementType(nodeRoot);
 
       else if(nodeRoot->type & unknownVariable){
         if(nodeRoot->right &&
-           nodeRoot->right->value == ":"){
+           nodeRoot->right->value == ":")
+          return checkGotoStatementType(nodeRoot);
 
-          nodeRoot = nodeRoot->right;
-          return gotoStatementType;
-        }
-
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return updateStatementType;
+        return checkUpdateStatementType(nodeRoot);
       }
 
-      else if(nodeRoot->type & flowControlType){
-        if(nodeRoot->value == "for")
-          return forStatementType;
-        else if(nodeRoot->value == "while")
-          return whileStatementType;
-        else if(nodeRoot->value == "do")
-          return doWhileStatementType;
-        else if(nodeRoot->value == "if")
-          return ifStatementType;
-        else if(nodeRoot->value == "else if")
-          return elseIfStatementType;
-        else if(nodeRoot->value == "else")
-          return elseStatementType;
-        else if(nodeRoot->value == "switch")
-          return switchStatementType;
-      }
+      else if(nodeRoot->type & flowControlType)
+        return checkFlowStatementType(nodeRoot);
 
-      else if(nodeRoot->type & occaKeywordType){
-        if((nodeRoot->value.find("occaInnerFor") != std::string::npos) &&
-           ((nodeRoot->value == "occaInnerFor0") ||
-            (nodeRoot->value == "occaInnerFor1") ||
-            (nodeRoot->value == "occaInnerFor2")))
-
-          return keywordType["occaInnerFor0"];
-
-        else if((nodeRoot->value.find("occaOuterFor") != std::string::npos) &&
-                ((nodeRoot->value == "occaOuterFor0") ||
-                 (nodeRoot->value == "occaOuterFor1") ||
-                 (nodeRoot->value == "occaOuterFor2")))
-
-          return keywordType["occaOuterFor0"];
-      }
-
-      else if(nodeRoot->type & specialKeywordType){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
-
-        return blankStatementType;
-      }
+      else if(nodeRoot->type & specialKeywordType)
+        return checkSpecialStatementType(nodeRoot);
 
       else if((nodeRoot->type == startBrace) &&
-         (nodeRoot->up)                 &&
-         !(nodeRoot->up->type & operatorType)){
-
-        nodeRoot = lastNode(nodeRoot);
-
-        return blockStatementType;
-      }
+              (nodeRoot->up)                 &&
+              !(nodeRoot->up->type & operatorType))
+        return checkBlockStatementType(nodeRoot);
 
       while(nodeRoot &&
             !(nodeRoot->type & endStatement))
         nodeRoot = nodeRoot->right;
 
       return declareStatementType;
+    }
+
+    inline int statement::checkMacroStatementType(strNode *&nodeRoot){
+      return macroStatementType;
+    }
+
+    inline int statement::checkOccaForStatementType(strNode *&nodeRoot){
+      return keywordType["occaOuterFor0"];
+    }
+
+    inline int statement::checkStructStatementType(strNode *&nodeRoot){
+      if((nodeRoot->value == "struct")       &&
+         (nodeRoot->down.size() == 0)        &&
+         (nodeRoot->right)                   &&
+         (nodeRoot->right->down.size() == 0)){
+
+        return checkDescriptorStatementType(nodeRoot);
+      }
+
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return structStatementType;
+    }
+
+    inline int statement::checkUpdateStatementType(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return updateStatementType;
+    }
+
+    inline int statement::checkDescriptorStatementType(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          return declareStatementType;
+
+        // Case:
+        //   const varName = ();
+        if(nodeRoot->type & operatorType){
+          while(nodeRoot){
+            if(nodeRoot->type & endStatement)
+              break;
+
+            nodeRoot = nodeRoot->right;
+          }
+
+          return declareStatementType;
+        }
+
+        else if(nodeRoot->down.size() &&
+                (nodeRoot->down[0]->type & parentheses)){
+
+          const int downCount = nodeRoot->down.size();
+
+          if(downCount == 1){
+            while(nodeRoot){
+              if(nodeRoot->type & endStatement)
+                break;
+
+              if(nodeRoot->right == NULL){
+                std::cout << "Missing a [;] after:\n"
+                          << prettyString(nodeRoot, "  ");
+                throw 1;
+              }
+
+              nodeRoot = nodeRoot->right;
+            }
+
+            return functionPrototypeType;
+          }
+          else
+            return functionDefinitionType;
+        }
+
+        if(nodeRoot->right == NULL)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return declareStatementType;
+    }
+
+    inline int statement::checkGotoStatementType(strNode *&nodeRoot){
+      nodeRoot = nodeRoot->right;
+      return gotoStatementType;
+    }
+
+    inline int statement::checkFlowStatementType(strNode *&nodeRoot){
+      if(nodeRoot->value == "for")
+        return forStatementType;
+      else if(nodeRoot->value == "while")
+        return whileStatementType;
+      else if(nodeRoot->value == "do")
+        return doWhileStatementType;
+      else if(nodeRoot->value == "if")
+        return ifStatementType;
+      else if(nodeRoot->value == "else if")
+        return elseIfStatementType;
+      else if(nodeRoot->value == "else")
+        return elseStatementType;
+      else if(nodeRoot->value == "switch")
+        return switchStatementType;
+
+      std::cout << "You found the Waldo error!\n";
+      throw 1;
+
+      return 0;
+    }
+
+    inline int statement::checkSpecialStatementType(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return blankStatementType;
+    }
+
+    inline int statement::checkBlockStatementType(strNode *&nodeRoot){
+      nodeRoot = lastNode(nodeRoot);
+
+      return blockStatementType;
     }
     //==============================================
 
@@ -6486,7 +6553,7 @@ namespace occa {
       keywordType["enum"]    = (specifierType | structType);
       keywordType["class"]   = (specifierType | structType);
       keywordType["union"]   = (specifierType | structType);
-      keywordType["struct"]  = (specifierType | structType);
+      keywordType["struct"]  = (specifierType | structType | qualifierType);
       keywordType["typedef"] = (specifierType | structType);
 
       //---[ C++ ]----------------------
@@ -7397,10 +7464,8 @@ namespace occa {
         }
       }
 
-      typeDef &def = *(new typeDef);
-      def.typeName = "void";
-
-      globalScope->scopeTypeMap[def.typeName] = &def;
+      globalScope->addTypeDef("void");
+      globalScope->addTypeDef("__builtin_va_list");
     }
   };
 
