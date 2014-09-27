@@ -1796,6 +1796,21 @@ namespace occa {
 
       void addTypeDef(const std::string &typeDefName);
 
+      inline bool nodeHasQualifier(strNode *n) const {
+        if( !(n->type & qualifierType) )
+          return false;
+
+        // short and long can be both:
+        //    specifiers and qualifiers
+        if( !(n->type & specifierType) )
+          return true;
+
+        if(n->right)
+          return nodeHasDescriptor(n->right);
+        else
+          return true;
+      }
+
       inline bool nodeHasDescriptor(strNode *n) const {
         return ((n->type & descriptorType) ||
                 ((n->type & unknownVariable) &&
@@ -1977,7 +1992,7 @@ namespace occa {
             if(nodePos->type & binaryOperatorType){
 
               // char *blah
-              if(nodePos->type & qualifierType){
+              if(nodeHasQualifier(nodePos)){
 
                 // [char ][*][blah]
                 // or
@@ -2294,7 +2309,7 @@ namespace occa {
           if( !(n->type & structType) ){
             strNode *nRoot = n;
 
-            while(n->type & qualifierType)
+            while(s.nodeHasQualifier(n))
               n = n->right;
 
             typedefing = s.hasTypeInScope(n->value);
@@ -3096,7 +3111,7 @@ namespace occa {
           info.typeInfo |= structType;
         }
 
-        else if(nodePos->type & qualifierType){
+        else if(nodeHasQualifier(nodePos)){
 
           if(nodePos->value == "*"){
             info.typeInfo |= heapPointerType;
@@ -6532,9 +6547,9 @@ namespace occa {
       keywordType["#"] = macroKeywordType;
 
       //---[ Types & Specifiers ]---------
-      std::string suffix[7] = {"", "1", "2", "3", "4", "8", "16"};
+      std::string suffix[6] = {"", "2", "3", "4", "8", "16"};
 
-      for(int i = 0; i < 7; ++i){
+      for(int i = 0; i < 6; ++i){
         keywordType[std::string("int")    + suffix[i]] = specifierType;
         keywordType[std::string("bool")   + suffix[i]] = specifierType;
         keywordType[std::string("char")   + suffix[i]] = specifierType;
@@ -6546,6 +6561,8 @@ namespace occa {
 
       keywordType["void"] = specifierType;
 
+      keywordType["long"]     = (qualifierType | specifierType);
+      keywordType["short"]    = (qualifierType | specifierType);
       keywordType["signed"]   = qualifierType;
       keywordType["unsigned"] = qualifierType;
 
