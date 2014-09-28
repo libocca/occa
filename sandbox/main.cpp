@@ -89,9 +89,10 @@ namespace occa {
     static bool keywordsAreInitialized = false;
 
     //   ---[ Delimeters ]---------
-    static const char whitespace[]       = " \t\r\n\v\f\0";
-    static const char wordDelimeter[]    = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
-    static const char wordDelimeterExt[] = "!=##%=&&&=*=+++=-=--->/=::<<<===>=>>^=|=||\0";
+    static const char whitespace[]     = " \t\r\n\v\f\0";
+    static const char wordDelimeter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
+    static const char wordDelimeter2[] = "!=##%=&&&=*=+++=-=--->../=::<<<===>=>>^=|=||\0";
+    static const char wordDelimeter3[] = "...<<=>>=\0";
 
     //   ---[ Keyword Types ]---
     static const int everythingType       = 0xFFFFFFFF;
@@ -142,43 +143,44 @@ namespace occa {
     static const int openclKeywordType    = (1 << 21);
 
     //   ---[ Types ]-----------
-    // static const int structType    = (1 << 0); (Defined on top)
-    static const int noType           = (1 << 1);
-    static const int boolType         = (1 << 2);
-    static const int charType         = (1 << 3);
-    static const int shortType        = (1 << 4);
-    static const int intType          = (1 << 5);
-    static const int longType         = (1 << 6);
-    static const int floatType        = (1 << 7);
-    static const int doubleType       = (1 << 8);
+    // static const int structType       = (1 << 0); (Defined on top)
+    static const int noType              = (1 << 1);
+    static const int boolType            = (1 << 2);
+    static const int charType            = (1 << 3);
+    static const int shortType           = (1 << 4);
+    static const int intType             = (1 << 5);
+    static const int longType            = (1 << 6);
+    static const int floatType           = (1 << 7);
+    static const int doubleType          = (1 << 8);
 
-    static const int pointerType      = (3 << 10);
-    static const int pointerTypeMask  = (7 << 10);
-    static const int heapPointerType  = (1 << 10);
-    static const int stackPointerType = (1 << 11);
-    static const int constPointerType = (1 << 12);
+    static const int pointerType         = (3 << 10);
+    static const int pointerTypeMask     = (7 << 10);
+    static const int heapPointerType     = (1 << 10);
+    static const int stackPointerType    = (1 << 11);
+    static const int constPointerType    = (1 << 12);
 
-    static const int referenceType    = (1 << 13);
+    static const int referenceType       = (1 << 13);
 
-    static const int variableType     = (1 << 14);
-    static const int functionType     = (1 << 15);
-    static const int protoType        = (1 << 16); // =P
-    static const int functionCallType = (1 << 17);
-    static const int gotoType         = (1 << 18);
+    static const int variableType        = (1 << 14);
+    static const int functionType        = (1 << 15);
+    static const int protoType           = (1 << 16); // =P
+    static const int functionCallType    = (1 << 17);
+    static const int functionPointerType = (1 << 18);
+    static const int gotoType            = (1 << 19);
 
-    static const int textureType      = (1 << 19);
+    static const int textureType         = (1 << 20);
 
     //   ---[ Type Def Info ]---
-    static const int podTypeDef       = (1 << 20);
+    static const int podTypeDef          = (1 << 21);
 
-    static const int structTypeDef    = (1 << 21);
-    static const int classTypeDef     = (1 << 22);
-    static const int unionTypeDef     = (1 << 23);
-    static const int enumTypeDef      = (1 << 24);
+    static const int structTypeDef       = (1 << 22);
+    static const int classTypeDef        = (1 << 23);
+    static const int unionTypeDef        = (1 << 24);
+    static const int enumTypeDef         = (1 << 25);
 
-    static const int functionTypeDef  = (1 << 25);
+    static const int functionTypeDef     = (1 << 26);
 
-    static const int templateTypeDef  = (1 << 26);
+    static const int templateTypeDef     = (1 << 27);
 
     namespace typeDefStyle {
       static const int skipFirstLineIndent = (1 << 0);
@@ -2046,6 +2048,7 @@ namespace occa {
                    ((nodePos->right == NULL) ||
                     !(nodePos->right->type & unknownVariable))){
                   if(nodePos->left){
+                    nodePos->up->print();
                     std::cout << "1. Error on:\n";
                     nodePos->left->print("  ");
                   }
@@ -3012,6 +3015,21 @@ namespace occa {
       return false;
     }
 
+    inline bool charIsIn3(const char *c, const char *delimeters){
+      const char c0 = c[0];
+      const char c1 = c[1];
+      const char c2 = c[2];
+
+      while((*delimeters) != '\0'){
+        if((c0 == delimeters[0]) && (c1 == delimeters[1]) && (c2 == delimeters[2]))
+          return true;
+
+        delimeters += 3;
+      }
+
+      return false;
+    }
+
     inline bool isWhitespace(const char c){
       return charIsIn(c, whitespace);
     }
@@ -3114,8 +3132,12 @@ namespace occa {
 
     inline char isAWordDelimeter(const char *c){
       if( charIsIn(c[0], wordDelimeter) ){
-        if(charIsIn2(c, wordDelimeterExt))
+        if(charIsIn2(c, wordDelimeter2)){
+          if(charIsIn3(c, wordDelimeter3))
+            return 3;
+
           return 2;
+        }
 
         return 1;
       }
@@ -6805,6 +6827,7 @@ namespace occa {
       keywordType["namespace"] = (specifierType | structType);
 
       //---[ Constants ]------------------
+      keywordType["..."]   = presetValue;
       keywordType["true"]  = presetValue;
       keywordType["false"] = presetValue;
 
@@ -6993,8 +7016,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      std::cout << *globalScope << '\n';
-      throw 1;
+      // std::cout << *globalScope << '\n';
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -7742,9 +7765,15 @@ int main(int argc, char **argv){
 
   {
     occa::parser parser;
-    std::string parsedContent = parser.parseFile("test.c");
+    std::string parsedContent = parser.parseFile("cleanTest.c");
     std::cout << parsedContent << '\n';
   }
+
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("clangTest.c");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   occa::parser parser;
