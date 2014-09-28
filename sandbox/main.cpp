@@ -153,6 +153,7 @@ namespace occa {
     static const int doubleType       = (1 << 8);
 
     static const int pointerType      = (3 << 10);
+    static const int pointerTypeMask  = (7 << 10);
     static const int heapPointerType  = (1 << 10);
     static const int stackPointerType = (1 << 11);
     static const int constPointerType = (1 << 12);
@@ -168,16 +169,16 @@ namespace occa {
     static const int textureType      = (1 << 19);
 
     //   ---[ Type Def Info ]---
-    static const int podTypeDef      = (1 << 1);
+    static const int podTypeDef       = (1 << 20);
 
-    static const int structTypeDef   = (1 << 2);
-    static const int classTypeDef    = (1 << 3);
-    static const int unionTypeDef    = (1 << 4);
-    static const int enumTypeDef     = (1 << 5);
+    static const int structTypeDef    = (1 << 21);
+    static const int classTypeDef     = (1 << 22);
+    static const int unionTypeDef     = (1 << 23);
+    static const int enumTypeDef      = (1 << 24);
 
-    static const int functionTypeDef = (1 << 6);
+    static const int functionTypeDef  = (1 << 25);
 
-    static const int templateTypeDef = (1 << 7);
+    static const int templateTypeDef  = (1 << 26);
 
     namespace typeDefStyle {
       static const int skipFirstLineIndent = (1 << 0);
@@ -2245,15 +2246,15 @@ namespace occa {
 
     //---[ Type Definitions ]-----------------------
     /*
-      struct {          |  members    = {float x, float y, float z}
-      union {         |  allMembers = {union{float x, float y}, float z}
-      float x;      |
-      float y;      |
-      }               |
-      float z;        |
-      }                 |
-      |
-      int (*f)(void *a) | allMembers = {int, void* a}
+      | struct {          |  members    = {float x, float y, float z}
+      |   union {         |  allMembers = {union{float x, float y}, float z}
+      |     float x;      |
+      |     float y;      |
+      |   }               |
+      |   float z;        |
+      | }                 |
+      |                   |
+      | int (*f)(void *a) | allMembers = {int, void* a}
     */
     class typeDef {
     public:
@@ -2261,6 +2262,9 @@ namespace occa {
 
       std::string typeName, varName;
       int typeInfo;
+
+      int pointerCount;
+      std::vector<std::string> stackPointerSizes;
 
       scopeTypeMap_t members;
       std::vector<typeDef*> allMembers;
@@ -2274,6 +2278,8 @@ namespace occa {
         typeName(""),
         varName(""),
         typeInfo(podTypeDef),
+
+        pointerCount(0),
 
         typedefing(NULL) {}
 
@@ -2389,7 +2395,58 @@ namespace occa {
           else
             ret = "";
 
-          ret += (varName.size() ? (typeName + " " + varName) : typeName);
+          const int heapCount = stackPointerSizes.size();
+
+          const bool hasType = typeName.size();
+          const bool hasVar  = varName.size();
+
+          bool needsSpace = false;
+
+          if(hasType){
+            ret += typeName;
+            needsSpace = true;
+          }
+
+          if(pointerCount){
+            if(needsSpace){
+              ret += " ";
+              needsSpace = false;
+            }
+
+            for(int i = 0; i < pointerCount; ++i)
+              ret += "*";
+          }
+
+          if(typeInfo & referenceType){
+            if(needsSpace){
+              ret += " ";
+              needsSpace = false;
+            }
+
+            ret += "&";
+          }
+
+          if(hasVar){
+            if(needsSpace)
+              ret += " ";
+
+            needsSpace = true;
+
+            ret += varName;
+          }
+
+          if(typeInfo & constPointerType){
+            if(needsSpace)
+              ret += " ";
+
+            ret += "const";
+          }
+
+          for(int i = 0; i < heapCount; ++i){
+            ret += "[";
+            ret += stackPointerSizes[i];
+            ret += "]";
+          }
 
           if( !(printStyle & typeDefStyle::skipSemicolon) )
             ret += ";";
@@ -2733,6 +2790,10 @@ namespace occa {
 
           typeDef &sDef = addType(info.name);
           sDef.typeName = info.type->typeName;
+
+          sDef.typeInfo         |= (info.typeInfo & pointerTypeMask);
+          sDef.pointerCount      = info.pointerCount;
+          sDef.stackPointerSizes = info.stackPointerSizes;
         }
         else{
           typeDef &sDef= *(new typeDef);

@@ -141,7 +141,7 @@
 #define __core2__ 1
 #define __tune_core2__ 1
 #define __LITTLE_ENDIAN__ 1
-#define __REGISTER_PREFIX__ 
+#define __REGISTER_PREFIX__
 #define __NO_MATH_INLINES 1
 #define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16 1
 #define __SSSE3__ 1
@@ -161,8 +161,8 @@
 #define OBJC_NEW_PROPERTIES 1
 #define __apple_build_version__ 5030040
 #define __weak __attribute__((objc_gc(weak)))
-#define __strong 
-#define __unsafe_unretained 
+#define __strong
+#define __unsafe_unretained
 #define __DYNAMIC__ 1
 #define __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ 1090
 #define __STDC__ 1
@@ -176,12 +176,12 @@
 # 1 "main.c" 2
 # 1 "/usr/include/stdlib.h" 1 3 4
 # 59 "/usr/include/stdlib.h" 3 4
-#define _STDLIB_H_ 
+#define _STDLIB_H_
 
 
 # 1 "/usr/include/Availability.h" 1 3 4
 # 25 "/usr/include/Availability.h" 3 4
-#define __AVAILABILITY__ 
+#define __AVAILABILITY__
 # 119 "/usr/include/Availability.h" 3 4
 #define __MAC_10_0 1000
 #define __MAC_10_1 1010
@@ -215,7 +215,7 @@
 
 # 1 "/usr/include/AvailabilityInternal.h" 1 3 4
 # 31 "/usr/include/AvailabilityInternal.h" 3 4
-#define __AVAILABILITY_INTERNAL__ 
+#define __AVAILABILITY_INTERNAL__
 # 42 "/usr/include/AvailabilityInternal.h" 3 4
 #define __AVAILABILITY_INTERNAL_DEPRECATED __attribute__((deprecated))
 
@@ -224,7 +224,7 @@
 # 54 "/usr/include/AvailabilityInternal.h" 3 4
 #define __AVAILABILITY_INTERNAL_UNAVAILABLE __attribute__((unavailable))
 #define __AVAILABILITY_INTERNAL_WEAK_IMPORT __attribute__((weak_import))
-#define __AVAILABILITY_INTERNAL_REGULAR 
+#define __AVAILABILITY_INTERNAL_REGULAR
 # 3615 "/usr/include/AvailabilityInternal.h" 3 4
 #define __MAC_OS_X_VERSION_MIN_REQUIRED __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
 
@@ -608,24 +608,24 @@
 
 # 1 "/usr/include/_types.h" 1 3 4
 # 25 "/usr/include/_types.h" 3 4
-#define __TYPES_H_ 
+#define __TYPES_H_
 
 
 # 1 "/usr/include/sys/_types.h" 1 3 4
 # 30 "/usr/include/sys/_types.h" 3 4
-#define _SYS__TYPES_H_ 
+#define _SYS__TYPES_H_
 
 
 # 1 "/usr/include/sys/cdefs.h" 1 3 4
 # 68 "/usr/include/sys/cdefs.h" 3 4
-#define _CDEFS_H_ 
+#define _CDEFS_H_
 
 
 
 
 
-#define __BEGIN_DECLS 
-#define __END_DECLS 
+#define __BEGIN_DECLS
+#define __END_DECLS
 # 92 "/usr/include/sys/cdefs.h" 3 4
 #define __P(protos) protos
 #define __CONCAT(x,y) x ## y
@@ -660,8 +660,8 @@
 
 
 
-#define __dead 
-#define __pure 
+#define __dead
+#define __pure
 # 198 "/usr/include/sys/cdefs.h" 3 4
 #define __restrict restrict
 # 221 "/usr/include/sys/cdefs.h" 3 4
@@ -694,7 +694,7 @@
 
 
 
-#define __FBSDID(s) 
+#define __FBSDID(s)
 
 
 
@@ -731,13 +731,13 @@
 
 
 
-#define __DARWIN_SUF_UNIX03 
+#define __DARWIN_SUF_UNIX03
 # 433 "/usr/include/sys/cdefs.h" 3 4
 #define __DARWIN_SUF_64_BIT_INO_T "$INODE64"
 # 443 "/usr/include/sys/cdefs.h" 3 4
 #define __DARWIN_SUF_1050 "$1050"
 # 452 "/usr/include/sys/cdefs.h" 3 4
-#define __DARWIN_SUF_NON_CANCELABLE 
+#define __DARWIN_SUF_NON_CANCELABLE
 # 462 "/usr/include/sys/cdefs.h" 3 4
 #define __DARWIN_SUF_EXTSN "$DARWIN_EXTSN"
 
@@ -764,91 +764,91 @@
 
 # 1 "/usr/include/sys/_symbol_aliasing.h" 1 3 4
 # 35 "/usr/include/sys/_symbol_aliasing.h" 3 4
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_2(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_2(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_2(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_2(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_2(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_2(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_3(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_3(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_7_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_7_0(x)
 
 
 
@@ -916,43 +916,43 @@
 # 550 "/usr/include/sys/cdefs.h" 3 4
 # 1 "/usr/include/sys/_posix_availability.h" 1 3 4
 # 35 "/usr/include/sys/_posix_availability.h" 3 4
-#define ___POSIX_C_DEPRECATED_STARTING_198808L 
+#define ___POSIX_C_DEPRECATED_STARTING_198808L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199009L 
+#define ___POSIX_C_DEPRECATED_STARTING_199009L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199209L 
+#define ___POSIX_C_DEPRECATED_STARTING_199209L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199309L 
+#define ___POSIX_C_DEPRECATED_STARTING_199309L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199506L 
+#define ___POSIX_C_DEPRECATED_STARTING_199506L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_200112L 
+#define ___POSIX_C_DEPRECATED_STARTING_200112L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_200809L 
+#define ___POSIX_C_DEPRECATED_STARTING_200809L
 # 551 "/usr/include/sys/cdefs.h" 2 3 4
 
 #define __POSIX_C_DEPRECATED(ver) ___POSIX_C_DEPRECATED_STARTING_##ver
@@ -1013,13 +1013,13 @@
 # 33 "/usr/include/sys/_types.h" 2 3 4
 # 1 "/usr/include/machine/_types.h" 1 3 4
 # 29 "/usr/include/machine/_types.h" 3 4
-#define _BSD_MACHINE__TYPES_H_ 
+#define _BSD_MACHINE__TYPES_H_
 
 
 
 # 1 "/usr/include/i386/_types.h" 1 3 4
 # 29 "/usr/include/i386/_types.h" 3 4
-#define _BSD_I386__TYPES_H_ 
+#define _BSD_I386__TYPES_H_
 
 
 
@@ -1110,10 +1110,15 @@ typedef long __darwin_time_t;
 # 58 "/usr/include/sys/_types.h" 3 4
 struct __darwin_pthread_handler_rec
 {
- void (*__routine)(void *);
  void *__arg;
  struct __darwin_pthread_handler_rec *__next;
 };
+/* struct __darwin_pthread_handler_rec */
+/* { */
+/*  void (*__routine)(void *); */
+/*  void *__arg; */
+/*  struct __darwin_pthread_handler_rec *__next; */
+/* }; */
 struct _opaque_pthread_attr_t { long __sig; char __opaque[56]; };
 struct _opaque_pthread_cond_t { long __sig; char __opaque[40]; };
 struct _opaque_pthread_condattr_t { long __sig; char __opaque[8]; };
@@ -1212,7 +1217,7 @@ typedef __uint32_t __darwin_wctype_t;
 
 # 1 "/usr/include/sys/wait.h" 1 3 4
 # 65 "/usr/include/sys/wait.h" 3 4
-#define _SYS_WAIT_H_ 
+#define _SYS_WAIT_H_
 # 79 "/usr/include/sys/wait.h" 3 4
 typedef enum {
  P_ALL,
@@ -1227,50 +1232,50 @@ typedef enum {
 
 # 1 "/usr/include/sys/_types/_pid_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_pid_t.h" 3 4
-#define _PID_T 
+#define _PID_T
 typedef __darwin_pid_t pid_t;
 # 90 "/usr/include/sys/wait.h" 2 3 4
 # 1 "/usr/include/sys/_types/_id_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_id_t.h" 3 4
-#define _ID_T 
+#define _ID_T
 typedef __darwin_id_t id_t;
 # 91 "/usr/include/sys/wait.h" 2 3 4
 # 109 "/usr/include/sys/wait.h" 3 4
 # 1 "/usr/include/sys/signal.h" 1 3 4
 # 70 "/usr/include/sys/signal.h" 3 4
-#define _SYS_SIGNAL_H_ 
+#define _SYS_SIGNAL_H_
 
 
 
 # 1 "/usr/include/sys/appleapiopts.h" 1 3 4
 # 30 "/usr/include/sys/appleapiopts.h" 3 4
-#define __SYS_APPLEAPIOPTS_H__ 
+#define __SYS_APPLEAPIOPTS_H__
 
 
 
-#define __APPLE_API_STANDARD 
+#define __APPLE_API_STANDARD
 
 
 
-#define __APPLE_API_STABLE 
+#define __APPLE_API_STABLE
 
 
 
 
 
-#define __APPLE_API_EVOLVING 
+#define __APPLE_API_EVOLVING
 
 
 
-#define __APPLE_API_UNSTABLE 
+#define __APPLE_API_UNSTABLE
 
 
 
-#define __APPLE_API_PRIVATE 
+#define __APPLE_API_PRIVATE
 
 
 
-#define __APPLE_API_OBSOLETE 
+#define __APPLE_API_OBSOLETE
 # 74 "/usr/include/sys/signal.h" 2 3 4
 
 #define __DARWIN_NSIG 32
@@ -1282,7 +1287,7 @@ typedef __darwin_id_t id_t;
 
 # 1 "/usr/include/machine/signal.h" 1 3 4
 # 29 "/usr/include/machine/signal.h" 3 4
-#define _BSD_MACHINE_SIGNAL_H_ 
+#define _BSD_MACHINE_SIGNAL_H_
 
 
 
@@ -1353,13 +1358,13 @@ typedef int sig_atomic_t;
 # 29 "/usr/include/machine/_mcontext.h" 3 4
 # 1 "/usr/include/i386/_mcontext.h" 1 3 4
 # 30 "/usr/include/i386/_mcontext.h" 3 4
-#define __I386_MCONTEXT_H_ 
+#define __I386_MCONTEXT_H_
 
 
 
 # 1 "/usr/include/mach/i386/_structs.h" 1 3 4
 # 33 "/usr/include/mach/i386/_structs.h" 3 4
-#define _MACH_I386__STRUCTS_H_ 
+#define _MACH_I386__STRUCTS_H_
 # 42 "/usr/include/mach/i386/_structs.h" 3 4
 #define _STRUCT_X86_THREAD_STATE32 struct __darwin_i386_thread_state
 struct __darwin_i386_thread_state
@@ -1754,7 +1759,7 @@ struct __darwin_mcontext_avx64
  struct __darwin_x86_avx_state64 __fs;
 };
 # 113 "/usr/include/i386/_mcontext.h" 3 4
-#define _MCONTEXT_T 
+#define _MCONTEXT_T
 
 typedef struct __darwin_mcontext64 *mcontext_t;
 #define _STRUCT_MCONTEXT _STRUCT_MCONTEXT64
@@ -1802,22 +1807,22 @@ typedef struct __darwin_ucontext ucontext_t;
 
 # 1 "/usr/include/sys/_types/_pthread_attr_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_pthread_attr_t.h" 3 4
-#define _PTHREAD_ATTR_T 
+#define _PTHREAD_ATTR_T
 typedef __darwin_pthread_attr_t pthread_attr_t;
 # 151 "/usr/include/sys/signal.h" 2 3 4
 # 1 "/usr/include/sys/_types/_sigset_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_sigset_t.h" 3 4
-#define _SIGSET_T 
+#define _SIGSET_T
 typedef __darwin_sigset_t sigset_t;
 # 152 "/usr/include/sys/signal.h" 2 3 4
 # 1 "/usr/include/sys/_types/_size_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_size_t.h" 3 4
-#define _SIZE_T 
+#define _SIZE_T
 typedef __darwin_size_t size_t;
 # 153 "/usr/include/sys/signal.h" 2 3 4
 # 1 "/usr/include/sys/_types/_uid_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_uid_t.h" 3 4
-#define _UID_T 
+#define _UID_T
 typedef __darwin_uid_t uid_t;
 # 154 "/usr/include/sys/signal.h" 2 3 4
 
@@ -2033,7 +2038,7 @@ void (*signal(int, void (*)(int)))(int);
 # 110 "/usr/include/sys/wait.h" 2 3 4
 # 1 "/usr/include/sys/resource.h" 1 3 4
 # 65 "/usr/include/sys/resource.h" 3 4
-#define _SYS_RESOURCE_H_ 
+#define _SYS_RESOURCE_H_
 
 
 
@@ -2043,7 +2048,7 @@ void (*signal(int, void (*)(int)))(int);
 
 # 1 "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/5.1/include/stdint.h" 1 3 4
 # 26 "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/5.1/include/stdint.h" 3 4
-#define __CLANG_STDINT_H 
+#define __CLANG_STDINT_H
 # 64 "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/../lib/clang/5.1/include/stdint.h" 3 4
 # 1 "/usr/include/stdint.h" 1 3 4
 
@@ -2052,7 +2057,7 @@ void (*signal(int, void (*)(int)))(int);
 
 
 
-#define _STDINT_H_ 
+#define _STDINT_H_
 
 
 #define __WORDSIZE 64
@@ -2066,43 +2071,43 @@ void (*signal(int, void (*)(int)))(int);
 
 # 1 "/usr/include/sys/_types/_int8_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_int8_t.h" 3 4
-#define _INT8_T 
+#define _INT8_T
 typedef signed char int8_t;
 # 19 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/sys/_types/_int16_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_int16_t.h" 3 4
-#define _INT16_T 
+#define _INT16_T
 typedef short int16_t;
 # 20 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/sys/_types/_int32_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_int32_t.h" 3 4
-#define _INT32_T 
+#define _INT32_T
 typedef int int32_t;
 # 21 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/sys/_types/_int64_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_int64_t.h" 3 4
-#define _INT64_T 
+#define _INT64_T
 typedef long long int64_t;
 # 22 "/usr/include/stdint.h" 2 3 4
 
 # 1 "/usr/include/_types/_uint8_t.h" 1 3 4
 # 30 "/usr/include/_types/_uint8_t.h" 3 4
-#define _UINT8_T 
+#define _UINT8_T
 typedef unsigned char uint8_t;
 # 24 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/_types/_uint16_t.h" 1 3 4
 # 30 "/usr/include/_types/_uint16_t.h" 3 4
-#define _UINT16_T 
+#define _UINT16_T
 typedef unsigned short uint16_t;
 # 25 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/_types/_uint32_t.h" 1 3 4
 # 30 "/usr/include/_types/_uint32_t.h" 3 4
-#define _UINT32_T 
+#define _UINT32_T
 typedef unsigned int uint32_t;
 # 26 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/_types/_uint64_t.h" 1 3 4
 # 30 "/usr/include/_types/_uint64_t.h" 3 4
-#define _UINT64_T 
+#define _UINT64_T
 typedef unsigned long long uint64_t;
 # 27 "/usr/include/stdint.h" 2 3 4
 
@@ -2134,12 +2139,12 @@ typedef uint64_t uint_fast64_t;
 
 # 1 "/usr/include/sys/_types/_intptr_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_intptr_t.h" 3 4
-#define _INTPTR_T 
+#define _INTPTR_T
 typedef __darwin_intptr_t intptr_t;
 # 54 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/sys/_types/_uintptr_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_uintptr_t.h" 3 4
-#define _UINTPTR_T 
+#define _UINTPTR_T
 typedef unsigned long uintptr_t;
 # 55 "/usr/include/stdint.h" 2 3 4
 
@@ -2147,13 +2152,13 @@ typedef unsigned long uintptr_t;
 
 # 1 "/usr/include/_types/_intmax_t.h" 1 3 4
 # 30 "/usr/include/_types/_intmax_t.h" 3 4
-#define _INTMAX_T 
+#define _INTMAX_T
 
 typedef long int intmax_t;
 # 59 "/usr/include/stdint.h" 2 3 4
 # 1 "/usr/include/_types/_uintmax_t.h" 1 3 4
 # 30 "/usr/include/_types/_uintmax_t.h" 3 4
-#define _UINTMAX_T 
+#define _UINTMAX_T
 
 typedef long unsigned int uintmax_t;
 # 60 "/usr/include/stdint.h" 2 3 4
@@ -2576,13 +2581,13 @@ int setrlimit(int, const struct rlimit *) __asm("_" "setrlimit") ;
 
 # 1 "/usr/include/machine/endian.h" 1 3 4
 # 32 "/usr/include/machine/endian.h" 3 4
-#define _BSD_MACHINE_ENDIAN_H_ 
+#define _BSD_MACHINE_ENDIAN_H_
 
 
 
 # 1 "/usr/include/i386/endian.h" 1 3 4
 # 67 "/usr/include/i386/endian.h" 3 4
-#define _I386__ENDIAN_H_ 
+#define _I386__ENDIAN_H_
 # 78 "/usr/include/i386/endian.h" 3 4
 #define _QUAD_HIGHWORD 1
 #define _QUAD_LOWWORD 0
@@ -2608,11 +2613,11 @@ int setrlimit(int, const struct rlimit *) __asm("_" "setrlimit") ;
 
 # 1 "/usr/include/sys/_endian.h" 1 3 4
 # 91 "/usr/include/sys/_endian.h" 3 4
-#define _SYS__ENDIAN_H_ 
+#define _SYS__ENDIAN_H_
 # 124 "/usr/include/sys/_endian.h" 3 4
 # 1 "/usr/include/libkern/_OSByteOrder.h" 1 3 4
 # 30 "/usr/include/libkern/_OSByteOrder.h" 3 4
-#define _OS__OSBYTEORDER_H 
+#define _OS__OSBYTEORDER_H
 # 43 "/usr/include/libkern/_OSByteOrder.h" 3 4
 #define __DARWIN_OSSwapConstInt16(x) ((__uint16_t)((((__uint16_t)(x) & 0xff00) >> 8) | (((__uint16_t)(x) & 0x00ff) << 8)))
 
@@ -2628,7 +2633,7 @@ int setrlimit(int, const struct rlimit *) __asm("_" "setrlimit") ;
 # 66 "/usr/include/libkern/_OSByteOrder.h" 3 4
 # 1 "/usr/include/libkern/i386/_OSByteOrder.h" 1 3 4
 # 30 "/usr/include/libkern/i386/_OSByteOrder.h" 3 4
-#define _OS__OSBYTEORDERI386_H 
+#define _OS__OSBYTEORDERI386_H
 
 
 
@@ -2756,7 +2761,7 @@ pid_t wait4(pid_t, int *, int, struct rusage *);
 
 # 1 "/usr/include/alloca.h" 1 3 4
 # 25 "/usr/include/alloca.h" 3 4
-#define _ALLOCA_H_ 
+#define _ALLOCA_H_
 
 
 
@@ -2783,19 +2788,19 @@ void *alloca(size_t);
 
 # 1 "/usr/include/sys/_types/_ct_rune_t.h" 1 3 4
 # 30 "/usr/include/sys/_types/_ct_rune_t.h" 3 4
-#define _CT_RUNE_T 
+#define _CT_RUNE_T
 typedef __darwin_ct_rune_t ct_rune_t;
 # 77 "/usr/include/stdlib.h" 2 3 4
 # 1 "/usr/include/sys/_types/_rune_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_rune_t.h" 3 4
-#define _RUNE_T 
+#define _RUNE_T
 typedef __darwin_rune_t rune_t;
 # 78 "/usr/include/stdlib.h" 2 3 4
 
 
 # 1 "/usr/include/sys/_types/_wchar_t.h" 1 3 4
 # 32 "/usr/include/sys/_types/_wchar_t.h" 3 4
-#define _WCHAR_T 
+#define _WCHAR_T
 typedef __darwin_wchar_t wchar_t;
 # 81 "/usr/include/stdlib.h" 2 3 4
 
@@ -2943,13 +2948,13 @@ int unsetenv(const char *) __asm("_" "unsetenv") ;
 
 # 1 "/usr/include/machine/types.h" 1 3 4
 # 32 "/usr/include/machine/types.h" 3 4
-#define _BSD_MACHINE_TYPES_H_ 
+#define _BSD_MACHINE_TYPES_H_
 
 
 
 # 1 "/usr/include/i386/types.h" 1 3 4
 # 67 "/usr/include/i386/types.h" 3 4
-#define _MACHTYPES_H_ 
+#define _MACHTYPES_H_
 # 81 "/usr/include/i386/types.h" 3 4
 typedef unsigned char u_int8_t;
 typedef unsigned short u_int16_t;
@@ -2985,12 +2990,12 @@ typedef u_int64_t syscall_arg_t;
 
 # 1 "/usr/include/sys/_types/_dev_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_dev_t.h" 3 4
-#define _DEV_T 
+#define _DEV_T
 typedef __darwin_dev_t dev_t;
 # 241 "/usr/include/stdlib.h" 2 3 4
 # 1 "/usr/include/sys/_types/_mode_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_mode_t.h" 3 4
-#define _MODE_T 
+#define _MODE_T
 typedef __darwin_mode_t mode_t;
 # 242 "/usr/include/stdlib.h" 2 3 4
 
@@ -3071,11 +3076,11 @@ void *valloc(size_t);
 # 2 "main.c" 2
 # 1 "/usr/include/stdio.h" 1 3 4
 # 62 "/usr/include/stdio.h" 3 4
-#define _STDIO_H_ 
+#define _STDIO_H_
 # 71 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/sys/_types/_va_list.h" 1 3 4
 # 30 "/usr/include/sys/_types/_va_list.h" 3 4
-#define _VA_LIST_T 
+#define _VA_LIST_T
 typedef __darwin_va_list va_list;
 # 72 "/usr/include/stdio.h" 2 3 4
 
@@ -3083,7 +3088,7 @@ typedef __darwin_va_list va_list;
 
 typedef __darwin_off_t fpos_t;
 
-#define _FSTDIO 
+#define _FSTDIO
 
 
 
@@ -3316,7 +3321,7 @@ char *tempnam(const char *, const char *) __asm("_" "tempnam") ;
 # 409 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/sys/_types/_off_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_off_t.h" 3 4
-#define _OFF_T 
+#define _OFF_T
 typedef __darwin_off_t off_t;
 # 410 "/usr/include/stdio.h" 2 3 4
 
@@ -3336,7 +3341,7 @@ int vsscanf(const char * restrict, const char * restrict, va_list) __attribute__
 # 434 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/sys/_types/_ssize_t.h" 1 3 4
 # 29 "/usr/include/sys/_types/_ssize_t.h" 3 4
-#define _SSIZE_T 
+#define _SSIZE_T
 typedef __darwin_ssize_t ssize_t;
 # 435 "/usr/include/stdio.h" 2 3 4
 
@@ -3379,12 +3384,12 @@ FILE *funopen(const void *,
 # 490 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/secure/_stdio.h" 1 3 4
 # 29 "/usr/include/secure/_stdio.h" 3 4
-#define _SECURE__STDIO_H_ 
+#define _SECURE__STDIO_H_
 
 
 # 1 "/usr/include/secure/_common.h" 1 3 4
 # 25 "/usr/include/secure/_common.h" 3 4
-#define _SECURE__COMMON_H_ 
+#define _SECURE__COMMON_H_
 
 #undef _USE_FORTIFY_LEVEL
 
