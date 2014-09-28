@@ -1806,12 +1806,10 @@ namespace occa {
         if( !(n->type & specifierType) )
           return true;
 
-        strNode *n2 = n;
-
         if((n->right) == NULL)
           return false;
 
-        return (n->right->type & qualifierType);
+        return (n->right->type & descriptorType);
       }
 
       inline bool nodeHasSpecifier(strNode *n) const {
@@ -2392,20 +2390,22 @@ namespace occa {
             popAndGoRight(nDown);
             popAndGoLeft(nDownEnd);
 
-            loadPartsFromNode(s, nDown);
+            if( !(typeInfo & enumTypeDef) )
+              loadStructPartsFromNode(s, nDown);
+            else
+              loadEnumPartsFromNode(s, nDown);
 
-            if(n->right->type & unknownVariable)
+            if(n->right &&
+               n->right->type & unknownVariable)
               varName = n->right->value;
           }
-          else{
-            loadPartsFromNode(s, n);
-            // std::cout << "2. HERE\n";
-            // n->print();
-          }
+          else
+            loadStructPartsFromNode(s, n);
         }
       }
 
-      void loadPartsFromNode(statement &s, strNode *n);
+      void loadStructPartsFromNode(statement &s, strNode *n);
+      void loadEnumPartsFromNode(statement &s, strNode *n);
 
       inline std::string print(const std::string &tab = "", const int printStyle = 0) const {
         std::string ret = "";
@@ -2677,6 +2677,25 @@ namespace occa {
         extraInfo = vi.extraInfo;
       }
 
+      inline std::string decoratedType() const {
+        const int descriptorCount = descriptors.size();
+
+        if(descriptorCount == 0)
+          return type->typeName;
+
+        std::string ret = descriptors[0];
+
+        for(int i = 1; i < descriptorCount; ++i){
+          ret += " ";
+          ret += descriptors[i];
+        }
+
+        ret += " ";
+        ret += type->typeName;
+
+        return ret;
+      }
+
       inline bool hasDescriptor(const std::string descriptor) const {
         const int descriptorCount = descriptors.size();
 
@@ -2798,8 +2817,8 @@ namespace occa {
     }
 
 
-    inline void typeDef::loadPartsFromNode(statement &s,
-                                           strNode *n){
+    inline void typeDef::loadStructPartsFromNode(statement &s,
+                                                 strNode *n){
       while(n){
         strNode *nEnd = n;
 
@@ -2816,9 +2835,10 @@ namespace occa {
 
         if(isPOD){
           varInfo info = s.loadVarInfo(n);
+          std::cout << "info = " << info << '\n';
 
           typeDef &sDef = addType(info.name);
-          sDef.typeName = info.type->typeName;
+          sDef.typeName = info.decoratedType();
 
           sDef.typeInfo         |= (info.typeInfo & pointerTypeMask);
           sDef.pointerCount      = info.pointerCount;
@@ -2835,6 +2855,11 @@ namespace occa {
 
         n = (nEnd ? nEnd->right : NULL);
       }
+    }
+
+    inline void typeDef::loadEnumPartsFromNode(statement &s,
+                                               strNode *n){
+      n->print();
     }
     //==============================================
 
