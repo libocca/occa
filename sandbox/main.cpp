@@ -2373,7 +2373,7 @@ namespace occa {
         }
         else{
           if(n->value == "struct"){
-            if(!s.nodeHasDescriptor(n->right))
+            if(!s.nodeHasSpecifier(n->right))
               typeInfo = structTypeDef;
           }
           else if(n->value == "class")
@@ -2394,6 +2394,18 @@ namespace occa {
 
               if(up == NULL)
                 s.up->scopeTypeMap[typeName] = this;
+
+              std::cout << "typeName = " << typeName << '\n';
+
+              // Empty struct
+              if((n->down.size() == 0) &&
+                 (n->right)            &&
+                 (n->right->type & endStatement)){
+                n->print();
+
+                n = n->right;
+                return;
+              }
             }
 
             strNode *nDown    = n->down[0];
@@ -2407,8 +2419,8 @@ namespace occa {
             else
               loadEnumPartsFromNode(s, nDown);
 
-            if(n->right &&
-               n->right->type & unknownVariable)
+            if((n->right) &&
+               (n->right->type & unknownVariable))
               varName = n->right->value;
           }
           else
@@ -2515,6 +2527,8 @@ namespace occa {
         if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
           ret += tab;
 
+        const int memberCount = allMembers.size();
+
         if(typeInfo & structTypeDef)
           ret += "struct ";
         else if(typeInfo & classTypeDef)
@@ -2524,20 +2538,28 @@ namespace occa {
         else if(typeInfo & enumTypeDef)
           ret += "enum ";
 
-        ret += (typeName.size() ? (typeName + " {") : "{");
+        if(typeName.size()){
+          ret += typeName;
 
-        const int memberCount = allMembers.size();
+          if(memberCount)
+            ret += " ";
+        }
 
         if(memberCount)
-          ret += "\n";
+          ret += "{\n";
 
         for(int i = 0; i < memberCount; ++i)
           ret += allMembers[i]->print(tab + "  ") + "\n";
 
-        if(memberCount)
+        if(memberCount){
           ret += tab;
+          ret += "}";
+        }
 
-        ret += (varName.size() ? ("} " + varName) : "}");
+        if(varName.size()){
+          ret += " ";
+          ret += varName;
+        }
 
         if(0 <= bitField){
           char sBitField[10];
@@ -6387,7 +6409,8 @@ namespace occa {
          (nodeRoot->right)                   &&
          (nodeRoot->right->down.size() == 0)){
 
-        return checkDescriptorStatementType(nodeRoot);
+        if(hasTypeInScope(nodeRoot->right->value))
+          return checkDescriptorStatementType(nodeRoot);
       }
 
       while(nodeRoot){
