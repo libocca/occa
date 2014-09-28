@@ -1979,6 +1979,7 @@ namespace occa {
       }
 
       void printTypesInStatement();
+      void printTypeDefsInStatement();
 
       inline void printTypesInScope(){
         if(up)
@@ -2321,7 +2322,11 @@ namespace occa {
 
           n = n->right;
 
-          if( !(n->type & structType) ){
+          const bool isPOD = (!(n->type & structType) ||
+                              ((n->right) &&
+                               (s.nodeHasDescriptor(n->right))));
+
+          if(isPOD){
             strNode *nRoot = n;
 
             while(s.nodeHasQualifier(n))
@@ -2536,7 +2541,16 @@ namespace occa {
 
       while(it != scopeTypeMap.end()){
         std::cout << (it->first) << '\n';
-        // std::cout << (it->second)->print("  ") << '\n';
+
+        ++it;
+      }
+    }
+
+    inline void statement::printTypeDefsInStatement(){
+      scopeTypeMapIterator it = scopeTypeMap.begin();
+
+      while(it != scopeTypeMap.end()){
+        std::cout << (it->second)->print("  ") << '\n';
 
         ++it;
       }
@@ -6658,11 +6672,11 @@ namespace occa {
       keywordType["occaAligned"]  = (qualifierType | occaKeywordType);
       keywordType["occaConstant"] = (qualifierType | occaKeywordType);
 
-      keywordType["enum"]    = (specifierType | structType);
-      keywordType["class"]   = (specifierType | structType);
-      keywordType["union"]   = (specifierType | structType);
-      keywordType["struct"]  = (specifierType | structType | qualifierType);
-      keywordType["typedef"] = (specifierType | structType);
+      keywordType["enum"]    = (structType);
+      keywordType["class"]   = (structType);
+      keywordType["union"]   = (structType);
+      keywordType["struct"]  = (structType | qualifierType);
+      keywordType["typedef"] = (structType);
 
       //---[ C++ ]----------------------
       keywordType["virtual"]   = qualifierType;
