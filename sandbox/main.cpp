@@ -1806,16 +1806,25 @@ namespace occa {
         if( !(n->type & specifierType) )
           return true;
 
-        if(n->right)
-          return nodeHasDescriptor(n->right);
-        else
-          return true;
+        strNode *n2 = n;
+
+        if((n->right) == NULL)
+          return false;
+
+        return (n->right->type & qualifierType);
+      }
+
+      inline bool nodeHasSpecifier(strNode *n) const {
+        return ((n->type & specifierType) ||
+                ((n->type & unknownVariable) &&
+                 ( hasTypeInScope(n->value) )));
       }
 
       inline bool nodeHasDescriptor(strNode *n) const {
-        return ((n->type & descriptorType) ||
-                ((n->type & unknownVariable) &&
-                 ( hasTypeInScope(n->value) )));
+        if(nodeHasSpecifier(n) || nodeHasQualifier(n))
+          return true;
+
+        return false;
       }
 
       varInfo loadVarInfo(strNode *&nodePos);
@@ -2361,8 +2370,8 @@ namespace occa {
 
           if( !(typeInfo & podTypeDef) ){
             // [--]
-            std::cout << "1. HERE\n";
-            n->print();
+            // std::cout << "1. HERE\n";
+            // n->print();
 
             if(n->down.size() == 0){
               n = n->right;
@@ -2372,14 +2381,21 @@ namespace occa {
                 s.up->scopeTypeMap[typeName] = this;
             }
 
-            loadPartsFromNode(s, n->down[0]);
+            strNode *nDown    = n->down[0];
+            strNode *nDownEnd = lastNode(nDown);
+
+            popAndGoRight(nDown);
+            popAndGoLeft(nDownEnd);
+
+            loadPartsFromNode(s, nDown);
 
             if(n->right->type & unknownVariable)
               varName = n->right->value;
           }
           else{
-            std::cout << "2. HERE\n";
-            n->print();
+            loadPartsFromNode(s, n);
+            // std::cout << "2. HERE\n";
+            // n->print();
           }
         }
       }
@@ -2461,7 +2477,7 @@ namespace occa {
           ret += "typedef ";
 
           if(typedefUsesName)
-            ret += typedefing->typeName + " " + varName;
+            ret += typeName + " " + varName;
           else
             ret += typedefing->print(tab, (typeDefStyle::skipFirstLineIndent |
                                            typeDefStyle::skipSemicolon));
@@ -2770,11 +2786,6 @@ namespace occa {
 
     inline void typeDef::loadPartsFromNode(statement &s,
                                            strNode *n){
-      strNode *nLast = lastNode(n);
-
-      popAndGoRight(n);
-      popAndGoLeft(nLast);
-
       while(n){
         strNode *nEnd = n;
 
@@ -2785,7 +2796,11 @@ namespace occa {
           nEnd = nEnd->right;
         }
 
-        if( !(n->type & structType) ){
+        const bool isPOD = (!(n->type & structType) ||
+                            ((n->right) &&
+                             (s.nodeHasDescriptor(n->right))));
+
+        if(isPOD){
           varInfo info = s.loadVarInfo(n);
 
           typeDef &sDef = addType(info.name);
@@ -3197,7 +3212,7 @@ namespace occa {
           }
         }
 
-        else if(nodePos->type & specifierType){
+        else if(nodeHasSpecifier(nodePos)){
           info.type = hasTypeInScope(*nodePos);
 
           if(info.type == NULL){
