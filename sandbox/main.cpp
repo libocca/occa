@@ -2274,10 +2274,12 @@ namespace occa {
       int pointerCount;
       std::vector<std::string> stackPointerSizes;
 
+      int bitField;
+
       scopeTypeMap_t members;
       std::vector<typeDef*> allMembers;
 
-      typeDef *typedefing;
+      typeDef *typedefing, *typedefingBase;
       bool typedefUsesName;
 
       inline typeDef() :
@@ -2289,7 +2291,10 @@ namespace occa {
 
         pointerCount(0),
 
-        typedefing(NULL) {}
+        bitField(-1),
+
+        typedefing(NULL),
+        typedefingBase(NULL) {}
 
       inline void addType(typeDef *def){
         def->up = this;
@@ -2337,6 +2342,11 @@ namespace occa {
               throw 1;
             }
 
+            if(typedefing->typedefing)
+              typedefingBase = typedefing->typedefingBase;
+            else
+              typedefingBase = typedefing;
+
             while(nRoot != n){
               typeName += nRoot->value + " ";
               nRoot = nRoot->right;
@@ -2353,6 +2363,8 @@ namespace occa {
           else{
             typedefing->up = this;
             typedefing->loadFromNode(s, n);
+
+            typedefingBase = typedefing;
 
             typedefUsesName = false;
 
@@ -2469,6 +2481,14 @@ namespace occa {
             ret += "]";
           }
 
+          if(0 <= bitField){
+            char sBitField[10];
+            sprintf(sBitField, "%d", bitField);
+
+            ret += " : ";
+            ret += sBitField;
+          }
+
           if( !(printStyle & typeDefStyle::skipSemicolon) )
             ret += ";";
 
@@ -2518,6 +2538,14 @@ namespace occa {
           ret += tab;
 
         ret += (varName.size() ? ("} " + varName) : "}");
+
+        if(0 <= bitField){
+          char sBitField[10];
+          sprintf(sBitField, "%d", bitField);
+
+          ret += " : ";
+          ret += sBitField;
+        }
 
         if( !(printStyle & typeDefStyle::skipSemicolon) )
           ret += ";";
@@ -2819,6 +2847,10 @@ namespace occa {
 
     inline void typeDef::loadStructPartsFromNode(statement &s,
                                                  strNode *n){
+      bool usingPreviousInfo = false;
+      typeDef *lastDef;
+      varInfo info;
+
       while(n){
         strNode *nEnd = n;
 
@@ -2829,20 +2861,55 @@ namespace occa {
           nEnd = nEnd->right;
         }
 
-        const bool isPOD = (!(n->type & structType) ||
+        bool isBitFieldOnly = (n->value == ":");
+
+        const bool isPOD = (usingPreviousInfo ||
+                            !(n->type & structType) ||
                             ((n->right) &&
                              (s.nodeHasDescriptor(n->right))));
 
         if(isPOD){
-          varInfo info = s.loadVarInfo(n);
-          std::cout << "info = " << info << '\n';
+          info = s.loadVarInfo(n);
 
+          // Case: int : 2, a : 3;
+          if(!usingPreviousInfo)
+            isBitFieldOnly = (n && (n->value == ":"));
+        }
+
+        if(isBitFieldOnly){
+          typeDef &sDef= *(new typeDef);
+
+          sDef.bitField = atoi(n->right->value.c_str());
+          nEnd = n->right->right;
+
+          // Is also the first thing
+          if(!usingPreviousInfo)
+            sDef.typeName = info.decoratedType();
+          else
+            sDef.typeName = lastDef->typeName;
+
+          addType(&sDef);
+
+          lastDef = &sDef;
+        }
+        else if(isPOD){
           typeDef &sDef = addType(info.name);
-          sDef.typeName = info.decoratedType();
+
+          if(n && (n->value == ":")){
+            sDef.bitField = atoi(n->right->value.c_str());
+            nEnd = n->right->right;
+          }
+
+          if(!usingPreviousInfo)
+            sDef.typeName = info.decoratedType();
+          else
+            sDef.typeName = lastDef->typeName;
 
           sDef.typeInfo         |= (info.typeInfo & pointerTypeMask);
           sDef.pointerCount      = info.pointerCount;
           sDef.stackPointerSizes = info.stackPointerSizes;
+
+          lastDef = &sDef;
         }
         else{
           typeDef &sDef= *(new typeDef);
@@ -2851,7 +2918,11 @@ namespace occa {
           sDef.loadFromNode(s, n);
 
           addType(&sDef);
+
+          lastDef = &sDef;
         }
+
+        usingPreviousInfo = (nEnd && (nEnd->value == ","));
 
         n = (nEnd ? nEnd->right : NULL);
       }
@@ -3216,8 +3287,9 @@ namespace occa {
     inline varInfo statement::loadVarInfo(strNode *&nodePos){
       varInfo info;
 
-      while(nodePos                        &&
-            !(nodePos->type & presetValue) &&
+      while(nodePos                         &&
+            !(nodePos->type & presetValue)  &&
+            !(nodePos->type & endStatement) && // For bitfields
             (!(nodePos->type & unknownVariable) ||
              hasTypeInScope(nodePos->value))){
 
@@ -3264,7 +3336,8 @@ namespace occa {
         nodePos = nodePos->right;
       }
 
-      if(nodePos == NULL)
+      if((nodePos == NULL) ||
+         (nodePos->type & endStatement)) // For bitfields
         return info;
 
       info.name = *nodePos;
