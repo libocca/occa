@@ -143,6 +143,9 @@ namespace occa {
     static const int openclKeywordType    = (1 << 21);
 
     //   ---[ Types ]-----------
+    static const int isTypeDef = (1 << 0);
+    static const int isVarInfo = (1 << 1);
+
     // static const int structType       = (1 << 0); (Defined on top)
     static const int noType              = (1 << 1);
     static const int boolType            = (1 << 2);
@@ -2286,8 +2289,11 @@ namespace occa {
 
       int bitField;
 
-      scopeTypeMap_t members;
-      std::vector<typeDef*> allMembers;
+      scopeTypeMap_t memberTypes;
+      scopeVarMap_t  memberVars;
+
+      std::vector<void*> allMembers;
+      std::vector<char> memberInfo;
 
       typeDef *typedefing, *typedefingBase;
       bool typedefUsesName;
@@ -2306,13 +2312,16 @@ namespace occa {
         typedefing(NULL),
         typedefingBase(NULL) {}
 
+      void addVar(varInfo *def);
+
       inline void addType(typeDef *def){
         def->up = this;
 
         if(def->typeName.size())
-          members[typeName] = def;
+          memberTypes[typeName] = def;
 
         allMembers.push_back(def);
+        memberInfo.push_back(isTypeDef);
       }
 
       inline typeDef& addType(const std::string &newVarName){
@@ -2321,8 +2330,9 @@ namespace occa {
         def.up      = this;
         def.varName = newVarName;
 
-        members[newVarName] = &def;
+        memberTypes[newVarName] = &def;
         allMembers.push_back(&def);
+        memberInfo.push_back(isTypeDef);
 
         return def;
       }
@@ -2439,149 +2449,7 @@ namespace occa {
       void loadStructPartsFromNode(statement &s, strNode *n);
       void loadEnumPartsFromNode(statement &s, strNode *n);
 
-      inline std::string print(const std::string &tab = "", const int printStyle = 0) const {
-        std::string ret = "";
-
-        if(!typedefing && (typeInfo & podTypeDef)){
-          if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
-            ret += tab;
-          else
-            ret = "";
-
-          const int heapCount = stackPointerSizes.size();
-
-          const bool hasType = typeName.size();
-          const bool hasVar  = varName.size();
-
-          bool needsSpace = false;
-
-          if(hasType){
-            ret += typeName;
-            needsSpace = true;
-          }
-
-          if(pointerCount){
-            if(needsSpace){
-              ret += " ";
-              needsSpace = false;
-            }
-
-            for(int i = 0; i < pointerCount; ++i)
-              ret += "*";
-          }
-
-          if(typeInfo & referenceType){
-            if(needsSpace){
-              ret += " ";
-              needsSpace = false;
-            }
-
-            ret += "&";
-          }
-
-          if(hasVar){
-            if(needsSpace)
-              ret += " ";
-
-            needsSpace = true;
-
-            ret += varName;
-          }
-
-          if(typeInfo & constPointerType){
-            if(needsSpace)
-              ret += " ";
-
-            ret += "const";
-          }
-
-          for(int i = 0; i < heapCount; ++i){
-            ret += "[";
-            ret += stackPointerSizes[i];
-            ret += "]";
-          }
-
-          if(0 <= bitField){
-            char sBitField[10];
-            sprintf(sBitField, "%d", bitField);
-
-            ret += " : ";
-            ret += sBitField;
-          }
-
-          if( !(printStyle & typeDefStyle::skipSemicolon) )
-            ret += ";";
-
-          return ret;
-        }
-
-        if(typedefing){
-          if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
-            ret += tab;
-
-          ret += "typedef ";
-
-          if(typedefUsesName)
-            ret += typeName + " " + varName;
-          else
-            ret += typedefing->print(tab, (typeDefStyle::skipFirstLineIndent |
-                                           typeDefStyle::skipSemicolon));
-
-          ret += ";";
-
-          return ret;
-        }
-
-        if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
-          ret += tab;
-
-        const int memberCount = allMembers.size();
-
-        if(typeInfo & structTypeDef)
-          ret += "struct ";
-        else if(typeInfo & classTypeDef)
-          ret += "class ";
-        else if(typeInfo & unionTypeDef)
-          ret += "union ";
-        else if(typeInfo & enumTypeDef)
-          ret += "enum ";
-
-        if(typeName.size()){
-          ret += typeName;
-
-          if(memberCount)
-            ret += " ";
-        }
-
-        if(memberCount)
-          ret += "{\n";
-
-        for(int i = 0; i < memberCount; ++i)
-          ret += allMembers[i]->print(tab + "  ") + "\n";
-
-        if(memberCount){
-          ret += tab;
-          ret += "}";
-        }
-
-        if(varName.size()){
-          ret += " ";
-          ret += varName;
-        }
-
-        if(0 <= bitField){
-          char sBitField[10];
-          sprintf(sBitField, "%d", bitField);
-
-          ret += " : ";
-          ret += sBitField;
-        }
-
-        if( !(printStyle & typeDefStyle::skipSemicolon) )
-          ret += ";";
-
-        return ret;
-      }
+      std::string print(const std::string &tab = "", const int printStyle = 0) const;
 
       operator std::string() const {
         return print();
@@ -2709,6 +2577,8 @@ namespace occa {
       std::string altType, name;
       int typeInfo;
 
+      int bitField;
+
       int pointerCount;
       std::vector<std::string> descriptors;
       std::vector<std::string> stackPointerSizes;
@@ -2724,6 +2594,8 @@ namespace occa {
         name(""),
         typeInfo(0),
 
+        bitField(-1),
+
         pointerCount(0) {};
 
       inline varInfo(const varInfo &vi){
@@ -2731,6 +2603,8 @@ namespace occa {
         altType  = vi.altType;
         name     = vi.name;
         typeInfo = vi.typeInfo;
+
+        bitField = vi.bitField;
 
         pointerCount = vi.pointerCount;
 
@@ -2839,6 +2713,17 @@ namespace occa {
           nodePos->type = keywordType[":"];
         }
         else{
+          if(0 <= bitField){
+            nodePos       = nodePos->push(":");
+            nodePos->type = keywordType[":"];
+
+            char sBitField[10];
+            sprintf(sBitField, "%d", bitField);
+
+            nodePos       = nodePos->push(sBitField);
+            nodePos->type = presetValue;
+          }
+
           nodePos       = nodePos->push(";");
           nodePos->type = keywordType[";"];
         }
@@ -3000,6 +2885,15 @@ namespace occa {
         if(typeInfo & gotoType)
           ret += ':';
 
+        if(0 <= bitField){
+          ret += ':';
+
+          char sBitField[10];
+          sprintf(sBitField, "%d", bitField);
+
+          ret += sBitField;
+        }
+
         return ret;
       }
 
@@ -3020,7 +2914,7 @@ namespace occa {
         }
 
 
-        ret += ");";
+        ret += ")";
 
         return ret;
       }
@@ -3058,7 +2952,7 @@ namespace occa {
             ret += ", ";
         }
 
-        ret += ");";
+        ret += ")";
 
         return ret;
       }
@@ -3068,13 +2962,22 @@ namespace occa {
       out << (std::string) info;
       return out;
     }
+    //==============================================
 
+
+    //---[ TypeDef Functions ]----------------------
+    inline void typeDef::addVar(varInfo *def){
+      if(def->name.size())
+        memberVars[def->name] = def;
+
+      allMembers.push_back(def);
+      memberInfo.push_back(isVarInfo);
+    }
 
     inline void typeDef::loadStructPartsFromNode(statement &s,
                                                  strNode *n){
       bool usingPreviousInfo = false;
-      typeDef *lastDef;
-      varInfo info;
+      varInfo *lastInfo, *info;
 
       while(n){
         strNode *nEnd = n;
@@ -3094,49 +2997,15 @@ namespace occa {
                              (s.nodeHasDescriptor(n->right))));
 
         if(isPOD){
-          info = s.loadVarInfo(n);
-          std::cout
-            << "info = " << info << '\n';
+          info  = new varInfo;
+          *info = s.loadVarInfo(n);
 
-          // Case: int : 2, a : 3;
-          if(!usingPreviousInfo)
-            isBitFieldOnly = (n && (n->value == ":"));
-        }
-
-        if(isBitFieldOnly){
-          typeDef &sDef= *(new typeDef);
-
-          sDef.bitField = atoi(n->right->value.c_str());
-          nEnd = n->right->right;
-
-          // Is also the first thing
-          if(!usingPreviousInfo)
-            sDef.typeName = info.decoratedType();
-          else
-            sDef.typeName = lastDef->typeName;
-
-          addType(&sDef);
-
-          lastDef = &sDef;
-        }
-        else if(isPOD){
-          typeDef &sDef = addType(info.name);
-
-          if(n && (n->value == ":")){
-            sDef.bitField = atoi(n->right->value.c_str());
-            nEnd = n->right->right;
+          if(usingPreviousInfo){
+            info->type = lastInfo->type;
+            lastInfo = info;
           }
 
-          if(!usingPreviousInfo)
-            sDef.typeName = info.decoratedType();
-          else
-            sDef.typeName = lastDef->typeName;
-
-          sDef.typeInfo         |= (info.typeInfo & pointerTypeMask);
-          sDef.pointerCount      = info.pointerCount;
-          sDef.stackPointerSizes = info.stackPointerSizes;
-
-          lastDef = &sDef;
+          addVar(info);
         }
         else{
           typeDef &sDef= *(new typeDef);
@@ -3145,8 +3014,6 @@ namespace occa {
           sDef.loadFromNode(s, n);
 
           addType(&sDef);
-
-          lastDef = &sDef;
         }
 
         usingPreviousInfo = (nEnd && (nEnd->value == ","));
@@ -3158,6 +3025,158 @@ namespace occa {
     inline void typeDef::loadEnumPartsFromNode(statement &s,
                                                strNode *n){
       n->print();
+    }
+
+    inline std::string typeDef::print(const std::string &tab, const int printStyle) const {
+      std::string ret = "";
+
+      if(!typedefing && (typeInfo & podTypeDef)){
+        if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
+          ret += tab;
+        else
+          ret = "";
+
+        const int heapCount = stackPointerSizes.size();
+
+        const bool hasType = typeName.size();
+        const bool hasVar  = varName.size();
+
+        bool needsSpace = false;
+
+        if(hasType){
+          ret += typeName;
+          needsSpace = true;
+        }
+
+        if(pointerCount){
+          if(needsSpace){
+            ret += " ";
+            needsSpace = false;
+          }
+
+          for(int i = 0; i < pointerCount; ++i)
+            ret += "*";
+        }
+
+        if(typeInfo & referenceType){
+          if(needsSpace){
+            ret += " ";
+            needsSpace = false;
+          }
+
+          ret += "&";
+        }
+
+        if(hasVar){
+          if(needsSpace)
+            ret += " ";
+
+          needsSpace = true;
+
+          ret += varName;
+        }
+
+        if(typeInfo & constPointerType){
+          if(needsSpace)
+            ret += " ";
+
+          ret += "const";
+        }
+
+        for(int i = 0; i < heapCount; ++i){
+          ret += "[";
+          ret += stackPointerSizes[i];
+          ret += "]";
+        }
+
+        if(0 <= bitField){
+          char sBitField[10];
+          sprintf(sBitField, "%d", bitField);
+
+          ret += " : ";
+          ret += sBitField;
+        }
+
+        if( !(printStyle & typeDefStyle::skipSemicolon) )
+          ret += ";";
+
+        return ret;
+      }
+
+      if(typedefing){
+        if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
+          ret += tab;
+
+        ret += "typedef ";
+
+        if(typedefUsesName)
+          ret += typeName + " " + varName;
+        else
+          ret += typedefing->print(tab, (typeDefStyle::skipFirstLineIndent |
+                                         typeDefStyle::skipSemicolon));
+
+        ret += ";";
+
+        return ret;
+      }
+
+      if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
+        ret += tab;
+
+      const int memberCount = allMembers.size();
+
+      if(typeInfo & structTypeDef)
+        ret += "struct ";
+      else if(typeInfo & classTypeDef)
+        ret += "class ";
+      else if(typeInfo & unionTypeDef)
+        ret += "union ";
+      else if(typeInfo & enumTypeDef)
+        ret += "enum ";
+
+      if(typeName.size()){
+        ret += typeName;
+
+        if(memberCount)
+          ret += " ";
+      }
+
+      if(memberCount)
+        ret += "{\n";
+
+      for(int i = 0; i < memberCount; ++i){
+        if(memberInfo[i] & isTypeDef)
+          ret += ((typeDef*) allMembers[i])->print(tab + "  ");
+        else{
+          ret += tab + "  ";
+          ret += (std::string) *((varInfo*) allMembers[i]);
+          ret += ";";
+        }
+        ret +=  + "\n";
+      }
+
+      if(memberCount){
+        ret += tab;
+        ret += "}";
+      }
+
+      if(varName.size()){
+        ret += " ";
+        ret += varName;
+      }
+
+      if(0 <= bitField){
+        char sBitField[10];
+        sprintf(sBitField, "%d", bitField);
+
+        ret += " : ";
+        ret += sBitField;
+      }
+
+      if( !(printStyle & typeDefStyle::skipSemicolon) )
+        ret += ";";
+
+      return ret;
     }
     //==============================================
 
@@ -3583,10 +3602,19 @@ namespace occa {
         nodePos = nodePos->right;
       }
 
-      if((nodePos == NULL)               ||
-         (nodePos->type & endSection)    ||
-         ((nodePos->type & endStatement) &&
-          nodePos->value == ":")){ // For bitfields
+      if((nodePos == NULL) ||
+         (nodePos->type & (endSection |
+                           endStatement))){
+
+        return info;
+      }
+
+      if((nodePos->type & endStatement) &&
+         (nodePos->value == ":")){ // For bitfields
+
+        info.bitField = atoi(nodePos->right->value.c_str());
+
+        nodePos = nodePos->right->right;
 
         return info;
       }
@@ -8237,11 +8265,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("cleanTest.c");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("cleanTest.c");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   occa::parser parser;
@@ -8249,11 +8277,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("addVectors.okl");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("addVectors.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 }
 
 #endif
