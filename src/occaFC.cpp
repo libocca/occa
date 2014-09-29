@@ -457,7 +457,6 @@ extern "C" {
                                      int32_t *v){
     if(sizeof(int) == 4)
     {
-      fprintf(stdout, "Here\n");
       occaArgumentListAddArg(*list, *argPos, occaInt(*v));
     }
     else {
