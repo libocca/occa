@@ -2107,6 +2107,7 @@ namespace occa {
                 ret += *nodePos;
             }
           }
+
           else if(nodePos->type & brace){
             if(nodePos->type & startSection){
               // a[] = {};
@@ -2148,6 +2149,7 @@ namespace occa {
               }
             }
           }
+
           else if(nodePos->type == endParentheses){
             ret += ")";
 
@@ -2160,6 +2162,7 @@ namespace occa {
                 ret += "\n" + tab + "  ";
               }
           }
+
           else if(nodePos->type & endStatement){
             ret += *nodePos;
 
@@ -2184,6 +2187,7 @@ namespace occa {
             else
               ret += " ";
           }
+
           else if(nodeHasDescriptor(nodePos)){
             ret += *nodePos;
 
@@ -2196,6 +2200,7 @@ namespace occa {
               ret += " ";
             }
           }
+
           else if(nodePos->type & flowControlType){
             ret += *nodePos;
 
@@ -2203,6 +2208,7 @@ namespace occa {
               if(nodePos->down.size() == 0)
                 ret += '\n' + tab + "  ";
           }
+
           else if(nodePos->type & specialKeywordType){
             if(nodePos->value == "case")
               ret += "case";
@@ -3431,6 +3437,164 @@ namespace occa {
     inline varInfo statement::loadVarInfo(strNode *&nodePos){
       varInfo info;
 
+#if 1
+      while(nodePos &&
+            (nodePos->down.size() == 0) &&
+            ((nodePos->type & qualifierType) ||
+             nodeHasSpecifier(nodePos))){
+
+        if(nodePos->type & structType){
+          info.descriptors.push_back(*nodePos);
+          info.typeInfo |= structType;
+        }
+
+        else if(nodeHasQualifier(nodePos)){
+          if(nodePos->value == "*"){
+            info.typeInfo |= heapPointerType;
+            ++info.pointerCount;
+
+            if(nodePos->right &&
+               nodePos->right->value == "const"){
+              info.typeInfo |= constPointerType;
+              nodePos = nodePos->right;
+            }
+          }
+          else if(nodePos->value == "&")
+            info.typeInfo |= referenceType;
+          else{
+            if((nodePos->value  == "texture")              ||
+               ((nodePos->value == "image1d_t")            ||
+                (nodePos->value == "image2d_t"))           ||
+               (nodePos->value  == "cudaSurfaceObject_t"))
+              info.typeInfo |= textureType;
+
+            info.descriptors.push_back(nodePos->value);
+          }
+        }
+
+        else if(nodeHasSpecifier(nodePos)){
+          info.type = hasTypeInScope(*nodePos);
+
+          if(info.type == NULL){
+            std::cout << "Type [" << *nodePos << "] is not defined.\nFound in:\n";
+            nodePos->print();
+            throw 1;
+          }
+        }
+
+        nodePos = nodePos->right;
+      }
+
+      if((nodePos == NULL) ||
+         ((nodePos->type & endStatement) &&
+          nodePos->value == ":")){ // For bitfields
+
+        return info;
+      }
+
+      const int downCount = nodePos->down.size();
+
+      if(downCount == 0){
+        info.name      = nodePos->value;
+        info.typeInfo |= variableType;
+
+        nodePos = nodePos->right;
+      }
+      else{
+        strNode *downNode = nodePos->down[0];
+
+        if(downNode->type == startParentheses){
+          // [-] Only for C
+          if((2 <= downCount) &&
+             (nodePos->down[1]->type == startParentheses)){
+
+            downNode = downNode->right;
+
+            while(downNode->value == "*"){
+              ++(info.pointerCount);
+              downNode = downNode->right;
+            }
+
+            info.name      = downNode->value;
+            info.typeInfo |= functionType;
+
+            if(downNode->down.size()){
+              const int downCount2 = downNode->down.size();
+
+              for(int i = 0; i < downCount2; ++i){
+                if(downNode->down[i]->type != startBracket)
+                  break;
+
+                std::string sps = prettyString(downNode->down[i]);
+                sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
+
+                info.stackPointerSizes.push_back(sps);
+              }
+            }
+
+            downNode = nodePos->down[1]->right;
+
+            while(downNode){
+              varInfo &arg = *(new varInfo);
+              arg = loadVarInfo(downNode);
+
+              info.vars.push_back(&arg);
+
+              downNode = downNode->right;
+
+              // Loaded last arg
+              if(downNode->right == NULL)
+                break;
+            }
+          }
+          else{
+            info.name      = nodePos->value;
+            info.typeInfo |= functionType;
+
+            downNode = downNode->right;
+
+            while(downNode){
+              varInfo &arg = *(new varInfo);
+              arg = loadVarInfo(downNode);
+
+              info.vars.push_back(&arg);
+
+              downNode = downNode->right;
+
+              // Loaded last arg
+              if(downNode == NULL)
+                break;
+            }
+
+            strNode *lastPos = lastNode(nodePos);
+
+            // Distinguish between prototypes and function calls
+            if(lastPos->value == ";"){
+              if(info.type)
+                info.typeInfo |= protoType;
+              else
+                info.typeInfo |= functionCallType;
+            }
+          }
+        }
+        else if(downNode->type == startBracket){
+          info.name      = nodePos->value;
+          info.typeInfo |= (variableType | stackPointerType);
+
+          for(int i = 0; i < downCount; ++i){
+            if(nodePos->down[i]->type != startBracket)
+              break;
+
+            std::string sps = prettyString(nodePos->down[i]);
+            sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
+
+            info.stackPointerSizes.push_back(sps);
+          }
+        }
+      }
+
+      return info;
+#else
       while(nodePos                         &&
             !(nodePos->type & presetValue)  &&
             !(nodePos->type & endStatement) && // For bitfields
@@ -3521,6 +3685,7 @@ namespace occa {
       }
 
       return info;
+#endif
     }
 
     inline bool statement::hasDescriptorVariable(const std::string descriptor) const {
@@ -4424,12 +4589,31 @@ namespace occa {
 
     inline void parserBase::loadScopeVarMap(statement &s){
       if((!(s.type & declareStatementType)   &&
+          !(s.type & structStatementType)    &&
           !(s.type & forStatementType)       &&
           !(s.type & gotoStatementType)      &&
           !(s.type & functionStatementType)) ||
          // OCCA for's don't have arguments
          (s.type == (forStatementType | occaStatementType)))
         return;
+
+      // Check for struct defs
+      if(s.type & structStatementType){
+        if(s.typePtr->varName.size()){
+          typeDef &type = *(s.typePtr);
+          varInfo info;
+
+          info.type = &type;
+          info.name = type.varName;
+
+          info.pointerCount      = type.pointerCount;
+          info.stackPointerSizes = type.stackPointerSizes;
+
+          (s.up)->addVariable(info, &s);
+        }
+
+        return;
+      }
 
       strNode *nodePos = s.nodeStart;
 
@@ -4452,6 +4636,9 @@ namespace occa {
 
       if( !(s.type & functionPrototypeType) ){
         varInfo info = s.loadVarInfo(nodePos);
+
+        std::cout
+          << "info = " << info << '\n';
 
         if(info.typeInfo & functionCallType)
           return;
@@ -4739,7 +4926,11 @@ namespace occa {
       if(s.type & macroStatementType)
         return;
 
+      std::cout << "s = " << s << "(" << s.type << ")\n";
+
       loadScopeVarMap(s);
+
+      std::cout << "s = " << s << '\n';
 
       loadVariableInformation(s, s.nodeStart);
     }
@@ -6558,16 +6749,18 @@ namespace occa {
     inline int statement::checkDescriptorStatementType(strNode *&nodeRoot){
 #if 1
       strNode *oldNodeRoot = nodeRoot;
-      strNode *nodePos     = nodeRoot;
+      strNode *nodePos;
 
       // Skip descriptors
-      while((nodePos)                         &&
-            (nodePos->down.size() == 0)       &&
-            ((nodePos->type & descriptorType) ||
-             nodeHasSpecifier(nodePos))){
+      while((nodeRoot)                         &&
+            (nodeRoot->down.size() == 0)       &&
+            ((nodeRoot->type & descriptorType) ||
+             nodeHasSpecifier(nodeRoot))){
 
-        nodePos = nodePos->right;
+        nodeRoot = nodeRoot->right;
       }
+
+      nodePos = nodeRoot;
 
       while((nodeRoot) &&
             !(nodeRoot->type & endStatement))

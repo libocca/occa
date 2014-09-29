@@ -7,7 +7,7 @@ void (**)(void *v);
 
 #if 1
 
-#  if 1
+#  if 0
 union blah {
   int i;
 };
@@ -18,7 +18,7 @@ struct blah {
   };
 
   int i;
-} b;
+} b23;
 #  endif
 
 typedef struct blah2 { int j = 0; } b2;
@@ -30,6 +30,7 @@ void addVectors(int entries,
                 float * ab){
   for(int group = 0; group < (20 + 3 - 1); ++group; outer0){
     for(int item = 0; item < itemsPerGroup; ++item; inner0){
+      b23;
       blah blkasjdf;
       struct blah ajskdlf;
 
