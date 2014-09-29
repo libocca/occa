@@ -2703,7 +2703,7 @@ namespace occa {
             downNode       = downNode->push(stackPointerSizes[i]);
             downNode->type = unknownVariable; // [-] Quick fix
 
-            downNode       = downNode->push("[");
+            downNode       = downNode->push("]");
             downNode->type = keywordType["]"];
           }
         }
@@ -2803,7 +2803,7 @@ namespace occa {
           downNode       = downNode->push(stackPointerSizes[i]);
           downNode->type = unknownVariable; // [-] Quick fix
 
-          downNode       = downNode->push("[");
+          downNode       = downNode->push("]");
           downNode->type = keywordType["]"];
         }
 
@@ -3396,9 +3396,30 @@ namespace occa {
 
           breakNextLine = false;
         }
+        // Append next line
         else if((c[0] == '\\') && isWhitespace(c[1])){
           breakNextLine = true;
           ++c;
+        }
+        else if(c[0] == '/'){
+          if(c[1] == '/'){
+            while((*c != '\n') && (*c != '\0'))
+              ++c;
+
+            return c;
+          }
+          else if(c[1] == '*'){
+            c += 2;
+
+            while( !((c[0] == '*') && (c[1] == '/')) &&
+                   (*c != '\0') )
+              ++c;
+
+            if(*c == '*')
+              c += 2;
+
+            return c;
+          }
         }
 
         ++c;
@@ -6451,30 +6472,53 @@ namespace occa {
       statement *outerMostLoop = NULL;
       statement *innerMostLoop = NULL;
 
+      bool hasForStatements = false;
+
       while(s &&
             statementHasBarrier( *(s->value) ))
         s = s->right;
 
-      while(s &&
-            s->value->type & forStatementType){
-        addInnerForsBetweenBarriers(*(s->value),
-                                    s->value->statementStart,
-                                    innerDim);
+      statementNode *s0 = s;
 
-        s = s->right;
+      while(s){
+        if(s->value->type & macroStatementType)
+          s = s->right;
+        else if(s->value->type & forStatementType){
+          hasForStatements = true;
+
+          addInnerForsBetweenBarriers(*(s0->value),
+                                      s0->value->statementStart,
+                                      innerDim);
+
+          s = s->right;
+          s0 = s;
+        }
+        else break;
       }
 
-      if(s == NULL)
+      while(s &&
+            (s->value->type & macroStatementType))
+        s0 = s->right;
+
+      while(s &&
+            (s->value->type & forStatementType)){
+
+      }
+
+      if((s == NULL) || hasForStatements){
         return;
+      }
 
       for(int i = innerDim; 0 <= i; --i){
         statement *newStatement = new statement(s->value->depth,
                                                 occaForType, &origin,
                                                 NULL, NULL);
 
-        newStatement->nodeStart = new strNode("occaInnerFor");
-        newStatement->nodeStart->value += '0' + i;
-        newStatement->nodeStart->type   = occaForType;
+        std::string loopName = "occaInnerFor";
+        loopName += '0' + i;
+
+        newStatement->nodeStart       = new strNode(loopName);
+        newStatement->nodeStart->type = occaForType;
 
         newStatement->nodeEnd = newStatement->nodeStart;
 
@@ -6498,8 +6542,11 @@ namespace occa {
         includeStart = includeStart->right;
       }
 
-      statementNode *includeEnd = includeStart;
+      statementNode *includeEnd    = includeStart;
       statementNode *stoppedAtNode = NULL;
+
+      std::cout
+        << "includeStart = " << *(includeStart->value) << '\n';
 
       while(includeEnd                                   &&
             !statementHasBarrier( *(includeEnd->value) ) &&
@@ -6511,6 +6558,37 @@ namespace occa {
       if(includeEnd){
         stoppedAtNode = includeEnd;
         includeEnd = includeEnd->left;
+
+        if(stoppedAtNode->value->type == forStatementType){
+          while((includeEnd) &&
+                (includeEnd->value->type & macroStatementType))
+            includeEnd = includeEnd->left;
+
+          stoppedAtNode = includeEnd->right;
+
+          std::cout
+            << "includeEnd = " << *(includeEnd->value) << '\n';
+
+          statement *newStatement = new statement(includeEnd->value->depth,
+                                                  occaForType, &origin,
+                                                  NULL, NULL);
+
+          newStatement->nodeStart       = new strNode("occaBarrier");
+          newStatement->nodeStart->type = keywordType["occaBarrier"];
+
+          strNode *nNodePos = newStatement->nodeStart->pushDown("(");
+          nNodePos->type    = keywordType["("];
+
+          nNodePos       = nNodePos->push("occaLocalMemFence");
+          nNodePos->type = keywordType["occaLocalMemFence"];
+
+          nNodePos       = nNodePos->push(")");
+          nNodePos->type = keywordType[")"];
+
+          newStatement->nodeEnd = newStatement->nodeStart;
+
+          includeEnd->push(new statementNode(newStatement));
+        }
       }
 
       // Put the loop node on the origin's statements
@@ -6597,27 +6675,32 @@ namespace occa {
         bool infoHasShared = info.hasDescriptor("occaShared");
 
         if(!infoHasShared){
-          strNode *nodePos = origin->nodeStart;
-          int declPos = 0;
+          if(origin->type & flowStatementType){
 
-          while(nodePos){
-            if(nodePos->type & unknownVariable){
-              if(nodePos->value == info.name)
-                break;
+          }
+          else{
+            strNode *nodePos = origin->nodeStart;
+            int declPos = 0;
 
-              ++declPos;
+            while(nodePos){
+              if(nodePos->type & unknownVariable){
+                if(nodePos->value == info.name)
+                  break;
+
+                ++declPos;
+              }
+
+              nodePos = nodePos->right;
             }
 
-            nodePos = nodePos->right;
+            if((nodePos->right) &&
+               (nodePos->right->value == "="))
+              initWithValue = true;
+
+            splitDefineForVariable(origin,
+                                   info, nodePos,
+                                   declPos);
           }
-
-          if((nodePos->right) &&
-             (nodePos->right->value == "="))
-            initWithValue = true;
-
-          splitDefineForVariable(origin,
-                                 info, nodePos,
-                                 declPos);
         }
         else{
           statement &originUp  = *(origin->up);
@@ -8272,11 +8355,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("cleanTest.c");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("cleanTest.c");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   occa::parser parser;
@@ -8289,6 +8372,12 @@ int main(int argc, char **argv){
   //   std::string parsedContent = parser.parseFile("addVectors.okl");
   //   std::cout << parsedContent << '\n';
   // }
+
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("PCGpart1.cl");
+    std::cout << parsedContent << '\n';
+  }
 }
 
 #endif
