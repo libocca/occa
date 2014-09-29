@@ -161,13 +161,13 @@ namespace occa {
 
     static const int referenceType       = (1 << 13);
 
-    static const int variableType        = (1 << 14);
-    static const int functionTypeMask    = (7 << 15);
-    static const int functionType        = (1 << 15);
-    static const int protoType           = (1 << 16); // =P
-    static const int functionCallType    = (1 << 17);
-    static const int functionPointerType = (1 << 18);
-    static const int gotoType            = (1 << 19);
+    static const int variableType        = (1  << 14);
+    static const int functionTypeMask    = (15 << 15);
+    static const int functionType        = (1  << 15);
+    static const int protoType           = (1  << 16); // =P
+    static const int functionCallType    = (1  << 17);
+    static const int functionPointerType = (1  << 18);
+    static const int gotoType            = (1  << 19);
 
     static const int textureType         = (1 << 20);
 
@@ -2714,7 +2714,7 @@ namespace occa {
       std::vector<std::string> stackPointerSizes;
 
       // Function {Proto, Def | Ptr}
-      //    { return type , arg1 , arg2 , ... }
+      //    { arg1 , arg2 , ... }
       std::vector<varInfo*> vars;
 
       std::vector<std::string> extraInfo;
@@ -2746,7 +2746,7 @@ namespace occa {
         const int descriptorCount = descriptors.size();
 
         if(descriptorCount == 0)
-          return type->typeName;
+          return (type ? type->typeName : "");
 
         std::string ret = descriptors[0];
 
@@ -3004,14 +3004,15 @@ namespace occa {
       }
 
       inline std::string functionString() const {
-        std::string ret = vars[0]->decoratedType();
+        std::string ret = decoratedType();
 
-        ret += vars[0]->name;
+        ret += " ";
+        ret += name;
         ret += "(";
 
         const int varCount = vars.size();
 
-        for(int i = 1; i < varCount; ++i){
+        for(int i = 0; i < varCount; ++i){
           ret += *(vars[i]);
 
           if(i != (varCount - 1))
@@ -3025,15 +3026,15 @@ namespace occa {
       }
 
       inline std::string functionPointerString() const {
-        std::string ret = vars[0]->decoratedType();
+        std::string ret = decoratedType();
 
         //---[ void <(*fp)>(void, void); ]--------
-        ret += "(";
+        ret += " (";
 
         for(int i = 0; i < pointerCount; ++i)
           ret += "*";
 
-        ret += vars[0]->name;
+        ret += name;
 
         const int heapCount = stackPointerSizes.size();
 
@@ -3050,7 +3051,7 @@ namespace occa {
 
         const int varCount = vars.size();
 
-        for(int i = 1; i < varCount; ++i){
+        for(int i = 0; i < varCount; ++i){
           ret += (std::string) *(vars[i]);
 
           if(i != (varCount - 1))
@@ -3534,7 +3535,6 @@ namespace occa {
 
 #if 1
       while(nodePos &&
-            (nodePos->down.size() == 0) &&
             ((nodePos->type & qualifierType) ||
              nodeHasSpecifier(nodePos))){
 
@@ -3577,6 +3577,9 @@ namespace occa {
           }
         }
 
+        if(nodePos->down.size() != 0)
+          break;
+
         nodePos = nodePos->right;
       }
 
@@ -3611,7 +3614,7 @@ namespace occa {
             }
 
             info.name      = downNode->value;
-            info.typeInfo |= functionType;
+            info.typeInfo |= functionPointerType;
 
             if(downNode->down.size()){
               const int downCount2 = downNode->down.size();
