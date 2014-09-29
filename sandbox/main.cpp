@@ -162,6 +162,7 @@ namespace occa {
     static const int referenceType       = (1 << 13);
 
     static const int variableType        = (1 << 14);
+    static const int functionTypeMask    = (7 << 15);
     static const int functionType        = (1 << 15);
     static const int protoType           = (1 << 16); // =P
     static const int functionCallType    = (1 << 17);
@@ -2708,6 +2709,10 @@ namespace occa {
       std::vector<std::string> descriptors;
       std::vector<std::string> stackPointerSizes;
 
+      // Function {Proto, Def | Ptr}
+      //    { return type , arg1 , arg2 , ... }
+      std::vector<varInfo*> vars;
+
       std::vector<std::string> extraInfo;
 
       inline varInfo() :
@@ -2719,6 +2724,7 @@ namespace occa {
 
       inline varInfo(const varInfo &vi){
         type     = vi.type;
+        altType  = vi.altType;
         name     = vi.name;
         typeInfo = vi.typeInfo;
 
@@ -2726,6 +2732,8 @@ namespace occa {
 
         descriptors       = vi.descriptors;
         stackPointerSizes = vi.stackPointerSizes;
+
+        vars = vi.vars;
 
         extraInfo = vi.extraInfo;
       }
@@ -2762,6 +2770,11 @@ namespace occa {
 
       inline strNode* makeStrNodeChain(const int depth     = 0,
                                        const int sideDepth = 0) const {
+        if(typeInfo & functionPointerType)
+          return makeStrNodeChainFromFP(depth, sideDepth);
+        else if(typeInfo & functionTypeMask)
+          return makeStrNodeChainFromF(depth, sideDepth);
+
         strNode *nodeRoot = new strNode();
         strNode *nodePos = nodeRoot;
 
@@ -2827,6 +2840,93 @@ namespace occa {
         }
 
         popAndGoRight(nodeRoot);
+
+        return nodeRoot;
+      }
+
+      inline strNode* makeStrNodeChainFromF(const int depth     = 0,
+                                            const int sideDepth = 0) const {
+        strNode *nodeRoot = vars[0]->makeStrNodeChain(depth, sideDepth);
+
+        strNode *nodePos = lastNode(nodeRoot);
+        popAndGoLeft(nodePos); // Get rid of the [;]
+
+        nodePos = nodePos->pushDown("(");
+
+        nodePos->type  = keywordType["("];
+        nodePos->depth = depth + 1;
+
+        const int varCount = vars.size();
+
+        for(int i = 1; i < varCount; ++i){
+          nodePos->right = vars[i]->makeStrNodeChain(depth + 1);
+          nodePos = lastNode(nodePos);
+
+          if(i != (varCount - 1)){
+            nodePos       = nodePos->push(",");
+            nodePos->type = keywordType[","];
+          }
+        }
+
+        nodePos       = nodePos->push(")");
+        nodePos->type = keywordType[")"];
+
+        if(typeInfo & protoType){
+          nodePos       = nodePos->push(";");
+          nodePos->type = keywordType[";"];
+        }
+
+        return nodeRoot;
+      }
+
+      inline strNode* makeStrNodeChainFromFP(const int depth     = 0,
+                                             const int sideDepth = 0) const {
+        strNode *nodeRoot = vars[0]->makeStrNodeChain(depth, sideDepth);
+
+        strNode *nodePos = lastNode(nodeRoot);
+        popAndGoLeft(nodePos); // Get rid of the [;]
+
+        strNode *nameNode = nodePos;
+
+        nodePos = nodePos->left;
+        nodePos->right = NULL;
+
+        //---[ void <(*fp)>(void, void); ]--------
+        strNode *downNode = nodePos->pushDown("(");
+        downNode->type    = keywordType["("];
+        downNode->depth   = depth + 1;
+
+        downNode->right = nameNode;
+        nameNode->left  = downNode;
+        nameNode->right = NULL;
+
+        downNode       = nameNode->push(")");
+        downNode->type = keywordType[")"];
+
+        //---[ void (*fp)<(void, void)>; ]--------
+        downNode        = nodePos->pushDown("(");
+        downNode->type  = keywordType["("];
+        downNode->depth = depth + 1;
+
+        const int varCount = vars.size();
+
+        for(int i = 1; i < varCount; ++i){
+          downNode->right = vars[i]->makeStrNodeChain(depth + 1);
+          downNode = lastNode(downNode);
+
+          if(i != (varCount - 1)){
+            downNode       = downNode->push(",");
+            downNode->type = keywordType[","];
+          }
+        }
+
+        downNode       = downNode->push(")");
+        downNode->type = keywordType[")"];
+
+        if(typeInfo & protoType){
+          downNode       = downNode->push(";");
+          downNode->type = keywordType[";"];
+        }
 
         return nodeRoot;
       }
@@ -3343,7 +3443,6 @@ namespace occa {
         }
 
         else if(nodeHasQualifier(nodePos)){
-
           if(nodePos->value == "*"){
             info.typeInfo |= heapPointerType;
             ++info.pointerCount;
@@ -6457,6 +6556,89 @@ namespace occa {
     }
 
     inline int statement::checkDescriptorStatementType(strNode *&nodeRoot){
+#if 1
+      strNode *oldNodeRoot = nodeRoot;
+      strNode *nodePos     = nodeRoot;
+
+      // Skip descriptors
+      while((nodePos)                         &&
+            (nodePos->down.size() == 0)       &&
+            ((nodePos->type & descriptorType) ||
+             nodeHasSpecifier(nodePos))){
+
+        nodePos = nodePos->right;
+      }
+
+      while((nodeRoot) &&
+            !(nodeRoot->type & endStatement))
+        nodeRoot = nodeRoot->right;
+
+      const int downCount = nodePos->down.size();
+
+      // Function {Proto, Def | Ptr}
+      if(downCount && (nodePos->down[0]->type & parentheses)){
+        if(downCount == 1)
+          return functionPrototypeType;
+
+        strNode *downNode = nodePos->down[1];
+
+        if(downNode->type & brace){
+          nodeRoot = nodePos;
+          return functionDefinitionType;
+        }
+
+        else if(downNode->type & parentheses){
+          downNode = downNode->right;
+
+          if(downNode->type & parentheses){
+            std::cout << "Function pointer needs a [*]:\n"
+                      << prettyString(oldNodeRoot, "  ");
+            throw 1;
+          }
+
+          while(downNode->value == "*"){
+            if(downNode->down.size()){
+              if(nodeRoot == NULL){
+                std::cout << "Missing a [;] after:\n"
+                          << prettyString(oldNodeRoot, "  ");
+                throw 1;
+              }
+
+              return updateStatementType;
+            }
+
+            downNode = downNode->right;
+          }
+
+          if(nodeRoot == NULL){
+            std::cout << "Missing a [;] after:\n"
+                      << prettyString(oldNodeRoot, "  ");
+            throw 1;
+          }
+
+          if(hasTypeInScope(downNode->value) ||
+             hasVariableInScope(downNode->value)){
+
+            return updateStatementType;
+          }
+
+          return declareStatementType;
+        }
+        else{
+          std::cout << "You found the [Waldo 1] error in:\n"
+                    << prettyString(oldNodeRoot, "  ");
+          throw 1;
+        }
+      }
+
+      if(nodeRoot == NULL){
+        std::cout << "Missing a [;] after:\n"
+                  << prettyString(oldNodeRoot, "  ");
+        throw 1;
+      }
+
+      return declareStatementType;
+#else
       while(nodeRoot){
         if(nodeRoot->type & endStatement)
           return declareStatementType;
@@ -6506,6 +6688,7 @@ namespace occa {
       }
 
       return declareStatementType;
+#endif
     }
 
     inline int statement::checkGotoStatementType(strNode *&nodeRoot){
@@ -6529,7 +6712,8 @@ namespace occa {
       else if(nodeRoot->value == "switch")
         return switchStatementType;
 
-      std::cout << "You found the Waldo error!\n";
+      std::cout << "You found the [Waldo 2] error in:\n"
+                << prettyString(nodeRoot, "  ");
       throw 1;
 
       return 0;
@@ -7763,11 +7947,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("cleanTest.c");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("cleanTest.c");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   occa::parser parser;
@@ -7775,11 +7959,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("addVectors.okl");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("addVectors.okl");
+    std::cout << parsedContent << '\n';
+  }
 }
 
 #endif

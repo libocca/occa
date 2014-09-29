@@ -1,4 +1,12 @@
 #if 1
+void (*fp1)(void *);
+void (*fp2[3])(void *);
+void (*)(void *v);
+void (**)(void *v);
+#endif
+
+#if 1
+
 #  if 1
 union blah {
   int i;
