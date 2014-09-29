@@ -2886,7 +2886,7 @@ namespace occa {
           ret += ':';
 
         if(0 <= bitField){
-          ret += ':';
+          ret += " : ";
 
           char sBitField[10];
           sprintf(sBitField, "%d", bitField);
@@ -2980,15 +2980,6 @@ namespace occa {
       varInfo *lastInfo, *info;
 
       while(n){
-        strNode *nEnd = n;
-
-        while(nEnd){
-          if(nEnd->type & endStatement)
-            break;
-
-          nEnd = nEnd->right;
-        }
-
         bool isBitFieldOnly = (n->value == ":");
 
         const bool isPOD = (usingPreviousInfo ||
@@ -3001,9 +2992,12 @@ namespace occa {
           *info = s.loadVarInfo(n);
 
           if(usingPreviousInfo){
-            info->type = lastInfo->type;
-            lastInfo = info;
+            info->type        = lastInfo->type;
+            info->typeInfo    = lastInfo->typeInfo;
+            info->descriptors = lastInfo->descriptors;
           }
+
+          lastInfo = info;
 
           addVar(info);
         }
@@ -3014,11 +3008,18 @@ namespace occa {
           sDef.loadFromNode(s, n);
 
           addType(&sDef);
+
+          while(n){
+            if(n->type & endStatement)
+              break;
+
+            n = n->right;
+          }
         }
 
-        usingPreviousInfo = (nEnd && (nEnd->value == ","));
+        usingPreviousInfo = (n && (n->value == ","));
 
-        n = (nEnd ? nEnd->right : NULL);
+        n = (n ? n->right : NULL);
       }
     }
 
@@ -3606,15 +3607,12 @@ namespace occa {
          (nodePos->type & (endSection |
                            endStatement))){
 
-        return info;
-      }
+        if(nodePos &&
+           nodePos->value == ":"){
 
-      if((nodePos->type & endStatement) &&
-         (nodePos->value == ":")){ // For bitfields
-
-        info.bitField = atoi(nodePos->right->value.c_str());
-
-        nodePos = nodePos->right->right;
+          info.bitField = atoi(nodePos->right->value.c_str());
+          nodePos = nodePos->right->right;
+        }
 
         return info;
       }
@@ -3626,6 +3624,15 @@ namespace occa {
         info.typeInfo |= variableType;
 
         nodePos = nodePos->right;
+
+        if(nodePos &&
+           nodePos->value == ":"){
+
+          info.bitField = atoi(nodePos->right->value.c_str());
+          nodePos = nodePos->right->right;
+
+          return info;
+        }
       }
       else{
         strNode *downNode = nodePos->down[0];
