@@ -3583,7 +3583,8 @@ namespace occa {
         nodePos = nodePos->right;
       }
 
-      if((nodePos == NULL) ||
+      if((nodePos == NULL)               ||
+         (nodePos->type & endSection)    ||
          ((nodePos->type & endStatement) &&
           nodePos->value == ":")){ // For bitfields
 
