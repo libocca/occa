@@ -2405,8 +2405,6 @@ namespace occa {
               if(up == NULL)
                 s.up->scopeTypeMap[typeName] = this;
 
-              std::cout << "typeName = " << typeName << '\n';
-
               // Empty struct
               if((n->down.size() == 0) &&
                  (n->right)            &&
@@ -3540,12 +3538,15 @@ namespace occa {
 
               info.vars.push_back(&arg);
 
-              downNode = downNode->right;
-
               // Loaded last arg
-              if(downNode->right == NULL)
+              if((downNode == NULL) ||
+                 (downNode->right == NULL))
                 break;
+
+              downNode = downNode->right;
             }
+
+            nodePos = nodePos->right;
           }
           else{
             info.name      = nodePos->value;
@@ -3566,10 +3567,9 @@ namespace occa {
                 break;
             }
 
-            strNode *lastPos = lastNode(nodePos);
-
             // Distinguish between prototypes and function calls
-            if(lastPos->value == ";"){
+            if(nodePos->right &&
+               (nodePos->right->value == ";")){
               if(info.type)
                 info.typeInfo |= protoType;
               else
@@ -4898,6 +4898,10 @@ namespace occa {
                    structStatementType))
         return;
 
+      // Skip qualifiers (good for function pointers)
+      if(s.type & declareStatementType)
+        s.loadVarInfo(n);
+
       while(n){
         if((n->type & unknownVariable) &&
            !s.hasTypeInScope(n->value)){
@@ -4926,11 +4930,7 @@ namespace occa {
       if(s.type & macroStatementType)
         return;
 
-      std::cout << "s = " << s << "(" << s.type << ")\n";
-
       loadScopeVarMap(s);
-
-      std::cout << "s = " << s << '\n';
 
       loadVariableInformation(s, s.nodeStart);
     }
@@ -6797,7 +6797,7 @@ namespace occa {
                 throw 1;
               }
 
-              return updateStatementType;
+              return declareStatementType;
             }
 
             downNode = downNode->right;
@@ -6809,11 +6809,10 @@ namespace occa {
             throw 1;
           }
 
-          if(hasTypeInScope(downNode->value) ||
-             hasVariableInScope(downNode->value)){
-
+          // [C++] Function call, not function pointer define
+          //    getFunc(0)(arg1, arg2);
+          if(hasVariableInScope(downNode->value))
             return updateStatementType;
-          }
 
           return declareStatementType;
         }
