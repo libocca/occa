@@ -1,6 +1,13 @@
 #if 1
 void (*fp1)(void *a);
 void (*fp2[3])(void *);
+
+struct __darwin_pthread_handler_rec
+{
+ void (*__routine)(void *);
+ void *__arg;
+ struct __darwin_pthread_handler_rec *__next;
+};
 #endif
 
 #if 1

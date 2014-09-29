@@ -2900,9 +2900,27 @@ namespace occa {
         downNode->type    = keywordType["("];
         downNode->depth   = depth + 1;
 
+        for(int i = 0; i < pointerCount; ++i){
+          downNode       = downNode->push("*");
+          downNode->type = keywordType["*"];
+        }
+
         downNode->right = nameNode;
         nameNode->left  = downNode;
         nameNode->right = NULL;
+
+        const int heapCount = stackPointerSizes.size();
+
+        for(int i = 0; i < heapCount; ++i){
+          strNode *downNode = nodePos->pushDown("[");
+          downNode->type    = keywordType["["];
+
+          downNode       = downNode->push(stackPointerSizes[i]);
+          downNode->type = unknownVariable; // [-] Quick fix
+
+          downNode       = downNode->push("[");
+          downNode->type = keywordType["]"];
+        }
 
         downNode       = nameNode->push(")");
         downNode->type = keywordType[")"];
@@ -2927,49 +2945,126 @@ namespace occa {
         downNode       = downNode->push(")");
         downNode->type = keywordType[")"];
 
-        if(typeInfo & protoType){
-          downNode       = downNode->push(";");
-          downNode->type = keywordType[";"];
-        }
+        downNode       = downNode->push(";");
+        downNode->type = keywordType[";"];
 
         return nodeRoot;
+      }
+
+      inline operator std::string() const {
+        if( !(typeInfo & functionTypeMask) )
+          return podString();
+        else if(typeInfo & functionPointerType)
+          return functionPointerString();
+        else
+          return functionString();
+      }
+
+      inline std::string podString() const {
+        const int descriptorCount = descriptors.size();
+        std::string ret;
+
+        for(int i = 0; i < descriptorCount; ++i){
+          ret += descriptors[i];
+          ret += ' ';
+        }
+
+        if(type){
+          ret += type->typeName;
+          ret +=  ' ';
+        }
+
+        if(typeInfo & pointerType){
+          if(typeInfo & heapPointerType){
+            for(int i = 0; i < pointerCount; ++i)
+              ret += '*';
+          }
+
+          if(typeInfo & constPointerType)
+            ret += " const ";
+        }
+
+        if(typeInfo & referenceType)
+          ret += '&';
+
+        ret += name;
+
+        const int heapCount = stackPointerSizes.size();
+
+        for(int i = 0; i < heapCount; ++i){
+          ret += '[';
+          ret += stackPointerSizes[i];
+          ret += ']';
+        }
+
+        if(typeInfo & gotoType)
+          ret += ':';
+
+        return ret;
+      }
+
+      inline std::string functionString() const {
+        std::string ret = vars[0]->decoratedType();
+
+        ret += vars[0]->name;
+        ret += "(";
+
+        const int varCount = vars.size();
+
+        for(int i = 1; i < varCount; ++i){
+          ret += *(vars[i]);
+
+          if(i != (varCount - 1))
+            ret += ", ";
+        }
+
+
+        ret += ");";
+
+        return ret;
+      }
+
+      inline std::string functionPointerString() const {
+        std::string ret = vars[0]->decoratedType();
+
+        //---[ void <(*fp)>(void, void); ]--------
+        ret += "(";
+
+        for(int i = 0; i < pointerCount; ++i)
+          ret += "*";
+
+        ret += vars[0]->name;
+
+        const int heapCount = stackPointerSizes.size();
+
+        for(int i = 0; i < heapCount; ++i){
+          ret += '[';
+          ret += stackPointerSizes[i];
+          ret += ']';
+        }
+
+        ret += ")";
+
+        //---[ void (*fp)<(void, void)>; ]--------
+        ret += "(";
+
+        const int varCount = vars.size();
+
+        for(int i = 1; i < varCount; ++i){
+          ret += (std::string) *(vars[i]);
+
+          if(i != (varCount - 1))
+            ret += ", ";
+        }
+
+        ret += ");";
+
+        return ret;
       }
     };
 
     inline std::ostream& operator << (std::ostream &out, const varInfo &info){
-      const int descriptorCount = info.descriptors.size();
-
-      for(int i = 0; i < descriptorCount; ++i)
-        out << info.descriptors[i] << ' ';
-
-      if(info.type)
-        out << info.type->typeName << ' ';
-
-      if(info.typeInfo & pointerType){
-        if(info.typeInfo & heapPointerType){
-          for(int i = 0; i < info.pointerCount; ++i)
-            out << '*';
-        }
-
-        if(info.typeInfo & constPointerType)
-          out << " const ";
-      }
-
-      if(info.typeInfo & referenceType)
-        out << '&';
-
-      out << info.name;
-
-      if(info.typeInfo & stackPointerType){
-        const int heapCount = info.stackPointerSizes.size();
-
-        for(int i = 0; i < heapCount; ++i)
-          out << '[' << info.stackPointerSizes[i] << ']';
-      }
-
-      if(info.typeInfo & gotoType)
-        out << ':';
-
+      out << (std::string) info;
       return out;
     }
 
@@ -2999,6 +3094,8 @@ namespace occa {
 
         if(isPOD){
           info = s.loadVarInfo(n);
+          std::cout
+            << "info = " << info << '\n';
 
           // Case: int : 2, a : 3;
           if(!usingPreviousInfo)
@@ -4636,9 +4733,6 @@ namespace occa {
 
       if( !(s.type & functionPrototypeType) ){
         varInfo info = s.loadVarInfo(nodePos);
-
-        std::cout
-          << "info = " << info << '\n';
 
         if(info.typeInfo & functionCallType)
           return;
