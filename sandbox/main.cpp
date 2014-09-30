@@ -399,9 +399,12 @@ namespace occa {
                                   varInfo &var, strNode *varNode,
                                   const int declPos);
 
-      void addInnerForsBetweenBarriers(statement &origin,
-                                       statementNode *s,
-                                       const int innerDim);
+      void addInnerForsToStatement(statement &s,
+                                   const int innerDim);
+
+      statementNode* addInnerForsBetweenBarriers(statement &origin,
+                                                 statementNode *includeStart,
+                                                 const int innerDim);
 
       void addInnerFors(statement &s);
 
@@ -6464,61 +6467,80 @@ namespace occa {
       }
     }
 
-    inline void parserBase::addInnerForsBetweenBarriers(statement &origin,
-                                                        statementNode *s,
-                                                        const int innerDim){
+    inline void parserBase::addInnerForsToStatement(statement &s,
+                                                    const int innerDim){
+      statementNode *sn = s.statementStart;
+
+      while(sn &&
+            statementHasBarrier( *(sn->value) ))
+        sn = sn->right;
+
+      while(sn){
+        sn = addInnerForsBetweenBarriers(s, sn, innerDim);
+
+        while(sn &&
+              statementHasBarrier( *(sn->value) ))
+          sn = sn->right;
+      }
+    }
+
+    inline statementNode* parserBase::addInnerForsBetweenBarriers(statement &origin,
+                                                                  statementNode *includeStart,
+                                                                  const int innerDim){
+      if(includeStart == NULL)
+        return NULL;
+
       const int occaForType = keywordType["occaInnerFor0"];
 
       statement *outerMostLoop = NULL;
       statement *innerMostLoop = NULL;
 
-      bool hasForStatements = false;
+      statementNode *includeEnd = includeStart;
+      statementNode *returnNode;
 
-      while(s &&
-            statementHasBarrier( *(s->value) ))
-        s = s->right;
+      bool stoppedAtFor = false;
 
-      statementNode *s0 = s;
+      while(includeEnd){
+        if(statementHasBarrier( *(includeEnd->value) ))
+          break;
 
-      while(s){
-        if(s->value->type & macroStatementType)
-          s = s->right;
-        else if(s->value->type & forStatementType){
-          hasForStatements = true;
-
-          addInnerForsBetweenBarriers(*(s0->value),
-                                      s0->value->statementStart,
-                                      innerDim);
-
-          s = s->right;
-          s0 = s;
+        if(includeEnd->value->type & forStatementType){
+          stoppedAtFor = true;
+          break;
         }
-        else break;
+
+        includeEnd = includeEnd->right;
       }
 
-      while(s &&
-            (s->value->type & macroStatementType))
-        s0 = s->right;
+      returnNode = (includeEnd ? includeEnd->right : NULL);
 
-      while(s &&
-            (s->value->type & forStatementType)){
+      if(includeEnd && stoppedAtFor){
+        statementNode *forStart = includeEnd;
+        statementNode *forNode  = includeEnd;
 
+        while(forStart->left &&
+              forStart->left->value->type & macroStatementType)
+          forStart = forStart->left;
+
+        includeEnd = forStart;
+
+        addInnerForsToStatement(*(forNode->value), innerDim);
+
+        if(includeStart == forStart)
+          return returnNode;
       }
 
-      if((s == NULL) || hasForStatements){
-        return;
-      }
+      if(includeEnd)
+        includeEnd = includeEnd->left;
 
       for(int i = innerDim; 0 <= i; --i){
-        statement *newStatement = new statement(s->value->depth,
+        statement *newStatement = new statement(includeStart->value->depth,
                                                 occaForType, &origin,
                                                 NULL, NULL);
 
-        std::string loopName = "occaInnerFor";
-        loopName += '0' + i;
-
-        newStatement->nodeStart       = new strNode(loopName);
-        newStatement->nodeStart->type = occaForType;
+        newStatement->nodeStart = new strNode("occaInnerFor");
+        newStatement->nodeStart->value += '0' + i;
+        newStatement->nodeStart->type   = occaForType;
 
         newStatement->nodeEnd = newStatement->nodeStart;
 
@@ -6533,62 +6555,12 @@ namespace occa {
         }
       }
 
-      statementNode *includeStart = s;
-
       // Keep privates and shared outside inner loops
-      while(includeStart->value->hasDescriptorVariable("occaShared") ||
-            includeStart->value->hasDescriptorVariable("exclusive")){
+      while(includeStart &&
+            (includeStart->value->hasDescriptorVariable("occaShared") ||
+             includeStart->value->hasDescriptorVariable("exclusive"))){
 
         includeStart = includeStart->right;
-      }
-
-      statementNode *includeEnd    = includeStart;
-      statementNode *stoppedAtNode = NULL;
-
-      std::cout
-        << "includeStart = " << *(includeStart->value) << '\n';
-
-      while(includeEnd                                   &&
-            !statementHasBarrier( *(includeEnd->value) ) &&
-            !(includeEnd->value->type & forStatementType)){
-
-        includeEnd = includeEnd->right;
-      }
-
-      if(includeEnd){
-        stoppedAtNode = includeEnd;
-        includeEnd = includeEnd->left;
-
-        if(stoppedAtNode->value->type == forStatementType){
-          while((includeEnd) &&
-                (includeEnd->value->type & macroStatementType))
-            includeEnd = includeEnd->left;
-
-          stoppedAtNode = includeEnd->right;
-
-          std::cout
-            << "includeEnd = " << *(includeEnd->value) << '\n';
-
-          statement *newStatement = new statement(includeEnd->value->depth,
-                                                  occaForType, &origin,
-                                                  NULL, NULL);
-
-          newStatement->nodeStart       = new strNode("occaBarrier");
-          newStatement->nodeStart->type = keywordType["occaBarrier"];
-
-          strNode *nNodePos = newStatement->nodeStart->pushDown("(");
-          nNodePos->type    = keywordType["("];
-
-          nNodePos       = nNodePos->push("occaLocalMemFence");
-          nNodePos->type = keywordType["occaLocalMemFence"];
-
-          nNodePos       = nNodePos->push(")");
-          nNodePos->type = keywordType[")"];
-
-          newStatement->nodeEnd = newStatement->nodeStart;
-
-          includeEnd->push(new statementNode(newStatement));
-        }
       }
 
       // Put the loop node on the origin's statements
@@ -6599,20 +6571,21 @@ namespace occa {
       if(origin.statementStart == includeStart)
         origin.statementStart = outerMostLoopSN;
 
-      outerMostLoopSN->right = stoppedAtNode;
+      outerMostLoopSN->left = includeStart->left;
 
-      if(includeStart &&
-         includeStart->left)
+      if(includeStart->left)
         includeStart->left->right = outerMostLoopSN;
 
-      if(stoppedAtNode)
-        stoppedAtNode->left = outerMostLoopSN;
+      includeStart->left = NULL;
 
-      if(includeStart)
-        includeStart->left = NULL;
+      if(includeEnd){
+        outerMostLoopSN->right = includeEnd->right;
 
-      if(includeEnd)
+        if(includeEnd->right)
+          includeEnd->right->left = outerMostLoopSN;
+
         includeEnd->right = NULL;
+      }
 
       innerMostLoop->statementStart = includeStart;
 
@@ -6633,9 +6606,7 @@ namespace occa {
       applyToAllStatements(*outerMostLoop, &parserBase::incrementDepth);
       --(outerMostLoop->depth);
 
-      // Stick loops on the next part
-      if(stoppedAtNode)
-        addInnerForsBetweenBarriers(origin, stoppedAtNode, innerDim);
+      return returnNode;
     }
 
     inline void parserBase::addInnerFors(statement &s){
@@ -6720,7 +6691,7 @@ namespace occa {
         varPos = varPos->right;
       }
 
-      addInnerForsBetweenBarriers(s, s.statementStart, innerDim);
+      addInnerForsToStatement(s, innerDim);
     }
 
     inline void parserBase::addOuterFors(statement &s){
