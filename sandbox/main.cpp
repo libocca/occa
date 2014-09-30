@@ -8326,11 +8326,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("cleanTest.c");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("cleanTest.c");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   occa::parser parser;
@@ -8344,11 +8344,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("PCGpart1.cl");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("PCGpart1.cl");
+  //   std::cout << parsedContent << '\n';
+  // }
 }
 
 #endif
