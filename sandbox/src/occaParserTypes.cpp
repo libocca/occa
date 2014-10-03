@@ -421,15 +421,28 @@ namespace occa {
       return ret;
     }
 
-    bool varInfo::hasDescriptor(const std::string descriptor) const {
+    int varInfo::hasDescriptor(const std::string descriptor) const {
       const int descriptorCount = descriptors.size();
 
       for(int i = 0; i < descriptorCount; ++i){
         if(descriptors[i] == descriptor)
-          return true;
+          return (i + 1);
       }
 
-      return false;
+      return 0;
+    }
+
+    void varInfo::removeDescriptor(const std::string descriptor){
+      const int pos = hasDescriptor(descriptor);
+
+      if(pos)
+        descriptors.erase(descriptors.begin() + pos - 1, // 1 indexed
+                          descriptors.begin() + pos);
+    }
+
+    void varInfo::removeDescriptor(const int descPos){
+      descriptors.erase(descriptors.begin() + descPos,
+                        descriptors.begin() + descPos + 1);
     }
 
     strNode* varInfo::makeStrNodeChain(const int depth,

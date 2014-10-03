@@ -169,10 +169,10 @@ namespace occa {
                                                  const int innerDim);
 
       void addInnerFors(statement &s);
-
       void addOuterFors(statement &s);
 
       void removeUnnecessaryBlocksInKernel(statement &s);
+      void floatSharedVarsInKernel(statement &s);
       void addOccaForsToKernel(statement &s);
 
       void addOccaFors();

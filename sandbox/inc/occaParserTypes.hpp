@@ -87,7 +87,10 @@ namespace occa {
 
       std::string decoratedType() const;
 
-      bool hasDescriptor(const std::string descriptor) const;
+      int hasDescriptor(const std::string descriptor) const;
+
+      void removeDescriptor(const std::string descriptor);
+      void removeDescriptor(const int descPos);
 
       strNode* makeStrNodeChain(const int depth     = 0,
                                 const int sideDepth = 0) const;
