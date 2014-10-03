@@ -1,3 +1,8 @@
+#include "stdlib.h"
+#include "stdio.h"
+
+#include "occa_c.h"
+
 void addVectors(int aEntries, int aOffset,
                 int bEntries, int bOffset,
                 const float * a,
@@ -23,11 +28,6 @@ void addVectors(int aEntries, int aOffset,
     }
   }
 }
-
-#include "stdlib.h"
-#include "stdio.h"
-
-#include "occa_c.h"
 
 int main(int argc, char **argv){
   const int aEntries = 3;

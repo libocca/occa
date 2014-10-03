@@ -1,4 +1,4 @@
-#if 1
+#if 0
 void (*fp1)(void *a);
 void (*fp2[3])(void *);
 
@@ -12,7 +12,7 @@ struct __darwin_pthread_handler_rec
 
 #if 1
 
-#  if 0
+#  if 1
 union blah {
   int i;
 };
