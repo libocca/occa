@@ -180,6 +180,7 @@ namespace occa {
       void setupOccaVariables(statement &s);
     };
 
+    strNode* splitContent(const std::string &str);
     strNode* splitContent(const char *cRoot);
 
     strNode* labelCode(strNode *lineNodeRoot);

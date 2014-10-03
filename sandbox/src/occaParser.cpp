@@ -3298,6 +3298,10 @@ namespace occa {
     }
     //==============================================
 
+    strNode* splitContent(const std::string &str){
+      return splitContent(str.c_str());
+    }
+
     strNode* splitContent(const char *cRoot){
       if(!keywordsAreInitialized)
         initKeywords();

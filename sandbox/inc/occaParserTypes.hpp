@@ -97,12 +97,6 @@ namespace occa {
       strNode* makeStrNodeChain(const int depth     = 0,
                                 const int sideDepth = 0) const;
 
-      strNode* makeStrNodeChainFromF(const int depth     = 0,
-                                     const int sideDepth = 0) const;
-
-      strNode* makeStrNodeChainFromFP(const int depth     = 0,
-                                      const int sideDepth = 0) const;
-
       operator std::string() const;
 
       std::string podString() const;
