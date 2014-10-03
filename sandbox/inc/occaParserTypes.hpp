@@ -85,6 +85,8 @@ namespace occa {
       varInfo();
       varInfo(const varInfo &vi);
 
+      varInfo& operator = (const varInfo &vi);
+
       std::string decoratedType() const;
 
       int hasDescriptor(const std::string descriptor) const;

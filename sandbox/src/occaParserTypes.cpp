@@ -1,4 +1,5 @@
 #include "occaParserTypes.hpp"
+#include "occaParser.hpp"
 
 namespace occa {
   namespace parserNamespace {
@@ -385,6 +386,10 @@ namespace occa {
       pointerCount(0) {};
 
     varInfo::varInfo(const varInfo &vi){
+      *this = vi;
+    }
+
+    varInfo& varInfo::operator = (const varInfo &vi){
       type     = vi.type;
       altType  = vi.altType;
       name     = vi.name;
@@ -400,6 +405,8 @@ namespace occa {
       vars = vi.vars;
 
       extraInfo = vi.extraInfo;
+
+      return *this;
     }
 
     std::string varInfo::decoratedType() const {
@@ -452,84 +459,64 @@ namespace occa {
       else if(typeInfo & functionTypeMask)
         return makeStrNodeChainFromF(depth, sideDepth);
 
-      strNode *nodeRoot = new strNode();
-      strNode *nodePos = nodeRoot;
-
-      nodeRoot->depth     = depth;
-      nodeRoot->sideDepth = sideDepth;
+      std::string ret = "";
 
       const int descriptorCount = descriptors.size();
 
       for(int i = 0; i < descriptorCount; ++i){
-        nodePos       = nodePos->push(descriptors[i]);
-        nodePos->type = qualifierType;
+        if(i)
+          ret += ' ';
+
+        ret += descriptors[i];
       }
 
       if(type){
-        nodePos       = nodePos->push(type->typeName);
-        nodePos->type = specifierType;
+        ret += " ";
+        ret += type->typeName;
       }
 
       if(typeInfo & pointerType){
         if(typeInfo & heapPointerType){
-          for(int i = 0; i < pointerCount; ++i){
-            nodePos       = nodePos->push("*");
-            nodePos->type = keywordType["*"];
-          }
+          for(int i = 0; i < pointerCount; ++i)
+            ret += '*';
         }
 
-        if(typeInfo & constPointerType){
-          nodePos       = nodePos->push("const");
-          nodePos->type = keywordType["const"];
-        }
+        if(typeInfo & constPointerType)
+          ret += " const";
       }
 
-      if(typeInfo & referenceType){
-        nodePos       = nodePos->push("&");
-        nodePos->type = keywordType["&"];
-      }
+      if(typeInfo & referenceType)
+        ret += " &";
 
-      nodePos       = nodePos->push(name);
-      nodePos->type = unknownVariable;
+      ret += " " + name;
 
       if(typeInfo & stackPointerType){
         const int heapCount = stackPointerSizes.size();
 
         for(int i = 0; i < heapCount; ++i){
-          strNode *downNode = nodePos->pushDown("[");
-          downNode->type    = keywordType["["];
-
-          downNode       = downNode->push(stackPointerSizes[i]);
-          downNode->type = unknownVariable; // [-] Quick fix
-
-          downNode       = downNode->push("]");
-          downNode->type = keywordType["]"];
+          ret += '[';
+          ret += stackPointerSizes[i];
+          ret += ']';
         }
       }
 
       if(typeInfo & gotoType){
-        nodePos       = nodePos->push(":");
-        nodePos->type = keywordType[":"];
+        ret += ':';
       }
       else{
         if(0 <= bitField){
-          nodePos       = nodePos->push(":");
-          nodePos->type = keywordType[":"];
+          ret += ":";
 
           char sBitField[10];
           sprintf(sBitField, "%d", bitField);
 
-          nodePos       = nodePos->push(sBitField);
-          nodePos->type = presetValue;
+          ret += sBitField;
         }
 
-        nodePos       = nodePos->push(";");
-        nodePos->type = keywordType[";"];
+        ret += ";";
       }
 
-      popAndGoRight(nodeRoot);
-
-      return nodeRoot;
+      return labelCode( splitContent(ret.c_str()) );
     }
 
     strNode* varInfo::makeStrNodeChainFromF(const int depth,
