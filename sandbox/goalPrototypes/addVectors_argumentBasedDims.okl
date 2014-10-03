@@ -1,0 +1,25 @@
+void addVectors(int countA, int startA,
+                int countB, int startB,
+                const float * a,
+                const float * b,
+                float * ab){
+  // Write out A
+  for(int group = 0; group < ((countA + 31) / 32); ++group; outer0){
+    for(int item = 0; item < 32; ++item; inner0){
+      const int id = item + 32*group;
+
+      if(id < countA)
+        ab[startA + id] = a[id];
+    }
+  }
+
+  // Write out B
+  for(int group = 0; group < ((countB + 31) / 32); ++group; outer0){
+    for(int item = 0; item < 32; ++item; inner0){
+      const int id = item + 32*group;
+
+      if(id < countB)
+        ab[startB + id] = b[id];
+    }
+  }
+}

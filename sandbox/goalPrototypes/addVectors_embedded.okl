@@ -1,0 +1,102 @@
+#include "stdlib.h"
+#include "stdio.h"
+
+#include "occa_c.h"
+
+void addVectors(int aEntries, int aOffset,
+                int bEntries, int bOffset,
+                const float * a,
+                const float * b,
+                float * ab){
+  // Write out A
+  for(int group = 0; group < ((aEntries + 31) / 32); ++group; outer0){
+    for(int item = 0; item < 32; ++item; inner0){
+      const int id = item + 32*group;
+
+      if(id < aEntries)
+        ab[aOffset + id] = a[id];
+    }
+  }
+
+  // Write out B
+  for(int group = 0; group < ((bEntries + 31) / 32); ++group; outer0){
+    for(int item = 0; item < 32; ++item; inner0){
+      const int id = item + 32*group;
+
+      if(id < bEntries)
+        ab[bOffset + id] = b[id];
+    }
+  }
+}
+
+int main(int argc, char **argv){
+  const int aEntries = 3;
+  const int bEntries = 7;
+  const int entries  = (aEntries + bEntries);
+
+  const int aOffset = 7;
+  const int bOffset = 0;
+
+  int i;
+
+  float *a  = (float*) malloc(aEntries*sizeof(float));
+  float *b  = (float*) malloc(bEntries*sizeof(float));
+  float *ab = (float*) malloc(entries*sizeof(float));
+
+  for(i = 0; i < aEntries; ++i)
+    a[i] = i;
+  for(i = 0; i < bEntries; ++i)
+    b[i] = 10 + i;
+  for(i = 0; i < entries; ++i)
+    ab[i] = -1;
+
+  const char *mode = "OpenMP";
+  int platformID = 0;
+  int deviceID   = 0;
+
+  occaDevice device;
+  occaMemory o_a, o_b, o_ab;
+
+  device = occaGetDevice(mode, platformID, deviceID);
+
+  o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
+  o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
+  o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL);
+
+  occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0);
+  occaCopyPtrToMem(o_b, b, occaAutoSize, occaNoOffset);
+
+  // Device function
+  device::addVectors(aEntries, aOffset,
+                     bEntries, bOffset,
+                     o_a, o_b, o_ab);
+
+  occaKernelRun(addVectors,
+               occaInt(entries), o_a, o_b, o_ab);
+
+  occaCopyMemToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
+
+  for(i = 0; i < entries; ++i)
+    printf("1. %d = %f\n", i, ab[i]);
+
+  for(i = 0; i < entries; ++i)
+    ab[i] = -1;
+
+  // Host function
+  addVectors(aEntries, aOffset,
+             bEntries, bOffset,
+             a, b, ab);
+
+  for(i = 0; i < entries; ++i)
+    printf("2. %d = %f\n", i, ab[i]);
+
+  free(a);
+  free(b);
+  free(ab);
+
+  occaKernelFree(addVectors);
+  occaMemoryFree(o_a);
+  occaMemoryFree(o_b);
+  occaMemoryFree(o_ab);
+  occaDeviceFree(device);
+}
