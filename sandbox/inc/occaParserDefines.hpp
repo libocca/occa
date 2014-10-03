@@ -149,7 +149,7 @@ namespace occa {
     static const int floatType           = (1 << 7);
     static const int doubleType          = (1 << 8);
 
-    static const int pointerType         = (3 << 10);
+    static const int pointerType         = (7 << 10);
     static const int pointerTypeMask     = (7 << 10);
     static const int heapPointerType     = (1 << 10);
     static const int stackPointerType    = (1 << 11);

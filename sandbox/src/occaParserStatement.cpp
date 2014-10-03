@@ -357,7 +357,7 @@ namespace occa {
     varInfo statement::loadVarInfo(strNode *&nodePos){
       varInfo info;
 
-#if 1
+#if 0
       while(nodePos &&
             ((nodePos->type & qualifierType) ||
              nodeHasSpecifier(nodePos))){
