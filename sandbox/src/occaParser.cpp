@@ -2633,8 +2633,7 @@ namespace occa {
                                             varInfo &var, strNode *varNode,
                                             const int declPos){
       const int declarationCount = origin->scopeVarMap.size();
-      const bool addingStatement = !((declPos == 0) &&
-                                     (declarationCount == 1));
+      const bool addingStatement = ((declPos != 0) || (declarationCount > 1));
 
       statement &originUp  = *(origin->up);
       statementNode *snPos = NULL;
@@ -2643,22 +2642,22 @@ namespace occa {
       bool ignoringFirst      = false;
       bool ignoringSecond     = false;
 
-      if(addingStatement){
-        snPos = originUp.statementStart;
+      snPos = originUp.statementStart;
 
-        while(snPos->value != origin)
-          snPos = snPos->right;
+      while(snPos->value != origin)
+        snPos = snPos->right;
 
-        // If it's something like
-        //   const int [a = 0], b = 0 ...
-        // stitch
-        //   const int b = 0 ...
-        // and paste
-        //   a = 0;
-        if(varNode->right->value == "="){
-          removeVarStatement = false;
+      // If it's something like
+      //   const int [a = 0], b = 0 ...
+      // stitch
+      //   const int b = 0 ...
+      // and paste
+      //   a = 0;
+      if(varNode->right->value == "="){
+        removeVarStatement = false;
+
+        if(addingStatement)
           varNode = varNode->left;
-        }
       }
 
       if(declPos == 0){
@@ -2744,8 +2743,20 @@ namespace occa {
       newS->depth = rootStatement->depth + 1;
       newS->up    = rootStatement;
 
-      if(!addingStatement)
+      if(!addingStatement){
+        if((declarationCount == 1) && removeVarStatement){
+          if(originUp.statementStart == snPos)
+            originUp.statementStart = snPos->right;
+
+          if(snPos->left)
+            snPos->left->right = snPos->right;
+
+          if(snPos->right)
+            snPos->right->left = snPos->left;
+        }
+
         return;
+      }
 
       varUsedMap[&var].push(origin);
 
@@ -2863,6 +2874,17 @@ namespace occa {
       else{
         origin->nodeStart = thirdNodeStart;
         origin->nodeEnd   = thirdNodeEnd;
+      }
+
+      if((declarationCount == 1) && removeVarStatement){
+        if(originUp.statementStart == snPos)
+          originUp.statementStart = snPos->right;
+
+        if(snPos->left)
+          snPos->left->right = snPos->right;
+
+        if(snPos->right)
+          snPos->right->left = snPos->left;
       }
     }
 
