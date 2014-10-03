@@ -3,6 +3,7 @@
 namespace occa {
   namespace parserNamespace {
     parserBase::parserBase(){
+      macrosAreInitialized = false;
       globalScope = new statement(*this);
     }
 
@@ -27,7 +28,7 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      // std::cout << *globalScope << '\n';
+      // std::cout << (std::string) *globalScope;
       // throw 1;
 
       markKernelFunctions(*globalScope);
@@ -747,7 +748,7 @@ namespace occa {
     }
 
     void parserBase::applyToAllStatements(statement &s,
-                                                 applyToAllStatements_t func){
+                                          applyToAllStatements_t func){
       (this->*func)(s);
 
       statementNode *statementPos = s.statementStart;
@@ -769,7 +770,7 @@ namespace occa {
     }
 
     void parserBase::applyToStatementsUsingVar(varInfo &info,
-                                                      applyToStatementsUsingVar_t func){
+                                               applyToStatementsUsingVar_t func){
       varUsedMapIterator it = varUsedMap.find(&info);
 
       if(it != varUsedMap.end()){
@@ -812,10 +813,13 @@ namespace occa {
     }
 
     bool parserBase::statementKernelUsesNativeOCCA(statement &s){
-      statement &sKernel = *(getStatementKernel(s));
+      statement *sKernel = getStatementKernel(s);
+
+      if(sKernel == NULL)
+        return false;
 
       std::string check = obfuscate("native", "occa");
-      varInfo *info = sKernel.hasVariableInScope(check);
+      varInfo *info = sKernel->hasVariableInScope(check);
 
       if(info != NULL)
         return true;
@@ -824,10 +828,13 @@ namespace occa {
     }
 
     bool parserBase::statementKernelUsesNativeOKL(statement &s){
-      statement &sKernel = *(getStatementKernel(s));
+      statement *sKernel = getStatementKernel(s);
+
+      if(sKernel == NULL)
+        return false;
 
       std::string check = obfuscate("native", "okl");
-      varInfo *info = sKernel.hasVariableInScope(check);
+      varInfo *info = sKernel->hasVariableInScope(check);
 
       if(info != NULL)
         return true;
@@ -846,8 +853,8 @@ namespace occa {
     }
 
     void parserBase::addOccaForCounter(statement &s,
-                                              const std::string &ioLoop,
-                                              const std::string &loopNest){
+                                       const std::string &ioLoop,
+                                       const std::string &loopNest){
       varInfo ioDimVar;
       ioDimVar.name = obfuscate(ioLoop);
       ioDimVar.extraInfo.push_back(loopNest);
@@ -1099,6 +1106,7 @@ namespace occa {
       // [-] ?
       if(!sKernel.hasVariableInScope(dimVar.name))
         sKernel.addVariable(dimVar);
+
       s.addVariable(dimVar);
 
       nodePos = commaNodes[3]->right;
@@ -1179,7 +1187,8 @@ namespace occa {
       if( !(s.type & functionPrototypeType) ){
         varInfo info = s.loadVarInfo(nodePos);
 
-        if(info.typeInfo & functionCallType)
+        if((info.type == NULL) ||
+           (info.typeInfo & functionCallType))
           return;
 
         up->addVariable(info, &s);
@@ -1387,8 +1396,8 @@ namespace occa {
       if( !(s.type & functionPrototypeType) ){
         while(nodePos){
           if((nodePos->type & cudaKeywordType) &&
-             (nodePos->right)                 &&
-             (nodePos->right->value == ".")  &&
+             (nodePos->right)                  &&
+             (nodePos->right->value == ".")    &&
              (nodePos->right->right)){
 
             std::string &coord = nodePos->right->right->value;
@@ -1432,7 +1441,7 @@ namespace occa {
     }
 
     void parserBase::loadVariableInformation(statement &s,
-                                                    strNode *n){
+                                             strNode *n){
       if(s.type & (functionPrototypeType |
                    structStatementType))
         return;
@@ -1600,7 +1609,7 @@ namespace occa {
     }
 
     void parserBase::fixOccaForStatementOrder(statement &origin,
-                                                     statementNode *sn){
+                                              statementNode *sn){
       int innerLoopCount = -1;
 
       while(sn){
@@ -1793,8 +1802,8 @@ namespace occa {
     }
 
     strNode* parserBase::occaExclusiveStrNode(varInfo &info,
-                                                     const int depth,
-                                                     const int sideDepth){
+                                              const int depth,
+                                              const int sideDepth){
       strNode *nodeRoot;
 
       const int typeInfo = info.typeInfo;
@@ -1992,7 +2001,7 @@ namespace occa {
         return;
 
       strNode *nodePos = s.nodeStart;
-      varInfo info = s.loadVarInfo(nodePos);
+      varInfo info     = s.loadVarInfo(nodePos);
 
       if(!info.hasDescriptor("exclusive"))
         return;
@@ -2064,7 +2073,7 @@ namespace occa {
     }
 
     void parserBase::modifyStatementOccaForVariables(varInfo &var,
-                                                            strNode *n){
+                                                     strNode *n){
       const int extras = var.extraInfo.size();
 
       while(n){
@@ -2160,7 +2169,7 @@ namespace occa {
     }
 
     statementNode* parserBase::splitKernelStatement(statementNode *sn,
-                                                           kernelInfo &info){
+                                                    kernelInfo &info){
       int kernelCount = 0;
 
       statement &s = *(sn->value);
@@ -2361,7 +2370,7 @@ namespace occa {
     }
 
     statementNode* parserBase::findStatementWith(statement &s,
-                                                        findStatementWith_t func){
+                                                 findStatementWith_t func){
       statementNode *ret = new statementNode(&s);
 
       if((this->*func)(s))
@@ -2491,9 +2500,9 @@ namespace occa {
     }
 
     int parserBase::findLoopSections(statement &s,
-                                            statementNode *path,
-                                            loopSection_t &loopSection,
-                                            int section){
+                                     statementNode *path,
+                                     loopSection_t &loopSection,
+                                     int section){
       if(s.statementCount == 0)
         return section;
 
@@ -2542,7 +2551,13 @@ namespace occa {
     }
 
     bool parserBase::varInTwoSegments(varInfo &info,
-                                             loopSection_t &loopSection){
+                                      loopSection_t &loopSection){
+      // Don't count shared memory
+      if(info.hasDescriptor("occaPointer")  ||
+         info.hasDescriptor("occaVariable") ||
+         info.hasDescriptor("occaShared"))
+        return false;
+
       varUsedMapIterator it = varUsedMap.find(&info);
 
       // Variable is not used
@@ -2565,7 +2580,7 @@ namespace occa {
     }
 
     varInfoNode* parserBase::findVarsMovingToTop(statement &s,
-                                                        loopSection_t &loopSection){
+                                                 loopSection_t &loopSection){
       // Statement defines have doubles (to know how many variables
       //                                 were defined)
       //    so ... ignore duplicates
@@ -2579,8 +2594,10 @@ namespace occa {
         while(it != s.scopeVarMap.end()){
           varInfo &info = *(it->second);
 
-          if(info.hasDescriptor("occaShared") ||
-             varInTwoSegments(info, loopSection)){
+          if(varInTwoSegments(info, loopSection)){
+            // No longer const
+            info.removeDescriptor("occaConst");
+
             if(root == NULL){
               root = new varInfoNode(&info);
               pos  = root;
@@ -2613,11 +2630,10 @@ namespace occa {
     }
 
     void parserBase::splitDefineForVariable(statement *&origin,
-                                                   varInfo &var, strNode *varNode,
-                                                   const int declPos){
-      const int declarationCount = (origin->scopeVarMap.size() == 1);
-      const bool addingStatement = !((declPos == 0) &&
-                                     (declarationCount == 1));
+                                            varInfo &var, strNode *varNode,
+                                            const int declPos){
+      const int declarationCount = origin->scopeVarMap.size();
+      const bool addingStatement = ((declPos != 0) || (declarationCount > 1));
 
       statement &originUp  = *(origin->up);
       statementNode *snPos = NULL;
@@ -2626,22 +2642,22 @@ namespace occa {
       bool ignoringFirst      = false;
       bool ignoringSecond     = false;
 
-      if(addingStatement){
-        snPos = originUp.statementStart;
+      snPos = originUp.statementStart;
 
-        while(snPos->value != origin)
-          snPos = snPos->right;
+      while(snPos->value != origin)
+        snPos = snPos->right;
 
-        // If it's something like
-        //   const int [a = 0], b = 0 ...
-        // stitch
-        //   const int b = 0 ...
-        // and paste
-        //   a = 0;
-        if(varNode->right->value == "="){
-          removeVarStatement = false;
+      // If it's something like
+      //   const int [a = 0], b = 0 ...
+      // stitch
+      //   const int b = 0 ...
+      // and paste
+      //   a = 0;
+      if(varNode->right->value == "="){
+        removeVarStatement = false;
+
+        if(addingStatement)
           varNode = varNode->left;
-        }
       }
 
       if(declPos == 0){
@@ -2727,8 +2743,20 @@ namespace occa {
       newS->depth = rootStatement->depth + 1;
       newS->up    = rootStatement;
 
-      if(!addingStatement)
+      if(!addingStatement){
+        if((declarationCount == 1) && removeVarStatement){
+          if(originUp.statementStart == snPos)
+            originUp.statementStart = snPos->right;
+
+          if(snPos->left)
+            snPos->left->right = snPos->right;
+
+          if(snPos->right)
+            snPos->right->left = snPos->left;
+        }
+
         return;
+      }
 
       varUsedMap[&var].push(origin);
 
@@ -2847,14 +2875,27 @@ namespace occa {
         origin->nodeStart = thirdNodeStart;
         origin->nodeEnd   = thirdNodeEnd;
       }
+
+      if((declarationCount == 1) && removeVarStatement){
+        if(originUp.statementStart == snPos)
+          originUp.statementStart = snPos->right;
+
+        if(snPos->left)
+          snPos->left->right = snPos->right;
+
+        if(snPos->right)
+          snPos->right->left = snPos->left;
+      }
     }
 
     void parserBase::addInnerForsToStatement(statement &s,
-                                                    const int innerDim){
+                                             const int innerDim){
       statementNode *sn = s.statementStart;
 
       while(sn &&
-            statementHasBarrier( *(sn->value) ))
+            (sn->value->hasDescriptorVariable("occaShared") ||
+             sn->value->hasDescriptorVariable("exclusive")  ||
+             statementHasBarrier( *(sn->value) )))
         sn = sn->right;
 
       while(sn){
@@ -2867,8 +2908,8 @@ namespace occa {
     }
 
     statementNode* parserBase::addInnerForsBetweenBarriers(statement &origin,
-                                                                  statementNode *includeStart,
-                                                                  const int innerDim){
+                                                           statementNode *includeStart,
+                                                           const int innerDim){
       if(includeStart == NULL)
         return NULL;
 
@@ -3009,7 +3050,7 @@ namespace occa {
 
       // Get private and shared vars
       varInfoNode *varRoot = findVarsMovingToTop(s, loopSection);
-      varInfoNode *varPos  = varRoot;
+      varInfoNode *varPos  = lastNode(varRoot);
 
       statementNode *newStatementStart = NULL;
       statementNode *newStatementPos   = NULL;
@@ -3017,60 +3058,33 @@ namespace occa {
       while(varPos){
         statement *origin = (varOriginMap[varPos->value]);
 
+        // Ignore kernel arguments
         if(origin->type & functionStatementType){
-          varPos = varPos->right;
+          varPos = varPos->left;
           continue;
         }
 
         varInfo &info = *(varPos->value);
 
-        bool initWithValue = false;
-        bool infoHasShared = info.hasDescriptor("occaShared");
+        strNode *nodePos = origin->nodeStart;
+        int declPos = 0;
 
-        if(!infoHasShared){
-          if(origin->type & flowStatementType){
+        while(nodePos){
+          if(nodePos->type & unknownVariable){
+            if(nodePos->value == info.name)
+              break;
 
+            ++declPos;
           }
-          else{
-            strNode *nodePos = origin->nodeStart;
-            int declPos = 0;
 
-            while(nodePos){
-              if(nodePos->type & unknownVariable){
-                if(nodePos->value == info.name)
-                  break;
-
-                ++declPos;
-              }
-
-              nodePos = nodePos->right;
-            }
-
-            if((nodePos->right) &&
-               (nodePos->right->value == "="))
-              initWithValue = true;
-
-            splitDefineForVariable(origin,
-                                   info, nodePos,
-                                   declPos);
-          }
-        }
-        else{
-          statement &originUp  = *(origin->up);
-          statementNode *snPos = NULL;
-
-          snPos = originUp.statementStart;
-
-          while(snPos->value != origin)
-            snPos = snPos->right;
-
-          if(snPos == originUp.statementStart)
-            originUp.statementStart = originUp.statementStart->right;
-
-          snPos->pop();
+          nodePos = nodePos->right;
         }
 
-        varPos = varPos->right;
+        splitDefineForVariable(origin,
+                               info, nodePos,
+                               declPos);
+
+        varPos = varPos->left;
       }
 
       addInnerForsToStatement(s, innerDim);
@@ -3124,13 +3138,7 @@ namespace occa {
       }
     }
 
-    void parserBase::addOccaForsToKernel(statement &s){
-      if(s.statementStart == NULL)
-        return;
-
-      if(statementKernelUsesNativeOCCA(s))
-        return;
-
+    void parserBase::removeUnnecessaryBlocksInKernel(statement &s){
       statement *sPos = &s;
 
       // Get rid of empty blocks
@@ -3162,7 +3170,61 @@ namespace occa {
         else
           break;
       }
+    }
 
+    void parserBase::floatSharedVarsInKernel(statement &s){
+      statementNode *sn = s.statementStart;
+
+      statementNode *sharedStart = NULL;
+      statementNode *sharedPos   = NULL;
+
+      while(sn){
+        statementNode *sn2 = sn;
+        statement &s2      = *(sn->value);
+
+        sn = sn->right;
+
+        if((s2.type & declareStatementType) &&
+           (s2.hasDescriptorVariable("occaShared") ||
+            s2.hasDescriptorVariable("exclusive"))){
+
+          if(s.statementStart == sn2)
+            s.statementStart = sn;
+
+          if(sn2->left)
+            sn2->left->right = sn2->right;
+          if(sn2->right)
+            sn2->right->left = sn2->left;
+
+          sn2->left  = NULL;
+          sn2->right = NULL;
+
+          if(sharedStart){
+            sharedPos->right = sn2;
+            sn2->left        = sharedPos;
+            sharedPos        = sn2;
+          }
+          else{
+            sharedStart = sn2;
+            sharedPos   = sharedStart;
+          }
+        }
+      }
+
+      if(sharedStart){
+        if(s.statementStart == NULL)
+          s.statementStart = sharedStart;
+        else{
+          statementNode *oldStart = s.statementStart;
+
+          s.statementStart = sharedStart;
+          sharedPos->right = oldStart;
+          oldStart->left   = sharedPos;
+        }
+      }
+    }
+
+    void parserBase::addOccaForsToKernel(statement &s){
       addInnerFors(s);
       addOuterFors(s);
     }
@@ -3173,9 +3235,13 @@ namespace occa {
       while(statementPos){
         statement *s = statementPos->value;
 
-        if(statementIsAKernel(*s) &&
-           !statementKernelUsesNativeOKL(*s)){
+        if(statementIsAKernel(*s)            && // Kernel
+           (s->statementStart != NULL)       && //   not empty
+           !statementKernelUsesNativeOKL(*s) && //   not OKL
+           !statementKernelUsesNativeOCCA(*s)){ //   not OCCA
 
+          removeUnnecessaryBlocksInKernel(*s);
+          floatSharedVarsInKernel(*s);
           addOccaForsToKernel(*s);
         }
 

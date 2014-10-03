@@ -770,6 +770,9 @@ namespace occa {
 
     void statement::loadBlocksFromLastNode(strNode *end,
                                            const int startBlockPos){
+      if(end == NULL)
+        return;
+
       const int downCount = end->down.size();
 
       if(startBlockPos <= downCount){

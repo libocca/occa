@@ -31,10 +31,7 @@ int main(int argc, char **argv){
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  // addVectors = device.buildKernelFromSource("addVectors.occa",
-  //                                           "addVectors");
-
-  addVectors = device.buildKernelFromSource("addVectors.okl",
+  addVectors = device.buildKernelFromSource("addVectors.occa",
                                             "addVectors");
 
   int dims = 1;
