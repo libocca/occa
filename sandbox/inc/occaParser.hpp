@@ -172,6 +172,7 @@ namespace occa {
 
       void addOuterFors(statement &s);
 
+      void removeUnnecessaryBlocksInKernel(statement &s);
       void addOccaForsToKernel(statement &s);
 
       void addOccaFors();

@@ -43,9 +43,9 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("tests/PCGpart1.cl");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("tests/PCGpart1.cl");
+    std::cout << parsedContent << '\n';
+  }
 }

@@ -3,6 +3,7 @@
 namespace occa {
   namespace parserNamespace {
     parserBase::parserBase(){
+      macrosAreInitialized = false;
       globalScope = new statement(*this);
     }
 
@@ -27,8 +28,6 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      // std::cout << *globalScope << '\n';
-      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -43,6 +42,8 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
+      std::cout << *globalScope << '\n';
+      throw 1;
 
       // Also auto-adds barriers if needed
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
@@ -812,10 +813,13 @@ namespace occa {
     }
 
     bool parserBase::statementKernelUsesNativeOCCA(statement &s){
-      statement &sKernel = *(getStatementKernel(s));
+      statement *sKernel = getStatementKernel(s);
+
+      if(sKernel == NULL)
+        return false;
 
       std::string check = obfuscate("native", "occa");
-      varInfo *info = sKernel.hasVariableInScope(check);
+      varInfo *info = sKernel->hasVariableInScope(check);
 
       if(info != NULL)
         return true;
@@ -824,10 +828,13 @@ namespace occa {
     }
 
     bool parserBase::statementKernelUsesNativeOKL(statement &s){
-      statement &sKernel = *(getStatementKernel(s));
+      statement *sKernel = getStatementKernel(s);
+
+      if(sKernel == NULL)
+        return false;
 
       std::string check = obfuscate("native", "okl");
-      varInfo *info = sKernel.hasVariableInScope(check);
+      varInfo *info = sKernel->hasVariableInScope(check);
 
       if(info != NULL)
         return true;
@@ -1387,8 +1394,8 @@ namespace occa {
       if( !(s.type & functionPrototypeType) ){
         while(nodePos){
           if((nodePos->type & cudaKeywordType) &&
-             (nodePos->right)                 &&
-             (nodePos->right->value == ".")  &&
+             (nodePos->right)                  &&
+             (nodePos->right->value == ".")    &&
              (nodePos->right->right)){
 
             std::string &coord = nodePos->right->right->value;
@@ -3124,13 +3131,7 @@ namespace occa {
       }
     }
 
-    void parserBase::addOccaForsToKernel(statement &s){
-      if(s.statementStart == NULL)
-        return;
-
-      if(statementKernelUsesNativeOCCA(s))
-        return;
-
+    void parserBase::removeUnnecessaryBlocksInKernel(statement &s){
       statement *sPos = &s;
 
       // Get rid of empty blocks
@@ -3162,7 +3163,12 @@ namespace occa {
         else
           break;
       }
+    }
 
+    void parserBase::floatSharedVarsInKernel(statement &s){
+    }
+
+    void parserBase::addOccaForsToKernel(statement &s){
       addInnerFors(s);
       addOuterFors(s);
     }
@@ -3173,9 +3179,13 @@ namespace occa {
       while(statementPos){
         statement *s = statementPos->value;
 
-        if(statementIsAKernel(*s) &&
-           !statementKernelUsesNativeOKL(*s)){
+        if(statementIsAKernel(*s)            && // Kernel
+           (s.statementStart != NULL)        && //   not empty
+           !statementKernelUsesNativeOKL(*s) && //   not OKL
+           !statementKernelUsesNativeOCCA(*s)){ //   not OCCA
 
+          removeUnnecessaryBlocksInKernel(*s);
+          floatSharedVarsInKernel(*s);
           addOccaForsToKernel(*s);
         }
 
