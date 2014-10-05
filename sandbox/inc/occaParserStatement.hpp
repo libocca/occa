@@ -28,7 +28,6 @@ namespace occa {
       int statementCount;
       statementNode *statementStart, *statementEnd;
 
-      typeDef *typePtr;
       bool hasTypeDefinition;
 
       statement(parserBase &pb);
