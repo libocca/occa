@@ -2,7 +2,47 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
+  void mutex::init(){
+#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+    int error = pthread_mutex_init(&mutexHandle, NULL);
 
+    if(error){
+      std::cout << "Error initializing mutex\n";
+      throw 1;
+    }
+#else
+    mutexHandle = CreateMutex(NULL, FALSE, NULL);
+#endif
+  }
+
+  void mutex::free(){
+#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+    int error = pthread_mutex_destroy(&mutexHandle);
+
+    if(error){
+      std::cout << "Error freeing mutex\n";
+      throw 1;
+    }
+#else
+    CloseHandle(mutexHandle);
+#endif
+  }
+
+  void mutex::lock(){
+#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+    pthread_mutex_lock(&mutexHandle);
+#else
+    WaitForSingleObject(mutexHandle, INFINITE);
+#endif
+  }
+
+  void mutex::unlock(){
+#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+    pthread_mutex_unlock(&mutexHandle);
+#else
+    ReleaseMutex(mutexHandle);
+#endif
+  }
 
   double currentTime(){
 #if OCCA_OS == LINUX_OS
