@@ -941,6 +941,8 @@ namespace occa {
 
     void getEnvironmentVariables();
 
+    static void appendAvailableDevices(std::vector<device> &dList);
+
     void setCompiler(const std::string &compiler);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
     void setCompilerFlags(const std::string &compilerFlags);
@@ -1081,6 +1083,8 @@ namespace occa {
 
     int simdWidth();
   };
+
+  std::vector<device> getDeviceList();
   //==================================
 
   class kernelInfo {

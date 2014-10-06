@@ -220,6 +220,9 @@ namespace occa {
   void device_t<OpenCL>::getEnvironmentVariables();
 
   template <>
+  void device_t<OpenCL>::appendAvailableDevices(std::vector<device> &dList);
+
+  template <>
   void device_t<OpenCL>::setCompiler(const std::string &compiler_);
 
   template <>

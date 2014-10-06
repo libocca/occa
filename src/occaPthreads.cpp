@@ -627,6 +627,21 @@ namespace occa {
   }
 
   template <>
+  void device_t<Pthreads>::appendAvailableDevices(std::vector<device> &dList){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    const int coreCount = sysconf(_SC_NPROCESSORS_ONLN);
+#else
+#  warning "Core finding not implemented for this OS"
+    const int coreCount = 1;
+#endif
+
+    device d;
+    d.setup("Pthreads", coreCount, occa::compact);
+
+    dList.push_back(d);
+  }
+
+  template <>
   void device_t<Pthreads>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
   }

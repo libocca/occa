@@ -727,6 +727,20 @@ namespace occa {
   }
 
   template <>
+  void device_t<COI>::appendAvailableDevices(std::vector<device> &dList){
+    uint32_t deviceCount;
+    OCCA_COI_CHECK("Device: Get Count",
+                   COIEngineGetCount(COI_ISA_MIC, &deviceCount));
+
+    for(int i = 0; i < deviceCount; ++i){
+      device d;
+      d.setup("COI", i);
+
+      dList.push_back(d);
+    }
+  }
+
+  template <>
   void device_t<COI>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
   }

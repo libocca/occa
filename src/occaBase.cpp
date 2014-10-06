@@ -400,16 +400,27 @@ namespace occa {
 
   //---[ Device ]---------------------
   device::device() :
-    dHandle(NULL) {}
+    dHandle(NULL),
+    currentStream(NULL) {}
 
   device::device(const device &d) :
     mode_(d.mode_),
     strMode(d.strMode),
-    dHandle(d.dHandle) {}
+    dHandle(d.dHandle),
+
+    currentStream(d.currentStream),
+    streams(d.streams) {
+
+    if(dHandle)
+      dHandle->dev = this;
+  }
 
   device& device::operator = (const device &d){
     mode_   = d.mode_;
     dHandle = d.dHandle;
+
+    if(dHandle)
+      dHandle->dev = this;
 
     return *this;
   }
@@ -723,6 +734,27 @@ namespace occa {
 
   int device::simdWidth(){
     return dHandle->simdWidth();
+  }
+
+  std::vector<device> getDeviceList(){
+    std::vector<device> dList;
+
+    device_t<OpenMP>::appendAvailableDevices(dList);
+
+#if OCCA_PTHREADS_ENABLED
+    device_t<Pthreads>::appendAvailableDevices(dList);
+#endif
+#if OCCA_OPENCL_ENABLED
+    device_t<OpenCL>::appendAvailableDevices(dList);
+#endif
+#if OCCA_CUDA_ENABLED
+    device_t<CUDA>::appendAvailableDevices(dList);
+#endif
+#if OCCA_COI_ENABLED
+    device_t<COI>::appendAvailableDevices(dList);
+#endif
+
+    return dList;
   }
 
   void deviceIdentifier::load(const char *c, const size_t chars){

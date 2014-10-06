@@ -185,6 +185,9 @@ namespace occa {
   void device_t<COI>::getEnvironmentVariables();
 
   template <>
+  void device_t<COI>::appendAvailableDevices(std::vector<device> &dList);
+
+  template <>
   void device_t<COI>::setCompiler(const std::string &compiler_);
 
   template <>

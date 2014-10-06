@@ -153,6 +153,9 @@ namespace occa {
   void device_t<OpenMP>::getEnvironmentVariables();
 
   template <>
+  void device_t<OpenMP>::appendAvailableDevices(std::vector<device> &dList);
+
+  template <>
   void device_t<OpenMP>::setCompiler(const std::string &compiler_);
 
   template <>

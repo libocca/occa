@@ -205,6 +205,9 @@ namespace occa {
   void device_t<Pthreads>::getEnvironmentVariables();
 
   template <>
+  void device_t<Pthreads>::appendAvailableDevices(std::vector<device> &dList);
+
+  template <>
   void device_t<Pthreads>::setCompiler(const std::string &compiler_);
 
   template <>

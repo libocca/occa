@@ -1039,6 +1039,22 @@ namespace occa {
   }
 
   template <>
+  void device_t<OpenCL>::appendAvailableDevices(std::vector<device> &dList){
+    int platformCount = occa::cl::platformCount();
+
+    for(int p = 0; p < platformCount; ++p){
+      int deviceCount = occa::cl::deviceCountInPlatform(p);
+
+      for(int d = 0; d < deviceCount; ++d){
+        device dev;
+        dev.setup("OpenCL", p, d);
+
+        dList.push_back(dev);
+      }
+    }
+  }
+
+  template <>
   void device_t<OpenCL>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
   }
