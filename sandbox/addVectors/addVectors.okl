@@ -1,0 +1,22 @@
+void addVectors(const int entries,
+                const float * a,
+                const float * b,
+                float * ab){
+  for(int group = 0; group < groups; ++group; outer0){
+    for(int item = 0; item < items; ++item; inner0){
+      const int N = (item + (group * items));
+
+      if(N < entries)
+        ab[N] = a[N];
+    }
+  }
+
+  for(int group = 0; group < groups; ++group; outer0){
+    for(int item = 0; item < items; ++item; inner0){
+      const int N = (item + (group * items));
+
+      if(N < entries)
+        ab[entries + N] = b[N];
+    }
+  }
+}
