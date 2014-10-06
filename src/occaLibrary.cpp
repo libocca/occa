@@ -178,6 +178,7 @@ namespace occa {
 
       for(uint32_t i = 0; i < headerCount; ++i){
         const infoHeader_t &h = it->second;
+        ++it;
 
         char *buffer = new char[std::max(h.flagsBytes,
                                          std::max(h.contentBytes,
@@ -239,9 +240,6 @@ namespace occa {
       fread(buffer, sizeof(char), h.contentBytes, inFD);
 
       fclose(inFD);
-
-      std::cout << "buffer = " << buffer << '\n'
-                << "kernelName = " << kernelName << '\n';
 
       kernel k = dev.loadKernelFromLibrary(buffer, kernelName);
 
