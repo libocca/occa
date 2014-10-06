@@ -31,6 +31,14 @@ namespace occa {
       deviceIdentifier devID;
       std::string kernelName;
 
+      inline infoID_t() :
+        devID(),
+        kernelName("") {}
+
+      inline infoID_t(const infoID_t &id) :
+        devID(id.devID),
+        kernelName(id.kernelName) {}
+
       inline friend bool operator < (const infoID_t &a, const infoID_t &b){
         const int sc = a.devID.compare(b.devID);
 

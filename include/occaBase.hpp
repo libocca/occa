@@ -830,10 +830,17 @@ namespace occa {
     occa::mode mode_;
     flagMap_t flagMap;
 
+    inline deviceIdentifier() :
+      mode_(OpenMP) {}
+
+    inline deviceIdentifier(const deviceIdentifier &di) :
+      mode_(di.mode_),
+      flagMap(di.flagMap) {}
+
     void load(const char *c, const size_t chars);
     void load(const std::string &s);
 
-    std::string flattenFlagMap();
+    std::string flattenFlagMap() const;
 
     int compare(const deviceIdentifier &b) const;
   };

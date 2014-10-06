@@ -751,7 +751,7 @@ namespace occa {
     return load(s.c_str(), s.size());
   }
 
-  std::string deviceIdentifier::flattenFlagMap(){
+  std::string deviceIdentifier::flattenFlagMap() const {
     std::string ret = "";
 
     cFlagMapIterator it = flagMap.begin();
@@ -791,6 +791,9 @@ namespace occa {
 
       if(cmp)
         return cmp;
+
+      ++it1;
+      ++it2;
     }
 
     return 0;

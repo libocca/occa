@@ -232,12 +232,16 @@ namespace occa {
       const std::string hFilename = fileDatabase::getFilename(h.fileID);
       FILE *inFD = fopen(hFilename.c_str(), "rb");
 
-      char *buffer = new char[h.contentBytes];
+      char *buffer = new char[h.contentBytes + 1];
+      buffer[h.contentBytes] = '\0';
 
       fseek(inFD, h.contentOffset, SEEK_SET);
       fread(buffer, sizeof(char), h.contentBytes, inFD);
 
       fclose(inFD);
+
+      std::cout << "buffer = " << buffer << '\n'
+                << "kernelName = " << kernelName << '\n';
 
       kernel k = dev.loadKernelFromLibrary(buffer, kernelName);
 
