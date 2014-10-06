@@ -21,10 +21,10 @@ namespace occa {
     int platform, device;
 
     cl_platform_id platformID;
-    cl_device_id deviceID;
-    cl_context   context;
-    cl_program   program;
-    cl_kernel    kernel;
+    cl_device_id   deviceID;
+    cl_context     context;
+    cl_program     program;
+    cl_kernel      kernel;
   };
 
   struct OpenCLDeviceData_t {
@@ -62,6 +62,17 @@ namespace occa {
     int deviceCoreCount(int pID, int dID);
 
     occa::deviceInfo deviceInfo(int pID, int dID);
+
+    void createProgramAndKernel(OpenCLKernelData_t &data_,
+                                const char *content,
+                                const size_t contentBytes,
+                                const std::string &functionName,
+                                const std::string &flags = "",
+                                const std::string &cachedBinary = "",
+                                const std::string &iCachedBinary = "");
+
+    void saveProgramBinary(OpenCLKernelData_t &data_,
+                           const std::string &cachedBinary);
   };
 
   extern const cl_channel_type clFormats[8];

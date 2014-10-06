@@ -139,6 +139,13 @@ namespace occa {
     return *this;
   }
 
+  kernel& kernel::loadFromLibrary(const char *cache,
+                                  const std::string &functionName_){
+    kHandle->loadFromLibrary(cache, functionName_);
+
+    return *this;
+  }
+
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
     for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
@@ -556,6 +563,18 @@ namespace occa {
     return ker;
   }
 
+  kernel device::loadKernelFromLibrary(const char *cache,
+                                       const std::string &functionName){
+    kernel ker;
+
+    ker.mode_   = mode_;
+    ker.strMode = strMode;
+
+    ker.kHandle      = dHandle->loadKernelFromLibrary(cache, functionName);
+    ker.kHandle->dev = this;
+
+    return ker;
+  }
 
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,

@@ -862,7 +862,7 @@ namespace occa {
 
     kData_.chiefID = data_.chiefID;
 
-    k->loadFromLibrary(cache, functionName);
+    k->loadFromLibrary(cache, functionName_);
     return k;
   }
 

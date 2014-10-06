@@ -674,7 +674,7 @@ namespace occa {
                                                     const std::string &functionName_){
     kernel_v *k = new kernel_t<OpenMP>;
     k->dev = dev;
-    k->loadFromLibrary(cache, functionName);
+    k->loadFromLibrary(cache, functionName_);
     return k;
   }
 
