@@ -196,13 +196,13 @@ namespace occa {
       return dInfo;
     }
 
-    void createProgramAndKernel(OpenCLKernelData_t &data_,
-                                const char *content,
-                                const size_t contentBytes,
-                                const std::string &functionName,
-                                const std::string &flags,
-                                const std::string &cachedBinary,
-                                const std::string &iCachedBinary){
+    void buildKernelFromSource(OpenCLKernelData_t &data_,
+                               const char *content,
+                               const size_t contentBytes,
+                               const std::string &functionName,
+                               const std::string &flags,
+                               const std::string &cachedBinary,
+                               const std::string &iCachedBinary){
       cl_int error;
 
       data_.program = clCreateProgramWithSource(data_.context, 1, (const char **) &content, &contentBytes, &error);
@@ -258,6 +258,53 @@ namespace occa {
         std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]\n";
       else
         std::cout << "OpenCL compiled " << functionName << " from [Library]\n";
+    }
+
+    void buildKernelFromBinary(OpenCLKernelData_t &data_,
+                               const unsigned char *content,
+                               const size_t contentBytes,
+                               const std::string &functionName,
+                               const std::string &flags){
+      cl_int error, binaryError;
+
+      data_.program = clCreateProgramWithBinary(data_.context,
+                                                1, &(data_.deviceID),
+                                                &contentBytes,
+                                                (const unsigned char**) &content,
+                                                &binaryError, &error);
+
+      OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", binaryError);
+      OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
+
+      error = clBuildProgram(data_.program,
+                             1, &data_.deviceID,
+                             flags.c_str(),
+                             NULL, NULL);
+
+      if(error){
+        cl_int error;
+        char *log;
+        uintptr_t logSize;
+
+        clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
+
+        if(logSize > 2){
+          log = new char[logSize+1];
+
+          error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
+          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+          log[logSize] = '\0';
+
+          printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
+
+          delete[] log;
+        }
+      }
+
+      OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+
+      data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
+      OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
     }
 
     void saveProgramBinary(OpenCLKernelData_t &data_,
@@ -433,95 +480,15 @@ namespace occa {
 
     ::close(fileHandle);
 
-#if 0
-    data_.program = clCreateProgramWithSource(data_.context, 1, (const char **) &cFunction, &cLength, &error);
-
-    if(error)
-      releaseFile(cachedBinary);
-
-    std::cout << "OpenCL compiling " << functionName << " from [" << iCachedBinary << "]\n";
-
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
-
     std::string catFlags = info.flags + dev->dHandle->compilerFlags;
 
-    error = clBuildProgram(data_.program,
-                           1, &data_.deviceID,
-                           catFlags.c_str(),
-                           NULL, NULL);
+    cl::buildKernelFromSource(data_,
+                              cFunction, cLength,
+                              functionName,
+                              catFlags,
+                              cachedBinary, iCachedBinary);
 
-    if(error){
-      cl_int error;
-      char *log;
-      uintptr_t logSize;
-
-      clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
-
-      if(logSize > 2){
-        log = new char[logSize+1];
-
-        error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-        OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
-        log[logSize] = '\0';
-
-        printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
-
-        delete[] log;
-      }
-
-      releaseFile(cachedBinary);
-    }
-
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
-
-    data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
-
-    if(error)
-      releaseFile(cachedBinary);
-
-    OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
-
-    std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]\n";
-#else
-    std::string catFlags = info.flags + dev->dHandle->compilerFlags;
-
-    cl::createProgramAndKernel(data_,
-                               cFunction, cLength,
-                               functionName,
-                               catFlags,
-                               cachedBinary, iCachedBinary);
-#endif
-
-#if 0
-    {
-      uintptr_t binarySize;
-      char *binary;
-
-      error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(uintptr_t), &binarySize, NULL);
-
-      if(error)
-        releaseFile(cachedBinary);
-
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes", error);
-
-      binary = new char[binarySize + 1];
-
-      error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL);
-
-      if(error)
-        releaseFile(cachedBinary);
-
-      OCCA_CL_CHECK("saveProgramBinary: Getting Binary", error);
-
-      FILE *fp = fopen(cachedBinary.c_str(), "wb");
-      fwrite(binary, 1, binarySize, fp);
-      fclose(fp);
-
-      delete [] binary;
-    }
-#else
     cl::saveProgramBinary(data_, cachedBinary);
-#endif
 
     releaseFile(cachedBinary);
 
@@ -562,43 +529,10 @@ namespace occa {
 
     ::close(fileHandle);
 
-    data_.program = clCreateProgramWithBinary(data_.context,
-                                              1, &(data_.deviceID),
-                                              &fileSize,
-                                              (const unsigned char**) &cFile,
-                                              &binaryError, &error);
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", binaryError);
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
-
-    error = clBuildProgram(data_.program,
-                           1, &data_.deviceID,
-                           dev->dHandle->compilerFlags.c_str(),
-                           NULL, NULL);
-
-    if(error){
-      cl_int error;
-      char *log;
-      uintptr_t logSize;
-
-      clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, 0, NULL, &logSize);
-
-      if(logSize > 2){
-        log = new char[logSize+1];
-
-        error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-        OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
-        log[logSize] = '\0';
-
-        printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
-
-        delete[] log;
-      }
-    }
-
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
-
-    data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
-    OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
+    cl::buildKernelFromBinary(data_,
+                              cFile, fileSize,
+                              functionName,
+                              dev->dHandle->compilerFlags);
 
     delete [] cFile;
 
@@ -612,9 +546,9 @@ namespace occa {
 
     functionName = functionName_;
 
-    cl::createProgramAndKernel(data_,
-                               cache, strlen(cache),
-                               functionName_);
+    cl::buildKernelFromSource(data_,
+                              cache, strlen(cache),
+                              functionName_);
 
     return this;
   }

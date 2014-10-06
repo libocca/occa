@@ -63,13 +63,19 @@ namespace occa {
 
     occa::deviceInfo deviceInfo(int pID, int dID);
 
-    void createProgramAndKernel(OpenCLKernelData_t &data_,
+    void buildKernelFromSource(OpenCLKernelData_t &data_,
                                 const char *content,
                                 const size_t contentBytes,
                                 const std::string &functionName,
                                 const std::string &flags = "",
                                 const std::string &cachedBinary = "",
                                 const std::string &iCachedBinary = "");
+
+    void buildKernelFromBinary(OpenCLKernelData_t &data_,
+                               const unsigned char *content,
+                               const size_t contentBytes,
+                               const std::string &functionName,
+                               const std::string &flags = "");
 
     void saveProgramBinary(OpenCLKernelData_t &data_,
                            const std::string &cachedBinary);
