@@ -3,6 +3,9 @@
 #include "occa.hpp"
 
 void createLibrary(){
+  if(occa::fileExists("testLib"))
+    return;
+
   std::vector<occa::device> devices = occa::getDeviceList();
 
   const int deviceCount = devices.size();
