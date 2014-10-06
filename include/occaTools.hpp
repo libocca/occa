@@ -36,7 +36,7 @@ namespace occa {
     HANDLE mutexHandle;
 #endif
 
-    void init();
+    mutex_t();
     void free();
 
     void lock();

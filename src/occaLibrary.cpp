@@ -104,6 +104,8 @@ namespace occa {
         const uint64_t kernelNameOffset = *(buffer64++);
         const uint64_t kernelNameBytes  = *(buffer64++);
 
+        buffer32 = (uint32_t*) buffer64;
+
         infoID.kernelName = std::string(buffer + kernelNameOffset,
                                         kernelNameBytes);
 
@@ -150,7 +152,7 @@ namespace occa {
       const uint64_t headerOffset = headerCount * ((  sizeof(uint32_t)) +
                                                    (6*sizeof(uint64_t)));
 
-      uint64_t contentOffsets = headerOffset;
+      uint64_t contentOffsets = sizeof(headerCount) + headerOffset;
 
       for(uint32_t i = 0; i < headerCount; ++i){
         const infoHeader_t &h = it->second;

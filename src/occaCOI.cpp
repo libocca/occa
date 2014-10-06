@@ -851,12 +851,8 @@ namespace occa {
   void device_t<COI>::cacheKernelInLibrary(const std::string &filename,
                                            const std::string &functionName,
                                            const kernelInfo &info_){
-    library::infoHeader_t header;
-    library::infoID_t infoID;
-
     //---[ Creating shared library ]----
-    kernel_t<COI> tmpK;
-    tmpK.buildFromSource(filename, functionName, info_);
+    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
     kernelInfo info = info_;
@@ -885,8 +881,12 @@ namespace occa {
     cachedBinary = libPath + libName;
     //==================================
 
+    library::infoID_t infoID;
+
     infoID.devID      = getIdentifier();
     infoID.kernelName = functionName;
+
+    library::infoHeader_t &header = library::headerMap[infoID];
 
     header.fileID = -1;
     header.mode   = COI;

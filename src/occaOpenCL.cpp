@@ -1189,14 +1189,10 @@ namespace occa {
   void device_t<OpenCL>::cacheKernelInLibrary(const std::string &filename,
                                               const std::string &functionName,
                                               const kernelInfo &info_){
-    library::infoHeader_t header;
-    library::infoID_t infoID;
-
     //---[ Creating shared library ]----
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
-    kernel_t<OpenCL> tmpK;
-    tmpK.buildFromSource(filename, functionName, info_);
+    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
     kernelInfo info = info_;
@@ -1227,8 +1223,12 @@ namespace occa {
     std::string contents = readFile(iCachedBinary);
     //==================================
 
+    library::infoID_t infoID;
+
     infoID.devID      = getIdentifier();
     infoID.kernelName = functionName;
+
+    library::infoHeader_t &header = library::headerMap[infoID];
 
     header.fileID = -1;
     header.mode   = OpenCL;

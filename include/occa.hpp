@@ -7,6 +7,7 @@
 #include "occaTools.hpp"
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 #include "occaTimer.hpp"
 
 #endif
