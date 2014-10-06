@@ -21,20 +21,19 @@ int main(int argc, char **argv){
   createLibrary();
   loadFromLibrary();
 
-  int entries = 5;
-
-  float *a  = new float[entries];
-  float *b  = new float[entries];
-  float *ab = new float[entries];
-
   typedef std::vector<occa::device> deviceList;
 
   deviceList devices      = occa::getDeviceList();
   deviceList::iterator it = devices.begin();
 
   while(it != devices.end()){
-    occa::device &device = *(it++);
+    int entries = 5;
 
+    float *a  = new float[entries];
+    float *b  = new float[entries];
+    float *ab = new float[entries];
+
+    occa::device &device = *(it++);
     occa::kernel addVectors;
     occa::memory o_a, o_b, o_ab;
 
@@ -80,11 +79,11 @@ int main(int argc, char **argv){
     o_a.free();
     o_b.free();
     o_ab.free();
-  }
 
-  delete [] a;
-  delete [] b;
-  delete [] ab;
+    delete [] a;
+    delete [] b;
+    delete [] ab;
+  }
 
   return 0;
 }

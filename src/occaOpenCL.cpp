@@ -1040,7 +1040,6 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::appendAvailableDevices(std::vector<device> &dList){
-    return;
     int platformCount = occa::cl::platformCount();
 
     for(int p = 0; p < platformCount; ++p){
