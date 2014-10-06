@@ -700,6 +700,57 @@ namespace occa {
     return dHandle->simdWidth();
   }
 
+  void deviceIdentifier::load(const char *c, const size_t chars){
+    const char *c1 = c;
+
+    while(((c1 - c) < chars) && (*c1 != '\0')){
+      const char *c2 = c1;
+      const char *c3;
+
+      while(*c2 != '|')
+        ++c2;
+
+      c3 = (c2 + 1);
+
+      while(((c3 - c) < chars) &&
+            (*c3 != '\0') && (*c3 != '|'))
+        ++c3;
+
+      flagMap[std::string(c1, c2 - c1)] = std::string(c2 + 1, c3 - c2 - 1);
+
+      c1 = (c3 + 1);
+    }
+  }
+
+  void deviceIdentifier::load(const std::string &s){
+    return load(s.c_str(), s.size());
+  }
+
+  std::string deviceIdentifier::flattenFlagMap(){
+    std::string ret = "";
+
+    cFlagMapIterator it = flagMap.begin();
+
+    if(it == flagMap.end())
+      return "";
+
+    ret += it->first;
+    ret += '|';
+    ret += it->second;
+    ++it;
+
+    while(it != flagMap.end()){
+      ret += '|';
+      ret += it->first;
+      ret += '|';
+      ret += it->second;
+
+      ++it;
+    }
+
+    return ret;
+  }
+
   int deviceIdentifier::compare(const deviceIdentifier &b) const {
     if(mode_ != b.mode_)
       return (mode_ < b.mode_) ? -1 : 1;

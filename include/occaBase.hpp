@@ -821,6 +821,11 @@ namespace occa {
     occa::mode mode_;
     flagMap_t flagMap;
 
+    void load(const char *c, const size_t chars);
+    void load(const std::string &s);
+
+    std::string flattenFlagMap();
+
     int compare(const deviceIdentifier &b) const;
   };
 
