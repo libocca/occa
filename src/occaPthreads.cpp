@@ -77,6 +77,11 @@ namespace occa {
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
@@ -702,6 +707,59 @@ namespace occa {
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
+                                                const std::string &functionName,
+                                                const kernelInfo &info_){
+    library::infoHeader_t header;
+    library::infoID_t infoID;
+
+    //---[ Creating shared library ]----
+    kernel_t<Pthreads> tmpK;
+    tmpK.buildFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_CPU"     , 1);
+    info.addDefine("OCCA_USING_PTHREADS", 1);
+
+    info.addOCCAKeywords(occaPthreadsDefines);
+
+    std::stringstream salt;
+    salt << "Pthreads"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+    //==================================
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    header.fileID = -1;
+    header.mode   = Pthreads;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(cachedBinary);
+    header.contentBytes  = cachedBinary.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
   }
 
   template <>

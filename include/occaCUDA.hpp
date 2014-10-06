@@ -3,6 +3,7 @@
 #  define OCCA_CUDA_HEADER
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -213,6 +214,11 @@ namespace occa {
   template <>
   kernel_v* device_t<CUDA>::buildKernelFromBinary(const std::string &filename,
                                                   const std::string &functionName_);
+
+  template <>
+  void device_t<CUDA>::cacheKernelInLibrary(const std::string &filename,
+                                            const std::string &functionName_,
+                                            const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,

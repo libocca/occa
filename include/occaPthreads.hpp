@@ -13,6 +13,7 @@
 #include <queue>
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -247,6 +248,11 @@ namespace occa {
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromBinary(const std::string &filename,
                                                       const std::string &functionName_);
+
+  template <>
+  void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
+                                                const std::string &functionName_,
+                                                const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,

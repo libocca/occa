@@ -47,6 +47,19 @@ namespace occa {
     mutex_t mutex;
     headerMap_t headerMap;
 
+    std::string scratchPad;
+
+    size_t addToScratchPad(const std::string &s){
+      mutex.lock();
+
+      size_t offset = scratchPad.size();
+      scratchPad += s;
+
+      mutex.unlock();
+
+      return offset;
+    }
+
     void load(const std::string &filename){
       //---[ Load file ]------
       struct stat fileInfo;
@@ -164,27 +177,38 @@ namespace occa {
       for(uint32_t i = 0; i < headerCount; ++i){
         const infoHeader_t &h = it->second;
 
-        const std::string hFilename = fileDatabase::getFilename(h.fileID);
-        FILE *inFD = fopen(hFilename.c_str(), "rb");
-
         char *buffer = new char[std::max(h.flagsBytes,
                                          std::max(h.contentBytes,
                                                   h.kernelNameBytes))];
 
+        if(0 <= h.fileID){
+          const std::string hFilename = fileDatabase::getFilename(h.fileID);
+          FILE *inFD = fopen(hFilename.c_str(), "rb");
 
-        fseek(inFD, h.flagsOffset, SEEK_SET);
-        fread(buffer , sizeof(char), h.flagsBytes, inFD);
-        fwrite(buffer, sizeof(char), h.flagsBytes, outFD);
+          fseek(inFD, h.flagsOffset, SEEK_SET);
+          fread(buffer , sizeof(char), h.flagsBytes, inFD);
+          fwrite(buffer, sizeof(char), h.flagsBytes, outFD);
 
-        fread(buffer , sizeof(char), h.contentBytes, inFD);
-        fwrite(buffer, sizeof(char), h.contentBytes, outFD);
+          fread(buffer , sizeof(char), h.contentBytes, inFD);
+          fwrite(buffer, sizeof(char), h.contentBytes, outFD);
 
-        fread(buffer , sizeof(char), h.kernelNameBytes, inFD);
-        fwrite(buffer, sizeof(char), h.kernelNameBytes, outFD);
+          fread(buffer , sizeof(char), h.kernelNameBytes, inFD);
+          fwrite(buffer, sizeof(char), h.kernelNameBytes, outFD);
 
-        fclose(inFD);
+          fclose(inFD);
 
-        delete [] buffer;
+          delete [] buffer;
+        }
+        else{
+          const char *c  = scratchPad.c_str();
+          const char *c1 = c + h.flagsOffset;
+          const char *c2 = c + h.contentOffset;
+          const char *c3 = c + h.kernelNameOffset;
+
+          fwrite(c1, sizeof(char), h.flagsBytes     , outFD);
+          fwrite(c2, sizeof(char), h.contentBytes   , outFD);
+          fwrite(c3, sizeof(char), h.kernelNameBytes, outFD);
+        }
       }
 
       fclose(outFD);

@@ -903,6 +903,55 @@ namespace occa {
   }
 
   template <>
+  void device_t<CUDA>::cacheKernelInLibrary(const std::string &filename,
+                                            const std::string &functionName,
+                                            const kernelInfo &info_){
+    library::infoHeader_t header;
+    library::infoID_t infoID;
+
+    //---[ Creating shared library ]----
+    kernel_t<CUDA> tmpK;
+    tmpK.buildFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_GPU" , 1);
+    info.addDefine("OCCA_USING_CUDA", 1);
+
+    info.addOCCAKeywords(occaCUDADefines);
+
+    std::stringstream salt;
+    salt << "CUDA"
+         << info.salt()
+         << parser::version
+         << dev->dHandle->compilerEnvScript
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string contents     = readFile(cachedBinary);
+    //==================================
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    header.fileID = -1;
+    header.mode   = CUDA;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(contents);
+    header.contentBytes  = contents.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
+  }
+
+  template <>
   kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
                                                   const std::string &functionName){
     OCCA_EXTRACT_DATA(CUDA, Device);

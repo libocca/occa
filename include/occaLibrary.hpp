@@ -57,6 +57,10 @@ namespace occa {
     extern mutex_t mutex;
     extern headerMap_t headerMap;
 
+    extern std::string scratchPad;
+
+    size_t addToScratchPad(const std::string &s);
+
     void load(const std::string &filename);
     void save(const std::string &filename);
 

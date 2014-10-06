@@ -563,6 +563,12 @@ namespace occa {
     return ker;
   }
 
+  void device::cacheKernelInLibrary(const std::string &filename,
+                                    const std::string &functionName,
+                                    const kernelInfo &info_){
+    dHandle->cacheKernelInLibrary(filename, functionName, info_);
+  }
+
   kernel device::loadKernelFromLibrary(const char *cache,
                                        const std::string &functionName){
     kernel ker;

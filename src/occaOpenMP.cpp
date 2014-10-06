@@ -668,6 +668,63 @@ namespace occa {
   }
 
   template <>
+  void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
+                                              const std::string &functionName,
+                                              const kernelInfo &info_){
+    library::infoHeader_t header;
+    library::infoID_t infoID;
+
+    //---[ Creating shared library ]----
+    kernel_t<OpenMP> tmpK;
+    tmpK.buildFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_CPU"   , 1);
+    info.addDefine("OCCA_USING_OPENMP", 1);
+
+#if OCCA_OPENMP_ENABLED
+    info.addIncludeDefine("omp.h");
+#endif
+
+    info.addOCCAKeywords(occaOpenMPDefines);
+
+    std::stringstream salt;
+    salt << "OpenMP"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+    //==================================
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    header.fileID = -1;
+    header.mode   = OpenMP;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(cachedBinary);
+    header.contentBytes  = cachedBinary.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
+  }
+
+  template <>
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName_){
     kernel_v *k = new kernel_t<OpenMP>;

@@ -889,6 +889,10 @@ namespace occa {
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
                                             const std::string &functionName_) = 0;
 
+    virtual void cacheKernelInLibrary(const std::string &filename,
+                                      const std::string &functionName_,
+                                      const kernelInfo &info_ = defaultKernelInfo) = 0;
+
     virtual kernel_v* loadKernelFromLibrary(const char *cache,
                                             const std::string &functionName_) = 0;
 
@@ -953,6 +957,10 @@ namespace occa {
 
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);
+
+    void cacheKernelInLibrary(const std::string &filename,
+                              const std::string &functionName_,
+                              const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_v* loadKernelFromLibrary(const char *cache,
                                     const std::string &functionName_);
@@ -1031,6 +1039,10 @@ namespace occa {
 
     kernel buildKernelFromBinary(const std::string &filename,
                                  const std::string &functionName);
+
+    void cacheKernelInLibrary(const std::string &filename,
+                              const std::string &functionName_,
+                              const kernelInfo &info_ = defaultKernelInfo);
 
     kernel loadKernelFromLibrary(const char *cache,
                                  const std::string &functionName_);

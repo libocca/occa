@@ -3,6 +3,7 @@
 #  define OCCA_OPENCL_HEADER
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -262,6 +263,11 @@ namespace occa {
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromBinary(const std::string &filename,
                                                     const std::string &functionName_);
+
+  template <>
+  void device_t<OpenCL>::cacheKernelInLibrary(const std::string &filename,
+                                              const std::string &functionName_,
+                                              const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,

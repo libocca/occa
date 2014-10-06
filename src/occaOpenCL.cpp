@@ -418,7 +418,7 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_GPU"   , 1); // [-] Is it really?
+    info.addDefine("OCCA_USING_GPU"   , 1);
     info.addDefine("OCCA_USING_OPENCL", 1);
 
     info.addOCCAKeywords(occaOpenCLDefines);
@@ -1183,6 +1183,66 @@ namespace occa {
 
     k->buildFromBinary(filename, functionName);
     return k;
+  }
+
+  template <>
+  void device_t<OpenCL>::cacheKernelInLibrary(const std::string &filename,
+                                              const std::string &functionName,
+                                              const kernelInfo &info_){
+    library::infoHeader_t header;
+    library::infoID_t infoID;
+
+    //---[ Creating shared library ]----
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    kernel_t<OpenCL> tmpK;
+    tmpK.buildFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_GPU"   , 1);
+    info.addDefine("OCCA_USING_OPENCL", 1);
+
+    info.addOCCAKeywords(occaOpenCLDefines);
+
+    std::stringstream salt;
+    salt << "OpenCL"
+         << data_.platform << '-' << data_.device
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+
+    std::string prefix, name;
+    getFilePrefixAndName(cachedBinary, prefix, name);
+
+    std::string extension = getFileExtension(filename);
+
+    const std::string iCachedBinary = prefix + "i_" + name;
+
+    std::string contents = readFile(iCachedBinary);
+    //==================================
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    header.fileID = -1;
+    header.mode   = OpenCL;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(contents);
+    header.contentBytes  = contents.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
   }
 
   template <>
