@@ -13,6 +13,10 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
+    nestedKernelCount = 1;
+    setDimsKernels    = NULL;
+    nestedKernels     = NULL;
+
     startTime = (void*) new double;
     endTime   = (void*) new double;
   }
@@ -28,6 +32,10 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
+    nestedKernelCount = k.nestedKernelCount;
+    setDimsKernels    = k.setDimsKernels;
+    nestedKernels     = k.nestedKernels;
+
     startTime = k.startTime;
     endTime   = k.endTime;
   }
@@ -42,6 +50,10 @@ namespace occa {
     dims  = k.dims;
     inner = k.inner;
     outer = k.outer;
+
+    nestedKernelCount = k.nestedKernelCount;
+    setDimsKernels    = k.setDimsKernels;
+    nestedKernels     = k.nestedKernels;
 
     *((double*) startTime) = *((double*) k.startTime);
     *((double*) endTime)   = *((double*) k.endTime);
@@ -100,9 +112,64 @@ namespace occa {
 
     data = new OpenMPKernelData_t;
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
+    //---[ Create Intermediate ]--------
+    std::string prefix, name;
+    getFilePrefixAndName(cachedBinary, prefix, name);
+
+    std::string extension = getFileExtension(filename);
+
+    const std::string iCachedBinary = prefix + "i_" + name;
+    if(extension == "okl"){
+      const std::string pCachedBinary = prefix + "p_" + name;
+      parser fileParser;
+
+      std::ofstream fs;
+      fs.open(pCachedBinary.c_str());
+
+      fs << info.header << readFile(filename);
+
+      fs.close();
+
+      fs.open(iCachedBinary.c_str());
+      fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
+
+      fs.close();
+
+      kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
+
+      if(kIt != fileParser.kernelInfoMap.end()){
+        parserNamespace::kernelInfo &kInfo = *((kIt++)->second);
+
+        nestedKernelCount = kInfo.nestedKernels.size();
+
+        if(nestedKernelCount != 1){
+          std::stringstream ss;
+          nestedKernels = new kernel_v*[nestedKernelCount];
+
+          releaseFile(cachedBinary);
+
+          for(int k = 0; k < nestedKernelCount; ++k){
+            ss.str("");
+            ss << k;
+
+            nestedKernels[k] = dev->dHandle->buildKernelFromSource(filename,
+                                                                   kInfo.baseName + ss.str(),
+                                                                   info_);
+          }
+
+          return this;
+        }
+      }
+    }
+    else{
+      std::ofstream fs;
+      fs.open(iCachedBinary.c_str());
+
+      fs << info.occaKeywords << info.header << readFile(filename);
+
+      fs.close();
+    }
+    //==================================
 
     std::stringstream command;
 

@@ -197,6 +197,11 @@ namespace occa {
     return ss.str();
   }
 
+  bool fileExists(const std::string &filename){
+    struct stat buffer;
+    return (stat(filename.c_str(), &buffer) == 0);
+  }
+
   std::string readFile(const std::string &filename){
     struct stat fileInfo;
 
