@@ -205,7 +205,6 @@ namespace occa {
 #endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
-
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
@@ -228,8 +227,7 @@ namespace occa {
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
                                                       const std::string &functionName_){
-
-    return this;
+    return buildFromBinary(cache, functionName_);
   }
 
   // [-] Missing

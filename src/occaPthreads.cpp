@@ -246,8 +246,7 @@ namespace occa {
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
                                                           const std::string &functionName_){
-
-    return this;
+    return buildFromBinary(cache, functionName_);
   }
 
   // [-] Missing

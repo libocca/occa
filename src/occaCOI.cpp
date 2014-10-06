@@ -218,8 +218,7 @@ namespace occa {
   template <>
   kernel_t<COI>* kernel_t<COI>::loadFromLibrary(const char *cache,
                                                 const std::string &functionName_){
-
-    return this;
+    return buildFromBinary(cache, functionName_);
   }
 
   // [-] Missing

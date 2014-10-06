@@ -239,6 +239,12 @@ namespace occa {
 
     functionName = functionName_;
 
+    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
+                    cuModuleLoadData(&data_.module, cache));
+
+    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
+                    cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
+
     return this;
   }
 
