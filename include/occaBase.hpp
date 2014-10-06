@@ -459,6 +459,10 @@ namespace occa {
     int dims;
     dim inner, outer;
 
+    int nestedKernelCount;
+    kernel_v **setDimsKernels;
+    kernel_v **nestedKernels;
+
     int preferredDimSize_;
 
     void *startTime, *endTime;
@@ -527,10 +531,6 @@ namespace occa {
     std::string strMode;
 
     kernel_v *kHandle;
-
-    int nestedKernelCount;
-    kernel_v **setDimsKernels;
-    kernel_v **nestedKernels;
 
     int argumentCount;
     kernelArg arguments[OCCA_MAX_ARGS];

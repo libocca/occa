@@ -91,31 +91,19 @@ namespace occa {
     mode_(),
     strMode(""),
 
-    kHandle(NULL),
-
-    nestedKernelCount(1),
-    setDimsKernels(NULL),
-    nestedKernels(NULL) {}
+    kHandle(NULL) {}
 
   kernel::kernel(const kernel &k) :
     mode_(k.mode_),
     strMode(k.strMode),
 
-    kHandle(k.kHandle),
-
-    nestedKernelCount(k.nestedKernelCount),
-    setDimsKernels(k.setDimsKernels),
-    nestedKernels(k.nestedKernels) {}
+    kHandle(k.kHandle) {}
 
   kernel& kernel::operator = (const kernel &k){
     mode_   = k.mode_;
     strMode = k.strMode;
 
     kHandle = k.kHandle;
-
-    nestedKernelCount = k.nestedKernelCount;
-    setDimsKernels    = k.setDimsKernels;
-    nestedKernels     = k.nestedKernels;
 
     return *this;
   }
@@ -155,13 +143,22 @@ namespace occa {
     for(int i = dims; i < 3; ++i)
       inner[i] = outer[i] = 1;
 
-    kHandle->dims  = dims;
-    kHandle->inner = inner;
-    kHandle->outer = outer;
+    if(kHandle->nestedKernelCount == 1){
+      kHandle->dims  = dims;
+      kHandle->inner = inner;
+      kHandle->outer = outer;
+    }
+    else{
+      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
+        kHandle->nestedKernels[k]->dims  = dims;
+        kHandle->nestedKernels[k]->inner = inner;
+        kHandle->nestedKernels[k]->outer = outer;
+      }
+    }
   }
 
   int kernel::preferredDimSize(){
-    if(nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 1){
       return kHandle->preferredDimSize();
     }
     else{
@@ -197,33 +194,36 @@ namespace occa {
 #include "operators/occaOperatorDefinitions.cpp"
 
   double kernel::timeTaken(){
-    if(nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 1){
       return kHandle->timeTaken();
     }
     else{
-      void *start = nestedKernels[0]->startTime;
-      void *end   = nestedKernels[nestedKernelCount - 1]->endTime;
+      kernel_v *k1 = kHandle->nestedKernels[0];
+      kernel_v *k2 = kHandle->nestedKernels[kHandle->nestedKernelCount - 1];
 
-      return nestedKernels[0]->timeTakenBetween(start, end);
+      void *start = k1->startTime;
+      void *end   = k2->endTime;
+
+      return k1->timeTakenBetween(start, end);
     }
   }
 
   void kernel::free(){
-    if(nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 1){
       kHandle->free();
       delete kHandle;
     }
     else{
-      for(int k = 0; k < nestedKernelCount; ++k){
-        setDimsKernels[k]->free();
-        delete setDimsKernels[k];
+      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
+        // kHandle->setDimsKernels[k]->free();
+        // delete kHandle->setDimsKernels[k];
 
-        nestedKernels[k]->free();
-        delete nestedKernels[k];
+        kHandle->nestedKernels[k]->free();
+        delete kHandle->nestedKernels[k];
       }
 
-      delete setDimsKernels;
-      delete nestedKernels;
+      // delete kHandle->setDimsKernels;
+      delete kHandle->nestedKernels;
     }
   }
   //==================================
