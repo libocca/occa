@@ -459,6 +459,10 @@ namespace occa {
     currentStream = genStream();
   }
 
+  deviceIdentifier device::getIdentifier(){
+    return dHandle->getIdentifier();
+  }
+
   void device::setup(const std::string &m,
                      const int arg1, const int arg2){
     setup(strToMode(m), arg1, arg2);
@@ -694,6 +698,26 @@ namespace occa {
 
   int device::simdWidth(){
     return dHandle->simdWidth();
+  }
+
+  int deviceIdentifier::compare(const deviceIdentifier &b) const {
+    if(mode_ != b.mode_)
+      return (mode_ < b.mode_) ? -1 : 1;
+
+    cFlagMapIterator it1 =   flagMap.begin();
+    cFlagMapIterator it2 = b.flagMap.begin();
+
+    while(it1 != flagMap.end()){
+      const std::string &s1 = it1->second;
+      const std::string &s2 = it2->second;
+
+      const int cmp = s1.compare(s2);
+
+      if(cmp)
+        return cmp;
+    }
+
+    return 0;
   }
   //==================================
 };

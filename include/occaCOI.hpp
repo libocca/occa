@@ -174,6 +174,9 @@ namespace occa {
   void device_t<COI>::setup(const int platform, const int device);
 
   template <>
+  deviceIdentifier device_t<COI>::getIdentifier();
+
+  template <>
   void device_t<COI>::getEnvironmentVariables();
 
   template <>

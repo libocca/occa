@@ -672,6 +672,15 @@ namespace occa {
   }
 
   template <>
+  deviceIdentifier device_t<COI>::getIdentifier(){
+    deviceIdentifier dID;
+
+    dID.mode_ = COI;
+
+    return dID;
+  }
+
+  template <>
   void device_t<COI>::getEnvironmentVariables(){
     const char *c_compiler = getenv("OCCA_COI_COMPILER");
 

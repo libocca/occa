@@ -812,6 +812,18 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+  class deviceIdentifier {
+  public:
+    typedef std::map<std::string,std::string> flagMap_t;
+    typedef flagMap_t::iterator               flagMapIterator;
+    typedef flagMap_t::const_iterator         cFlagMapIterator;
+
+    occa::mode mode_;
+    flagMap_t flagMap;
+
+    int compare(const deviceIdentifier &b) const;
+  };
+
   template <occa::mode>
   std::vector<occa::deviceInfo> availableDevices();
 
@@ -834,6 +846,8 @@ namespace occa {
     virtual inline ~device_v(){}
 
     virtual void setup(const int arg1, const int arg2) = 0;
+
+    virtual deviceIdentifier getIdentifier() = 0;
 
     virtual void getEnvironmentVariables() = 0;
 
@@ -894,6 +908,8 @@ namespace occa {
     device_t<mode>& operator = (const device_t<mode> &k);
 
     void setup(const int arg1, const int arg2);
+
+    deviceIdentifier getIdentifier();
 
     void getEnvironmentVariables();
 
@@ -964,6 +980,8 @@ namespace occa {
                const int arg1 = 0, const int arg2 = 0);
     void setup(const std::string &m,
                const int arg1 = 0, const int arg2 = 0);
+
+    deviceIdentifier getIdentifier();
 
     std::string& mode();
 

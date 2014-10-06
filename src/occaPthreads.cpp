@@ -563,6 +563,15 @@ namespace occa {
   }
 
   template <>
+  deviceIdentifier device_t<Pthreads>::getIdentifier(){
+    deviceIdentifier dID;
+
+    dID.mode_ = Pthreads;
+
+    return dID;
+  }
+
+  template <>
   void device_t<Pthreads>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_PTHREADS_COMPILER");
 

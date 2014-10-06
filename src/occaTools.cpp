@@ -2,7 +2,7 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
-  void mutex::init(){
+  void mutex_t::init(){
 #if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
@@ -15,7 +15,7 @@ namespace occa {
 #endif
   }
 
-  void mutex::free(){
+  void mutex_t::free(){
 #if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
     int error = pthread_mutex_destroy(&mutexHandle);
 
@@ -28,7 +28,7 @@ namespace occa {
 #endif
   }
 
-  void mutex::lock(){
+  void mutex_t::lock(){
 #if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
     pthread_mutex_lock(&mutexHandle);
 #else
@@ -36,7 +36,7 @@ namespace occa {
 #endif
   }
 
-  void mutex::unlock(){
+  void mutex_t::unlock(){
 #if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
     pthread_mutex_unlock(&mutexHandle);
 #else

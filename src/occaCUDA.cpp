@@ -656,10 +656,11 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+
   template <>
   device_t<CUDA>::device_t() {
     data            = NULL;
-    memoryAllocated            = 0;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
@@ -710,6 +711,40 @@ namespace occa {
 
     OCCA_CUDA_CHECK("Device: Creating Context",
                     cuCtxCreate(&data_.context, CU_CTX_SCHED_AUTO, data_.device));
+  }
+
+  template <>
+  deviceIdentifier device_t<CUDA>::getIdentifier(){
+    deviceIdentifier dID;
+
+    dID.mode_ = CUDA;
+
+    const size_t archPos = compilerFlags.find("-arch=sm_");
+
+    if(archPos == std::string::npos){
+      OCCA_EXTRACT_DATA(CUDA, Device);
+
+      std::stringstream archSM_;
+
+      int major, minor;
+      OCCA_CUDA_CHECK("Getting CUDA Device Arch",
+                      cuDeviceComputeCapability(&major, &minor, data_.device) );
+
+      archSM_ << major << minor;
+
+      dID.flagMap["arch"] = archSM_.str();
+    }
+    else{
+      const char *c0 = (compilerFlags.c_str() + archPos);
+      const char *c1 = c0;
+
+      while((*c0 != '\0') && (*c0 != ' '))
+        ++c1;
+
+      dID.flagMap["arch"] = std::string(c0, c1 - c0);
+    }
+
+    return dID;
   }
 
   template <>

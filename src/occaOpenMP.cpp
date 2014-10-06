@@ -510,6 +510,15 @@ namespace occa {
   void device_t<OpenMP>::setup(const int unusedArg1, const int unusedArg2){}
 
   template <>
+  deviceIdentifier device_t<OpenMP>::getIdentifier(){
+    deviceIdentifier dID;
+
+    dID.mode_ = OpenMP;
+
+    return dID;
+  }
+
+  template <>
   void device_t<OpenMP>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_OPENMP_COMPILER");
 

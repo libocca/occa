@@ -194,6 +194,9 @@ namespace occa {
   void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo);
 
   template <>
+  deviceIdentifier device_t<Pthreads>::getIdentifier();
+
+  template <>
   void device_t<Pthreads>::getEnvironmentVariables();
 
   template <>

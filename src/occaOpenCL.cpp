@@ -962,6 +962,15 @@ namespace occa {
   }
 
   template <>
+  deviceIdentifier device_t<OpenCL>::getIdentifier(){
+    deviceIdentifier dID;
+
+    dID.mode_ = OpenCL;
+
+    return dID;
+  }
+
+  template <>
   void device_t<OpenCL>::getEnvironmentVariables(){
     char *c_compilerFlags = getenv("OCCA_OPENCL_COMPILER_FLAGS");
     if(c_compilerFlags != NULL)

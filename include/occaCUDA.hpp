@@ -160,6 +160,9 @@ namespace occa {
   void device_t<CUDA>::setup(const int device, const int unusedArg);
 
   template <>
+  deviceIdentifier device_t<CUDA>::getIdentifier();
+
+  template <>
   void device_t<CUDA>::getEnvironmentVariables();
 
   template <>
