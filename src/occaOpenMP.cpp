@@ -515,6 +515,24 @@ namespace occa {
 
     dID.mode_ = OpenMP;
 
+    const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
+
+    dID.flagMap["compiler"]     = compiler;
+    dID.flagMap["debugEnabled"] = (debugEnabled ? "1" : "0");
+
+    for(int i = 0; i <= 3; ++i){
+      std::string flag = "-O";
+      flag += '0' + i;
+
+      if(compilerFlags.find(flag) != std::string::npos){
+        dID.flagMap["O"] = '0' + i;
+        break;
+      }
+
+      if(i == 3)
+        dID.flagMap["O"] = "None";
+    }
+
     return dID;
   }
 
