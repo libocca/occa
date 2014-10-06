@@ -1,0 +1,15 @@
+occaKernel void addVectors(occaKernelInfoArg,
+                           occaConst int occaVariable entries,
+                           occaConst occaPointer float * a,
+                           occaConst occaPointer float * b,
+                           occaPointer           float * ab){
+  occaParallelFor
+  occaOuterFor0{
+    occaInnerFor0{
+      const int N = occaGlobalId0;
+
+      if(N < entries)
+        ab[N] = a[N] + b[N];
+    }
+  }
+}
