@@ -233,6 +233,16 @@ namespace occa {
   }
 
   template <>
+  kernel_t<CUDA>* kernel_t<CUDA>::loadFromLibrary(const char *cache,
+                                                  const std::string &functionName_){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    functionName = functionName_;
+
+    return this;
+  }
+
+  template <>
   int kernel_t<CUDA>::preferredDimSize(){
     preferredDimSize_ = 32;
     return 32;
@@ -714,7 +724,7 @@ namespace occa {
   }
 
   template <>
-  deviceIdentifier device_t<CUDA>::getIdentifier(){
+  deviceIdentifier device_t<CUDA>::getIdentifier() const {
     deviceIdentifier dID;
 
     dID.mode_ = CUDA;
@@ -883,6 +893,25 @@ namespace occa {
     kData_.context = data_.context;
 
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
+                                                  const std::string &functionName){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
+    kernel_v *k = new kernel_t<CUDA>;
+
+    k->dev  = dev;
+    k->data = new CUDAKernelData_t;
+
+    CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
+
+    kData_.device  = data_.device;
+    kData_.context = data_.context;
+
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

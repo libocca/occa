@@ -473,6 +473,9 @@ namespace occa {
     virtual kernel_v* buildFromBinary(const std::string &filename,
                                       const std::string &functionName_) = 0;
 
+    virtual kernel_v* loadFromLibrary(const char *cache,
+                                      const std::string &functionName_) = 0;
+
     virtual int preferredDimSize() = 0;
 
 #include "operators/occaVirtualOperatorDeclarations.hpp"
@@ -501,6 +504,9 @@ namespace occa {
                                     const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_t<mode>* buildFromBinary(const std::string &filename,
+                                    const std::string &functionName_);
+
+    kernel_t<mode>* loadFromLibrary(const char *cache,
                                     const std::string &functionName_);
 
     int preferredDimSize();
@@ -542,6 +548,9 @@ namespace occa {
                             const kernelInfo &info_ = defaultKernelInfo);
 
     kernel& buildFromBinary(const std::string &filename,
+                            const std::string &functionName_);
+
+    kernel& loadFromLibrary(const char *cache,
                             const std::string &functionName_);
 
     int preferredDimSize();
@@ -852,7 +861,7 @@ namespace occa {
 
     virtual void setup(const int arg1, const int arg2) = 0;
 
-    virtual deviceIdentifier getIdentifier() = 0;
+    virtual deviceIdentifier getIdentifier() const = 0;
 
     virtual void getEnvironmentVariables() = 0;
 
@@ -878,6 +887,9 @@ namespace occa {
                                             const kernelInfo &info_ = defaultKernelInfo) = 0;
 
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
+                                            const std::string &functionName_) = 0;
+
+    virtual kernel_v* loadKernelFromLibrary(const char *cache,
                                             const std::string &functionName_) = 0;
 
     virtual memory_v* wrapMemory(void *handle_,
@@ -914,7 +926,7 @@ namespace occa {
 
     void setup(const int arg1, const int arg2);
 
-    deviceIdentifier getIdentifier();
+    deviceIdentifier getIdentifier() const;
 
     void getEnvironmentVariables();
 
@@ -941,6 +953,9 @@ namespace occa {
 
     kernel_v* buildKernelFromBinary(const std::string &filename,
                                     const std::string &functionName);
+
+    kernel_v* loadKernelFromLibrary(const char *cache,
+                                    const std::string &functionName_);
 
     memory_v* wrapMemory(void *handle_,
                          const uintptr_t bytes);
@@ -986,7 +1001,7 @@ namespace occa {
     void setup(const std::string &m,
                const int arg1 = 0, const int arg2 = 0);
 
-    deviceIdentifier getIdentifier();
+    deviceIdentifier getIdentifier() const;
 
     std::string& mode();
 
@@ -1016,6 +1031,9 @@ namespace occa {
 
     kernel buildKernelFromBinary(const std::string &filename,
                                  const std::string &functionName);
+
+    kernel loadKernelFromLibrary(const char *cache,
+                                 const std::string &functionName_);
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,

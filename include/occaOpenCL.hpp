@@ -94,6 +94,10 @@ namespace occa {
                                                       const std::string &functionName_);
 
   template <>
+  kernel_t<OpenCL>* kernel_t<OpenCL>::loadFromLibrary(const char *cache,
+                                                      const std::string &functionName_);
+
+  template <>
   int kernel_t<OpenCL>::preferredDimSize();
 
   template <>
@@ -192,7 +196,7 @@ namespace occa {
   void device_t<OpenCL>::setup(const int platform, const int device);
 
   template <>
-  deviceIdentifier device_t<OpenCL>::getIdentifier();
+  deviceIdentifier device_t<OpenCL>::getIdentifier() const;
 
   template <>
   void device_t<OpenCL>::getEnvironmentVariables();
@@ -240,6 +244,10 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromBinary(const std::string &filename,
+                                                    const std::string &functionName_);
+
+  template <>
+  kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName_);
 
   template <>

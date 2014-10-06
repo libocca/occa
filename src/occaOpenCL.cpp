@@ -500,6 +500,13 @@ namespace occa {
   }
 
   template <>
+  kernel_t<OpenCL>* kernel_t<OpenCL>::loadFromLibrary(const char *cache,
+                                                      const std::string &functionName_){
+
+    return this;
+  }
+
+  template <>
   int kernel_t<OpenCL>::preferredDimSize(){
     if(preferredDimSize_)
       return preferredDimSize_;
@@ -962,7 +969,7 @@ namespace occa {
   }
 
   template <>
-  deviceIdentifier device_t<OpenCL>::getIdentifier(){
+  deviceIdentifier device_t<OpenCL>::getIdentifier() const {
     deviceIdentifier dID;
 
     dID.mode_ = OpenCL;
@@ -1128,6 +1135,29 @@ namespace occa {
     kData_.context    = data_.context;
 
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,
+                                                    const std::string &functionName_){
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    kernel_v *k = new kernel_t<OpenCL>;
+
+    k->dev  = dev;
+    k->data = new OpenCLKernelData_t;
+
+    OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
+
+    kData_.platform = data_.platform;
+    kData_.device   = data_.device;
+
+    kData_.platformID = data_.platformID;
+    kData_.deviceID   = data_.deviceID;
+    kData_.context    = data_.context;
+
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

@@ -65,6 +65,10 @@ namespace occa {
                                                   const std::string &functionName_);
 
   template <>
+  kernel_t<CUDA>* kernel_t<CUDA>::loadFromLibrary(const char *cache,
+                                                  const std::string &functionName_);
+
+  template <>
   int kernel_t<CUDA>::preferredDimSize();
 
   template <>
@@ -160,7 +164,7 @@ namespace occa {
   void device_t<CUDA>::setup(const int device, const int unusedArg);
 
   template <>
-  deviceIdentifier device_t<CUDA>::getIdentifier();
+  deviceIdentifier device_t<CUDA>::getIdentifier() const;
 
   template <>
   void device_t<CUDA>::getEnvironmentVariables();
@@ -208,6 +212,10 @@ namespace occa {
 
   template <>
   kernel_v* device_t<CUDA>::buildKernelFromBinary(const std::string &filename,
+                                                  const std::string &functionName_);
+
+  template <>
+  kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
                                                   const std::string &functionName_);
 
   template <>

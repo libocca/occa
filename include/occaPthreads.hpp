@@ -102,6 +102,10 @@ namespace occa {
                                                           const std::string &functionName_);
 
   template <>
+  kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
+                                                          const std::string &functionName_);
+
+  template <>
   int kernel_t<Pthreads>::preferredDimSize();
 
   template <>
@@ -194,7 +198,7 @@ namespace occa {
   void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo);
 
   template <>
-  deviceIdentifier device_t<Pthreads>::getIdentifier();
+  deviceIdentifier device_t<Pthreads>::getIdentifier() const;
 
   template <>
   void device_t<Pthreads>::getEnvironmentVariables();
@@ -242,6 +246,10 @@ namespace occa {
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromBinary(const std::string &filename,
+                                                      const std::string &functionName_);
+
+  template <>
+  kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
                                                       const std::string &functionName_);
 
   template <>

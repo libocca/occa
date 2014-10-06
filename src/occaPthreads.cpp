@@ -243,6 +243,13 @@ namespace occa {
     return this;
   }
 
+  template <>
+  kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
+                                                          const std::string &functionName_){
+
+    return this;
+  }
+
   // [-] Missing
   template <>
   int kernel_t<Pthreads>::preferredDimSize(){
@@ -563,7 +570,7 @@ namespace occa {
   }
 
   template <>
-  deviceIdentifier device_t<Pthreads>::getIdentifier(){
+  deviceIdentifier device_t<Pthreads>::getIdentifier() const {
     deviceIdentifier dID;
 
     dID.mode_ = Pthreads;
@@ -695,6 +702,15 @@ namespace occa {
     kernel_v *k = new kernel_t<Pthreads>;
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
+                                                      const std::string &functionName_){
+    kernel_v *k = new kernel_t<Pthreads>;
+    k->dev = dev;
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

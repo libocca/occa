@@ -225,6 +225,13 @@ namespace occa {
     return this;
   }
 
+  template <>
+  kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
+                                                      const std::string &functionName_){
+
+    return this;
+  }
+
   // [-] Missing
   template <>
   int kernel_t<OpenMP>::preferredDimSize(){
@@ -510,7 +517,7 @@ namespace occa {
   void device_t<OpenMP>::setup(const int unusedArg1, const int unusedArg2){}
 
   template <>
-  deviceIdentifier device_t<OpenMP>::getIdentifier(){
+  deviceIdentifier device_t<OpenMP>::getIdentifier() const {
     deviceIdentifier dID;
 
     dID.mode_ = OpenMP;
@@ -659,6 +666,15 @@ namespace occa {
     kernel_v *k = new kernel_t<OpenMP>;
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
+                                                    const std::string &functionName_){
+    kernel_v *k = new kernel_t<OpenMP>;
+    k->dev = dev;
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

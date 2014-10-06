@@ -459,7 +459,7 @@ namespace occa {
     currentStream = genStream();
   }
 
-  deviceIdentifier device::getIdentifier(){
+  deviceIdentifier device::getIdentifier() const {
     return dHandle->getIdentifier();
   }
 

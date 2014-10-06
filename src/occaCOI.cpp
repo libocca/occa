@@ -215,6 +215,13 @@ namespace occa {
     return this;
   }
 
+  template <>
+  kernel_t<COI>* kernel_t<COI>::loadFromLibrary(const char *cache,
+                                                const std::string &functionName_){
+
+    return this;
+  }
+
   // [-] Missing
   template <>
   int kernel_t<COI>::preferredDimSize(){
@@ -672,7 +679,7 @@ namespace occa {
   }
 
   template <>
-  deviceIdentifier device_t<COI>::getIdentifier(){
+  deviceIdentifier device_t<COI>::getIdentifier() const {
     deviceIdentifier dID;
 
     dID.mode_ = COI;
@@ -838,6 +845,24 @@ namespace occa {
     kData_.chiefID = data_.chiefID;
 
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  kernel_v* device_t<COI>::loadKernelFromLibrary(const char *cache,
+                                                 const std::string &functionName_){
+    OCCA_EXTRACT_DATA(COI, Device);
+
+    kernel_v *k = new kernel_t<COI>;
+
+    k->dev  = dev;
+    k->data = new COIKernelData_t;
+
+    COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
+
+    kData_.chiefID = data_.chiefID;
+
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 
