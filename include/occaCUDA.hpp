@@ -33,6 +33,12 @@ namespace occa {
 
 
   //---[ Helper Functions ]-----------
+  namespace cuda {
+    static bool isNotInitialized = true;
+
+    void init();
+  };
+
   extern const CUarray_format cudaFormats[8];
 
   template <>
@@ -169,6 +175,9 @@ namespace occa {
 
   template <>
   void device_t<CUDA>::getEnvironmentVariables();
+
+  template <>
+  void device_t<CUDA>::appendAvailableDevices(std::vector<device> &dList);
 
   template <>
   void device_t<CUDA>::setCompiler(const std::string &compiler_);

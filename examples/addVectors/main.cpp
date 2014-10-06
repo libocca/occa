@@ -53,7 +53,7 @@ int main(int argc, char **argv){
 
   o_ab.copyTo(ab);
 
-  std::cout<<"Elapsed time = " << elapsedTime << " s" << std::endl;
+  std::cout << "Elapsed time = " << elapsedTime << " s" << std::endl;
 
   occa::printTimer();
 

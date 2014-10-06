@@ -4,6 +4,17 @@
 
 namespace occa {
   //---[ Helper Functions ]-----------
+  namespace cuda {
+    void init(){
+      if(!isNotInitialized)
+        return;
+
+      cuInit(0);
+
+      isNotInitialized = false;
+    }
+  }
+
   const CUarray_format cudaFormats[8] = {CU_AD_FORMAT_UNSIGNED_INT8,
                                          CU_AD_FORMAT_UNSIGNED_INT16,
                                          CU_AD_FORMAT_UNSIGNED_INT32,
@@ -672,7 +683,6 @@ namespace occa {
 
 
   //---[ Device ]---------------------
-
   template <>
   device_t<CUDA>::device_t() {
     data            = NULL;
@@ -711,12 +721,7 @@ namespace occa {
 
   template <>
   void device_t<CUDA>::setup(const int device, const int unusedArg){
-    static bool cudaIsNotInitialized = true;
-
-    if(cudaIsNotInitialized){
-      cuInit(0);
-      cudaIsNotInitialized = false;
-    }
+    cuda::init();
 
     data = new CUDADeviceData_t;
 
@@ -782,6 +787,23 @@ namespace occa {
 #else
       compilerFlags = "--compiler-options -O3 --use_fast_math";
 #endif
+    }
+  }
+
+  template <>
+  void device_t<CUDA>::appendAvailableDevices(std::vector<device> &dList){
+    cuda::init();
+
+    int deviceCount;
+
+    OCCA_CUDA_CHECK("Finding Number of Devices",
+                    cuDeviceGetCount(&deviceCount));
+
+    for(int i = 0; i < deviceCount; ++i){
+      device d;
+      d.setup("CUDA", i);
+
+      dList.push_back(d);
     }
   }
 
