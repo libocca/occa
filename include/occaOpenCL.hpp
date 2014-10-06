@@ -3,6 +3,7 @@
 #  define OCCA_OPENCL_HEADER
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -21,10 +22,10 @@ namespace occa {
     int platform, device;
 
     cl_platform_id platformID;
-    cl_device_id deviceID;
-    cl_context   context;
-    cl_program   program;
-    cl_kernel    kernel;
+    cl_device_id   deviceID;
+    cl_context     context;
+    cl_program     program;
+    cl_kernel      kernel;
   };
 
   struct OpenCLDeviceData_t {
@@ -62,6 +63,23 @@ namespace occa {
     int deviceCoreCount(int pID, int dID);
 
     occa::deviceInfo deviceInfo(int pID, int dID);
+
+    void buildKernelFromSource(OpenCLKernelData_t &data_,
+                                const char *content,
+                                const size_t contentBytes,
+                                const std::string &functionName,
+                                const std::string &flags = "",
+                                const std::string &cachedBinary = "",
+                                const std::string &iCachedBinary = "");
+
+    void buildKernelFromBinary(OpenCLKernelData_t &data_,
+                               const unsigned char *content,
+                               const size_t contentBytes,
+                               const std::string &functionName,
+                               const std::string &flags = "");
+
+    void saveProgramBinary(OpenCLKernelData_t &data_,
+                           const std::string &cachedBinary);
   };
 
   extern const cl_channel_type clFormats[8];
@@ -91,6 +109,10 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromBinary(const std::string &filename,
+                                                      const std::string &functionName_);
+
+  template <>
+  kernel_t<OpenCL>* kernel_t<OpenCL>::loadFromLibrary(const char *cache,
                                                       const std::string &functionName_);
 
   template <>
@@ -192,6 +214,9 @@ namespace occa {
   void device_t<OpenCL>::setup(const int platform, const int device);
 
   template <>
+  deviceIdentifier device_t<OpenCL>::getIdentifier() const;
+
+  template <>
   void device_t<OpenCL>::getEnvironmentVariables();
 
   template <>
@@ -237,6 +262,15 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromBinary(const std::string &filename,
+                                                    const std::string &functionName_);
+
+  template <>
+  void device_t<OpenCL>::cacheKernelInLibrary(const std::string &filename,
+                                              const std::string &functionName_,
+                                              const kernelInfo &info_);
+
+  template <>
+  kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName_);
 
   template <>

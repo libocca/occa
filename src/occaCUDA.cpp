@@ -233,6 +233,22 @@ namespace occa {
   }
 
   template <>
+  kernel_t<CUDA>* kernel_t<CUDA>::loadFromLibrary(const char *cache,
+                                                  const std::string &functionName_){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    functionName = functionName_;
+
+    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
+                    cuModuleLoadData(&data_.module, cache));
+
+    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
+                    cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
+
+    return this;
+  }
+
+  template <>
   int kernel_t<CUDA>::preferredDimSize(){
     preferredDimSize_ = 32;
     return 32;
@@ -656,10 +672,11 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+
   template <>
   device_t<CUDA>::device_t() {
     data            = NULL;
-    memoryAllocated            = 0;
+    memoryAllocated = 0;
 
     getEnvironmentVariables();
   }
@@ -710,6 +727,40 @@ namespace occa {
 
     OCCA_CUDA_CHECK("Device: Creating Context",
                     cuCtxCreate(&data_.context, CU_CTX_SCHED_AUTO, data_.device));
+  }
+
+  template <>
+  deviceIdentifier device_t<CUDA>::getIdentifier() const {
+    deviceIdentifier dID;
+
+    dID.mode_ = CUDA;
+
+    const size_t archPos = compilerFlags.find("-arch=sm_");
+
+    if(archPos == std::string::npos){
+      OCCA_EXTRACT_DATA(CUDA, Device);
+
+      std::stringstream archSM_;
+
+      int major, minor;
+      OCCA_CUDA_CHECK("Getting CUDA Device Arch",
+                      cuDeviceComputeCapability(&major, &minor, data_.device) );
+
+      archSM_ << major << minor;
+
+      dID.flagMap["arch"] = archSM_.str();
+    }
+    else{
+      const char *c0 = (compilerFlags.c_str() + archPos);
+      const char *c1 = c0;
+
+      while((*c0 != '\0') && (*c0 != ' '))
+        ++c1;
+
+      dID.flagMap["arch"] = std::string(c0, c1 - c0);
+    }
+
+    return dID;
   }
 
   template <>
@@ -848,6 +899,74 @@ namespace occa {
     kData_.context = data_.context;
 
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  void device_t<CUDA>::cacheKernelInLibrary(const std::string &filename,
+                                            const std::string &functionName,
+                                            const kernelInfo &info_){
+    //---[ Creating shared library ]----
+    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_GPU" , 1);
+    info.addDefine("OCCA_USING_CUDA", 1);
+
+    info.addOCCAKeywords(occaCUDADefines);
+
+    std::stringstream salt;
+    salt << "CUDA"
+         << info.salt()
+         << parser::version
+         << dev->dHandle->compilerEnvScript
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string contents     = readFile(cachedBinary);
+    //==================================
+
+    library::infoID_t infoID;
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    library::infoHeader_t &header = library::headerMap[infoID];
+
+    header.fileID = -1;
+    header.mode   = CUDA;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(contents);
+    header.contentBytes  = contents.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
+  }
+
+  template <>
+  kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
+                                                  const std::string &functionName){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
+    kernel_v *k = new kernel_t<CUDA>;
+
+    k->dev  = dev;
+    k->data = new CUDAKernelData_t;
+
+    CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
+
+    kData_.device  = data_.device;
+    kData_.context = data_.context;
+
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

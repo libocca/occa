@@ -18,9 +18,7 @@ namespace occa {
 
       statementCount(0),
       statementStart(NULL),
-      statementEnd(NULL),
-
-      typePtr(NULL) {}
+      statementEnd(NULL) {}
 
     statement::statement(const int depth_,
                          const int type_,
@@ -39,9 +37,7 @@ namespace occa {
 
       statementCount(0),
       statementStart(NULL),
-      statementEnd(NULL),
-
-      typePtr(NULL) {}
+      statementEnd(NULL) {}
 
     statement::~statement(){};
 
@@ -1099,11 +1095,12 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      typePtr = new typeDef;
-      typePtr->loadFromNode(*this, nodeRoot);
+
+      typeDef &td = *(new typeDef);
+      td.loadFromNode(*this, nodeRoot);
 
       // [--]
-      std::cout << "typePtr = " << *typePtr << '\n';
+      std::cout << "typePtr = " << td << '\n';
 
       loadBlocksFromLastNode(nodeRootEnd);
 
@@ -1199,8 +1196,6 @@ namespace occa {
 
       newStatement->statementStart = NULL;
       newStatement->statementEnd   = NULL;
-
-      newStatement->typePtr = typePtr;
 
       if(statementCount == 0)
         return newStatement;
@@ -1598,7 +1593,7 @@ namespace occa {
         return ret;
       }
       else if(type & structStatementType){
-        return typePtr->print(tab) + "\n";
+        return tab + prettyString(nodeStart, "", false);
       }
       else if(type & macroStatementType){
         return tab + prettyString(nodeStart, "", false);

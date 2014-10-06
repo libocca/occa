@@ -13,6 +13,7 @@
 #include <queue>
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -99,6 +100,10 @@ namespace occa {
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
+                                                          const std::string &functionName_);
+
+  template <>
+  kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
                                                           const std::string &functionName_);
 
   template <>
@@ -194,6 +199,9 @@ namespace occa {
   void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo);
 
   template <>
+  deviceIdentifier device_t<Pthreads>::getIdentifier() const;
+
+  template <>
   void device_t<Pthreads>::getEnvironmentVariables();
 
   template <>
@@ -239,6 +247,15 @@ namespace occa {
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromBinary(const std::string &filename,
+                                                      const std::string &functionName_);
+
+  template <>
+  void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
+                                                const std::string &functionName_,
+                                                const kernelInfo &info_);
+
+  template <>
+  kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
                                                       const std::string &functionName_);
 
   template <>

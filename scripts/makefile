@@ -18,10 +18,20 @@ cudaEnabled     = 0
 coiEnabled      = 0
 pthreadsEnabled = 0
 
-ifeq ($(DEBUG), 1)
-	Debug_Enabled = 1
-else
-	Debug_Enabled = 0
+ifdef OCCA_DEVELOPER
+ ifeq ($(OCCA_DEVELOPER), 1)
+  ifeq ($(DEBUG), 0)
+     Debug_Enabled = 0
+  else
+     Debug_Enabled = 1
+  endif
+ else
+  ifeq ($(DEBUG), 1)
+     Debug_Enabled = 1
+  else
+     Debug_Enabled = 0
+  endif
+ endif
 endif
 
 ifndef CXX

@@ -205,7 +205,6 @@ namespace occa {
 #endif
     OCCA_CHECK(data_.dlHandle != NULL);
 
-
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
@@ -223,6 +222,12 @@ namespace occa {
 #endif
 
     return this;
+  }
+
+  template <>
+  kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
+                                                      const std::string &functionName_){
+    return buildFromBinary(cache, functionName_);
   }
 
   // [-] Missing
@@ -510,6 +515,33 @@ namespace occa {
   void device_t<OpenMP>::setup(const int unusedArg1, const int unusedArg2){}
 
   template <>
+  deviceIdentifier device_t<OpenMP>::getIdentifier() const {
+    deviceIdentifier dID;
+
+    dID.mode_ = OpenMP;
+
+    const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
+
+    dID.flagMap["compiler"]     = compiler;
+    dID.flagMap["debugEnabled"] = (debugEnabled ? "1" : "0");
+
+    for(int i = 0; i <= 3; ++i){
+      std::string flag = "-O";
+      flag += '0' + i;
+
+      if(compilerFlags.find(flag) != std::string::npos){
+        dID.flagMap["O"] = '0' + i;
+        break;
+      }
+
+      if(i == 3)
+        dID.flagMap["O"] = "None";
+    }
+
+    return dID;
+  }
+
+  template <>
   void device_t<OpenMP>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_OPENMP_COMPILER");
 
@@ -632,6 +664,72 @@ namespace occa {
     kernel_v *k = new kernel_t<OpenMP>;
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
+                                              const std::string &functionName,
+                                              const kernelInfo &info_){
+    //---[ Creating shared library ]----
+    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_CPU"   , 1);
+    info.addDefine("OCCA_USING_OPENMP", 1);
+
+#if OCCA_OPENMP_ENABLED
+    info.addIncludeDefine("omp.h");
+#endif
+
+    info.addOCCAKeywords(occaOpenMPDefines);
+
+    std::stringstream salt;
+    salt << "OpenMP"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+    //==================================
+
+    library::infoID_t infoID;
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    library::infoHeader_t &header = library::headerMap[infoID];
+
+    header.fileID = -1;
+    header.mode   = OpenMP;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(cachedBinary);
+    header.contentBytes  = cachedBinary.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
+  }
+
+  template <>
+  kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
+                                                    const std::string &functionName_){
+    kernel_v *k = new kernel_t<OpenMP>;
+    k->dev = dev;
+    k->loadFromLibrary(cache, functionName_);
     return k;
   }
 

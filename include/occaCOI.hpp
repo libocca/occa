@@ -3,6 +3,7 @@
 #  define OCCA_COI_HEADER
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -76,6 +77,10 @@ namespace occa {
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
+                                                const std::string &functionName_);
+
+  template <>
+  kernel_t<COI>* kernel_t<COI>::loadFromLibrary(const char *cache,
                                                 const std::string &functionName_);
 
   template <>
@@ -174,6 +179,9 @@ namespace occa {
   void device_t<COI>::setup(const int platform, const int device);
 
   template <>
+  deviceIdentifier device_t<COI>::getIdentifier() const;
+
+  template <>
   void device_t<COI>::getEnvironmentVariables();
 
   template <>
@@ -219,6 +227,15 @@ namespace occa {
 
   template <>
   kernel_v* device_t<COI>::buildKernelFromBinary(const std::string &filename,
+                                                 const std::string &functionName_);
+
+  template <>
+  void device_t<COI>::cacheKernelInLibrary(const std::string &filename,
+                                           const std::string &functionName_,
+                                           const kernelInfo &info_);
+
+  template <>
+  kernel_v* device_t<COI>::loadKernelFromLibrary(const char *cache,
                                                  const std::string &functionName_);
 
   template <>

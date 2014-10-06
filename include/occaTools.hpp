@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include <stdlib.h>
+#include <stdint.h>
 
 #include <sys/stat.h>
 #include <string.h>
@@ -26,6 +27,21 @@
 
 namespace occa {
   class kernelInfo;
+
+  class mutex_t {
+  public:
+#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+    pthread_mutex_t mutexHandle;
+#else
+    HANDLE mutexHandle;
+#endif
+
+    mutex_t();
+    void free();
+
+    void lock();
+    void unlock();
+  };
 
   double currentTime();
 

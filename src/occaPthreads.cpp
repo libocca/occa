@@ -77,6 +77,11 @@ namespace occa {
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
@@ -241,6 +246,12 @@ namespace occa {
     data_.kernelMutex      = &(dData.kernelMutex);
 
     return this;
+  }
+
+  template <>
+  kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
+                                                          const std::string &functionName_){
+    return buildFromBinary(cache, functionName_);
   }
 
   // [-] Missing
@@ -563,6 +574,33 @@ namespace occa {
   }
 
   template <>
+  deviceIdentifier device_t<Pthreads>::getIdentifier() const {
+    deviceIdentifier dID;
+
+    dID.mode_ = Pthreads;
+
+    const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
+
+    dID.flagMap["compiler"]     = compiler;
+    dID.flagMap["debugEnabled"] = (debugEnabled ? "1" : "0");
+
+    for(int i = 0; i <= 3; ++i){
+      std::string flag = "-O";
+      flag += '0' + i;
+
+      if(compilerFlags.find(flag) != std::string::npos){
+        dID.flagMap["O"] = '0' + i;
+        break;
+      }
+
+      if(i == 3)
+        dID.flagMap["O"] = "None";
+    }
+
+    return dID;
+  }
+
+  template <>
   void device_t<Pthreads>::getEnvironmentVariables(){
     char *c_compiler = getenv("OCCA_PTHREADS_COMPILER");
 
@@ -668,6 +706,68 @@ namespace occa {
     kernel_v *k = new kernel_t<Pthreads>;
     k->dev = dev;
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
+                                                const std::string &functionName,
+                                                const kernelInfo &info_){
+    //---[ Creating shared library ]----
+    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_CPU"     , 1);
+    info.addDefine("OCCA_USING_PTHREADS", 1);
+
+    info.addOCCAKeywords(occaPthreadsDefines);
+
+    std::stringstream salt;
+    salt << "Pthreads"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+
+#if OCCA_OS == WINDOWS_OS
+    // Windows refuses to load dll's that do not end with '.dll'
+    cachedBinary = cachedBinary + ".dll";
+#endif
+    //==================================
+
+    library::infoID_t infoID;
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    library::infoHeader_t &header = library::headerMap[infoID];
+
+    header.fileID = -1;
+    header.mode   = Pthreads;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(cachedBinary);
+    header.contentBytes  = cachedBinary.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
+  }
+
+  template <>
+  kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
+                                                      const std::string &functionName_){
+    kernel_v *k = new kernel_t<Pthreads>;
+    k->dev = dev;
+    k->loadFromLibrary(cache, functionName_);
     return k;
   }
 

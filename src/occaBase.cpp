@@ -139,6 +139,13 @@ namespace occa {
     return *this;
   }
 
+  kernel& kernel::loadFromLibrary(const char *cache,
+                                  const std::string &functionName_){
+    kHandle->loadFromLibrary(cache, functionName_);
+
+    return *this;
+  }
+
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
     for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
@@ -459,6 +466,10 @@ namespace occa {
     currentStream = genStream();
   }
 
+  deviceIdentifier device::getIdentifier() const {
+    return dHandle->getIdentifier();
+  }
+
   void device::setup(const std::string &m,
                      const int arg1, const int arg2){
     setup(strToMode(m), arg1, arg2);
@@ -552,6 +563,24 @@ namespace occa {
     return ker;
   }
 
+  void device::cacheKernelInLibrary(const std::string &filename,
+                                    const std::string &functionName,
+                                    const kernelInfo &info_){
+    dHandle->cacheKernelInLibrary(filename, functionName, info_);
+  }
+
+  kernel device::loadKernelFromLibrary(const char *cache,
+                                       const std::string &functionName){
+    kernel ker;
+
+    ker.mode_   = mode_;
+    ker.strMode = strMode;
+
+    ker.kHandle      = dHandle->loadKernelFromLibrary(cache, functionName);
+    ker.kHandle->dev = this;
+
+    return ker;
+  }
 
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
@@ -694,6 +723,80 @@ namespace occa {
 
   int device::simdWidth(){
     return dHandle->simdWidth();
+  }
+
+  void deviceIdentifier::load(const char *c, const size_t chars){
+    const char *c1 = c;
+
+    while(((c1 - c) < chars) && (*c1 != '\0')){
+      const char *c2 = c1;
+      const char *c3;
+
+      while(*c2 != '|')
+        ++c2;
+
+      c3 = (c2 + 1);
+
+      while(((c3 - c) < chars) &&
+            (*c3 != '\0') && (*c3 != '|'))
+        ++c3;
+
+      flagMap[std::string(c1, c2 - c1)] = std::string(c2 + 1, c3 - c2 - 1);
+
+      c1 = (c3 + 1);
+    }
+  }
+
+  void deviceIdentifier::load(const std::string &s){
+    return load(s.c_str(), s.size());
+  }
+
+  std::string deviceIdentifier::flattenFlagMap() const {
+    std::string ret = "";
+
+    cFlagMapIterator it = flagMap.begin();
+
+    if(it == flagMap.end())
+      return "";
+
+    ret += it->first;
+    ret += '|';
+    ret += it->second;
+    ++it;
+
+    while(it != flagMap.end()){
+      ret += '|';
+      ret += it->first;
+      ret += '|';
+      ret += it->second;
+
+      ++it;
+    }
+
+    return ret;
+  }
+
+  int deviceIdentifier::compare(const deviceIdentifier &b) const {
+    if(mode_ != b.mode_)
+      return (mode_ < b.mode_) ? -1 : 1;
+
+    cFlagMapIterator it1 =   flagMap.begin();
+    cFlagMapIterator it2 = b.flagMap.begin();
+
+    while(it1 != flagMap.end()){
+      const std::string &s1 = it1->second;
+      const std::string &s2 = it2->second;
+
+      const int cmp = s1.compare(s2);
+
+      if(cmp)
+        return cmp;
+
+      ++it1;
+      ++it2;
+    }
+
+    return 0;
   }
   //==================================
 };

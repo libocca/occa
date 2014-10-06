@@ -7,6 +7,7 @@
 #include <fcntl.h>
 
 #include "occaBase.hpp"
+#include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
 
@@ -44,6 +45,10 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
+                                                      const std::string &functionName_);
+
+  template <>
+  kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
                                                       const std::string &functionName_);
 
   template <>
@@ -142,6 +147,9 @@ namespace occa {
   void device_t<OpenMP>::setup(const int arg1, const int arg2);
 
   template <>
+  deviceIdentifier device_t<OpenMP>::getIdentifier() const;
+
+  template <>
   void device_t<OpenMP>::getEnvironmentVariables();
 
   template <>
@@ -187,6 +195,15 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
+                                                    const std::string &functionName_);
+
+  template <>
+  void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
+                                              const std::string &functionName_,
+                                              const kernelInfo &info_);
+
+  template <>
+  kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName_);
 
   template <>

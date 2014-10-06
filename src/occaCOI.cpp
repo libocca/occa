@@ -215,6 +215,12 @@ namespace occa {
     return this;
   }
 
+  template <>
+  kernel_t<COI>* kernel_t<COI>::loadFromLibrary(const char *cache,
+                                                const std::string &functionName_){
+    return buildFromBinary(cache, functionName_);
+  }
+
   // [-] Missing
   template <>
   int kernel_t<COI>::preferredDimSize(){
@@ -672,6 +678,33 @@ namespace occa {
   }
 
   template <>
+  deviceIdentifier device_t<COI>::getIdentifier() const {
+    deviceIdentifier dID;
+
+    dID.mode_ = COI;
+
+    const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
+
+    dID.flagMap["compiler"]     = compiler;
+    dID.flagMap["debugEnabled"] = (debugEnabled ? "1" : "0");
+
+    for(int i = 0; i <= 3; ++i){
+      std::string flag = "-O";
+      flag += '0' + i;
+
+      if(compilerFlags.find(flag) != std::string::npos){
+        dID.flagMap["O"] = '0' + i;
+        break;
+      }
+
+      if(i == 3)
+        dID.flagMap["O"] = "None";
+    }
+
+    return dID;
+  }
+
+  template <>
   void device_t<COI>::getEnvironmentVariables(){
     const char *c_compiler = getenv("OCCA_COI_COMPILER");
 
@@ -811,6 +844,80 @@ namespace occa {
     kData_.chiefID = data_.chiefID;
 
     k->buildFromBinary(filename, functionName);
+    return k;
+  }
+
+  template <>
+  void device_t<COI>::cacheKernelInLibrary(const std::string &filename,
+                                           const std::string &functionName,
+                                           const kernelInfo &info_){
+    //---[ Creating shared library ]----
+    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    tmpK.free();
+
+    kernelInfo info = info_;
+    info.addDefine("OCCA_USING_CPU", 1);
+    info.addDefine("OCCA_USING_COI", 1);
+
+    info.addOCCAKeywords(occaCOIDefines);
+
+    std::stringstream salt;
+
+    salt << "COI"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags
+         << functionName;
+
+    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string libPath, soname;
+
+    getFilePrefixAndName(cachedBinary, libPath, soname);
+
+    std::string libName = "lib" + soname + ".so";
+
+    cachedBinary = libPath + libName;
+    //==================================
+
+    library::infoID_t infoID;
+
+    infoID.devID      = getIdentifier();
+    infoID.kernelName = functionName;
+
+    library::infoHeader_t &header = library::headerMap[infoID];
+
+    header.fileID = -1;
+    header.mode   = COI;
+
+    const std::string flatDevID = infoID.devID.flattenFlagMap();
+
+    header.flagsOffset = library::addToScratchPad(flatDevID);
+    header.flagsBytes  = flatDevID.size();
+
+    header.contentOffset = library::addToScratchPad(cachedBinary);
+    header.contentBytes  = cachedBinary.size();
+
+    header.kernelNameOffset = library::addToScratchPad(functionName);
+    header.kernelNameBytes  = functionName.size();
+  }
+
+  template <>
+  kernel_v* device_t<COI>::loadKernelFromLibrary(const char *cache,
+                                                 const std::string &functionName_){
+    OCCA_EXTRACT_DATA(COI, Device);
+
+    kernel_v *k = new kernel_t<COI>;
+
+    k->dev  = dev;
+    k->data = new COIKernelData_t;
+
+    COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
+
+    kData_.chiefID = data_.chiefID;
+
+    k->loadFromLibrary(cache, functionName_);
     return k;
   }
 

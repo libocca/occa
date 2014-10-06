@@ -1148,6 +1148,10 @@ namespace occa {
         return;
 
       // Check for struct defs
+#if 1
+      if(s.type & structStatementType)
+        return;
+#else
       if(s.type & structStatementType){
         if(s.typePtr->varName.size()){
           typeDef &type = *(s.typePtr);
@@ -1164,6 +1168,7 @@ namespace occa {
 
         return;
       }
+#endif
 
       strNode *nodePos = s.nodeStart;
 
@@ -3370,9 +3375,7 @@ namespace occa {
           if(isAString(cLeft)){
             skipString(cRight);
 
-            nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-
-            nodePos = nodePos->right;
+            nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
 
             nodePos->type  = presetValue;
             nodePos->depth = depth;
@@ -3382,9 +3385,7 @@ namespace occa {
           else if(isANumber(cLeft)){
             skipNumber(cRight);
 
-            nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-
-            nodePos = nodePos->right;
+            nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
 
             nodePos->type  = presetValue;
             nodePos->depth = depth;
@@ -3426,9 +3427,7 @@ namespace occa {
             else{
               skipWord(cRight);
 
-              nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-
-              nodePos = nodePos->right;
+              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
 
               keywordTypeMapIterator it = keywordType.find(nodePos->value);
 
