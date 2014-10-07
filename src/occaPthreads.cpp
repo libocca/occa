@@ -773,7 +773,6 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.mode_      = Pthreads;
     infoID.devID      = dev->id_;
     infoID.kernelName = functionName;
 

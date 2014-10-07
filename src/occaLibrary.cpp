@@ -44,9 +44,11 @@ namespace occa {
   };
 
   namespace library {
-    mutex_t scratchMutex, headerMutex, deviceMutex;
+    mutex_t headerMutex, kernelMutex, deviceMutex;
+    mutex_t scratchMutex;
 
     headerMap_t headerMap;
+    kernelMap_t kernelMap;
     deviceMap_t deviceMap;
 
     std::string scratchPad;
@@ -94,7 +96,7 @@ namespace occa {
       for(uint32_t i = 0; i < headerCount; ++i){
         infoID_t infoID;
 
-        infoID.mode_ = *(buffer32++);
+        const int mode_ = *(buffer32++);
 
         buffer64 = (uint64_t*) buffer32;
         const uint64_t flagsOffset = *(buffer64++);
@@ -111,17 +113,21 @@ namespace occa {
         infoID.kernelName = std::string(buffer + kernelNameOffset,
                                         kernelNameBytes);
 
-        deviceIdentifier identifier(infoID.mode_,
+        deviceIdentifier identifier(mode_,
                                     buffer + flagsOffset, flagsBytes);
 
         infoID.devID = deviceID(identifier);
+
+        kernelMutex.lock();
+        kernelMap[infoID.kernelName].push_back(infoID.devID);
+        kernelMutex.unlock();
 
         //---[ Input to header map ]----
         headerMutex.lock();
         infoHeader_t &h = headerMap[infoID];
 
         h.fileID = fileDatabase::getFileID(filename);
-        h.mode   = infoID.mode_;
+        h.mode   = mode_;
 
         h.flagsOffset = flagsOffset;
         h.flagsBytes  = flagsBytes;
@@ -247,11 +253,31 @@ namespace occa {
       return dID;
     }
 
+    occa::kernelDatabase loadKernelDatabase(const std::string &kernelName){
+      kernelDatabase kdb(kernelName);
+
+      kernelMutex.lock();
+
+      kernelMapIterator it = kernelMap.find(kernelName);
+
+      if(it != kernelMap.end()){
+        std::vector<int> &ids = it->second;
+
+        const int idCount = ids.size();
+
+        for(int i = 0; i < idCount; ++i)
+          kdb.kernelIsAvailable(ids[i]);
+      }
+
+      kernelMutex.unlock();
+
+      return kdb;
+    }
+
     kernel loadKernel(occa::device &dev,
                       const std::string &kernelName){
       infoID_t infoID;
 
-      infoID.mode_      = dev.modeID();
       infoID.devID      = dev.id();
       infoID.kernelName = kernelName;
 

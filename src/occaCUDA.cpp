@@ -969,7 +969,6 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.mode_      = CUDA;
     infoID.devID      = dev->id_;
     infoID.kernelName = functionName;
 
