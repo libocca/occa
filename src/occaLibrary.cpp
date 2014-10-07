@@ -44,18 +44,20 @@ namespace occa {
   };
 
   namespace library {
-    mutex_t mutex;
+    mutex_t scratchMutex, headerMutex, deviceMutex;
+
     headerMap_t headerMap;
+    deviceMap_t deviceMap;
 
     std::string scratchPad;
 
     size_t addToScratchPad(const std::string &s){
-      mutex.lock();
+      scratchMutex.lock();
 
       size_t offset = scratchPad.size();
       scratchPad += s;
 
-      mutex.unlock();
+      scratchMutex.unlock();
 
       return offset;
     }
@@ -92,7 +94,7 @@ namespace occa {
       for(uint32_t i = 0; i < headerCount; ++i){
         infoID_t infoID;
 
-        infoID.devID.mode_ = *(buffer32++);
+        infoID.mode_ = *(buffer32++);
 
         buffer64 = (uint64_t*) buffer32;
         const uint64_t flagsOffset = *(buffer64++);
@@ -109,14 +111,17 @@ namespace occa {
         infoID.kernelName = std::string(buffer + kernelNameOffset,
                                         kernelNameBytes);
 
-        infoID.devID.load(buffer + flagsOffset, flagsBytes);
+        deviceIdentifier identifier(infoID.mode_,
+                                    buffer + flagsOffset, flagsBytes);
+
+        infoID.devID = deviceID(identifier);
 
         //---[ Input to header map ]----
-        mutex.lock();
+        headerMutex.lock();
         infoHeader_t &h = headerMap[infoID];
 
         h.fileID = fileDatabase::getFileID(filename);
-        h.mode   = infoID.devID.mode_;
+        h.mode   = infoID.mode_;
 
         h.flagsOffset = flagsOffset;
         h.flagsBytes  = flagsBytes;
@@ -126,7 +131,7 @@ namespace occa {
 
         h.kernelNameOffset = kernelNameOffset;
         h.kernelNameBytes  = kernelNameBytes;
-        mutex.unlock();
+        headerMutex.unlock();
         //==============================
       }
 
@@ -134,14 +139,14 @@ namespace occa {
     }
 
     void save(const std::string &filename){
-      mutex.lock();
+      headerMutex.lock();
 
       FILE *outFD = fopen(filename.c_str(), "wb");
 
       uint32_t headerCount = headerMap.size();
 
       if(headerCount == 0){
-        mutex.unlock();
+        headerMutex.unlock();
         return;
       }
 
@@ -216,19 +221,43 @@ namespace occa {
 
       fclose(outFD);
 
-      mutex.unlock();
+      headerMutex.unlock();
+    }
+
+    int deviceID(occa::device &dev){
+      return deviceID(dev.getIdentifier());
+    }
+
+    int deviceID(const occa::deviceIdentifier &id){
+      deviceMutex.lock();
+
+      deviceMapIterator it = deviceMap.find(id);
+
+      int dID;
+
+      if(it != deviceMap.end())
+        dID = it->second;
+      else{
+        dID = deviceMap.size();
+        deviceMap[id] = dID;
+      }
+
+      deviceMutex.unlock();
+
+      return dID;
     }
 
     kernel loadKernel(occa::device &dev,
                       const std::string &kernelName){
       infoID_t infoID;
 
-      infoID.devID      = dev.getIdentifier();
+      infoID.mode_      = dev.modeID();
+      infoID.devID      = dev.id();
       infoID.kernelName = kernelName;
 
-      mutex.lock();
+      headerMutex.lock();
       const infoHeader_t &h = headerMap[infoID];
-      mutex.unlock();
+      headerMutex.unlock();
 
       const std::string hFilename = fileDatabase::getFilename(h.fileID);
       FILE *inFD = fopen(hFilename.c_str(), "rb");

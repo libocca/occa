@@ -14,10 +14,7 @@ namespace occa {
 
     void test(){
       strNode *n = labelCode( splitContent("1 + ((2 + 3) + 4)") );
-      n->print();
-      printf("|||||||||||||||||||||||||\n");
       n->flatten();
-      n->print();
 
       throw 1;
     }

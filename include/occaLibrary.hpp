@@ -28,22 +28,27 @@ namespace occa {
   namespace library {
     class infoID_t {
     public:
-      deviceIdentifier devID;
+      occa::mode mode_;
+
+      int devID;
       std::string kernelName;
 
       inline infoID_t() :
-        devID(),
+        mode_(OpenMP),
+        devID(-1),
         kernelName("") {}
 
       inline infoID_t(const infoID_t &id) :
+        mode_(id.mode_),
         devID(id.devID),
         kernelName(id.kernelName) {}
 
       inline friend bool operator < (const infoID_t &a, const infoID_t &b){
-        const int sc = a.devID.compare(b.devID);
+        if(a.mode_ != b.mode_)
+          return (a.mode_ < b.mode_);
 
-        if(sc)
-          return (sc < 0);
+        if(a.devID != b.devID)
+          return (a.devID < b.devID);
 
         return (a.kernelName < b.kernelName);
       }
@@ -62,8 +67,14 @@ namespace occa {
     typedef headerMap_t::iterator           headerMapIterator;
     typedef headerMap_t::const_iterator     cHeaderMapIterator;
 
-    extern mutex_t mutex;
+    typedef std::map<deviceIdentifier,int> deviceMap_t;
+    typedef deviceMap_t::iterator          deviceMapIterator;
+    typedef deviceMap_t::const_iterator    cDeviceMapIterator;
+
+    extern mutex_t scratchMutex, headerMutex, deviceMutex;
+
     extern headerMap_t headerMap;
+    extern deviceMap_t deviceMap;
 
     extern std::string scratchPad;
 
@@ -71,6 +82,9 @@ namespace occa {
 
     void load(const std::string &filename);
     void save(const std::string &filename);
+
+    int deviceID(occa::device &dev);
+    int deviceID(const occa::deviceIdentifier &id);
 
     occa::kernel loadKernel(occa::device &dev,
                             const std::string &kernelName);

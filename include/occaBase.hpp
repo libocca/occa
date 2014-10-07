@@ -571,6 +571,24 @@ namespace occa {
 
     void free();
   };
+
+  class kernelDatabase {
+  public:
+    std::string kernelName;
+
+    int kernelCount;
+    std::vector<kernel> kernels;
+    std::vector<char> kernelAllocated;
+
+    kernelDatabase();
+    kernelDatabase(const kernelDatabase &kdb);
+
+    kernelDatabase& operator = (const kernelDatabase &kdb);
+
+    void addKernel(device &d, kernel &k);
+
+    kernel& operator [] (device &d);
+  };
   //==================================
 
 
@@ -830,12 +848,15 @@ namespace occa {
     occa::mode mode_;
     flagMap_t flagMap;
 
-    inline deviceIdentifier() :
-      mode_(OpenMP) {}
+    deviceIdentifier();
 
-    inline deviceIdentifier(const deviceIdentifier &di) :
-      mode_(di.mode_),
-      flagMap(di.flagMap) {}
+    deviceIdentifier(occa::mode m,
+                     const char *c, const size_t chars);
+
+    deviceIdentifier(occa::mode m, const std::string &s);
+
+    deviceIdentifier(const deviceIdentifier &di);
+    deviceIdentifier& operator = (const deviceIdentifier &di);
 
     void load(const char *c, const size_t chars);
     void load(const std::string &s);
@@ -843,6 +864,11 @@ namespace occa {
     std::string flattenFlagMap() const;
 
     int compare(const deviceIdentifier &b) const;
+
+    inline friend bool operator < (const deviceIdentifier &a,
+                                   const deviceIdentifier &b){
+      return (a.compare(b) < 0);
+    }
   };
 
   template <occa::mode>
@@ -998,10 +1024,13 @@ namespace occa {
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
 
+    friend class occa::kernelDatabase;
+
   private:
     occa::mode mode_;
     std::string strMode;
 
+    int id_;
     device_v *dHandle;
 
     stream currentStream;
@@ -1020,6 +1049,8 @@ namespace occa {
 
     deviceIdentifier getIdentifier() const;
 
+    int id();
+    int modeID();
     std::string& mode();
 
     void setCompiler(const std::string &compiler);
@@ -1085,6 +1116,15 @@ namespace occa {
   };
 
   std::vector<device> getDeviceList();
+  //==================================
+
+
+  //---[ Kernel ]---------------------
+  inline kernel& kernelDatabase::operator [] (device &d){
+    OCCA_CHECK((0 <= d.id_) && (d.id_ < kernelCount) && kernelAllocated[d.id_]);
+
+    return kernels[d.id_];
+  }
   //==================================
 
   class kernelInfo {

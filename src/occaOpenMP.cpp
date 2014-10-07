@@ -14,6 +14,8 @@ namespace occa {
     outer = occa::dim(1,1,1);
 
     nestedKernelCount = 1;
+
+    nestedKernelCount = 1;
     setDimsKernels    = NULL;
     nestedKernels     = NULL;
 
@@ -33,6 +35,13 @@ namespace occa {
     outer = k.outer;
 
     nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
+
+    nestedKernelCount = k.nestedKernelCount;
     setDimsKernels    = k.setDimsKernels;
     nestedKernels     = k.nestedKernels;
 
@@ -50,6 +59,13 @@ namespace occa {
     dims  = k.dims;
     inner = k.inner;
     outer = k.outer;
+
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
 
     nestedKernelCount = k.nestedKernelCount;
     setDimsKernels    = k.setDimsKernels;
@@ -590,19 +606,19 @@ namespace occa {
     const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
 
     dID.flagMap["compiler"]     = compiler;
-    dID.flagMap["debugEnabled"] = (debugEnabled ? "1" : "0");
+    dID.flagMap["debugEnabled"] = (debugEnabled ? "true" : "false");
 
     for(int i = 0; i <= 3; ++i){
       std::string flag = "-O";
       flag += '0' + i;
 
       if(compilerFlags.find(flag) != std::string::npos){
-        dID.flagMap["O"] = '0' + i;
+        dID.flagMap["optimization"] = '0' + i;
         break;
       }
 
       if(i == 3)
-        dID.flagMap["O"] = "None";
+        dID.flagMap["optimization"] = "None";
     }
 
     return dID;
@@ -779,7 +795,8 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.devID      = getIdentifier();
+    infoID.mode_      = OpenMP;
+    infoID.devID      = dev->id_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -787,7 +804,7 @@ namespace occa {
     header.fileID = -1;
     header.mode   = OpenMP;
 
-    const std::string flatDevID = infoID.devID.flattenFlagMap();
+    const std::string flatDevID = getIdentifier().flattenFlagMap();
 
     header.flagsOffset = library::addToScratchPad(flatDevID);
     header.flagsBytes  = flatDevID.size();

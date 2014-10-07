@@ -19,6 +19,8 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
+    nestedKernelCount = 1;
+
     preferredDimSize_ = 0;
 
     startTime = (void*) new double;
@@ -36,6 +38,13 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
+
     preferredDimSize_ = k.preferredDimSize_;
 
     startTime = k.startTime;
@@ -52,6 +61,13 @@ namespace occa {
     dims  = k.dims;
     inner = k.inner;
     outer = k.outer;
+
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
 
     preferredDimSize_ = k.preferredDimSize_;
 
@@ -686,19 +702,19 @@ namespace occa {
     const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
 
     dID.flagMap["compiler"]     = compiler;
-    dID.flagMap["debugEnabled"] = (debugEnabled ? "1" : "0");
+    dID.flagMap["debugEnabled"] = (debugEnabled ? "true" : "false");
 
     for(int i = 0; i <= 3; ++i){
       std::string flag = "-O";
       flag += '0' + i;
 
       if(compilerFlags.find(flag) != std::string::npos){
-        dID.flagMap["O"] = '0' + i;
+        dID.flagMap["optimization"] = '0' + i;
         break;
       }
 
       if(i == 3)
-        dID.flagMap["O"] = "None";
+        dID.flagMap["optimization"] = "None";
     }
 
     return dID;
@@ -897,7 +913,8 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.devID      = getIdentifier();
+    infoID.mode_      = COI;
+    infoID.devID      = dev->id_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -905,7 +922,7 @@ namespace occa {
     header.fileID = -1;
     header.mode   = COI;
 
-    const std::string flatDevID = infoID.devID.flattenFlagMap();
+    const std::string flatDevID = getIdentifiers().flattenFlagMap();
 
     header.flagsOffset = library::addToScratchPad(flatDevID);
     header.flagsBytes  = flatDevID.size();
