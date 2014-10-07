@@ -1124,7 +1124,7 @@ namespace occa {
   extern mutex_t deviceListMutex;
   extern std::vector<device> deviceList;
 
-  std::vector<device> getDeviceList();
+  std::vector<device>& getDeviceList();
   //==================================
 
 

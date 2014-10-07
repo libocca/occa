@@ -26,6 +26,9 @@ int main(int argc, char **argv){
   createLibrary();
   loadFromLibrary();
 
+  occa::kernelDatabase addVectors =
+    occa::library::loadKernelDatabase("addVectors");
+
   deviceList_t &devices     = occa::getDeviceList();
   deviceList_t::iterator it = devices.begin();
 
@@ -37,7 +40,6 @@ int main(int argc, char **argv){
     float *ab = new float[entries];
 
     occa::device &device = *(it++);
-    occa::kernel addVectors;
     occa::memory o_a, o_b, o_ab;
 
     for(int i = 0; i < entries; ++i){
@@ -50,13 +52,11 @@ int main(int argc, char **argv){
     o_b  = device.malloc(entries*sizeof(float));
     o_ab = device.malloc(entries*sizeof(float));
 
-    addVectors = occa::library::loadKernel(device, "addVectors");
-
     int dims = 1;
     int itemsPerGroup(2);
     int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
 
-    addVectors.setWorkingDims(dims, itemsPerGroup, groups);
+    addVectors[device].setWorkingDims(dims, itemsPerGroup, groups);
 
     o_a.copyFrom(a);
     o_b.copyFrom(b);
@@ -65,9 +65,9 @@ int main(int argc, char **argv){
 
     occa::tic("addVectors");
 
-    addVectors(entries, o_a, o_b, o_ab);
+    addVectors[device](entries, o_a, o_b, o_ab);
 
-    double elapsedTime = occa::toc("addVectors", addVectors);
+    double elapsedTime = occa::toc("addVectors", addVectors[device]);
 
     o_ab.copyTo(ab);
 
@@ -78,7 +78,7 @@ int main(int argc, char **argv){
     for(int i = 0; i < 5; ++i)
       std::cout << i << ": " << ab[i] << '\n';
 
-    addVectors.free();
+    addVectors[device].free();
     o_a.free();
     o_b.free();
     o_ab.free();

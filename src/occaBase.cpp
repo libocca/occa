@@ -820,7 +820,7 @@ namespace occa {
   mutex_t deviceListMutex;
   std::vector<device> deviceList;
 
-  std::vector<device> getDeviceList(){
+  std::vector<device>& getDeviceList(){
 
     deviceListMutex.lock();
 
