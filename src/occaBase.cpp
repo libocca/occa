@@ -226,6 +226,73 @@ namespace occa {
       delete kHandle->nestedKernels;
     }
   }
+
+  kernelDatabase::kernelDatabase() :
+    kernelName(""),
+    modelKernelCount(0),
+    kernelCount(0) {}
+
+  kernelDatabase::kernelDatabase(const std::string kernelName_) :
+    kernelName(kernelName_),
+    modelKernelCount(0),
+    kernelCount(0) {}
+
+  kernelDatabase::kernelDatabase(const kernelDatabase &kdb) :
+    kernelName(kdb.kernelName),
+
+    modelKernelCount(kdb.modelKernelCount),
+    modelKernelAvailable(kdb.modelKernelAvailable),
+
+    kernelCount(kdb.kernelCount),
+    kernels(kdb.kernels),
+    kernelAllocated(kdb.kernelAllocated) {}
+
+
+  kernelDatabase& kernelDatabase::operator = (const kernelDatabase &kdb){
+    kernelName = kdb.kernelName;
+
+    modelKernelCount     = kdb.modelKernelCount;
+    modelKernelAvailable = kdb.modelKernelAvailable;
+
+    kernelCount     = kdb.kernelCount;
+    kernels         = kdb.kernels;
+    kernelAllocated = kdb.kernelAllocated;
+
+    return *this;
+  }
+
+  void kernelDatabase::modelKernelIsAvailable(const int id){
+    OCCA_CHECK(0 <= id);
+
+    if(modelKernelCount <= id){
+      modelKernelCount = (id + 1);
+      modelKernelAvailable.resize(modelKernelCount, false);
+    }
+
+    modelKernelAvailable[id] = true;
+  }
+
+  void kernelDatabase::addKernel(device d, kernel k){
+    addKernel(d.id_, k);
+  }
+
+  void kernelDatabase::addKernel(const int id, kernel k){
+    OCCA_CHECK(0 <= id);
+
+    if(kernelCount <= id){
+      kernelCount = (id + 1);
+
+      kernels.resize(kernelCount);
+      kernelAllocated.resize(kernelCount, false);
+    }
+
+    kernels[id] = k;
+    kernelAllocated[id] = true;
+  }
+
+  void kernelDatabase::loadKernelFromLibrary(device &d){
+    addKernel(d, library::loadKernel(d, kernelName));
+  }
   //==================================
 
 
@@ -400,12 +467,19 @@ namespace occa {
 
   //---[ Device ]---------------------
   device::device() :
+    modelID_(-1),
+    id_(-1),
+
     dHandle(NULL),
     currentStream(NULL) {}
 
   device::device(const device &d) :
     mode_(d.mode_),
     strMode(d.strMode),
+
+    modelID_(d.modelID_),
+    id_(d.id_),
+
     dHandle(d.dHandle),
 
     currentStream(d.currentStream),
@@ -416,7 +490,11 @@ namespace occa {
   }
 
   device& device::operator = (const device &d){
-    mode_   = d.mode_;
+    mode_ = d.mode_;
+
+    modelID_ = d.modelID_;
+    id_      = d.id_;
+
     dHandle = d.dHandle;
 
     if(dHandle)
@@ -474,6 +552,9 @@ namespace occa {
     dHandle->dev = this;
     dHandle->setup(arg1, arg2);
 
+    modelID_ = library::deviceModelID(getIdentifier());
+    id_      = library::genDeviceID();
+
     currentStream = genStream();
   }
 
@@ -508,6 +589,18 @@ namespace occa {
 
   std::string& device::getCompilerFlags(){
     return dHandle->getCompilerFlags();
+  }
+
+  int device::modelID(){
+    return modelID_;
+  }
+
+  int device::id(){
+    return id_;
+  }
+
+  int device::modeID(){
+    return mode_;
   }
 
   std::string& device::mode(){
@@ -736,25 +829,61 @@ namespace occa {
     return dHandle->simdWidth();
   }
 
-  std::vector<device> getDeviceList(){
-    std::vector<device> dList;
+  mutex_t deviceListMutex;
+  std::vector<device> deviceList;
 
-    device_t<OpenMP>::appendAvailableDevices(dList);
+  std::vector<device>& getDeviceList(){
+
+    deviceListMutex.lock();
+
+    if(deviceList.size()){
+      deviceListMutex.unlock();
+      return deviceList;
+    }
+
+    device_t<OpenMP>::appendAvailableDevices(deviceList);
 
 #if OCCA_PTHREADS_ENABLED
-    device_t<Pthreads>::appendAvailableDevices(dList);
+    device_t<Pthreads>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_OPENCL_ENABLED
-    device_t<OpenCL>::appendAvailableDevices(dList);
+    device_t<OpenCL>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_CUDA_ENABLED
-    device_t<CUDA>::appendAvailableDevices(dList);
+    device_t<CUDA>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_COI_ENABLED
-    device_t<COI>::appendAvailableDevices(dList);
+    device_t<COI>::appendAvailableDevices(deviceList);
 #endif
 
-    return dList;
+    deviceListMutex.unlock();
+
+    return deviceList;
+  }
+
+  deviceIdentifier::deviceIdentifier() :
+    mode_(OpenMP) {}
+
+  deviceIdentifier::deviceIdentifier(occa::mode m,
+                                     const char *c, const size_t chars){
+    mode_ = m;
+    load(c, chars);
+  }
+
+  deviceIdentifier::deviceIdentifier(occa::mode m, const std::string &s){
+    mode_ = m;
+    load(s);
+  }
+
+  deviceIdentifier::deviceIdentifier(const deviceIdentifier &di) :
+    mode_(di.mode_),
+    flagMap(di.flagMap) {}
+
+  deviceIdentifier& deviceIdentifier::operator = (const deviceIdentifier &di){
+    mode_ = di.mode_;
+    flagMap = di.flagMap;
+
+    return *this;
   }
 
   void deviceIdentifier::load(const char *c, const size_t chars){

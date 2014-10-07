@@ -273,6 +273,38 @@ namespace occa {
       return nRootNode;
     }
 
+    void strNode::flatten(){
+      strNode *nodePos = this;
+
+      while(nodePos){
+        const int downCount = nodePos->down.size();
+
+        if(downCount){
+          for(int i = 1; i < downCount; ++i){
+            strNode *d1 = lastNode(nodePos->down[i - 1]);
+            strNode *d2 = nodePos->down[i];
+
+            d1->right = d2;
+            d2->left  = d1;
+          }
+
+          strNode *lastD = lastNode(nodePos->down[downCount - 1]);
+
+          lastD->right = nodePos->right;
+
+          if(nodePos->right)
+            nodePos->right->left = lastD;
+
+          nodePos->right         = nodePos->down[0];
+          nodePos->down[0]->left = nodePos;
+
+          nodePos->down.clear();
+        }
+
+        nodePos = nodePos->right;
+      }
+    }
+
     bool strNode::freeLeft(){
       if((left != NULL) && (left != this)){
         strNode *l = left;

@@ -44,18 +44,26 @@ namespace occa {
   };
 
   namespace library {
-    mutex_t mutex;
+    mutex_t headerMutex, kernelMutex;
+    mutex_t deviceIDMutex, deviceModelMutex;
+    mutex_t scratchMutex;
+
     headerMap_t headerMap;
+    kernelMap_t kernelMap;
+
+    deviceModelMap_t deviceModelMap;
 
     std::string scratchPad;
 
+    int currentDeviceID = 0;
+
     size_t addToScratchPad(const std::string &s){
-      mutex.lock();
+      scratchMutex.lock();
 
       size_t offset = scratchPad.size();
       scratchPad += s;
 
-      mutex.unlock();
+      scratchMutex.unlock();
 
       return offset;
     }
@@ -92,7 +100,7 @@ namespace occa {
       for(uint32_t i = 0; i < headerCount; ++i){
         infoID_t infoID;
 
-        infoID.devID.mode_ = *(buffer32++);
+        const int mode_ = *(buffer32++);
 
         buffer64 = (uint64_t*) buffer32;
         const uint64_t flagsOffset = *(buffer64++);
@@ -109,14 +117,21 @@ namespace occa {
         infoID.kernelName = std::string(buffer + kernelNameOffset,
                                         kernelNameBytes);
 
-        infoID.devID.load(buffer + flagsOffset, flagsBytes);
+        deviceIdentifier identifier(mode_,
+                                    buffer + flagsOffset, flagsBytes);
+
+        infoID.modelID = deviceModelID(identifier);
+
+        kernelMutex.lock();
+        kernelMap[infoID.kernelName].push_back(infoID.modelID);
+        kernelMutex.unlock();
 
         //---[ Input to header map ]----
-        mutex.lock();
+        headerMutex.lock();
         infoHeader_t &h = headerMap[infoID];
 
         h.fileID = fileDatabase::getFileID(filename);
-        h.mode   = infoID.devID.mode_;
+        h.mode   = mode_;
 
         h.flagsOffset = flagsOffset;
         h.flagsBytes  = flagsBytes;
@@ -126,7 +141,7 @@ namespace occa {
 
         h.kernelNameOffset = kernelNameOffset;
         h.kernelNameBytes  = kernelNameBytes;
-        mutex.unlock();
+        headerMutex.unlock();
         //==============================
       }
 
@@ -134,14 +149,14 @@ namespace occa {
     }
 
     void save(const std::string &filename){
-      mutex.lock();
+      headerMutex.lock();
 
       FILE *outFD = fopen(filename.c_str(), "wb");
 
       uint32_t headerCount = headerMap.size();
 
       if(headerCount == 0){
-        mutex.unlock();
+        headerMutex.unlock();
         return;
       }
 
@@ -216,19 +231,71 @@ namespace occa {
 
       fclose(outFD);
 
-      mutex.unlock();
+      headerMutex.unlock();
+    }
+
+    int genDeviceID(){
+      deviceIDMutex.lock();
+      const int id = (currentDeviceID++);
+      deviceIDMutex.unlock();
+
+      return id;
+    }
+
+    int deviceModelID(occa::device &dev){
+      return deviceModelID(dev.getIdentifier());
+    }
+
+    int deviceModelID(const occa::deviceIdentifier &id){
+      deviceModelMutex.lock();
+
+      deviceModelMapIterator it = deviceModelMap.find(id);
+
+      int dID;
+
+      if(it != deviceModelMap.end())
+        dID = it->second;
+      else{
+        dID = deviceModelMap.size();
+        deviceModelMap[id] = dID;
+      }
+
+      deviceModelMutex.unlock();
+
+      return dID;
+    }
+
+    occa::kernelDatabase loadKernelDatabase(const std::string &kernelName){
+      kernelDatabase kdb(kernelName);
+
+      kernelMutex.lock();
+
+      kernelMapIterator it = kernelMap.find(kernelName);
+
+      if(it != kernelMap.end()){
+        std::vector<int> &ids = it->second;
+
+        const int idCount = ids.size();
+
+        for(int i = 0; i < idCount; ++i)
+          kdb.modelKernelIsAvailable(ids[i]);
+      }
+
+      kernelMutex.unlock();
+
+      return kdb;
     }
 
     kernel loadKernel(occa::device &dev,
                       const std::string &kernelName){
       infoID_t infoID;
 
-      infoID.devID      = dev.getIdentifier();
+      infoID.modelID    = dev.modelID();
       infoID.kernelName = kernelName;
 
-      mutex.lock();
+      headerMutex.lock();
       const infoHeader_t &h = headerMap[infoID];
-      mutex.unlock();
+      headerMutex.unlock();
 
       const std::string hFilename = fileDatabase::getFilename(h.fileID);
       FILE *inFD = fopen(hFilename.c_str(), "rb");

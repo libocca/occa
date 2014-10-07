@@ -28,22 +28,20 @@ namespace occa {
   namespace library {
     class infoID_t {
     public:
-      deviceIdentifier devID;
+      int modelID;
       std::string kernelName;
 
       inline infoID_t() :
-        devID(),
+        modelID(-1),
         kernelName("") {}
 
       inline infoID_t(const infoID_t &id) :
-        devID(id.devID),
+        modelID(id.modelID),
         kernelName(id.kernelName) {}
 
       inline friend bool operator < (const infoID_t &a, const infoID_t &b){
-        const int sc = a.devID.compare(b.devID);
-
-        if(sc)
-          return (sc < 0);
+        if(a.modelID != b.modelID)
+          return (a.modelID < b.modelID);
 
         return (a.kernelName < b.kernelName);
       }
@@ -62,15 +60,38 @@ namespace occa {
     typedef headerMap_t::iterator           headerMapIterator;
     typedef headerMap_t::const_iterator     cHeaderMapIterator;
 
-    extern mutex_t mutex;
+    typedef std::map<std::string,std::vector<int> > kernelMap_t;
+    typedef kernelMap_t::iterator                   kernelMapIterator;
+    typedef kernelMap_t::const_iterator             cKernelMapIterator;
+
+    typedef std::map<deviceIdentifier,int>   deviceModelMap_t;
+    typedef deviceModelMap_t::iterator       deviceModelMapIterator;
+    typedef deviceModelMap_t::const_iterator cDeviceMapIterator;
+
+    extern mutex_t headerMutex, kernelMutex;
+    extern mutex_t deviceIDMutex, deviceModelMutex;
+    extern mutex_t scratchMutex;
+
     extern headerMap_t headerMap;
+    extern kernelMap_t kernelMap;
+
+    extern deviceModelMap_t deviceModelMap;
 
     extern std::string scratchPad;
+
+    extern int currentDeviceID;
 
     size_t addToScratchPad(const std::string &s);
 
     void load(const std::string &filename);
     void save(const std::string &filename);
+
+    int genDeviceID();
+
+    int deviceModelID(occa::device &dev);
+    int deviceModelID(const occa::deviceIdentifier &id);
+
+    occa::kernelDatabase loadKernelDatabase(const std::string &kernelName);
 
     occa::kernel loadKernel(occa::device &dev,
                             const std::string &kernelName);

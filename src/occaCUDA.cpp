@@ -46,6 +46,8 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
+    nestedKernelCount = 1;
+
     preferredDimSize_ = 0;
 
     startTime = (void*) new CUevent;
@@ -63,6 +65,13 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
+
     preferredDimSize_ = k.preferredDimSize_;
 
     startTime = k.startTime;
@@ -79,6 +88,13 @@ namespace occa {
     dims  = k.dims;
     inner = k.inner;
     outer = k.outer;
+
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
 
     *((CUevent*) startTime) = *((CUevent*) k.startTime);
     *((CUevent*) endTime)   = *((CUevent*) k.endTime);
@@ -753,7 +769,7 @@ namespace occa {
 
       archSM_ << major << minor;
 
-      dID.flagMap["arch"] = archSM_.str();
+      dID.flagMap["sm_arch"] = archSM_.str();
     }
     else{
       const char *c0 = (compilerFlags.c_str() + archPos);
@@ -762,7 +778,7 @@ namespace occa {
       while((*c0 != '\0') && (*c0 != ' '))
         ++c1;
 
-      dID.flagMap["arch"] = std::string(c0, c1 - c0);
+      dID.flagMap["sm_arch"] = std::string(c0, c1 - c0);
     }
 
     return dID;
@@ -953,7 +969,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.devID      = getIdentifier();
+    infoID.modelID    = dev->modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -961,7 +977,7 @@ namespace occa {
     header.fileID = -1;
     header.mode   = CUDA;
 
-    const std::string flatDevID = infoID.devID.flattenFlagMap();
+    const std::string flatDevID = getIdentifier().flattenFlagMap();
 
     header.flagsOffset = library::addToScratchPad(flatDevID);
     header.flagsBytes  = flatDevID.size();

@@ -64,6 +64,8 @@ namespace occa {
   bool fileExists(const std::string &filename);
   std::string readFile(const std::string &filename);
 
+  std::string getCachePath();
+
   std::string getCachedName(const std::string &filename,
                             const std::string &salt);
 

@@ -364,6 +364,8 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
+    nestedKernelCount = 1;
+
     preferredDimSize_ = 0;
 
     startTime = (void*) new cl_event;
@@ -381,6 +383,13 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
+
     preferredDimSize_ = k.preferredDimSize_;
 
     startTime = k.startTime;
@@ -397,6 +406,13 @@ namespace occa {
     dims  = k.dims;
     inner = k.inner;
     outer = k.outer;
+
+    nestedKernelCount = k.nestedKernelCount;
+    // setDimsKernels = new kernel_v*[nestedKernelCount];
+    nestedKernels  = new kernel_v*[nestedKernelCount];
+
+    for(int i = 0; i < nestedKernelCount; ++i)
+      nestedKernels[i] = k.nestedKernels[i];
 
     preferredDimSize_ = k.preferredDimSize_;
 
@@ -1241,7 +1257,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.devID      = getIdentifier();
+    infoID.modelID    = dev->modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -1249,7 +1265,7 @@ namespace occa {
     header.fileID = -1;
     header.mode   = OpenCL;
 
-    const std::string flatDevID = infoID.devID.flattenFlagMap();
+    const std::string flatDevID = getIdentifier().flattenFlagMap();
 
     header.flagsOffset = library::addToScratchPad(flatDevID);
     header.flagsBytes  = flatDevID.size();

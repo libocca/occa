@@ -87,6 +87,8 @@ namespace occa {
       node<strNode*> getStrNodesWith(const std::string &name_,
                                      const int type_ = everythingType);
 
+      void flatten();
+
       bool freeLeft();
       bool freeRight();
 

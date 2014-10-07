@@ -231,14 +231,14 @@ namespace occa {
     return contents;
   }
 
-  std::string getCachedName(const std::string &filename,
-                            const std::string &salt){
-    //---[ Place Somewhere Else ]-----
+  std::string getCachePath(){
     char *c_cachePath = getenv("OCCA_CACHE_DIR");
 
     std::string occaCachePath;
 
-    if(c_cachePath == NULL){
+    if(c_cachePath != NULL)
+      occaCachePath = c_cachePath;
+    else{
       std::stringstream ss;
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       char *c_home = getenv("HOME");
@@ -272,14 +272,13 @@ namespace occa {
       if(mkdirStatus == FALSE)
         assert(GetLastError() == ERROR_ALREADY_EXISTS);
 #endif
+
       occaCachePath = defaultCacheDir;
     }
-    else
-      occaCachePath = c_cachePath;
 
     const int chars = occaCachePath.size();
 
-    OCCA_CHECK(chars > 0);
+    OCCA_CHECK(0 < chars);
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const char slashChar = '/';
@@ -304,6 +303,14 @@ namespace occa {
       else
         occaCachePath += slashChar;
     }
+
+    return occaCachePath;
+  }
+
+  std::string getCachedName(const std::string &filename,
+                            const std::string &salt){
+
+    std::string occaCachePath = getCachePath();
     //================================
 
     const std::string fileContents = readFile(filename);
