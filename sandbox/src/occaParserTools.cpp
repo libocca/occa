@@ -126,18 +126,20 @@ namespace occa {
 
       skipInt(c);
 
-      if(*c == '.')
+      if(*c == '.'){
         ++c;
 
-      skipInt(c);
+        skipInt(c);
+      }
 
-      if(*c == 'e')
+      if(*c == 'e'){
         ++c;
 
-      if((*c == '+') || (*c == '-'))
-        ++c;
+        if((*c == '+') || (*c == '-'))
+          ++c;
 
-      skipInt(c);
+        skipInt(c);
+      }
 
       if(*c == 'f')
         ++c;

@@ -108,6 +108,7 @@ namespace occa {
 
       while(labelNodePos){
         if(labelNodePos->down.size()){
+          // () () is not allowed (down.size is 0 or 1)
           strNode *downNode = labelNodePos->down[0];
           labelNodePos->down.clear();
 
@@ -3372,7 +3373,22 @@ namespace occa {
 
           const char *cRight = cLeft;
 
-          if(isAString(cLeft)){
+          bool loadString = isAString(cLeft);
+          bool loadNumber = isANumber(cLeft);
+
+          // Case: n +1
+          if(loadNumber){
+            const int delimeterChars = isAWordDelimeter(cLeft);
+
+            if((delimeterChars == 1) &&
+               ((cLeft[0] == '+') || (cLeft[0] == '-'))){
+
+              if(nodePos->left)
+                loadNumber = false;
+            }
+          }
+
+          if(loadString){
             skipString(cRight);
 
             nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
@@ -3382,7 +3398,9 @@ namespace occa {
 
             cLeft = cRight;
           }
-          else if(isANumber(cLeft)){
+          else if(loadNumber){
+            const int delimeterChars = isAWordDelimeter(cLeft);
+
             skipNumber(cRight);
 
             nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
@@ -3678,11 +3696,13 @@ namespace occa {
       //---[ Operator Precedence ]--------
       opPrecedence[opHolder("::", binaryOperatorType)]   = 0;
 
+      // class(...), class{1,2,3}, static_cast<>(), func(), arr[]
       opPrecedence[opHolder("++", rUnitaryOperatorType)] = 1;
       opPrecedence[opHolder("--", rUnitaryOperatorType)] = 1;
       opPrecedence[opHolder("." , binaryOperatorType)]   = 1;
       opPrecedence[opHolder("->", binaryOperatorType)]   = 1;
 
+      // (int) x, sizeof, new, new [], delete, delete []
       opPrecedence[opHolder("++", lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("--", lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("+" , lUnitaryOperatorType)] = 2;
@@ -3692,45 +3712,51 @@ namespace occa {
       opPrecedence[opHolder("*" , qualifierType)]        = 2;
       opPrecedence[opHolder("&" , qualifierType)]        = 2;
 
-      opPrecedence[opHolder("*" , binaryOperatorType)]   = 3;
-      opPrecedence[opHolder("/" , binaryOperatorType)]   = 3;
-      opPrecedence[opHolder("%" , binaryOperatorType)]   = 3;
+      opPrecedence[opHolder(".*" , binaryOperatorType)]  = 3;
+      opPrecedence[opHolder("->*", binaryOperatorType)]  = 3;
 
-      opPrecedence[opHolder("+" , binaryOperatorType)]   = 4;
-      opPrecedence[opHolder("-" , binaryOperatorType)]   = 4;
+      opPrecedence[opHolder("*" , binaryOperatorType)]   = 4;
+      opPrecedence[opHolder("/" , binaryOperatorType)]   = 4;
+      opPrecedence[opHolder("%" , binaryOperatorType)]   = 4;
 
-      opPrecedence[opHolder("<<", binaryOperatorType)]   = 5;
-      opPrecedence[opHolder(">>", binaryOperatorType)]   = 5;
+      opPrecedence[opHolder("+" , binaryOperatorType)]   = 5;
+      opPrecedence[opHolder("-" , binaryOperatorType)]   = 5;
 
-      opPrecedence[opHolder("<" , binaryOperatorType)]   = 6;
-      opPrecedence[opHolder("<=", binaryOperatorType)]   = 6;
-      opPrecedence[opHolder(">=", binaryOperatorType)]   = 6;
-      opPrecedence[opHolder(">" , binaryOperatorType)]   = 6;
+      opPrecedence[opHolder("<<", binaryOperatorType)]   = 6;
+      opPrecedence[opHolder(">>", binaryOperatorType)]   = 6;
 
-      opPrecedence[opHolder("==", binaryOperatorType)]   = 7;
-      opPrecedence[opHolder("!=", binaryOperatorType)]   = 7;
+      opPrecedence[opHolder("<" , binaryOperatorType)]   = 7;
+      opPrecedence[opHolder("<=", binaryOperatorType)]   = 7;
+      opPrecedence[opHolder(">=", binaryOperatorType)]   = 7;
+      opPrecedence[opHolder(">" , binaryOperatorType)]   = 7;
 
-      opPrecedence[opHolder("&" , binaryOperatorType)]   = 8;
+      opPrecedence[opHolder("==", binaryOperatorType)]   = 8;
+      opPrecedence[opHolder("!=", binaryOperatorType)]   = 8;
 
-      opPrecedence[opHolder("^" , binaryOperatorType)]   = 9;
+      opPrecedence[opHolder("&" , binaryOperatorType)]   = 9;
 
-      opPrecedence[opHolder("|" , binaryOperatorType)]   = 10;
+      opPrecedence[opHolder("^" , binaryOperatorType)]   = 10;
 
-      opPrecedence[opHolder("&&", binaryOperatorType)]   = 11;
+      opPrecedence[opHolder("|" , binaryOperatorType)]   = 11;
 
-      opPrecedence[opHolder("||", binaryOperatorType)]   = 12;
+      opPrecedence[opHolder("&&", binaryOperatorType)]   = 12;
 
-      opPrecedence[opHolder("?" , ternaryOperatorType)]  = 13;
-      opPrecedence[opHolder("=" , assOperatorType)]      = 13;
+      opPrecedence[opHolder("||", binaryOperatorType)]   = 13;
 
-      opPrecedence[opHolder("%=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("&=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("*=", assOperatorType)]      = 14;
+      opPrecedence[opHolder("?" , ternaryOperatorType)]  = 14;
+      opPrecedence[opHolder("=" , assOperatorType)]      = 14;
       opPrecedence[opHolder("+=", assOperatorType)]      = 14;
       opPrecedence[opHolder("-=", assOperatorType)]      = 14;
+      opPrecedence[opHolder("*=", assOperatorType)]      = 14;
       opPrecedence[opHolder("/=", assOperatorType)]      = 14;
+      opPrecedence[opHolder("%=", assOperatorType)]      = 14;
+      opPrecedence[opHolder("<<=", assOperatorType)]     = 14;
+      opPrecedence[opHolder(">>=", assOperatorType)]     = 14;
+      opPrecedence[opHolder("&=", assOperatorType)]      = 14;
       opPrecedence[opHolder("^=", assOperatorType)]      = 14;
       opPrecedence[opHolder("|=", assOperatorType)]      = 14;
+
+      // 15: throw
 
       opPrecedence[opHolder("," , binaryOperatorType)]   = 16;
 

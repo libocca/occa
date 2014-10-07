@@ -98,8 +98,8 @@ namespace occa {
     //   ---[ Delimeters ]---------
     static const char whitespace[]     = " \t\r\n\v\f\0";
     static const char wordDelimeter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
-    static const char wordDelimeter2[] = "!=##%=&&&=*=+++=-=--->../=::<<<===>=>>^=|=||\0";
-    static const char wordDelimeter3[] = "...<<=>>=\0";
+    static const char wordDelimeter2[] = "!=##%=&&&=*=+++=-=--->.*.*../=::<<<===>=>>^=|=||\0";
+    static const char wordDelimeter3[] = "->*...<<=>>=\0";
 
     //   ---[ Keyword Types ]---
     static const int everythingType       = 0xFFFFFFFF;

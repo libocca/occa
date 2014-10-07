@@ -473,11 +473,11 @@ namespace occa {
 
       else if(op == "<<"){
         if(bIsFloat){
-          std::cout << "Cannot apply [A << B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " << " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A << B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " << " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -485,11 +485,11 @@ namespace occa {
       }
       else if(op == ">>"){
         if(bIsFloat){
-          std::cout << "Cannot apply [A >> B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " >> " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A >> B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " >> " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -497,11 +497,11 @@ namespace occa {
       }
       else if(op == "^"){
         if(bIsFloat){
-          std::cout << "Cannot apply [A ^ B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " ^ " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A ^ B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " ^ " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -509,11 +509,11 @@ namespace occa {
       }
       else if(op == "|"){
         if(bIsFloat){
-          std::cout << "Cannot apply [A | B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " | " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A | B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " | " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -521,11 +521,11 @@ namespace occa {
       }
       else if(op == "&"){
         if(bIsFloat){
-          std::cout << "Cannot apply [A & B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " & " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A & B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " & " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -533,11 +533,11 @@ namespace occa {
       }
       else if(op == "%"){
         if(bIsFloat){
-          std::cout << "Cannot apply [A % B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " % " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A % B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " % " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -551,11 +551,11 @@ namespace occa {
 
       else if(op == "%="){
         if(bIsFloat){
-          std::cout << "Cannot apply [A % B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " %= " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A % B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " %= " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
@@ -563,39 +563,63 @@ namespace occa {
       }
       else if(op == "&="){
         if(bIsFloat){
-          std::cout << "Cannot apply [A % B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " &= " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A % B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " &= " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
-          ret.setLongValue(ret.longValue() % b.longValue());
+          ret.setLongValue(ret.longValue() & b.longValue());
       }
       else if(op == "^="){
         if(bIsFloat){
-          std::cout << "Cannot apply [A % B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " ^= " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A % B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " ^= " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
-          ret.setLongValue(ret.longValue() % b.longValue());
+          ret.setLongValue(ret.longValue() ^ b.longValue());
       }
       else if(op == "|="){
         if(bIsFloat){
-          std::cout << "Cannot apply [A % B] where B is [float].\n";
+          std::cout << "Cannot apply [" << a << " |= " << b << "] where " << b << " is [float].\n";
           throw 1;
         }
         else if(aIsFloat){
-          std::cout << "Cannot apply [A % B] where A is [float].\n";
+          std::cout << "Cannot apply [" << a << " |= " << b << "] where " << a << " is [float].\n";
           throw 1;
         }
         else
-          ret.setLongValue(ret.longValue() % b.longValue());
+          ret.setLongValue(ret.longValue() | b.longValue());
+      }
+      else if(op == ">>="){
+        if(bIsFloat){
+          std::cout << "Cannot apply [" << a << " >>= " << b << "] where " << b << " is [float].\n";
+          throw 1;
+        }
+        else if(aIsFloat){
+          std::cout << "Cannot apply [" << a << " >>= " << b << "] where " << a << " is [float].\n";
+          throw 1;
+        }
+        else
+          ret.setLongValue(ret.longValue() >> b.longValue());
+      }
+      else if(op == "<<="){
+        if(bIsFloat){
+          std::cout << "Cannot apply [" << a << " <<= " << b << "] where " << b << " is [float].\n";
+          throw 1;
+        }
+        else if(aIsFloat){
+          std::cout << "Cannot apply [" << a << " <<= " << b << "] where " << a << " is [float].\n";
+          throw 1;
+        }
+        else
+          ret.setLongValue(ret.longValue() << b.longValue());
       }
 
       return ret;
