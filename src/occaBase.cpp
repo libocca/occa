@@ -289,7 +289,7 @@ namespace occa {
     kernelAllocated[id] = true;
   }
 
-  void kernelDatabase::loadKernelFromLibrary(device d){
+  void kernelDatabase::loadKernelFromLibrary(device &d){
     addKernel(d, library::loadKernel(d, kernelName));
   }
   //==================================

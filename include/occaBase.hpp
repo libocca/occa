@@ -591,7 +591,7 @@ namespace occa {
     void addKernel(device d, kernel k);
     void addKernel(const int id, kernel k);
 
-    void loadKernelFromLibrary(device d);
+    void loadKernelFromLibrary(device &d);
 
     kernel& operator [] (device &d);
   };
