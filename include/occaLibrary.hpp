@@ -28,20 +28,20 @@ namespace occa {
   namespace library {
     class infoID_t {
     public:
-      int devID;
+      int modelID;
       std::string kernelName;
 
       inline infoID_t() :
-        devID(-1),
+        modelID(-1),
         kernelName("") {}
 
       inline infoID_t(const infoID_t &id) :
-        devID(id.devID),
+        modelID(id.modelID),
         kernelName(id.kernelName) {}
 
       inline friend bool operator < (const infoID_t &a, const infoID_t &b){
-        if(a.devID != b.devID)
-          return (a.devID < b.devID);
+        if(a.modelID != b.modelID)
+          return (a.modelID < b.modelID);
 
         return (a.kernelName < b.kernelName);
       }
@@ -64,26 +64,32 @@ namespace occa {
     typedef kernelMap_t::iterator                   kernelMapIterator;
     typedef kernelMap_t::const_iterator             cKernelMapIterator;
 
-    typedef std::map<deviceIdentifier,int> deviceMap_t;
-    typedef deviceMap_t::iterator          deviceMapIterator;
-    typedef deviceMap_t::const_iterator    cDeviceMapIterator;
+    typedef std::map<deviceIdentifier,int>   deviceModelMap_t;
+    typedef deviceModelMap_t::iterator       deviceModelMapIterator;
+    typedef deviceModelMap_t::const_iterator cDeviceMapIterator;
 
-    extern mutex_t headerMutex, kernelMutex, deviceMutex;
+    extern mutex_t headerMutex, kernelMutex;
+    extern mutex_t deviceIDMutex, deviceModelMutex;
     extern mutex_t scratchMutex;
 
     extern headerMap_t headerMap;
     extern kernelMap_t kernelMap;
-    extern deviceMap_t deviceMap;
+
+    extern deviceModelMap_t deviceModelMap;
 
     extern std::string scratchPad;
+
+    extern int currentDeviceID;
 
     size_t addToScratchPad(const std::string &s);
 
     void load(const std::string &filename);
     void save(const std::string &filename);
 
-    int deviceID(occa::device &dev);
-    int deviceID(const occa::deviceIdentifier &id);
+    int genDeviceID();
+
+    int deviceModelID(occa::device &dev);
+    int deviceModelID(const occa::deviceIdentifier &id);
 
     occa::kernelDatabase loadKernelDatabase(const std::string &kernelName);
 

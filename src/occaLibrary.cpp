@@ -44,14 +44,18 @@ namespace occa {
   };
 
   namespace library {
-    mutex_t headerMutex, kernelMutex, deviceMutex;
+    mutex_t headerMutex, kernelMutex;
+    mutex_t deviceIDMutex, deviceModelMutex;
     mutex_t scratchMutex;
 
     headerMap_t headerMap;
     kernelMap_t kernelMap;
-    deviceMap_t deviceMap;
+
+    deviceModelMap_t deviceModelMap;
 
     std::string scratchPad;
+
+    int currentDeviceID = 0;
 
     size_t addToScratchPad(const std::string &s){
       scratchMutex.lock();
@@ -116,10 +120,10 @@ namespace occa {
         deviceIdentifier identifier(mode_,
                                     buffer + flagsOffset, flagsBytes);
 
-        infoID.devID = deviceID(identifier);
+        infoID.modelID = deviceModelID(identifier);
 
         kernelMutex.lock();
-        kernelMap[infoID.kernelName].push_back(infoID.devID);
+        kernelMap[infoID.kernelName].push_back(infoID.modelID);
         kernelMutex.unlock();
 
         //---[ Input to header map ]----
@@ -230,25 +234,33 @@ namespace occa {
       headerMutex.unlock();
     }
 
-    int deviceID(occa::device &dev){
-      return deviceID(dev.getIdentifier());
+    int genDeviceID(){
+      deviceIDMutex.lock();
+      const int id = (currentDeviceID++);
+      deviceIDMutex.unlock();
+
+      return id;
     }
 
-    int deviceID(const occa::deviceIdentifier &id){
-      deviceMutex.lock();
+    int deviceModelID(occa::device &dev){
+      return deviceModelID(dev.getIdentifier());
+    }
 
-      deviceMapIterator it = deviceMap.find(id);
+    int deviceModelID(const occa::deviceIdentifier &id){
+      deviceModelMutex.lock();
+
+      deviceModelMapIterator it = deviceModelMap.find(id);
 
       int dID;
 
-      if(it != deviceMap.end())
+      if(it != deviceModelMap.end())
         dID = it->second;
       else{
-        dID = deviceMap.size();
-        deviceMap[id] = dID;
+        dID = deviceModelMap.size();
+        deviceModelMap[id] = dID;
       }
 
-      deviceMutex.unlock();
+      deviceModelMutex.unlock();
 
       return dID;
     }
@@ -278,7 +290,7 @@ namespace occa {
                       const std::string &kernelName){
       infoID_t infoID;
 
-      infoID.devID      = dev.id();
+      infoID.modelID    = dev.modelID();
       infoID.kernelName = kernelName;
 
       headerMutex.lock();

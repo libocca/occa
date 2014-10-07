@@ -1036,7 +1036,7 @@ namespace occa {
     occa::mode mode_;
     std::string strMode;
 
-    int id_;
+    int modelID_, id_;
     device_v *dHandle;
 
     stream currentStream;
@@ -1055,7 +1055,9 @@ namespace occa {
 
     deviceIdentifier getIdentifier() const;
 
+    int modelID();
     int id();
+
     int modeID();
     std::string& mode();
 

@@ -466,7 +466,9 @@ namespace occa {
 
   //---[ Device ]---------------------
   device::device() :
+    modelID_(-1),
     id_(-1),
+
     dHandle(NULL),
     currentStream(NULL) {}
 
@@ -474,7 +476,9 @@ namespace occa {
     mode_(d.mode_),
     strMode(d.strMode),
 
+    modelID_(d.modelID_),
     id_(d.id_),
+
     dHandle(d.dHandle),
 
     currentStream(d.currentStream),
@@ -487,7 +491,9 @@ namespace occa {
   device& device::operator = (const device &d){
     mode_ = d.mode_;
 
-    id_ = d.id_;
+    modelID_ = d.modelID_;
+    id_      = d.id_;
+
     dHandle = d.dHandle;
 
     if(dHandle)
@@ -545,7 +551,8 @@ namespace occa {
     dHandle->dev = this;
     dHandle->setup(arg1, arg2);
 
-    id_ = library::deviceID(*this);
+    modelID_ = library::deviceModelID(getIdentifier());
+    id_      = library::genDeviceID();
 
     currentStream = genStream();
   }
@@ -581,6 +588,10 @@ namespace occa {
 
   std::string& device::getCompilerFlags(){
     return dHandle->getCompilerFlags();
+  }
+
+  int device::modelID(){
+    return modelID_;
   }
 
   int device::id(){

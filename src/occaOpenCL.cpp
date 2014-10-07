@@ -1257,7 +1257,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.devID      = dev->id_;
+    infoID.modelID    = dev->modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
