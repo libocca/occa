@@ -817,25 +817,36 @@ namespace occa {
     return dHandle->simdWidth();
   }
 
-  std::vector<device> getDeviceList(){
-    std::vector<device> dList;
+  mutex_t deviceListMutex;
+  std::vector<device> deviceList;
 
-    device_t<OpenMP>::appendAvailableDevices(dList);
+  std::vector<device> getDeviceList(){
+
+    deviceListMutex.lock();
+
+    if(deviceList.size()){
+      deviceListMutex.unlock();
+      return deviceList;
+    }
+
+    device_t<OpenMP>::appendAvailableDevices(deviceList);
 
 #if OCCA_PTHREADS_ENABLED
-    device_t<Pthreads>::appendAvailableDevices(dList);
+    device_t<Pthreads>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_OPENCL_ENABLED
-    device_t<OpenCL>::appendAvailableDevices(dList);
+    device_t<OpenCL>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_CUDA_ENABLED
-    device_t<CUDA>::appendAvailableDevices(dList);
+    device_t<CUDA>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_COI_ENABLED
-    device_t<COI>::appendAvailableDevices(dList);
+    device_t<COI>::appendAvailableDevices(deviceList);
 #endif
 
-    return dList;
+    deviceListMutex.unlock();
+
+    return deviceList;
   }
 
   deviceIdentifier::deviceIdentifier() :
