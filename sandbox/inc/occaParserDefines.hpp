@@ -35,47 +35,61 @@ namespace occa {
 
     template <class TM> class node;
     class strNode;
+  };
 
-    //---[ Info ]-----------------------------------
-    typedef node<statement*> statementNode;
-    typedef node<varInfo*>   varInfoNode;
+  //---[ Info ]-----------------------------------
+  typedef parserNamespace::node<parserNamespace::statement*> statementNode;
+  typedef parserNamespace::node<parserNamespace::varInfo*>   varInfoNode;
 
-    typedef std::map<std::string,int>  macroMap_t;
-    typedef macroMap_t::iterator       macroMapIterator;
-    typedef macroMap_t::const_iterator cMacroMapIterator;
+  typedef std::map<std::string,int>  macroMap_t;
+  typedef macroMap_t::iterator       macroMapIterator;
+  typedef macroMap_t::const_iterator cMacroMapIterator;
 
-    typedef std::map<std::string,int>        keywordTypeMap_t;
-    typedef keywordTypeMap_t::iterator       keywordTypeMapIterator;
-    typedef keywordTypeMap_t::const_iterator cKeywordTypeMapIterator;
+  typedef std::map<std::string,int>        keywordTypeMap_t;
+  typedef keywordTypeMap_t::iterator       keywordTypeMapIterator;
+  typedef keywordTypeMap_t::const_iterator cKeywordTypeMapIterator;
 
-    typedef std::map<std::string,typeDef*> scopeTypeMap_t;
-    typedef scopeTypeMap_t::iterator       scopeTypeMapIterator;
-    typedef scopeTypeMap_t::const_iterator cScopeTypeMapIterator;
+  typedef std::map<parserNamespace::opHolder,int> opTypeMap_t;
+  typedef opTypeMap_t::iterator                   opTypeMapIterator;
+  typedef opTypeMap_t::const_iterator             cOpTypeMapIterator;
 
-    typedef std::map<std::string,varInfo*> scopeVarMap_t;
-    typedef scopeVarMap_t::iterator        scopeVarMapIterator;
-    typedef scopeVarMap_t::const_iterator  cScopeVarMapIterator;
+  typedef std::vector<parserNamespace::typeDef*> anonymousTypeMap_t;
 
-    typedef std::map<varInfo*,statement*>  varOriginMap_t;
-    typedef varOriginMap_t::iterator       varOriginMapIterator;
-    typedef varOriginMap_t::const_iterator cVarOriginMapIterator;
+  typedef std::map<std::string,parserNamespace::typeDef*> scopeTypeMap_t;
+  typedef scopeTypeMap_t::iterator                        scopeTypeMapIterator;
+  typedef scopeTypeMap_t::const_iterator                  cScopeTypeMapIterator;
 
-    typedef std::map<varInfo*,statementNode> varUsedMap_t;
-    typedef varUsedMap_t::iterator           varUsedMapIterator;
-    typedef varUsedMap_t::const_iterator     cVarUsedMapIterator;
+  typedef std::map<std::string,parserNamespace::varInfo*> scopeVarMap_t;
+  typedef scopeVarMap_t::iterator                         scopeVarMapIterator;
+  typedef scopeVarMap_t::const_iterator                   cScopeVarMapIterator;
 
-    typedef std::map<std::string,kernelInfo*> kernelInfoMap_t;
-    typedef kernelInfoMap_t::iterator         kernelInfoIterator;
-    typedef kernelInfoMap_t::const_iterator   cKernelInfoIterator;
+  typedef std::map<parserNamespace::varInfo*,
+                   parserNamespace::statement*> varOriginMap_t;
+  typedef varOriginMap_t::iterator              varOriginMapIterator;
+  typedef varOriginMap_t::const_iterator        cVarOriginMapIterator;
 
-    typedef std::map<statement*,int> loopSection_t;
-    typedef loopSection_t::iterator  loopSectionIterator;
+  typedef std::map<parserNamespace::varInfo*, statementNode> varUsedMap_t;
+  typedef varUsedMap_t::iterator                             varUsedMapIterator;
+  typedef varUsedMap_t::const_iterator                       cVarUsedMapIterator;
 
-    typedef void (parserBase::*applyToAllStatements_t)(statement &s);
-    typedef void (parserBase::*applyToStatementsDefiningVar_t)(varInfo &info, statement &s);
-    typedef void (parserBase::*applyToStatementsUsingVar_t)(varInfo &info, statement &s);
+  typedef std::map<std::string,parserNamespace::kernelInfo*> kernelInfoMap_t;
+  typedef kernelInfoMap_t::iterator                          kernelInfoIterator;
+  typedef kernelInfoMap_t::const_iterator                    cKernelInfoIterator;
 
-    typedef bool (parserBase::*findStatementWith_t)(statement &s);
+  typedef std::map<parserNamespace::statement*,int> loopSection_t;
+  typedef loopSection_t::iterator                   loopSectionIterator;
+
+  typedef void (parserNamespace::parserBase::*applyToAllStatements_t)(parserNamespace::statement &s);
+
+  typedef void (parserNamespace::parserBase::*applyToStatementsDefiningVar_t)(parserNamespace::varInfo &info,
+                                                                              parserNamespace::statement &s);
+
+  typedef void (parserNamespace::parserBase::*applyToStatementsUsingVar_t)(parserNamespace::varInfo &info,
+                                                                           parserNamespace::statement &s);
+
+  typedef bool (parserNamespace::parserBase::*findStatementWith_t)(parserNamespace::statement &s);
+
+  namespace parserNamespace {
 
     static keywordTypeMap_t keywordType;
 

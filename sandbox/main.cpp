@@ -2,9 +2,23 @@
 
 namespace occa {
   namespace parserNamespace {
+    class expNode {
+      std::string value;
+      char info;
+
+      int leafCount;
+      expNode **leaves;
+      varInfo *var;
+      typeDef *type;
+    };
+
     void test(){
-      strNode *n = labelCode( splitContent("i+++1") );
+      strNode *n = labelCode( splitContent("1 + ((2 + 3) + 4)") );
       n->print();
+      printf("|||||||||||||||||||||||||\n");
+      n->flatten();
+      n->print();
+
       throw 1;
     }
   };
