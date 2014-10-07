@@ -229,44 +229,47 @@ namespace occa {
 
   kernelDatabase::kernelDatabase() :
     kernelName(""),
+    modelKernelCount(0),
     kernelCount(0) {}
 
   kernelDatabase::kernelDatabase(const std::string kernelName_) :
     kernelName(kernelName_),
+    modelKernelCount(0),
     kernelCount(0) {}
 
   kernelDatabase::kernelDatabase(const kernelDatabase &kdb) :
     kernelName(kdb.kernelName),
 
+    modelKernelCount(kdb.modelKernelCount),
+    modelKernelAvailable(kdb.modelKernelAvailable),
+
     kernelCount(kdb.kernelCount),
     kernels(kdb.kernels),
-    kernelAvailable(kdb.kernelAvailable),
     kernelAllocated(kdb.kernelAllocated) {}
 
 
   kernelDatabase& kernelDatabase::operator = (const kernelDatabase &kdb){
     kernelName = kdb.kernelName;
 
+    modelKernelCount     = kdb.modelKernelCount;
+    modelKernelAvailable = kdb.modelKernelAvailable;
+
     kernelCount     = kdb.kernelCount;
     kernels         = kdb.kernels;
-    kernelAvailable = kdb.kernelAvailable;
     kernelAllocated = kdb.kernelAllocated;
 
     return *this;
   }
 
-  void kernelDatabase::kernelIsAvailable(const int id){
+  void kernelDatabase::modelKernelIsAvailable(const int id){
     OCCA_CHECK(0 <= id);
 
-    if(kernelCount <= id){
-      kernelCount = (id + 1);
-
-      kernels.resize(kernelCount);
-      kernelAvailable.resize(kernelCount, false);
-      kernelAllocated.resize(kernelCount, false);
+    if(modelKernelCount <= id){
+      modelKernelCount = (id + 1);
+      modelKernelAvailable.resize(modelKernelCount, false);
     }
 
-    kernelAvailable[id] = true;
+    modelKernelAvailable[id] = true;
   }
 
   void kernelDatabase::addKernel(device d, kernel k){
@@ -280,12 +283,10 @@ namespace occa {
       kernelCount = (id + 1);
 
       kernels.resize(kernelCount);
-      kernelAvailable.resize(kernelCount, false);
       kernelAllocated.resize(kernelCount, false);
     }
 
     kernels[id] = k;
-    kernelAvailable[id] = true;
     kernelAllocated[id] = true;
   }
 

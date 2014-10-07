@@ -576,9 +576,12 @@ namespace occa {
   public:
     std::string kernelName;
 
+    int modelKernelCount;
+    std::vector<char> modelKernelAvailable;
+
     int kernelCount;
     std::vector<kernel> kernels;
-    std::vector<char> kernelAvailable, kernelAllocated;
+    std::vector<char> kernelAllocated;
 
     kernelDatabase();
     kernelDatabase(const std::string kernelName_);
@@ -586,7 +589,7 @@ namespace occa {
     kernelDatabase(const kernelDatabase &kdb);
     kernelDatabase& operator = (const kernelDatabase &kdb);
 
-    void kernelIsAvailable(const int id);
+    void modelKernelIsAvailable(const int id);
 
     void addKernel(device d, kernel k);
     void addKernel(const int id, kernel k);
@@ -1132,9 +1135,12 @@ namespace occa {
 
   //---[ Kernel ]---------------------
   inline kernel& kernelDatabase::operator [] (device &d){
-    OCCA_CHECK((0 <= d.id_) && (d.id_ < kernelCount) && kernelAvailable[d.id_]);
+    OCCA_CHECK((0 <= d.modelID_) && (d.modelID_ < modelKernelCount) &&
+               modelKernelAvailable[d.modelID_]);
 
-    if(kernelAllocated[d.id_])
+    OCCA_CHECK(0 <= d.id_);
+
+    if((d.id_ < kernelCount) && kernelAllocated[d.id_])
       return kernels[d.id_];
 
     loadKernelFromLibrary(d);

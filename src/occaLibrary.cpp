@@ -278,7 +278,7 @@ namespace occa {
         const int idCount = ids.size();
 
         for(int i = 0; i < idCount; ++i)
-          kdb.kernelIsAvailable(ids[i]);
+          kdb.modelKernelIsAvailable(ids[i]);
       }
 
       kernelMutex.unlock();
