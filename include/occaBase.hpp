@@ -920,6 +920,7 @@ namespace occa {
 
     virtual stream genStream() = 0;
     virtual void freeStream(stream s) = 0;
+    virtual stream wrapStream(void *handle_) = 0;
 
     virtual tag tagStream() = 0;
     virtual double timeBetween(const tag &startTag, const tag &endTag) = 0;
@@ -991,6 +992,7 @@ namespace occa {
 
     stream genStream();
     void freeStream(stream s);
+    stream wrapStream(void *handle_);
 
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);
@@ -1078,6 +1080,7 @@ namespace occa {
     stream genStream();
     stream getStream();
     void setStream(stream s);
+    stream wrapStream(void *handle_);
 
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);

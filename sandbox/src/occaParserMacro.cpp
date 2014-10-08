@@ -17,6 +17,9 @@ namespace occa {
 
       return false;
     }
+
+    opTypeMap_t opPrecedence;
+    opLevelMap_t opLevelMap[17];
     //==============================================
 
 

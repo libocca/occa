@@ -8,8 +8,7 @@ namespace occa {
     }
 
     const std::string parserBase::parseFile(const std::string &filename){
-      if(!macrosAreInitialized)
-        initMacros();
+      initMacros();
 
       const char *cRoot = cReadFile(filename);
 
@@ -604,11 +603,8 @@ namespace occa {
     }
 
     strNode* parserBase::splitAndPreprocessContent(const char *cRoot){
-      if(!keywordsAreInitialized)
-        initKeywords();
-
-      if(!macrosAreInitialized)
-        initMacros();
+      initKeywords();
+      initMacros();
 
       strNode *nodeRoot = splitContent(cRoot);
 
@@ -620,6 +616,11 @@ namespace occa {
     //====================================
 
     void parserBase::initMacros(){
+      if(!macrosAreInitialized)
+        return;
+
+      macrosAreInitialized = true;
+
       //---[ Macros ]---------------------
       loadMacro("#define kernel occaKernel");
 
@@ -3309,8 +3310,7 @@ namespace occa {
     }
 
     strNode* splitContent(const char *cRoot){
-      if(!keywordsAreInitialized)
-        initKeywords();
+      initKeywords();
 
       const char *c = cRoot;
 
@@ -3357,6 +3357,8 @@ namespace occa {
     }
 
     strNode* labelCode(strNode *lineNodeRoot){
+      initKeywords();
+
       strNode *nodeRoot = new strNode();
       strNode *nodePos  = nodeRoot;
 
@@ -3493,6 +3495,11 @@ namespace occa {
     }
 
     void initKeywords(){
+      std::cout << "keywordsAreInitialized = " << keywordsAreInitialized << '\n';
+
+      if(keywordsAreInitialized)
+        return;
+
       keywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
@@ -3756,9 +3763,56 @@ namespace occa {
       opPrecedence[opHolder("^=", assOperatorType)]      = 14;
       opPrecedence[opHolder("|=", assOperatorType)]      = 14;
 
-      // 15: throw
+      // 15: throw x
 
       opPrecedence[opHolder("," , binaryOperatorType)]   = 16;
+
+      opLevelMap[ 0]["::"]  = binaryOperatorType;
+      opLevelMap[ 1]["++"]  = rUnitaryOperatorType;
+      opLevelMap[ 1]["--"]  = rUnitaryOperatorType;
+      opLevelMap[ 1]["." ]  = binaryOperatorType;
+      opLevelMap[ 1]["->"]  = binaryOperatorType;
+      opLevelMap[ 2]["++"]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["--"]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["+" ]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["-" ]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["!" ]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["~" ]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["*" ]  = qualifierType;
+      opLevelMap[ 2]["&" ]  = qualifierType;
+      opLevelMap[ 3][".*" ] = binaryOperatorType;
+      opLevelMap[ 3]["->*"] = binaryOperatorType;
+      opLevelMap[ 4]["*" ]  = binaryOperatorType;
+      opLevelMap[ 4]["/" ]  = binaryOperatorType;
+      opLevelMap[ 4]["%" ]  = binaryOperatorType;
+      opLevelMap[ 5]["+" ]  = binaryOperatorType;
+      opLevelMap[ 5]["-" ]  = binaryOperatorType;
+      opLevelMap[ 6]["<<"]  = binaryOperatorType;
+      opLevelMap[ 6][">>"]  = binaryOperatorType;
+      opLevelMap[ 7]["<" ]  = binaryOperatorType;
+      opLevelMap[ 7]["<="]  = binaryOperatorType;
+      opLevelMap[ 7][">="]  = binaryOperatorType;
+      opLevelMap[ 7][">" ]  = binaryOperatorType;
+      opLevelMap[ 8]["=="]  = binaryOperatorType;
+      opLevelMap[ 8]["!="]  = binaryOperatorType;
+      opLevelMap[ 9]["&" ]  = binaryOperatorType;
+      opLevelMap[10]["^" ]  = binaryOperatorType;
+      opLevelMap[11]["|" ]  = binaryOperatorType;
+      opLevelMap[12]["&&"]  = binaryOperatorType;
+      opLevelMap[13]["||"]  = binaryOperatorType;
+      opLevelMap[14]["?" ]  = ternaryOperatorType;
+      opLevelMap[14]["=" ]  = assOperatorType;
+      opLevelMap[14]["+="]  = assOperatorType;
+      opLevelMap[14]["-="]  = assOperatorType;
+      opLevelMap[14]["*="]  = assOperatorType;
+      opLevelMap[14]["/="]  = assOperatorType;
+      opLevelMap[14]["%="]  = assOperatorType;
+      opLevelMap[14]["<<="] = assOperatorType;
+      opLevelMap[14][">>="] = assOperatorType;
+      opLevelMap[14]["&="]  = assOperatorType;
+      opLevelMap[14]["^="]  = assOperatorType;
+      opLevelMap[14]["|="]  = assOperatorType;
+      opLevelMap[16][","]   = binaryOperatorType;
 
       /*---[ Future Ones ]----------------
         keywordType["using"] = ;

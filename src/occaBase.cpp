@@ -628,6 +628,10 @@ namespace occa {
     currentStream = s;
   }
 
+  stream device::wrapStream(void *handle_){
+    return dHandle->wrapStream(handle_);
+  }
+
   tag device::tagStream(){
     return dHandle->tagStream();
   }

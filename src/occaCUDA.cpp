@@ -882,6 +882,11 @@ namespace occa {
   }
 
   template <>
+  stream device_t<CUDA>::wrapStream(void *handle_){
+    return handle_;
+  }
+
+  template <>
   tag device_t<CUDA>::tagStream(){
     tag ret;
 

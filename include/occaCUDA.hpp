@@ -210,6 +210,9 @@ namespace occa {
   void device_t<CUDA>::freeStream(stream s);
 
   template <>
+  stream device_t<CUDA>::wrapStream(void *handle_);
+
+  template <>
   tag device_t<CUDA>::tagStream();
 
   template <>

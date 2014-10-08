@@ -238,6 +238,9 @@ namespace occa {
   void device_t<Pthreads>::freeStream(stream s);
 
   template <>
+  stream device_t<Pthreads>::wrapStream(void *handle_);
+
+  template <>
   tag device_t<Pthreads>::tagStream();
 
   template <>

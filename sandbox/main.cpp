@@ -80,7 +80,196 @@ namespace occa {
           nodePos = nodePos->right;
         }
 
+        organizeLeaves();
+
         // [-] Need to free clone();
+      }
+
+      class int2 {
+        int x, y;
+
+        friend bool operator < (const int2 &a, const int2 &b){
+          if(a.x != b.x)
+            return (a.x < b.x);
+
+          return (a.y < b.y);
+        }
+      };
+
+      void organizeLeaves(){
+        //---[ Level 0 ]------
+        // [a][::][b]
+        mergeNamespaces();
+        //====================
+
+        //---[ Level 1 ]------
+        // class(...), class{1,2,3}
+        markClassConstructs();
+
+        // static_cast<>()
+        markCasts();
+
+        // func()
+        markFunctionCalls();
+
+        organizeLeaves(1);
+        //====================
+
+        //---[ Level 2 ]------
+        // (class) x
+        markClassCasts();
+
+        // sizeof x
+        mergeSizeOf();
+
+        // new, new [], delete, delete []
+        mergeNewsAndDeletes();
+
+        organizeLeaves(2);
+        //====================
+
+        //---[ Level 3-14 ]---
+        for(int i = 3; i <= 14; ++i)
+          organizeLeaves(i);
+        //====================
+
+        //---[ Level 15 ]-----
+        // throw x
+        mergeThrows();
+        //====================
+
+        //---[ Level 16 ]-----
+        organizeLeaves(16);
+        //====================
+      }
+
+      void organizeLeaves(const int level){
+        for(int i = 0; i < leafCount; ++i){
+          if(leaves[i]->leafCount)
+            continue;
+
+          opLevelMapIterator it = opLevelMap[level].find(leaves[i]->value);
+
+          if(it == opLevelMap[level].end())
+            continue;
+
+          std::cout
+            << "leaves[i]->value = " << leaves[i]->value << '\n';
+
+          const int levelType = it->second;
+          const int allTypes  = keywordType[leaves[i]->value];
+        }
+      }
+
+      void mergeNamespaces(){
+      }
+
+      // class(...), class{1,2,3}
+      void markClassConstructs(){
+      }
+
+      // static_cast<>()
+      void markCasts(){
+      }
+
+      // func()
+      void markFunctionCalls(){
+      }
+
+      // (class) x
+      void markClassCasts(){
+      }
+
+      // sizeof x
+      void mergeSizeOf(){
+      }
+
+      // new, new [], delete, delete []
+      void mergeNewsAndDeletes(){
+      }
+
+      // throw x
+      void mergeThrows(){
+      }
+
+      // [++]i
+      void mergeLeftUnary(const int leafPos){
+        expNode *leaf  = leaves[leafPos];
+        expNode *sLeaf = leaves[leafPos + 1];
+
+        for(int i = (leafPos + 1); i < leafCount; ++i)
+          leaves[i - 1] = leaves[i];
+
+        --leafCount;
+
+        leaf->leafCount = 1;
+        leaf->info      = expType::L;
+
+        leaf->leaves    = new expNode*[1];
+        leaf->leaves[0] = sLeaf;
+      }
+
+      // i[++]
+      void mergeRightUnary(const int leafPos){
+        expNode *leaf  = leaves[leafPos];
+        expNode *sLeaf = leaves[leafPos - 1];
+
+        leaves[leafPos - 1] = leaf;
+
+        --leafCount;
+
+        for(int i = leafPos; i < leafCount; ++i)
+          leaves[i] = leaves[i + 1];
+
+        leaf->leafCount = 1;
+        leaf->info      = expType::R;
+
+        leaf->leaves    = new expNode*[1];
+        leaf->leaves[0] = sLeaf;
+      }
+
+      // a [+] b
+      void mergeBinary(const int leafPos){
+        expNode *leaf   = leaves[leafPos];
+        expNode *sLeafL = leaves[leafPos - 1];
+        expNode *sLeafR = leaves[leafPos + 1];
+
+        leaves[leafPos - 1] = leaf;
+
+        leafCount -= 2;
+
+        for(int i = leafPos; i < leafCount; ++i)
+          leaves[i] = leaves[i + 2];
+
+        leaf->leafCount = 2;
+        leaf->info      = (expType::L | expType::R);
+
+        leaf->leaves    = new expNode*[2];
+        leaf->leaves[0] = sLeafL;
+        leaf->leaves[1] = sLeafR;
+      }
+
+      // a [?] b : c
+      void mergeTernary(const int leafPos){
+        expNode *leaf   = leaves[leafPos];
+        expNode *sLeafL = leaves[leafPos - 1];
+        expNode *sLeafC = leaves[leafPos + 1];
+        expNode *sLeafR = leaves[leafPos + 3];
+
+        leaves[leafPos - 1] = leaf;
+
+        leafCount -= 4;
+
+        for(int i = leafPos; i < leafCount; ++i)
+          leaves[i] = leaves[i + 4];
+
+        leaf->leafCount = 3;
+        leaf->info      = (expType::L | expType::C | expType::R);
+
+        leaf->leaves    = new expNode*[3];
+        leaf->leaves[0] = sLeafL;
+        leaf->leaves[1] = sLeafC;
+        leaf->leaves[2] = sLeafR;
       }
 
       friend std::ostream& operator << (std::ostream &out, const expNode &n){

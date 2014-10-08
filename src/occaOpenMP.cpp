@@ -726,6 +726,11 @@ namespace occa {
   void device_t<OpenMP>::freeStream(stream s){}
 
   template <>
+  stream device_t<OpenMP>::wrapStream(void *handle_){
+    return NULL;
+  }
+
+  template <>
   tag device_t<OpenMP>::tagStream(){
     tag ret;
 

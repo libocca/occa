@@ -66,9 +66,10 @@ int main(int argc, char **argv){
   int mpChars, clChars, cuChars, ptChars, coiChars, coiMainChars;
 
   if(argc != 2){
-    std::cout << "Usage " << argv[0] << " occa_dir"  ;
+    std::cout << "Needs [OCCA_DIR] as the argument\n";
     throw 1;
   }
+
   std::string occaDir(argv[1]);
 
   std::string ns = "namespace occa {";

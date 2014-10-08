@@ -1131,6 +1131,11 @@ namespace occa {
   }
 
   template <>
+  stream device_t<OpenCL>::wrapStream(void *handle_){
+    return handle_;
+  }
+
+  template <>
   tag device_t<OpenCL>::tagStream(){
     cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
 

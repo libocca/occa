@@ -825,6 +825,14 @@ namespace occa {
     delete stream;
   }
 
+  template <>
+  stream device_t<COI>::wrapStream(void *handle_){
+    coiStream *retStream = new coiStream;
+    retStream->handle = *((COIPIPELINE*) handle_);
+
+    return retStream;
+  }
+
   // [-] Event-based timing in COI?
   template <>
   tag device_t<COI>::tagStream(){

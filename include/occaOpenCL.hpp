@@ -253,6 +253,9 @@ namespace occa {
   void device_t<OpenCL>::freeStream(stream s);
 
   template <>
+  stream device_t<OpenCL>::wrapStream(void *handle_);
+
+  template <>
   tag device_t<OpenCL>::tagStream();
 
   template <>

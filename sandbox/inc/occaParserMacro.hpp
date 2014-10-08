@@ -20,7 +20,13 @@ namespace occa {
     typedef opTypeMap_t::iterator        opTypeMapIterator;
     typedef opTypeMap_t::const_iterator  cOpTypeMapIterator;
 
-    static opTypeMap_t opPrecedence;
+    typedef std::map<std::string,int>    opLevelMap_t;
+    typedef opLevelMap_t::iterator       opLevelMapIterator;
+    typedef opLevelMap_t::const_iterator cOpLevelMapIterator;
+
+    static int opLevels = 17;
+    extern opTypeMap_t opPrecedence;
+    extern opLevelMap_t opLevelMap[17];
     //==============================================
 
 
