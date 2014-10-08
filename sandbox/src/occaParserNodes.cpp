@@ -364,33 +364,6 @@ namespace occa {
       return out;
     }
 
-
-    strNode* firstNode(strNode *node){
-      if((node == NULL) ||
-         (node->left == NULL))
-        return node;
-
-      strNode *end = node;
-
-      while(end->left)
-        end = end->left;
-
-      return end;
-    }
-
-    strNode* lastNode(strNode *node){
-      if((node == NULL) ||
-         (node->right == NULL))
-        return node;
-
-      strNode *end = node;
-
-      while(end->right)
-        end = end->right;
-
-      return end;
-    }
-
     void popAndGoRight(strNode *&node){
       strNode *left  = node->left;
       strNode *right = node->right;
@@ -419,6 +392,43 @@ namespace occa {
       delete node;
 
       node = left;
+    }
+
+    strNode* firstNode(strNode *node){
+      if((node == NULL) ||
+         (node->left == NULL))
+        return node;
+
+      strNode *end = node;
+
+      while(end->left)
+        end = end->left;
+
+      return end;
+    }
+
+    strNode* lastNode(strNode *node){
+      if((node == NULL) ||
+         (node->right == NULL))
+        return node;
+
+      strNode *end = node;
+
+      while(end->right)
+        end = end->right;
+
+      return end;
+    }
+
+    int length(strNode *node){
+      int l = 0;
+
+      while(node){
+        ++l;
+        node = node->right;
+      }
+
+      return l;
     }
 
     void free(strNode *node){

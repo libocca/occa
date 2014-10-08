@@ -180,6 +180,18 @@ namespace occa {
 
       return end;
     }
+
+    template <class TM>
+    int length(node<TM> *n){
+      int l = 0;
+
+      while(n){
+        ++l;
+        n = n->right;
+      }
+
+      return l;
+    }
     //==============================================
   };
 };

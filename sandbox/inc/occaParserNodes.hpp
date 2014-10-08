@@ -43,6 +43,9 @@ namespace occa {
 
     template <class TM>
     node<TM>* lastNode(node<TM> *n);
+
+    template <class TM>
+    int length(node<TM> *n);
     //==============================================
 
 
@@ -97,11 +100,13 @@ namespace occa {
 
     std::ostream& operator << (std::ostream &out, const strNode &n);
 
+    void popAndGoRight(strNode *&node);
+    void popAndGoLeft(strNode *&node);
+
     strNode* firstNode(strNode *node);
     strNode* lastNode(strNode *node);
 
-    void popAndGoRight(strNode *&node);
-    void popAndGoLeft(strNode *&node);
+    int length(strNode *node);
 
     void free(strNode *node);
     //==============================================
