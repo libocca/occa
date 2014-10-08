@@ -70,6 +70,7 @@ namespace occa {
 
             sLeaf        = new expNode;
             sLeaf->value = sValue;
+            sLeaf->info  = expType::C;
 
             // Case: ()
             if(lastDown != NULL)
@@ -83,19 +84,18 @@ namespace occa {
       }
 
       friend std::ostream& operator << (std::ostream &out, const expNode &n){
-        const char startChar = (n.value.size() ? n.value[0] : ' ');
-
-        const char endChar = ((')' * (startChar == '(')) +
-                              (']' * (startChar == '[')) +
-                              ('}' * (startChar == '{')));
-
         out << n.value;
 
         for(int i = 0; i < n.leafCount; ++i)
           out << *(n.leaves[i]);
 
-        if(endChar)
-          out << endChar;
+        if(n.info == expType::C){
+          const char startChar = n.value[0];
+
+          out << (char) ((')' * (startChar == '(')) +
+                         (']' * (startChar == '[')) +
+                         ('}' * (startChar == '{')));
+        }
 
         return out;
       }
