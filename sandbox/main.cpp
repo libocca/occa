@@ -154,13 +154,14 @@ namespace occa {
       }
 
       void organizeLeaves(){
-        if( ~(info & expType::LCR) )
-          return;
-
         // Organize leaves bottom -> up
         for(int i = 0; i < leafCount; ++i){
-          if(leaves[i]->leafCount)
+          if((leaves[i]->leafCount) &&
+             !(leaves[i]->info & (expType::type |
+                                  expType::qualifier))){
+
             leaves[i]->organizeLeaves();
+          }
         }
 
         //---[ Level 1 ]------
@@ -579,7 +580,7 @@ namespace occa {
     };
 
     void test(){
-      strNode *n = labelCode( splitContent("const int * const *") );
+      strNode *n = labelCode( splitContent("const int * const * (*func)(int)") );
       // strNode *n = labelCode( splitContent("(1+2*3%2|1+10&3^1)") );
 
       expNode expRoot;
