@@ -89,7 +89,7 @@ namespace occa {
               // [--] Check for custom variable-type when
               //        putting this in parser
               if(nodePos->left &&
-                 (nodePos->left->type & qualifierType)){
+                 (nodePos->left->type & descriptorType)){
 
                 leaf->info = expType::qualifier;
               }
@@ -154,6 +154,9 @@ namespace occa {
       }
 
       void organizeLeaves(){
+        if( ~(info & expType::LCR) )
+          return;
+
         // Organize leaves bottom -> up
         for(int i = 0; i < leafCount; ++i){
           if(leaves[i]->leafCount)
@@ -576,7 +579,7 @@ namespace occa {
     };
 
     void test(){
-      strNode *n = labelCode( splitContent("const int") );
+      strNode *n = labelCode( splitContent("const int * const *") );
       // strNode *n = labelCode( splitContent("(1+2*3%2|1+10&3^1)") );
 
       expNode expRoot;
