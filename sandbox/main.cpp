@@ -338,14 +338,14 @@ namespace occa {
 
       // [qualifiers] [type] (*[name]) ([args])
       void mergeFunctionPointers(){
-        // int leafPos = 0;
+        int leafPos = 0;
 
-        // while(leafPos < leafCount){
-        //   if(leaves[leafPos]->leafCount){
-        //     ++leafPos;
-        //     continue;
-        //   }
-        // }
+        while(leafPos < leafCount){
+          if(leaves[leafPos]->leafCount){
+            ++leafPos;
+            continue;
+          }
+        }
       }
 
       int mergeFunctionPointer(const int leafPos){
