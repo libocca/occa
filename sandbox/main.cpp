@@ -76,7 +76,16 @@ namespace occa {
           leaf->value = nodePos->value;
 
           if(nodePos->type & unknownVariable){
-            leaf->info = expType::variable;
+
+            // [-] Temp until I merge with parser
+            if(nodePos->down.size() &&
+               (nodePos->down[0]->type & parentheses)){
+
+              leaf->info = expType::function;
+            }
+            else{
+              leaf->info = expType::variable;
+            }
           }
 
           else if(nodePos->type & presetValue){
@@ -146,6 +155,9 @@ namespace occa {
         // [[const] [int] [*]] x
         mergeTypes();
 
+        // [[[const] [int] [*]] [x]]
+        mergeVariables();
+
         // [qualifiers] [type] (*[name]) ([args])
         mergeFunctionPointers();
         //====================
@@ -155,8 +167,10 @@ namespace occa {
         // Organize leaves bottom -> up
         for(int i = 0; i < leafCount; ++i){
           if((leaves[i]->leafCount) &&
-             !(leaves[i]->info & (expType::type |
-                                  expType::qualifier))){
+             !(leaves[i]->info & (expType::type      |
+                                  expType::qualifier |
+                                  expType::function  |
+                                  expType::functionPointer))){
 
             leaves[i]->organizeLeaves();
           }
@@ -338,6 +352,23 @@ namespace occa {
         }
       }
 
+      // [[[const] [int] [*]] [x]]
+      void mergeVariables(){
+        int leafPos = 0;
+
+        while(leafPos < leafCount){
+          if((leaves[leafPos]->info & expType::type) && // [[const] [int] [*]]
+             ((leafPos + 1) < leafCount)             && // [x]
+             (leaves[leafPos + 1]->info & expType::variable)){
+
+            leafPos = mergeRange(expType::variable,
+                                 leafPos, leafPos + 1);
+          }
+          else
+            ++leafPos;
+        }
+      }
+
       // 1 [type]                           2 [(]       3 [(]
       // [[qualifiers] [type] [qualifiers]] [(*[name])] [([args])]
       void mergeFunctionPointers(){
@@ -359,6 +390,9 @@ namespace occa {
             newLeaf->leaves[0] = leaves[leafPos];
             newLeaf->leaves[1] = leaves[leafPos + 1]->leaves[1];
             newLeaf->leaves[2] = leaves[leafPos + 2];
+
+            // Merge arguments in [leafPos + 2]
+            newLeaf->leaves[2]->mergeArguments();
 
             // Don't kill the name of the function pointer
             leaves[leafPos + 1]->leafCount = 1;
@@ -387,6 +421,17 @@ namespace occa {
 
       // func()
       void mergeFunctionCalls(){
+      }
+
+      void mergeArguments(){
+        for(int i = 0; i < leafCount; i += 2){
+          leaves[i/2] = leaves[i];
+
+          if((i + 1) < leafCount)
+            freeLeaf(i + 1);
+        }
+
+        leafCount = ((leafCount / 2) + 1);
       }
 
       // (class) x
@@ -573,8 +618,9 @@ namespace occa {
 
             out << *(n.leaves[n.leafCount - 1]);
           }
-          else
+          else{
             out << n.value;
+          }
 
           break;
         }
@@ -587,8 +633,9 @@ namespace occa {
             out << *(n.leaves[n.leafCount - 1]);
           }
           // [int]
-          else
+          else{
             out << n.value;
+          }
 
           break;
         }
@@ -598,16 +645,46 @@ namespace occa {
           break;
         }
         case expType::variable:{
-          out << n.value;
+          // [[[const] [int] [*]] [x]]
+          if(n.leafCount){
+            out << *(n.leaves[0]) << ' ' << *(n.leaves[1]);
+          }
+          // [x]
+          else{
+            out << n.value;
+          }
 
           break;
         }
         case expType::function:{
+          out << n.value << '(';
+
+          if(n.leafCount){
+            for(int i = 0; i < (n.leafCount - 1); ++i)
+              out << *(n.leaves[i]) << ", ";
+
+            out << *(n.leaves[n.leafCount - 1]);
+          }
+
+          out << ')';
 
           break;
         }
         case expType::functionPointer:{
-          out << *(n.leaves[0]) << " (*" << *(n.leaves[1]) << ")" << *(n.leaves[2]);
+          out << *(n.leaves[0]) << " (*" << *(n.leaves[1]) << ")"
+              << '(';
+
+          expNode *argNode = n.leaves[2];
+
+          if(argNode->leafCount){
+            for(int i = 0; i < (argNode->leafCount - 1); ++i)
+              out << *(argNode->leaves[i]) << ", ";
+
+            out << *(argNode->leaves[argNode->leafCount - 1]);
+          }
+
+          out << ')';
+
 
           break;
         }
@@ -618,7 +695,7 @@ namespace occa {
     };
 
     void test(){
-      strNode *n = labelCode( splitContent("const int * const * (*func)(int)") );
+      strNode *n = labelCode( splitContent("const int * const * (*func)(int x, int, int)") );
       // strNode *n = labelCode( splitContent("(1+2*3%2|1+10&3^1)") );
 
       expNode expRoot;
