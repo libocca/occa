@@ -8,11 +8,13 @@ namespace occa {
       const int L           = (1 << 1);
       const int C           = (1 << 2);
       const int R           = (1 << 3);
-      const int type        = (1 << 4);
-      const int presetValue = (1 << 5);
-      const int variable    = (1 << 6);
-      const int function    = (1 << 7);
-      const int pFunction   = (1 << 8);
+
+      const int notOperator = (32 << 4);
+      const int type        = (1  << 4);
+      const int presetValue = (1  << 5);
+      const int variable    = (1  << 6);
+      const int function    = (1  << 7);
+      const int pFunction   = (1  << 8);
     };
 
     class expNode {
@@ -157,35 +159,52 @@ namespace occa {
       }
 
       void organizeLeaves(const int level){
-        for(int i = 0; i < leafCount; ++i){
-          if(leaves[i]->leafCount)
-            continue;
+        int leafPos = 0;
 
-          opLevelMapIterator it = opLevelMap[level].find(leaves[i]->value);
-
-          if(it == opLevelMap[level].end())
+        while(leafPos < leafCount){
+          if(leaves[leafPos]->leafCount){
+            ++leafPos;
             continue;
+          }
+
+          opLevelMapIterator it = opLevelMap[level].find(leaves[leafPos]->value);
+
+          if(it == opLevelMap[level].end()){
+            ++leafPos;
+            continue;
+          }
 
           const int levelType = it->second;
 
           if(levelType & unitaryOperatorType){
+            bool updateNow = true;
+
             // Cases:  1 + [-]1
             //         (+1)
-            if(levelType & binaryOperatorType){
-              if(
-              mergeBinary(i);
+            if((leaves[leafPos]->value.size() == 1) &&
+               ((leaves[leafPos]->value[0] == '+') ||
+                (leaves[leafPos]->value[0] == '-'))){
+
+              if(leafPos &&
+                 !(leaves[leafPos - 1]->info & expType::notOperator))
+                updateNow = false;
             }
-            else{
+
+            if(updateNow){
               if(levelType & lUnitaryOperatorType)
-                mergeLeftUnary(i);
+                leafPos = mergeLeftUnary(leafPos);
               else
-                mergeRightUnary(i);
+                leafPos = mergeRightUnary(leafPos);
             }
+            else
+              ++leafPos;
           }
           else if(levelType & binaryOperatorType)
-            mergeBinary(i);
+            leafPos = mergeBinary(leafPos);
           else if(levelType & ternaryOperatorType)
-            mergeTernary(i);
+            leafPos = mergeTernary(leafPos);
+          else
+            ++leafPos;
         }
       }
 
@@ -221,7 +240,7 @@ namespace occa {
       }
 
       // [++]i
-      void mergeLeftUnary(const int leafPos){
+      int mergeLeftUnary(const int leafPos){
         expNode *leaf  = leaves[leafPos];
         expNode *sLeaf = leaves[leafPos + 1];
 
@@ -235,10 +254,12 @@ namespace occa {
 
         leaf->leaves    = new expNode*[1];
         leaf->leaves[0] = sLeaf;
+
+        return (leafPos + 1);
       }
 
       // i[++]
-      void mergeRightUnary(const int leafPos){
+      int mergeRightUnary(const int leafPos){
         expNode *leaf  = leaves[leafPos];
         expNode *sLeaf = leaves[leafPos - 1];
 
@@ -254,10 +275,14 @@ namespace occa {
 
         leaf->leaves    = new expNode*[1];
         leaf->leaves[0] = sLeaf;
+
+        sLeaf->up = leaf;
+
+        return (leafPos + 1);
       }
 
       // a [+] b
-      void mergeBinary(const int leafPos){
+      int mergeBinary(const int leafPos){
         expNode *leaf   = leaves[leafPos];
         expNode *sLeafL = leaves[leafPos - 1];
         expNode *sLeafR = leaves[leafPos + 1];
@@ -275,10 +300,15 @@ namespace occa {
         leaf->leaves    = new expNode*[2];
         leaf->leaves[0] = sLeafL;
         leaf->leaves[1] = sLeafR;
+
+        sLeafL->up = leaf;
+        sLeafR->up = leaf;
+
+        return leafPos;
       }
 
       // a [?] b : c
-      void mergeTernary(const int leafPos){
+      int mergeTernary(const int leafPos){
         expNode *leaf   = leaves[leafPos];
         expNode *sLeafL = leaves[leafPos - 1];
         expNode *sLeafC = leaves[leafPos + 1];
@@ -298,6 +328,19 @@ namespace occa {
         leaf->leaves[0] = sLeafL;
         leaf->leaves[1] = sLeafC;
         leaf->leaves[2] = sLeafR;
+
+        sLeafL->up = leaf;
+        sLeafC->up = leaf;
+        sLeafR->up = leaf;
+
+        return leafPos;
+      }
+
+      void print(const std::string &tab = ""){
+        std::cout << tab << value << '\n';
+
+        for(int i = 0; i < leafCount; ++i)
+          leaves[i]->print(tab + "  ");
       }
 
       friend std::ostream& operator << (std::ostream &out, const expNode &n){
@@ -373,6 +416,8 @@ namespace occa {
 
       std::cout
         << "expRoot = " << expRoot << '\n';
+
+      expRoot.print();
 
       throw 1;
     }
