@@ -3,19 +3,19 @@
 namespace occa {
   namespace parserNamespace {
     namespace expType {
-      const int root        = (1 << 0);
+      const int root            = (1 << 0);
 
-      const int LCR         = (7 << 1);
-      const int L           = (1 << 1);
-      const int C           = (1 << 2);
-      const int R           = (1 << 3);
+      const int LCR             = (7 << 1);
+      const int L               = (1 << 1);
+      const int C               = (1 << 2);
+      const int R               = (1 << 3);
 
-      const int qualifier   = (1 << 4);
-      const int type        = (1 << 5);
-      const int presetValue = (1 << 6);
-      const int variable    = (1 << 7);
-      const int function    = (1 << 8);
-      const int pFunction   = (1 << 9);
+      const int qualifier       = (1 << 4);
+      const int type            = (1 << 5);
+      const int presetValue     = (1 << 6);
+      const int variable        = (1 << 7);
+      const int function        = (1 << 8);
+      const int functionPointer = (1 << 9);
     };
 
     class expNode {
@@ -263,8 +263,10 @@ namespace occa {
         newLeaf->leafCount = (leafPosEnd - leafPosStart + 1);
         newLeaf->leaves    = new expNode*[newLeaf->leafCount];
 
-        for(int i = 0; i < newLeaf->leafCount; ++i)
-          newLeaf->leaves[i] = leaves[leafPosStart + i];
+        for(int i = 0; i < newLeaf->leafCount; ++i){
+          newLeaf->leaves[i]     = leaves[leafPosStart + i];
+          newLeaf->leaves[i]->up = newLeaf;
+        }
 
         leaves[leafPosStart] = newLeaf;
 
@@ -336,20 +338,43 @@ namespace occa {
         }
       }
 
-      // [qualifiers] [type] (*[name]) ([args])
+      // 1 [type]                           2 [(]       3 [(]
+      // [[qualifiers] [type] [qualifiers]] [(*[name])] [([args])]
       void mergeFunctionPointers(){
         int leafPos = 0;
 
         while(leafPos < leafCount){
-          if(leaves[leafPos]->leafCount){
-            ++leafPos;
-            continue;
-          }
-        }
-      }
+          if((leaves[leafPos]->info & expType::type)   &&     // 1
+             ((leafPos + 2) < leafCount)               &&     // Has 2 & 3
+             (leaves[leafPos + 1]->info == expType::C) &&     // 2
+             (leaves[leafPos + 2]->info == expType::C) &&     // 3
+             (leaves[leafPos + 1]->leaves[0]->value == "*")){ // 2.5
 
-      int mergeFunctionPointer(const int leafPos){
-        return 0;
+            expNode *newLeaf = new expNode;
+
+            newLeaf->up        = this;
+            newLeaf->info      = expType::functionPointer;
+            newLeaf->leafCount = 3;
+            newLeaf->leaves    = new expNode*[3];
+            newLeaf->leaves[0] = leaves[leafPos];
+            newLeaf->leaves[1] = leaves[leafPos + 1]->leaves[1];
+            newLeaf->leaves[2] = leaves[leafPos + 2];
+
+            // Don't kill the name of the function pointer
+            leaves[leafPos + 1]->leafCount = 1;
+            freeLeaf(leafPos + 1);
+
+            leaves[leafPos] = newLeaf;
+
+            for(int i = (leafPos + 3); i < leafCount; ++i)
+              leaves[i - 2] = leaves[i];
+
+            ++leafPos;
+            leafCount -= 2;
+          }
+          else
+            ++leafPos;
+        }
       }
 
       // class(...), class{1,2,3}
@@ -475,6 +500,20 @@ namespace occa {
         return leafPos;
       }
 
+      void freeLeaf(const int leafPos){
+        leaves[leafPos]->free();
+        delete leaves[leafPos];
+      }
+
+      void free(){
+        for(int i = 0; i < leafCount; ++i){
+          leaves[i]->free();
+          delete leaves[i];
+        }
+
+        delete [] leaves;
+      }
+
       void print(const std::string &tab = ""){
         std::cout << tab << "| " << value << '\n';
 
@@ -567,7 +606,8 @@ namespace occa {
 
           break;
         }
-        case expType::pFunction:{
+        case expType::functionPointer:{
+          out << *(n.leaves[0]) << " (*" << *(n.leaves[1]) << ")" << *(n.leaves[2]);
 
           break;
         }
