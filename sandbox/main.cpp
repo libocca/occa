@@ -102,29 +102,27 @@ namespace occa {
             }
           }
 
-          else{
-            const int downCount = nodePos->down.size();
+          const int downCount = nodePos->down.size();
 
-            for(int i = 0; i < downCount; ++i){
-              strNode *downNode = nodePos->down[i];
-              strNode *lastDown = lastNode(downNode);
+          for(int i = 0; i < downCount; ++i){
+            strNode *downNode = nodePos->down[i];
+            strNode *lastDown = lastNode(downNode);
 
-              std::string sValue = downNode->value;
+            std::string sValue = downNode->value;
 
-              // Get rid of ()'s and stuff
-              popAndGoRight(downNode);
-              popAndGoLeft(lastDown);
+            // Get rid of ()'s and stuff
+            popAndGoRight(downNode);
+            popAndGoLeft(lastDown);
 
-              expNode *&sLeaf = leaves[leafCount++];
+            expNode *&sLeaf = leaves[leafCount++];
 
-              sLeaf        = new expNode;
-              sLeaf->value = sValue;
-              sLeaf->info  = expType::C;
+            sLeaf        = new expNode;
+            sLeaf->value = sValue;
+            sLeaf->info  = expType::C;
 
-              // Case: ()
-              if(lastDown != NULL)
-                sLeaf->initLoadFromNode(downNode);
-            }
+            // Case: ()
+            if(lastDown != NULL)
+              sLeaf->initLoadFromNode(downNode);
           }
 
           nodePos = nodePos->right;
