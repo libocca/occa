@@ -228,11 +228,15 @@ public:
 
   ~occaPrivate_t(){}
 
-  inline int index(){
+  inline int index() const {
     return ((id2*dim1 + id1)*dim0 + id0);
   }
 
   inline TM& operator [] (const int n){
+    return data[index()][n];
+  }
+
+  inline TM operator [] (const int n) const {
     return data[index()][n];
   }
 
