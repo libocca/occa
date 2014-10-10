@@ -90,10 +90,9 @@ namespace occa {
   typedef bool (parserNamespace::parserBase::*findStatementWith_t)(parserNamespace::statement &s);
 
   namespace parserNamespace {
+    extern keywordTypeMap_t keywordType;
 
-    static keywordTypeMap_t keywordType;
-
-    static bool keywordsAreInitialized = false;
+    extern bool keywordsAreInitialized;
 
     //   ---[ Delimeters ]---------
     static const char whitespace[]     = " \t\r\n\v\f\0";

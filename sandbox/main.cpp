@@ -3,19 +3,24 @@
 namespace occa {
   namespace parserNamespace {
     namespace expType {
-      const char L         = (1 << 0);
-      const char C         = (1 << 1);
-      const char R         = (1 << 2);
-      const char type      = (1 << 3);
-      const char var       = (1 << 4);
-      const char function  = (1 << 5);
-      const char pFunction = (1 << 6);
+      const int root        = (1 << 0);
+
+      const int L           = (1 << 1);
+      const int C           = (1 << 2);
+      const int R           = (1 << 3);
+      const int type        = (1 << 4);
+      const int presetValue = (1 << 5);
+      const int variable    = (1 << 6);
+      const int function    = (1 << 7);
+      const int pFunction   = (1 << 8);
     };
 
     class expNode {
     public:
       std::string value;
-      char info;
+      int info;
+
+      expNode *up;
 
       int leafCount;
       expNode **leaves;
@@ -24,15 +29,17 @@ namespace occa {
 
       expNode() :
         value(""),
-        info(0),
+        info(expType::root),
+
+        up(NULL),
 
         leafCount(0),
         leaves(NULL),
         var(NULL),
         type(NULL) {}
 
-      void loadFromNode(strNode *n, const int depth = 0){
-        strNode *nodeRoot = (depth ? n : n->clone());
+      void loadFromNode(strNode *n){
+        strNode *nodeRoot = (!(info & expType::root) ? n : n->clone());
         strNode *nodePos  = nodeRoot;
 
         while(nodePos){
@@ -52,7 +59,13 @@ namespace occa {
           expNode *&leaf = leaves[leafCount++];
 
           leaf        = new expNode;
+          leaf->up    = this;
           leaf->value = nodePos->value;
+
+          if(nodePos->type & unknownVariable)
+            leaf->info = expType::variable;
+          else if(nodePos->type & presetValue)
+            leaf->info = expType::presetValue;
 
           const int downCount = nodePos->down.size();
 
@@ -74,7 +87,7 @@ namespace occa {
 
             // Case: ()
             if(lastDown != NULL)
-              sLeaf->loadFromNode(downNode, depth + 1);
+              sLeaf->loadFromNode(downNode);
           }
 
           nodePos = nodePos->right;
@@ -153,11 +166,26 @@ namespace occa {
           if(it == opLevelMap[level].end())
             continue;
 
-          std::cout
-            << "leaves[i]->value = " << leaves[i]->value << '\n';
-
           const int levelType = it->second;
-          const int allTypes  = keywordType[leaves[i]->value];
+
+          if(levelType & unitaryOperatorType){
+            // Cases:  1 + [-]1
+            //         (+1)
+            if(levelType & binaryOperatorType){
+              if(
+              mergeBinary(i);
+            }
+            else{
+              if(levelType & lUnitaryOperatorType)
+                mergeLeftUnary(i);
+              else
+                mergeRightUnary(i);
+            }
+          }
+          else if(levelType & binaryOperatorType)
+            mergeBinary(i);
+          else if(levelType & ternaryOperatorType)
+            mergeTernary(i);
         }
       }
 
@@ -273,17 +301,64 @@ namespace occa {
       }
 
       friend std::ostream& operator << (std::ostream &out, const expNode &n){
-        out << n.value;
 
-        for(int i = 0; i < n.leafCount; ++i)
-          out << *(n.leaves[i]);
+        switch(n.info){
+        case (expType::root):{
+          for(int i = 0; i < n.leafCount; ++i)
+            out << *(n.leaves[i]);
 
-        if(n.info == expType::C){
+          break;
+        }
+
+        case (expType::L):{
+          out << n.value << *(n.leaves[0]);
+
+          break;
+        }
+        case (expType::R):{
+          out << *(n.leaves[0]) << n.value;
+
+          break;
+        }
+        case (expType::L | expType::R):{
+          out << *(n.leaves[0]) << n.value << *(n.leaves[1]);
+
+          break;
+        }
+        case (expType::L | expType::C | expType::R):{
+          out << *(n.leaves[0]) << '?' << *(n.leaves[1]) << ':' << *(n.leaves[2]);
+
+          break;
+        }
+        case expType::C:{
           const char startChar = n.value[0];
+
+          out << startChar;
+
+          for(int i = 0; i < n.leafCount; ++i)
+            out << *(n.leaves[i]);
 
           out << (char) ((')' * (startChar == '(')) +
                          (']' * (startChar == '[')) +
                          ('}' * (startChar == '{')));
+
+          break;
+        }
+
+        case expType::type:{
+        }
+        case expType::presetValue:{
+          out << n.value;
+          break;
+        }
+        case expType::variable:{
+          out << n.value;
+          break;
+        }
+        case expType::function:{
+        }
+        case expType::pFunction:{
+        }
         }
 
         return out;

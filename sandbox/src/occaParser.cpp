@@ -3495,8 +3495,6 @@ namespace occa {
     }
 
     void initKeywords(){
-      std::cout << "keywordsAreInitialized = " << keywordsAreInitialized << '\n';
-
       if(keywordsAreInitialized)
         return;
 
