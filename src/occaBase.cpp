@@ -497,6 +497,9 @@ namespace occa {
 
     dHandle = d.dHandle;
 
+    currentStream = d.currentStream;
+    streams       = d.streams;
+
     if(dHandle)
       dHandle->dev = this;
 

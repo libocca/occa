@@ -695,7 +695,7 @@ namespace occa {
     };
 
     void test(){
-      strNode *n = labelCode( splitContent("const int * const * (*func)(int x, int, int)") );
+      strNode *n = labelCode( splitContent("const int * const * (*func)(int **x, int, int)") );
       // strNode *n = labelCode( splitContent("(1+2*3%2|1+10&3^1)") );
 
       expNode expRoot;
