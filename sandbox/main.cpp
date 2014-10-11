@@ -545,6 +545,29 @@ namespace occa {
         return leafPos;
       }
 
+      //---[ Custom Type Info ]---------
+      bool qualifierEndsWithStar() const {
+        if( !(info & expType::qualifier) )
+          return false;
+
+        if(leafCount)
+          return leaves[leafCount - 1]->qualifierEndsWithStar();
+        else
+          return (value == "*");
+      }
+
+      bool typeEndsWithStar() const {
+        if( !(info & expType::type) ||
+            (leafCount == 0) )
+          return false;
+
+        if(leaves[leafCount - 1]->info & expType::qualifier)
+          return leaves[leafCount - 1]->qualifierEndsWithStar();
+
+        return false;
+      }
+      //================================
+
       void freeLeaf(const int leafPos){
         leaves[leafPos]->free();
         delete leaves[leafPos];
@@ -621,10 +644,22 @@ namespace occa {
           if(n.leafCount){
             int leafPos = 0;
 
-            for(int i = 0; i < (n.leafCount - 1); ++i)
-              out << *(n.leaves[i]);
+            std::string strLeaf = (std::string) *(n.leaves[0]);
+            bool lastStar = (strLeaf == "*");
 
-            out << *(n.leaves[n.leafCount - 1]);
+            out << strLeaf;
+
+            for(int i = 1; i < n.leafCount; ++i){
+              std::string strLeaf = (std::string) *(n.leaves[i]);
+              const bool thisStar = (strLeaf == "*");
+
+              if( !(thisStar && lastStar) )
+                out << ' ';
+
+              out << strLeaf;
+
+              lastStar = thisStar;
+            }
           }
           else{
             out << n.value;
@@ -655,7 +690,12 @@ namespace occa {
         case expType::variable:{
           // [[[const] [int] [*]] [x]]
           if(n.leafCount){
-            out << *(n.leaves[0]) << ' ' << *(n.leaves[1]);
+            out << *(n.leaves[0]);
+
+            if( !(n.leaves[0]->typeEndsWithStar()) )
+              out << ' ';
+
+            out << *(n.leaves[1]);
           }
           // [x]
           else{
