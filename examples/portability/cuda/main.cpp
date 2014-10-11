@@ -5,35 +5,28 @@
 int main(int argc, char **argv){
   int entries = 5;
 
-  //---[ Init OpenCL ]------------------
-  cl_int error;
+  //---[ Init CUDA ]------------------
+  int cuDeviceID;
+  void *cu_a, *cu_b, *cu_ab;
 
-  cl_platform_id clPlatformID = occa::cl::platformID(0);
-  cl_device_id clDeviceID     = occa::cl::deviceID(0,0);
+  cudaMalloc(&cu_a , entries*sizeof(float));
+  cudaMalloc(&cu_b , entries*sizeof(float));
+  cudaMalloc(&cu_ab, entries*sizeof(float));
 
-  cl_context clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
-  OCCA_CL_CHECK("Device: Creating Context", error);
+  //  ---[ Get CUDA Info ]----
+  CUdevice cuDevice;
+  CUcontext cuContext;
 
-  cl_mem cl_a = clCreateBuffer(clContext,
-                               CL_MEM_READ_WRITE,
-                               entries*sizeof(float), NULL, &error);
-
-  cl_mem cl_b = clCreateBuffer(clContext,
-                               CL_MEM_READ_WRITE,
-                               entries*sizeof(float), NULL, &error);
-
-  cl_mem cl_ab = clCreateBuffer(clContext,
-                                CL_MEM_READ_WRITE,
-                                entries*sizeof(float), NULL, &error);
+  cuDeviceGet(&cuDevice, cuDeviceID);
+  cuCtxGetCurrent(&cuContext);
+  //  ========================
   //====================================
 
   float *a  = new float[entries];
   float *b  = new float[entries];
   float *ab = new float[entries];
 
-  occa::device device = occa::cl::wrapDevice(clPlatformID,
-                                             clDeviceID,
-                                             clContext);
+  occa::device device = occa::cuda::wrapDevice(cuDevice, cuContext);
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
@@ -43,9 +36,9 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  o_a  = device.wrapMemory(&cl_a , entries*sizeof(float));
-  o_b  = device.wrapMemory(&cl_b , entries*sizeof(float));
-  o_ab = device.wrapMemory(&cl_ab, entries*sizeof(float));
+  o_a  = device.wrapMemory(&cu_a , entries*sizeof(float));
+  o_b  = device.wrapMemory(&cu_b , entries*sizeof(float));
+  o_ab = device.wrapMemory(&cu_ab, entries*sizeof(float));
 
   addVectors = device.buildKernelFromSource("addVectors.occa",
                                             "addVectors");

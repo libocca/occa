@@ -4,6 +4,9 @@ endif
 
 include ${OCCA_DIR}/scripts/makefile
 
+compilerFlags = ""
+flags         = ""
+
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
 sources = $(wildcard $(sPath)/*.cpp)
@@ -15,7 +18,7 @@ executables = main
 all: $(executables)
 
 main: $(objects) $(headers) main.cpp
-	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
+	nvcc $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
 
 $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
