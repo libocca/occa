@@ -7,7 +7,11 @@ int main(int argc, char **argv){
 
   //---[ Init CUDA ]------------------
   int cuDeviceID;
+  cudaStream_t cuStream;
   void *cu_a, *cu_b, *cu_ab;
+
+  // Default: cuStream = 0
+  cudaStreamCreate(&customStream);
 
   cudaMalloc(&cu_a , entries*sizeof(float));
   cudaMalloc(&cu_b , entries*sizeof(float));
@@ -27,6 +31,10 @@ int main(int argc, char **argv){
   float *ab = new float[entries];
 
   occa::device device = occa::cuda::wrapDevice(cuDevice, cuContext);
+
+  occa::stream stream = device.wrapStream(&cuStream);
+  device.setStream(stream);
+
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
