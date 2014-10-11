@@ -11,8 +11,15 @@ int main(int argc, char **argv){
   cl_platform_id clPlatformID = occa::cl::platformID(0);
   cl_device_id clDeviceID     = occa::cl::deviceID(0,0);
 
-  cl_context clContext = clCreateContext(NULL, 1, &clDeviceID, NULL, NULL, &error);
+  cl_context clContext = clCreateContext(NULL,
+                                         1, &clDeviceID,
+                                         NULL, NULL, &error);
   OCCA_CL_CHECK("Device: Creating Context", error);
+
+  cl_command_queue clStream = clCreateCommandQueue(clContext,
+                                                   clDeviceID,
+                                                   CL_QUEUE_PROFILING_ENABLE, &error);
+  OCCA_CL_CHECK("Device: genStream", error);
 
   cl_mem cl_a = clCreateBuffer(clContext,
                                CL_MEM_READ_WRITE,
@@ -34,6 +41,10 @@ int main(int argc, char **argv){
   occa::device device = occa::cl::wrapDevice(clPlatformID,
                                              clDeviceID,
                                              clContext);
+
+  occa::stream stream = device.wrapStream(&clStream);
+  device.setStream(stream);
+
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
