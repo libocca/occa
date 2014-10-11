@@ -685,7 +685,6 @@ namespace occa {
 
           out << ')';
 
-
           break;
         }
         };

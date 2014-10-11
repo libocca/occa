@@ -351,6 +351,8 @@ namespace occa {
     isTexture = false;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
+
+    isAWrapper = false;
   }
 
   template <>
@@ -365,6 +367,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
   }
 
   template <>
@@ -379,6 +383,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
 
     return *this;
   }
@@ -706,7 +712,9 @@ namespace occa {
   void memory_t<CUDA>::free(){
     if(!isTexture){
       cuMemFree(*((CUdeviceptr*) handle));
-      delete (CUdeviceptr*) handle;
+
+      if(!isAWrapper)
+        delete (CUdeviceptr*) handle;
     }
     else{
       CUarray &array        = ((CUDATextureData_t*) handle)->array;
@@ -715,8 +723,10 @@ namespace occa {
       cuArrayDestroy(array);
       cuSurfObjectDestroy(surface);
 
-      delete (CUDATextureData_t*) handle;
-      delete (CUaddress_mode*)    textureInfo.arg;
+      if(!isAWrapper){
+        delete (CUDATextureData_t*) handle;
+        delete (CUaddress_mode*)    textureInfo.arg;
+      }
     }
 
     size = 0;
@@ -1048,6 +1058,8 @@ namespace occa {
     mem->size   = bytes;
     mem->handle = handle_;
 
+    mem->isAWrapper = true;
+
     return mem;
   }
 
@@ -1069,6 +1081,8 @@ namespace occa {
     mem->textureInfo.d = dims.z;
 
     mem->textureInfo.bytesInEntry = type.bytes();
+
+    mem->isAWrapper = true;
 
     return mem;
   }

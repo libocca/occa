@@ -662,6 +662,8 @@ namespace occa {
     bool isTexture;
     occa::textureInfo_t textureInfo;
 
+    bool isAWrapper;
+
   public:
     virtual inline ~memory_v(){}
 

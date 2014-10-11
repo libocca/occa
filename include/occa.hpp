@@ -10,4 +10,8 @@
 #include "occaLibrary.hpp"
 #include "occaTimer.hpp"
 
+#include "occaOpenCL.hpp"
+#include "occaCUDA.hpp"
+#include "occaCOI.hpp"
+
 #endif

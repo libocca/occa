@@ -118,7 +118,7 @@
       std::cout << "Error\n"                                            \
                 << "    File    : " << file << '\n'                     \
                 << "    Line    : " << line << '\n'                     \
-                << "    Error   : OpenCL Error [ " << _error << " ]: " << openclError(_error) << '\n' \
+                << "    Error   : OpenCL Error [ " << _error << " ]: " << occa::openclError(_error) << '\n' \
                 << "    Message : " << _str << '\n';                    \
       throw 1;                                                          \
     }                                                                   \

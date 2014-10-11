@@ -318,6 +318,8 @@ namespace occa {
     textureInfo.arg = NULL;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
+
+    isAWrapper = false;
   }
 
   template <>
@@ -333,6 +335,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
   }
 
   template <>
@@ -347,6 +351,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
 
     return *this;
   }
@@ -816,6 +822,8 @@ namespace occa {
     mem->size   = bytes;
     mem->handle = handle_;
 
+    mem->isAWrapper = true;
+
     return mem;
   }
 
@@ -838,6 +846,8 @@ namespace occa {
     mem->textureInfo.arg = handle_;
 
     mem->handle = &(mem->textureInfo);
+
+    mem->isAWrapper = true;
 
     return mem;
   }

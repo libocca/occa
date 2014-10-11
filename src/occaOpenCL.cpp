@@ -675,6 +675,8 @@ namespace occa {
     isTexture = false;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
+
+    isAWrapper = false;
   }
 
   template <>
@@ -689,6 +691,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
   }
 
   template <>
@@ -703,6 +707,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
 
     return *this;
   }
@@ -971,11 +977,15 @@ namespace occa {
   template <>
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
-    delete (cl_mem*) handle;
+
+    if(!isAWrapper)
+      delete (cl_mem*) handle;
 
     if(isTexture){
       clReleaseSampler( *((cl_sampler*) textureInfo.arg) );
-      delete (cl_sampler*) textureInfo.arg;
+
+      if(!isAWrapper)
+        delete (cl_sampler*) textureInfo.arg;
     }
 
     size = 0;
@@ -1346,6 +1356,8 @@ namespace occa {
     mem->size   = bytes;
     mem->handle = handle_;
 
+    mem->isAWrapper = true;
+
     return mem;
   }
 
@@ -1365,6 +1377,8 @@ namespace occa {
     mem->dev    = dev;
     mem->size   = (dims.x * dims.y) * type.bytes();
     mem->handle = handle_;
+
+    mem->isAWrapper = true;
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;
@@ -1395,6 +1409,8 @@ namespace occa {
     mem->dev    = dev;
     mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
     mem->handle = handle_;
+
+    mem->isAWrapper = true;
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;

@@ -397,6 +397,8 @@ namespace occa {
     textureInfo.arg = NULL;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
+
+    isAWrapper = false;
   }
 
   template <>
@@ -412,6 +414,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
   }
 
   template <>
@@ -427,6 +431,8 @@ namespace occa {
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
+
+    isAWrapper = m.isAWrapper;
 
     return *this;
   }
@@ -669,7 +675,8 @@ namespace occa {
     OCCA_COI_CHECK("Memory: free",
                    COIBufferDestroy( *((coiMemory*) handle) ) );
 
-    delete handle;
+    if(!isAWrapper)
+      delete handle;
 
     size = 0;
   }
@@ -1003,6 +1010,8 @@ namespace occa {
     mem->dev    = dev;
     mem->size   = bytes;
     mem->handle = handle_;
+
+    mem->isAWrapper = true;
 
     return mem;
   }
