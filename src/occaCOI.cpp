@@ -94,8 +94,8 @@ namespace occa {
                                                   data.kernelWrapper));
     }
 
-    occa::device wrapCOIDevice(COIENGINE device){
-      occa::device &dev        = *(new occa::device);
+    occa::device wrapDevice(COIENGINE device){
+      occa::device dev;
       device_t<COI> &devH      = *(new device_t<COI>());
       COIDeviceData_t &devData = *(new COIDeviceData_t);
 
@@ -103,6 +103,7 @@ namespace occa {
       dev.strMode = "COI";
       dev.dHandle = &devH;
 
+      // This will get set in the copy-back
       devH.dev = &dev;
 
       //---[ Setup ]----------

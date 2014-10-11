@@ -566,8 +566,14 @@ namespace occa {
           leaves[i]->print(tab + "  ");
       }
 
-      friend std::ostream& operator << (std::ostream &out, const expNode &n){
+      operator std::string () const {
+        std::stringstream ss;
+        ss << *this;
+        return ss.str();
+      }
 
+
+      friend std::ostream& operator << (std::ostream &out, const expNode &n){
         switch(n.info){
         case (expType::root):{
           for(int i = 0; i < n.leafCount; ++i)
@@ -613,8 +619,10 @@ namespace occa {
 
         case expType::qualifier:{
           if(n.leafCount){
+            int leafPos = 0;
+
             for(int i = 0; i < (n.leafCount - 1); ++i)
-              out << *(n.leaves[i]) << ' ';
+              out << *(n.leaves[i]);
 
             out << *(n.leaves[n.leafCount - 1]);
           }

@@ -60,6 +60,8 @@ namespace occa {
   //---[ Helper Functions ]-----------
   namespace coi {
     void initDevice(COIENGINE &device, COIPROCESS &chief);
+
+    occa::device wrapDevice(COIENGINE device);
   };
   //==================================
 

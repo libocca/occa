@@ -15,7 +15,7 @@ namespace occa {
     }
 
     occa::device wrapDevice(CUdevice device, CUcontext context){
-      occa::device &dev         = *(new occa::device);
+      occa::device dev;
       device_t<CUDA> &devH      = *(new device_t<CUDA>());
       CUDADeviceData_t &devData = *(new CUDADeviceData_t);
 
@@ -23,6 +23,7 @@ namespace occa {
       dev.strMode = "CUDA";
       dev.dHandle = &devH;
 
+      // This will get set in the copy-back
       devH.dev = &dev;
 
       //---[ Setup ]----------

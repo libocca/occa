@@ -338,7 +338,7 @@ namespace occa {
     occa::device wrapDevice(cl_platform_id platformID,
                             cl_device_id deviceID,
                             cl_context context){
-      occa::device &dev           = *(new occa::device);
+      occa::device dev;
       device_t<OpenCL> &devH      = *(new device_t<OpenCL>());
       OpenCLDeviceData_t &devData = *(new OpenCLDeviceData_t);
 
@@ -346,6 +346,7 @@ namespace occa {
       dev.strMode = "OpenCL";
       dev.dHandle = &devH;
 
+      // This will get set in the copy-back
       devH.dev = &dev;
 
       //---[ Setup ]----------
