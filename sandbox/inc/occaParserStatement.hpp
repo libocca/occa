@@ -151,6 +151,127 @@ namespace occa {
     };
 
     std::ostream& operator << (std::ostream &out, const statement &s);
+
+
+    //---[ Exp Node ]-------------------------------
+    namespace expType {
+      static const int root            = (1 << 0);
+
+      static const int LCR             = (7 << 1);
+      static const int L               = (1 << 1);
+      static const int C               = (1 << 2);
+      static const int R               = (1 << 3);
+
+      static const int qualifier       = (1 << 4);
+      static const int type            = (1 << 5);
+      static const int presetValue     = (1 << 6);
+      static const int variable        = (1 << 7);
+      static const int function        = (1 << 8);
+      static const int functionPointer = (1 << 9);
+    };
+
+    class expNode {
+    public:
+      varOriginMap_t &varOriginMap;
+      varUsedMap_t   &varUsedMap;
+
+      std::string value;
+      int info;
+
+      expNode *up;
+
+      int leafCount;
+      expNode **leaves;
+      varInfo *var;
+      typeDef *type;
+
+      expNode(statement &s);
+      expNode(expNode &up_);
+
+      void loadFromNode(strNode *n);
+
+      void initLoadFromNode(strNode *n);
+
+      void initOrganization();
+
+      void organizeLeaves();
+
+      void organizeLeaves(const int level);
+
+      int mergeRange(const int newLeafType,
+                     const int leafPosStart,
+                     const int leafPosEnd);
+
+      // [a][::][b]
+      void mergeNamespaces();
+
+      int mergeNamespace(const int leafPos);
+
+      // [const] int x
+      void mergeQualifiers();
+
+      // [[const] [int] [*]] x
+      void mergeTypes();
+
+      // [[[const] [int] [*]] [x]]
+      void mergeVariables();
+
+      // 1 [type]                           2 [(]       3 [(]
+      // [[qualifiers] [type] [qualifiers]] [(*[name])] [([args])]
+      void mergeFunctionPointers();
+
+      // class(...), class{1,2,3}
+      void mergeClassConstructs();
+
+      // static_cast<>()
+      void mergeCasts();
+
+      // func()
+      void mergeFunctionCalls();
+
+      void mergeArguments();
+
+      // (class) x
+      void mergeClassCasts();
+
+      // sizeof x
+      void mergeSizeOf();
+
+      // new, new [], delete, delete []
+      void mergeNewsAndDeletes();
+
+      // throw x
+      void mergeThrows();
+
+      // [++]i
+      int mergeLeftUnary(const int leafPos);
+
+      // i[++]
+      int mergeRightUnary(const int leafPos);
+
+      // a [+] b
+      int mergeBinary(const int leafPos);
+
+      // a [?] b : c
+      int mergeTernary(const int leafPos);
+
+      //---[ Custom Type Info ]---------
+      bool qualifierEndsWithStar() const;
+
+      bool typeEndsWithStar() const;
+      //================================
+
+      void freeLeaf(const int leafPos);
+
+      void free();
+
+      void print(const std::string &tab = "");
+
+      operator std::string () const;
+
+      friend std::ostream& operator << (std::ostream &out, const expNode &n);
+    };
+    //==============================================
   };
 };
 
