@@ -7,6 +7,123 @@
 #include "occaCOI.hpp"
 
 namespace occa {
+  //---[ Helper Functions ]-----------
+  namespace coi {
+    void initDevice(COIDeviceData_t &data){
+      std::stringstream salt;
+      salt << "COI"
+           << occaCOIMain;
+
+      std::string cachedBinary = getCachedName("occaCOIMain", salt.str());
+
+      struct stat buffer;
+      bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+
+      if(fileExists)
+        std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
+      else{
+        //---[ Write File ]-----------------
+        std::string prefix, name;
+
+        getFilePrefixAndName(cachedBinary, prefix, name);
+
+        const std::string iCachedBinary = prefix + "i_" + name;
+
+        if(haveFile(cachedBinary)){
+          std::cout << "Making [" << iCachedBinary << "]\n";
+
+          std::ofstream fs;
+          fs.open(iCachedBinary.c_str());
+
+          fs << occaCOIMain;
+
+          fs.close();
+
+          std::stringstream command;
+
+          command << dev->dHandle->compiler
+                  << " -o " << cachedBinary
+                  << " -x c++"
+                  << ' '    << dev->dHandle->compilerFlags
+                  << ' '    << iCachedBinary;
+
+          const std::string &sCommand = command.str();
+
+          std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+
+          system(sCommand.c_str());
+
+          releaseFile(cachedBinary);
+        }
+        else
+          waitForFile(cachedBinary);
+      }
+
+      // [-] Tentative
+      std::string SINK_LD_LIBRARY_PATH;
+
+      char *c_SINK_LD_LIBRARY_PATH = getenv("SINK_LD_LIBRARY_PATH");
+      if(c_SINK_LD_LIBRARY_PATH != NULL)
+        SINK_LD_LIBRARY_PATH = std::string(c_SINK_LD_LIBRARY_PATH);
+
+      OCCA_COI_CHECK("Device: Initializing",
+                     COIProcessCreateFromFile(data.deviceID,
+                                              cachedBinary.c_str(),
+                                              0   , NULL,
+                                              true, NULL,
+                                              true, NULL,
+                                              memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
+                                              SINK_LD_LIBRARY_PATH.c_str(),
+                                              &(data.chiefID)) );
+
+      const char *kernelNames[] = {"occaKernelWith1Argument"  , "occaKernelWith2Arguments" , "occaKernelWith3Arguments" ,
+                                   "occaKernelWith4Arguments" , "occaKernelWith5Arguments" , "occaKernelWith6Arguments" ,
+                                   "occaKernelWith7Arguments" , "occaKernelWith8Arguments" , "occaKernelWith9Arguments" ,
+                                   "occaKernelWith10Arguments", "occaKernelWith11Arguments", "occaKernelWith12Arguments",
+                                   "occaKernelWith13Arguments", "occaKernelWith14Arguments", "occaKernelWith15Arguments",
+                                   "occaKernelWith16Arguments", "occaKernelWith17Arguments", "occaKernelWith18Arguments",
+                                   "occaKernelWith19Arguments", "occaKernelWith20Arguments", "occaKernelWith21Arguments",
+                                   "occaKernelWith22Arguments", "occaKernelWith23Arguments", "occaKernelWith24Arguments",
+                                   "occaKernelWith25Arguments"};
+
+      // [-] More hard-coding, if you know what I mean
+      OCCA_COI_CHECK("Device: Getting Kernel Wrappers",
+                     COIProcessGetFunctionHandles(data.chiefID,
+                                                  25,
+                                                  kernelNames,
+                                                  data.kernelWrapper));
+    }
+
+    occa::device wrapCOIDevice(COIENGINE device){
+      occa::device &dev        = *(new occa::device);
+      device_t<COI> &devH      = *(new device_t<COI>());
+      COIDeviceData_t &devData = *(new COIDeviceData_t);
+
+      dev.mode_   = occa::COI;
+      dev.strMode = "COI";
+      dev.dHandle = &devH;
+
+      devH.dev = &dev;
+
+      //---[ Setup ]----------
+      devH.data = &devData;
+
+      devData.deviceID = device;
+
+      coi::initDevice(devData);
+      //======================
+
+      dev.modelID_ = library::deviceModelID(dev.getIdentifier());
+      dev.id_      = library::genDeviceID();
+
+      dev.currentStream = dev.genStream();
+
+      return dev;
+    }
+  };
+  //==================================
+
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<COI>::kernel_t(){
@@ -609,88 +726,7 @@ namespace occa {
     OCCA_COI_CHECK("Device: Get Handle",
                    COIEngineGetHandle(COI_ISA_MIC, device, &data_.deviceID) );
 
-    std::stringstream salt;
-    salt << "COI"
-         << occaCOIMain;
-
-    std::string cachedBinary = getCachedName("occaCOIMain", salt.str());
-
-    struct stat buffer;
-    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists)
-      std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
-    else{
-      //---[ Write File ]-----------------
-      std::string prefix, name;
-
-      getFilePrefixAndName(cachedBinary, prefix, name);
-
-      const std::string iCachedBinary = prefix + "i_" + name;
-
-      if(haveFile(cachedBinary)){
-        std::cout << "Making [" << iCachedBinary << "]\n";
-
-        std::ofstream fs;
-        fs.open(iCachedBinary.c_str());
-
-        fs << occaCOIMain;
-
-        fs.close();
-
-        std::stringstream command;
-
-        command << dev->dHandle->compiler
-                << " -o " << cachedBinary
-                << " -x c++"
-                << ' '    << dev->dHandle->compilerFlags
-                << ' '    << iCachedBinary;
-
-        const std::string &sCommand = command.str();
-
-        std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
-
-        system(sCommand.c_str());
-
-        releaseFile(cachedBinary);
-      }
-      else
-        waitForFile(cachedBinary);
-    }
-
-    // [-] Tentative
-    std::string SINK_LD_LIBRARY_PATH;
-
-    char *c_SINK_LD_LIBRARY_PATH = getenv("SINK_LD_LIBRARY_PATH");
-    if(c_SINK_LD_LIBRARY_PATH != NULL)
-      SINK_LD_LIBRARY_PATH = std::string(c_SINK_LD_LIBRARY_PATH);
-
-    OCCA_COI_CHECK("Device: Initializing",
-                   COIProcessCreateFromFile(data_.deviceID,
-                                            cachedBinary.c_str(),
-                                            0   , NULL,
-                                            true, NULL,
-                                            true, NULL,
-                                            memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
-                                            SINK_LD_LIBRARY_PATH.c_str(),
-                                            &(data_.chiefID)) );
-
-    const char *kernelNames[] = {"occaKernelWith1Argument"  , "occaKernelWith2Arguments" , "occaKernelWith3Arguments" ,
-                                 "occaKernelWith4Arguments" , "occaKernelWith5Arguments" , "occaKernelWith6Arguments" ,
-                                 "occaKernelWith7Arguments" , "occaKernelWith8Arguments" , "occaKernelWith9Arguments" ,
-                                 "occaKernelWith10Arguments", "occaKernelWith11Arguments", "occaKernelWith12Arguments",
-                                 "occaKernelWith13Arguments", "occaKernelWith14Arguments", "occaKernelWith15Arguments",
-                                 "occaKernelWith16Arguments", "occaKernelWith17Arguments", "occaKernelWith18Arguments",
-                                 "occaKernelWith19Arguments", "occaKernelWith20Arguments", "occaKernelWith21Arguments",
-                                 "occaKernelWith22Arguments", "occaKernelWith23Arguments", "occaKernelWith24Arguments",
-                                 "occaKernelWith25Arguments"};
-
-    // [-] More hard-coding, if you know what I mean
-    OCCA_COI_CHECK("Device: Getting Kernel Wrappers",
-                   COIProcessGetFunctionHandles(data_.chiefID,
-                                                25,
-                                                kernelNames,
-                                                data_.kernelWrapper));
+    coi::initDevice(data_);
   }
 
   template <>

@@ -883,6 +883,26 @@ namespace occa {
   template <occa::mode>
   std::vector<occa::deviceInfo> availableDevices();
 
+#if OCCA_OPENCL_ENABLED
+  namespace cl {
+    occa::device wrapDevice(cl_platform_id platformID,
+                            cl_device_id deviceID,
+                            cl_context context);
+  };
+#endif
+
+#if OCCA_CUDA_ENABLED
+  namespace cuda {
+    occa::device wrapDevice(CUdevice device, CUcontext context);
+  };
+#endif
+
+#if OCCA_COI_ENABLED
+  namespace coi {
+    occa::device wrapDevice(COIENGINE coiDevice);
+  };
+#endif
+
   class device_v {
     template <occa::mode> friend class occa::device_t;
     template <occa::mode> friend class occa::kernel_t;
@@ -938,6 +958,20 @@ namespace occa {
 
     virtual kernel_v* loadKernelFromLibrary(const char *cache,
                                             const std::string &functionName_) = 0;
+
+#if OCCA_OPENCL_ENABLED
+    friend occa::device cl::wrapDevice(cl_platform_id platformID,
+                                       cl_device_id deviceID,
+                                       cl_context context);
+#endif
+
+#if OCCA_CUDA_ENABLED
+    friend occa::device cuda::wrapDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_COI_ENABLED
+    friend occa::device coi::wrapDevice(COIENGINE coiDevice);
+#endif
 
     virtual memory_v* wrapMemory(void *handle_,
                                  const uintptr_t bytes) = 0;
@@ -1010,6 +1044,20 @@ namespace occa {
 
     kernel_v* loadKernelFromLibrary(const char *cache,
                                     const std::string &functionName_);
+
+#if OCCA_OPENCL_ENABLED
+    friend occa::device cl::wrapDevice(cl_platform_id platformID,
+                                       cl_device_id deviceID,
+                                       cl_context context);
+#endif
+
+#if OCCA_CUDA_ENABLED
+    friend occa::device cuda::wrapDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_COI_ENABLED
+    friend occa::device coi::wrapDevice(COIENGINE coiDevice);
+#endif
 
     memory_v* wrapMemory(void *handle_,
                          const uintptr_t bytes);
@@ -1109,6 +1157,20 @@ namespace occa {
                                 const std::string &functionName,
                                 const std::string &pythonCode = "",
                                 int loopyOrFloopy = occa::useLoopy);
+
+#if OCCA_OPENCL_ENABLED
+    friend occa::device cl::wrapDevice(cl_platform_id platformID,
+                                       cl_device_id deviceID,
+                                       cl_context context);
+#endif
+
+#if OCCA_CUDA_ENABLED
+    friend occa::device cuda::wrapDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_COI_ENABLED
+    friend occa::device coi::wrapDevice(COIENGINE coiDevice);
+#endif
 
     memory wrapMemory(void *handle_,
                       const uintptr_t bytes);

@@ -334,6 +334,38 @@ namespace occa {
 
       delete [] binary;
     }
+
+    occa::device wrapDevice(cl_platform_id platformID,
+                            cl_device_id deviceID,
+                            cl_context context){
+      occa::device &dev           = *(new occa::device);
+      device_t<OpenCL> &devH      = *(new device_t<OpenCL>());
+      OpenCLDeviceData_t &devData = *(new OpenCLDeviceData_t);
+
+      dev.mode_   = occa::OpenCL;
+      dev.strMode = "OpenCL";
+      dev.dHandle = &devH;
+
+      devH.dev = &dev;
+
+      //---[ Setup ]----------
+      devH.data = &devData;
+
+      devData.platform = -1;
+      devData.device   = -1;
+
+      devData.platformID = platformID;
+      devData.deviceID   = deviceID;
+      devData.context    = context;
+      //======================
+
+      dev.modelID_ = library::deviceModelID(dev.getIdentifier());
+      dev.id_      = library::genDeviceID();
+
+      dev.currentStream = dev.genStream();
+
+      return dev;
+    }
   };
 
   const cl_channel_type clFormats[8] = {CL_UNSIGNED_INT8,

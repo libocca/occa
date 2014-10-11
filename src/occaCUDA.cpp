@@ -13,7 +13,33 @@ namespace occa {
 
       isNotInitialized = false;
     }
-  }
+
+    occa::device wrapDevice(CUdevice device, CUcontext context){
+      occa::device &dev         = *(new occa::device);
+      device_t<CUDA> &devH      = *(new device_t<CUDA>());
+      CUDADeviceData_t &devData = *(new CUDADeviceData_t);
+
+      dev.mode_   = occa::CUDA;
+      dev.strMode = "CUDA";
+      dev.dHandle = &devH;
+
+      devH.dev = &dev;
+
+      //---[ Setup ]----------
+      devH.data = &devData;
+
+      devData.device  = device;
+      devData.context = context;
+      //======================
+
+      dev.modelID_ = library::deviceModelID(dev.getIdentifier());
+      dev.id_      = library::genDeviceID();
+
+      dev.currentStream = dev.genStream();
+
+      return dev;
+    }
+  };
 
   const CUarray_format cudaFormats[8] = {CU_AD_FORMAT_UNSIGNED_INT8,
                                          CU_AD_FORMAT_UNSIGNED_INT16,
