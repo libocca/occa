@@ -1054,9 +1054,10 @@ namespace occa {
                                        const uintptr_t bytes){
     memory_v *mem = new memory_t<CUDA>;
 
+    // CUdeviceptr ~ void*
     mem->dev    = dev;
     mem->size   = bytes;
-    mem->handle = handle_;
+    mem->handle = &handle_;
 
     mem->isAWrapper = true;
 
