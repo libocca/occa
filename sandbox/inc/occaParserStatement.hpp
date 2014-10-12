@@ -9,6 +9,8 @@
 
 namespace occa {
   namespace parserNamespace {
+    class expNode;
+
     //---[ Statement ]------------------------------
     class statement {
     public:
@@ -23,6 +25,7 @@ namespace occa {
 
       int type;
 
+      expNode *exp;
       strNode *nodeStart, *nodeEnd;
 
       int statementCount;
