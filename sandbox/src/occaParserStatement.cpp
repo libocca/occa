@@ -13,6 +13,9 @@ namespace occa {
       varOriginMap(pb.varOriginMap),
       varUsedMap(pb.varUsedMap),
 
+      expCount(0),
+      exp(NULL),
+
       nodeStart(NULL),
       nodeEnd(NULL),
 
@@ -31,6 +34,9 @@ namespace occa {
 
       varOriginMap(up_->varOriginMap),
       varUsedMap(up_->varUsedMap),
+
+      expCount(0),
+      exp(NULL),
 
       nodeStart(nodeStart_),
       nodeEnd(nodeEnd_),
@@ -1061,6 +1067,9 @@ namespace occa {
 
       // Blocks don't have stuff, they just provide a new scope
       //   Hence, nodeStart = nodeEnd = NULL
+      expCount = 0;
+      exp      = NULL;
+
       nodeStart = nodeEnd = NULL;
 
       // Load all down's before popping [{] and [}]'s
@@ -1184,6 +1193,13 @@ namespace occa {
       statement *newStatement = new statement(depth,
                                               type, up,
                                               NULL, NULL);
+
+      if(expCount){
+        newStatement->exp = new expNode*[expCount];
+
+        for(int i = 0; i < expCount; ++i)
+          newStatement->exp[i] = exp[i]->clone(*newStatement);
+      }
 
       if(nodeStart){
         newStatement->nodeStart = nodeStart->clone();
@@ -1612,8 +1628,7 @@ namespace occa {
 
     //---[ Exp Node ]-------------------------------
     expNode::expNode(statement &s) :
-      varOriginMap(s.varOriginMap),
-      varUsedMap(s.varUsedMap),
+      sInfo(s),
 
       value(""),
       info(expType::root),
@@ -1626,8 +1641,7 @@ namespace occa {
       type(NULL) {}
 
     expNode::expNode(expNode &up_) :
-      varOriginMap(up_.varOriginMap),
-      varUsedMap(up_.varUsedMap),
+      sInfo(up_.sInfo),
 
       value(""),
       info(expType::root),
@@ -1646,7 +1660,7 @@ namespace occa {
       initOrganization();
       organizeLeaves();
 
-      // [-] Need to free nClone;
+      occa::parserNamespace::free(nClone);
     }
 
     void expNode::initLoadFromNode(strNode *n){
@@ -1695,10 +1709,41 @@ namespace occa {
           if(nodePos->type & operatorType){
             // [--] Check for custom variable-type when
             //        putting this in parser
-            if(nodePos->left &&
-               (nodePos->left->type & descriptorType)){
 
-              leaf->info = expType::qualifier;
+            if(nodePos->value == "*"){
+              bool starIsQualifier = true;
+              int starCount = 1;
+
+              strNode *nodePos2 = nodePos->right;
+
+              while(nodePos2 &&
+                    (nodePos2->value == "*")){
+                ++starCount;
+                nodePos2 = nodePos2->right;
+              }
+
+              if(nodePos2){
+                varInfo *vInfo = sInfo.hasVariableInScope(nodePos2->value);
+
+                if(vInfo){
+
+                }
+              }
+
+              if(starIsQualifier){
+                leaf->info = expType::qualifier;
+
+                for(int i = 1; i < starCount; ++i){
+                  expNode *&leaf2 = leaves[leafCount++];
+
+                  leaf2        = new expNode(*this);
+                  leaf2->up    = this;
+                  leaf2->value = nodePos->value;
+                  leaf2->info  = expType::qualifier;
+
+                  nodePos = nodePos->right;
+                }
+              }
             }
           }
           else{
@@ -1903,6 +1948,9 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
+        if(leafPos < leafCount)
+          std::cout << "1. leaves[leafPos] = " << leaves[leafPos]->value << '\n';
+
         if(leaves[leafPos]->info & expType::qualifier){
           int leafPosStart = leafPos;
           int leafPosEnd   = leafPos;
@@ -1911,13 +1959,19 @@ namespace occa {
                 (leaves[leafPosEnd]->info & expType::qualifier))
             ++leafPosEnd;
 
-          --leafPosEnd;
+          for(int i = leafPosStart; i <= leafPosEnd; ++i)
+            std::cout << "leaves[i]->value = " << leaves[i]->value << '\n';
 
           leafPos = mergeRange(expType::qualifier,
-                               leafPosStart, leafPosEnd);
+                               leafPosStart, leafPosEnd - 1);
+
+          print();
         }
         else
           ++leafPos;
+
+        if(leafPos < leafCount)
+          std::cout << "2. leaves[leafPos] = " << leaves[leafPos]->value << '\n';
       }
     }
 
@@ -2165,6 +2219,45 @@ namespace occa {
       return false;
     }
     //================================
+
+    expNode* expNode::clone(statement &s){
+      expNode &newRoot = *(new expNode(s));
+
+      newRoot.value = value;
+
+      newRoot.leafCount = leafCount;
+      newRoot.var       = var;
+      newRoot.type      = type;
+
+      if(leafCount){
+        newRoot.leaves = new expNode*[leafCount];
+
+        for(int i = 0; i < leafCount; ++i)
+          newRoot.leaves[i] = clone(leaves[i]);
+      }
+
+      return &newRoot;
+    }
+
+    expNode* expNode::clone(expNode *original){
+      expNode &newLeaf = *(new expNode(*this));
+      expNode &o = *original;
+
+      newLeaf.value = o.value;
+
+      newLeaf.leafCount = o.leafCount;
+      newLeaf.var       = o.var;
+      newLeaf.type      = o.type;
+
+      if(o.leafCount){
+        newLeaf.leaves = new expNode*[o.leafCount];
+
+        for(int i = 0; i < o.leafCount; ++i)
+          newLeaf.leaves[i] = o.clone(o.leaves[i]);
+      }
+
+      return &newLeaf;
+    }
 
     void expNode::freeLeaf(const int leafPos){
       leaves[leafPos]->free();

@@ -25,7 +25,9 @@ namespace occa {
 
       int type;
 
-      expNode *exp;
+      int expCount;
+      expNode **exp;
+
       strNode *nodeStart, *nodeEnd;
 
       int statementCount;
@@ -175,8 +177,7 @@ namespace occa {
 
     class expNode {
     public:
-      varOriginMap_t &varOriginMap;
-      varUsedMap_t   &varUsedMap;
+      statement &sInfo;
 
       std::string value;
       int info;
@@ -263,6 +264,9 @@ namespace occa {
 
       bool typeEndsWithStar() const;
       //================================
+
+      expNode* clone(statement &s);
+      expNode* clone(expNode *original);
 
       void freeLeaf(const int leafPos);
 
