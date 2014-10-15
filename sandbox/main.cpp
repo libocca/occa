@@ -6,7 +6,7 @@ namespace occa {
       parser p;
       statement s(p);
 
-      strNode *n = labelCode( splitContent("const int *a, b, **c") );
+      strNode *n = labelCode( splitContent("const int *a = NULL, b= a, **c") );
       // strNode *n = labelCode( splitContent("const int * const * (*func)(int **x, int, int)") );
       // strNode *n = labelCode( splitContent("(1+2*3%2|1+10&3^1)") );
 
