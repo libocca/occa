@@ -102,15 +102,15 @@ namespace occa {
       }
       //======================
 
-      initLoadFromNode(newNodeRoot);
+      addNewVariables(newNodeRoot);
 
-      markNewVariables();
+      initLoadFromNode(newNodeRoot);
 
       initOrganization();
       print();
       organizeLeaves();
 
-      addNewVariables();
+      updateNewVariables();
 
       // Only the root needs to free
       if(up == NULL){
@@ -554,46 +554,67 @@ namespace occa {
     }
 
     // Disregards function pointers, those are "easy"
-    void expNode::markNewVariables(){
+    void expNode::addNewVariables(strNode *nodePos){
       if( !(sInfo.type & declareStatementType) )
         return;
 
-      int leafPos = 0;
+      while((nodePos) &&
+            !(nodePos->type & specifierType)){
 
-      // Skip qualifiers
-      while((leafPos < leafCount) &&
-            !(leaves[leafPos]->info & expType::type))
-        ++leafPos;
+        nodePos = nodePos->right;;
+      }
 
       // Skip Type
-      ++leafPos;
+      nodePos = nodePos->right;;
 
-      while(leafPos < leafCount){
+      while(nodePos){
+
+        varInfo newVar;
+
         // Mark pointer qualifiers
-        while(leafPos < leafCount){
-          if(leaves[leafPos]->value == "*")
-            leaves[leafPos]->info = expType::qualifier;
-          else if( !(leaves[leafPos]->info & expType::qualifier) )
-            break;
+        while((nodePos) &&
+              (nodePos->type & qualifierType)){
+          if(nodePos->value == "*"){
+            // Remove the operator type
+            nodePos->type = qualifierType;
+            ++(newVar.pointerCount);
+          }
 
-          ++leafPos;
+          nodePos = nodePos->right;;
         }
 
-        // Mark new variables
-        leaves[leafPos]->info = expType::variable;
+        const int downCount = nodePos->down.size();
+
+        // Not a function pointer
+        if((downCount == 0) ||
+           (nodePos->down[0]->type != startParentheses)){
+
+          newVar.name = nodePos->value;
+
+          for(int i = 0; i < downCount; ++i){
+            if(nodePos->down[i]->type == startBracket)
+              newVar.stackPointerSizes.push_back((std::string) *(nodePos->down[i]));
+            else
+              break;
+          }
+
+          // Add new variables
+          sInfo.addVariable(newVar);
+
+          nodePos = nodePos->right;;
+        }
 
         // Go to [,] or [;]
-        while(leafPos < leafCount){
-          ++leafPos;
+        while((nodePos)               &&
+              (nodePos->value != ",") &&
+              (nodePos->value != ";")){
 
-          if((leaves[leafPos - 1]->value == ";") ||
-             (leaves[leafPos - 1]->value == ","))
-            break;
+          nodePos = nodePos->right;;
         }
       }
     }
 
-    void expNode::addNewVariables(){
+    void expNode::updateNewVariables(){
       if( !(sInfo.type & declareStatementType) )
         return;
     }

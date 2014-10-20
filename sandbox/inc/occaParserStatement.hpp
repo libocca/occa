@@ -79,8 +79,8 @@ namespace occa {
       void organizeLeaves();
       void organizeLeaves(const int level);
 
-      void markNewVariables();
-      void addNewVariables();
+      void addNewVariables(strNode *nodePos);
+      void updateNewVariables();
 
       int mergeRange(const int newLeafType,
                      const int leafPosStart,
