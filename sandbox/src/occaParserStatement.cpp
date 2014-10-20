@@ -110,9 +110,11 @@ namespace occa {
       updateNewVariables();
 
       // Only the root needs to free
-      if(up == NULL){
+      if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
-      }
+
+      print();
+      std::cout << "this = " << *this << '\n';
     }
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -561,15 +563,8 @@ namespace occa {
           else
             ++leafPos;
         }
-        else if(levelType & binaryOperatorType){
-          printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
-          print();
-          std::cout
-            << "this = " << *this << '\n';
-
-          printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
+        else if(levelType & binaryOperatorType)
           leafPos = mergeBinary(leafPos);
-        }
         else if(levelType & ternaryOperatorType)
           leafPos = mergeTernary(leafPos);
         else
@@ -616,8 +611,21 @@ namespace occa {
           newVar.name = nodePos->value;
 
           for(int i = 0; i < downCount; ++i){
-            if(nodePos->down[i]->type == startBracket)
-              newVar.stackPointerSizes.push_back((std::string) *(nodePos->down[i]));
+            if(nodePos->down[i]->type == startBracket){
+              strNode *leftBracket  = nodePos->down[i];
+              strNode *rightBracket = lastNode(leftBracket);
+
+              if(leftBracket->right != rightBracket){
+                strNode *lastDown = rightBracket->left;
+                lastDown->right = NULL;
+
+                newVar.stackPointerSizes.push_back((std::string) *(leftBracket->right));
+
+                lastDown->right = rightBracket;
+              }
+              else
+                newVar.stackPointerSizes.push_back("");
+            }
             else
               break;
           }
