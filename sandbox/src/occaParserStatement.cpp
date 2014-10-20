@@ -370,17 +370,18 @@ namespace occa {
         leaf->value = nodePos->value;
 
         if(nodePos->type & unknownVariable){
-          varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
+          leaf->info = expType::unknown;
+          // varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
 
-          if(nodeVar){
-            if( !(nodeVar->typeInfo & functionType) )
-              leaf->info = expType::variable;
-            else
-              leaf->info = expType::function;
-          }
-          else{
-            typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
-          }
+          // if(nodeVar){
+          //   if( !(nodeVar->typeInfo & functionType) )
+          //     leaf->info = expType::variable;
+          //   else
+          //     leaf->info = expType::function;
+          // }
+          // else{
+          //   typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
+          // }
         }
 
         else if(nodePos->type & presetValue){
@@ -1194,6 +1195,12 @@ namespace occa {
       }
 
       case expType::presetValue:{
+        out << n.value;
+
+        break;
+      }
+
+      case expType::unknown:{
         out << n.value;
 
         break;
