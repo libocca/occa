@@ -564,6 +564,9 @@ namespace occa {
         else if(levelType & binaryOperatorType){
           printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
           print();
+          std::cout
+            << "this = " << *this << '\n';
+
           printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
           leafPos = mergeBinary(leafPos);
         }
@@ -839,9 +842,9 @@ namespace occa {
           newLeaf->leaves[0] = leaves[leafPos - 1];
           newLeaf->leaves[1] = leaves[leafPos    ];
 
-          leaves[leafPos] = newLeaf;
+          leaves[leafPos - 1] = newLeaf;
 
-          for(int i = (leafPos + 2); i < leafCount; ++i)
+          for(int i = (leafPos + 1); i < leafCount; ++i)
             leaves[i - 1] = leaves[i];
 
           ++leafPos;
