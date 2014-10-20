@@ -40,6 +40,13 @@ namespace occa {
 
       labelStatement(nodePos);
 
+      // Don't need to load stuff
+      if(sInfo.type & (macroStatementType           |
+                       keywordType["occaOuterFor0"] |
+                       gotoStatementType            |
+                       blockStatementType))
+        return;
+
       strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
 
       initLoadFromNode(newNodeRoot);
@@ -887,6 +894,7 @@ namespace occa {
       std::cout << tab << "[";
 
       bool printedSomething = false;
+
       for(int i = 0; i < 10; ++i){
         if(info & (1 << i)){
           if(printedSomething)
@@ -981,6 +989,7 @@ namespace occa {
 
         break;
       }
+
       case expType::type:{
         // [const] [int] [*]
         if(n.leafCount){
@@ -996,11 +1005,13 @@ namespace occa {
 
         break;
       }
+
       case expType::presetValue:{
         out << n.value;
 
         break;
       }
+
       case expType::variable:{
         // [[[const] [int] [*]] [x]]
         if(n.leafCount){
@@ -1018,6 +1029,7 @@ namespace occa {
 
         break;
       }
+
       case expType::function:{
         out << n.value << '(';
 
@@ -1032,6 +1044,7 @@ namespace occa {
 
         break;
       }
+
       case expType::functionPointer:{
         out << *(n.leaves[0]) << " (*" << *(n.leaves[1]) << ")"
             << '(';
@@ -1047,6 +1060,25 @@ namespace occa {
 
         out << ')';
 
+        break;
+      }
+
+      case expType::namespace_:{
+        break;
+      }
+
+      case expType::macro_:{
+        out << n.value;
+        break;
+      }
+
+      case expType::goto_:{
+        out << n.value << ':';
+        break;
+      }
+
+      case expType::occaFor:{
+        out << n.value;
         break;
       }
       };
