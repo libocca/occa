@@ -108,12 +108,11 @@ namespace occa {
       organizeLeaves();
 
       updateNewVariables();
-      print();
 
       // Only the root needs to free
-      // if(up == NULL){
-      //   occa::parserNamespace::free(newNodeRoot);
-      // }
+      if(up == NULL){
+        occa::parserNamespace::free(newNodeRoot);
+      }
     }
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -342,6 +341,12 @@ namespace occa {
     void expNode::initLoadFromNode(strNode *nodeRoot){
       strNode *nodePos = nodeRoot;
 
+      // Root
+      if(nodePos->type == 0){
+        leafCount += nodePos->down.size();
+        nodePos = nodePos->right;
+      }
+
       while(nodePos){
         leafCount += (1 + nodePos->down.size());
         nodePos = nodePos->right;
@@ -392,15 +397,16 @@ namespace occa {
 
         const int downCount = nodePos->down.size();
 
+        if(nodePos->type == 0){
+          delete leaf;
+          --leafCount;
+        }
+
         for(int i = 0; i < downCount; ++i){
           strNode *downNode = nodePos->down[i];
           strNode *lastDown = lastNode(downNode);
 
           std::string sValue = downNode->value;
-
-          // Get rid of ()'s and stuff
-          popAndGoRight(downNode);
-          popAndGoLeft(lastDown);
 
           expNode *&sLeaf = leaves[leafCount++];
 
@@ -409,8 +415,18 @@ namespace occa {
           sLeaf->info  = expType::C;
 
           // Case: ()
-          if(lastDown != NULL)
-            sLeaf->initLoadFromNode(downNode);
+          if(downNode != lastDown){
+            // Get rid of ()'s and stuff
+            downNode->type = 0;
+            popAndGoLeft(lastDown);
+
+            if(downNode != lastDown){
+              if(downNode->down.size())
+                sLeaf->initLoadFromNode(downNode);
+              else
+                sLeaf->initLoadFromNode(downNode->right);
+            }
+          }
         }
 
         nodePos = nodePos->right;
@@ -469,6 +485,9 @@ namespace occa {
 
       // func()
       mergeFunctionCalls();
+
+      // a[3]
+      mergeArrays();
 
       organizeLeaves(1);
       //====================
@@ -542,8 +561,12 @@ namespace occa {
           else
             ++leafPos;
         }
-        else if(levelType & binaryOperatorType)
+        else if(levelType & binaryOperatorType){
+          printf("AAAAAAAAAAAAAAAAAAAAAAAAAAAA\n");
+          print();
+          printf("BBBBBBBBBBBBBBBBBBBBBBBBBBBB\n");
           leafPos = mergeBinary(leafPos);
+        }
         else if(levelType & ternaryOperatorType)
           leafPos = mergeTernary(leafPos);
         else
@@ -559,11 +582,11 @@ namespace occa {
       while((nodePos) &&
             !(nodePos->type & specifierType)){
 
-        nodePos = nodePos->right;;
+        nodePos = nodePos->right;
       }
 
       // Skip Type
-      nodePos = nodePos->right;;
+      nodePos = nodePos->right;
 
       while(nodePos){
 
@@ -578,7 +601,7 @@ namespace occa {
             ++(newVar.pointerCount);
           }
 
-          nodePos = nodePos->right;;
+          nodePos = nodePos->right;
         }
 
         const int downCount = nodePos->down.size();
@@ -599,7 +622,7 @@ namespace occa {
           // Add new variables
           sInfo.addVariable(newVar);
 
-          nodePos = nodePos->right;;
+          nodePos = nodePos->right;
         }
 
         // Go to [,] or [;]
@@ -607,8 +630,10 @@ namespace occa {
               (nodePos->value != ",") &&
               (nodePos->value != ";")){
 
-          nodePos = nodePos->right;;
+          nodePos = nodePos->right;
         }
+
+        nodePos = nodePos->right;
       }
     }
 
@@ -796,6 +821,35 @@ namespace occa {
       }
 
       leafCount = ((leafCount / 2) + 1);
+    }
+
+    // a[2]
+    void expNode::mergeArrays(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if((leaves[leafPos]->info & expType::C) &&
+           (leaves[leafPos]->value == "[")){
+          expNode *newLeaf = new expNode(*this);
+
+          newLeaf->up        = this;
+          newLeaf->info      = (expType::L | expType::R);
+          newLeaf->leafCount = 2;
+          newLeaf->leaves    = new expNode*[2];
+          newLeaf->leaves[0] = leaves[leafPos - 1];
+          newLeaf->leaves[1] = leaves[leafPos    ];
+
+          leaves[leafPos] = newLeaf;
+
+          for(int i = (leafPos + 2); i < leafCount; ++i)
+            leaves[i - 1] = leaves[i];
+
+          ++leafPos;
+          --leafCount;
+        }
+        else
+          ++leafPos;
+      }
     }
 
     // (class) x
@@ -2171,8 +2225,8 @@ namespace occa {
 
         if(((downCount == 1) && (st != elseStatementType)) ||
            ((downCount == 0) && (st == elseStatementType))){
-          // if()         or    else
-          //   statement;         statement;
+          // if()           or    else
+          //   statement;           statement;
 
           nextNode = newStatement->loadFromNode(nextNode);
 

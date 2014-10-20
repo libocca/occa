@@ -113,6 +113,9 @@ namespace occa {
 
       void mergeArguments();
 
+      // a[3]
+      void mergeArrays();
+
       // (class) x
       void mergeClassCasts();
 

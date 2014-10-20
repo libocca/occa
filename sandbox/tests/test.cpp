@@ -142,7 +142,7 @@ kernel void fd2d(tFloat *u1,
         }
       }
 
-      barrier(localMemFence);
+      // barrier(localMemFence);
 
       for(int ly = 0; ly < lDimY; ++ly; inner1){
         for(int lx = 0; lx < lDimX; ++lx; inner0){
