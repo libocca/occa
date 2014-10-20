@@ -13,6 +13,8 @@ namespace occa {
 
     //---[ Exp Node ]-------------------------------
     namespace expType {
+      static const int maxBit = 17;
+
       static const int root            = (1 << 0);
 
       static const int LCR             = (7 << 1);
@@ -75,8 +77,10 @@ namespace occa {
       void initOrganization();
 
       void organizeLeaves();
-
       void organizeLeaves(const int level);
+
+      void markNewVariables();
+      void addNewVariables();
 
       int mergeRange(const int newLeafType,
                      const int leafPosStart,

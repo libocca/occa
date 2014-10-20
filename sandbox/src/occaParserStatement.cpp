@@ -47,6 +47,7 @@ namespace occa {
                        blockStatementType))
         return;
 
+      //---[ Special Type ]---
       if(nodeRoot->type & specialKeywordType){
         if((nodeRoot->value == "break")    ||
            (nodeRoot->value == "continue") ||
@@ -73,10 +74,12 @@ namespace occa {
 
         nodeRoot = nodeRoot->right;
       }
+      //======================
 
       strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
       strNode *lastNewNode = lastNode(newNodeRoot);
 
+      //---[ Extra Blocks ]---
       if(lastNewNode->down.size()){
         int downsAvailable = 0;
 
@@ -97,16 +100,20 @@ namespace occa {
         lastNewNode->down.erase(lastNewNode->down.begin() + downsAvailable,
                                 lastNewNode->down.end());
       }
+      //======================
 
       initLoadFromNode(newNodeRoot);
+
+      markNewVariables();
 
       initOrganization();
       print();
       organizeLeaves();
 
+      addNewVariables();
+
       // Only the root needs to free
       if(up == NULL){
-        // print();
         occa::parserNamespace::free(newNodeRoot);
       }
     }
@@ -358,23 +365,16 @@ namespace occa {
         leaf->value = nodePos->value;
 
         if(nodePos->type & unknownVariable){
-          varInfo *nodeVar  = sInfo.hasVariableInScope(nodePos->value);
+          varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
 
           if(nodeVar){
-
+            if( !(nodeVar->typeInfo & functionType) )
+              leaf->info = expType::variable;
+            else
+              leaf->info = expType::function;
           }
           else{
-          typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
-          }
-
-          // [-] Temp until I merge with parser
-          if(nodePos->down.size() &&
-             (nodePos->down[0]->type & parentheses)){
-
-            leaf->info = expType::function;
-          }
-          else{
-            leaf->info = expType::variable;
+            typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
           }
         }
 
@@ -551,6 +551,51 @@ namespace occa {
         else
           ++leafPos;
       }
+    }
+
+    // Disregards function pointers, those are "easy"
+    void expNode::markNewVariables(){
+      if( !(sInfo.type & declareStatementType) )
+        return;
+
+      int leafPos = 0;
+
+      // Skip qualifiers
+      while((leafPos < leafCount) &&
+            !(leaves[leafPos]->info & expType::type))
+        ++leafPos;
+
+      // Skip Type
+      ++leafPos;
+
+      while(leafPos < leafCount){
+        // Mark pointer qualifiers
+        while(leafPos < leafCount){
+          if(leaves[leafPos]->value == "*")
+            leaves[leafPos]->info = expType::qualifier;
+          else if( !(leaves[leafPos]->info & expType::qualifier) )
+            break;
+
+          ++leafPos;
+        }
+
+        // Mark new variables
+        leaves[leafPos]->info = expType::variable;
+
+        // Go to [,] or [;]
+        while(leafPos < leafCount){
+          ++leafPos;
+
+          if((leaves[leafPos - 1]->value == ";") ||
+             (leaves[leafPos - 1]->value == ","))
+            break;
+        }
+      }
+    }
+
+    void expNode::addNewVariables(){
+      if( !(sInfo.type & declareStatementType) )
+        return;
     }
 
     int expNode::mergeRange(const int newLeafType,
@@ -949,7 +994,7 @@ namespace occa {
 
       bool printedSomething = false;
 
-      for(int i = 0; i < 10; ++i){
+      for(int i = 0; i <= expType::maxBit; ++i){
         if(info & (1 << i)){
           if(printedSomething)
             std::cout << ',';
