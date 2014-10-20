@@ -71,8 +71,6 @@ namespace occa {
           info = expType::case_;
         else // (nodeRoot->value == "return")
           info = expType::return_;
-
-        nodeRoot = nodeRoot->right;
       }
       //======================
 
@@ -107,15 +105,15 @@ namespace occa {
       initLoadFromNode(newNodeRoot);
 
       initOrganization();
-      print();
       organizeLeaves();
 
       updateNewVariables();
+      print();
 
       // Only the root needs to free
-      if(up == NULL){
-        occa::parserNamespace::free(newNodeRoot);
-      }
+      // if(up == NULL){
+      //   occa::parserNamespace::free(newNodeRoot);
+      // }
     }
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -821,7 +819,7 @@ namespace occa {
       expNode *leaf  = leaves[leafPos];
       expNode *sLeaf = leaves[leafPos + 1];
 
-      for(int i = (leafPos + 1); i < leafCount; ++i)
+      for(int i = (leafPos + 2); i < leafCount; ++i)
         leaves[i - 1] = leaves[i];
 
       --leafCount;
