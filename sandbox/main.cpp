@@ -6,8 +6,8 @@ namespace occa {
       parser p;
       statement s(p);
 
-      strNode *n = labelCode( splitContent("#pragma blah") );
-      // strNode *n = labelCode( splitContent("const int *a = NULL, b= a, **c; int b;") );
+      // strNode *n = labelCode( splitContent("#pragma blah") );
+      strNode *n = labelCode( splitContent("const int *a = NULL, b= a, **c; int b;") );
       // strNode *n = labelCode( splitContent("const int * const * (*func)(int **x, int, int)") );
       // strNode *n = labelCode( splitContent("(1+2*3%2|1+10&3^1)") );
 
@@ -25,13 +25,13 @@ namespace occa {
 };
 
 int main(int argc, char **argv){
-  occa::parserNamespace::test();
+  // occa::parserNamespace::test();
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("tests/test.cpp");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   occa::parser parser;
@@ -51,11 +51,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("tests/cleanTest.c");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("tests/cleanTest.c");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   occa::parser parser;

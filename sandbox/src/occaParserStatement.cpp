@@ -47,6 +47,33 @@ namespace occa {
                        blockStatementType))
         return;
 
+      if(nodeRoot->type & specialKeywordType){
+        if((nodeRoot->value == "break")    ||
+           (nodeRoot->value == "continue") ||
+           (nodeRoot->value == "default")){
+
+          value = nodeRoot->value;
+          info  = expType::printValue;
+          return;
+        }
+
+        // [-] Doesn't support GCC's twisted [Labels as Values]
+        if(nodeRoot->value == "goto"){
+          value = nodeRoot->right->value;
+          info  = expType::goto_;
+          return;
+        }
+
+        // Case where nodeRoot = [case, return]
+
+        if(nodeRoot->value == "case")
+          info = expType::case_;
+        else // (nodeRoot->value == "return")
+          info = expType::return_;
+
+        nodeRoot = nodeRoot->right;
+      }
+
       strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
 
       initLoadFromNode(newNodeRoot);
@@ -54,7 +81,11 @@ namespace occa {
       initOrganization();
       organizeLeaves();
 
-      occa::parserNamespace::free(newNodeRoot);
+      // Only the root needs to free
+      if(up == NULL){
+        print();
+        occa::parserNamespace::free(newNodeRoot);
+      }
     }
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -232,7 +263,7 @@ namespace occa {
     }
 
     int expNode::loadGotoStatement(strNode *&nodeRoot){
-      info  = expType::goto_;
+      info  = expType::gotoLabel_;
       value = nodeRoot->value;
 
       nodeRoot = nodeRoot->right;
@@ -924,6 +955,10 @@ namespace occa {
         for(int i = 0; i < n.leafCount; ++i)
           out << *(n.leaves[i]);
 
+        if((n.up == NULL) &&
+           (n.sInfo.type & simpleStatementType))
+          out << ';';
+
         break;
       }
 
@@ -1073,12 +1108,49 @@ namespace occa {
       }
 
       case expType::goto_:{
+        out << "goto " << n.value << ';';
+        break;
+      }
+
+      case expType::gotoLabel_:{
         out << n.value << ':';
+        break;
+      }
+
+      case expType::case_:{
+        out << "case ";
+
+        for(int i = 0; i < n.leafCount; ++i)
+          out << *(n.leaves[i]);
+
+        if((n.up == NULL) &&
+           (n.sInfo.type & simpleStatementType))
+          out << ';';
+
+        break;
+      }
+
+      case expType::return_:{
+        out << "return ";
+
+        for(int i = 0; i < n.leafCount; ++i)
+          out << *(n.leaves[i]);
+
+        if((n.up == NULL) &&
+           (n.sInfo.type & simpleStatementType))
+          out << ';';
+
         break;
       }
 
       case expType::occaFor:{
         out << n.value;
+        break;
+      }
+
+      case expType::printValue:{
+        out << n.value;
+
         break;
       }
       };

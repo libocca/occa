@@ -29,7 +29,12 @@ namespace occa {
       static const int namespace_      = (1 << 10);
       static const int macro_          = (1 << 11);
       static const int goto_           = (1 << 12);
-      static const int occaFor         = (1 << 13);
+      static const int gotoLabel_      = (1 << 13);
+      static const int case_           = (1 << 14);
+      static const int return_         = (1 << 15);
+      static const int occaFor         = (1 << 16);
+
+      static const int printValue      = (1 << 17);
     };
 
     class expNode {

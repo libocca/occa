@@ -132,7 +132,20 @@ namespace occa {
     }
 
     strNode* strNode::clone() const {
-      return cloneTo(NULL);
+      const strNode *nodePos = this;
+
+      strNode *newNodeRoot = cloneNode();
+      strNode *newNodePos  = newNodeRoot;
+
+      while(nodePos->right){
+        newNodePos->right       = nodePos->right->cloneNode();
+        newNodePos->right->left = newNodePos;
+
+        newNodePos = newNodePos->right;
+        nodePos    = nodePos->right;
+      }
+
+      return newNodeRoot;
     }
 
     strNode* strNode::cloneTo(strNode *n) const {
