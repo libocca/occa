@@ -1160,6 +1160,8 @@ namespace occa {
                                 const std::string &pythonCode = "",
                                 int loopyOrFloopy = occa::useLoopy);
 
+    kernel& operator [] (kernelDatabase &kdb);
+
 #if OCCA_OPENCL_ENABLED
     friend occa::device cl::wrapDevice(cl_platform_id platformID,
                                        cl_device_id deviceID,
@@ -1200,7 +1202,7 @@ namespace occa {
   //==================================
 
 
-  //---[ Kernel ]---------------------
+  //---[ Kernel Database ]------------
   inline kernel& kernelDatabase::operator [] (device &d){
     OCCA_CHECK((0 <= d.modelID_) && (d.modelID_ < modelKernelCount) &&
                modelKernelAvailable[d.modelID_]);
@@ -1213,6 +1215,10 @@ namespace occa {
     loadKernelFromLibrary(d);
 
     return kernels[d.id_];
+  }
+
+  inline kernel& device::operator [] (kernelDatabase &kdb){
+    return kdb[*this];
   }
   //==================================
 

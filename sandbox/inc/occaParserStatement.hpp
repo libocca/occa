@@ -20,12 +20,16 @@ namespace occa {
       static const int C               = (1 << 2);
       static const int R               = (1 << 3);
 
-      static const int qualifier       = (1 << 4);
-      static const int type            = (1 << 5);
-      static const int presetValue     = (1 << 6);
-      static const int variable        = (1 << 7);
-      static const int function        = (1 << 8);
-      static const int functionPointer = (1 << 9);
+      static const int qualifier       = (1 <<  4);
+      static const int type            = (1 <<  5);
+      static const int presetValue     = (1 <<  6);
+      static const int variable        = (1 <<  7);
+      static const int function        = (1 <<  8);
+      static const int functionPointer = (1 <<  9);
+      static const int namespace_      = (1 << 10);
+      static const int macro_          = (1 << 11);
+      static const int goto_           = (1 << 12);
+      static const int occaFor         = (1 << 13);
     };
 
     class expNode {
@@ -45,7 +49,21 @@ namespace occa {
       expNode(statement &s);
       expNode(expNode &up_);
 
-      void loadFromNode(strNode *n);
+      //---[ Find Statement ]-----------
+      void labelStatement(strNode *&nodeRoot);
+
+      int loadMacroStatement(strNode *&nodeRoot);
+      int loadOccaForStatement(strNode *&nodeRoot);
+      int loadStructStatement(strNode *&nodeRoot);
+      int loadUpdateStatement(strNode *&nodeRoot);
+      int loadDescriptorStatement(strNode *&nodeRoot);
+      int loadGotoStatement(strNode *&nodeRoot);
+      int loadFlowStatement(strNode *&nodeRoot);
+      int loadSpecialStatement(strNode *&nodeRoot);
+      int loadBlockStatement(strNode *&nodeRoot);
+      //================================
+
+      void loadFromNode(strNode *&nodePos);
 
       void initLoadFromNode(strNode *n);
 
@@ -61,8 +79,6 @@ namespace occa {
 
       // [a][::][b]
       void mergeNamespaces();
-
-      int mergeNamespace(const int leafPos);
 
       // [const] int x
       void mergeQualifiers();
@@ -111,6 +127,10 @@ namespace occa {
 
       // a [?] b : c
       int mergeTernary(const int leafPos);
+
+      //---[ Custom Functions ]---------
+      void labelNewVariables();
+      //================================
 
       //---[ Custom Type Info ]---------
       bool qualifierEndsWithStar() const;
@@ -168,12 +188,16 @@ namespace occa {
 
       statement(parserBase &pb);
 
+      statement(const int depth_, statement *up_);
+
       statement(const int depth_,
                 const int type_,
                 statement *up_,
                 strNode *nodeStart_, strNode *nodeEnd_);
 
       ~statement();
+
+      statement* makeSubStatement();
 
       std::string getTab() const;
 

@@ -56,7 +56,7 @@ int main(int argc, char **argv){
     int itemsPerGroup(2);
     int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
 
-    addVectors[device].setWorkingDims(dims, itemsPerGroup, groups);
+    device[addVectors].setWorkingDims(dims, itemsPerGroup, groups);
 
     o_a.copyFrom(a);
     o_b.copyFrom(b);
@@ -65,7 +65,7 @@ int main(int argc, char **argv){
 
     occa::tic("addVectors");
 
-    addVectors[device](entries, o_a, o_b, o_ab);
+    device[addVectors](entries, o_a, o_b, o_ab);
 
     double elapsedTime = occa::toc("addVectors", addVectors[device]);
 
@@ -78,7 +78,7 @@ int main(int argc, char **argv){
     for(int i = 0; i < 5; ++i)
       std::cout << i << ": " << ab[i] << '\n';
 
-    addVectors[device].free();
+    device[addVectors].free();
     o_a.free();
     o_b.free();
     o_ab.free();

@@ -30,19 +30,251 @@ namespace occa {
       var(NULL),
       type(NULL) {}
 
-    void expNode::loadFromNode(strNode *n){
-      strNode *nClone = n->clone();
-      initLoadFromNode(nClone);
+    void expNode::loadFromNode(strNode *&nodePos){
+      if(nodePos == NULL){
+        sInfo.type = invalidStatementType;
+        return;
+      }
+
+      strNode *nodeRoot = nodePos;
+
+      labelStatement(nodePos);
+
+      strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
+
+      initLoadFromNode(newNodeRoot);
 
       initOrganization();
-      // organizeLeaves();
+      organizeLeaves();
 
-      occa::parserNamespace::free(nClone);
+      occa::parserNamespace::free(newNodeRoot);
     }
 
-    void expNode::initLoadFromNode(strNode *n){
-      strNode *nodeRoot = n;
-      strNode *nodePos  = nodeRoot;
+    void expNode::labelStatement(strNode *&nodeRoot){
+      if(nodeRoot->type == macroKeywordType)
+        sInfo.type = loadMacroStatement(nodeRoot);
+
+      else if(nodeRoot->type == keywordType["occaOuterFor0"])
+        sInfo.type = loadOccaForStatement(nodeRoot);
+
+      else if(nodeRoot->type & structType)
+        sInfo.type = loadStructStatement(nodeRoot);
+
+      else if(nodeRoot->type & operatorType)
+        sInfo.type = loadUpdateStatement(nodeRoot);
+
+      else if(sInfo.nodeHasDescriptor(nodeRoot))
+        sInfo.type = loadDescriptorStatement(nodeRoot);
+
+      else if(nodeRoot->type & unknownVariable){
+        if(nodeRoot->right &&
+           nodeRoot->right->value == ":")
+          sInfo.type = loadGotoStatement(nodeRoot);
+
+        sInfo.type = loadUpdateStatement(nodeRoot);
+      }
+
+      else if(nodeRoot->type & flowControlType)
+        sInfo.type = loadFlowStatement(nodeRoot);
+
+      else if(nodeRoot->type & specialKeywordType)
+        sInfo.type = loadSpecialStatement(nodeRoot);
+
+      else if((nodeRoot->type == startBrace) &&
+              (nodeRoot->up)                 &&
+              !(nodeRoot->up->type & operatorType))
+        sInfo.type = loadBlockStatement(nodeRoot);
+
+      else {
+        while(nodeRoot &&
+              !(nodeRoot->type & endStatement))
+          nodeRoot = nodeRoot->right;
+
+        sInfo.type = declareStatementType;
+      }
+    }
+
+    int expNode::loadMacroStatement(strNode *&nodeRoot){
+      info  = expType::macro_;
+      value = nodeRoot->value;
+
+      return macroStatementType;
+    }
+
+    int expNode::loadOccaForStatement(strNode *&nodeRoot){
+      info  = expType::occaFor;
+      value = nodeRoot->value;
+
+      return keywordType["occaOuterFor0"];
+    }
+
+    int expNode::loadStructStatement(strNode *&nodeRoot){
+      if((nodeRoot->value == "struct")       &&
+         (nodeRoot->down.size() == 0)        &&
+         (nodeRoot->right)                   &&
+         (nodeRoot->right->down.size() == 0)){
+
+        if(sInfo.hasTypeInScope(nodeRoot->right->value))
+          return sInfo.checkDescriptorStatementType(nodeRoot);
+      }
+
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return structStatementType;
+    }
+
+    int expNode::loadUpdateStatement(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return updateStatementType;
+    }
+
+    int expNode::loadDescriptorStatement(strNode *&nodeRoot){
+      strNode *oldNodeRoot = nodeRoot;
+      strNode *nodePos;
+
+      // Skip descriptors
+      while((nodeRoot)                         &&
+            (nodeRoot->down.size() == 0)       &&
+            ((nodeRoot->type & descriptorType) ||
+             sInfo.nodeHasSpecifier(nodeRoot))){
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      nodePos = nodeRoot;
+
+      while((nodeRoot) &&
+            !(nodeRoot->type & endStatement))
+        nodeRoot = nodeRoot->right;
+
+      const int downCount = nodePos->down.size();
+
+      // Function {Proto, Def | Ptr}
+      if(downCount && (nodePos->down[0]->type & parentheses)){
+        if(downCount == 1)
+          return functionPrototypeType;
+
+        strNode *downNode = nodePos->down[1];
+
+        if(downNode->type & brace){
+          nodeRoot = nodePos;
+          return functionDefinitionType;
+        }
+
+        else if(downNode->type & parentheses){
+          downNode = downNode->right;
+
+          if(downNode->type & parentheses){
+            std::cout << "Function pointer needs a [*]:\n"
+                      << sInfo.prettyString(oldNodeRoot, "  ");
+            throw 1;
+          }
+
+          while(downNode->value == "*"){
+            if(downNode->down.size()){
+              if(nodeRoot == NULL){
+                std::cout << "Missing a [;] after:\n"
+                          << sInfo.prettyString(oldNodeRoot, "  ");
+                throw 1;
+              }
+
+              return declareStatementType;
+            }
+
+            downNode = downNode->right;
+          }
+
+          if(nodeRoot == NULL){
+            std::cout << "Missing a [;] after:\n"
+                      << sInfo.prettyString(oldNodeRoot, "  ");
+            throw 1;
+          }
+
+          // [C++] Function call, not function pointer define
+          //    getFunc(0)(arg1, arg2);
+          if(sInfo.hasVariableInScope(downNode->value))
+            return updateStatementType;
+
+          return declareStatementType;
+        }
+        else{
+          std::cout << "You found the [Waldo 1] error in:\n"
+                    << sInfo.prettyString(oldNodeRoot, "  ");
+          throw 1;
+        }
+      }
+
+      if(nodeRoot == NULL){
+        std::cout << "Missing a [;] after:\n"
+                  << sInfo.prettyString(oldNodeRoot, "  ");
+        throw 1;
+      }
+
+      return declareStatementType;
+    }
+
+    int expNode::loadGotoStatement(strNode *&nodeRoot){
+      info  = expType::goto_;
+      value = nodeRoot->value;
+
+      nodeRoot = nodeRoot->right;
+
+      return gotoStatementType;
+    }
+
+    int expNode::loadFlowStatement(strNode *&nodeRoot){
+      if(nodeRoot->value == "for")
+        return forStatementType;
+      else if(nodeRoot->value == "while")
+        return whileStatementType;
+      else if(nodeRoot->value == "do")
+        return doWhileStatementType;
+      else if(nodeRoot->value == "if")
+        return ifStatementType;
+      else if(nodeRoot->value == "else if")
+        return elseIfStatementType;
+      else if(nodeRoot->value == "else")
+        return elseStatementType;
+      else if(nodeRoot->value == "switch")
+        return switchStatementType;
+
+      std::cout << "You found the [Waldo 2] error in:\n"
+                << sInfo.prettyString(nodeRoot, "  ");
+      throw 1;
+
+      return 0;
+    }
+
+    int expNode::loadSpecialStatement(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return blankStatementType;
+    }
+
+    int expNode::loadBlockStatement(strNode *&nodeRoot){
+      nodeRoot = lastNode(nodeRoot);
+
+      return blockStatementType;
+    }
+
+    void expNode::initLoadFromNode(strNode *nodeRoot){
+      strNode *nodePos = nodeRoot;
 
       while(nodePos){
         leafCount += (1 + nodePos->down.size());
@@ -143,11 +375,16 @@ namespace occa {
       // [[const] [int] [*]] x
       mergeTypes();
 
-      // [[[const] [int] [*]] [x]]
-      mergeVariables();
-
       // [qualifiers] [type] (*[name]) ([args])
       mergeFunctionPointers();
+
+      if(sInfo.type & declareStatementType){
+        labelNewVariables();
+      }
+      else{
+        // [[[const] [int] [*]] [x]]
+        mergeVariables();
+      }
       //====================
     }
 
@@ -282,10 +519,26 @@ namespace occa {
 
     // [a][::][b]
     void expNode::mergeNamespaces(){
-    }
+      int leafPos = 0;
 
-    int expNode::mergeNamespace(const int leafPos){
-      return 0;
+      while(leafPos < leafCount){
+        if(leaves[leafPos]->value == "::"){
+          int leafPosStart = leafPos - (leafPos &&
+                                        (leaves[leafPos - 1]->info & expType::namespace_));
+          int leafPosEnd   = leafPos + 2;
+
+          while((leafPosEnd < leafCount) &&
+                (leaves[leafPosEnd]->value == "::"))
+            leafPosEnd += 2;
+
+          --leafPosEnd;
+
+          leafPos = mergeRange(expType::type,
+                               leafPosStart, leafPosEnd);
+        }
+        else
+          ++leafPos;
+      }
     }
 
     // [const] int x
@@ -530,6 +783,14 @@ namespace occa {
 
       return leafPos;
     }
+
+
+    //---[ Custom Functions ]---------
+    void expNode::labelNewVariables(){
+
+    }
+    //================================
+
 
     //---[ Custom Type Info ]---------
     bool expNode::qualifierEndsWithStar() const {
@@ -836,6 +1097,12 @@ namespace occa {
       statementEnd(NULL) {}
 
     statement::~statement(){};
+
+    statement* statement::makeSubStatement(){
+      return new statement(depth + 1,
+                           0, this,
+                           NULL, NULL);
+    }
 
     std::string statement::getTab() const {
       std::string ret = "";
@@ -1473,20 +1740,16 @@ namespace occa {
     }
 
     strNode* statement::loadFromNode(strNode *nodeRoot){
-      strNode *nodeRootEnd = nodeRoot;
+      statement *newStatement = makeSubStatement();
+      strNode * nodeRootEnd = nodeRoot;
 
-      // Finds statement type and sets nodeRootEnd to the
-      //    last strNode in that statement
-      const int st = statementType(nodeRootEnd);
+      newStatement->expRoot.loadFromNode(nodeRootEnd);
+      const int st = newStatement->type;
 
       if(st & invalidStatementType){
         std::cout << "Not a valid statement\n";
         throw 1;
       }
-
-      statement *newStatement = new statement(depth + 1,
-                                              st, this,
-                                              nodeRoot, nodeRootEnd);
 
       if( !(st & ifStatementType) )
         addStatement(newStatement);
