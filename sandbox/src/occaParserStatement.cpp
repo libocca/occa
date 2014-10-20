@@ -75,15 +75,38 @@ namespace occa {
       }
 
       strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
+      strNode *lastNewNode = lastNode(newNodeRoot);
+
+      if(lastNewNode->down.size()){
+        int downsAvailable = 0;
+
+        if(sInfo.type & (forStatementType      |
+                         switchStatementType   |
+                         functionStatementType)){
+
+          downsAvailable = 1;
+        }
+        else if(sInfo.type == whileStatementType){
+          downsAvailable = 1;
+        }
+        else if((sInfo.type & ifStatementType) &&
+                (sInfo.type != elseStatementType)){
+            downsAvailable = 1;
+        }
+
+        lastNewNode->down.erase(lastNewNode->down.begin() + downsAvailable,
+                                lastNewNode->down.end());
+      }
 
       initLoadFromNode(newNodeRoot);
 
       initOrganization();
+      print();
       organizeLeaves();
 
       // Only the root needs to free
       if(up == NULL){
-        print();
+        // print();
         occa::parserNamespace::free(newNodeRoot);
       }
     }
