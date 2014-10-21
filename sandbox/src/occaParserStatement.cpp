@@ -113,7 +113,6 @@ namespace occa {
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
 
-      print();
       std::cout << "this = " << *this << '\n';
     }
 
@@ -370,18 +369,19 @@ namespace occa {
         leaf->value = nodePos->value;
 
         if(nodePos->type & unknownVariable){
-          leaf->info = expType::unknown;
-          // varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
+          varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
 
-          // if(nodeVar){
-          //   if( !(nodeVar->typeInfo & functionType) )
-          //     leaf->info = expType::variable;
-          //   else
-          //     leaf->info = expType::function;
-          // }
-          // else{
-          //   typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
-          // }
+          if(nodeVar){
+            if( !(nodeVar->typeInfo & functionType) )
+              leaf->info = expType::variable;
+            else
+              leaf->info = expType::function;
+          }
+          else{
+            typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
+
+            leaf->info = expType::unknown;
+          }
         }
 
         else if(nodePos->type & presetValue){

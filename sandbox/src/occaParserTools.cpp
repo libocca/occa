@@ -98,12 +98,12 @@ namespace occa {
         return true;
 
       if(((c[0] == '+') || (c[0] == '-')) &&
-         ((c + 1) != '\0') &&
+         (c[1] != '\0') &&
          ((c[1] == '.') || (('0' <= c[1]) && (c[1] <= '9'))))
         return true;
 
       if((c[0] == '.')     &&
-         ((c + 1) != '\0') &&
+         (c[1] != '\0') &&
          ('0' <= c[1]) && (c[1] <= '9'))
         return true;
 
@@ -115,7 +115,7 @@ namespace occa {
     }
 
     void skipInt(const char *&c){
-      while((c != '\0') &&
+      while((*c != '\0') &&
             ('0' <= *c) && (*c <= '9'))
         ++c;
     }
@@ -341,7 +341,7 @@ namespace occa {
 
       int status = readingCode;
 
-      while(cRight != '\0'){
+      while(*cRight != '\0'){
         skipString(cRight);
 
         if((*cRight == '\0') || (*cRight == '\n'))

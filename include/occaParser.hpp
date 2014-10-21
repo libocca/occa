@@ -91,7 +91,6 @@ namespace occa {
 
   namespace parserNamespace {
     static keywordTypeMap_t keywordType;
-    static opTypeMap_t opPrecedence;
 
     static bool keywordsAreInitialized = false;
 
@@ -447,6 +446,8 @@ namespace occa {
         return false;
       }
     };
+
+    static opTypeMap_t opPrecedence;
     //==============================================
 
 
@@ -3299,12 +3300,12 @@ namespace occa {
         return true;
 
       if(((c[0] == '+') || (c[0] == '-')) &&
-         ((c + 1) != '\0') &&
+         (c[1] != '\0') &&
          ((c[1] == '.') || (('0' <= c[1]) && (c[1] <= '9'))))
         return true;
 
       if((c[0] == '.')     &&
-         ((c + 1) != '\0') &&
+         (c[1] != '\0') &&
          ('0' <= c[1]) && (c[1] <= '9'))
         return true;
 
@@ -3316,7 +3317,7 @@ namespace occa {
     }
 
     inline void skipInt(const char *&c){
-      while((c != '\0') &&
+      while((*c != '\0') &&
             ('0' <= *c) && (*c <= '9'))
         ++c;
     }
@@ -3540,7 +3541,7 @@ namespace occa {
 
       int status = readingCode;
 
-      while(cRight != '\0'){
+      while(*cRight != '\0'){
         skipString(cRight);
 
         if((*cRight == '\0') || (*cRight == '\n'))
