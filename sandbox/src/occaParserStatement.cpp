@@ -357,6 +357,9 @@ namespace occa {
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
+      // nodeRoot->print();
+      // printf("A\n\n\n");
+
       addNewVariables(nodeRoot);
       initLoadFromNode(nodeRoot);
 
@@ -365,13 +368,13 @@ namespace occa {
 
       else if(sInfo.type & structStatementType){
         nodeRoot->print();
-        printf("\n\n\n");
+        printf("B\n\n\n");
         splitStructStatement();
       }
 
       else if(sInfo.type & typedefStatementType){
         nodeRoot->print();
-        printf("\n\n\n");
+        printf("C\n\n\n");
         splitTypedefStatement();
       }
 
@@ -391,60 +394,87 @@ namespace occa {
       if( !(sInfo.type & declareStatementType) )
         return;
 
+      bool loadingFunctionPointer = false;
+
       while((nodePos) &&
-            !(nodePos->type & specifierType)){
+            (nodePos->type & qualifierType)){
 
         nodePos = nodePos->right;
       }
 
       // Skip Type
-      nodePos = nodePos->right;
+      if(nodePos->down.size() == 0)
+        nodePos = nodePos->right;
+      else
+        loadingFunctionPointer = true;
 
       while(nodePos){
-
         varInfo newVar;
 
-        // Mark pointer qualifiers
-        while((nodePos) &&
-              (nodePos->type & qualifierType)){
-          if(nodePos->value == "*")
-            ++(newVar.pointerCount);
+        if(!loadingFunctionPointer){
+          // Mark pointer qualifiers
+          while((nodePos) &&
+                (nodePos->type & qualifierType)){
+            if(nodePos->value == "*")
+              ++(newVar.pointerCount);
 
-          nodePos = nodePos->right;
-        }
-
-        const int downCount = nodePos->down.size();
-
-        // Not a function pointer
-        if((downCount == 0) ||
-           (nodePos->down[0]->type != startParentheses)){
-
-          newVar.name = nodePos->value;
-
-          for(int i = 0; i < downCount; ++i){
-            if(nodePos->down[i]->type == startBracket){
-              strNode *leftBracket  = nodePos->down[i];
-              strNode *rightBracket = lastNode(leftBracket);
-
-              if(leftBracket->right != rightBracket){
-                strNode *lastDown = rightBracket->left;
-                lastDown->right = NULL;
-
-                newVar.stackPointerSizes.push_back((std::string) *(leftBracket->right));
-
-                lastDown->right = rightBracket;
-              }
-              else
-                newVar.stackPointerSizes.push_back("");
-            }
-            else
-              break;
+            nodePos = nodePos->right;
           }
 
-          // Add new variables
-          sInfo.addVariable(newVar);
+          const int downCount = nodePos->down.size();
 
-          nodePos = nodePos->right;
+          // Not a function pointer
+          if((downCount == 0) ||
+             (nodePos->down[0]->type != startParentheses)){
+
+            newVar.name = nodePos->value;
+
+            for(int i = 0; i < downCount; ++i){
+              if(nodePos->down[i]->type == startBracket){
+                strNode *leftBracket  = nodePos->down[i];
+                strNode *rightBracket = lastNode(leftBracket);
+
+                if(leftBracket->right != rightBracket){
+                  strNode *lastDown = rightBracket->left;
+                  lastDown->right = NULL;
+
+                  newVar.stackPointerSizes.push_back((std::string) *(leftBracket->right));
+
+                  lastDown->right = rightBracket;
+                }
+                else
+                  newVar.stackPointerSizes.push_back("");
+              }
+              else
+                break;
+            }
+
+            // Add new variables
+            sInfo.addVariable(newVar);
+
+            nodePos = nodePos->right;
+          }
+        }
+
+        // int [(*f)()], [(*g)()]
+        else{
+          strNode *downNode = nodePos->down[0];
+          downNode = downNode->right;
+
+          if((downNode) &&
+             (downNode->value == "*")){
+
+            while((downNode) &&
+                  (downNode->type & qualifierType)){
+
+              downNode = downNode->right;
+            }
+
+            newVar.name = downNode->value;
+
+            // [-] Not fully true
+            sInfo.addVariable(newVar);
+          }
         }
 
         // Go to [,] or [;]
@@ -454,6 +484,8 @@ namespace occa {
 
           nodePos = nodePos->right;
         }
+
+        loadingFunctionPointer = (nodePos->down.size() != 0);
 
         nodePos = nodePos->right;
       }
