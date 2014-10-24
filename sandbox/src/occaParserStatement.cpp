@@ -347,8 +347,13 @@ namespace occa {
 
       if(sInfo.type & declareStatementType)
         splitDeclareStatement();
-      else if(sInfo.type & structStatementType)
+      else if(sInfo.type & structStatementType){
         splitStructStatement();
+
+        print();
+        std::cout << "this = " << *this << '\n';
+        throw 1;
+      }
       else
         organize();
     }
@@ -439,6 +444,8 @@ namespace occa {
     }
 
     void expNode::splitDeclareStatement(){
+      info = expType::declaration;
+
       int extras = 1;
 
       for(int i = 0; i < leafCount; ++i){
@@ -485,6 +492,67 @@ namespace occa {
     }
 
     void expNode::splitStructStatement(){
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->info == expType::C){
+
+          leaves[i]->splitStructStatements();
+          break;
+        }
+      }
+    }
+
+    void expNode::splitStructStatements(){
+      int extras = 0;
+
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->value == ";")
+          ++extras;
+      }
+
+      if(extras == 0)
+        return;
+
+      expNode **newLeaves = new expNode*[extras];
+      extras = 0;
+
+      int first = 0;
+
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->value == ";"){
+          bool newLeafIsAStruct = false;
+
+          expNode *newLeaf = new expNode(*this);
+          const int newLeafCount = (i - first + 1);
+
+          newLeaf->up        = this;
+          newLeaf->info      = expType::root;
+          newLeaf->leafCount = newLeafCount;
+          newLeaf->leaves    = new expNode*[newLeafCount];
+
+          for(int i = 0; i < newLeafCount; ++i){
+            newLeaf->leaves[i] = leaves[first + i];
+
+            if((newLeaf->leaves[i]->info & expType::qualifier) &&
+               (newLeaf->leaves[i]->value == "struct")){
+
+              newLeafIsAStruct = true;
+            }
+          }
+
+          if(!newLeafIsAStruct)
+            newLeaf->splitDeclareStatement();
+          else
+            newLeaf->splitStructStatement();
+
+          first = i + 1;
+          newLeaves[extras++] = newLeaf;
+        }
+      }
+
+      delete [] leaves;
+
+      leaves    = newLeaves;
+      leafCount = extras;
     }
 
     void expNode::initLoadFromNode(strNode *nodeRoot){
@@ -516,8 +584,6 @@ namespace occa {
         leaf->up    = this;
         leaf->value = nodePos->value;
 
-        leaf->info = 0;
-
         if(nodePos->type & unknownVariable){
           varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
 
@@ -539,14 +605,22 @@ namespace occa {
         }
 
         else if(nodePos->type & descriptorType){
-          if(nodePos->type & qualifierType)
+          if(nodePos->type & (qualifierType | structType))
             leaf->info = expType::qualifier;
           else
             leaf->info = expType::type;
+
+          // For [*] and [&]
+          if(nodePos->type & operatorType)
+            leaf->info |= expType::operator_;
         }
 
-        if(nodePos->type & operatorType)
-          leaf->info |= expType::operator_;
+        else if(nodePos->type & operatorType){
+          leaf->info = expType::operator_;
+        }
+
+        else
+          leaf->info = expType::printValue;
 
         const int downCount = nodePos->down.size();
 
@@ -1366,6 +1440,12 @@ namespace occa {
         break;
       }
 
+      case expType::operator_:{
+        out << n.value;
+
+        break;
+      }
+
       case expType::unknown:{
         out << n.value;
 
@@ -1423,6 +1503,19 @@ namespace occa {
         }
 
         out << ')';
+
+        break;
+      }
+
+      case expType::declaration:{
+        if(n.leafCount){
+          out << *(n.leaves[0]);
+
+          for(int i = 1; i < n.leafCount; ++i)
+            out << ", " << *(n.leaves[i]);
+
+          out << ';';
+        }
 
         break;
       }
