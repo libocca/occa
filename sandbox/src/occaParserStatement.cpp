@@ -135,6 +135,11 @@ namespace occa {
             ((nodeRoot->type & descriptorType) ||
              sInfo.nodeHasSpecifier(nodeRoot))){
 
+        if(nodeRoot->type & structType){
+          nodeRoot = oldNodeRoot;
+          return loadStructStatement(nodeRoot);
+        }
+
         nodeRoot = nodeRoot->right;
       }
 
@@ -1746,6 +1751,13 @@ namespace occa {
     }
 
     int statement::checkStructStatementType(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & structType)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
       if((nodeRoot->value == "struct")       &&
          (nodeRoot->down.size() == 0)        &&
          (nodeRoot->right)                   &&
@@ -2738,7 +2750,6 @@ namespace occa {
       return nextNode;
     }
 
-    // [-] Missing
     strNode* statement::loadStructFromNode(const int st,
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd){
@@ -2748,13 +2759,6 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
-
-
-      typeDef &td = *(new typeDef);
-      td.loadFromNode(*this, nodeRoot);
-
-      // [--]
-      std::cout << "typePtr = " << td << '\n';
 
       loadBlocksFromLastNode(nodeRootEnd);
 

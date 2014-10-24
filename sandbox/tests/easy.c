@@ -1,4 +1,4 @@
-struct a_t {
+const struct a_t {
   int a1;
   struct b {
     int b1, c1;
