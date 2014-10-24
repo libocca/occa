@@ -674,17 +674,20 @@ namespace occa {
         }
       }
 
-      if(!splitStruct){
+      if(!splitStruct)
         splitDeclareStatement();
+      else
+        splitStructStatement();
 
-        expNode *lastLeaf  = leaves[leafCount - 1];
-        expNode *sLastLeaf = lastLeaf->leaves[lastLeaf->leafCount - 1];
+      expNode *lastLeaf  = leaves[leafCount - 1];
+      expNode *sLastLeaf = lastLeaf->leaves[lastLeaf->leafCount - 1];
+
+      if(!splitStruct){
         sInfo.up->addTypeDef(sLastLeaf->value);
       }
       else{
-        splitStructStatement();
-
-        sInfo.up->addTypeDef(leaves[leafCount - 1]->value);
+        expNode *ssLastLeaf = sLastLeaf->leaves[sLastLeaf->leafCount - 1];
+        sInfo.up->addTypeDef(ssLastLeaf->value);
       }
 
 
