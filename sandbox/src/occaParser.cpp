@@ -3588,7 +3588,7 @@ namespace occa {
       keywordType["class"]   = (structType);
       keywordType["union"]   = (structType);
       keywordType["struct"]  = (structType | qualifierType);
-      keywordType["typedef"] = (structType);
+      keywordType["typedef"] = (typedefType);
 
       //---[ C++ ]----------------------
       keywordType["virtual"]   = qualifierType;

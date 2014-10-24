@@ -39,6 +39,9 @@ namespace occa {
       else if(nodeRoot->type == keywordType["occaOuterFor0"])
         sInfo.type = loadOccaForStatement(nodeRoot);
 
+      else if(nodeRoot->type & typedefType)
+        sInfo.type = loadTypedefStatement(nodeRoot);
+
       else if(nodeRoot->type & structType)
         sInfo.type = loadStructStatement(nodeRoot);
 
@@ -94,14 +97,24 @@ namespace occa {
       return keywordType["occaOuterFor0"];
     }
 
+    int expNode::loadTypedefStatement(strNode *&nodeRoot){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return typedefStatementType;
+    }
+
     int expNode::loadStructStatement(strNode *&nodeRoot){
       if((nodeRoot->value == "struct")       &&
          (nodeRoot->down.size() == 0)        &&
          (nodeRoot->right)                   &&
-         (nodeRoot->right->down.size() == 0)){
+         (sInfo.hasTypeInScope(nodeRoot->right->value))){
 
-        if(sInfo.hasTypeInScope(nodeRoot->right->value))
-          return sInfo.checkDescriptorStatementType(nodeRoot);
+        return sInfo.checkDescriptorStatementType(nodeRoot);
       }
 
       while(nodeRoot){
@@ -341,9 +354,6 @@ namespace occa {
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
-
-      print();
-      std::cout << "this = " << *this << '\n';
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
@@ -352,13 +362,19 @@ namespace occa {
 
       if(sInfo.type & declareStatementType)
         splitDeclareStatement();
-      else if(sInfo.type & structStatementType){
-        splitStructStatement();
 
-        print();
-        std::cout << "this = " << *this << '\n';
-        throw 1;
+      else if(sInfo.type & structStatementType){
+        nodeRoot->print();
+        printf("\n\n\n");
+        splitStructStatement();
       }
+
+      else if(sInfo.type & typedefStatementType){
+        nodeRoot->print();
+        printf("\n\n\n");
+        splitTypedefStatement();
+      }
+
       else
         organize();
     }
@@ -502,12 +518,18 @@ namespace occa {
       int pos = 0;
 
       for(pos = 0; pos < leafCount; ++pos){
-        if(leaves[pos]->info == expType::C){
-
-          leaves[pos]->splitStructStatements();
+        if(leaves[pos]->info == expType::C)
           break;
-        }
       }
+
+      if((pos)              &&
+         (pos != leafCount) &&
+         !(leaves[pos - 1]->info & expType::qualifier)){
+
+        sInfo.up->addTypeDef(leaves[pos - 1]->value);
+      }
+
+      leaves[pos]->splitStructStatements();
 
       // Skip {}
       ++pos;
@@ -567,7 +589,9 @@ namespace occa {
             newLeaf->leaves[i] = leaves[first + i];
 
             if((newLeaf->leaves[i]->info & expType::qualifier) &&
-               (newLeaf->leaves[i]->value == "struct")){
+               (newLeaf->leaves[i]->value == "struct")         &&
+               (  !(((i + 1) < newLeafCount) &&
+                    (sInfo.hasTypeInScope(leaves[first + i + 1]->value)))  )){
 
               newLeafIsAStruct = true;
             }
@@ -575,8 +599,10 @@ namespace occa {
 
           if(!newLeafIsAStruct)
             newLeaf->splitDeclareStatement();
-          else
+          else{
+            newLeaf->print();
             newLeaf->splitStructStatement();
+          }
 
           first = i + 1;
           newLeaves[extras++] = newLeaf;
@@ -587,6 +613,46 @@ namespace occa {
 
       leaves    = newLeaves;
       leafCount = extras;
+    }
+
+    void expNode::splitTypedefStatement(){
+      --leafCount;
+
+      bool splitStruct = false;
+
+      for(int i = 0; i < leafCount; ++i){
+        leaves[i] = leaves[i + 1];
+
+        if((leaves[i]->info & expType::qualifier) &&
+           ((leaves[i]->value == "struct") ||
+            (leaves[i]->value == "union") ||
+            (leaves[i]->value == "enum"))){
+
+          // Make sure struct is not being used as a qualifier
+          if(  !((leaves[i]->value == "struct") &&
+                 ((i + 2) < leafCount)          &&
+                 (sInfo.hasTypeInScope(leaves[i + 2]->value)))  ){
+
+            splitStruct = true;
+          }
+        }
+      }
+
+      if(!splitStruct){
+        splitDeclareStatement();
+
+        expNode *lastLeaf  = leaves[leafCount - 1];
+        expNode *sLastLeaf = lastLeaf->leaves[lastLeaf->leafCount - 1];
+        sInfo.up->addTypeDef(sLastLeaf->value);
+      }
+      else{
+        splitStructStatement();
+
+        sInfo.up->addTypeDef(leaves[leafCount - 1]->value);
+      }
+
+
+      info |= expType::typedef_;
     }
 
     void expNode::initLoadFromNode(strNode *nodeRoot){
@@ -647,6 +713,10 @@ namespace occa {
           // For [*] and [&]
           if(nodePos->type & operatorType)
             leaf->info |= expType::operator_;
+        }
+
+        else if(nodePos->type & structType){
+          leaf->info = expType::qualifier;
         }
 
         else if(nodePos->type & operatorType){
@@ -1761,9 +1831,8 @@ namespace occa {
       if((nodeRoot->value == "struct")       &&
          (nodeRoot->down.size() == 0)        &&
          (nodeRoot->right)                   &&
-         (nodeRoot->right->down.size() == 0)){
+         (hasTypeInScope(nodeRoot->right->value))){
 
-        if(hasTypeInScope(nodeRoot->right->value))
           return checkDescriptorStatementType(nodeRoot);
       }
 

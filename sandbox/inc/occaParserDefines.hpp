@@ -104,25 +104,26 @@ namespace occa {
     static const int everythingType       = 0xFFFFFFFF;
 
     static const int emptyType            = 0;
-    static const int descriptorType       = (7 << 0);
-    static const int structType           = (1 << 0); // struct, class, typedef
-    static const int specifierType        = (1 << 1); // void, char, short, int
-    static const int qualifierType        = (1 << 2); // const, restrict, volatile
+    static const int descriptorType       = (15 << 0);
+    static const int typedefType          = (1  << 0); // typedef
+    static const int structType           = (1  << 1); // struct, class
+    static const int specifierType        = (1  << 2); // void, char, short, int
+    static const int qualifierType        = (1  << 3); // const, restrict, volatile
 
-    static const int operatorType         = (0x1F << 3);
-    static const int unitaryOperatorType  = (3    << 3);
-    static const int lUnitaryOperatorType = (1    << 3);
-    static const int rUnitaryOperatorType = (1    << 4);
-    static const int binaryOperatorType   = (3    << 5);
-    static const int assOperatorType      = (1    << 6); // hehe
-    static const int ternaryOperatorType  = (1    << 7);
+    static const int operatorType         = (0x1F << 4);
+    static const int unitaryOperatorType  = (3    << 4);
+    static const int lUnitaryOperatorType = (1    << 4);
+    static const int rUnitaryOperatorType = (1    << 5);
+    static const int binaryOperatorType   = (3    << 6);
+    static const int assOperatorType      = (1    << 7); // hehe
+    static const int ternaryOperatorType  = (1    << 8);
 
-    static const int parentheses          = (1 << 8);
-    static const int brace                = (1 << 9);
-    static const int bracket              = (1 << 10);
+    static const int parentheses          = (1 <<  9);
+    static const int brace                = (1 << 10);
+    static const int bracket              = (1 << 11);
 
-    static const int startSection         = (1 << 11);
-    static const int endSection           = (1 << 12);
+    static const int startSection         = (1 << 12);
+    static const int endSection           = (1 << 13);
 
     static const int startParentheses     = (parentheses | startSection);
     static const int endParentheses       = (parentheses | endSection);
@@ -133,21 +134,21 @@ namespace occa {
     static const int startBracket         = (bracket | startSection);
     static const int endBracket           = (bracket | endSection);
 
-    static const int endStatement         = (1 << 13);
+    static const int endStatement         = (1 << 14);
 
-    static const int flowControlType      = (1 << 14);
+    static const int flowControlType      = (1 << 15);
 
-    static const int presetValue          = (1 << 15);
-    static const int unknownVariable      = (1 << 16);
+    static const int presetValue          = (1 << 16);
+    static const int unknownVariable      = (1 << 17);
 
-    static const int specialKeywordType   = (1 << 17);
+    static const int specialKeywordType   = (1 << 18);
 
-    static const int macroKeywordType     = (1 << 18);
+    static const int macroKeywordType     = (1 << 19);
 
-    static const int apiKeywordType       = (7 << 19);
-    static const int occaKeywordType      = (1 << 19);
-    static const int cudaKeywordType      = (1 << 20);
-    static const int openclKeywordType    = (1 << 21);
+    static const int apiKeywordType       = (7 << 20);
+    static const int occaKeywordType      = (1 << 20);
+    static const int cudaKeywordType      = (1 << 21);
+    static const int openclKeywordType    = (1 << 22);
 
     //   ---[ Types ]-----------
     static const int isTypeDef = (1 << 0);
@@ -216,31 +217,32 @@ namespace occa {
     //   ---[ Statements ]------
     static const int invalidStatementType   = (1 << 0);
 
-    static const int simpleStatementType    = (3 << 1);
-    static const int declareStatementType   = (1 << 1);
-    static const int updateStatementType    = (1 << 2);
+    static const int simpleStatementType    = (7 << 1);
+    static const int typedefStatementType   = (1 << 1);
+    static const int declareStatementType   = (1 << 2);
+    static const int updateStatementType    = (1 << 3);
 
-    static const int flowStatementType      = (255 << 3);
-    static const int forStatementType       = (1   << 3);
-    static const int whileStatementType     = (1   << 4);
-    static const int doWhileStatementType   = (3   << 4);
-    static const int ifStatementType        = (1   << 6);
-    static const int elseIfStatementType    = (3   << 6);
-    static const int elseStatementType      = (5   << 6);
-    static const int switchStatementType    = (1   << 9);
-    static const int gotoStatementType      = (1   << 10);
+    static const int flowStatementType      = (255 <<  4);
+    static const int forStatementType       = (1   <<  4);
+    static const int whileStatementType     = (1   <<  5);
+    static const int doWhileStatementType   = (3   <<  5);
+    static const int ifStatementType        = (1   <<  7);
+    static const int elseIfStatementType    = (3   <<  7);
+    static const int elseStatementType      = (5   <<  7);
+    static const int switchStatementType    = (1   << 10);
+    static const int gotoStatementType      = (1   << 11);
 
-    static const int blankStatementType     = (1 << 11);
+    static const int blankStatementType     = (1 << 12);
 
-    static const int functionStatementType  = (3 << 12);
-    static const int functionDefinitionType = (1 << 12);
-    static const int functionPrototypeType  = (1 << 13);
-    static const int blockStatementType     = (1 << 14);
-    static const int structStatementType    = (1 << 15);
+    static const int functionStatementType  = (3 << 13);
+    static const int functionDefinitionType = (1 << 13);
+    static const int functionPrototypeType  = (1 << 14);
+    static const int blockStatementType     = (1 << 15);
+    static const int structStatementType    = (1 << 16);
 
-    static const int occaStatementType      = (1 << 16);
+    static const int occaStatementType      = (1 << 17);
 
-    static const int macroStatementType     = (1 << 17);
+    static const int macroStatementType     = (1 << 18);
 
     //   ---[ OCCA Fors ]------
     static const int occaOuterForShift = 0;
