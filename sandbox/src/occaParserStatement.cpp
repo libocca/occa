@@ -1244,7 +1244,7 @@ namespace occa {
       }
 
       case (expType::L | expType::R):{
-        out << *(n.leaves[0]) << n.value << *(n.leaves[1]);
+        out << *(n.leaves[0]) << ' ' << n.value << ' ' << *(n.leaves[1]);
 
         break;
       }
@@ -1283,7 +1283,8 @@ namespace occa {
             std::string strLeaf = (std::string) *(n.leaves[i]);
             const bool thisStar = (strLeaf == "*");
 
-            if( !(thisStar && lastStar) )
+            if(!(thisStar && lastStar) &&
+               (strLeaf[0] != '['))
               out << ' ';
 
             out << strLeaf;
@@ -1292,7 +1293,7 @@ namespace occa {
           }
         }
         else{
-          out << n.value;
+          out << n.value << ' ';
         }
 
         break;
@@ -1302,13 +1303,13 @@ namespace occa {
         // [const] [int] [*]
         if(n.leafCount){
           for(int i = 0; i < (n.leafCount - 1); ++i)
-            out << *(n.leaves[i]) << ' ';
+            out << *(n.leaves[i]);
 
           out << *(n.leaves[n.leafCount - 1]);
         }
         // [int]
         else{
-          out << n.value;
+          out << n.value << ' ';
         }
 
         break;
@@ -1332,12 +1333,8 @@ namespace occa {
           const bool hasLQualifier = (n.leaves[0]->info                 & expType::qualifier);
           const bool hasRQualifier = (n.leaves[hasLQualifier + 1]->info & expType::qualifier);
 
-          if(hasLQualifier){
+          if(hasLQualifier)
             out << *(n.leaves[0]);
-
-            if( !(n.leaves[0]->typeEndsWithStar()) )
-              out << ' ';
-          }
 
           out << *(n.leaves[hasLQualifier]);
 
