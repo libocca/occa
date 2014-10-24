@@ -357,32 +357,20 @@ namespace occa {
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
-      // nodeRoot->print();
-      // printf("A\n\n\n");
-
       addNewVariables(nodeRoot);
       initLoadFromNode(nodeRoot);
 
       if(sInfo.type & declareStatementType)
         splitDeclareStatement();
 
-      else if(sInfo.type & structStatementType){
-        nodeRoot->print();
-        printf("B\n\n\n");
+      else if(sInfo.type & structStatementType)
         splitStructStatement();
-      }
 
-      else if(sInfo.type & typedefStatementType){
-        nodeRoot->print();
-        printf("C\n\n\n");
+      else if(sInfo.type & typedefStatementType)
         splitTypedefStatement();
-      }
 
-      else{
-        nodeRoot->print();
-        printf("D\n\n\n");
+      else
         organize();
-      }
     }
 
     void expNode::organize(){
@@ -635,10 +623,8 @@ namespace occa {
 
           if(!newLeafIsAStruct)
             newLeaf->splitDeclareStatement();
-          else{
-            newLeaf->print();
+          else
             newLeaf->splitStructStatement();
-          }
 
           first = i + 1;
           newLeaves[extras++] = newLeaf;
@@ -929,10 +915,17 @@ namespace occa {
           }
 
           if(updateNow){
-            if(levelType & lUnitaryOperatorType)
-              leafPos = mergeLeftUnary(leafPos);
-            else
-              leafPos = mergeRightUnary(leafPos);
+            int target = leafPos - 1 + 2*(levelType & lUnitaryOperatorType);
+
+            if((target < 0) || (leafCount <= target )){
+              ++leafPos;
+            }
+            else{
+              if(levelType & lUnitaryOperatorType)
+                leafPos = mergeLeftUnary(leafPos);
+              else
+                leafPos = mergeRightUnary(leafPos);
+            }
           }
           else
             ++leafPos;
@@ -1028,23 +1021,31 @@ namespace occa {
             if(leaves[leafPos - 1]->info & (expType::L           |
                                             expType::R           |
                                             expType::presetValue |
-                                            expType::unknown     |
                                             expType::variable    |
                                             expType::function)){
 
-              leaves[leafPos]->info |= expType::operator_;
+              leaves[leafPos]->info = expType::operator_;
             }
+
+            else if(leaves[leafPos - 1]->info & expType::unknown){
+              if(!sInfo.hasTypeInScope(leaves[leafPos - 1]->value))
+                leaves[leafPos]->info = expType::operator_;
+              else
+                leaves[leafPos]->info = expType::qualifier;
+            }
+
             else if((leaves[leafPos - 1]->info & expType::C) &&
                     ~(leaves[leafPos - 1]->info & expType::cast_)){
 
-              leaves[leafPos]->info |= expType::operator_;
+              leaves[leafPos]->info = expType::operator_;
             }
+
             else{
-              leaves[leafPos]->info |= expType::qualifier;
+              leaves[leafPos]->info = expType::qualifier;
             }
           }
           else{
-            leaves[leafPos]->info |= expType::qualifier;
+            leaves[leafPos]->info = expType::qualifier;
           }
         }
 
