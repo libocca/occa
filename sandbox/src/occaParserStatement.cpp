@@ -118,7 +118,7 @@ namespace occa {
         occa::parserNamespace::free(newNodeRoot);
 
       print();
-      // std::cout << "this = " << *this << '\n';
+      std::cout << "this = " << *this << '\n';
     }
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -945,15 +945,24 @@ namespace occa {
             ++brackets;
           }
 
-          expNode *newLeaf = new expNode(*this);
+          expNode *newLeaf  = new expNode(*this);
+          expNode *sNewLeaf = new expNode(*newLeaf);
 
           newLeaf->up        = this;
-          newLeaf->info      = (expType::L | expType::R);
-          newLeaf->leafCount = (1 + brackets);
-          newLeaf->leaves    = new expNode*[1 + brackets];
+          newLeaf->info      = expType::variable;
+          newLeaf->leafCount = 2;
+          newLeaf->leaves    = new expNode*[2];
 
-          for(int i = 0; i <= brackets; ++i)
-            newLeaf->leaves[i] = leaves[leafPos + i - 1];
+          sNewLeaf->up        = newLeaf;
+          sNewLeaf->info      = expType::qualifier;
+          sNewLeaf->leafCount = brackets;
+          sNewLeaf->leaves    = new expNode*[brackets];
+
+          newLeaf->leaves[0] = leaves[leafPos - 1];
+          newLeaf->leaves[1] = sNewLeaf;
+
+          for(int i = 0; i < brackets; ++i)
+            sNewLeaf->leaves[i] = leaves[leafPos + i];
 
           leaves[leafPos - 1] = newLeaf;
 
@@ -1320,12 +1329,20 @@ namespace occa {
       case expType::variable:{
         // [[[const] [int] [*]] [x]]
         if(n.leafCount){
-          out << *(n.leaves[0]);
+          const bool hasLQualifier = (n.leaves[0]->info                 & expType::qualifier);
+          const bool hasRQualifier = (n.leaves[hasLQualifier + 1]->info & expType::qualifier);
 
-          if( !(n.leaves[0]->typeEndsWithStar()) )
-            out << ' ';
+          if(hasLQualifier){
+            out << *(n.leaves[0]);
 
-          out << *(n.leaves[1]);
+            if( !(n.leaves[0]->typeEndsWithStar()) )
+              out << ' ';
+          }
+
+          out << *(n.leaves[hasLQualifier]);
+
+          if(hasRQualifier)
+            out << *(n.leaves[hasLQualifier + 1]);
         }
         // [x]
         else{
