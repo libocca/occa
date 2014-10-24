@@ -103,6 +103,7 @@ namespace occa {
     //   ---[ Keyword Types ]---
     static const int everythingType       = 0xFFFFFFFF;
 
+    static const int emptyType            = 0;
     static const int descriptorType       = (7 << 0);
     static const int structType           = (1 << 0); // struct, class, typedef
     static const int specifierType        = (1 << 1); // void, char, short, int

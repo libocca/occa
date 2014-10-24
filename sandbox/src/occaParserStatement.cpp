@@ -14,8 +14,9 @@ namespace occa {
 
       leafCount(0),
       leaves(NULL),
-      var(NULL),
-      type(NULL) {}
+
+      varType(NULL),
+      varPointerCount(0) {}
 
     expNode::expNode(expNode &up_) :
       sInfo(up_.sInfo),
@@ -27,8 +28,9 @@ namespace occa {
 
       leafCount(0),
       leaves(NULL),
-      var(NULL),
-      type(NULL) {}
+
+      varType(NULL),
+      varPointerCount(0) {}
 
     void expNode::loadFromNode(strNode *&nodePos){
       if(nodePos == NULL){
@@ -87,9 +89,11 @@ namespace occa {
 
           downsAvailable = 1;
         }
+        // Skip do
         else if(sInfo.type == whileStatementType){
           downsAvailable = 1;
         }
+        // Only [if] and [if else]
         else if((sInfo.type & ifStatementType) &&
                 (sInfo.type != elseStatementType)){
             downsAvailable = 1;
@@ -113,7 +117,8 @@ namespace occa {
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
 
-      std::cout << "this = " << *this << '\n';
+      print();
+      // std::cout << "this = " << *this << '\n';
     }
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -150,6 +155,10 @@ namespace occa {
               (nodeRoot->up)                 &&
               !(nodeRoot->up->type & operatorType))
         sInfo.type = loadBlockStatement(nodeRoot);
+
+      // Statement: (int) 3;
+      else if(nodeRoot->type == emptyType)
+        sInfo.type = loadUpdateStatement(nodeRoot);
 
       else {
         while(nodeRoot &&
@@ -368,6 +377,8 @@ namespace occa {
         leaf->up    = this;
         leaf->value = nodePos->value;
 
+        leaf->info = 0;
+
         if(nodePos->type & unknownVariable){
           varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
 
@@ -389,14 +400,14 @@ namespace occa {
         }
 
         else if(nodePos->type & descriptorType){
-          // Need to fix [*] and [&] when they're used as operators
-          if(nodePos->type & qualifierType){
-            if( !(nodePos->type & operatorType) )
-              leaf->info = expType::qualifier;
-          }
+          if(nodePos->type & qualifierType)
+            leaf->info = expType::qualifier;
           else
             leaf->info = expType::type;
         }
+
+        if(nodePos->type & operatorType)
+          leaf->info |= expType::operator_;
 
         const int downCount = nodePos->down.size();
 
@@ -420,7 +431,7 @@ namespace occa {
           // Case: ()
           if(downNode != lastDown){
             // Get rid of ()'s and stuff
-            downNode->type = 0;
+            downNode->type = emptyType;
             popAndGoLeft(lastDown);
 
             if(downNode != lastDown){
@@ -446,6 +457,12 @@ namespace occa {
       //---[ Level 0 ]------
       // [a][::][b]
       mergeNamespaces();
+
+      // [(class)]
+      labelCasts();
+
+      // const int [*] x
+      labelReferenceQualifiers();
 
       // [const] int [*] x
       mergeQualifiers();
@@ -594,11 +611,8 @@ namespace occa {
         // Mark pointer qualifiers
         while((nodePos) &&
               (nodePos->type & qualifierType)){
-          if(nodePos->value == "*"){
-            // Remove the operator type
-            nodePos->type = qualifierType;
+          if(nodePos->value == "*")
             ++(newVar.pointerCount);
-          }
 
           nodePos = nodePos->right;
         }
@@ -703,6 +717,63 @@ namespace occa {
       }
     }
 
+    // [(class)]
+    void expNode::labelCasts(){
+      // Don't mistake:
+      //   int main(int) -> int main[(int)]
+      if(sInfo.type & functionStatementType)
+        return;
+
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if((leaves[leafPos]->info == expType::C) &&
+           (leaves[leafPos]->value == "(")       &&
+           (leaves[leafPos]->leafCount)          &&
+           (leaves[leafPos]->leaves[0]->info & expType::type)){
+
+          leaves[leafPos]->info |= expType::cast_;
+        }
+
+        ++leafPos;
+      }
+    }
+
+    // const int [*] x
+    void expNode::labelReferenceQualifiers(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if(leaves[leafPos]->info == (expType::operator_ |
+                                     expType::qualifier)){
+          if(leafPos){
+            if(leaves[leafPos - 1]->info & (expType::L           |
+                                            expType::R           |
+                                            expType::presetValue |
+                                            expType::unknown     |
+                                            expType::variable    |
+                                            expType::function)){
+
+              leaves[leafPos]->info |= expType::operator_;
+            }
+            else if((leaves[leafPos - 1]->info & expType::C) &&
+                    ~(leaves[leafPos - 1]->info & expType::cast_)){
+
+              leaves[leafPos]->info |= expType::operator_;
+            }
+            else{
+              leaves[leafPos]->info |= expType::qualifier;
+            }
+          }
+          else{
+            leaves[leafPos]->info |= expType::qualifier;
+          }
+        }
+
+        ++leafPos;
+      }
+    }
+
     // [const] int x
     void expNode::mergeQualifiers(){
       int leafPos = 0;
@@ -730,23 +801,43 @@ namespace occa {
 
       while(leafPos < leafCount){
         if(leaves[leafPos]->info & expType::type){
-          int leafPosStart = leafPos;
-          int leafPosEnd   = leafPos;
+          expNode &typeNode = *(leaves[leafPos]);
 
-          if(leafPos &&
-             (leaves[leafPos - 1]->info & expType::qualifier)){
+          typeNode.varType  = new varInfo;
+          varInfo &var      = *(typeNode.varType);
 
-            --leafPosStart;
+          const bool varHasLQualifiers = (leafPos &&
+                                          (leaves[leafPos - 1]->info & expType::qualifier));
+
+          const bool varHasRQualifiers = (((leafPos + 1) < leafCount) &&
+                                          (leaves[leafPos + 1]->info & expType::qualifier));
+
+          if(varHasLQualifiers){
+            expNode &lqNode = *(leaves[leafPos - 1]);
+
+            var.descriptors.resize(lqNode.leafCount);
+
+            for(int i = 0; i < lqNode.leafCount; ++i)
+              var.descriptors[i] = lqNode.leaves[i]->value;
           }
 
-          if(((leafPos + 1) < leafCount) &&
-             (leaves[leafPos + 1]->info & expType::qualifier)){
+          var.type = sInfo.hasTypeInScope(typeNode.value);
+          var.pointerCount = 0;
 
-            ++leafPosEnd;
+          if(varHasRQualifiers){
+            expNode &rqNode = *(leaves[leafPos + 1]);
+
+            var.descriptors.resize(rqNode.leafCount);
+
+            for(int i = 0; i < rqNode.leafCount; ++i){
+              if(rqNode.leaves[i]->value == "*")
+                ++(var.pointerCount);
+            }
           }
 
           leafPos = mergeRange(expType::type,
-                               leafPosStart, leafPosEnd);
+                               leafPos - varHasLQualifiers,
+                               leafPos + varHasRQualifiers);
         }
         else
           ++leafPos;
@@ -1012,8 +1103,9 @@ namespace occa {
       newRoot.value = value;
 
       newRoot.leafCount = leafCount;
-      newRoot.var       = var;
-      newRoot.type      = type;
+
+      newRoot.varType         = varType;
+      newRoot.varPointerCount = varPointerCount;
 
       if(leafCount){
         newRoot.leaves = new expNode*[leafCount];
@@ -1032,8 +1124,9 @@ namespace occa {
       newLeaf.value = o.value;
 
       newLeaf.leafCount = o.leafCount;
-      newLeaf.var       = o.var;
-      newLeaf.type      = o.type;
+
+      newLeaf.varType         = o.varType;
+      newLeaf.varPointerCount = o.varPointerCount;
 
       if(o.leafCount){
         newLeaf.leaves = new expNode*[o.leafCount];
@@ -1049,8 +1142,9 @@ namespace occa {
       newRoot.value = value;
 
       newRoot.leafCount = leafCount;
-      newRoot.var       = var;
-      newRoot.type      = type;
+
+      newRoot.varType         = varType;
+      newRoot.varPointerCount = varPointerCount;
 
       if(leafCount){
         newRoot.leaves = new expNode*[leafCount];
@@ -1120,21 +1214,25 @@ namespace occa {
 
         break;
       }
+
       case (expType::R):{
         out << *(n.leaves[0]) << n.value;
 
         break;
       }
+
       case (expType::L | expType::R):{
         out << *(n.leaves[0]) << n.value << *(n.leaves[1]);
 
         break;
       }
+
       case (expType::L | expType::C | expType::R):{
         out << *(n.leaves[0]) << '?' << *(n.leaves[1]) << ':' << *(n.leaves[2]);
 
         break;
       }
+
       case expType::C:{
         const char startChar = n.value[0];
 
@@ -1251,6 +1349,17 @@ namespace occa {
 
           out << *(argNode->leaves[argNode->leafCount - 1]);
         }
+
+        out << ')';
+
+        break;
+      }
+
+      case (expType::C | expType::cast_):{
+        out << '(';
+
+        for(int i = 0; i < n.leafCount; ++i)
+          out << *(n.leaves[i]);
 
         out << ')';
 
@@ -2345,18 +2454,34 @@ namespace occa {
       // Load all down's before popping [{] and [}]'s
       const int downCount = blockStart->down.size();
 
-      for(int i = 0; i < downCount; ++i)
+      bool brokeDowns = false;
+
+      for(int i = 0; i < downCount; ++i){
+        if(blockStart->down[i]->type != startBrace){
+          if(i != 0)
+            blockStart->down.erase(nodeRootEnd->down.begin(),
+                                   nodeRootEnd->down.begin() + i);
+
+          brokeDowns = true;
+          break;
+        }
+
         loadAllFromNode( blockStart->down[i] );
-
-      if(blockStart->right == blockEnd){
-        popAndGoRight(blockStart);
-        popAndGoLeft(blockEnd);
-
-        return nextNode;
       }
 
-      popAndGoRight(blockStart);
-      popAndGoLeft(blockEnd);
+      if(!brokeDowns){
+        popAndGoRight(blockStart);
+        popAndGoLeft(blockEnd);
+      }
+      else{
+        blockStart->type  = 0;
+        blockStart->value = "";
+
+        popAndGoLeft(blockEnd);
+      }
+
+      if(blockStart->right == blockEnd)
+        return nextNode;
 
       loadAllFromNode(blockStart);
 

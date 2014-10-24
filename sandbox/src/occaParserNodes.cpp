@@ -11,7 +11,7 @@ namespace occa {
 
       value(""),
 
-      type(0),
+      type(emptyType),
       depth(0),
 
       sideDepth(0) {}
@@ -24,7 +24,7 @@ namespace occa {
 
       value(value_),
 
-      type(0),
+      type(emptyType),
       depth(0),
 
       sideDepth(0) {}

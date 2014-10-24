@@ -13,7 +13,7 @@ namespace occa {
 
     //---[ Exp Node ]-------------------------------
     namespace expType {
-      static const int maxBit = 18;
+      static const int maxBit = 21;
 
       static const int root            = (1 << 0);
 
@@ -25,19 +25,21 @@ namespace occa {
       static const int qualifier       = (1 <<  4);
       static const int type            = (1 <<  5);
       static const int presetValue     = (1 <<  6);
-      static const int unknown         = (1 <<  7);
-      static const int variable        = (1 <<  8);
-      static const int function        = (1 <<  9);
-      static const int functionPointer = (1 << 10);
-      static const int namespace_      = (1 << 11);
-      static const int macro_          = (1 << 12);
-      static const int goto_           = (1 << 13);
-      static const int gotoLabel_      = (1 << 14);
-      static const int case_           = (1 << 15);
-      static const int return_         = (1 << 16);
-      static const int occaFor         = (1 << 17);
+      static const int operator_       = (1 <<  7);
+      static const int unknown         = (1 <<  8);
+      static const int variable        = (1 <<  9);
+      static const int function        = (1 << 11);
+      static const int functionPointer = (1 << 12);
+      static const int namespace_      = (1 << 13);
+      static const int cast_           = (1 << 14);
+      static const int macro_          = (1 << 15);
+      static const int goto_           = (1 << 16);
+      static const int gotoLabel_      = (1 << 17);
+      static const int case_           = (1 << 18);
+      static const int return_         = (1 << 19);
+      static const int occaFor         = (1 << 20);
 
-      static const int printValue      = (1 << 18);
+      static const int printValue      = (1 << 21);
     };
 
     class expNode {
@@ -51,8 +53,9 @@ namespace occa {
 
       int leafCount;
       expNode **leaves;
-      varInfo *var;
-      typeDef *type;
+
+      varInfo *varType;
+      int varPointerCount;
 
       expNode(statement &s);
       expNode(expNode &up_);
@@ -89,6 +92,12 @@ namespace occa {
 
       // [a][::][b]
       void mergeNamespaces();
+
+      // [(class)]
+      void labelCasts();
+
+      // const int [*] x
+      void labelReferenceQualifiers();
 
       // [const] int x
       void mergeQualifiers();
