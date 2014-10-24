@@ -508,8 +508,10 @@ namespace occa {
       ++pos;
 
       // Return if pos is at [;]
-      if(pos == (leafCount - 1))
+      if(pos == (leafCount - 1)){
+        --leafCount; // Remove [;]
         return;
+      }
 
       expNode *newLeaf = new expNode(*this);
       const int newLeafCount = (leafCount - pos);
@@ -1550,6 +1552,12 @@ namespace occa {
       case expType::struct_:{
         for(int i = 0; i < n.leafCount; ++i)
           out << *(n.leaves[i]);
+
+        if((n.leafCount == 0) ||
+           (n.leaves[n.leafCount - 1]->value == "{")){
+
+          out << ";";
+        }
 
         break;
       }
