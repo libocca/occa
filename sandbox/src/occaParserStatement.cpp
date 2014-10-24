@@ -492,13 +492,40 @@ namespace occa {
     }
 
     void expNode::splitStructStatement(){
-      for(int i = 0; i < leafCount; ++i){
-        if(leaves[i]->info == expType::C){
+      info = expType::struct_;
 
-          leaves[i]->splitStructStatements();
+      int pos = 0;
+
+      for(pos = 0; pos < leafCount; ++pos){
+        if(leaves[pos]->info == expType::C){
+
+          leaves[pos]->splitStructStatements();
           break;
         }
       }
+
+      // Skip {}
+      ++pos;
+
+      // Return if pos is at [;]
+      if(pos == (leafCount - 1))
+        return;
+
+      expNode *newLeaf = new expNode(*this);
+      const int newLeafCount = (leafCount - pos);
+
+      newLeaf->up        = this;
+      newLeaf->info      = expType::root;
+      newLeaf->leafCount = newLeafCount;
+      newLeaf->leaves    = new expNode*[newLeafCount];
+
+      for(int i = 0; i < newLeafCount; ++i)
+        newLeaf->leaves[i] = leaves[pos + i];
+
+      newLeaf->splitDeclareStatement();
+
+      leaves[pos] = newLeaf;
+      leafCount = (pos + 1);
     }
 
     void expNode::splitStructStatements(){
@@ -1516,6 +1543,13 @@ namespace occa {
 
           out << ';';
         }
+
+        break;
+      }
+
+      case expType::struct_:{
+        for(int i = 0; i < n.leafCount; ++i)
+          out << *(n.leaves[i]);
 
         break;
       }

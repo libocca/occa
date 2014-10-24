@@ -13,7 +13,7 @@ namespace occa {
 
     //---[ Exp Node ]-------------------------------
     namespace expType {
-      static const int maxBit = 21;
+      static const int maxBit = 23;
 
       static const int root            = (1 << 0);
 
@@ -31,16 +31,17 @@ namespace occa {
       static const int function        = (1 << 11);
       static const int functionPointer = (1 << 12);
       static const int declaration     = (1 << 13);
-      static const int namespace_      = (1 << 14);
-      static const int cast_           = (1 << 15);
-      static const int macro_          = (1 << 16);
-      static const int goto_           = (1 << 17);
-      static const int gotoLabel_      = (1 << 18);
-      static const int case_           = (1 << 19);
-      static const int return_         = (1 << 20);
-      static const int occaFor         = (1 << 21);
+      static const int struct_         = (1 << 14);
+      static const int namespace_      = (1 << 15);
+      static const int cast_           = (1 << 16);
+      static const int macro_          = (1 << 17);
+      static const int goto_           = (1 << 18);
+      static const int gotoLabel_      = (1 << 19);
+      static const int case_           = (1 << 20);
+      static const int return_         = (1 << 21);
+      static const int occaFor         = (1 << 22);
 
-      static const int printValue      = (1 << 22);
+      static const int printValue      = (1 << 23);
     };
 
     class expNode {
