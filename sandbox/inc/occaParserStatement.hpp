@@ -76,15 +76,21 @@ namespace occa {
 
       void loadFromNode(strNode *&nodePos);
 
-      void initLoadFromNode(strNode *n);
+      void splitAndOrganizeNode(strNode *nodeRoot);
+      void organize();
+
+      void addNewVariables(strNode *nodePos);
+      void updateNewVariables();
+
+      void splitDeclareStatement();
+      void splitStructStatement();
+
+      void initLoadFromNode(strNode *nodeRoot);
 
       void initOrganization();
 
       void organizeLeaves();
       void organizeLeaves(const int level);
-
-      void addNewVariables(strNode *nodePos);
-      void updateNewVariables();
 
       int mergeRange(const int newLeafType,
                      const int leafPosStart,

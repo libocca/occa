@@ -1,5 +1,9 @@
+struct a {
+
+};
+
 static const int* main(int arg1[1 + 1]){
-  int **a;
+  int **a, *a2;
   *a;
 
   int &b = a[0][0];
