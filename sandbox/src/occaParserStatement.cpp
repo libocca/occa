@@ -378,8 +378,11 @@ namespace occa {
         splitTypedefStatement();
       }
 
-      else
+      else{
+        nodeRoot->print();
+        printf("D\n\n\n");
         organize();
+      }
     }
 
     void expNode::organize(){
@@ -550,7 +553,8 @@ namespace occa {
       int pos = 0;
 
       for(pos = 0; pos < leafCount; ++pos){
-        if(leaves[pos]->info == expType::C)
+        if((leaves[pos]->info == expType::C) ||
+           (leaves[pos]->value == ";")) // Empty struct
           break;
       }
 

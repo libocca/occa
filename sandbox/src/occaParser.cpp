@@ -3520,7 +3520,7 @@ namespace occa {
       keywordType["?"]  = ternaryOperatorType;
       keywordType["["]  = startBracket;
       keywordType["]"]  = endBracket;
-      keywordType["^"]  = binaryOperatorType;
+      keywordType["^"]  = (binaryOperatorType | qualifierType);
       keywordType["{"]  = startBrace;
       keywordType["|"]  = binaryOperatorType;
       keywordType["}"]  = endBrace;
@@ -3561,7 +3561,8 @@ namespace occa {
         keywordType[std::string("double") + suffix[i]] = specifierType;
       }
 
-      keywordType["void"] = specifierType;
+      keywordType["void"]          = specifierType;
+      keywordType["__attribute__"] = specifierType; // [--]
 
       keywordType["long"]     = (qualifierType | specifierType);
       keywordType["short"]    = (qualifierType | specifierType);
