@@ -801,16 +801,16 @@ namespace occa {
 
       while(leafPos < leafCount){
         if(leaves[leafPos]->info & expType::type){
-          expNode &typeNode = *(leaves[leafPos]);
-
-          typeNode.varType  = new varInfo;
-          varInfo &var      = *(typeNode.varType);
-
           const bool varHasLQualifiers = (leafPos &&
                                           (leaves[leafPos - 1]->info & expType::qualifier));
 
           const bool varHasRQualifiers = (((leafPos + 1) < leafCount) &&
                                           (leaves[leafPos + 1]->info & expType::qualifier));
+
+          expNode &typeNode = *(leaves[leafPos - varHasLQualifiers]);
+
+          typeNode.varType  = new varInfo;
+          varInfo &var      = *(typeNode.varType);
 
           if(varHasLQualifiers){
             expNode &lqNode = *(leaves[leafPos - 1]);
@@ -821,7 +821,7 @@ namespace occa {
               var.descriptors[i] = lqNode.leaves[i]->value;
           }
 
-          var.type = sInfo.hasTypeInScope(typeNode.value);
+          var.type = sInfo.hasTypeInScope(leaves[leafPos]->value);
           var.pointerCount = 0;
 
           if(varHasRQualifiers){
@@ -833,6 +833,8 @@ namespace occa {
               if(rqNode.leaves[i]->value == "*")
                 ++(var.pointerCount);
             }
+
+            typeNode.varPointerCount = var.pointerCount;
           }
 
           leafPos = mergeRange(expType::type,
@@ -933,22 +935,33 @@ namespace occa {
       while(leafPos < leafCount){
         if((leaves[leafPos]->info & expType::C) &&
            (leaves[leafPos]->value == "[")){
+
+          int brackets = 0;
+
+          while(((leafPos + brackets) < leafCount) &&
+                (leaves[leafPos + brackets]->info & expType::C) &&
+                (leaves[leafPos + brackets]->value == "[")){
+
+            ++brackets;
+          }
+
           expNode *newLeaf = new expNode(*this);
 
           newLeaf->up        = this;
           newLeaf->info      = (expType::L | expType::R);
-          newLeaf->leafCount = 2;
-          newLeaf->leaves    = new expNode*[2];
-          newLeaf->leaves[0] = leaves[leafPos - 1];
-          newLeaf->leaves[1] = leaves[leafPos    ];
+          newLeaf->leafCount = (1 + brackets);
+          newLeaf->leaves    = new expNode*[1 + brackets];
+
+          for(int i = 0; i <= brackets; ++i)
+            newLeaf->leaves[i] = leaves[leafPos + i - 1];
 
           leaves[leafPos - 1] = newLeaf;
 
-          for(int i = (leafPos + 1); i < leafCount; ++i)
-            leaves[i - 1] = leaves[i];
+          for(int i = (leafPos + brackets); i < leafCount; ++i)
+            leaves[i - brackets] = leaves[i];
 
           ++leafPos;
-          --leafCount;
+          leafCount -= brackets;
         }
         else
           ++leafPos;
