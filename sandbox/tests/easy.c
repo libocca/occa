@@ -10,7 +10,21 @@ static const int* main(int arg1[1 + 1]){
   *a;
 
   for(int N = 0; N < a; ++N)
+    ;
 
+  while(true)
+    ;
+
+  do{
+    ;
+  } while(true);
+
+  if(true)
+    ;
+  else if(true)
+    ;
+  else
+    ;
 
   int &b = a[0][0];
   /* (int**) 3; */

@@ -355,8 +355,6 @@ namespace occa {
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
 
-      print();
-
       std::cout << "this = " << *this << '\n';
     }
 
@@ -2797,17 +2795,20 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
+      int allowedDowns = (st == whileStatementType);
+
       const int downCount = nodeRootEnd->down.size();
 
-      if(downCount == 1)
+      if(downCount == allowedDowns){
         return loadFromNode(nextNode);
+      }
 
       else{
-        strNode *blockStart = nodeRoot->down[1];
+        strNode *blockStart = nodeRoot->down[allowedDowns];
         strNode *blockEnd   = lastNode(blockStart);
 
-        nodeRoot->down.erase(nodeRoot->down.begin() + 1,
-                             nodeRoot->down.begin() + 2);
+        nodeRoot->down.erase(nodeRoot->down.begin() + allowedDowns + 0,
+                             nodeRoot->down.begin() + allowedDowns + 1);
 
         // Load all down's before popping [{] and [}]'s
         const int downCount = blockStart->down.size();
@@ -2815,7 +2816,7 @@ namespace occa {
         for(int i = 0; i < downCount; ++i)
           loadAllFromNode( blockStart->down[i] );
 
-        loadBlocksFromLastNode(nodeRootEnd, 1);
+        loadBlocksFromLastNode(nodeRootEnd, allowedDowns);
 
         popAndGoRight(blockStart);
         popAndGoLeft(blockEnd);
@@ -2829,22 +2830,28 @@ namespace occa {
     strNode* statement::loadIfFromNode(const int st_,
                                        strNode *nodeRoot,
                                        strNode *nodeRootEnd){
-      int st = st_;
       strNode *nextNode;
+      int st = st_;
 
       do {
+        statement *newStatement = makeSubStatement();
+        strNode * nodeRootEnd = nodeRoot;
+
+        newStatement->expRoot.loadFromNode(nodeRootEnd);
+
+        st = newStatement->type;
+
+        if(st & invalidStatementType){
+          std::cout << "Not a valid statement\n";
+          throw 1;
+        }
+
         nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
         if(nodeRoot)
           nodeRoot->left = NULL;
         if(nodeRootEnd)
           nodeRootEnd->right = NULL;
-
-        statement *newStatement = new statement(depth + 1,
-                                                st, this,
-                                                nodeRoot, nodeRootEnd);
-
-        addStatement(newStatement);
 
         const int downCount = nodeRootEnd->down.size();
 
@@ -2887,6 +2894,12 @@ namespace occa {
           break;
 
         nodeRoot = nodeRootEnd = nextNode;
+
+        // statement *newStatement = makeSubStatement();
+        // strNode * nodeRootEnd = nodeRoot;
+
+        // newStatement->expRoot.loadFromNode(nodeRootEnd);
+        // const int st = newStatement->type;
 
         st = statementType(nodeRootEnd);
 
