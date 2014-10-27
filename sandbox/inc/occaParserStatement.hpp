@@ -188,6 +188,8 @@ namespace occa {
       expNode* lastLeaf();
 
       //---[ Exp Info ]-----------------
+      void addNode(const int info_, const int pos);
+
       bool hasQualifier(const std::string &qualifier) const;
       void addQualifier(const std::string &qualifier, const int pos = 0);
       //================================

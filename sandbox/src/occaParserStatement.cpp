@@ -1724,7 +1724,6 @@ namespace occa {
       return false;
     }
 
-#if 0
     void expNode::addNode(const int info_,
                           const int pos){
       expNode &newNode  = *(new expNode(*this));
@@ -1748,10 +1747,9 @@ namespace occa {
       if(leafCount)
         delete [] leaves;
 
-      typeNode.leaves = newLeaves;
+      leaves = newLeaves;
       ++leafCount;
     }
-#endif
     //================================
 
     void expNode::freeLeaf(const int leafPos){
@@ -3461,56 +3459,26 @@ namespace occa {
       if(type & functionStatementType){
         expNode &typeNode = *(expRoot.leaves[0]);
 
-        if( !(typeNode.leaves[0]->info & expType::qualifier) ){
-          expNode &newQualNode  = *(new expNode(typeNode));
+        if( !(typeNode.leaves[0]->info & expType::qualifier) )
+          typeNode.addNode(expType::qualifier, 0);
 
-          newQualNode.info      = expType::qualifier;
-          newQualNode.leafCount = 0;
-          newQualNode.leaves    = NULL;
+        expNode &qualNode = *(typeNode.leaves[0]);
 
-          expNode **newLeaves = new expNode*[typeNode.leafCount + 1];
+        qualNode.addNode(expType::qualifier, pos);
 
-          newLeaves[pos] = &newQualNode;
-
-          for(int i = pos; i < typeNode.leafCount; ++i)
-            newLeaves[i + 1] = typeNode.leaves[i];
-
-          if(typeNode.leafCount)
-            delete [] typeNode.leaves;
-
-          typeNode.leaves = newLeaves;
-          ++(typeNode.leafCount);
-        }
-
-        expNode &qualNode     = *(typeNode.leaves[0]);
-        expNode &sNewQualNode = *(new expNode(qualNode));
-
-        sNewQualNode.info  = expType::qualifier;
-        sNewQualNode.value = qualifier;
-
-        expNode **newLeaves = new expNode*[qualNode.leafCount + 1];
-
-        newLeaves[0] = &sNewQualNode;
-
-        for(int i = 0; i < qualNode.leafCount; ++i)
-          newLeaves[i + 1] = qualNode.leaves[i];
-
-        if(qualNode.leafCount)
-          delete [] qualNode.leaves;
-
-        qualNode.leaves = newLeaves;
-        ++(qualNode.leafCount);
+        expNode &sNewQualNode = *(qualNode.leaves[pos]);
+        sNewQualNode.value    = qualifier;
       }
       else if(type & forStatementType){
-        // if(expRoot.leafCount){
-        //   expNode &node1 = *(expRoot.leaves[0]);
+        if(expRoot.leafCount){
+          expNode &node1    = *(expRoot.leaves[0]);
+          expNode &qualNode = *(node1.leaves[0]);
 
-        //   if((node1.leafCount) &&
-        //      (node1.leaves[0]->info & expType::type)){
+          if( !(qualNode.leaves[0]->info & expType::qualifier) )
+            qualNode.addNode(expType::qualifier, 0);
 
-        //     return node1.leaves[0]->hasQualifier(qualifier);
-        //   }
-        // }
+          qualNode.leaves[0]->value = qualifier;
+        }
       }
     }
 

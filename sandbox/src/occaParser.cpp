@@ -1022,8 +1022,8 @@ namespace occa {
 
       std::stringstream ss;
 
-      // s.expRoot.print();
-      // std::cout << "s.hasQualifier(\"const\") = " << s.hasQualifier("const") << '\n';
+      if( !s.hasQualifier("const") )
+        s.addQualifier("const");
 
       if(opStride != "1"){
         ss << *(s.expRoot.leaves[0]) << ' '
