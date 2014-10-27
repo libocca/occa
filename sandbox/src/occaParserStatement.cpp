@@ -361,7 +361,6 @@ namespace occa {
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
       addNewVariables(nodeRoot);
       initLoadFromNode(nodeRoot);
-      print();
 
       if(sInfo.type & declareStatementType)
         splitDeclareStatement();
@@ -380,6 +379,8 @@ namespace occa {
 
       else
         organize();
+
+      print();
     }
 
     void expNode::organize(){
@@ -566,6 +567,9 @@ namespace occa {
 
     void expNode::splitForStatement(){
       info = expType::checkSInfo;
+
+      // [+]
+      print();
 
       if((leafCount < 2) ||
          (leaves[1]->value != "(")){
