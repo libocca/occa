@@ -21,8 +21,8 @@
 |    (4) LD_LIBRARY_PATH
 |
 |    (5) Pthreads Options
-|            OCCA_PTHREAD_ENABLED
-|            OCCA_PTHREAD_COUNT, OCCA_PTHREADS_COMPILER,
+|            OCCA_PTHREADS_ENABLED
+|            OCCA_PTHREADS_COUNT, OCCA_PTHREADS_COMPILER,
 |            OCCA_PTHREADS_COMPILER_FLAGS
 |
 |    (6) OpenMP Options

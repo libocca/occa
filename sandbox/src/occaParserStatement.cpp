@@ -693,8 +693,6 @@ namespace occa {
         argNode.leaves    = sLeaves;
         argNode.leafCount = argc;
       }
-
-      print();
     }
 
     void expNode::splitStructStatement(){
