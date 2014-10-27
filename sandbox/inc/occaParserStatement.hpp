@@ -171,6 +171,8 @@ namespace occa {
       bool qualifierEndsWithStar() const;
 
       bool typeEndsWithStar() const;
+
+      bool hasAnArrayQualifier(const int pos = 0) const;
       //================================
 
       expNode* clone(statement &s);

@@ -609,6 +609,34 @@ namespace occa {
 
       int pos = 0;
 
+      //---[ Merge qualifiers ]---------
+      for(pos = 0; pos < leafCount; ++pos){
+        if( !(leaves[pos]->info & expType::qualifier) )
+          break;
+      }
+
+      if(pos){
+        expNode *sNewLeaf = new expNode(*this);
+
+        sNewLeaf->up        = this;
+        sNewLeaf->info      = expType::qualifier;
+        sNewLeaf->leafCount = pos;
+        sNewLeaf->leaves    = new expNode*[pos];
+
+        for(int i = 0; i < pos; ++i){
+          sNewLeaf->leaves[i] = leaves[i];
+          leaves[i]->up       = sNewLeaf;
+        }
+
+        leaves[0] = sNewLeaf;
+
+        for(int i = pos; i < leafCount; ++i)
+          leaves[i - pos + 1] = leaves[i];
+
+        leafCount -= (pos - 1);
+      }
+      //================================
+
       for(pos = 0; pos < leafCount; ++pos){
         if((leaves[pos]->info == expType::C) ||
            (leaves[pos]->value == ";")) // Empty struct
@@ -1466,6 +1494,16 @@ namespace occa {
 
       return false;
     }
+
+    bool expNode::hasAnArrayQualifier(const int pos) const {
+      if( !(info & expType::qualifier) ||
+          (leafCount <= pos) )
+        return false;
+
+      return ((leaves[pos]->value == "*") ||
+              (leaves[pos]->value == "&") ||
+              (leaves[pos]->value == "["));
+    }
     //================================
 
     expNode* expNode::clone(statement &s){
@@ -1603,12 +1641,17 @@ namespace occa {
 
       case expType::qualifier:{
         if(leafCount){
-          for(int i = 0; i < leafCount; ++i){
+          out << *(leaves[0]);
+
+          for(int i = 1; i < leafCount; ++i){
+            if( !hasAnArrayQualifier(i) )
+              out << ' ';
+
             out << *(leaves[i]);
           }
         }
         else{
-          out << value << ' ';
+          out << value;
         }
 
         break;
@@ -1617,14 +1660,22 @@ namespace occa {
       case expType::type:{
         // [const] [int] [*]
         if(leafCount){
-          for(int i = 0; i < (leafCount - 1); ++i)
-            out << *(leaves[i]);
+          out << *(leaves[0]);
 
-          out << *(leaves[leafCount - 1]);
+          if(leafCount == 1)
+            out << ' ';
+          else{
+            for(int i = 1; i < leafCount; ++i){
+              if( !leaves[i - 1]->hasAnArrayQualifier() )
+                out << ' ';
+
+              out << *(leaves[i]);
+            }
+          }
         }
         // [int]
         else{
-          out << value << ' ';
+          out << value;
         }
 
         break;
@@ -1655,12 +1706,16 @@ namespace occa {
           const bool hasRQualifier = (leaves[hasLQualifier + 1]->info & expType::qualifier);
 
           if(hasLQualifier)
-            out << *(leaves[0]);
+            out << *(leaves[0]) << ' ';
 
           out << *(leaves[hasLQualifier]);
 
-          if(hasRQualifier)
+          if(hasRQualifier){
+            if( !(leaves[hasLQualifier + 1]->hasAnArrayQualifier()) )
+              out << ' ';
+
             out << *(leaves[hasLQualifier + 1]);
+          }
         }
         // [x]
         else{
@@ -1725,7 +1780,7 @@ namespace occa {
             expNode &leaf = *(leaves[i]);
 
             if(leaf.value == "{"){
-              out << " {\n";
+              out << "{\n";
 
               for(int j = 0; j < leaf.leafCount; ++j)
                 leaf.leaves[j]->printOn(out, tab + "  ");
@@ -1736,7 +1791,7 @@ namespace occa {
                 out << tab << "};\n";
             }
             else
-              out << leaf;
+              out << leaf << ' ';
           }
         }
         else
