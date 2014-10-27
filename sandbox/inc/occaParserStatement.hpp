@@ -343,7 +343,7 @@ namespace occa {
 
       //---[ Statement Info ]-----------
       bool hasQualifier(const std::string &qualifier) const;
-      void addQualifier(const std::string &qualifier);
+      void addQualifier(const std::string &qualifier, const int pos = 0);
 
       std::string getFunctionName() const;
       int getFunctionArgCount() const;

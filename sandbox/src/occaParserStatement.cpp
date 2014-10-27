@@ -393,8 +393,20 @@ namespace occa {
 
     // Disregards function pointers, those are "easy"
     void expNode::addNewVariables(strNode *nodePos){
-      if( !(sInfo.type & declareStatementType) )
+      if( !(sInfo.type & (declareStatementType |
+                          functionDefinitionType)) )
         return;
+
+      strNode *lastPos;
+
+      if(sInfo.type & functionDefinitionType){
+        nodePos = lastNode(nodePos)->down[0];
+        lastPos = lastNode(nodePos);
+        lastPos->value = ";";
+
+        if(nodePos->down.size() == 0)
+          nodePos = nodePos->right;
+      }
 
       bool loadingFunctionPointer = false;
 
@@ -491,6 +503,9 @@ namespace occa {
 
         nodePos = nodePos->right;
       }
+
+      if(sInfo.type & functionDefinitionType)
+        lastPos->value = ";";
     }
 
     void expNode::updateNewVariables(){
@@ -3314,7 +3329,8 @@ namespace occa {
       return false;
     }
 
-    void statement::addQualifier(const std::string &qualifier){
+    void statement::addQualifier(const std::string &qualifier,
+                                 const int pos){
       if(hasQualifier(qualifier))
         return;
 
@@ -3330,9 +3346,9 @@ namespace occa {
 
           expNode **newLeaves = new expNode*[typeNode.leafCount + 1];
 
-          newLeaves[0] = &newQualNode;
+          newLeaves[pos] = &newQualNode;
 
-          for(int i = 0; i < typeNode.leafCount; ++i)
+          for(int i = pos; i < typeNode.leafCount; ++i)
             newLeaves[i + 1] = typeNode.leaves[i];
 
           if(typeNode.leafCount)

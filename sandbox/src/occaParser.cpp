@@ -1752,13 +1752,16 @@ namespace occa {
     }
 
     void parserBase::addArgQualifiers(varInfo &info, statement &s){
-      return;
-
       // Having functionCallType at this level means:
       //   occaExp, occaBarrier, etc
       // so don't add occaKernelInfoArg
       if((info.typeInfo & functionType) &&
          !(info.typeInfo & functionCallType)){
+
+        std::cout << "s = " << s << '\n';
+
+        return;
+
         strNode *nodePos = s.nodeStart;
 
         while(nodePos->down.size() == 0)
