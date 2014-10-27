@@ -6,6 +6,9 @@ const struct a_t {
 } *a[2], b[3];
 
 static const int* main(int arg1[1 + 1]){
+  occaOuterFor0{
+  }
+
   int **a, *a2;
   *a;
 

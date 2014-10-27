@@ -334,10 +334,16 @@ namespace occa {
 
       void printVariablesInScope();
 
+      void printTypesInScope();
       void printTypesInStatement();
       void printTypeDefsInStatement();
 
-      void printTypesInScope();
+      //---[ Statement Info ]-----------
+      bool hasQualifier(const std::string &qualifier) const;
+      void addQualifier(const std::string &qualifier);
+
+      std::string getFunctionName() const;
+      //================================
 
       // autoMode: Handles newlines and tabs
       std::string prettyString(strNode *nodeRoot,

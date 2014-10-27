@@ -27,34 +27,45 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
 
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
-
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
-      applyToAllStatements(*globalScope, &parserBase::loadVariableInformation);
 
+      // Broken
       addFunctionPrototypes();
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
+      // Broken
       addOccaFors();
 
       // Also auto-adds barriers if needed
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
 
+      // Broken
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
 
+      // Broken
       modifyOccaForVariables();
+      // Broken
       modifyTextureVariables();
 
+      // Broken
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
 
+      // Broken
       loadKernelInfos();
 
       return (std::string) *globalScope;
@@ -788,14 +799,8 @@ namespace occa {
 
     bool parserBase::statementIsAKernel(statement &s){
       if(s.type & functionStatementType){
-        strNode *nodePos = s.nodeStart;
-
-        while(nodePos){
-          if(nodePos->value == "occaKernel")
-            return true;
-
-          nodePos = nodePos->right;
-        }
+        if(s.hasQualifier("occaKernel"))
+          return true;
       }
 
       return false;
@@ -1222,7 +1227,7 @@ namespace occa {
 
     bool parserBase::statementHasOccaOuterFor(statement &s){
       if(s.type == keywordType["occaOuterFor0"]){
-        std::string &forName = s.nodeStart->value;
+        std::string &forName = s.expRoot.value;
 
         if((forName.find("occaOuterFor") != std::string::npos) &&
            ((forName == "occaOuterFor0") ||
@@ -1262,31 +1267,8 @@ namespace occa {
     }
 
     bool parserBase::statementHasOklFor(statement &s){
-      if(s.type == forStatementType){
-
-        strNode *nodePos = s.nodeStart;
-
-        while(nodePos->down.size() == 0)
-          nodePos = nodePos->right;
-
-        nodePos = nodePos->down[0];
-
-        while(nodePos){
-          if( ((nodePos->value.find("inner") != std::string::npos) &&
-               ((nodePos->value == "inner0") ||
-                (nodePos->value == "inner1") ||
-                (nodePos->value == "inner2")))                     ||
-              ((nodePos->value.find("outer") != std::string::npos) &&
-               ((nodePos->value == "outer0") ||
-                (nodePos->value == "outer1") ||
-                (nodePos->value == "outer2"))) ){
-
-            return true;
-          }
-
-          nodePos = nodePos->right;
-        }
-      }
+      if(s.type == forStatementType)
+        return (s.expRoot.leafCount == 4);
 
       statementNode *statementPos = s.statementStart;
 
@@ -1332,15 +1314,8 @@ namespace occa {
           continue;
         }
 
-        if(statementHasOccaStuff(s2)){
-          strNode *kernelMark = new strNode("occaKernel");
-          kernelMark->type    = keywordType["occaKernel"];
-
-          s2.nodeStart->left = kernelMark;
-          kernelMark->right  = s2.nodeStart;
-
-          s2.nodeStart = kernelMark;
-        }
+        if(statementHasOccaStuff(s2))
+          s2.addQualifier("occaKernel");
 
         snPos = snPos->right;
       }
@@ -1447,50 +1422,9 @@ namespace occa {
       }
     }
 
-    void parserBase::loadVariableInformation(statement &s,
-                                             strNode *n){
-      if(s.type & (functionPrototypeType |
-                   structStatementType))
-        return;
-
-      // Skip qualifiers (good for function pointers)
-      if(s.type & declareStatementType)
-        s.loadVarInfo(n);
-
-      while(n){
-        if((n->type & unknownVariable) &&
-           !s.hasTypeInScope(n->value)){
-
-          varInfo *infoPtr = s.hasVariableInScope(n->value);
-
-          if(infoPtr == NULL){
-            std::cout << "Couldn't find [" << (std::string) *n << "] in:\n"
-                      << s << '\n';
-            throw 1;
-          }
-
-          varUsedMap[infoPtr].push(&s);
-        }
-
-        const int downCount = n->down.size();
-
-        for(int i = 0; i < downCount; ++i)
-          loadVariableInformation(s, n->down[i]);
-
-        n = n->right;
-      }
-    }
-
-    void parserBase::loadVariableInformation(statement &s){
-      if(s.type & macroStatementType)
-        return;
-
-      loadScopeVarMap(s);
-
-      loadVariableInformation(s, s.nodeStart);
-    }
-
     void parserBase::addFunctionPrototypes(){
+      return;
+
       std::map<std::string,bool> prototypes;
 
       statementNode *statementPos = globalScope->statementStart;
@@ -1498,12 +1432,8 @@ namespace occa {
       while(statementPos){
         statement *s2 = statementPos->value;
 
-        if(s2->type & functionPrototypeType){
-          strNode *nodePos = s2->nodeStart;
-          varInfo info = globalScope->loadVarInfo(nodePos);
-
-          prototypes[info.name] = true;
-        }
+        if(s2->type & functionPrototypeType)
+          prototypes[s2->getFunctionName()] = true;
 
         statementPos = statementPos->right;
       }
@@ -1514,32 +1444,20 @@ namespace occa {
         statement *s2 = statementPos->value;
 
         if(s2->type & functionStatementType){
-          strNode *nodePos = s2->nodeStart;
-          varInfo info = globalScope->loadVarInfo(nodePos);
-
-          if(info.hasDescriptor("occaKernel") ||
-             info.hasDescriptor("kernel")){
-
+          if(s2->hasQualifier("occaKernel")){
             statementPos = statementPos->right;
             continue;
           }
 
-          if(!info.hasDescriptor("occaFunction")){
-            strNode *ofNode = s2->nodeStart;
-
-            ofNode       = ofNode->push("occaFunction");
-            ofNode->type = keywordType["occaFunction"];
-
-            ofNode->swapWithLeft();
-            s2->nodeStart = ofNode;
-          }
+          if(!s2->hasQualifier("occaFunction"))
+            s2->addQualifier("occaFunction");
 
           if( !(s2->type & functionDefinitionType) ){
             statementPos = statementPos->right;
             continue;
           }
 
-          if(prototypes.find(info.name) == prototypes.end()){
+          if(prototypes.find( s2->getFunctionName() ) == prototypes.end()){
             statement *newS2 = s2->clone();
             statementNode *newNode = new statementNode(newS2);
 
@@ -1617,6 +1535,8 @@ namespace occa {
 
     void parserBase::fixOccaForStatementOrder(statement &origin,
                                               statementNode *sn){
+      return;
+
       int innerLoopCount = -1;
 
       while(sn){
@@ -1740,6 +1660,8 @@ namespace occa {
     }
 
     void parserBase::addParallelFors(statement &s){
+      return;
+
       if( !statementIsAKernel(s) )
         return;
 
@@ -1786,6 +1708,8 @@ namespace occa {
     }
 
     void parserBase::updateConstToConstant(statement &s){
+      return;
+
       // Global scope only
       if((s.depth != 0) ||
          !(s.type & declareStatementType))
@@ -1918,6 +1842,8 @@ namespace occa {
     }
 
     void parserBase::addArgQualifiers(varInfo &info, statement &s){
+      return;
+
       // Having functionCallType at this level means:
       //   occaExp, occaBarrier, etc
       // so don't add occaKernelInfoArg
@@ -1996,6 +1922,8 @@ namespace occa {
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
+      return;
+
       if(!(s.type & declareStatementType))
         return;
 
@@ -2102,6 +2030,8 @@ namespace occa {
     }
 
     void parserBase::modifyOccaForVariables(){
+      return;
+
       varUsedMapIterator it = varUsedMap.begin();
 
       while(it != varUsedMap.end()){
@@ -2128,6 +2058,8 @@ namespace occa {
     }
 
     void parserBase::modifyTextureVariables(){
+      return;
+
       varUsedMapIterator it = varUsedMap.begin();
 
       while(it != varUsedMap.end()){
@@ -2306,6 +2238,8 @@ namespace occa {
     }
 
     void parserBase::loadKernelInfos(){
+      return;
+
       statementNode *snPos = globalScope->statementStart;
 
       while(snPos){
@@ -3222,6 +3156,8 @@ namespace occa {
     }
 
     void parserBase::addOccaForsToKernel(statement &s){
+      return;
+
       addInnerFors(s);
       addOuterFors(s);
     }

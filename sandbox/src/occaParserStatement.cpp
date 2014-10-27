@@ -291,8 +291,10 @@ namespace occa {
       if(sInfo.type & (macroStatementType           |
                        gotoStatementType            |
                        blockStatementType) ||
-         (sInfo.type == keywordType["occaOuterFor0"]))
+         (sInfo.type == keywordType["occaOuterFor0"])){
+
         return;
+      }
 
       //---[ Special Type ]---
       if(nodeRoot->type & specialKeywordType){
@@ -354,8 +356,6 @@ namespace occa {
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
-
-      std::cout << "this = " << *this << '\n';
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
@@ -2753,10 +2753,12 @@ namespace occa {
           for(int i = 0; i < blockDownCount; ++i)
             loadAllFromNode( blockStart->down[i] );
 
-          popAndGoRight(blockStart);
-          popAndGoLeft(blockEnd);
+          if(blockStart->right != blockEnd){
+            popAndGoRight(blockStart);
+            popAndGoLeft(blockEnd);
 
-          loadAllFromNode(blockStart);
+            loadAllFromNode(blockStart);
+          }
         }
       }
       else{
@@ -3193,6 +3195,83 @@ namespace occa {
         ++it;
       }
     }
+
+    //---[ Statement Info ]-----------
+    bool statement::hasQualifier(const std::string &qualifier) const {
+      if(type & functionStatementType){
+        expNode &typeNode = *(expRoot.leaves[0]);
+        expNode &qualNode = *(typeNode.leaves[0]);
+
+        if( !(qualNode.info & expType::qualifier) )
+          return false;
+
+        for(int i = 0; i < qualNode.leafCount; ++i)
+          if(qualNode.leaves[i]->value == qualifier)
+            return true;
+      }
+
+      return false;
+    }
+
+    void statement::addQualifier(const std::string &qualifier){
+      if(hasQualifier(qualifier))
+        return;
+
+      if(type & functionStatementType){
+        expNode &typeNode = *(expRoot.leaves[0]);
+
+        if( !(typeNode.leaves[0]->info & expType::qualifier) ){
+          expNode &newQualNode  = *(new expNode(typeNode));
+
+          newQualNode.info      = expType::qualifier;
+          newQualNode.leafCount = 0;
+          newQualNode.leaves    = NULL;
+
+          expNode **newLeaves = new expNode*[typeNode.leafCount + 1];
+
+          newLeaves[0] = &newQualNode;
+
+          for(int i = 0; i < typeNode.leafCount; ++i)
+            newLeaves[i + 1] = typeNode.leaves[i];
+
+          if(typeNode.leafCount)
+            delete [] typeNode.leaves;
+
+          typeNode.leaves = newLeaves;
+          ++(typeNode.leafCount);
+        }
+
+        expNode &qualNode     = *(typeNode.leaves[0]);
+        expNode &sNewQualNode = *(new expNode(qualNode));
+
+        sNewQualNode.info  = expType::qualifier;
+        sNewQualNode.value = qualifier;
+
+        expNode **newLeaves = new expNode*[qualNode.leafCount + 1];
+
+        newLeaves[0] = &sNewQualNode;
+
+        for(int i = 0; i < qualNode.leafCount; ++i)
+          newLeaves[i + 1] = qualNode.leaves[i];
+
+        if(qualNode.leafCount)
+          delete [] qualNode.leaves;
+
+        qualNode.leaves = newLeaves;
+        ++(qualNode.leafCount);
+      }
+    }
+
+    std::string statement::getFunctionName() const {
+      if(type & functionStatementType){
+        return (expRoot.leaves[1]->value);
+      }
+
+      printf("Not added yet");
+      throw 1;
+      return "";
+    }
+    //================================
 
     // autoMode: Handles newlines and tabs
     std::string statement::prettyString(strNode *nodeRoot,
