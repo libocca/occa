@@ -951,13 +951,101 @@ namespace occa {
 
       addOccaForCounter(s, ioLoop, loopNest);
 
-      std::string opSign   = "+";
-      std::string opStride = "1";
+      //---[ Find operators ]-----------
+      std::string iter, bound;
+      std::string iterCheck, iterOp;
+      std::string opSign, opStride;
 
-      std::cout << *(s.expRoot.leaves[0]) << ' '
-                << opSign
-                << " (occa" << ioLoop << "Id" << loopNest
-                << " * (" << opStride << "));";
+      expNode &node1 = *(s.expRoot.leaves[0]);
+      expNode &node2 = *(s.expRoot.leaves[1]);
+      expNode &node3 = *(s.expRoot.leaves[2]);
+
+      //---[ Node 1 ]---------
+      if((node1.leafCount < 2) ||
+         (node1.leaves[1]->value != "=")){
+
+        std::cout << "Wrong 1st statement for:\n  " << s.expRoot << '\n';
+        throw 1;
+      }
+
+      // [int] [=]
+      //        |    \
+      //       [group] [0]
+      iter = node1.leaves[1]->leaves[0]->value;
+
+      //---[ Node 2 ]---------
+      if((node2.leafCount != 1) ||
+         ((node2.leaves[0]->value != "<=") &&
+          (node2.leaves[0]->value != "<" ) &&
+          (node2.leaves[0]->value != ">" ) &&
+          (node2.leaves[0]->value != ">="))){
+
+        std::cout << "Wrong 2nd statement for:\n  " << s.expRoot << '\n';
+        throw 1;
+      }
+
+      if(node2.leaves[0]->leaves[0]->value == iter){
+        bound = (std::string) *(node2.leaves[0]->leaves[1]);
+      }
+      else if(node2.leaves[0]->leaves[1]->value == iter){
+        bound = (std::string) *(node2.leaves[0]->leaves[0]);
+      }
+      else {
+        std::cout << "Wrong 2nd statement for:\n  " << s.expRoot << '\n';
+        throw 1;
+      }
+
+      iterCheck = node2.leaves[0]->value;
+
+      //---[ Node 3 ]---------
+      if((node3.leafCount != 1) ||
+         ((node3.leaves[0]->value != "++") &&
+          (node3.leaves[0]->value != "--") &&
+          (node3.leaves[0]->value != "+=") &&
+          (node3.leaves[0]->value != "-="))){
+        std::cout << "Wrong 3nd statement for:\n  " << s.expRoot << '\n';
+        throw 1;
+      }
+
+      iterOp = node3.leaves[0]->value;
+
+      // [+]+, [+]=
+      // [-]-, [-]=
+      opSign = iterOp[0];
+
+      if((iterOp != "++") || (iterOp != "--"))
+        opStride = "1";
+      else{
+        if(node3.leaves[0]->leaves[0]->value == iter){
+          opStride = (std::string) *(node3.leaves[0]->leaves[1]);
+        }
+        else if(node3.leaves[0]->leaves[1]->value == iter){
+          opStride = (std::string) *(node3.leaves[0]->leaves[0]);
+        }
+        else {
+          std::cout << "Wrong 3rd statement for:\n  " << s.expRoot << '\n';
+          throw 1;
+        }
+      }
+      //================================
+
+      std::stringstream ss;
+
+      ss << *(s.expRoot.leaves[0]) << ' '
+         << opSign
+         << " (occa" << ioLoop << "Id" << loopNest
+         << " * (" << opStride << "));";
+
+      s.loadFromNode(labelCode( splitContent(ss.str()) ));
+
+      statement *newS2       = s.statementEnd->value;
+      statementNode *newNode = new statementNode(newS2);
+
+      s.statementEnd        = s.statementEnd->left;
+      s.statementEnd->right = NULL;
+
+      newNode->right   = s.statementStart;
+      s.statementStart = newNode;
 
       std::string occaForName = "occa" + ioLoop + "For" + loopNest;
 
@@ -966,9 +1054,6 @@ namespace occa {
       s.expRoot.info  = expType::occaFor;
       s.expRoot.value = occaForName;
       s.expRoot.free();
-
-      std::cout
-        << "s = " << s << '\n';
     }
 
     void parserBase::loadScopeVarMap(statement &s){

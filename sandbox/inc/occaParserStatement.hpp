@@ -181,6 +181,8 @@ namespace occa {
 
       void cloneTo(expNode &newRoot);
 
+      expNode* lastLeaf();
+
       void freeLeaf(const int leafPos);
 
       void free();

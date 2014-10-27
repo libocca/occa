@@ -594,7 +594,10 @@ namespace occa {
           if(i < leafCount)
             delete leaves[i];
 
-          ssLeaf.organize();
+          if(i != 0)
+            ssLeaf.organize();
+          else
+            ssLeaf.splitDeclareStatement();
 
           sLeaves[statementCount++] = &ssLeaf;
           firstLeaf = (i + 1);
@@ -1625,6 +1628,13 @@ namespace occa {
         for(int i = 0; i < leafCount; ++i)
           newRoot.leaves[i] = clone(leaves[i]);
       }
+    }
+
+    expNode* expNode::lastLeaf(){
+      if(leafCount != 0)
+        return leaves[leafCount - 1];
+
+      return NULL;
     }
 
     void expNode::freeLeaf(const int leafPos){
