@@ -93,7 +93,11 @@ namespace occa {
       void splitStructStatements();
       void splitTypedefStatement();
 
-      void initLoadFromNode(strNode *nodeRoot);
+      void initLoadFromNode(strNode *nodeRoot,
+                            const int initPos = 0);
+
+      int initDownsFromNode(strNode *nodeRoot,
+                            int leafPos);
 
       void initOrganization();
 
@@ -182,6 +186,11 @@ namespace occa {
       void cloneTo(expNode &newRoot);
 
       expNode* lastLeaf();
+
+      //---[ Exp Info ]-----------------
+      bool hasQualifier(const std::string &qualifier) const;
+      void addQualifier(const std::string &qualifier, const int pos = 0);
+      //================================
 
       void freeLeaf(const int leafPos);
 

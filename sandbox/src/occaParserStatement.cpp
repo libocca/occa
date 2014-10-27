@@ -361,6 +361,7 @@ namespace occa {
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
       addNewVariables(nodeRoot);
       initLoadFromNode(nodeRoot);
+      print();
 
       if(sInfo.type & declareStatementType)
         splitDeclareStatement();
@@ -867,7 +868,8 @@ namespace occa {
       info |= expType::typedef_;
     }
 
-    void expNode::initLoadFromNode(strNode *nodeRoot){
+    void expNode::initLoadFromNode(strNode *nodeRoot,
+                                   const int initPos){
       strNode *nodePos = nodeRoot;
 
       // Root
@@ -886,11 +888,34 @@ namespace occa {
 
       nodePos = nodeRoot;
 
-      leaves = new expNode*[leafCount];
-      leafCount = 0;
+      int leafPos;
+
+      if(initPos){
+        expNode **sLeaves = new expNode*[initPos + leafCount];
+
+        for(int i = 0; i < initPos; ++i)
+          sLeaves[i] = leaves[i];
+
+        delete [] leaves;
+
+        leaves     = sLeaves;
+        leafPos    = initPos;
+        leafCount += initPos;
+      }
+      else{
+        leaves = new expNode*[leafCount];
+        leafPos = 0;
+      }
 
       while(nodePos){
-        expNode *&leaf = leaves[leafCount++];
+        if(nodePos->type == 0){
+          leafPos = initDownsFromNode(nodePos, leafPos);
+          nodePos = nodePos->right;
+
+          continue;
+        }
+
+        expNode *&leaf = leaves[leafPos++];
 
         leaf        = new expNode(*this);
         leaf->up    = this;
@@ -938,42 +963,56 @@ namespace occa {
         else
           leaf->info = expType::printValue;
 
-        const int downCount = nodePos->down.size();
-
         if(nodePos->type == 0){
           delete leaf;
-          --leafCount;
+          --leafPos;
         }
 
-        for(int i = 0; i < downCount; ++i){
-          strNode *downNode = nodePos->down[i];
-          strNode *lastDown = lastNode(downNode);
-
-          std::string sValue = downNode->value;
-
-          expNode *&sLeaf = leaves[leafCount++];
-
-          sLeaf        = new expNode(*this);
-          sLeaf->value = sValue;
-          sLeaf->info  = expType::C;
-
-          // Case: ()
-          if(downNode != lastDown){
-            // Get rid of ()'s and stuff
-            downNode->type = emptyType;
-            popAndGoLeft(lastDown);
-
-            if(downNode != lastDown){
-              if(downNode->down.size())
-                sLeaf->initLoadFromNode(downNode);
-              else
-                sLeaf->initLoadFromNode(downNode->right);
-            }
-          }
-        }
+        leafPos = initDownsFromNode(nodePos, leafPos);
 
         nodePos = nodePos->right;
       }
+    }
+
+    int expNode::initDownsFromNode(strNode *nodePos, int leafPos){
+      const int downCount = nodePos->down.size();
+
+      if(downCount == 0)
+        return leafPos;
+
+      if(leafCount == 0){
+        leafCount = downCount;
+        leaves    = new expNode*[leafCount];
+      }
+
+      for(int i = 0; i < downCount; ++i){
+        strNode *downNode = nodePos->down[i];
+        strNode *lastDown = lastNode(downNode);
+
+        popAndGoLeft(lastDown);
+
+        std::string sValue = downNode->value;
+
+        expNode *&sLeaf = leaves[leafPos++];
+
+        sLeaf        = new expNode(*this);
+        sLeaf->value = sValue;
+        sLeaf->info  = expType::C;
+
+        int sLeafCount = 0;
+
+        // (downNode == lastDown) if loading [()]
+        if(downNode->down.size())
+          sLeafCount = sLeaf->initDownsFromNode(downNode, 0);
+
+        if(downNode != lastDown){
+          popAndGoRight(downNode);
+
+          sLeaf->initLoadFromNode(downNode, sLeafCount);
+        }
+      }
+
+      return leafPos;
     }
 
     void expNode::initOrganization(){
@@ -1659,6 +1698,61 @@ namespace occa {
 
       return NULL;
     }
+
+    //---[ Exp Info ]-----------------
+    bool expNode::hasQualifier(const std::string &qualifier) const {
+      if(info & expType::type){
+        if(!leafCount ||
+           !(leaves[0]->info & expType::qualifier))
+          return false;
+
+        return leaves[0]->hasQualifier(qualifier);
+      }
+      else if(info & expType::qualifier){
+        if(leafCount){
+          for(int i = 0; i < leafCount; ++i){
+            if(leaves[i]->value == qualifier)
+              return true;
+          }
+
+          return false;
+        }
+        else
+          return value == qualifier;
+      }
+
+      return false;
+    }
+
+#if 0
+    void expNode::addNode(const int info_,
+                          const int pos){
+      expNode &newNode  = *(new expNode(*this));
+
+      newNode.info      = info_;
+      newNode.leafCount = 0;
+      newNode.leaves    = NULL;
+
+      expNode **newLeaves = new expNode*[leafCount + 1];
+
+      //---[ Add Leaves ]-----
+      for(int i = 0; i < pos; ++i)
+        newLeaves[i] = leaves[i];
+
+      newLeaves[pos] = &newNode;
+
+      for(int i = pos; i < leafCount; ++i)
+        newLeaves[i + 1] = leaves[i];
+      //======================
+
+      if(leafCount)
+        delete [] leaves;
+
+      typeNode.leaves = newLeaves;
+      ++leafCount;
+    }
+#endif
+    //================================
 
     void expNode::freeLeaf(const int leafPos){
       leaves[leafPos]->free();
@@ -2737,7 +2831,7 @@ namespace occa {
 
     strNode* statement::loadFromNode(strNode *nodeRoot){
       statement *newStatement = makeSubStatement();
-      strNode * nodeRootEnd = nodeRoot;
+      strNode * nodeRootEnd   = nodeRoot;
 
       newStatement->expRoot.loadFromNode(nodeRootEnd);
       const int st = newStatement->type;
@@ -3330,16 +3424,30 @@ namespace occa {
 
     //---[ Statement Info ]-----------
     bool statement::hasQualifier(const std::string &qualifier) const {
-      if(type & functionStatementType){
+      if(type & declareStatementType){
+
+      }
+      else if(type & functionStatementType){
         expNode &typeNode = *(expRoot.leaves[0]);
         expNode &qualNode = *(typeNode.leaves[0]);
 
         if( !(qualNode.info & expType::qualifier) )
           return false;
 
-        for(int i = 0; i < qualNode.leafCount; ++i)
-          if(qualNode.leaves[i]->value == qualifier)
-            return true;
+        return qualNode.hasQualifier(qualifier);
+      }
+      else if(type & forStatementType){
+        if(expRoot.leafCount){
+          expNode &node1 = *(expRoot.leaves[0]);
+
+          if((node1.leafCount) &&
+             (node1.leaves[0]->info & expType::type)){
+
+            return node1.leaves[0]->hasQualifier(qualifier);
+          }
+        }
+
+        return false;
       }
 
       return false;
@@ -3392,6 +3500,17 @@ namespace occa {
 
         qualNode.leaves = newLeaves;
         ++(qualNode.leafCount);
+      }
+      else if(type & forStatementType){
+        // if(expRoot.leafCount){
+        //   expNode &node1 = *(expRoot.leaves[0]);
+
+        //   if((node1.leafCount) &&
+        //      (node1.leaves[0]->info & expType::type)){
+
+        //     return node1.leaves[0]->hasQualifier(qualifier);
+        //   }
+        // }
       }
     }
 

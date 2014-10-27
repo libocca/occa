@@ -989,6 +989,8 @@ namespace occa {
       iterCheck = node2.leaves[0]->value;
 
       //---[ Node 3 ]---------
+      s.expRoot.print();
+
       if((node3.leafCount != 1) ||
          ((node3.leaves[0]->value != "++") &&
           (node3.leaves[0]->value != "--") &&
@@ -1004,7 +1006,7 @@ namespace occa {
       // [-]-, [-]=
       opSign = iterOp[0];
 
-      if((iterOp != "++") || (iterOp != "--"))
+      if((iterOp == "++") || (iterOp == "--"))
         opStride = "1";
       else{
         if(node3.leaves[0]->leaves[0]->value == iter){
@@ -1022,6 +1024,9 @@ namespace occa {
 
       std::stringstream ss;
 
+      // s.expRoot.print();
+      // std::cout << "s.hasQualifier(\"const\") = " << s.hasQualifier("const") << '\n';
+
       if(opStride != "1"){
         ss << *(s.expRoot.leaves[0]) << ' '
            << opSign
@@ -1035,6 +1040,8 @@ namespace occa {
       }
 
       s.loadFromNode(labelCode( splitContent(ss.str()) ));
+      s.statementEnd->value->expRoot.print();
+      throw 1;
 
       statement *newS2       = s.statementEnd->value;
       statementNode *newNode = new statementNode(newS2);
