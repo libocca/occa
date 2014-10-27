@@ -397,7 +397,7 @@ namespace occa {
                           functionDefinitionType)) )
         return;
 
-      strNode *lastPos;
+      strNode *lastPos = NULL;
 
       if(sInfo.type & functionDefinitionType){
         nodePos = lastNode(nodePos)->down[0];
@@ -408,21 +408,23 @@ namespace occa {
           nodePos = nodePos->right;
       }
 
-      bool loadingFunctionPointer = false;
-
-      while((nodePos) &&
-            (nodePos->type & qualifierType)){
-
-        nodePos = nodePos->right;
-      }
-
-      // Skip Type
-      if(nodePos->down.size() == 0)
-        nodePos = nodePos->right;
-      else
-        loadingFunctionPointer = true;
+      bool loadingFunctionPointer;
 
       while(nodePos){
+        // Skip Type
+        while((nodePos) &&
+              (nodePos->type & qualifierType)){
+
+          nodePos = nodePos->right;
+        }
+
+        if(nodePos->down.size() == 0){
+          nodePos = nodePos->right;
+          loadingFunctionPointer = false;
+        }
+        else
+          loadingFunctionPointer = true;
+
         varInfo newVar;
 
         if(!loadingFunctionPointer){
@@ -504,8 +506,8 @@ namespace occa {
         nodePos = nodePos->right;
       }
 
-      if(sInfo.type & functionDefinitionType)
-        lastPos->value = ";";
+      if(lastPos)
+        lastPos->value = ")";
     }
 
     void expNode::updateNewVariables(){
@@ -675,6 +677,12 @@ namespace occa {
 
             sLeaf.organize();
 
+            expNode *ssLeaf = sLeaf.leaves[0];
+            delete &sLeaf;
+
+            sLeaves[argc] = ssLeaf;
+            ssLeaf->up    = sLeaves[argc];
+
             ++argc;
             pos = (i + 1);
           }
@@ -685,6 +693,8 @@ namespace occa {
         argNode.leaves    = sLeaves;
         argNode.leafCount = argc;
       }
+
+      print();
     }
 
     void expNode::splitStructStatement(){
@@ -1791,11 +1801,19 @@ namespace occa {
       case expType::variable:{
         // [[[const] [int] [*]] [x]]
         if(leafCount){
-          const bool hasLQualifier = (leaves[0]->info                 & expType::qualifier);
-          const bool hasRQualifier = (leaves[hasLQualifier + 1]->info & expType::qualifier);
+          const bool hasLQualifier = (leaves[0]->info                  & (expType::qualifier |
+                                                                         expType::type));
 
-          if(hasLQualifier)
-            out << *(leaves[0]) << ' ';
+          const bool hasRQualifier = (((hasLQualifier + 1) < leafCount) &&
+                                      (leaves[hasLQualifier + 1]->info & (expType::qualifier |
+                                                                          expType::type)));
+
+          if(hasLQualifier){
+            out << *(leaves[0]);
+
+            if(leaves[0]->info & expType::qualifier)
+              out << ' ';
+          }
 
           out << *(leaves[hasLQualifier]);
 
