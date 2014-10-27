@@ -1575,7 +1575,7 @@ namespace occa {
       delete [] leaves;
     }
 
-    void expNode::print(const std::string &tab){
+    void expNode::print(const std::string &tab) const {
       std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
       for(int i = 0; i < leafCount; ++i)
@@ -1902,12 +1902,16 @@ namespace occa {
       };
     }
 
-    expNode::operator std::string () const {
+    std::string expNode::getString(const std::string &tab) const {
       std::stringstream ss;
 
-      printOn(ss);
+      printOn(ss, tab);
 
       return ss.str();
+    }
+
+    expNode::operator std::string () const {
+      return getString();
     }
 
     std::ostream& operator << (std::ostream &out, const expNode &n){
@@ -1930,17 +1934,13 @@ namespace occa {
 
       expRoot(*this),
 
-      nodeStart(NULL),
-      nodeEnd(NULL),
-
       statementCount(0),
       statementStart(NULL),
       statementEnd(NULL) {}
 
     statement::statement(const int depth_,
                          const int type_,
-                         statement *up_,
-                         strNode *nodeStart_, strNode *nodeEnd_) :
+                         statement *up_) :
       depth(depth_),
       type(type_),
 
@@ -1951,9 +1951,6 @@ namespace occa {
 
       expRoot(*this),
 
-      nodeStart(nodeStart_),
-      nodeEnd(nodeEnd_),
-
       statementCount(0),
       statementStart(NULL),
       statementEnd(NULL) {}
@@ -1962,8 +1959,7 @@ namespace occa {
 
     statement* statement::makeSubStatement(){
       return new statement(depth + 1,
-                           0, this,
-                           NULL, NULL);
+                           0, this);
     }
 
     std::string statement::getTab() const {
@@ -3017,10 +3013,6 @@ namespace occa {
                                           strNode *nodeRootEnd){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
-      // Blocks don't have stuff, they just provide a new scope
-      //   Hence, nodeStart = nodeEnd = NULL
-      nodeStart = nodeEnd = NULL;
-
       // Load all down's before popping [{] and [}]'s
       const int downCount = nodeRoot->down.size();
 
@@ -3132,15 +3124,9 @@ namespace occa {
 
     statement* statement::clone(){
       statement *newStatement = new statement(depth,
-                                              type, up,
-                                              NULL, NULL);
+                                              type, up);
 
       expRoot.cloneTo(newStatement->expRoot);
-
-      if(nodeStart){
-        newStatement->nodeStart = nodeStart->clone();
-        newStatement->nodeEnd   = lastNode(newStatement->nodeStart);
-      }
 
       newStatement->scopeVarMap = scopeVarMap;
 
@@ -3475,7 +3461,7 @@ namespace occa {
 
       // OCCA For's
       if(type == (occaStatementType | forStatementType)){
-        std::string ret = tab + nodeStart->value + " {\n";
+        std::string ret = expRoot.getString(tab) + " {\n";
 
         while(statementPos){
           ret += (std::string) *(statementPos->value);
@@ -3488,11 +3474,11 @@ namespace occa {
       }
 
       else if(type & (simpleStatementType | gotoStatementType)){
-        return tab + prettyString(nodeStart, "", false);
+        return expRoot.getString(tab);
       }
 
       else if(type & flowStatementType){
-        std::string ret = tab + prettyString(nodeStart, "", false);
+        std::string ret = expRoot.getString(tab);
 
         if(statementCount > 1)
           ret += " {";
@@ -3512,7 +3498,7 @@ namespace occa {
 
       else if(type & functionStatementType){
         if(type & functionDefinitionType){
-          std::string ret = prettyString(nodeStart, "", false);
+          std::string ret = expRoot.getString(tab);
 
           ret += " {\n";
 
@@ -3526,7 +3512,7 @@ namespace occa {
           return ret;
         }
         else if(type & functionPrototypeType)
-          return tab + prettyString(nodeStart, "", false);
+          return expRoot.getString(tab);
       }
       else if(type & blockStatementType){
         std::string ret = "";
@@ -3545,13 +3531,13 @@ namespace occa {
         return ret;
       }
       else if(type & structStatementType){
-        return tab + prettyString(nodeStart, "", false);
+        return expRoot.getString(tab);
       }
       else if(type & macroStatementType){
-        return tab + prettyString(nodeStart, "", false);
+        return expRoot.getString(tab);
       }
 
-      return tab + prettyString(nodeStart, "", false);
+      return expRoot.getString(tab);
     }
 
     std::ostream& operator << (std::ostream &out, const statement &s){

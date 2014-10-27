@@ -934,7 +934,7 @@ namespace occa {
       while(nodePos){
         if(nodePos->value == ";"){
           if(segmentCount == 4){
-            std::cout << "More than 4 statements for:\n  " << s.prettyString(s.nodeStart) << '\n';
+            std::cout << "More than 4 statements for:\n  " << s.expRoot << '\n';
             throw 1;
           }
 
@@ -959,7 +959,7 @@ namespace occa {
             (nodePos->value != "outer1") &&
             (nodePos->value != "outer2"))) ){
 
-        std::cout << "Wrong 4th statement for:\n  " << s.prettyString(s.nodeStart) << '\n';
+        std::cout << "Wrong 4th statement for:\n  " << s.expRoot << '\n';
         throw 1;
       }
 
@@ -982,7 +982,7 @@ namespace occa {
 
       if(nodePos->value != "="){
         std::cout << "The first statement of:\n"
-                  << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
+                  << "  " << s.expRoot << '\n'
                   << "should look like:\n"
                   << "  for(int var = off; ...; ...; ...)\n";
         throw 1;
@@ -996,7 +996,7 @@ namespace occa {
       while(nodePos != commaNodes[1]){
         if( nodePos->hasType(unknownVariable) ){
           std::cout << "The first statement of:\n"
-                    << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
+                    << "  " << s.expRoot << '\n'
                     << "should look like:\n"
                     << "  for(int var = off; ...; ...; ...)\n"
                     << "where [off] needs to be known at compile time\n";
@@ -1025,7 +1025,7 @@ namespace occa {
 
       if(nodePos->value != idName){
         std::cout << "The second statement of:\n"
-                  << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
+                  << "  " << s.expRoot << '\n'
                   << "should look like:\n"
                   << "  for(int [var] = off; [var] < dim; ...; ...)\n"
                   << "           ^____________^ are the same\n";
@@ -1036,7 +1036,7 @@ namespace occa {
 
       if(nodePos->value != "<"){
         std::cout << "The second statement of:\n"
-                  << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
+                  << "  " << s.expRoot << '\n'
                   << "should look like:\n"
                   << "  for(int var = off; var [<] dim; ...; ...)\n"
                   << "                          ^ less than\n";
@@ -1086,7 +1086,7 @@ namespace occa {
         }
         else{
           std::cout << "The second statement of:\n"
-                    << "  " << s.prettyString(s.nodeStart, "  ", false) << '\n'
+                    << "  " << s.expRoot << '\n'
                     << "should look like:\n"
                     << "  for(int var = off; var < [dim]; ...; ...)\n"
                     << "                            ^ only one variable name\n"
@@ -1681,8 +1681,7 @@ namespace occa {
                         << "========================================\n";
 
               statement *newS = new statement(sn->value->depth,
-                                              declareStatementType, sn->value->up,
-                                              NULL, NULL);
+                                              declareStatementType, sn->value->up);
 
               statementNode *newSN = new statementNode(newS);
 
@@ -1760,8 +1759,7 @@ namespace occa {
         const char outerDim = '0' + (nest - 1);
 
         statement *parallelStatement = new statement(s.depth + 1,
-                                                     occaStatementType, &s,
-                                                     NULL, NULL);
+                                                     occaStatementType, &s);
 
         statementNode *parallelSN = new statementNode(parallelStatement);
 
@@ -2014,8 +2012,7 @@ namespace occa {
         return;
 
       statement *newS = new statement(s.depth,
-                                      declareStatementType, s.up,
-                                      NULL, NULL);
+                                      declareStatementType, s.up);
 
       newS->nodeStart = occaExclusiveStrNode(info,
                                              nodePos->depth,
@@ -2060,8 +2057,7 @@ namespace occa {
           info2.descriptors = info.descriptors;
 
           statement *newS2 = new statement(s.depth,
-                                           declareStatementType, s.up,
-                                           NULL, NULL);
+                                           declareStatementType, s.up);
 
           newS2->nodeStart = occaExclusiveStrNode(info2,
                                                   nodePos->depth,
@@ -2235,8 +2231,7 @@ namespace occa {
         strNode *newNodeEnd  = lastNode(newNodeRoot);
 
         info.nestedKernels.push_back(new statement(s.depth,
-                                                   s.type, globalScope,
-                                                   newNodeRoot, newNodeEnd));
+                                                   s.type, globalScope));
 
         while( !(newNodeRoot->type & unknownVariable) )
           newNodeRoot = newNodeRoot->right;
@@ -2727,8 +2722,7 @@ namespace occa {
 
       statement *newS = new statement(origin->depth,
                                       declareStatementType,
-                                      origin->up,
-                                      newVarNode, lastNode(newVarNode));
+                                      origin->up);
 
       varOriginMap[&var]          = newS;
       newS->scopeVarMap[var.name] = &var;
@@ -2802,8 +2796,7 @@ namespace occa {
          !removeVarStatement){
         statement *secondS = new statement(origin->depth,
                                            updateStatementType,
-                                           origin->up,
-                                           secondNodeStart, secondNodeEnd);
+                                           origin->up);
 
         snPos = snPos->push(secondS);
         varUsedMap[&var].push(secondS);
@@ -2839,8 +2832,7 @@ namespace occa {
         if(!ignoringFirst){
           thirdS = new statement(origin->depth,
                                  declareStatementType,
-                                 origin->up,
-                                 thirdNodeStart, thirdNodeEnd);
+                                 origin->up);
 
           snPos = snPos->push(thirdS);
         }
@@ -2965,8 +2957,7 @@ namespace occa {
 
       for(int i = innerDim; 0 <= i; --i){
         statement *newStatement = new statement(includeStart->value->depth,
-                                                occaForType, &origin,
-                                                NULL, NULL);
+                                                occaForType, &origin);
 
         newStatement->nodeStart = new strNode("occaInnerFor");
         newStatement->nodeStart->value += '0' + i;
@@ -3111,8 +3102,7 @@ namespace occa {
 
       for(int o = outerDim; 0 <= o; --o){
         statement *newStatement = new statement(sPos->depth + 1,
-                                                occaForType, &s,
-                                                NULL, NULL);
+                                                occaForType, &s);
 
         newStatement->nodeStart = new strNode("occaOuterFor");
         newStatement->nodeStart->value += '0' + o;

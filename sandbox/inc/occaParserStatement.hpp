@@ -184,10 +184,10 @@ namespace occa {
 
       void free();
 
-      void print(const std::string &tab = "");
-
+      void print(const std::string &tab = "") const;
       void printOn(std::ostream &out, const std::string &tab = "") const;
 
+      std::string getString(const std::string &tab = "") const;
       operator std::string () const;
 
       friend std::ostream& operator << (std::ostream &out, const expNode &n);
@@ -209,15 +209,14 @@ namespace occa {
       varOriginMap_t &varOriginMap;
       varUsedMap_t   &varUsedMap;
 
+      strNode *nodeStart, *nodeEnd;
+
       int depth;
       statement *up;
 
       int type;
 
       expNode expRoot;
-
-      // Going away
-      strNode *nodeStart, *nodeEnd;
 
       int statementCount;
       statementNode *statementStart, *statementEnd;
@@ -231,8 +230,7 @@ namespace occa {
 
       statement(const int depth_,
                 const int type_,
-                statement *up_,
-                strNode *nodeStart_, strNode *nodeEnd_);
+                statement *up_);
 
       ~statement();
 
