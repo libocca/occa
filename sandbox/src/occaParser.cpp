@@ -53,11 +53,6 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
 
       // Broken
-      applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
-
-      // Broken
-      modifyOccaForVariables();
-      // Broken
       modifyTextureVariables();
 
       // Broken
@@ -921,8 +916,6 @@ namespace occa {
         throw 1;
       }
 
-      s.expRoot.print();
-
       statement &sKernel = *spKernel;
 
       std::string arg4 = (std::string) *(s.expRoot.leaves[3]);
@@ -1607,8 +1600,6 @@ namespace occa {
         parallelStatement->expRoot.value += '\n';
         parallelStatement->expRoot.info   = expType::occaFor;
 
-        parallelStatement->expRoot.print();
-
         if(s.statementStart == snPos)
           s.statementStart = parallelSN;
 
@@ -1920,60 +1911,6 @@ namespace occa {
 
       // [-] Needs proper free (can't because it's nested...)
       //   delete oldSN;
-    }
-
-    void parserBase::modifyStatementOccaForVariables(varInfo &var,
-                                                     strNode *n){
-      const int extras = var.extraInfo.size();
-
-      while(n){
-        if((n->type & unknownVariable) &&
-           (n->value == var.name)){
-
-          if(extras == 1)
-            n->value = var.extraInfo[0];
-          else
-            n->value = ("(" + (var.extraInfo[0] +
-                               " + " +
-                               var.extraInfo[1]) +
-                        ")");
-        }
-
-        const int downCount = n->down.size();
-
-        for(int i = 0; i < downCount; ++i)
-          modifyStatementOccaForVariables(var, n->down[i]);
-
-        n = n->right;
-      }
-    }
-
-    void parserBase::modifyOccaForVariables(){
-      return;
-
-      varUsedMapIterator it = varUsedMap.begin();
-
-      while(it != varUsedMap.end()){
-        varInfo *infoPtr = it->first;
-        const int extras = infoPtr->extraInfo.size();
-
-        // Only occa id/dim's have extras atm
-        if(extras){
-          // First node is just a placeholder
-          statementNode *sNodePos = (it->second).right;
-
-          while(sNodePos){
-            statement &s = *(sNodePos->value);
-
-            modifyStatementOccaForVariables(*infoPtr,
-                                            s.nodeStart);
-
-            sNodePos = sNodePos->right;
-          }
-        }
-
-        ++it;
-      }
     }
 
     void parserBase::modifyTextureVariables(){

@@ -357,11 +357,6 @@ namespace occa {
 
       void modifyExclusiveVariables(statement &s);
 
-      void modifyStatementOccaForVariables(varInfo &var,
-                                           strNode *n);
-
-      void modifyOccaForVariables();
-
       void modifyTextureVariables();
 
       statementNode* splitKernelStatement(statementNode *sn,
