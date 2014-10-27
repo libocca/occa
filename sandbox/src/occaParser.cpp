@@ -37,7 +37,6 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
-      // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
 
       // Broken
@@ -51,7 +50,6 @@ namespace occa {
       // Also auto-adds barriers if needed
       // Broken
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
-      // Broken
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
 
       // Broken
@@ -1031,10 +1029,17 @@ namespace occa {
 
       std::stringstream ss;
 
-      ss << *(s.expRoot.leaves[0]) << ' '
-         << opSign
-         << " (occa" << ioLoop << "Id" << loopNest
-         << " * (" << opStride << "));";
+      if(opStride != "1"){
+        ss << *(s.expRoot.leaves[0]) << ' '
+           << opSign
+           << " (occa" << ioLoop << "Id" << loopNest
+           << " * (" << opStride << "));";
+      }
+      else{
+        ss << *(s.expRoot.leaves[0]) << ' '
+           << opSign
+           << " occa" << ioLoop << "Id" << loopNest << ";";
+      }
 
       s.loadFromNode(labelCode( splitContent(ss.str()) ));
 
@@ -1414,12 +1419,12 @@ namespace occa {
     }
 
     int parserBase::statementOccaForNest(statement &s){
-      if( !(s.type != (forStatementType | occaStatementType)) )
+      if(s.type != keywordType["occaOuterFor0"])
         return notAnOccaFor;
 
       int ret = notAnOccaFor;
 
-      const std::string &forName = s.nodeStart->value;
+      const std::string &forName = s.expRoot.value;
 
       if((forName.find("occaOuterFor") != std::string::npos) &&
          ((forName == "occaOuterFor0") ||
@@ -1572,8 +1577,6 @@ namespace occa {
     }
 
     void parserBase::addParallelFors(statement &s){
-      return;
-
       if( !statementIsAKernel(s) )
         return;
 
@@ -1597,10 +1600,14 @@ namespace occa {
 
         statementNode *parallelSN = new statementNode(parallelStatement);
 
-        parallelStatement->nodeStart         = new strNode("occaParallelFor");
-        parallelStatement->nodeStart->value += outerDim;
-        parallelStatement->nodeStart->value += '\n';
-        parallelStatement->type              = occaStatementType;
+        parallelStatement->type = occaStatementType;
+
+        parallelStatement->expRoot.value = "occaParallelFor";
+        parallelStatement->expRoot.value += outerDim;
+        parallelStatement->expRoot.value += '\n';
+        parallelStatement->expRoot.info   = expType::occaFor;
+
+        parallelStatement->expRoot.print();
 
         if(s.statementStart == snPos)
           s.statementStart = parallelSN;

@@ -1648,6 +1648,7 @@ namespace occa {
         delete leaves[i];
       }
 
+      leafCount = 0;
       delete [] leaves;
     }
 
