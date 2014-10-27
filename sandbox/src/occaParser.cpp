@@ -904,6 +904,8 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
+      return;
+
       if( !(s.type & forStatementType) )
         return;
 

@@ -20,6 +20,7 @@ static const int* main(int arg1[1 + 1]){
 
   do{
     ;
+    ;
   } while(true);
 
   if(true)

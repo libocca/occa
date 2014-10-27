@@ -88,6 +88,7 @@ namespace occa {
 
       void splitDeclareStatement();
       void splitForStatement();
+      void splitFunctionStatement();
       void splitStructStatement();
       void splitStructStatements();
       void splitTypedefStatement();
