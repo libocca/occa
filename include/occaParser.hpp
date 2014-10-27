@@ -335,6 +335,12 @@ namespace occa {
 
       void setupCudaVariables(statement &s);
 
+
+      void loadVariableInformation(statement &s,
+                                   strNode *n);
+
+      void loadVariableInformation(statement &s);
+
       void addFunctionPrototypes();
 
       int statementOccaForNest(statement &s);
@@ -356,6 +362,11 @@ namespace occa {
       void addArgQualifiers(varInfo &info, statement &s);
 
       void modifyExclusiveVariables(statement &s);
+
+      void modifyStatementOccaForVariables(varInfo &var,
+                                           strNode *n);
+
+      void modifyOccaForVariables();
 
       void modifyTextureVariables();
 
