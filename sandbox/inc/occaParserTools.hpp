@@ -55,6 +55,8 @@ namespace occa {
 
     int stripComments(std::string &line);
     //==============================================
+
+    std::string getBits(const int value);
   };
 };
 

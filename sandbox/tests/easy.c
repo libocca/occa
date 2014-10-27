@@ -3,11 +3,14 @@ const struct a_t {
   struct b {
     int b1, c1;
   };
-} a[2], b[3];
+} *a[2], b[3];
 
 static const int* main(int arg1[1 + 1]){
   int **a, *a2;
   *a;
+
+  for(int N = 0; N < a; ++N)
+
 
   int &b = a[0][0];
   /* (int**) 3; */

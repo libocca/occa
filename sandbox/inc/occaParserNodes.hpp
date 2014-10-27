@@ -2,6 +2,7 @@
 #define OCCA_PARSER_NODES_HEADER
 
 #include "occaParserDefines.hpp"
+#include "occaParserTools.hpp"
 
 namespace occa {
   namespace parserNamespace {

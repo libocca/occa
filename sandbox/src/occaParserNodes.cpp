@@ -374,7 +374,7 @@ namespace occa {
       strNode *nodePos = this;
 
       while(nodePos){
-        std::cout << tab << "[" << *nodePos << "] (" << nodePos->type << ")\n";
+        std::cout << tab << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
 
         const int downCount = (nodePos->down).size();
 

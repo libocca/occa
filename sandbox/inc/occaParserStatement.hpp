@@ -38,11 +38,11 @@ namespace occa {
       static const int gotoLabel_      = (1 << 20);
       static const int case_           = (1 << 21);
       static const int return_         = (1 << 22);
-      static const int occaFor         = (1 << 23);
+      static const int for_            = (1 << 23);
+      static const int occaFor         = (1 << 24);
 
-      static const int printValue      = (1 << 24);
-
-      static const int maxBit = 24;
+      static const int printValue      = (1 << 25);
+      static const int maxBit          = 25;
     };
 
     class expNode {
@@ -87,6 +87,7 @@ namespace occa {
       void updateNewVariables();
 
       void splitDeclareStatement();
+      void splitForStatement();
       void splitStructStatement();
       void splitStructStatements();
       void splitTypedefStatement();

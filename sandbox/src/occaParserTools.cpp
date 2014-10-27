@@ -373,5 +373,27 @@ namespace occa {
       return status;
     }
     //==============================================
+
+    std::string getBits(const int value){
+      if(value == 0)
+        return "0";
+
+      std::stringstream ret;
+
+      bool printedSomething = false;
+
+      for(int i = 0; i < 32; ++i){
+        if(value & (1 << i)){
+          if(printedSomething)
+            ret << ',';
+
+          ret << i;
+
+          printedSomething = true;
+        }
+      }
+
+      return ret.str();
+    }
   };
 };

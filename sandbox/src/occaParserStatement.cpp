@@ -289,9 +289,9 @@ namespace occa {
 
       // Don't need to load stuff
       if(sInfo.type & (macroStatementType           |
-                       keywordType["occaOuterFor0"] |
                        gotoStatementType            |
-                       blockStatementType))
+                       blockStatementType) ||
+         (sInfo.type == keywordType["occaOuterFor0"]))
         return;
 
       //---[ Special Type ]---
@@ -363,6 +363,9 @@ namespace occa {
       if(sInfo.type & declareStatementType)
         splitDeclareStatement();
 
+      else if(sInfo.type & forStatementType)
+        splitForStatement();
+
       else if(sInfo.type & structStatementType)
         splitStructStatement();
 
@@ -374,6 +377,9 @@ namespace occa {
     }
 
     void expNode::organize(){
+      if(leafCount == 0)
+        return;
+
       initOrganization();
       organizeLeaves();
 
@@ -533,6 +539,69 @@ namespace occa {
 
       leaves    = newLeaves;
       leafCount = extras;
+    }
+
+    void expNode::splitForStatement(){
+      info = expType::for_;
+
+      if((leafCount < 2) ||
+         (leaves[1]->value != "(")){
+        std::cout << "Wrong syntax for [for]:\n";
+        print();
+        throw 1;
+      }
+
+      expNode **sLeaves    = leaves[1]->leaves;
+      const int sLeafCount = leaves[1]->leafCount;
+
+      delete leaves[0];
+      delete leaves[1];
+
+      leafCount = sLeafCount;
+      leaves    = sLeaves;
+
+      int statementCount = 1;
+
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->value == ";")
+          ++statementCount;
+      }
+
+      sLeaves = new expNode*[statementCount];
+
+      int firstLeaf  = 0;
+      statementCount = 0;
+
+      for(int i = 0; i <= leafCount; ++i){
+        if((i == leafCount) ||
+           (leaves[i]->value == ";")){
+
+          expNode &ssLeaf = *(new expNode(*this));
+
+          if(firstLeaf != i){
+            ssLeaf.leafCount = (i - firstLeaf);
+            ssLeaf.leaves    = new expNode*[ssLeaf.leafCount];
+
+            for(int j = firstLeaf; j < i; ++j)
+              ssLeaf.leaves[j - firstLeaf] = leaves[j];
+          }
+
+          if(i < leafCount)
+            delete leaves[i];
+
+          ssLeaf.organize();
+
+          sLeaves[statementCount++] = &ssLeaf;
+          firstLeaf = (i + 1);
+        }
+      }
+
+      leaves    = sLeaves;
+      leafCount = statementCount;
+
+      print();
+
+      throw 1;
     }
 
     void expNode::splitStructStatement(){
@@ -915,9 +984,10 @@ namespace occa {
           }
 
           if(updateNow){
-            int target = leafPos - 1 + 2*(levelType & lUnitaryOperatorType);
+            int target = leafPos + ((levelType & lUnitaryOperatorType) ?
+                                    1 : -1);
 
-            if((target < 0) || (leafCount <= target )){
+            if((target < 0) || (leafCount <= target)){
               ++leafPos;
             }
             else{
@@ -1470,22 +1540,7 @@ namespace occa {
     }
 
     void expNode::print(const std::string &tab){
-      std::cout << tab << "[";
-
-      bool printedSomething = false;
-
-      for(int i = 0; i <= expType::maxBit; ++i){
-        if(info & (1 << i)){
-          if(printedSomething)
-            std::cout << ',';
-
-          std::cout << i;
-
-          printedSomething = true;
-        }
-      }
-
-      std::cout << "] " << value << '\n';
+      std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
       for(int i = 0; i < leafCount; ++i)
         leaves[i]->print(tab + "    ");
