@@ -344,6 +344,9 @@ namespace occa {
       void addQualifier(const std::string &qualifier);
 
       std::string getFunctionName() const;
+      int getFunctionArgCount() const;
+
+      int getForStatementCount() const;
       //================================
 
       // autoMode: Handles newlines and tabs

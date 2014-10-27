@@ -2651,13 +2651,16 @@ namespace occa {
     }
 
     varInfo* statement::hasVariableInScope(const std::string &varName) const {
-      cScopeVarMapIterator it = scopeVarMap.find(varName);
+      const statement *sPos = this;
 
-      if(it != scopeVarMap.end())
-        return it->second;
+      while(sPos){
+        cScopeVarMapIterator it = sPos->scopeVarMap.find(varName);
 
-      if(up)
-        return up->hasVariableInScope(varName);
+        if(it != sPos->scopeVarMap.end())
+          return it->second;
+
+        sPos = sPos->up;
+      }
 
       return NULL;
     }
@@ -2946,6 +2949,7 @@ namespace occa {
           //   statement;           statement;
 
           nextNode = newStatement->loadFromNode(nextNode);
+          addStatement(newStatement);
 
           if(st == elseStatementType)
             break;
@@ -2971,6 +2975,7 @@ namespace occa {
           popAndGoLeft(blockEnd);
 
           newStatement->loadAllFromNode(blockStart);
+          addStatement(newStatement);
 
           break;
         }
@@ -3355,6 +3360,21 @@ namespace occa {
       printf("Not added yet");
       throw 1;
       return "";
+    }
+
+    int statement::getFunctionArgCount() const {
+      if(type & functionStatementType)
+        return (expRoot.leaves[2]->leafCount);
+
+      return 0;
+    }
+
+
+    int statement::getForStatementCount() const {
+      if(type & forStatementType)
+        return expRoot.leafCount;
+
+      return 0;
     }
     //================================
 

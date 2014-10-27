@@ -904,8 +904,6 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      return;
-
       if( !(s.type & forStatementType) )
         return;
 
@@ -917,233 +915,60 @@ namespace occa {
       if(statementKernelUsesNativeOCCA(s))
         return;
 
-      statement &sKernel = *spKernel;
-
-      strNode *nodePos = s.nodeStart;
-      strNode *lastNode;
-
-      while(nodePos->down.size() == 0)
-        nodePos = nodePos->right;
-
-      lastNode = nodePos;
-      nodePos  = nodePos->down[0]->right;
-
-      std::vector<strNode*> oldDown(lastNode->down.begin() + 1,
-                                    lastNode->down.end());
-
-      // Last segment doesn't have a [;]
-      int segmentCount = 1;
-      strNode *commaNodes[4];
-
-      // First statement
-      commaNodes[0] = nodePos;
-
-      while(nodePos){
-        if(nodePos->value == ";"){
-          if(segmentCount == 4){
-            std::cout << "More than 4 statements for:\n  " << s.expRoot << '\n';
-            throw 1;
-          }
-
-          commaNodes[segmentCount++] = nodePos;
-        }
-
-        nodePos = nodePos->right;
-      }
-
-      if(segmentCount < 4)
+      if(s.getForStatementCount() <= 3)
         return;
 
-      nodePos = commaNodes[3]->right;
+      if(4 < s.getForStatementCount()){
+        std::cout << "More than 4 statements for:\n  " << s.expRoot << '\n';
+        throw 1;
+      }
+
+      s.expRoot.print();
+
+      statement &sKernel = *spKernel;
+
+      std::string arg4 = (std::string) *(s.expRoot.leaves[3]);
 
       // If it has a fourth argument, make sure it's the correct one
-      if( ((nodePos->value.find("inner") == std::string::npos) ||
-           ((nodePos->value != "inner0") &&
-            (nodePos->value != "inner1") &&
-            (nodePos->value != "inner2")))                     &&
-          ((nodePos->value.find("outer") == std::string::npos) ||
-           ((nodePos->value != "outer0") &&
-            (nodePos->value != "outer1") &&
-            (nodePos->value != "outer2"))) ){
+      if( ((arg4.find("inner") == std::string::npos) ||
+           ((arg4 != "inner0") &&
+            (arg4 != "inner1") &&
+            (arg4 != "inner2")))                     &&
+          ((arg4.find("outer") == std::string::npos) ||
+           ((arg4 != "outer0") &&
+            (arg4 != "outer1") &&
+            (arg4 != "outer2"))) ){
 
         std::cout << "Wrong 4th statement for:\n  " << s.expRoot << '\n';
         throw 1;
       }
 
       // [-----][#]
-      std::string ioLoop   = nodePos->value.substr(0,5);
-      std::string loopNest = nodePos->value.substr(5,1);
+      std::string ioLoop   = arg4.substr(0,5);
+      std::string loopNest = arg4.substr(5,1);
 
       ioLoop[0] += ('A' - 'a');
 
       addOccaForCounter(s, ioLoop, loopNest);
 
-      varInfo idVar, dimVar, loopVar;
-      std::string idName, dimName, dimSubName, loopName;
+      std::string opSign   = "+";
+      std::string opStride = "1";
 
-      nodePos = commaNodes[0];
-      idVar = s.loadVarInfo(nodePos);
-
-      idName = idVar.name;
-      idVar.extraInfo.push_back("occa" + ioLoop + "Id" + loopNest);
-
-      if(nodePos->value != "="){
-        std::cout << "The first statement of:\n"
-                  << "  " << s.expRoot << '\n'
-                  << "should look like:\n"
-                  << "  for(int var = off; ...; ...; ...)\n";
-        throw 1;
-      }
-
-      nodePos = nodePos->right;
-
-      strNode *idOffStart = nodePos->clone();
-      strNode *idOffEnd   = idOffStart;
-
-      while(nodePos != commaNodes[1]){
-        if( nodePos->hasType(unknownVariable) ){
-          std::cout << "The first statement of:\n"
-                    << "  " << s.expRoot << '\n'
-                    << "should look like:\n"
-                    << "  for(int var = off; ...; ...; ...)\n"
-                    << "where [off] needs to be known at compile time\n";
-          throw 1;
-        }
-
-        nodePos  = nodePos->right;
-        idOffEnd = idOffEnd->right;
-      }
-
-      // Go behind [;]
-      idOffEnd = idOffEnd->left;
-      // Don't kill me
-      idOffEnd->left = NULL;
-      free(idOffEnd);
-
-      idVar.extraInfo.push_back( s.prettyString(idOffStart) );
-
-      // [-] ?
-      if(!sKernel.hasVariableInScope(idVar.name))
-        sKernel.addVariable(idVar);
-
-      s.addVariable(idVar);
-
-      nodePos = nodePos->right;
-
-      if(nodePos->value != idName){
-        std::cout << "The second statement of:\n"
-                  << "  " << s.expRoot << '\n'
-                  << "should look like:\n"
-                  << "  for(int [var] = off; [var] < dim; ...; ...)\n"
-                  << "           ^____________^ are the same\n";
-        throw 1;
-      }
-
-      nodePos = nodePos->right;
-
-      if(nodePos->value != "<"){
-        std::cout << "The second statement of:\n"
-                  << "  " << s.expRoot << '\n'
-                  << "should look like:\n"
-                  << "  for(int var = off; var [<] dim; ...; ...)\n"
-                  << "                          ^ less than\n";
-        throw 1;
-      }
-
-      nodePos = nodePos->right;
-
-      // Dim is shadowed by a variable
-      if((nodePos->type & unknownVariable) &&
-         (nodePos->right == commaNodes[2])){
-
-        dimName = nodePos->value;
-      }
-      // Dim explicitly stated
-      else{
-        bool startFromBelow = false;
-
-        // blah < [(...) ...]
-        if(nodePos->left->down.size()){
-          nodePos = nodePos->left;
-          startFromBelow = true;
-        }
-
-        // Un-link node chain
-        commaNodes[2]->left->right = NULL;
-
-        // Manual bounds
-        bool errorFound = nodeHasUnknownVariable(nodePos);
-
-        if(!errorFound){
-          strNode *tmpNodePos;
-
-          if(startFromBelow){
-            tmpNodePos = nodePos->clone();
-
-            tmpNodePos->value = "+";
-            tmpNodePos->type  = keywordType["+"];
-          }
-          else
-            tmpNodePos = nodePos;
-
-          dimSubName = (std::string) evaluateLabelNode(tmpNodePos);
-
-          // Re-link node chain
-          commaNodes[2]->left->right = commaNodes[2]->left;
-        }
-        else{
-          std::cout << "The second statement of:\n"
-                    << "  " << s.expRoot << '\n'
-                    << "should look like:\n"
-                    << "  for(int var = off; var < [dim]; ...; ...)\n"
-                    << "                            ^ only one variable name\n"
-                    << "                              or exact value\n";
-          throw 1;
-        }
-      }
-
-      if(dimName.size())
-        dimVar.name = dimName;
-      else
-        dimVar.name = obfuscate("occa" + ioLoop + "Dim" + loopNest);
-
-      if(dimSubName.size())
-        dimVar.extraInfo.push_back(dimSubName);
-      else
-        dimVar.extraInfo.push_back("occa" + ioLoop + "Dim" + loopNest);
-
-      // [-] ?
-      if(!sKernel.hasVariableInScope(dimVar.name))
-        sKernel.addVariable(dimVar);
-
-      s.addVariable(dimVar);
-
-      nodePos = commaNodes[3]->right;
-
-      loopVar.name = "occa" + ioLoop + "For" + loopNest;
-
-      s.addVariable(loopVar);
+      std::cout << *(s.expRoot.leaves[0]) << ' '
+                << opSign
+                << " (occa" << ioLoop << "Id" << loopNest
+                << " * (" << opStride << "));";
 
       std::string occaForName = "occa" + ioLoop + "For" + loopNest;
 
-      // [-] Needs proper free (can't because it's nested...)
-      // free(s.nodeStart);
+      s.type = keywordType["occaOuterFor0"];
 
-      s.type            = keywordType["occaOuterFor0"];
-      s.nodeStart       = new strNode(occaForName);
-      s.nodeStart->type = s.type;
+      s.expRoot.info  = expType::occaFor;
+      s.expRoot.value = occaForName;
+      s.expRoot.free();
 
-      s.nodeEnd = s.nodeStart;
-
-      const int downCount = oldDown.size();
-
-      for(int i = 0; i < downCount; ++i){
-        // Remove the braces
-        popAndGoRight(oldDown[i]);
-        parserNamespace::lastNode(oldDown[i])->pop();
-
-        s.loadAllFromNode(oldDown[i]);
-      }
+      std::cout
+        << "s = " << s << '\n';
     }
 
     void parserBase::loadScopeVarMap(statement &s){
