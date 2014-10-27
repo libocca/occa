@@ -379,8 +379,6 @@ namespace occa {
 
       else
         organize();
-
-      print();
     }
 
     void expNode::organize(){

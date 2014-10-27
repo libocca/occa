@@ -989,8 +989,6 @@ namespace occa {
       iterCheck = node2.leaves[0]->value;
 
       //---[ Node 3 ]---------
-      s.expRoot.print();
-
       if((node3.leafCount != 1) ||
          ((node3.leaves[0]->value != "++") &&
           (node3.leaves[0]->value != "--") &&
