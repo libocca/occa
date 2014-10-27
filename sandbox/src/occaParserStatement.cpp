@@ -569,7 +569,7 @@ namespace occa {
       info = expType::checkSInfo;
 
       // [+]
-      print();
+      // print();
 
       if((leafCount < 2) ||
          (leaves[1]->value != "(")){
@@ -895,16 +895,15 @@ namespace occa {
       int leafPos;
 
       if(initPos){
-        expNode **sLeaves = new expNode*[initPos + leafCount];
+        expNode **sLeaves = new expNode*[leafCount];
 
         for(int i = 0; i < initPos; ++i)
           sLeaves[i] = leaves[i];
 
         delete [] leaves;
 
-        leaves     = sLeaves;
-        leafPos    = initPos;
-        leafCount += initPos;
+        leaves  = sLeaves;
+        leafPos = initPos;
       }
       else{
         leaves = new expNode*[leafCount];
@@ -1007,12 +1006,11 @@ namespace occa {
 
         // (downNode == lastDown) if loading [()]
         if(downNode->down.size())
-          sLeafCount = sLeaf->initDownsFromNode(downNode, 0);
+          sLeafCount = sLeaf->initDownsFromNode(downNode);
 
         if(downNode != lastDown){
-          popAndGoRight(downNode);
-
-          sLeaf->initLoadFromNode(downNode, sLeafCount);
+          // Don't pop (root's free will screw up)
+          sLeaf->initLoadFromNode(downNode->right, sLeafCount);
         }
       }
 

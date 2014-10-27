@@ -1040,8 +1040,6 @@ namespace occa {
       }
 
       s.loadFromNode(labelCode( splitContent(ss.str()) ));
-      s.statementEnd->value->expRoot.print();
-      throw 1;
 
       statement *newS2       = s.statementEnd->value;
       statementNode *newNode = new statementNode(newS2);

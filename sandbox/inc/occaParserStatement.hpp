@@ -97,7 +97,7 @@ namespace occa {
                             const int initPos = 0);
 
       int initDownsFromNode(strNode *nodeRoot,
-                            int leafPos);
+                            int leafPos = 0);
 
       void initOrganization();
 
