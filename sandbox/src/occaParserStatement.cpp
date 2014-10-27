@@ -1788,8 +1788,12 @@ namespace occa {
               else
                 out << tab << "};\n";
             }
-            else
-              out << leaf << ' ';
+            else{
+              out << leaf;
+
+              if(i < (leafCount - 1))
+                out << ' ';
+            }
           }
         }
         else
@@ -1847,9 +1851,7 @@ namespace occa {
         for(int i = 0; i < leafCount; ++i)
           out << *(leaves[i]);
 
-        if((up == NULL) &&
-           (sInfo.type & simpleStatementType))
-          out << ';';
+        out << '\n';
 
         break;
       }
@@ -3473,8 +3475,16 @@ namespace occa {
         return ret;
       }
 
-      else if(type & (simpleStatementType | gotoStatementType)){
+      else if(type & declareStatementType){
         return expRoot.getString(tab);
+      }
+
+      else if(type & (simpleStatementType | gotoStatementType)){
+        return expRoot.getString(tab) + "\n";
+      }
+
+      else if(type & (simpleStatementType | gotoStatementType)){
+        return expRoot.getString(tab) + "\n";
       }
 
       else if(type & flowStatementType){
