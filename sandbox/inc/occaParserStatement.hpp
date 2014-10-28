@@ -364,6 +364,8 @@ namespace occa {
       void addQualifier(const std::string &qualifier, const int pos = 0);
 
       std::string getFunctionName() const;
+      expNode* getFunctionArg(const int pos);
+      std::string getFunctionArgName(const int pos);
       int getFunctionArgCount() const;
 
       int getForStatementCount() const;
