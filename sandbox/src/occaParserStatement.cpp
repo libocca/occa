@@ -380,6 +380,9 @@ namespace occa {
       else
         organize();
 
+      print();
+      std::cout << "this = " << *this << '\n';
+
       updateNewVariables();
     }
 
@@ -1884,14 +1887,14 @@ namespace occa {
       delete [] leaves;
     }
 
-    void expNode::print(const std::string &tab) const {
+    void expNode::print(const std::string &tab){
       std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
       for(int i = 0; i < leafCount; ++i)
         leaves[i]->print(tab + "    ");
     }
 
-    void expNode::printOn(std::ostream &out, const std::string &tab) const {
+    void expNode::printOn(std::ostream &out, const std::string &tab){
       switch(info){
       case (expType::root):{
         out << tab;
@@ -2094,12 +2097,22 @@ namespace occa {
 
       case expType::declaration:{
         if(leafCount){
-          out << tab << *(leaves[0]) << *(leaves[1]);
+          // Delarations are used in
+          //   typedef struct {} [a]
+          // where there is no type
+          const int typeAndVar = 2 - !(leaves[0]->info & expType::type);
 
-          for(int i = 2; i < leafCount; ++i)
+          if(typeAndVar == 2)
+            out << tab;
+
+          for(int i = 0; i < typeAndVar; ++i)
+            out << *(leaves[i]);
+
+          for(int i = typeAndVar; i < leafCount; ++i)
             out << ", " << *(leaves[i]);
 
-          out << ";\n";
+          if(typeAndVar == 2)
+            out << ";\n";
         }
 
         break;
@@ -2239,18 +2252,24 @@ namespace occa {
       }
       default:{
         if(info & expType::typedef_){
-          out << "typedef";
+          const int oldInfo = info;
 
-          for(int i = 0; i < leafCount; ++i)
-            out << ' ' << *(leaves[i]);
+          out << "typedef ";
 
-          out << ";";
+          info &= ~expType::typedef_;
+
+          out << *this;
+
+          info = oldInfo;
+
+          if(info & expType::struct_)
+            out << ";\n";
         }
       }
       };
     }
 
-    std::string expNode::getString(const std::string &tab) const {
+    std::string expNode::getString(const std::string &tab){
       std::stringstream ss;
 
       printOn(ss, tab);
@@ -2258,11 +2277,11 @@ namespace occa {
       return ss.str();
     }
 
-    expNode::operator std::string () const {
+    expNode::operator std::string (){
       return getString();
     }
 
-    std::ostream& operator << (std::ostream &out, const expNode &n){
+    std::ostream& operator << (std::ostream &out, expNode &n){
       n.printOn(out);
 
       return out;
@@ -3946,7 +3965,7 @@ namespace occa {
       return ret;
     }
 
-    statement::operator std::string() const {
+    statement::operator std::string(){
       const std::string tab = getTab();
 
       statementNode *statementPos = statementStart;
@@ -4040,7 +4059,7 @@ namespace occa {
       return expRoot.getString(tab);
     }
 
-    std::ostream& operator << (std::ostream &out, const statement &s){
+    std::ostream& operator << (std::ostream &out, statement &s){
       out << (std::string) s;
 
       return out;

@@ -201,13 +201,13 @@ namespace occa {
 
       void free();
 
-      void print(const std::string &tab = "") const;
-      void printOn(std::ostream &out, const std::string &tab = "") const;
+      void print(const std::string &tab = "");
+      void printOn(std::ostream &out, const std::string &tab = "");
 
-      std::string getString(const std::string &tab = "") const;
-      operator std::string () const;
+      std::string getString(const std::string &tab = "");
+      operator std::string ();
 
-      friend std::ostream& operator << (std::ostream &out, const expNode &n);
+      friend std::ostream& operator << (std::ostream &out, expNode &n);
     };
 
     struct statementExp {
@@ -376,10 +376,10 @@ namespace occa {
                                const std::string &tab_ = "",
                                const bool autoMode = true) const;
 
-      operator std::string() const;
+      operator std::string();
     };
 
-    std::ostream& operator << (std::ostream &out, const statement &s);
+    std::ostream& operator << (std::ostream &out, statement &s);
   };
 };
 
