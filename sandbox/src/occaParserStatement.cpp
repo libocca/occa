@@ -379,6 +379,8 @@ namespace occa {
 
       else
         organize();
+
+      updateNewVariables();
     }
 
     void expNode::organize(){
@@ -387,20 +389,28 @@ namespace occa {
 
       initOrganization();
       organizeLeaves();
-
-      updateNewVariables();
     }
 
     // Disregards function pointers, those are "easy"
     void expNode::addNewVariables(strNode *nodePos){
-      if( !(sInfo->type & (declareStatementType |
+      if((up != NULL) ||
+         !(sInfo->type & (declareStatementType |
                           functionDefinitionType)) )
         return;
 
       strNode *lastPos = NULL;
 
       if(sInfo->type & functionDefinitionType){
-        nodePos = lastNode(nodePos)->down[0];
+        nodePos = lastNode(nodePos);
+
+        //---[ Add Function ]-----------
+        varInfo newVar;
+        newVar.name = nodePos->value;
+
+        sInfo->up->addVariable(newVar);
+        //==============================
+
+        nodePos = nodePos->down[0];
         lastPos = lastNode(nodePos);
         lastPos->value = ";";
 
@@ -511,7 +521,9 @@ namespace occa {
     }
 
     void expNode::updateNewVariables(){
-      if( !(sInfo->type & declareStatementType) )
+      if((up != NULL) ||
+         !(sInfo->type & (declareStatementType |
+                          functionDefinitionType)) )
         return;
     }
 
@@ -641,15 +653,20 @@ namespace occa {
       }
 
       if(argPos){
+        int typePos = (argPos - 1);
+
         const int trueLeafCount = leafCount;
-        leafCount = argPos;
+        leafCount = typePos;
 
         organize();
 
         const int newArgPos = leafCount;
 
-        leafCount = trueLeafCount - (argPos - newArgPos);
-        argPos    = newArgPos;
+        for(int i = typePos; i < trueLeafCount; ++i)
+          leaves[newArgPos + i - typePos] = leaves[i];
+
+        leafCount = trueLeafCount - (typePos - newArgPos);
+        typePos   = newArgPos;
       }
 
       expNode &argNode = *(leaves[argPos]);
@@ -1906,8 +1923,8 @@ namespace occa {
       case expType::variable:{
         // [[[const] [int] [*]] [x]]
         if(leafCount){
-          const bool hasLQualifier = (leaves[0]->info                  & (expType::qualifier |
-                                                                         expType::type));
+          const bool hasLQualifier = (leaves[0]->info & (expType::qualifier |
+                                                         expType::type));
 
           const bool hasRQualifier = (((hasLQualifier + 1) < leafCount) &&
                                       (leaves[hasLQualifier + 1]->info & (expType::qualifier |

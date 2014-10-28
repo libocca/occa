@@ -55,7 +55,6 @@ namespace occa {
       // Broken
       modifyTextureVariables();
 
-      // Broken
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
 
       // Broken
@@ -1771,11 +1770,14 @@ namespace occa {
     }
 
     void parserBase::addArgQualifiers(varInfo &info, statement &s){
+      std::cout << "info = " << info << '\n';
+
       // Having functionCallType at this level means:
       //   occaExp, occaBarrier, etc
       // so don't add occaKernelInfoArg
       if((info.typeInfo & functionType) &&
          !(info.typeInfo & functionCallType)){
+
         strNode *nodePos = s.nodeStart;
 
         while(nodePos->down.size() == 0)
