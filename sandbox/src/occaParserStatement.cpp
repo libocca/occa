@@ -532,7 +532,7 @@ namespace occa {
         varInfo &var = *(sInfo->up->scopeVarMap[ leaves[1]->value ]);
 
         leaves[0]->setVarInfo(var);
-        std::cout << "var = " << var << '\n';
+        // std::cout << "var = " << var << '\n';
 
         const int argc = sInfo->getFunctionArgCount();
 
@@ -540,17 +540,21 @@ namespace occa {
           expNode &arg  = *(sInfo->getFunctionArg(i));
           varInfo &sVar = *(sInfo->scopeVarMap[ sInfo->getFunctionArgName(i) ]);
 
-          std::cout << "sVar = " << sVar << '\n';
+          // std::cout << "sVar = " << sVar << '\n';
         }
       }
 
-      print();
+      // print();
     }
 
     void expNode::splitDeclareStatement(){
       info = expType::declaration;
 
-      int varCount = 1;
+      const bool hasType = ((leafCount) &&
+                            (leaves[0]->info & (expType::qualifier |
+                                                expType::type)));
+
+      int varCount = hasType;
 
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->info & expType::operator_) &&
@@ -566,12 +570,15 @@ namespace occa {
       varCount  = 0;
 
       for(int i = 0; i < leafCount; ++i){
-        if(((first != 0) && ((leaves[i]->value == ",") ||
-                             (leaves[i]->value == ";")))    ||
-           // Load type
-           ((first == 0) && !(leaves[i]->info & (expType::qualifier |
-                                                 expType::type)))){
+        const bool addingType = (hasType && (first == 0));
 
+        const bool delimeterStop = (!addingType && ((leaves[i]->value == ",") ||
+                                                    (leaves[i]->value == ";")));
+
+        const bool addingTypeStop = (addingType && !(leaves[i]->info & (expType::qualifier |
+                                                                        expType::type)));
+
+        if(delimeterStop | addingTypeStop){
           expNode *newLeaf = new expNode(*this);
           const int newLeafCount = (i - first);
 
@@ -585,7 +592,7 @@ namespace occa {
 
           newLeaf->organize();
 
-          if(first){
+          if(delimeterStop){
             delete leaves[i];
 
             first = (i + 1);
@@ -916,7 +923,6 @@ namespace occa {
         expNode *ssLastLeaf = sLastLeaf->leaves[sLastLeaf->leafCount - 1];
         sInfo->up->addTypeDef(ssLastLeaf->value);
       }
-
 
       info |= expType::typedef_;
     }
@@ -2230,6 +2236,16 @@ namespace occa {
         out << value << ' ';
 
         break;
+      }
+      default:{
+        if(info & expType::typedef_){
+          out << "typedef";
+
+          for(int i = 0; i < leafCount; ++i)
+            out << ' ' << *(leaves[i]);
+
+          out << ";";
+        }
       }
       };
     }
