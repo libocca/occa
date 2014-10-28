@@ -1771,6 +1771,7 @@ namespace occa {
 
     void parserBase::addArgQualifiers(varInfo &info, statement &s){
       std::cout << "info = " << info << '\n';
+      s.expRoot.print();
 
       // Having functionCallType at this level means:
       //   occaExp, occaBarrier, etc

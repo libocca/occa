@@ -525,29 +525,41 @@ namespace occa {
          !(sInfo->type & (declareStatementType |
                           functionDefinitionType)) )
         return;
+
+      if(sInfo->type & declareStatementType){
+      }
+      else if(sInfo->type & functionDefinitionType){
+        varInfo &var = *(sInfo->up->scopeVarMap[ leaves[1]->value ]);
+        std::cout << "var = " << var << '\n';
+      }
+
+      print();
     }
 
     void expNode::splitDeclareStatement(){
       info = expType::declaration;
 
-      int extras = 1;
+      int varCount = 1;
 
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->info & expType::operator_) &&
            (leaves[i]->value == ",")){
 
-          ++extras;
+          ++varCount;
         }
       }
 
-      expNode **newLeaves = new expNode*[extras];
-      extras = 0;
+      expNode **newLeaves = new expNode*[1 + varCount];
 
       int first = 0;
+      varCount  = 0;
 
       for(int i = 0; i < leafCount; ++i){
-        if((leaves[i]->value == ",") ||
-           (leaves[i]->value == ";")){
+        if(((first != 0) && ((leaves[i]->value == ",") ||
+                             (leaves[i]->value == ";")))    ||
+           // Load type
+           ((first == 0) && !(leaves[i]->info & (expType::qualifier |
+                                                 expType::type)))){
 
           expNode *newLeaf = new expNode(*this);
           const int newLeafCount = (i - first);
@@ -560,19 +572,30 @@ namespace occa {
           for(int i = 0; i < newLeafCount; ++i)
             newLeaf->leaves[i] = leaves[first + i];
 
-          delete leaves[i];
-
-          first = i + 1;
-          newLeaves[extras++] = newLeaf;
-
           newLeaf->organize();
+
+          if(first){
+            delete leaves[i];
+
+            first = (i + 1);
+
+            newLeaves[varCount++] = newLeaf;
+          }
+          else{
+            first = i;
+
+            newLeaves[varCount++] = newLeaf->leaves[0];
+
+            delete [] newLeaf->leaves;
+            delete newLeaf;
+          }
         }
       }
 
       delete [] leaves;
 
       leaves    = newLeaves;
-      leafCount = extras;
+      leafCount = varCount;
     }
 
     void expNode::splitForStatement(){
@@ -683,8 +706,8 @@ namespace occa {
         argc = 0;
 
         for(int i = 0; i <= argNode.leafCount; ++i){
-          if((argNode.leaves[i]->value == ",") ||
-             (i == argNode.leafCount)){
+          if((i == argNode.leafCount) ||
+             (argNode.leaves[i]->value == ",")){
 
             expNode &sLeaf = *(new expNode(argNode));
             sLeaves[argc]  = &sLeaf;
@@ -2009,9 +2032,9 @@ namespace occa {
 
       case expType::declaration:{
         if(leafCount){
-          out << tab << *(leaves[0]);
+          out << tab << *(leaves[0]) << *(leaves[1]);
 
-          for(int i = 1; i < leafCount; ++i)
+          for(int i = 2; i < leafCount; ++i)
             out << ", " << *(leaves[i]);
 
           out << ";\n";

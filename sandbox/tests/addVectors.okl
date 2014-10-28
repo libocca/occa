@@ -1,8 +1,9 @@
 #if 1
-void addVectors(int entries,
+void addVectors(int entries[2],
                 const float * a,
                 const float * b,
                 float * ab){
+  const int *blah[3], *blah2[2];
   for(const int group = 0; group < ((entries - 31) / 32); group += (N + 1); outer0){
     for(int item = 0; item < 32; ++item; inner0){
       if((item + group*32) < entries)
