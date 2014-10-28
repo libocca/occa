@@ -193,7 +193,8 @@ namespace occa {
       void addNode(const int info_, const int pos);
 
       bool hasQualifier(const std::string &qualifier) const;
-      void addQualifier(const std::string &qualifier, const int pos = 0);
+
+      void setVarInfo(varInfo &var);
       //================================
 
       void freeLeaf(const int leafPos);

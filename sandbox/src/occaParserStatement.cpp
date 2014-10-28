@@ -530,6 +530,8 @@ namespace occa {
       }
       else if(sInfo->type & functionDefinitionType){
         varInfo &var = *(sInfo->up->scopeVarMap[ leaves[1]->value ]);
+
+        leaves[0]->setVarInfo(var);
         std::cout << "var = " << var << '\n';
       }
 
@@ -1491,26 +1493,43 @@ namespace occa {
             ++brackets;
           }
 
-          expNode *newLeaf  = new expNode(*this);
-          expNode *sNewLeaf = new expNode(*newLeaf);
+          const bool inserting = ((leaves[leafPos - 1]->info & expType::variable) &&
+                                  leaves[leafPos - 1]->leafCount);
 
-          newLeaf->up        = this;
-          newLeaf->info      = expType::variable;
-          newLeaf->leafCount = 2;
-          newLeaf->leaves    = new expNode*[2];
+          expNode *newLeaf;
+
+          if(inserting){
+            newLeaf = leaves[leafPos - 1];
+          }
+          else{
+            newLeaf = new expNode(*this);
+
+            newLeaf->up        = this;
+            newLeaf->info      = expType::variable;
+            newLeaf->leafCount = 2;
+            newLeaf->leaves    = new expNode*[2];
+          }
+
+          expNode *sNewLeaf = new expNode(*newLeaf);
 
           sNewLeaf->up        = newLeaf;
           sNewLeaf->info      = expType::qualifier;
           sNewLeaf->leafCount = brackets;
           sNewLeaf->leaves    = new expNode*[brackets];
 
-          newLeaf->leaves[0] = leaves[leafPos - 1];
-          newLeaf->leaves[1] = sNewLeaf;
+          if(inserting){
+            newLeaf->addNode(expType::qualifier, newLeaf->leafCount);
+            newLeaf->leaves[newLeaf->leafCount - 1] = sNewLeaf;
+          }
+          else{
+            newLeaf->leaves[0] = leaves[leafPos - 1];
+            newLeaf->leaves[1] = sNewLeaf;
+
+            leaves[leafPos - 1] = newLeaf;
+          }
 
           for(int i = 0; i < brackets; ++i)
             sNewLeaf->leaves[i] = leaves[leafPos + i];
-
-          leaves[leafPos - 1] = newLeaf;
 
           for(int i = (leafPos + brackets); i < leafCount; ++i)
             leaves[i - brackets] = leaves[i];
@@ -1755,30 +1774,6 @@ namespace occa {
     }
 
     //---[ Exp Info ]-----------------
-    bool expNode::hasQualifier(const std::string &qualifier) const {
-      if(info & expType::type){
-        if(!leafCount ||
-           !(leaves[0]->info & expType::qualifier))
-          return false;
-
-        return leaves[0]->hasQualifier(qualifier);
-      }
-      else if(info & expType::qualifier){
-        if(leafCount){
-          for(int i = 0; i < leafCount; ++i){
-            if(leaves[i]->value == qualifier)
-              return true;
-          }
-
-          return false;
-        }
-        else
-          return value == qualifier;
-      }
-
-      return false;
-    }
-
     void expNode::addNode(const int info_,
                           const int pos){
       expNode &newNode  = *(new expNode(*this));
@@ -1804,6 +1799,45 @@ namespace occa {
 
       leaves = newLeaves;
       ++leafCount;
+    }
+
+    bool expNode::hasQualifier(const std::string &qualifier) const {
+      if(info & expType::type){
+        if(!leafCount ||
+           !(leaves[0]->info & expType::qualifier))
+          return false;
+
+        return leaves[0]->hasQualifier(qualifier);
+      }
+      else if(info & expType::qualifier){
+        if(leafCount){
+          for(int i = 0; i < leafCount; ++i){
+            if(leaves[i]->value == qualifier)
+              return true;
+          }
+
+          return false;
+        }
+        else
+          return value == qualifier;
+      }
+
+      return false;
+    }
+
+    void expNode::setVarInfo(varInfo &var){
+      if(info & expType::type){
+        const bool hasLQualifier = (leaves[0]->info & (expType::qualifier |
+                                                       expType::type));
+
+        const bool hasRQualifier = (((hasLQualifier + 1) < leafCount) &&
+                                    (leaves[hasLQualifier + 1]->info & (expType::qualifier |
+                                                                        expType::type)));
+
+        if(hasLQualifier){
+
+        }
+      }
     }
     //================================
 
