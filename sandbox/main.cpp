@@ -57,11 +57,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("tests/cleanTest.c");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("tests/cleanTest.c");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   occa::parser parser;
@@ -69,11 +69,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("tests/addVectors.okl");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("tests/addVectors.okl");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   occa::parser parser;

@@ -380,8 +380,9 @@ namespace occa {
       else
         organize();
 
-      print();
-      std::cout << "this = " << *this << '\n';
+      // [-] Need to fix typedef output
+      // print();
+      // std::cout << "this = " << *this << '\n';
 
       updateNewVariables();
     }
