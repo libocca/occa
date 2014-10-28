@@ -47,7 +47,7 @@ namespace occa {
 
     class expNode {
     public:
-      statement &sInfo;
+      statement *sInfo;
 
       std::string value;
       int info;
@@ -179,6 +179,8 @@ namespace occa {
 
       bool hasAnArrayQualifier(const int pos = 0) const;
       //================================
+
+      static void swap(expNode &a, expNode &b);
 
       expNode* clone(statement &s);
       expNode* clone(expNode *original);
@@ -337,6 +339,8 @@ namespace occa {
                                  strNode *nodeRoot,
                                  strNode *nodeRootEnd);
 
+      statementNode* getStatementNode();
+
       varInfo* addVariable(const varInfo &info,
                            statement *origin = NULL);
 
@@ -353,6 +357,8 @@ namespace occa {
       void printTypeDefsInStatement();
 
       //---[ Statement Info ]-----------
+      void swapExpWith(statement &s);
+
       bool hasQualifier(const std::string &qualifier) const;
       void addQualifier(const std::string &qualifier, const int pos = 0);
 

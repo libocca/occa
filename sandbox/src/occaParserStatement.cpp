@@ -5,7 +5,7 @@ namespace occa {
   namespace parserNamespace {
     //---[ Exp Node ]-------------------------------
     expNode::expNode(statement &s) :
-      sInfo(s),
+      sInfo(&s),
 
       value(""),
       info(expType::root),
@@ -34,52 +34,52 @@ namespace occa {
 
     void expNode::labelStatement(strNode *&nodeRoot){
       if(nodeRoot->type == macroKeywordType)
-        sInfo.type = loadMacroStatement(nodeRoot);
+        sInfo->type = loadMacroStatement(nodeRoot);
 
       else if(nodeRoot->type == keywordType["occaOuterFor0"])
-        sInfo.type = loadOccaForStatement(nodeRoot);
+        sInfo->type = loadOccaForStatement(nodeRoot);
 
       else if(nodeRoot->type & typedefType)
-        sInfo.type = loadTypedefStatement(nodeRoot);
+        sInfo->type = loadTypedefStatement(nodeRoot);
 
       else if(nodeRoot->type & structType)
-        sInfo.type = loadStructStatement(nodeRoot);
+        sInfo->type = loadStructStatement(nodeRoot);
 
       else if(nodeRoot->type & operatorType)
-        sInfo.type = loadUpdateStatement(nodeRoot);
+        sInfo->type = loadUpdateStatement(nodeRoot);
 
-      else if(sInfo.nodeHasDescriptor(nodeRoot))
-        sInfo.type = loadDescriptorStatement(nodeRoot);
+      else if(sInfo->nodeHasDescriptor(nodeRoot))
+        sInfo->type = loadDescriptorStatement(nodeRoot);
 
       else if(nodeRoot->type & unknownVariable){
         if(nodeRoot->right &&
            nodeRoot->right->value == ":")
-          sInfo.type = loadGotoStatement(nodeRoot);
+          sInfo->type = loadGotoStatement(nodeRoot);
 
-        sInfo.type = loadUpdateStatement(nodeRoot);
+        sInfo->type = loadUpdateStatement(nodeRoot);
       }
 
       else if(nodeRoot->type & flowControlType)
-        sInfo.type = loadFlowStatement(nodeRoot);
+        sInfo->type = loadFlowStatement(nodeRoot);
 
       else if(nodeRoot->type & specialKeywordType)
-        sInfo.type = loadSpecialStatement(nodeRoot);
+        sInfo->type = loadSpecialStatement(nodeRoot);
 
       else if((nodeRoot->type == startBrace) &&
               (nodeRoot->up)                 &&
               !(nodeRoot->up->type & operatorType))
-        sInfo.type = loadBlockStatement(nodeRoot);
+        sInfo->type = loadBlockStatement(nodeRoot);
 
       // Statement: (int) 3;
       else if(nodeRoot->type == emptyType)
-        sInfo.type = loadUpdateStatement(nodeRoot);
+        sInfo->type = loadUpdateStatement(nodeRoot);
 
       else {
         while(nodeRoot &&
               !(nodeRoot->type & endStatement))
           nodeRoot = nodeRoot->right;
 
-        sInfo.type = declareStatementType;
+        sInfo->type = declareStatementType;
       }
     }
 
@@ -112,9 +112,9 @@ namespace occa {
       if((nodeRoot->value == "struct")       &&
          (nodeRoot->down.size() == 0)        &&
          (nodeRoot->right)                   &&
-         (sInfo.hasTypeInScope(nodeRoot->right->value))){
+         (sInfo->hasTypeInScope(nodeRoot->right->value))){
 
-        return sInfo.checkDescriptorStatementType(nodeRoot);
+        return sInfo->checkDescriptorStatementType(nodeRoot);
       }
 
       while(nodeRoot){
@@ -146,7 +146,7 @@ namespace occa {
       while((nodeRoot)                         &&
             (nodeRoot->down.size() == 0)       &&
             ((nodeRoot->type & descriptorType) ||
-             sInfo.nodeHasSpecifier(nodeRoot))){
+             sInfo->nodeHasSpecifier(nodeRoot))){
 
         if(nodeRoot->type & structType){
           nodeRoot = oldNodeRoot;
@@ -181,7 +181,7 @@ namespace occa {
 
           if(downNode->type & parentheses){
             std::cout << "Function pointer needs a [*]:\n"
-                      << sInfo.prettyString(oldNodeRoot, "  ");
+                      << sInfo->prettyString(oldNodeRoot, "  ");
             throw 1;
           }
 
@@ -189,7 +189,7 @@ namespace occa {
             if(downNode->down.size()){
               if(nodeRoot == NULL){
                 std::cout << "Missing a [;] after:\n"
-                          << sInfo.prettyString(oldNodeRoot, "  ");
+                          << sInfo->prettyString(oldNodeRoot, "  ");
                 throw 1;
               }
 
@@ -201,27 +201,27 @@ namespace occa {
 
           if(nodeRoot == NULL){
             std::cout << "Missing a [;] after:\n"
-                      << sInfo.prettyString(oldNodeRoot, "  ");
+                      << sInfo->prettyString(oldNodeRoot, "  ");
             throw 1;
           }
 
           // [C++] Function call, not function pointer define
           //    getFunc(0)(arg1, arg2);
-          if(sInfo.hasVariableInScope(downNode->value))
+          if(sInfo->hasVariableInScope(downNode->value))
             return updateStatementType;
 
           return declareStatementType;
         }
         else{
           std::cout << "You found the [Waldo 1] error in:\n"
-                    << sInfo.prettyString(oldNodeRoot, "  ");
+                    << sInfo->prettyString(oldNodeRoot, "  ");
           throw 1;
         }
       }
 
       if(nodeRoot == NULL){
         std::cout << "Missing a [;] after:\n"
-                  << sInfo.prettyString(oldNodeRoot, "  ");
+                  << sInfo->prettyString(oldNodeRoot, "  ");
         throw 1;
       }
 
@@ -254,7 +254,7 @@ namespace occa {
         return switchStatementType;
 
       std::cout << "You found the [Waldo 2] error in:\n"
-                << sInfo.prettyString(nodeRoot, "  ");
+                << sInfo->prettyString(nodeRoot, "  ");
       throw 1;
 
       return 0;
@@ -279,7 +279,7 @@ namespace occa {
 
     void expNode::loadFromNode(strNode *&nodePos){
       if(nodePos == NULL){
-        sInfo.type = invalidStatementType;
+        sInfo->type = invalidStatementType;
         return;
       }
 
@@ -288,10 +288,10 @@ namespace occa {
       labelStatement(nodePos);
 
       // Don't need to load stuff
-      if(sInfo.type & (macroStatementType           |
+      if(sInfo->type & (macroStatementType           |
                        gotoStatementType            |
                        blockStatementType) ||
-         (sInfo.type == keywordType["occaOuterFor0"])){
+         (sInfo->type == keywordType["occaOuterFor0"])){
 
         return;
       }
@@ -330,19 +330,19 @@ namespace occa {
       if(lastNewNode->down.size()){
         int downsAvailable = 0;
 
-        if(sInfo.type & (forStatementType      |
+        if(sInfo->type & (forStatementType      |
                          switchStatementType   |
                          functionStatementType)){
 
           downsAvailable = 1;
         }
         // Skip do
-        else if(sInfo.type == whileStatementType){
+        else if(sInfo->type == whileStatementType){
           downsAvailable = 1;
         }
         // Only [if] and [if else]
-        else if((sInfo.type & ifStatementType) &&
-                (sInfo.type != elseStatementType)){
+        else if((sInfo->type & ifStatementType) &&
+                (sInfo->type != elseStatementType)){
             downsAvailable = 1;
         }
 
@@ -362,19 +362,19 @@ namespace occa {
       addNewVariables(nodeRoot);
       initLoadFromNode(nodeRoot);
 
-      if(sInfo.type & declareStatementType)
+      if(sInfo->type & declareStatementType)
         splitDeclareStatement();
 
-      else if(sInfo.type & forStatementType)
+      else if(sInfo->type & forStatementType)
         splitForStatement();
 
-      else if(sInfo.type & functionStatementType)
+      else if(sInfo->type & functionStatementType)
         splitFunctionStatement();
 
-      else if(sInfo.type & structStatementType)
+      else if(sInfo->type & structStatementType)
         splitStructStatement();
 
-      else if(sInfo.type & typedefStatementType)
+      else if(sInfo->type & typedefStatementType)
         splitTypedefStatement();
 
       else
@@ -393,13 +393,13 @@ namespace occa {
 
     // Disregards function pointers, those are "easy"
     void expNode::addNewVariables(strNode *nodePos){
-      if( !(sInfo.type & (declareStatementType |
+      if( !(sInfo->type & (declareStatementType |
                           functionDefinitionType)) )
         return;
 
       strNode *lastPos = NULL;
 
-      if(sInfo.type & functionDefinitionType){
+      if(sInfo->type & functionDefinitionType){
         nodePos = lastNode(nodePos)->down[0];
         lastPos = lastNode(nodePos);
         lastPos->value = ";";
@@ -466,7 +466,7 @@ namespace occa {
             }
 
             // Add new variables
-            sInfo.addVariable(newVar);
+            sInfo->addVariable(newVar);
 
             nodePos = nodePos->right;
           }
@@ -489,7 +489,7 @@ namespace occa {
             newVar.name = downNode->value;
 
             // [-] Not fully true
-            sInfo.addVariable(newVar);
+            sInfo->addVariable(newVar);
           }
         }
 
@@ -511,7 +511,7 @@ namespace occa {
     }
 
     void expNode::updateNewVariables(){
-      if( !(sInfo.type & declareStatementType) )
+      if( !(sInfo->type & declareStatementType) )
         return;
     }
 
@@ -740,7 +740,7 @@ namespace occa {
          (pos != leafCount) &&
          !(leaves[pos - 1]->info & expType::qualifier)){
 
-        sInfo.up->addTypeDef(leaves[pos - 1]->value);
+        sInfo->up->addTypeDef(leaves[pos - 1]->value);
       }
 
       leaves[pos]->splitStructStatements();
@@ -805,7 +805,7 @@ namespace occa {
             if((newLeaf->leaves[i]->info & expType::qualifier) &&
                (newLeaf->leaves[i]->value == "struct")         &&
                (  !(((i + 1) < newLeafCount) &&
-                    (sInfo.hasTypeInScope(leaves[first + i + 1]->value)))  )){
+                    (sInfo->hasTypeInScope(leaves[first + i + 1]->value)))  )){
 
               newLeafIsAStruct = true;
             }
@@ -843,7 +843,7 @@ namespace occa {
           // Make sure struct is not being used as a qualifier
           if(  !((leaves[i]->value == "struct") &&
                  ((i + 2) < leafCount)          &&
-                 (sInfo.hasTypeInScope(leaves[i + 2]->value)))  ){
+                 (sInfo->hasTypeInScope(leaves[i + 2]->value)))  ){
 
             splitStruct = true;
           }
@@ -859,11 +859,11 @@ namespace occa {
       expNode *sLastLeaf = lastLeaf->leaves[lastLeaf->leafCount - 1];
 
       if(!splitStruct){
-        sInfo.up->addTypeDef(sLastLeaf->value);
+        sInfo->up->addTypeDef(sLastLeaf->value);
       }
       else{
         expNode *ssLastLeaf = sLastLeaf->leaves[sLastLeaf->leafCount - 1];
-        sInfo.up->addTypeDef(ssLastLeaf->value);
+        sInfo->up->addTypeDef(ssLastLeaf->value);
       }
 
 
@@ -923,7 +923,7 @@ namespace occa {
         leaf->value = nodePos->value;
 
         if(nodePos->type & unknownVariable){
-          varInfo *nodeVar = sInfo.hasVariableInScope(nodePos->value);
+          varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
 
           if(nodeVar){
             if( !(nodeVar->typeInfo & functionType) )
@@ -932,7 +932,7 @@ namespace occa {
               leaf->info = expType::function;
           }
           else{
-            typeDef *nodeType = sInfo.hasTypeInScope(nodePos->value);
+            typeDef *nodeType = sInfo->hasTypeInScope(nodePos->value);
 
             leaf->info = expType::unknown;
           }
@@ -1041,7 +1041,7 @@ namespace occa {
       // [qualifiers] [type] (*[name]) ([args])
       mergeFunctionPointers();
 
-      if(sInfo.type & declareStatementType){
+      if(sInfo->type & declareStatementType){
         labelNewVariables();
       }
       else{
@@ -1219,7 +1219,7 @@ namespace occa {
     void expNode::labelCasts(){
       // Don't mistake:
       //   int main(int) -> int main[(int)]
-      if(sInfo.type & functionStatementType)
+      if(sInfo->type & functionStatementType)
         return;
 
       int leafPos = 0;
@@ -1255,7 +1255,7 @@ namespace occa {
             }
 
             else if(leaves[leafPos - 1]->info & expType::unknown){
-              if(!sInfo.hasTypeInScope(leaves[leafPos - 1]->value))
+              if(!sInfo->hasTypeInScope(leaves[leafPos - 1]->value))
                 leaves[leafPos]->info = expType::operator_;
               else
                 leaves[leafPos]->info = expType::qualifier;
@@ -1327,7 +1327,7 @@ namespace occa {
               var.descriptors[i] = lqNode.leaves[i]->value;
           }
 
-          var.type = sInfo.hasTypeInScope(leaves[leafPos]->value);
+          var.type = sInfo->hasTypeInScope(leaves[leafPos]->value);
           var.pointerCount = 0;
 
           if(varHasRQualifiers){
@@ -1635,6 +1635,21 @@ namespace occa {
     }
     //================================
 
+    void expNode::swap(expNode &a, expNode &b){
+      swapValues(a.sInfo, b.sInfo);
+
+      swapValues(a.value, b.value);
+      swapValues(a.info , b.info);
+
+      swapValues(a.up, b.up);
+
+      swapValues(a.leafCount, b.leafCount);
+      swapValues(a.leaves   , b.leaves);
+
+      swapValues(a.varType        , b.varType);
+      swapValues(a.varPointerCount, b.varPointerCount);
+    }
+
     expNode* expNode::clone(statement &s){
       expNode &newRoot = *(new expNode(s));
 
@@ -1784,7 +1799,7 @@ namespace occa {
 
         // Change later
         if((up == NULL) &&
-           (sInfo.type & declareStatementType))
+           (sInfo->type & declareStatementType))
           out << ';';
 
         break;
@@ -2058,7 +2073,7 @@ namespace occa {
           out << *(leaves[i]);
 
         if((up == NULL) &&
-           (sInfo.type & simpleStatementType))
+           (sInfo->type & simpleStatementType))
           out << ';';
 
         break;
@@ -2081,22 +2096,22 @@ namespace occa {
       }
 
       case expType::checkSInfo:{
-        if(sInfo.type & flowStatementType){
+        if(sInfo->type & flowStatementType){
           out << tab;
 
-          if(sInfo.type & forStatementType)
+          if(sInfo->type & forStatementType)
             out << "for(";
-          else if(sInfo.type & whileStatementType)
+          else if(sInfo->type & whileStatementType)
             out << "while(";
-          else if(sInfo.type & doWhileStatementType)
+          else if(sInfo->type & doWhileStatementType)
             out << "do";
-          else if(sInfo.type & ifStatementType)
+          else if(sInfo->type & ifStatementType)
             out << "if(";
-          else if(sInfo.type & elseIfStatementType)
+          else if(sInfo->type & elseIfStatementType)
             out << "else if(";
-          else if(sInfo.type & elseStatementType)
+          else if(sInfo->type & elseStatementType)
             out << "else";
-          else if(sInfo.type & switchStatementType)
+          else if(sInfo->type & switchStatementType)
             out << "switch(";
 
           if(leafCount){
@@ -2106,11 +2121,11 @@ namespace occa {
             out << *(leaves[leafCount - 1]);
           }
 
-          if( !(sInfo.type & (doWhileStatementType |
+          if( !(sInfo->type & (doWhileStatementType |
                                 elseStatementType    |
                                 gotoStatementType)) )
             out << ")";
-          else if(sInfo.type & gotoStatementType)
+          else if(sInfo->type & gotoStatementType)
             out << ":";
         }
       }
@@ -3309,6 +3324,22 @@ namespace occa {
       return nextNode;
     }
 
+    statementNode* statement::getStatementNode(){
+      if(up != NULL){
+        statementNode *ret = up->statementStart;
+        const int upNodes  = up->statementCount;
+
+        for(int i = 0; i < upNodes; ++i){
+          if(ret->value == this)
+            return ret;
+
+          ret = ret->right;
+        }
+      }
+
+      return NULL;
+    }
+
     varInfo* statement::addVariable(const varInfo &info,
                                     statement *origin){
       scopeVarMapIterator it = scopeVarMap.find(info.name);
@@ -3421,6 +3452,17 @@ namespace occa {
     }
 
     //---[ Statement Info ]-----------
+    void statement::swapExpWith(statement &s){
+      swapValues(expRoot.value, s.expRoot.value);
+      swapValues(expRoot.info , s.expRoot.info);
+
+      swapValues(expRoot.leafCount, s.expRoot.leafCount);
+      swapValues(expRoot.leaves   , s.expRoot.leaves);
+
+      swapValues(expRoot.varType        , s.expRoot.varType);
+      swapValues(expRoot.varPointerCount, s.expRoot.varPointerCount);
+    }
+
     bool statement::hasQualifier(const std::string &qualifier) const {
       if(type & declareStatementType){
 

@@ -54,6 +54,13 @@ namespace occa {
     char* cReadFile(const std::string &filename);
 
     int stripComments(std::string &line);
+
+    template <class TM>
+    inline void swapValues(TM &a, TM &b){
+      TM tmp = a;
+      a      = b;
+      b      = tmp;
+    }
     //==============================================
 
     std::string getBits(const int value);

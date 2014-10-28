@@ -37,6 +37,9 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
+
+      // Also auto-adds barriers if needed
+      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
 
       // Broken
@@ -47,9 +50,6 @@ namespace occa {
       // Broken
       addOccaFors();
 
-      // Also auto-adds barriers if needed
-      // Broken
-      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
 
       // Broken
@@ -1415,26 +1415,29 @@ namespace occa {
     }
 
     int parserBase::statementOccaForNest(statement &s){
-      if(s.type != keywordType["occaOuterFor0"])
+      if((s.type != forStatementType) ||
+         (s.expRoot.leafCount != 4)){
+
         return notAnOccaFor;
+      }
 
       int ret = notAnOccaFor;
 
-      const std::string &forName = s.expRoot.value;
+      const std::string &forName = s.expRoot.leaves[3]->leaves[0]->value;
 
-      if((forName.find("occaOuterFor") != std::string::npos) &&
-         ((forName == "occaOuterFor0") ||
-          (forName == "occaOuterFor1") ||
-          (forName == "occaOuterFor2"))){
+      if((forName.find("outer") != std::string::npos) &&
+         ((forName == "outer0") ||
+          (forName == "outer1") ||
+          (forName == "outer2"))){
 
-        ret = ((1 + forName[12] - '0') << occaOuterForShift);
+        ret = ((1 + forName[5] - '0') << occaOuterForShift);
       }
-      else if((forName.find("occaInnerFor") != std::string::npos) &&
-              ((forName == "occaInnerFor0") ||
-               (forName == "occaInnerFor1") ||
-               (forName == "occaInnerFor2"))){
+      else if((forName.find("inner") != std::string::npos) &&
+              ((forName == "inner0") ||
+               (forName == "inner1") ||
+               (forName == "inner2"))){
 
-        ret = ((1 + forName[12] - '0') << occaInnerForShift);
+        ret = ((1 + forName[5] - '0') << occaInnerForShift);
       }
 
       return ret;
@@ -1448,13 +1451,11 @@ namespace occa {
 
     void parserBase::fixOccaForStatementOrder(statement &origin,
                                               statementNode *sn){
-      return;
-
       int innerLoopCount = -1;
 
       while(sn){
-        std::vector<statement*> statStack;
-        std::vector<int> nestStack;
+        std::vector<statement*> forLoopS;
+        std::vector<int> nestStack, nestStackInv;
 
         statement &s = *(sn->value);
 
@@ -1472,7 +1473,7 @@ namespace occa {
 
         statement *sp = &s;
 
-        statStack.push_back(sp);
+        forLoopS.push_back(sp);
         nestStack.push_back((sNest >> shift) - 1);
 
         int loopCount = 1;
@@ -1485,7 +1486,7 @@ namespace occa {
           if(nest & (~mask))
             break;
 
-          statStack.push_back(sp);
+          forLoopS.push_back(sp);
           nestStack.push_back((nest >> shift) - 1);
 
           ++loopCount;
@@ -1513,14 +1514,16 @@ namespace occa {
                         << *(sn->value)
                         << "========================================\n";
 
-              statement *newS = new statement(sn->value->depth,
-                                              declareStatementType, sn->value->up);
+              s.loadFromNode(labelCode( splitContent("occaBarrier(occaLocalMemFence);\0") ));
 
-              statementNode *newSN = new statementNode(newS);
+              statement *newS2     = s.statementEnd->value;
+              statementNode *newSN = new statementNode(newS2);
 
-              newS->nodeStart = splitContent("occaBarrier(occaLocalMemFence);\0");
-              newS->nodeStart = labelCode(newS->nodeStart);
-              newS->nodeEnd   = lastNode(newS->nodeStart);
+              s.statementEnd        = s.statementEnd->left;
+              s.statementEnd->right = NULL;
+
+              newSN->right     = s.statementStart;
+              s.statementStart = newSN;
 
               if(sn->left)
                 sn->left->right = newSN;
@@ -1537,10 +1540,31 @@ namespace occa {
           fixOccaForStatementOrder(origin, (sp->up->statementStart));
         }
 
-        std::sort(nestStack.begin(), nestStack.end());
+        nestStackInv.resize(loopCount);
 
-        for(int i = (loopCount - 1); 0 <= i; --i){
-          if(nestStack[i] != i){
+        for(int i = 0; i < loopCount; ++i)
+          nestStackInv[ nestStack[i] ] = i;
+
+        for(int i = 0; i < loopCount; ++i){
+          const int sInv1 = (loopCount - i - 1);
+          const int sInv2 = nestStack[i];
+
+          if(sInv1 == sInv2)
+            continue;
+
+          const int s1 = nestStackInv[sInv1];
+          const int s2 = nestStackInv[sInv2];
+
+          swapValues(nestStack[s1]      , nestStack[s2]);
+          swapValues(nestStackInv[sInv1], nestStackInv[sInv2]);
+
+          // [-] Warning: It doesn't swap variables defined in the for-loop
+          //              Should be ok ...
+          expNode::swap(forLoopS[s1]->expRoot, forLoopS[s2]->expRoot);
+        }
+
+        for(int i = 0; i < loopCount; ++i){
+          if(nestStack[i] != (loopCount - i - 1)){
             std::cout << "Inner loops ";
 
             for(int i2 = 0; i2 < loopCount; ++i2)
@@ -1551,14 +1575,6 @@ namespace occa {
 
             throw 1;
           }
-
-          sp = statStack[loopCount - i - 1];
-
-          sp->nodeStart->value  = "occa";
-          sp->nodeStart->value += (isAnInnerLoop ? "Inner" : "Outer");
-          sp->nodeStart->value += "For0";
-
-          sp->nodeStart->value[12] += i;
         }
 
         sn = sn->right;
