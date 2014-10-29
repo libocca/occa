@@ -1749,6 +1749,7 @@ namespace occa {
       expNode &newRoot = *(new expNode(s));
 
       newRoot.value = value;
+      newRoot.info  = info;
 
       newRoot.leafCount = leafCount;
 
@@ -1758,8 +1759,10 @@ namespace occa {
       if(leafCount){
         newRoot.leaves = new expNode*[leafCount];
 
-        for(int i = 0; i < leafCount; ++i)
-          newRoot.leaves[i] = clone(leaves[i]);
+        for(int i = 0; i < leafCount; ++i){
+          newRoot.leaves[i]     = clone(leaves[i]);
+          newRoot.leaves[i]->up = &newRoot;
+        }
       }
 
       return &newRoot;
@@ -1770,6 +1773,7 @@ namespace occa {
       expNode &o = *original;
 
       newLeaf.value = o.value;
+      newLeaf.info  = o.info;
 
       newLeaf.leafCount = o.leafCount;
 
@@ -1779,8 +1783,10 @@ namespace occa {
       if(o.leafCount){
         newLeaf.leaves = new expNode*[o.leafCount];
 
-        for(int i = 0; i < o.leafCount; ++i)
-          newLeaf.leaves[i] = o.clone(o.leaves[i]);
+        for(int i = 0; i < o.leafCount; ++i){
+          newLeaf.leaves[i]     = o.clone(o.leaves[i]);
+          newLeaf.leaves[i]->up = &newLeaf;
+        }
       }
 
       return &newLeaf;
@@ -1788,6 +1794,7 @@ namespace occa {
 
     void expNode::cloneTo(expNode &newRoot){
       newRoot.value = value;
+      newRoot.info  = info;
 
       newRoot.leafCount = leafCount;
 
@@ -1797,8 +1804,10 @@ namespace occa {
       if(leafCount){
         newRoot.leaves = new expNode*[leafCount];
 
-        for(int i = 0; i < leafCount; ++i)
-          newRoot.leaves[i] = clone(leaves[i]);
+        for(int i = 0; i < leafCount; ++i){
+          newRoot.leaves[i]     = clone(leaves[i]);
+          newRoot.leaves[i]->up = &newRoot;
+        }
       }
     }
 

@@ -25,8 +25,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -1993,23 +1993,19 @@ namespace occa {
       globalScope->scopeVarMap.erase(it);
 
       for(int k = 0; k < kernelCount; ++k){
-        std::cout << "s.getFunctionName() = " << s.getFunctionName() << '\n';
-        continue;
+        statement &s2 = *(new statement(s.depth,
+                                        s.type, globalScope));
 
-        //-------
-        strNode *newNodeRoot = s.nodeStart->clone();
-        strNode *newNodeEnd  = lastNode(newNodeRoot);
+        info.nestedKernels.push_back(&s2);
 
-        info.nestedKernels.push_back(new statement(s.depth,
-                                                   s.type, globalScope));
-
-        while( !(newNodeRoot->type & unknownVariable) )
-          newNodeRoot = newNodeRoot->right;
+        s.expRoot.cloneTo(s2.expRoot);
 
         ss << k;
-        newNodeRoot->value = info.baseName + ss.str();
-        originalVar.name   = newNodeRoot->value;
-        //-------
+        originalVar.name = s.getFunctionName() + ss.str();
+
+        std::cout << "s.expRoot  = " << s.expRoot << '\n'
+                  << "s2.expRoot = " << s2.expRoot << '\n';
+
         ss.str("");
 
         globalScope->addVariable(originalVar);
