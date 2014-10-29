@@ -1858,6 +1858,16 @@ namespace occa {
         argsNode.addNode(expType::printValue);
         argsNode.leaves[0]->value = "occaKernelInfoArgs";
       }
+      // [-] Missing
+      else if(var.hasDescriptor("occaFunction")){
+        statementNode *sn = (varUsedMap[&var]).right;
+
+        while(sn){
+          std::cout << "s = " << *(sn->value) << '\n';
+
+          sn = sn->right;
+        }
+      }
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){

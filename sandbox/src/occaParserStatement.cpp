@@ -1030,8 +1030,12 @@ namespace occa {
           if(nodeVar){
             if( !(nodeVar->typeInfo & functionType) )
               leaf->info = expType::variable;
-            else
+            else{
+              if( !(sInfo->type & functionStatementType) )
+                sInfo->varUsedMap[nodeVar].push(sInfo);
+
               leaf->info = expType::function;
+            }
           }
           else{
             typeDef *nodeType = sInfo->hasTypeInScope(nodePos->value);
