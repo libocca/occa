@@ -1858,8 +1858,6 @@ namespace occa {
         if(isPrivateArray)
           ss << "Array";
 
-        std::cout << "var = " << var << '\n';
-
         ss << "(" << typeNode << var.postTypeStr() << ", " << var.name;
 
         if(isPrivateArray){
