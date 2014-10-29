@@ -796,6 +796,9 @@ namespace occa {
     }
 
     statement* parserBase::getStatementKernel(statement &s){
+      if(statementIsAKernel(s))
+        return &s;
+
       statement *sUp = &s;
 
       while(sUp){
@@ -864,7 +867,9 @@ namespace occa {
 
     void parserBase::addOccaForCounter(statement &s,
                                        const std::string &ioLoop,
-                                       const std::string &loopNest){
+                                       const std::string &loopNest,
+                                       const std::string &loopIters){
+      //---[ Add loop counter ]---------
       varInfo ioDimVar;
       ioDimVar.name = obfuscate(ioLoop);
       ioDimVar.extraInfo.push_back(loopNest);
@@ -886,6 +891,21 @@ namespace occa {
 
         if(i == extras)
           ioDimVar2->extraInfo.push_back(loopNest);
+      }
+
+      //---[ Add loop iterations ]------
+      if(loopIters.size()){
+        varInfo ioIterVar;
+        ioIterVar.name = obfuscate("loop", "iters");
+
+        varInfo *ioIterVar2 = s.hasVariableInScope(ioIterVar.name);
+
+        if(ioIterVar2 == NULL){
+          statement &sOuterLoop = *(getStatementOuterMostLoop(s));
+          ioIterVar2 = sOuterLoop.addVariable(ioIterVar);
+        }
+
+        ioIterVar2->extraInfo.push_back(loopIters);
       }
     }
 
@@ -952,8 +972,6 @@ namespace occa {
       std::string loopNest  = arg4.substr(5,1);
 
       ioLoop[0] += ('A' - 'a');
-
-      addOccaForCounter(s, ioLoop, loopNest);
 
       //---[ Find operators ]-----------
       std::string iter, start, bound, stride;
@@ -1044,16 +1062,14 @@ namespace occa {
 
       std::stringstream ss;
 
-      addOccaForCounter(s, ioLoop, loopNest);
-
       // Working Dim
-      ss << "nestedKernels[]->" << ioLoopVar << '[' << loopNest << "] = "
+      ss << ioLoopVar << '[' << loopNest << "] = "
          << '('
          <<   "((" << bound << ") - (" << start << "))"
          <<   " / (" << stride << ")"
          << ");";
 
-      std::cout << ss.str() << '\n';
+      addOccaForCounter(s, ioLoop, loopNest, ss.str());
 
       ss.str("");
 
@@ -1971,13 +1987,15 @@ namespace occa {
                                                     kernelInfo &info){
       int kernelCount = 0;
 
-      statement &s = *(sn->value);
+      const int occaForType = keywordType["occaOuterFor0"];
+
+      statement &s         = *(sn->value);
       statementNode *snPos = s.statementStart;
 
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if( (s2.type != (forStatementType | occaStatementType)) &&
+        if( (s2.type != occaForType) &&
             !(s2.type & macroStatementType) ){
 
           std::cout << "Only outer-loops are supported at the kernel scope:\n"
@@ -1985,7 +2003,7 @@ namespace occa {
           throw 1;
         }
 
-        if(s2.type == (forStatementType | occaStatementType))
+        if(s2.type == occaForType)
           ++kernelCount;
 
         snPos = snPos->right;
@@ -2021,8 +2039,6 @@ namespace occa {
       scopeVarMapIterator it = globalScope->scopeVarMap.find(info.name);
       varInfo &originalVar   = *(it->second);
 
-      // globalScope->scopeVarMap.erase(it);
-
       for(int k = 0; k < kernelCount; ++k){
         statement &s2 = *(new statement(s.depth,
                                         s.type, globalScope));
@@ -2056,17 +2072,90 @@ namespace occa {
       snPos = snPosStart;
 
       kernelCount = 0;
+      int snCount = 0;
+
+      statement &sKernel = *(getStatementKernel(s));
+
+      // occaKernelInfoArgs doesn't count
+      const int argc = (sKernel.getFunctionArgCount() - 1);
+      std::string argsStr;
+
+      if(argc){
+        ss << sKernel.getFunctionArgName(1);
+
+        for(int i = 1; i < argc; ++i)
+          ss << ", " << sKernel.getFunctionArgName(i + 1);
+
+        argsStr = ss.str();
+
+        ss.str("");
+      }
+      else
+        argsStr = "";
 
       // Add kernel bodies
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if((s2.type == (forStatementType | occaStatementType)) ||
+        if((s2.type == occaForType) ||
            (snPos->right == NULL)){
+
+          //---[ Make substitute call ]-----------
+          ss << "{\n";
+
+          varInfo *loopIter = s2.hasVariableInScope( obfuscate("loop", "iters") );
+
+          if(loopIter){
+            const int extras = loopIter->extraInfo.size();
+
+            ss << "  const int dims = " << (getOuterMostForDim(s2) + 1) << ";\n"
+               << "  occa::dim outer, inner;\n";
+
+            for(int i = 0; i < extras; ++i)
+              ss << "  " << loopIter->extraInfo[i] << "\n";
+
+            ss << "  nestedKernels[" << kernelCount << "]->setWorkingDims(dims, inner, outer);\n";
+          }
+
+          ss << "  *(nestedKernels[" << kernelCount << "])(" << argsStr << ");\n";
+
+          ss << "}";
+
+
+          s.loadFromNode(labelCode( splitContent(ss.str()) ));
+
+          statementNode *newSN  = s.statementEnd;
+          s.statementEnd        = newSN->left;
+          s.statementEnd->right = NULL;
+
+          if(snPosStart){
+            newSN->left = snPosStart->left;
+
+            if(newSN->left)
+              newSN->left->right = newSN;
+          }
+
+          if(snPos){
+            newSN->right = snPos->right;
+
+            if(newSN->right)
+              newSN->right->left = newSN;
+          }
+
+          if(snPosStart == s.statementStart){
+            s.statementStart = newSN;
+          }
+          if(snPosStart == s.statementEnd){
+            s.statementEnd = newSN;
+          }
+
+          ss.str("");
+          //======================================
 
           statement &s3 = *(info.nestedKernels[kernelCount]);
 
-          if( !(s2.type == (forStatementType | occaStatementType)) )
+          // Stopping at the last node
+          if( !(s2.type == keywordType["occaOuterFor0"]) )
             snPos = NULL;
 
           s3.statementStart = snPosStart;
@@ -2078,25 +2167,21 @@ namespace occa {
           if(snPos){
             statementNode *snPosRight = snPos->right;
             snPos->right = NULL;
-            snPos        = snPosRight;
 
+            snPos      = snPosRight;
             snPosStart = snPosRight;
           }
 
+          snCount = 0;
           ++kernelCount;
         }
-        else
+        else{
           snPos = snPos->right;
+          ++snCount;
+        }
 
         globalScope->statementCount += (kernelCount - 1);
       }
-
-      // Change original kernel
-      s.statementCount = 0;
-      // [-] Free body here
-      s.statementStart = NULL;
-
-      // Update original kernel body
 
       return newSNEnd->right;
     }
@@ -2268,6 +2353,34 @@ namespace occa {
       }
 
       return innerDim;
+    }
+
+    int parserBase::getOuterMostForDim(statement &s){
+      std::string outerStr = obfuscate("Outer");
+      int outerDim = -1;
+
+      varInfo *info = s.hasVariableInScope(outerStr);
+
+      if(info != NULL){
+        const int extras = info->extraInfo.size();
+
+        for(int i = 0; i < extras; ++i){
+          const int loopNest = (info->extraInfo[i][0] - '0');
+
+          if(outerDim < loopNest)
+            outerDim = loopNest;
+
+          // Max Dim
+          if(outerDim == 2)
+            return outerDim;
+        }
+
+        return outerDim;
+      }
+
+      std::cout << "Error, Outer-most loop doesn't contain obfuscate(\"Outer\"):\n"
+                << s.expRoot << '\n';
+      return -1;
     }
 
     void parserBase::checkPathForConditionals(statementNode *path){

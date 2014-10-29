@@ -36,6 +36,10 @@ namespace occa {
       if(nodeRoot->type == macroKeywordType)
         sInfo->type = loadMacroStatement(nodeRoot);
 
+      else if(nodeRoot->type == 0){
+        sInfo->type = 0;
+      }
+
       else if(nodeRoot->type == keywordType["occaOuterFor0"])
         sInfo->type = loadOccaForStatement(nodeRoot);
 
@@ -3165,6 +3169,15 @@ namespace occa {
     }
 
     strNode* statement::loadFromNode(strNode *nodeRoot){
+      if(nodeRoot->type == 0){
+        const int downCount = nodeRoot->down.size();
+
+        for(int i = 0; i < downCount; ++i)
+          loadFromNode(nodeRoot->down[i]);
+
+        return nodeRoot->right;
+      }
+
       statement *newStatement = makeSubStatement();
       strNode * nodeRootEnd   = nodeRoot;
 

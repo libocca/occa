@@ -71,7 +71,8 @@ namespace occa {
 
       void addOccaForCounter(statement &s,
                              const std::string &ioLoop,
-                             const std::string &loopNest);
+                             const std::string &loopNest,
+                             const std::string &loopIters = "");
 
       bool nodeHasUnknownVariable(strNode *n);
 
@@ -132,8 +133,9 @@ namespace occa {
                                        findStatementWith_t func);
 
       int getKernelOuterDim(statement &s);
-
       int getKernelInnerDim(statement &s);
+
+      int getOuterMostForDim(statement &s);
 
       void checkPathForConditionals(statementNode *path);
 
