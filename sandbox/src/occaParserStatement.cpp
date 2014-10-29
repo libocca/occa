@@ -532,23 +532,11 @@ namespace occa {
         expNode &sType     = *(sInfo->getDeclarationTypeNode());
         const int varCount = sInfo->getDeclarationVarCount();
 
-        printf("Statement 1\n");
-        print();
-
         for(int i = 0; i < varCount; ++i){
-          expNode &varNode = *(sInfo->getDeclarationVarNode(i));
           std::string varName = sInfo->getDeclarationVarName(i);
+          varInfo &var        = *(sInfo->scopeVarMap[varName]);
 
-          printf("Var %d\n", i);
-          varNode.print();
-          std::cout << "varName = " << varName << '\n';
-
-          varInfo &var = *(sInfo->scopeVarMap[varName]);
-
-          std::cout << "1. var = " << var << '\n';
           sType.setVarInfo(var);
-
-          std::cout << "2. var = " << var << '\n';
         }
       }
       else if(sInfo->type & functionDefinitionType){
@@ -3734,9 +3722,6 @@ namespace occa {
       if(type & declareStatementType){
         expNode &argNode = *(expRoot.leaves[1 + pos]);
 
-        printf("ArgNode\n");
-        argNode.print();
-
         // int i = 0  -->  [=] has [i,0]
         if(argNode.leaves[0]->info & expType::LCR){
           return argNode.leaves[0]->leaves[0]->value;
@@ -3756,7 +3741,7 @@ namespace occa {
 
     int statement::getDeclarationVarCount() const {
       if(type & declareStatementType)
-        return expRoot.leaves[1]->leafCount;
+        return (expRoot.leafCount - 1);
 
       return 0;
     }
