@@ -321,17 +321,21 @@ namespace occa {
 
   class kernelArg {
   public:
+    occa::device *dev;
+
     kernelArg_t arg, arg2;
 
     uintptr_t size;
     bool pointer, hasTwoArgs;
 
     inline kernelArg(){
-      arg.void_ = NULL;
+      dev        = NULL;
+      arg.void_  = NULL;
       hasTwoArgs = false;
     }
 
     inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
+      dev(NULL),
       size(size_),
       pointer(pointer_),
       hasTwoArgs(false) {
@@ -339,6 +343,7 @@ namespace occa {
     }
 
     inline kernelArg(const kernelArg &k) :
+      dev(k.dev),
       size(k.size),
       pointer(k.pointer),
       hasTwoArgs(k.hasTwoArgs) {
@@ -346,6 +351,7 @@ namespace occa {
     }
 
     inline kernelArg& operator = (const kernelArg &k){
+      dev        = k.dev;
       arg.void_  = k.arg.void_;
       size       = k.size;
       pointer    = k.pointer;
@@ -373,6 +379,8 @@ namespace occa {
     inline kernelArg(const occa::memory &m);
 
     inline kernelArg(void *arg_){
+      dev = NULL;
+
       arg.void_ = arg_;
       size = sizeof(void*);
 
@@ -597,6 +605,8 @@ namespace occa {
     void loadKernelFromLibrary(device &d);
 
     kernel& operator [] (device &d);
+
+#include "operators/occaOperatorDeclarations.hpp"
   };
   //==================================
 
@@ -837,6 +847,8 @@ namespace occa {
 
   //---[ KernelArg ]----------
   inline kernelArg::kernelArg(const occa::memory &m){
+    dev = m.mHandle->dev;
+
     arg.void_ = m.mHandle->handle;
     size = sizeof(void*);
 

@@ -65,7 +65,7 @@ int main(int argc, char **argv){
 
     occa::tic("addVectors");
 
-    device[addVectors](entries, o_a, o_b, o_ab);
+    addVectors(entries, o_a, o_b, o_ab);
 
     double elapsedTime = occa::toc("addVectors", addVectors[device]);
 

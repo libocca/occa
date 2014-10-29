@@ -46,8 +46,7 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
-      // Also auto-adds barriers if needed
-      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
+      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
       // Broken
       modifyTextureVariables();

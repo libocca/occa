@@ -85,6 +85,14 @@ def operatorDefinition(mode, N):
         (*(kHandle->nestedKernels[k]))(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
       }
     }
+  }
+
+  void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
+    occa::device *launchDevice;
+
+    if(arg0.dev) launchDevice = arg0.dev;
+    """ + '    '.join([('else if(arg' + str(n + 1) + '.dev) launchDevice = arg' + str(n + 1) + '.dev;\n') for n in xrange(N - 1)]) + """
+    (*this)[*launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
   }"""
     else:
         header = operatorDefinitionHeader(mode, N)
