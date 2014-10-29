@@ -409,6 +409,25 @@ namespace occa {
       return *this;
     }
 
+    std::string varInfo::postTypeStr() const {
+      std::string ret = "";
+
+      if(typeInfo & pointerType){
+        if(typeInfo & heapPointerType){
+          for(int i = 0; i < pointerCount; ++i)
+            ret += '*';
+        }
+
+        if(typeInfo & constPointerType)
+          ret += " const ";
+      }
+
+      if(typeInfo & referenceType)
+        ret += '&';
+
+      return ret;
+    }
+
     std::string varInfo::decoratedType() const {
       const int descriptorCount = descriptors.size();
 
@@ -424,6 +443,7 @@ namespace occa {
 
       ret += " ";
       ret += type->typeName;
+      ret += postTypeStr();
 
       return ret;
     }

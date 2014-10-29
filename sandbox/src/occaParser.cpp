@@ -49,7 +49,6 @@ namespace occa {
       // Broken?
       // applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
-      // Broken
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
       // Broken
       modifyTextureVariables();
@@ -1840,70 +1839,67 @@ namespace occa {
       if(!s.hasQualifier("exclusive"))
         return;
 
-#if 0
-      statement *newS = new statement(s.depth,
-                                      declareStatementType, s.up);
+      s.removeQualifier("exclusive");
 
-      newS->nodeStart = occaExclusiveStrNode(info,
-                                             nodePos->depth,
-                                             nodePos->sideDepth);
+      std::stringstream ss;
 
-      newS->nodeEnd   = lastNode(newS->nodeStart);
+      const int argc = s.getDeclarationVarCount();
 
-      statementNode *newSN = new statementNode(newS);
-      statementNode *upPos = (s.up)->statementStart;
+      expNode &typeNode = *(s.getDeclarationTypeNode());
 
-      while(upPos->value != &s)
-        upPos = upPos->right;
+      for(int i = 0; i < argc; ++i){
+        expNode &argNode = *(s.getDeclarationVarNode(i));
+        varInfo &var     = *(s.hasVariableInScope(s.getDeclarationVarName(i)));
 
-      statementNode *oldSN = upPos;
+        const int isPrivateArray = var.stackPointerSizes.size();
 
-      if(upPos == (s.up)->statementStart){
-        (s.up)->statementStart = newSN;
+        ss << "occaPrivate";
 
-        if(oldSN->right)
-          oldSN->right->left = newSN;
+        if(isPrivateArray)
+          ss << "Array";
 
-        newSN->left  = NULL;
-        newSN->right = oldSN->right;
-      }
-      else{
-        oldSN->left->right = newSN;
+        std::cout << "var = " << var << '\n';
 
-        if(oldSN->right)
-          oldSN->right->left = newSN;
+        ss << "(" << typeNode << var.postTypeStr() << ", " << var.name;
 
-        newSN->left  = oldSN->left;
-        newSN->right = oldSN->right;
-      }
+        if(isPrivateArray){
+          ss << ", ";
 
-      while(nodePos){
-        if(nodePos->value == ","){
-          nodePos = nodePos->right;
+          // [-] Only supports 1D arrays
+          if(1 < isPrivateArray){
+            std::cout << "Only 1D exclusive arrays are supported:\n"
+                      << "exclusive " << s << '\n';
+            throw 1;
+          }
 
-          varInfo info2 = s.loadVarInfo(nodePos);
-
-          info2.type        = info.type;
-          info2.descriptors = info.descriptors;
-
-          statement *newS2 = new statement(s.depth,
-                                           declareStatementType, s.up);
-
-          newS2->nodeStart = occaExclusiveStrNode(info2,
-                                                  nodePos->depth,
-                                                  nodePos->sideDepth);
-
-          newS2->nodeEnd   = lastNode(newS2->nodeStart);
-
-          newSN = newSN->push(newS2);
+          ss << var.stackPointerSizes[0];
         }
-        else
-          nodePos = nodePos->right;
+
+        ss << ");";
+
+        s.loadFromNode(labelCode( splitContent(ss.str()) ));
+
+        ss.str("");
       }
 
-      // [-] Needs proper free (can't because it's nested...)
-      //   delete oldSN;
-#endif
+      statementNode *sn = s.getStatementNode();
+
+      if(s.up->statementStart != sn){
+        sn->left->right        = s.statementStart;
+        s.statementStart->left = sn->left;
+      }
+      else
+        s.up->statementStart = s.statementStart;
+
+      s.statementEnd->right = sn->right;
+
+      if(sn->right)
+        sn->right->left = s.statementEnd;
+
+      s.up->statementCount += (argc - 1);
+
+      s.statementStart = s.statementEnd = NULL;
+      s.statementCount = 0;
     }
 
     void parserBase::modifyTextureVariables(){

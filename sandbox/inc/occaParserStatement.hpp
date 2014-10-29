@@ -192,10 +192,14 @@ namespace occa {
 
       //---[ Exp Info ]-----------------
       void addNode(const int info_, const int pos = 0);
+      void removeNode(const int pos = 0);
 
       bool hasQualifier(const std::string &qualifier) const;
+
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void addPostQualifier(const std::string &qualifier, const int pos = 0);
+
+      void removeQualifier(const std::string &qualifier);
 
       std::string getVariableName() const;
 
@@ -366,7 +370,9 @@ namespace occa {
       void swapExpWith(statement &s);
 
       bool hasQualifier(const std::string &qualifier) const;
+
       void addQualifier(const std::string &qualifier, const int pos = 0);
+      void removeQualifier(const std::string &qualifier);
 
       expNode* getDeclarationTypeNode();
       expNode* getDeclarationVarNode(const int pos);

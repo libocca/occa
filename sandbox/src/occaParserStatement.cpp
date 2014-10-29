@@ -545,10 +545,15 @@ namespace occa {
         const int varCount = sInfo->getDeclarationVarCount();
 
         for(int i = 0; i < varCount; ++i){
+          expNode &varNode = *(sInfo->getDeclarationVarNode(i));
+
           std::string varName = sInfo->getDeclarationVarName(i);
           varInfo &var        = *(sInfo->scopeVarMap[varName]);
 
           sType.setVarInfo(var);
+
+          if(varNode.leaves[0]->info & expType::qualifier)
+            varNode.leaves[0]->setVarInfo(var);
         }
       }
       else if(sInfo->type & functionDefinitionType){
@@ -1860,6 +1865,13 @@ namespace occa {
       ++leafCount;
     }
 
+    void expNode::removeNode(const int pos){
+      for(int i = (pos + 1); i < leafCount; ++i)
+        leaves[i - 1] = leaves[i];
+
+      --leafCount;
+    }
+
     bool expNode::hasQualifier(const std::string &qualifier) const {
       if(info & expType::type){
         if(!leafCount ||
@@ -1909,8 +1921,8 @@ namespace occa {
 
           expNode &qNode = *(lqNode.leaves[0]);
 
-          qNode.addNode(expType::qualifier, 0);
-          qNode.leaves[0]->value = qualifier;
+          qNode.addNode(expType::qualifier, pos);
+          qNode.leaves[pos]->value = qualifier;
         }
       }
     }
@@ -1931,8 +1943,31 @@ namespace occa {
 
           expNode &qNode = *(lqNode.lastLeaf());
 
-          qNode.addNode(expType::qualifier, 0);
-          qNode.leaves[0]->value = qualifier;
+          qNode.addNode(expType::qualifier, pos);
+          qNode.leaves[pos]->value = qualifier;
+        }
+      }
+    }
+
+    void expNode::removeQualifier(const std::string &qualifier){
+      if(info & expType::type){
+        if(leafCount){
+          expNode &qNode = *(leaves[0]);
+
+          if( !(qNode.info & expType::qualifier) )
+            return;
+
+          for(int i = 0; i < qNode.leafCount; ++i){
+            if(qNode.leaves[i]->value == qualifier){
+              qNode.removeNode(i);
+
+              // Erase if there are no qualifiers
+              if(qNode.leafCount == 0)
+                removeNode(0);
+
+              return;
+            }
+          }
         }
       }
     }
@@ -3810,6 +3845,19 @@ namespace occa {
 
           qualNode.leaves[0]->value = qualifier;
         }
+      }
+    }
+
+    void statement::removeQualifier(const std::string &qualifier){
+      if(!hasQualifier(qualifier))
+        return;
+
+      if(type & declareStatementType){
+        expRoot.leaves[0]->removeQualifier(qualifier);
+      }
+      else if(type & functionStatementType){
+      }
+      else if(type & forStatementType){
       }
     }
 
