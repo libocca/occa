@@ -3473,7 +3473,8 @@ namespace occa {
         popAndGoLeft(blockEnd);
       }
 
-      if(blockStart->right == blockEnd)
+      if(brokeDowns &&
+         (blockStart->right == blockEnd))
         return nextNode;
 
       loadAllFromNode(blockStart);

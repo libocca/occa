@@ -21,14 +21,12 @@ namespace occa {
 
     const std::string parserBase::parseSource(const char *cRoot){
       strNode *nodeRoot = splitAndPreprocessContent(cRoot);
-      // nodeRoot->print();
-      // throw 1;
 
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -1951,7 +1949,8 @@ namespace occa {
         if( (s2.type != (forStatementType | occaStatementType)) &&
             !(s2.type & macroStatementType) ){
 
-          std::cout << "Only outer-loops are supported at the kernel scope\n";
+          std::cout << "Only outer-loops are supported at the kernel scope:\n"
+                    << s2 << '\n';
           throw 1;
         }
 
@@ -1994,6 +1993,10 @@ namespace occa {
       globalScope->scopeVarMap.erase(it);
 
       for(int k = 0; k < kernelCount; ++k){
+        std::cout << "s.getFunctionName() = " << s.getFunctionName() << '\n';
+        continue;
+
+        //-------
         strNode *newNodeRoot = s.nodeStart->clone();
         strNode *newNodeEnd  = lastNode(newNodeRoot);
 
@@ -2006,6 +2009,7 @@ namespace occa {
         ss << k;
         newNodeRoot->value = info.baseName + ss.str();
         originalVar.name   = newNodeRoot->value;
+        //-------
         ss.str("");
 
         globalScope->addVariable(originalVar);
@@ -2073,8 +2077,6 @@ namespace occa {
     }
 
     void parserBase::loadKernelInfos(){
-      return;
-
       statementNode *snPos = globalScope->statementStart;
 
       while(snPos){
@@ -2084,13 +2086,8 @@ namespace occa {
           //---[ Setup Info ]-----------
           kernelInfo &info = *(new kernelInfo);
 
-          strNode *nodePos = s.nodeStart;
-
-          while( !(nodePos->type & unknownVariable) )
-            nodePos = nodePos->right;
-
-          info.name     = nodePos->value;
-          info.baseName = nodePos->value;
+          info.name     = s.getFunctionName();
+          info.baseName = info.name;
           info.nestedKernels.push_back(&s);
 
           kernelInfoMap[info.name] = &info;

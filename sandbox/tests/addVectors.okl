@@ -3,8 +3,12 @@ void addVectors(int entries,
                 const float * a,
                 const float * b,
                 float * ab){
-  const int *blah[3], *blah2[2];
-  int i = 0, j = 0;
+  for(const int group = 0; group < ((entries - 31) / 32); group += (N + 1); outer0){
+    for(int item = 0; item < 32; ++item; inner0){
+      if((item + group*32) < entries)
+        ab[item] = a[item] + b[item];
+    }
+  }
 
   for(const int group = 0; group < ((entries - 31) / 32); group += (N + 1); outer0){
     for(int item = 0; item < 32; ++item; inner0){
