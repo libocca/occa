@@ -3,16 +3,16 @@ void addVectors(int entries,
                 const float * a,
                 const float * b,
                 float * ab){
-  for(const int group = 0; group < ((entries - 31) / 32); group += (N + 1); outer0){
+  for(const int groupA = 0; groupA < ((entries - 31) / 32); groupA += (N + 1); outer0){
     for(int item = 0; item < 32; ++item; inner0){
-      if((item + group*32) < entries)
+      if((item + groupA*32) < entries)
         ab[item] = a[item] + b[item];
     }
   }
 
-  for(const int group = 0; group < ((entries - 31) / 32); group += (N + 1); outer0){
+  for(const int groupB = 0; groupB < ((entries - 31) / 32); groupB += (N + 1); outer0){
     for(int item = 0; item < 32; ++item; inner0){
-      if((item + group*32) < entries)
+      if((item + groupB*32) < entries)
         ab[item] = a[item] + b[item];
     }
   }

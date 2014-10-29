@@ -1989,7 +1989,7 @@ namespace occa {
       scopeVarMapIterator it = globalScope->scopeVarMap.find(info.name);
       varInfo &originalVar   = *(it->second);
 
-      globalScope->scopeVarMap.erase(it);
+      // globalScope->scopeVarMap.erase(it);
 
       for(int k = 0; k < kernelCount; ++k){
         statement &s2 = *(new statement(s.depth,
@@ -2014,17 +2014,8 @@ namespace occa {
           newSNRoot = newSNEnd = new statementNode(info.nestedKernels.back());
       }
 
-      if(globalScope->statementStart == sn)
-        globalScope->statementStart = newSNRoot;
-
-      if(sn->left)
-        sn->left->right = newSNRoot;
-
-      if(sn->right)
-        sn->right->left = newSNEnd;
-
-      newSNRoot->left = sn->left;
-      newSNEnd->right = sn->right;
+      sn->right       = newSNRoot;
+      newSNRoot->left = sn;
 
       statementNode *snPosStart = s.statementStart;
       snPos = snPosStart;
@@ -2065,7 +2056,12 @@ namespace occa {
         globalScope->statementCount += (kernelCount - 1);
       }
 
-      // [-] Free sn and s
+      // Change original kernel
+      s.statementCount = 0;
+      // [-] Free body here
+      s.statementStart = NULL;
+
+      // Update original kernel body
 
       return newSNEnd->right;
     }

@@ -4210,7 +4210,7 @@ namespace occa {
             statementPos = statementPos->right;
           }
 
-          ret += tab + "}\n";
+          ret += tab + "}\n\n";
 
           return ret;
         }
