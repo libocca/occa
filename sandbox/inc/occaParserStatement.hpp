@@ -201,6 +201,8 @@ namespace occa {
 
       void removeQualifier(const std::string &qualifier);
 
+      void changeType(const std::string &newType);
+
       std::string getVariableName() const;
 
       void setVarInfo(varInfo &var);
@@ -381,6 +383,7 @@ namespace occa {
 
       std::string getFunctionName() const;
       void setFunctionName(const std::string &newName);
+      expNode* getFunctionArgsNode();
       expNode* getFunctionArgNode(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);

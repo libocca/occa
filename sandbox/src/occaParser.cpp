@@ -2093,6 +2093,30 @@ namespace occa {
       else
         argsStr = "";
 
+      // Add nestedKernels argument
+      {
+        s.loadFromNode(labelCode( splitContent("int **nestedKernels;") ));
+
+        statementNode *nkSN   = s.statementEnd;
+        s.statementEnd        = nkSN->left;
+        s.statementEnd->right = NULL;
+
+        --(s.statementCount);
+
+        expNode &argsNode = *(sKernel.getFunctionArgsNode());
+
+        argsNode.addNode(expType::printValue, 1);
+
+        *(argsNode.leaves[1])    = nkSN->value->expRoot;
+        argsNode.leaves[1]->info = expType::variable;
+        argsNode.leaves[1]->changeType("occa::kernel_v");
+
+        sKernel.expRoot.print();
+
+        delete nkSN->value;
+        delete nkSN;
+      }
+
       // Add kernel bodies
       while(snPos){
         statement &s2 = *(snPos->value);
@@ -2120,7 +2144,6 @@ namespace occa {
           ss << "  *(nestedKernels[" << kernelCount << "])(" << argsStr << ");\n";
 
           ss << "}";
-
 
           s.loadFromNode(labelCode( splitContent(ss.str()) ));
 

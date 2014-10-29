@@ -1977,6 +1977,23 @@ namespace occa {
       }
     }
 
+    void expNode::changeType(const std::string &newType){
+      if(info & expType::variable){
+        if(leafCount){
+          const bool hasLQualifier = (leaves[0]->info & expType::type);
+
+          if(hasLQualifier)
+            leaves[0]->changeType(newType);
+        }
+      }
+      else if(info & expType::type){
+        if(leaves[0]->info & expType::type)
+          leaves[0]->value = newType;
+        else
+          leaves[1]->value = newType;
+      }
+    }
+
     std::string expNode::getVariableName() const {
       if(info & expType::variable){
         if(leafCount){
@@ -3940,11 +3957,16 @@ namespace occa {
       throw 1;
     }
 
+    expNode* statement::getFunctionArgsNode(){
+      if(type & functionDefinitionType)
+        return expRoot.leaves[2];
+
+      return NULL;
+    }
+
     expNode* statement::getFunctionArgNode(const int pos){
-      if(type & functionDefinitionType){
-        expNode &argC = *(expRoot.leaves[2]);
-        return argC.leaves[pos];
-      }
+      if(type & functionDefinitionType)
+        return getFunctionArgsNode()->leaves[pos];
 
       return NULL;
     }
