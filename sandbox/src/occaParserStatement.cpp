@@ -45,7 +45,8 @@ namespace occa {
       else if(nodeRoot->type & structType)
         sInfo->type = loadStructStatement(nodeRoot);
 
-      else if(nodeRoot->type & operatorType)
+      else if(nodeRoot->type & (operatorType |
+                                presetValue))
         sInfo->type = loadUpdateStatement(nodeRoot);
 
       else if(sInfo->nodeHasDescriptor(nodeRoot))
@@ -4255,10 +4256,6 @@ namespace occa {
 
       else if(type & declareStatementType){
         return expRoot.getString(tab);
-      }
-
-      else if(type & (simpleStatementType | gotoStatementType)){
-        return expRoot.getString(tab) + "\n";
       }
 
       else if(type & (simpleStatementType | gotoStatementType)){

@@ -1877,6 +1877,9 @@ namespace occa {
 
         s.loadFromNode(labelCode( splitContent(ss.str()) ));
 
+        s.statementEnd->value->up    = s.up;
+        s.statementEnd->value->depth = s.depth;
+
         ss.str("");
       }
 
@@ -3395,6 +3398,9 @@ namespace occa {
 
       keywordType["occaKernelInfoArg"] = (presetValue | occaKeywordType);
       keywordType["occaKernelInfo"]    = (presetValue | occaKeywordType);
+
+      keywordType["occaPrivate"]      = (presetValue | occaKeywordType);
+      keywordType["occaPrivateArray"] = (presetValue | occaKeywordType);
 
       keywordType["barrier"]        = (presetValue | occaKeywordType);
       keywordType["localMemFence"]  = (presetValue | occaKeywordType);
