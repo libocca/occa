@@ -432,12 +432,17 @@ namespace occa {
           nodePos = nodePos->right;
         }
 
-        if(nodePos->down.size() == 0){
+        if(sInfo->nodeHasSpecifier(nodePos))
           nodePos = nodePos->right;
+
+        if((nodePos->down.size() == 0) ||
+           (nodePos->down[0]->type != startParentheses)){
+
           loadingFunctionPointer = false;
         }
-        else
+        else{
           loadingFunctionPointer = true;
+        }
 
         varInfo newVar;
 
