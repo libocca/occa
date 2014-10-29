@@ -748,7 +748,7 @@ namespace occa {
           leaves[newArgPos + i - typePos] = leaves[i];
 
         leafCount = trueLeafCount - (typePos - newArgPos);
-        typePos   = newArgPos;
+        argPos    = (newArgPos + 1);
       }
 
       expNode &argNode = *(leaves[argPos]);
@@ -1173,7 +1173,7 @@ namespace occa {
       // static_cast<>()
       mergeCasts();
 
-      // func()
+      // [max(a,b)]
       mergeFunctionCalls();
 
       // a[3]

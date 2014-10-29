@@ -84,8 +84,8 @@ gotoTest:
 const tFloat hat_t0 = 1.3523661426929/freq; /* Testing 3 */
 const tFloat &hat_t1 = hat_t0;
 
-tFloat hatWavelet(tFloat t);
-tFloat hatWavelet(tFloat t){
+occaFunction tFloat hatWavelet(tFloat t);
+occaFunction tFloat hatWavelet(tFloat t){
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
@@ -95,13 +95,13 @@ tFloat hatWavelet(tFloat t){
 const int2 * const a34;
 
 #if 1
-kernel void fd2d(tFloat *u1,
-                 tFloat *u2,
-                 tFloat *u3,
-                 const texture tFloat tex1[],
-                 texture tFloat tex2[][],
-                 texture tFloat **tex3,
-                 const tFloat currentTime){
+occaKernel void fd2d(tFloat *u1,
+                     tFloat *u2,
+                     tFloat *u3,
+                     const texture tFloat tex1[],
+                     texture tFloat tex2[][],
+                     texture tFloat **tex3,
+                     const tFloat currentTime){
   for(int by = 0; by < bDimY; ++by; outer1){
     for(int bx = 0; bx < bDimX; ++bx; outer0){
       shared tFloat Lu[bDimY + 2*sr][bDimX + 2*sr];
