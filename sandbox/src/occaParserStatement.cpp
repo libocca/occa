@@ -703,7 +703,10 @@ namespace occa {
     }
 
     void expNode::splitFunctionStatement(){
-      info = (expType::function | expType::declaration);
+      if(sInfo->type & functionDefinitionType)
+        info = (expType::function | expType::declaration);
+      else
+        info = (expType::function | expType::prototype);
 
       int argPos = 0;
       int argc   = 0;
@@ -732,6 +735,10 @@ namespace occa {
       }
 
       expNode &argNode = *(leaves[argPos]);
+
+      // [-] Remove [;] on prototypes
+      if((argPos + 1) < leafCount)
+        leafCount = argPos + 1;
 
       if(argNode.leafCount){
         argc = 1;
@@ -2158,6 +2165,26 @@ namespace occa {
         // [x]
         else{
           out << value;
+        }
+
+        break;
+      }
+
+      case (expType::function | expType::prototype):{
+        if(leafCount){
+          for(int i = 0; i < (leafCount - 1); ++i)
+            out << *(leaves[i]);
+
+          expNode &argNode = *(leaves[leafCount - 1]);
+
+          out << '(';
+
+          for(int i = 0; i < (argNode.leafCount - 1); ++i)
+            out << *(argNode.leaves[i]) << ", ";
+
+          out << *(argNode.leaves[argNode.leafCount - 1]);
+
+          out << ')';
         }
 
         break;
@@ -3797,17 +3824,20 @@ namespace occa {
       if(type & declareStatementType){
         expNode &argNode = *(expRoot.leaves[1 + pos]);
 
-        // int i = 0  -->  [=] has [i,0]
-        if(argNode.leaves[0]->info & expType::LCR){
-          return argNode.leaves[0]->leaves[0]->value;
-        }
-        else{
-          // First entry might be
-          //   int [*] blah
-          if(argNode.leaves[0]->info & expType::variable)
-            return argNode.leaves[0]->getVariableName();
-          else
-            return argNode.leaves[1]->getVariableName();
+        // First entry might be
+        //   int [*] blah
+        if(argNode.leaves[0]->info & expType::variable)
+          return argNode.leaves[0]->getVariableName();
+        else if(argNode.leaves[1]->info & expType::variable)
+          return argNode.leaves[1]->getVariableName();
+        else {
+          // int i = 0  -->  [=] has [i,0]
+          if(argNode.leaves[0]->info & expType::LCR){
+            return argNode.leaves[0]->leaves[0]->getVariableName();
+          }
+          else {
+            return argNode.leaves[1]->leaves[0]->getVariableName();
+          }
         }
       }
 
