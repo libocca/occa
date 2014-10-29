@@ -468,7 +468,6 @@ namespace occa {
     dim inner, outer;
 
     int nestedKernelCount;
-    kernel_v **setDimsKernels;
     kernel_v **nestedKernels;
 
     int preferredDimSize_;

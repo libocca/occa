@@ -143,7 +143,7 @@ namespace occa {
     for(int i = dims; i < 3; ++i)
       inner[i] = outer[i] = 1;
 
-    if(kHandle->nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 0){
       kHandle->dims  = dims;
       kHandle->inner = inner;
       kHandle->outer = outer;
@@ -158,7 +158,7 @@ namespace occa {
   }
 
   int kernel::preferredDimSize(){
-    if(kHandle->nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 0){
       return kHandle->preferredDimSize();
     }
     else{
@@ -194,7 +194,7 @@ namespace occa {
 #include "operators/occaOperatorDefinitions.cpp"
 
   double kernel::timeTaken(){
-    if(kHandle->nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 0){
       return kHandle->timeTaken();
     }
     else{
@@ -209,21 +209,16 @@ namespace occa {
   }
 
   void kernel::free(){
-    if(kHandle->nestedKernelCount == 1){
-      kHandle->free();
-      delete kHandle;
-    }
-    else{
-      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
-        // kHandle->setDimsKernels[k]->free();
-        // delete kHandle->setDimsKernels[k];
+    kHandle->free();
+    delete kHandle;
 
+    if(kHandle->nestedKernelCount){
+      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
         kHandle->nestedKernels[k]->free();
         delete kHandle->nestedKernels[k];
       }
 
-      // delete kHandle->setDimsKernels;
-      delete kHandle->nestedKernels;
+      delete [] kHandle->nestedKernels;
     }
   }
 

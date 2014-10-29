@@ -38,15 +38,12 @@ def runFromArguments(N):
 
 def runFromArgument(N):
     return '  case ' + str(N) + """:
-  if(kHandle->nestedKernelCount == 1){
+  if(kHandle->nestedKernelCount == 0){
     (*kHandle)(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
-  }
+  }""" + (("""
   else{
-    for(int k = 0; k < kHandle->nestedKernelCount; ++k){
-      /* (*(kHandle->setDimsKernels[k]))(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """); */
-      (*(kHandle->nestedKernels[k]))(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
-    }
-  }
+    (*kHandle)(kHandle->nestedKernels, """ + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
+  }""") if (N < maxN) else '') + """
   break;"""
 
 def virtualOperatorDeclarations(N):
@@ -76,14 +73,12 @@ def operatorDefinitions(mode, N):
 def operatorDefinition(mode, N):
     if mode == 'Base':
         return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    if(kHandle->nestedKernelCount == 1){
+    if(kHandle->nestedKernelCount == 0){
       (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
     }
-    else{
-      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
-        /* (*(kHandle->setDimsKernels[k]))(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """); */
-        (*(kHandle->nestedKernels[k]))(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
-      }
+    else{""" + (("""
+      (*kHandle)(kHandle->nestedKernels, """ + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);""") \
+                if (N < maxN) else '') + """
     }
   }
 

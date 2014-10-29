@@ -73,7 +73,7 @@ namespace occa {
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
 
-    nestedKernelCount = 1;
+    nestedKernelCount = 0;
 
     preferredDimSize_ = 0;
 
@@ -93,11 +93,13 @@ namespace occa {
     outer = k.outer;
 
     nestedKernelCount = k.nestedKernelCount;
-    // setDimsKernels = new kernel_v*[nestedKernelCount];
-    nestedKernels  = new kernel_v*[nestedKernelCount];
 
-    for(int i = 0; i < nestedKernelCount; ++i)
-      nestedKernels[i] = k.nestedKernels[i];
+    if(nestedKernelCount){
+      nestedKernels = new kernel_v*[nestedKernelCount];
+
+      for(int i = 0; i < nestedKernelCount; ++i)
+        nestedKernels[i] = k.nestedKernels[i];
+    }
 
     preferredDimSize_ = k.preferredDimSize_;
 
@@ -117,11 +119,13 @@ namespace occa {
     outer = k.outer;
 
     nestedKernelCount = k.nestedKernelCount;
-    // setDimsKernels = new kernel_v*[nestedKernelCount];
-    nestedKernels  = new kernel_v*[nestedKernelCount];
 
-    for(int i = 0; i < nestedKernelCount; ++i)
-      nestedKernels[i] = k.nestedKernels[i];
+    if(nestedKernelCount){
+      nestedKernels = new kernel_v*[nestedKernelCount];
+
+      for(int i = 0; i < nestedKernelCount; ++i)
+        nestedKernels[i] = k.nestedKernels[i];
+    }
 
     *((CUevent*) startTime) = *((CUevent*) k.startTime);
     *((CUevent*) endTime)   = *((CUevent*) k.endTime);
