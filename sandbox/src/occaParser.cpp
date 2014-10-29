@@ -1773,15 +1773,54 @@ namespace occa {
       }
     }
 
-    void parserBase::addArgQualifiers(varInfo &info, statement &s){
-      // std::cout << "info = " << info << '\n';
+    void parserBase::addArgQualifiers(varInfo &var, statement &s){
+      std::cout << "var = " << var << '\n';
+
+      if(var.hasDescriptor("occaKernel")){
+        statementNode *snPos = s.statementStart;
+
+        while(snPos){
+          statement &s2 = *(snPos->value);
+
+          if((s2.type & functionStatementType) &&
+             (var.name == s2.getFunctionName())){
+
+            break;
+          }
+
+          snPos = snPos->right;
+        }
+
+        statement &s2 = *(snPos->value);
+
+        const int argc = s2.getFunctionArgCount();
+
+        for(int i = 0; i < argc; ++i){
+          expNode &argNode = *(s2.getFunctionArgNode(i));
+          varInfo &argVar  = *(s2.getFunctionArgVar(i));
+
+          if(argVar.pointerCount)
+            argNode.addQualifier("occaPointer");
+          else
+            argNode.addQualifier("occaVariable", argNode.leafCount);
+        }
+
+        expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
+
+        argsNode.addNode(expType::printValue);
+        argsNode.leaves[0]->value = "occaKernelInfoArgs";
+
+        s2.expRoot.print();
+
+        return;
+      }
       // s.expRoot.print();
 
       // Having functionCallType at this level means:
       //   occaExp, occaBarrier, etc
       // so don't add occaKernelInfoArg
-      if((info.typeInfo & functionType) &&
-         !(info.typeInfo & functionCallType)){
+      if((var.typeInfo & functionType) &&
+         !(var.typeInfo & functionCallType)){
 
         strNode *nodePos = s.nodeStart;
 
@@ -1806,7 +1845,7 @@ namespace occa {
           comma->depth     = kia->depth;
           comma->sideDepth = kia->sideDepth;
 
-          applyToStatementsUsingVar(info, &parserBase::addKernelInfo);
+          applyToStatementsUsingVar(var, &parserBase::addKernelInfo);
 
           while(nodePos){
             if((nodePos->value == ",") ||
@@ -1817,8 +1856,8 @@ namespace occa {
           }
         }
 
-        if(!info.hasDescriptor("occaKernel") &&
-           !info.hasDescriptor("kernel"))
+        if(!var.hasDescriptor("occaKernel") &&
+           !var.hasDescriptor("kernel"))
           return;
 
         while(nodePos){

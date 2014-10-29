@@ -190,9 +190,10 @@ namespace occa {
       expNode* lastLeaf();
 
       //---[ Exp Info ]-----------------
-      void addNode(const int info_, const int pos);
+      void addNode(const int info_, const int pos = 0);
 
       bool hasQualifier(const std::string &qualifier) const;
+      void addQualifier(const std::string &qualifier, const int pos = 0);
 
       std::string getVariableName() const;
 
@@ -373,6 +374,7 @@ namespace occa {
       std::string getFunctionName() const;
       expNode* getFunctionArgNode(const int pos);
       std::string getFunctionArgName(const int pos);
+      varInfo* getFunctionArgVar(const int pos);
       int getFunctionArgCount() const;
 
       int getForStatementCount() const;

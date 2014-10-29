@@ -547,6 +547,8 @@ namespace occa {
       else if(sInfo->type & functionDefinitionType){
         varInfo &var = *(sInfo->up->scopeVarMap[ leaves[1]->value ]);
 
+        var.typeInfo |= functionType;
+
         leaves[0]->setVarInfo(var);
 
         const int argc = sInfo->getFunctionArgCount();
@@ -602,7 +604,6 @@ namespace occa {
           expNode *newLeaf = new expNode(*this);
           const int newLeafCount = (i - first);
 
-          newLeaf->up        = this;
           newLeaf->info      = expType::root;
           newLeaf->leafCount = newLeafCount;
           newLeaf->leaves    = new expNode*[newLeafCount];
@@ -1856,8 +1857,39 @@ namespace occa {
         else
           return value == qualifier;
       }
+      else if(info & expType::variable){
+        if((leafCount) &&
+           (leaves[0]->info & expType::type)){
+
+          return leaves[0]->hasQualifier(qualifier);
+        }
+        else
+          return false;
+      }
 
       return false;
+    }
+
+    void expNode::addQualifier(const std::string &qualifier,
+                               const int pos){
+      if(info & expType::variable){
+        if(leafCount){
+          expNode &lqNode = *(leaves[0]);
+
+          if( !(lqNode.info & expType::type) ){
+            std::cout << "5. Error on:" << *this << '\n';
+            throw 1;
+          }
+
+          if( !(lqNode.leaves[0]->info & expType::qualifier) )
+            lqNode.addNode(expType::qualifier, 0);
+
+          expNode &qNode = *(lqNode.leaves[0]);
+
+          qNode.addNode(expType::qualifier, 0);
+          qNode.leaves[0]->value = qualifier;
+        }
+      }
     }
 
     std::string expNode::getVariableName() const {
@@ -3650,7 +3682,7 @@ namespace occa {
 
     bool statement::hasQualifier(const std::string &qualifier) const {
       if(type & declareStatementType){
-
+        return expRoot.leaves[0]->hasQualifier(qualifier);
       }
       else if(type & functionStatementType){
         expNode &typeNode = *(expRoot.leaves[0]);
@@ -3683,7 +3715,9 @@ namespace occa {
       if(hasQualifier(qualifier))
         return;
 
-      if(type & functionStatementType){
+      if(type & declareStatementType){
+      }
+      else if(type & functionStatementType){
         expNode &typeNode = *(expRoot.leaves[0]);
 
         if( !(typeNode.leaves[0]->info & expType::qualifier) )
@@ -3778,6 +3812,14 @@ namespace occa {
           return arg.leaves[0]->value;
         else
           return arg.leaves[1]->value;
+      }
+
+      return NULL;
+    }
+
+    varInfo* statement::getFunctionArgVar(const int pos){
+      if(type & functionDefinitionType){
+        return scopeVarMap[ getFunctionArgName(pos) ];
       }
 
       return NULL;
