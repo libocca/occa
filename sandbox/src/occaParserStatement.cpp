@@ -2111,7 +2111,10 @@ namespace occa {
       }
 
       case (expType::L | expType::R):{
-        out << *(leaves[0]) << ' ' << value << ' ' << *(leaves[1]);
+        if((value != ".") && (value != "->"))
+          out << *(leaves[0]) << ' ' << value << ' ' << *(leaves[1]);
+        else
+          out << *(leaves[0]) << value << *(leaves[1]);
 
         break;
       }

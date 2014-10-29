@@ -2111,8 +2111,6 @@ namespace occa {
         argsNode.leaves[1]->info = expType::variable;
         argsNode.leaves[1]->changeType("occa::kernel_v");
 
-        sKernel.expRoot.print();
-
         delete nkSN->value;
         delete nkSN;
       }
