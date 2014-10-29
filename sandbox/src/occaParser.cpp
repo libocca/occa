@@ -55,7 +55,6 @@ namespace occa {
 
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
 
-      // Broken
       loadKernelInfos();
 
       return (std::string) *globalScope;
