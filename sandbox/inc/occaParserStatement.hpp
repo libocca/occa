@@ -373,6 +373,7 @@ namespace occa {
       int getDeclarationVarCount() const;
 
       std::string getFunctionName() const;
+      void setFunctionName(const std::string &newName);
       expNode* getFunctionArgNode(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);

@@ -2001,10 +2001,9 @@ namespace occa {
         s.expRoot.cloneTo(s2.expRoot);
 
         ss << k;
-        originalVar.name = s.getFunctionName() + ss.str();
 
-        std::cout << "s.expRoot  = " << s.expRoot << '\n'
-                  << "s2.expRoot = " << s2.expRoot << '\n';
+        originalVar.name = s.getFunctionName() + ss.str();
+        s2.setFunctionName(originalVar.name);
 
         ss.str("");
 

@@ -3826,9 +3826,19 @@ namespace occa {
         return (expRoot.leaves[1]->value);
       }
 
-      printf("Not added yet");
+      printf("Not added yet\n");
       throw 1;
       return "";
+    }
+
+    void statement::setFunctionName(const std::string &newName){
+      if(type & functionStatementType){
+        expRoot.leaves[1]->value = newName;
+        return;
+      }
+
+      printf("Not added yet\n");
+      throw 1;
     }
 
     expNode* statement::getFunctionArgNode(const int pos){
