@@ -27,8 +27,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -1226,8 +1226,12 @@ namespace occa {
           continue;
         }
 
-        if(statementHasOccaStuff(s2))
+        if(statementHasOccaStuff(s2)){
           s2.addQualifier("occaKernel");
+
+          varInfo &var = *(s2.hasVariableInScope( s2.getFunctionName() ));
+          var.descriptors.insert(var.descriptors.begin(), "occaKernel");
+        }
 
         snPos = snPos->right;
       }
@@ -1770,8 +1774,8 @@ namespace occa {
     }
 
     void parserBase::addArgQualifiers(varInfo &info, statement &s){
-      std::cout << "info = " << info << '\n';
-      s.expRoot.print();
+      // std::cout << "info = " << info << '\n';
+      // s.expRoot.print();
 
       // Having functionCallType at this level means:
       //   occaExp, occaBarrier, etc

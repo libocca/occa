@@ -445,8 +445,6 @@ namespace occa {
           // Mark pointer qualifiers
           while((nodePos) &&
                 (nodePos->type & qualifierType)){
-            if(nodePos->value == "*")
-              ++(newVar.pointerCount);
 
             nodePos = nodePos->right;
           }
@@ -531,20 +529,45 @@ namespace occa {
         return;
 
       if(sInfo->type & declareStatementType){
+        expNode &sType     = *(sInfo->getDeclarationTypeNode());
+        const int varCount = sInfo->getDeclarationVarCount();
+
+        printf("Statement 1\n");
+        print();
+
+        for(int i = 0; i < varCount; ++i){
+          expNode &varNode = *(sInfo->getDeclarationVarNode(i));
+          std::string varName = sInfo->getDeclarationVarName(i);
+
+          printf("Var %d\n", i);
+          varNode.print();
+          std::cout << "varName = " << varName << '\n';
+
+          varInfo &var = *(sInfo->scopeVarMap[varName]);
+
+          std::cout << "1. var = " << var << '\n';
+          sType.setVarInfo(var);
+
+          std::cout << "2. var = " << var << '\n';
+        }
       }
       else if(sInfo->type & functionDefinitionType){
         varInfo &var = *(sInfo->up->scopeVarMap[ leaves[1]->value ]);
 
         leaves[0]->setVarInfo(var);
-        // std::cout << "var = " << var << '\n';
 
         const int argc = sInfo->getFunctionArgCount();
 
         for(int i = 0; i < argc; ++i){
-          expNode &arg  = *(sInfo->getFunctionArg(i));
+          expNode &arg  = *(sInfo->getFunctionArgNode(i));
           varInfo &sVar = *(sInfo->scopeVarMap[ sInfo->getFunctionArgName(i) ]);
 
-          // std::cout << "sVar = " << sVar << '\n';
+          // [const int] x[2]
+          arg.leaves[0]->setVarInfo(sVar);
+
+          // const int x[[2]]
+          if(arg.leafCount == 3)
+            arg.leaves[2]->setVarInfo(sVar);
         }
       }
 
@@ -1844,10 +1867,25 @@ namespace occa {
       return false;
     }
 
+    std::string expNode::getVariableName() const {
+      if(info & expType::variable){
+        if(leafCount){
+          const bool hasLQualifier = (leaves[0]->info & expType::type);
+
+          return leaves[hasLQualifier]->value;
+        }
+        else
+          return value;
+      }
+
+      return "";
+    }
+
     void expNode::setVarInfo(varInfo &var){
       if(info & expType::type){
-        const bool hasLQualifier = (leaves[0]->info & (expType::qualifier |
-                                                       expType::type));
+        const bool hasLQualifier = ((leaves[0]->info & expType::qualifier) ||
+                                    (leaves[0]->leafCount &&
+                                     (leaves[0]->info & expType::type)));
 
         const bool hasRQualifier = (((hasLQualifier + 1) < leafCount) &&
                                     (leaves[hasLQualifier + 1]->info & (expType::qualifier |
@@ -1860,6 +1898,8 @@ namespace occa {
             var.descriptors.push_back(lq.leaves[i]->value);
         }
 
+        var.type = sInfo->hasTypeInScope(leaves[hasLQualifier]->value);
+
         if(hasRQualifier){
           expNode &rq = *(leaves[hasLQualifier + 1]);
 
@@ -1870,6 +1910,26 @@ namespace occa {
           }
         }
       }
+      else if(info & expType::qualifier){
+        if(leafCount){
+          for(int i = 0; i < leafCount; ++i){
+            if(leaves[i]->value == "*")
+              ++(var.pointerCount);
+            else if(leaves[i]->info & expType::C){
+              std::string stackSize = (std::string) *(leaves[i]);
+
+              // var[x]
+              if(2 < stackSize.size())
+                var.stackPointerSizes.push_back( stackSize.substr(1, stackSize.size() - 2) );
+            }
+          }
+        }
+        else
+          var.descriptors.push_back(value);
+      }
+
+      if(var.pointerCount)
+        var.typeInfo |= heapPointerType;
     }
     //================================
 
@@ -3656,6 +3716,51 @@ namespace occa {
       }
     }
 
+    expNode* statement::getDeclarationTypeNode(){
+      if(type & declareStatementType)
+        return expRoot.leaves[0];
+
+      return NULL;
+    }
+
+    expNode* statement::getDeclarationVarNode(const int pos){
+      if(type & declareStatementType)
+        return expRoot.leaves[1 + pos];
+
+      return NULL;
+    }
+
+    std::string statement::getDeclarationVarName(const int pos) const {
+      if(type & declareStatementType){
+        expNode &argNode = *(expRoot.leaves[1 + pos]);
+
+        printf("ArgNode\n");
+        argNode.print();
+
+        // int i = 0  -->  [=] has [i,0]
+        if(argNode.leaves[0]->info & expType::LCR){
+          return argNode.leaves[0]->leaves[0]->value;
+        }
+        else{
+          // First entry might be
+          //   int [*] blah
+          if(argNode.leaves[0]->info & expType::variable)
+            return argNode.leaves[0]->getVariableName();
+          else
+            return argNode.leaves[1]->getVariableName();
+        }
+      }
+
+      return "";
+    }
+
+    int statement::getDeclarationVarCount() const {
+      if(type & declareStatementType)
+        return expRoot.leaves[1]->leafCount;
+
+      return 0;
+    }
+
     std::string statement::getFunctionName() const {
       if(type & functionStatementType){
         return (expRoot.leaves[1]->value);
@@ -3666,7 +3771,7 @@ namespace occa {
       return "";
     }
 
-    expNode* statement::getFunctionArg(const int pos){
+    expNode* statement::getFunctionArgNode(const int pos){
       if(type & functionDefinitionType){
         expNode &argC = *(expRoot.leaves[2]);
         return argC.leaves[pos];
@@ -3677,7 +3782,7 @@ namespace occa {
 
     std::string statement::getFunctionArgName(const int pos){
       if(type & functionDefinitionType){
-        expNode &arg = *( getFunctionArg(pos) );
+        expNode &arg = *( getFunctionArgNode(pos) );
 
         if(arg.leaves[0]->info & expType::variable)
           return arg.leaves[0]->value;

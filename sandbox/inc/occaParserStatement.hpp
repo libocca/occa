@@ -194,6 +194,8 @@ namespace occa {
 
       bool hasQualifier(const std::string &qualifier) const;
 
+      std::string getVariableName() const;
+
       void setVarInfo(varInfo &var);
       //================================
 
@@ -363,8 +365,13 @@ namespace occa {
       bool hasQualifier(const std::string &qualifier) const;
       void addQualifier(const std::string &qualifier, const int pos = 0);
 
+      expNode* getDeclarationTypeNode();
+      expNode* getDeclarationVarNode(const int pos);
+      std::string getDeclarationVarName(const int pos) const;
+      int getDeclarationVarCount() const;
+
       std::string getFunctionName() const;
-      expNode* getFunctionArg(const int pos);
+      expNode* getFunctionArgNode(const int pos);
       std::string getFunctionArgName(const int pos);
       int getFunctionArgCount() const;
 
