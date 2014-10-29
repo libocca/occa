@@ -807,6 +807,20 @@ namespace occa {
 
       return sUp;
     }
+    statement* parserBase::getStatementOuterMostLoop(statement &s){
+      statement *ret = ((s.type == keywordType["occaOuterFor0"]) ? &s : NULL);
+
+      statement *sUp = &s;
+
+      while(sUp){
+        if(sUp->type == keywordType["occaOuterFor0"])
+          ret = sUp;
+
+        sUp = sUp->up;
+      }
+
+      return ret;
+    }
 
     bool parserBase::statementKernelUsesNativeOCCA(statement &s){
       statement *sKernel = getStatementKernel(s);
@@ -858,8 +872,8 @@ namespace occa {
       varInfo *ioDimVar2 = s.hasVariableInScope(ioDimVar.name);
 
       if(ioDimVar2 == NULL){
-        statement &sKernel = *(getStatementKernel(s));
-        sKernel.addVariable(ioDimVar);
+        statement &sOuterLoop = *(getStatementOuterMostLoop(s));
+        sOuterLoop.addVariable(ioDimVar);
       }
       else{
         const int extras = ioDimVar2->extraInfo.size();
@@ -912,6 +926,8 @@ namespace occa {
         throw 1;
       }
 
+      s.type = keywordType["occaOuterFor0"];
+
       statement &sKernel = *spKernel;
 
       std::string arg4 = (std::string) *(s.expRoot.leaves[3]);
@@ -931,8 +947,9 @@ namespace occa {
       }
 
       // [-----][#]
-      std::string ioLoop   = arg4.substr(0,5);
-      std::string loopNest = arg4.substr(5,1);
+      std::string ioLoopVar = arg4.substr(0,5);
+      std::string ioLoop    = ioLoopVar;
+      std::string loopNest  = arg4.substr(5,1);
 
       ioLoop[0] += ('A' - 'a');
 
@@ -1027,11 +1044,14 @@ namespace occa {
 
       std::stringstream ss;
 
+      addOccaForCounter(s, ioLoop, loopNest);
+
       // Working Dim
-      ss << '('
+      ss << "nestedKernels[]->" << ioLoopVar << '[' << loopNest << "] = "
+         << '('
          <<   "((" << bound << ") - (" << start << "))"
          <<   " / (" << stride << ")"
-         << ')';
+         << ");";
 
       std::cout << ss.str() << '\n';
 
@@ -1064,8 +1084,6 @@ namespace occa {
       s.statementStart = newNode;
 
       std::string occaForName = "occa" + ioLoop + "For" + loopNest;
-
-      s.type = keywordType["occaOuterFor0"];
 
       s.expRoot.info  = expType::occaFor;
       s.expRoot.value = occaForName;

@@ -61,6 +61,7 @@ namespace occa {
       bool statementIsAKernel(statement &s);
 
       statement* getStatementKernel(statement &s);
+      statement* getStatementOuterMostLoop(statement &s);
 
       bool statementKernelUsesNativeOCCA(statement &s);
 
