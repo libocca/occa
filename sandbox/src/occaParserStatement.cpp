@@ -399,19 +399,26 @@ namespace occa {
     void expNode::addNewVariables(strNode *nodePos){
       if((up != NULL) ||
          !(sInfo->type & (declareStatementType |
-                          functionDefinitionType)) )
+                          functionStatementType)) )
         return;
 
       strNode *lastPos = NULL;
 
-      if(sInfo->type & functionDefinitionType){
+      if(sInfo->type & functionStatementType){
         nodePos = lastNode(nodePos);
+
+        // Function Definition: void f(){}
+        // Function Prototype : void f()[;]
+        //                   Extra node _^
+        if(sInfo->type & functionPrototypeType)
+          nodePos = nodePos->left;
 
         //---[ Add Function ]-----------
         varInfo newVar;
         newVar.name = nodePos->value;
 
-        sInfo->up->addVariable(newVar);
+        if( !(sInfo->up->hasVariableInScope(newVar.name)) )
+          sInfo->up->addVariable(newVar);
         //==============================
 
         nodePos = nodePos->down[0];
@@ -2184,7 +2191,7 @@ namespace occa {
 
           out << *(argNode.leaves[argNode.leafCount - 1]);
 
-          out << ')';
+          out << ");\n";
         }
 
         break;

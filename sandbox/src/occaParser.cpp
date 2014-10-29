@@ -50,6 +50,8 @@ namespace occa {
       // applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
       // Broken
+      applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
+      // Broken
       modifyTextureVariables();
 
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
@@ -1032,7 +1034,7 @@ namespace occa {
          <<   " / (" << stride << ")"
          << ')';
 
-      // std::cout << ss.str() << '\n';
+      std::cout << ss.str() << '\n';
 
       ss.str("");
 
@@ -1826,8 +1828,6 @@ namespace occa {
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
-      return;
-
       if(!(s.type & declareStatementType))
         return;
 
@@ -1837,12 +1837,10 @@ namespace occa {
       if(statementKernelUsesNativeOCCA(s))
         return;
 
-      strNode *nodePos = s.nodeStart;
-      varInfo info     = s.loadVarInfo(nodePos);
-
-      if(!info.hasDescriptor("exclusive"))
+      if(!s.hasQualifier("exclusive"))
         return;
 
+#if 0
       statement *newS = new statement(s.depth,
                                       declareStatementType, s.up);
 
@@ -1905,6 +1903,7 @@ namespace occa {
 
       // [-] Needs proper free (can't because it's nested...)
       //   delete oldSN;
+#endif
     }
 
     void parserBase::modifyTextureVariables(){
