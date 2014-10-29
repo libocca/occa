@@ -2009,9 +2009,6 @@ namespace occa {
         snPos = snPos->right;
       }
 
-      if(kernelCount == 1)
-        return sn->right;
-
       std::stringstream ss;
 
       while(true){
@@ -2130,10 +2127,13 @@ namespace occa {
           if(loopIter){
             const int extras = loopIter->extraInfo.size();
 
-            ss << "  const int dims = " << (getOuterMostForDim(s2) + 1) << ";\n"
+            const int outerDim = getOuterMostForDim(s2) + 1;
+            const int innerDim = getInnerMostForDim(s2) + 1;
+
+            ss << "  const int dims = " << outerDim << ";\n"
                << "  occa::dim outer, inner;\n";
 
-            for(int i = 0; i < extras; ++i)
+            for(int i = 0; i < (outerDim + innerDim); ++i)
               ss << "  " << loopIter->extraInfo[i] << "\n";
 
             ss << "  nestedKernels[" << kernelCount << "]->setWorkingDims(dims, inner, outer);\n";
@@ -2377,7 +2377,17 @@ namespace occa {
     }
 
     int parserBase::getOuterMostForDim(statement &s){
-      std::string outerStr = obfuscate("Outer");
+      return getForDim(s, "Outer");
+    }
+
+    int parserBase::getInnerMostForDim(statement &s){
+      return getForDim(s, "Inner");
+    }
+
+    int parserBase::getForDim(statement &s,
+                              const std::string &tag){
+
+      std::string outerStr = obfuscate(tag);
       int outerDim = -1;
 
       varInfo *info = s.hasVariableInScope(outerStr);
@@ -2399,7 +2409,7 @@ namespace occa {
         return outerDim;
       }
 
-      std::cout << "Error, Outer-most loop doesn't contain obfuscate(\"Outer\"):\n"
+      std::cout << "Error, " << tag << "-most loop doesn't contain obfuscate(\"Outer\"):\n"
                 << s.expRoot << '\n';
       return -1;
     }

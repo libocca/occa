@@ -136,6 +136,8 @@ namespace occa {
       int getKernelInnerDim(statement &s);
 
       int getOuterMostForDim(statement &s);
+      int getInnerMostForDim(statement &s);
+      int getForDim(statement &s, const std::string &tag);
 
       void checkPathForConditionals(statementNode *path);
 
