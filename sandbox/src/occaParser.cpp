@@ -36,10 +36,6 @@ namespace occa {
       // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
 
-      // Also auto-adds barriers if needed
-      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
-      applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
-
       // Broken
       addFunctionPrototypes();
       // Broken
@@ -49,6 +45,9 @@ namespace occa {
       addOccaFors();
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
+      applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
+      // Also auto-adds barriers if needed
+      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder);
 
       // Broken
       modifyTextureVariables();
@@ -1612,7 +1611,7 @@ namespace occa {
 
         statementNode *parallelSN = new statementNode(parallelStatement);
 
-        parallelStatement->type = occaStatementType;
+        parallelStatement->type = macroStatementType;
 
         parallelStatement->expRoot.value = "occaParallelFor";
         parallelStatement->expRoot.value += outerDim;
@@ -1622,7 +1621,7 @@ namespace occa {
         if(s.statementStart == snPos)
           s.statementStart = parallelSN;
 
-        statementNode *leftSN  = snPos->left;
+        statementNode *leftSN = snPos->left;
 
         parallelSN->right = snPos;
         parallelSN->left  = leftSN;
