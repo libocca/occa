@@ -137,7 +137,7 @@ namespace occa {
       // static_cast<>()
       void mergeCasts();
 
-      // func()
+      // [max(a,b)]
       void mergeFunctionCalls();
 
       void mergeArguments();

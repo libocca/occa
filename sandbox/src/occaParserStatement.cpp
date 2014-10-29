@@ -1521,8 +1521,31 @@ namespace occa {
     void expNode::mergeCasts(){
     }
 
-    // func()
+    // [max(a,b)]
     void expNode::mergeFunctionCalls(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if((leaves[leafPos]->info  == expType::C) &&
+           (leaves[leafPos]->value == "(")){
+
+          if((leafPos) &&
+             (leaves[leafPos - 1]->info & expType::function)){
+            expNode &fNode    = *(leaves[leafPos - 1]);
+            expNode &argsNode = *(leaves[leafPos    ]);
+
+            fNode.addNode(argsNode.info);
+
+            delete fNode.leaves[0];
+            fNode.leaves[0] = &argsNode;
+
+            removeNode(leafPos);
+            --leafPos;
+          }
+        }
+
+        ++leafPos;
+      }
     }
 
     void expNode::mergeArguments(){
@@ -2278,16 +2301,10 @@ namespace occa {
       }
 
       case expType::function:{
-        out << value << '(';
+        out << value;
 
-        if(leafCount){
-          for(int i = 0; i < (leafCount - 1); ++i)
-            out << *(leaves[i]) << ", ";
-
-          out << *(leaves[leafCount - 1]);
-        }
-
-        out << ')';
+        if(leafCount)
+          out << *(leaves[0]);
 
         break;
       }
