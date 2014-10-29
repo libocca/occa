@@ -937,7 +937,7 @@ namespace occa {
       addOccaForCounter(s, ioLoop, loopNest);
 
       //---[ Find operators ]-----------
-      std::string iter, bound;
+      std::string iter, start, bound, stride;
       std::string iterCheck, iterOp;
       std::string opSign, opStride;
 
@@ -956,7 +956,8 @@ namespace occa {
       // [int] [=]
       //        |    \
       //       [group] [0]
-      iter = node1.leaves[1]->leaves[0]->value;
+      iter  = node1.leaves[1]->leaves[0]->value;
+      start = (std::string) *(node1.leaves[1]->leaves[1]);
 
       //---[ Node 2 ]---------
       if((node2.leafCount != 1) ||
@@ -1012,21 +1013,39 @@ namespace occa {
           throw 1;
         }
       }
+
+      if(opSign[0] == '-')
+        stride  = "-(";
+      else
+        stride  = "(";
+
+      stride += opStride;
+      stride += ")";
       //================================
 
       std::stringstream ss;
+
+      // Working Dim
+      ss << '('
+         <<   "((" << bound << ") - (" << start << "))"
+         <<   " / (" << stride << ")"
+         << ')';
+
+      // std::cout << ss.str() << '\n';
+
+      ss.str("");
 
       if( !s.hasQualifier("const") )
         s.addQualifier("const");
 
       if(opStride != "1"){
-        ss << *(s.expRoot.leaves[0]) << ' '
+        ss << node1 << ' '
            << opSign
            << " (occa" << ioLoop << "Id" << loopNest
            << " * (" << opStride << "));";
       }
       else{
-        ss << *(s.expRoot.leaves[0]) << ' '
+        ss << node1 << ' '
            << opSign
            << " occa" << ioLoop << "Id" << loopNest << ";";
       }
@@ -1992,6 +2011,9 @@ namespace occa {
       for(int k = 0; k < kernelCount; ++k){
         statement &s2 = *(new statement(s.depth,
                                         s.type, globalScope));
+
+        s2.scopeTypeMap = s.scopeTypeMap;
+        s2.scopeVarMap  = s.scopeVarMap;
 
         info.nestedKernels.push_back(&s2);
 

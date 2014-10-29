@@ -162,6 +162,8 @@ namespace occa {
                                                                  kInfo.baseName + ss.str(),
                                                                  info_);
         }
+
+        return this;
       }
     }
     else{
