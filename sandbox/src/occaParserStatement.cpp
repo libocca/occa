@@ -1892,6 +1892,28 @@ namespace occa {
       }
     }
 
+    void expNode::addPostQualifier(const std::string &qualifier,
+                                   const int pos){
+      if(info & expType::variable){
+        if(leafCount){
+          expNode &lqNode = *(leaves[0]);
+
+          if( !(lqNode.info & expType::type) ){
+            std::cout << "5. Error on:" << *this << '\n';
+            throw 1;
+          }
+
+          if( !(lqNode.lastLeaf()->info & expType::qualifier) )
+            lqNode.addNode(expType::qualifier, lqNode.leafCount);
+
+          expNode &qNode = *(lqNode.lastLeaf());
+
+          qNode.addNode(expType::qualifier, 0);
+          qNode.leaves[0]->value = qualifier;
+        }
+      }
+    }
+
     std::string expNode::getVariableName() const {
       if(info & expType::variable){
         if(leafCount){
@@ -2107,8 +2129,12 @@ namespace occa {
           if(hasLQualifier){
             out << *(leaves[0]);
 
-            if(leaves[0]->info & expType::qualifier)
+            if((leaves[0]->info & expType::qualifier) ||
+               ((leaves[0]->leafCount) &&
+                (leaves[0]->lastLeaf()->info & expType::qualifier))){
+
               out << ' ';
+            }
           }
 
           out << *(leaves[hasLQualifier]);

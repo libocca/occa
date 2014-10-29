@@ -194,6 +194,7 @@ namespace occa {
 
       bool hasQualifier(const std::string &qualifier) const;
       void addQualifier(const std::string &qualifier, const int pos = 0);
+      void addPostQualifier(const std::string &qualifier, const int pos = 0);
 
       std::string getVariableName() const;
 

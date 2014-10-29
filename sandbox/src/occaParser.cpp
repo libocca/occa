@@ -1802,7 +1802,7 @@ namespace occa {
           if(argVar.pointerCount)
             argNode.addQualifier("occaPointer");
           else
-            argNode.addQualifier("occaVariable", argNode.leafCount);
+            argNode.addPostQualifier("occaVariable");
         }
 
         expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
