@@ -127,6 +127,7 @@ namespace occa {
     std::string extension = getFileExtension(filename);
 
     const std::string iCachedBinary = prefix + "i_" + name;
+
     if(extension == "okl"){
       const std::string pCachedBinary = prefix + "p_" + name;
       parser fileParser;
@@ -150,22 +151,16 @@ namespace occa {
 
         nestedKernelCount = kInfo.nestedKernels.size();
 
-        if(nestedKernelCount != 1){
-          std::stringstream ss;
-          nestedKernels = new kernel_v*[nestedKernelCount];
+        std::stringstream ss;
+        nestedKernels = new kernel_v*[nestedKernelCount];
 
-          releaseFile(cachedBinary);
+        for(int k = 0; k < nestedKernelCount; ++k){
+          ss.str("");
+          ss << k;
 
-          for(int k = 0; k < nestedKernelCount; ++k){
-            ss.str("");
-            ss << k;
-
-            nestedKernels[k] = dev->dHandle->buildKernelFromSource(filename,
-                                                                   kInfo.baseName + ss.str(),
-                                                                   info_);
-          }
-
-          return this;
+          nestedKernels[k] = dev->dHandle->buildKernelFromSource(filename,
+                                                                 kInfo.baseName + ss.str(),
+                                                                 info_);
         }
       }
     }
