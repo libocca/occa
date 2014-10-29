@@ -1774,8 +1774,6 @@ namespace occa {
     }
 
     void parserBase::addArgQualifiers(varInfo &var, statement &s){
-      std::cout << "var = " << var << '\n';
-
       if(var.hasDescriptor("occaKernel")){
         statementNode *snPos = s.statementStart;
 
@@ -1809,88 +1807,6 @@ namespace occa {
 
         argsNode.addNode(expType::printValue);
         argsNode.leaves[0]->value = "occaKernelInfoArgs";
-
-        s2.expRoot.print();
-
-        return;
-      }
-      // s.expRoot.print();
-
-      // Having functionCallType at this level means:
-      //   occaExp, occaBarrier, etc
-      // so don't add occaKernelInfoArg
-      if((var.typeInfo & functionType) &&
-         !(var.typeInfo & functionCallType)){
-
-        strNode *nodePos = s.nodeStart;
-
-        while(nodePos->down.size() == 0)
-          nodePos = nodePos->right;
-
-        nodePos = nodePos->down[0];
-
-        if((nodePos->type == startParentheses) &&
-           (nodePos->value != "occaKernelInfoArg")){
-          strNode *kia = nodePos->push("occaKernelInfoArg");
-
-          kia->up        = nodePos->up;
-          kia->type      = keywordType["occaKernelInfoArg"];
-          kia->depth     = nodePos->depth;
-          kia->sideDepth = nodePos->sideDepth;
-
-          strNode *comma = kia->push(",");
-
-          comma->up        = kia->up;
-          comma->type      = keywordType[","];
-          comma->depth     = kia->depth;
-          comma->sideDepth = kia->sideDepth;
-
-          applyToStatementsUsingVar(var, &parserBase::addKernelInfo);
-
-          while(nodePos){
-            if((nodePos->value == ",") ||
-               (nodePos->value == ")"))
-              break;
-
-            nodePos = nodePos->right;
-          }
-        }
-
-        if(!var.hasDescriptor("occaKernel") &&
-           !var.hasDescriptor("kernel"))
-          return;
-
-        while(nodePos){
-          if(nodePos->value == ","){
-            nodePos = nodePos->right;
-
-            strNode *nextVar = nodePos;
-            varInfo info = s.loadVarInfo(nextVar);
-
-            if((info.typeInfo & pointerType)        &&
-               (!info.hasDescriptor("occaPointer")) &&
-               (!info.hasDescriptor("texture")) ){
-              nodePos       = nodePos->push("occaPointer");
-              nodePos->type = keywordType["occaPointer"];
-
-              nodePos->swapWithLeft();
-            }
-            else if(!(info.typeInfo & pointerType) &&
-                    !info.hasDescriptor("occaVariable") ){
-              while( !(nodePos->type & unknownVariable) )
-                nodePos = nodePos->right;
-
-              nodePos       = nodePos->push("occaVariable");
-              nodePos->type = keywordType["occaVariable"];
-
-              nodePos->swapWithLeft();
-            }
-
-            nodePos = nextVar;
-          }
-          else
-            nodePos = nodePos->right;
-        }
       }
     }
 
