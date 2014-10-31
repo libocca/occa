@@ -2009,6 +2009,7 @@ namespace occa {
       statement &sUp       = *(s.up);
       statementNode *snPos = s.statementStart;
 
+      // Count sub-kernels
       while(snPos){
         statement &s2 = *(snPos->value);
 
@@ -2054,6 +2055,7 @@ namespace occa {
       scopeVarMapIterator it = globalScope->scopeVarMap.find(info.name);
       varInfo &originalVar   = *(it->second);
 
+      // Create empty kernels
       for(int k = 0; k < kernelCount; ++k){
         statement &s2 = *(new statement(s.depth,
                                         s.type, globalScope));
@@ -2080,6 +2082,7 @@ namespace occa {
           newSNRoot = newSNEnd = new statementNode(info.nestedKernels.back());
       }
 
+      // Squeeze new kernels after original kernel
       sn->right       = newSNRoot;
       newSNRoot->left = sn;
 
