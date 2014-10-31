@@ -331,6 +331,9 @@ namespace occa {
       strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
       strNode *lastNewNode = lastNode(newNodeRoot);
 
+      if(lastNewNode == NULL)
+        nodeRoot->print();
+
       //---[ Extra Blocks ]---
       if(lastNewNode->down.size()){
         int downsAvailable = 0;
@@ -1244,7 +1247,7 @@ namespace occa {
               (leaves[leafPos]->value[0] == '-'))){
 
             if(leafPos &&
-               !(leaves[leafPos - 1]->info & expType::LCR))
+               !(leaves[leafPos - 1]->info & expType::operator_))
               updateNow = false;
           }
 
@@ -1320,8 +1323,6 @@ namespace occa {
 
           leafPos = mergeRange(expType::type | expType::namespace_,
                                leafPosStart, leafPosEnd);
-
-          print();
         }
         else
           ++leafPos;

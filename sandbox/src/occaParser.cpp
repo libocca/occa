@@ -2149,7 +2149,7 @@ namespace occa {
             ss << "  nestedKernels[" << kernelCount << "]->setWorkingDims(dims, inner, outer);\n";
           }
 
-          ss << "  *(nestedKernels[" << kernelCount << "])(" << argsStr << ");\n";
+          ss << "  *(nestedKernels[" << kernelCount << "])->operator()(" << argsStr << ");\n";
 
           ss << "}";
 
