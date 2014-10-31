@@ -207,7 +207,6 @@ namespace occa {
 
   void kernel::free(){
     kHandle->free();
-    delete kHandle;
 
     if(kHandle->nestedKernelCount){
       for(int k = 0; k < kHandle->nestedKernelCount; ++k)
@@ -215,6 +214,8 @@ namespace occa {
 
       delete [] kHandle->nestedKernels;
     }
+
+    delete kHandle;
   }
 
   kernelDatabase::kernelDatabase() :
@@ -689,6 +690,8 @@ namespace occa {
         sKer.kHandle = dHandle->buildKernelFromSource(filename,
                                                       kInfo.baseName + ss.str(),
                                                       info_);
+
+        std::cout << "sKer.kHandle->nestedKernelCount = " << sKer.kHandle->nestedKernelCount << '\n';
 
         ss.str("");
       }

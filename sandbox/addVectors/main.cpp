@@ -34,12 +34,6 @@ int main(int argc, char **argv){
   addVectors = device.buildKernelFromSource("addVectors.okl",
                                             "addVectors");
 
-  int dims = 1;
-  int itemsPerGroup(2);
-  int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
-
-  addVectors.setWorkingDims(dims, itemsPerGroup, groups);
-
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
