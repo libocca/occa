@@ -95,7 +95,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -121,7 +121,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];

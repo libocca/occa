@@ -183,6 +183,7 @@ namespace occa {
     fs << info.header << readFile(filename);
 
     fs.close();
+    fs.clear();
 
     fs.open(iCachedBinary.c_str());
     fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);

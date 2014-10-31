@@ -33,7 +33,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -57,7 +57,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -123,12 +123,19 @@ namespace occa {
     //---[ Create Intermediate ]--------
     const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
 
-    std::ofstream fs;
-    fs.open(iCachedBinary.c_str());
+    {
+      struct stat buffer;
+      bool fileExists = (stat(iCachedBinary.c_str(), &buffer) == 0);
 
-    fs << info.occaKeywords << info.header << readFile(filename);
+      if(!fileExists){
+        std::ofstream fs;
+        fs.open(iCachedBinary.c_str());
 
-    fs.close();
+        fs << info.occaKeywords << info.header << readFile(filename);
+
+        fs.close();
+      }
+    }
     //==================================
 
     const std::string occaDir = getOCCADir();
@@ -721,14 +728,14 @@ namespace occa {
       k->nestedKernelCount = kInfo.nestedKernels;
 
       std::stringstream ss;
-      k->nestedKernels = new kernel_v*[kInfo.nestedKernels];
+      k->nestedKernels = new kernel[kInfo.nestedKernels];
 
       for(int ki = 0; ki < kInfo.nestedKernels; ++ki){
         ss << ki;
 
-        k->nestedKernels[ki] = buildKernelFromSource(filename,
-                                                     kInfo.baseName + ss.str(),
-                                                     info_);
+        k->nestedKernels[ki] = dev->buildKernelFromSource(filename,
+                                                          kInfo.baseName + ss.str(),
+                                                          info_);
         ss.str("");
       }
     }

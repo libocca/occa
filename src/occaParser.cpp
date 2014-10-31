@@ -47,7 +47,7 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       // Broken?
-      // applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
+      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
       // Broken
@@ -1310,6 +1310,8 @@ namespace occa {
     }
 
     void parserBase::setupCudaVariables(statement &s){
+      return;
+
       if((!(s.type & declareStatementType)   &&
           !(s.type & forStatementType)       &&
           !(s.type & functionStatementType)) ||
@@ -1635,6 +1637,8 @@ namespace occa {
     }
 
     void parserBase::fixOccaForOrder(statement &s){
+      return;
+
       if( !statementIsAKernel(s) )
         return;
 
@@ -1856,7 +1860,7 @@ namespace occa {
         expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
 
         argsNode.addNode(expType::printValue);
-        argsNode.leaves[0]->value = "occaKernelInfoArgs";
+        argsNode.leaves[0]->value = "occaKernelInfoArg";
       }
       // [-] Missing
       else if(var.hasDescriptor("occaFunction")){
@@ -2083,7 +2087,7 @@ namespace occa {
 
       statement &sKernel = *(getStatementKernel(s));
 
-      // occaKernelInfoArgs doesn't count
+      // occaKernelInfoArg doesn't count
       const int argc = (sKernel.getFunctionArgCount() - 1);
       std::string argsStr;
 
@@ -2102,7 +2106,7 @@ namespace occa {
 
       // Add nestedKernels argument
       {
-        s.loadFromNode(labelCode( splitContent("int **nestedKernels;") ));
+        s.loadFromNode(labelCode( splitContent("int *nestedKernels;") ));
 
         statementNode *nkSN   = s.statementEnd;
         s.statementEnd        = nkSN->left;
@@ -2116,7 +2120,7 @@ namespace occa {
 
         *(argsNode.leaves[1])    = nkSN->value->expRoot;
         argsNode.leaves[1]->info = expType::variable;
-        argsNode.leaves[1]->changeType("occa::kernel_v");
+        argsNode.leaves[1]->changeType("occa::kernel");
 
         delete nkSN->value;
         delete nkSN;
@@ -2146,10 +2150,10 @@ namespace occa {
             for(int i = 0; i < (outerDim + innerDim); ++i)
               ss << "  " << loopIter->extraInfo[i] << "\n";
 
-            ss << "  nestedKernels[" << kernelCount << "]->setWorkingDims(dims, inner, outer);\n";
+            ss << "  nestedKernels[" << kernelCount << "].setWorkingDims(dims, inner, outer);\n";
           }
 
-          ss << "  *(nestedKernels[" << kernelCount << "])->operator()(" << argsStr << ");\n";
+          ss << "  nestedKernels[" << kernelCount << "](" << argsStr << ");\n";
 
           ss << "}";
 
@@ -3194,6 +3198,8 @@ namespace occa {
     }
 
     void parserBase::setupOccaVariables(statement &s){
+      return;
+
       const int idKeywordType = keywordType["occaInnerId0"];
 
       strNode *nodePos = s.nodeStart;

@@ -464,15 +464,15 @@ namespace occa {
 
     std::string functionName;
 
+    int preferredDimSize_;
+
+    void *startTime, *endTime;
+
     int dims;
     dim inner, outer;
 
     int nestedKernelCount;
-    kernel_v **nestedKernels;
-
-    int preferredDimSize_;
-
-    void *startTime, *endTime;
+    kernel *nestedKernels;
 
   public:
     virtual inline ~kernel_v(){}

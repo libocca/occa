@@ -149,11 +149,8 @@ namespace occa {
       kHandle->outer = outer;
     }
     else{
-      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
-        kHandle->nestedKernels[k]->dims  = dims;
-        kHandle->nestedKernels[k]->inner = inner;
-        kHandle->nestedKernels[k]->outer = outer;
-      }
+      for(int k = 0; k < kHandle->nestedKernelCount; ++k)
+        kHandle->nestedKernels[k].setWorkingDims(dims, inner, outer);
     }
   }
 
@@ -198,13 +195,13 @@ namespace occa {
       return kHandle->timeTaken();
     }
     else{
-      kernel_v *k1 = kHandle->nestedKernels[0];
-      kernel_v *k2 = kHandle->nestedKernels[kHandle->nestedKernelCount - 1];
+      kernel &k1 = kHandle->nestedKernels[0];
+      kernel &k2 = kHandle->nestedKernels[kHandle->nestedKernelCount - 1];
 
-      void *start = k1->startTime;
-      void *end   = k2->endTime;
+      void *start = k1.kHandle->startTime;
+      void *end   = k2.kHandle->endTime;
 
-      return k1->timeTakenBetween(start, end);
+      return k1.kHandle->timeTakenBetween(start, end);
     }
   }
 
@@ -213,10 +210,8 @@ namespace occa {
     delete kHandle;
 
     if(kHandle->nestedKernelCount){
-      for(int k = 0; k < kHandle->nestedKernelCount; ++k){
-        kHandle->nestedKernels[k]->free();
-        delete kHandle->nestedKernels[k];
-      }
+      for(int k = 0; k < kHandle->nestedKernelCount; ++k)
+        kHandle->nestedKernels[k].free();
 
       delete [] kHandle->nestedKernels;
     }
