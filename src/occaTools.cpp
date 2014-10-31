@@ -180,15 +180,26 @@ namespace occa {
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
 
-    fs << info.header << readFile(filename);
+    fs << readFile(filename);
 
     fs.close();
     fs.clear();
 
     fs.open(iCachedBinary.c_str());
-    fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
+    fs << info.occaKeywords << info.header << fileParser.parseFile(pCachedBinary);
 
     fs.close();
+
+    {
+      kernelInfoIterator kIt = fileParser.kernelInfoMap.begin();
+
+      while(kIt != fileParser.kernelInfoMap.end()){
+        std::cout
+          << "kIt = " << (kIt->first) << '\n';
+
+        ++kIt;
+      }
+    }
 
     kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
 

@@ -640,13 +640,55 @@ namespace occa {
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
+    const bool usingParser = (getFileExtension(filename) == "okl");
+
     kernel ker;
 
     ker.mode_   = mode_;
     ker.strMode = strMode;
 
-    ker.kHandle      = dHandle->buildKernelFromSource(filename, functionName, info_);
-    ker.kHandle->dev = this;
+    kernel_v *&k = ker.kHandle;
+
+    if(usingParser){
+      k               = new kernel_t<OpenMP>;
+      k->dev          = new device;
+      k->dev->dHandle = new device_t<OpenMP>();
+
+      kernelInfo info = info_;
+
+      std::string cachedBinary = k->getCachedBinaryName(filename, info);
+
+      parsedKernelInfo kInfo = parseFileForFunction(filename,
+                                                    cachedBinary,
+                                                    functionName,
+                                                    info);
+
+      k->buildFromSource(filename, functionName, info_);
+
+      k->nestedKernelCount = kInfo.nestedKernels;
+
+      std::stringstream ss;
+      k->nestedKernels = new kernel[kInfo.nestedKernels];
+
+      for(int ki = 0; ki < kInfo.nestedKernels; ++ki){
+        ss << ki;
+
+        kernel &sKer = k->nestedKernels[ki];
+
+        sKer.mode_   = mode_;
+        sKer.strMode = strMode;
+
+        sKer.kHandle = dHandle->buildKernelFromSource(filename,
+                                                      kInfo.baseName + ss.str(),
+                                                      info_);
+
+        ss.str("");
+      }
+    }
+    else{
+      k      = dHandle->buildKernelFromSource(filename, functionName, info_);
+      k->dev = this;
+    }
 
     return ker;
   }
