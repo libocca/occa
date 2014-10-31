@@ -2006,6 +2006,7 @@ namespace occa {
       const int occaForType = keywordType["occaOuterFor0"];
 
       statement &s         = *(sn->value);
+      statement &sUp       = *(s.up);
       statementNode *snPos = s.statementStart;
 
       while(snPos){
@@ -2027,6 +2028,7 @@ namespace occa {
 
       std::stringstream ss;
 
+      // Find unique baseName
       while(true){
         int k;
 
@@ -2080,6 +2082,9 @@ namespace occa {
 
       sn->right       = newSNRoot;
       newSNRoot->left = sn;
+
+      if(sUp.statementEnd == sn)
+        sUp.statementEnd = newSNEnd;
 
       statementNode *snPosStart = s.statementStart;
       snPos = snPosStart;
@@ -2182,7 +2187,7 @@ namespace occa {
           if(snPosStart == s.statementStart){
             s.statementStart = newSN;
           }
-          if(snPosStart == s.statementEnd){
+          if(snPos == s.statementEnd){
             s.statementEnd = newSN;
           }
 
@@ -2218,6 +2223,43 @@ namespace occa {
         }
 
         globalScope->statementCount += (kernelCount - 1);
+      }
+
+      // Add kernel guards
+      {
+        sUp.loadFromNode(labelCode( splitContent("#if OCCA_USING_OPENMP") ));
+
+        statementNode *ifOMP    = sUp.statementEnd;
+        sUp.statementEnd        = ifOMP->left;
+        sUp.statementEnd->right = NULL;
+
+        ifOMP->left = sn->left;
+
+        if(ifOMP->left)
+          ifOMP->left->right = ifOMP;
+
+        ifOMP->right = sn;
+        sn->left     = ifOMP;
+
+        if(sUp.statementStart == sn)
+          sUp.statementStart = ifOMP;
+
+        sUp.loadFromNode(labelCode( splitContent("#endif") ));
+
+        statementNode *endifOMP = sUp.statementEnd;
+        sUp.statementEnd        = endifOMP->left;
+        sUp.statementEnd->right = NULL;
+
+        endifOMP->right = sn->right;
+
+        if(endifOMP->right)
+          endifOMP->right->left = endifOMP;
+
+        endifOMP->left = sn;
+        sn->right      = endifOMP;
+
+        if(sUp.statementEnd == sn)
+          sUp.statementEnd = endifOMP;
       }
 
       return newSNEnd->right;

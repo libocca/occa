@@ -1,10 +1,4 @@
 #if 1
-#  if 1
-#    include "A"
-#  else
-#    include "B"
-#  endif
-
 void addVectors(int entries,
                 const float * a,
                 const float * b,
