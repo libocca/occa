@@ -429,6 +429,8 @@ namespace occa {
         else if(stringsAreEqual(c, (cEnd - c), "include")){
           if(state & ignoring)
             return state;
+
+          return (state | keepMacro);
         }
         else if(stringsAreEqual(c, (cEnd - c), "pragma"))
           return (state | keepMacro);

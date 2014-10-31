@@ -2418,7 +2418,7 @@ namespace occa {
       }
 
       case (expType::macro_):{
-        out << tab << value;
+        out << tab << value << '\n';
         break;
       }
 
