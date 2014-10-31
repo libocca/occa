@@ -39,6 +39,10 @@ namespace occa {
   kernel_t<OpenMP>::kernel_t(const kernel_t<OpenMP> &k);
 
   template <>
+  std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
+                                                    kernelInfo &info_);
+
+  template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName_,
                                                       const kernelInfo &info_);

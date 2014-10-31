@@ -33,7 +33,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -57,7 +57,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -73,29 +73,25 @@ namespace occa {
   kernel_t<OpenMP>::~kernel_t(){}
 
   template <>
-  kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
-                                                      const kernelInfo &info_){
-    functionName = functionName_;
-
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU"   , 1);
-    info.addDefine("OCCA_USING_OPENMP", 1);
+  std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
+                                                    kernelInfo &info_){
+    info_.addDefine("OCCA_USING_CPU"   , 1);
+    info_.addDefine("OCCA_USING_OPENMP", 1);
 
 #if OCCA_OPENMP_ENABLED
-    info.addIncludeDefine("omp.h");
+    info_.addIncludeDefine("omp.h");
 #endif
 
-    info.addOCCAKeywords(occaOpenMPDefines);
+    info_.addOCCAKeywords(occaOpenMPDefines);
 
     std::stringstream salt;
+
     salt << "OpenMP"
-         << info.salt()
+         << info_.salt()
          << parser::version
          << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags
-         << functionName;
+         << dev->dHandle->compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 
@@ -104,13 +100,17 @@ namespace occa {
     cachedBinary = cachedBinary + ".dll";
 #endif
 
-    struct stat buffer;
-    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+    return cachedBinary;
+  }
 
-    if(fileExists){
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-      return buildFromBinary(cachedBinary, functionName);
-    }
+  template <>
+  kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
+                                                      const std::string &functionName_,
+                                                      const kernelInfo &info_){
+    functionName = functionName_;
+
+    kernelInfo info = info_;
+    std::string cachedBinary = getCachedBinaryName(filename, info);
 
     if(!haveFile(cachedBinary)){
       waitForFile(cachedBinary);
@@ -121,60 +121,24 @@ namespace occa {
     data = new OpenMPKernelData_t;
 
     //---[ Create Intermediate ]--------
-    std::string prefix, name;
-    getFilePrefixAndName(cachedBinary, prefix, name);
+    const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
 
-    std::string extension = getFileExtension(filename);
+    {
+      struct stat buffer;
+      bool fileExists = (stat(iCachedBinary.c_str(), &buffer) == 0);
 
-    const std::string iCachedBinary = prefix + "i_" + name;
+      if(!fileExists){
+        std::ofstream fs;
+        fs.open(iCachedBinary.c_str());
 
-    if(extension == "okl"){
-      const std::string pCachedBinary = prefix + "p_" + name;
-      parser fileParser;
+        fs << info.occaKeywords << info.header << readFile(filename);
 
-      std::ofstream fs;
-      fs.open(pCachedBinary.c_str());
-
-      fs << info.header << readFile(filename);
-
-      fs.close();
-
-      fs.open(iCachedBinary.c_str());
-      fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
-
-      fs.close();
-
-      kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
-
-      if(kIt != fileParser.kernelInfoMap.end()){
-        parserNamespace::kernelInfo &kInfo = *((kIt++)->second);
-
-        nestedKernelCount = kInfo.nestedKernels.size();
-
-        std::stringstream ss;
-        nestedKernels = new kernel_v*[nestedKernelCount];
-
-        for(int k = 0; k < nestedKernelCount; ++k){
-          ss.str("");
-          ss << k;
-
-          nestedKernels[k] = dev->dHandle->buildKernelFromSource(filename,
-                                                                 kInfo.baseName + ss.str(),
-                                                                 info_);
-        }
-
-        return this;
+        fs.close();
       }
     }
-    else{
-      std::ofstream fs;
-      fs.open(iCachedBinary.c_str());
-
-      fs << info.occaKeywords << info.header << readFile(filename);
-
-      fs.close();
-    }
     //==================================
+
+    const std::string occaDir = getOCCADir();
 
     std::stringstream command;
 
@@ -189,6 +153,8 @@ namespace occa {
 #endif
             << ' '    << dev->dHandle->compilerFlags
             << ' '    << info.flags
+            << " -I"  << occaDir << "/include"
+            << " -L"  << occaDir << "/lib -locca"
             << ' '    << iCachedBinary
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -o " << cachedBinary
@@ -743,9 +709,48 @@ namespace occa {
   kernel_v* device_t<OpenMP>::buildKernelFromSource(const std::string &filename,
                                                     const std::string &functionName,
                                                     const kernelInfo &info_){
+    const bool usingParser = (getFileExtension(filename) == "okl");
+
     kernel_v *k = new kernel_t<OpenMP>;
     k->dev = dev;
-    k->buildFromSource(filename, functionName, info_);
+
+    kernelInfo info = info_;
+    std::string cachedBinary = k->getCachedBinaryName(filename, info);
+
+    if(usingParser){
+      parsedKernelInfo kInfo = parseFileForFunction(filename,
+                                                    cachedBinary,
+                                                    functionName,
+                                                    info);
+
+      k->buildFromSource(filename, functionName, info_);
+
+      k->nestedKernelCount = kInfo.nestedKernels;
+
+      std::stringstream ss;
+      k->nestedKernels = new kernel[kInfo.nestedKernels];
+
+      for(int ki = 0; ki < kInfo.nestedKernels; ++ki){
+        ss << ki;
+
+        k->nestedKernels[ki] = dev->buildKernelFromSource(filename,
+                                                          kInfo.baseName + ss.str(),
+                                                          info_);
+        ss.str("");
+      }
+    }
+    else{
+      struct stat buffer;
+      bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+
+      if(fileExists){
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        k->buildFromBinary(cachedBinary, functionName);
+      }
+      else
+        k->buildFromSource(filename, functionName, info_);
+    }
+
     return k;
   }
 
@@ -782,8 +787,7 @@ namespace occa {
          << parser::version
          << compilerEnvScript
          << compiler
-         << compilerFlags
-         << functionName;
+         << compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 

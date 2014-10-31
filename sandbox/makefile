@@ -4,7 +4,7 @@ sPath = src
 iPath = inc
 #=================================================
 
-paths = -I./$(sPath) -I./$(iPath)
+paths = -I./$(sPath) -I./$(iPath) -I${OCCA_DIR}/include -L${OCCA_DIR}/lib -locca
 flags = -Qunused-arguments -D__extern_always_inline=inline -g -Wno-unused-value
 
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)

@@ -1,5 +1,6 @@
 ifndef OCCA_DIR
 	OCCA_DIR = $(shell pwd)
+	occaDirWasInitialized = 1
 endif
 
 include ${OCCA_DIR}/scripts/makefile
@@ -38,8 +39,15 @@ else
 	developerDependencies =
 endif
 
+ifdef occaDirWasInitialized
+.FORCE:
+
+$(occaLPath)/libocca.so: .FORCE
+	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
+else
 $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
+endif
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp))) $(developerDependencies)
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<

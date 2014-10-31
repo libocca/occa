@@ -159,7 +159,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -185,7 +185,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -203,34 +203,40 @@ namespace occa {
   kernel_t<COI>::~kernel_t(){}
 
   template <>
-  kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
-                                                          const std::string &functionName_,
-                                                          const kernelInfo &info_){
-    functionName = functionName_;
+  std::string kernel_t<COI>::getCachedBinaryName(const std::string &filename,
+                                                 kernelInfo &info_){
+    info_.addDefine("OCCA_USING_CPU", 1);
+    info_.addDefine("OCCA_USING_COI", 1);
 
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU", 1);
-    info.addDefine("OCCA_USING_COI", 1);
-
-    info.addOCCAKeywords(occaCOIDefines);
+    info_.addOCCAKeywords(occaCOIDefines);
 
     std::stringstream salt;
     salt << "COI"
-         << info.salt()
+         << info_.salt()
          << parser::version
          << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags
-         << functionName;
+         << dev->dHandle->compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
+
     std::string libPath, soname;
 
     getFilePrefixAndName(cachedBinary, libPath, soname);
 
     std::string libName = "lib" + soname + ".so";
 
-    cachedBinary = libPath + libName;
+    return (libPath + libName);
+  }
+
+  template <>
+  kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
+                                                          const std::string &functionName_,
+                                                          const kernelInfo &info_){
+    functionName = functionName_;
+
+    kernelInfo info = info_;
+    std::string cachedBinary = getCachedBinaryName(filename, info);
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -954,8 +960,7 @@ namespace occa {
          << parser::version
          << compilerEnvScript
          << compiler
-         << compilerFlags
-         << functionName;
+         << compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
     std::string libPath, soname;

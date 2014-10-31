@@ -419,7 +419,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -445,7 +445,7 @@ namespace occa {
     nestedKernelCount = k.nestedKernelCount;
 
     if(nestedKernelCount){
-      nestedKernels = new kernel_v*[nestedKernelCount];
+      nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
@@ -463,6 +463,29 @@ namespace occa {
   kernel_t<OpenCL>::~kernel_t(){}
 
   template <>
+  std::string kernel_t<OpenCL>::getCachedBinaryName(const std::string &filename,
+                                                    kernelInfo &info_){
+    OCCA_EXTRACT_DATA(OpenCL, Kernel);
+
+    info_.addDefine("OCCA_USING_GPU"   , 1);
+    info_.addDefine("OCCA_USING_OPENCL", 1);
+
+    info_.addOCCAKeywords(occaOpenCLDefines);
+
+    std::stringstream salt;
+
+    salt << "OpenCL"
+         << data_.platform << '-' << data_.device
+         << info_.salt()
+         << parser::version
+         << dev->dHandle->compilerEnvScript
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags;
+
+    return getCachedName(filename, salt.str());
+  }
+
+  template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName_,
                                                       const kernelInfo &info_){
@@ -471,22 +494,7 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_GPU"   , 1);
-    info.addDefine("OCCA_USING_OPENCL", 1);
-
-    info.addOCCAKeywords(occaOpenCLDefines);
-
-    std::stringstream salt;
-    salt << "OpenCL"
-         << data_.platform << '-' << data_.device
-         << info.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags
-         << functionName;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedBinaryName(filename, info);
 
     struct stat buffer;
     const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -1292,8 +1300,7 @@ namespace occa {
          << parser::version
          << compilerEnvScript
          << compiler
-         << compilerFlags
-         << functionName;
+         << compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 

@@ -464,18 +464,21 @@ namespace occa {
 
     std::string functionName;
 
-    int dims;
-    dim inner, outer;
-
-    int nestedKernelCount;
-    kernel_v **nestedKernels;
-
     int preferredDimSize_;
 
     void *startTime, *endTime;
 
+    int dims;
+    dim inner, outer;
+
+    int nestedKernelCount;
+    kernel *nestedKernels;
+
   public:
     virtual inline ~kernel_v(){}
+
+    virtual std::string getCachedBinaryName(const std::string &filename,
+                                            kernelInfo &info_) = 0;
 
     virtual kernel_v* buildFromSource(const std::string &filename,
                                       const std::string &functionName_,
@@ -509,6 +512,9 @@ namespace occa {
     kernel_t<mode>& operator = (const kernel_t<mode> &k);
 
     ~kernel_t();
+
+    std::string getCachedBinaryName(const std::string &filename,
+                                    kernelInfo &info_);
 
     kernel_t<mode>* buildFromSource(const std::string &filename,
                                     const std::string &functionName_,
