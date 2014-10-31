@@ -7,13 +7,15 @@ int main(int argc, char **argv){
 
   float *a  = new float[entries];
   float *b  = new float[entries];
-  float *ab = new float[2*entries];
+  float *ab = new float[entries];
 
   for(int i = 0; i < entries; ++i){
     a[i]  = i;
     b[i]  = 1 - i;
-    ab[i] = ab[entries + i] = 0;
+    ab[i] = 0;
   }
+
+  // occa::availableDevices<occa::OpenCL>();
 
   std::string mode = "OpenMP";
   int platformID = 0;
@@ -25,9 +27,9 @@ int main(int argc, char **argv){
 
   device.setup(mode, platformID, deviceID);
 
-  o_a  = device.malloc(  entries*sizeof(float));
-  o_b  = device.malloc(  entries*sizeof(float));
-  o_ab = device.malloc(2*entries*sizeof(float));
+  o_a  = device.malloc(entries*sizeof(float));
+  o_b  = device.malloc(entries*sizeof(float));
+  o_ab = device.malloc(entries*sizeof(float));
 
   addVectors = device.buildKernelFromSource("addVectors.okl",
                                             "addVectors");
@@ -55,7 +57,7 @@ int main(int argc, char **argv){
 
   occa::printTimer();
 
-  for(int i = 0; i < (2*entries); ++i)
+  for(int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
   delete [] a;
