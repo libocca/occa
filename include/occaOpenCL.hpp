@@ -103,6 +103,10 @@ namespace occa {
   kernel_t<OpenCL>::kernel_t(const kernel_t<OpenCL> &k);
 
   template <>
+  std::string kernel_t<OpenCL>::getCachedBinaryName(const std::string &filename,
+                                                    kernelInfo &info_);
+
+  template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName_,
                                                       const kernelInfo &info_);

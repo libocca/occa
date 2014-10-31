@@ -137,6 +137,28 @@ namespace occa {
   kernel_t<CUDA>::~kernel_t(){}
 
   template <>
+  std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
+                                                  kernelInfo &info_){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    info_.addDefine("OCCA_USING_GPU" , 1);
+    info_.addDefine("OCCA_USING_CUDA", 1);
+
+    info_.addOCCAKeywords(occaCUDADefines);
+
+    std::stringstream salt;
+
+    salt << "CUDA"
+         << info_.salt()
+         << parser::version
+         << dev->dHandle->compilerEnvScript
+         << dev->dHandle->compiler
+         << dev->dHandle->compilerFlags;
+
+    return getCachedName(filename, salt.str());
+  }
+
+  template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromSource(const std::string &filename,
                                                   const std::string &functionName_,
                                                   const kernelInfo &info_){
@@ -145,21 +167,7 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_GPU" , 1);
-    info.addDefine("OCCA_USING_CUDA", 1);
-
-    info.addOCCAKeywords(occaCUDADefines);
-
-    std::stringstream salt;
-    salt << "CUDA"
-         << info.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags
-         << functionName;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedBinaryName(filename, info);
 
     struct stat buffer;
     const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -1006,8 +1014,7 @@ namespace occa {
          << parser::version
          << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags
-         << functionName;
+         << dev->dHandle->compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
     std::string contents     = readFile(cachedBinary);

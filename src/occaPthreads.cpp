@@ -75,25 +75,20 @@ namespace occa {
   kernel_t<Pthreads>::~kernel_t(){}
 
   template <>
-  kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,
-                                                          const std::string &functionName_,
-                                                          const kernelInfo &info_){
-    functionName = functionName_;
+  std::string kernel_t<Pthreads>::getCachedBinaryName(const std::string &filename,
+                                                      kernelInfo &info_){
+    info_.addDefine("OCCA_USING_CPU"     , 1);
+    info_.addDefine("OCCA_USING_PTHREADS", 1);
 
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU"     , 1);
-    info.addDefine("OCCA_USING_PTHREADS", 1);
-
-    info.addOCCAKeywords(occaPthreadsDefines);
+    info_.addOCCAKeywords(occaPthreadsDefines);
 
     std::stringstream salt;
     salt << "Pthreads"
-         << info.salt()
+         << info_.salt()
          << parser::version
          << dev->dHandle->compilerEnvScript
          << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags
-         << functionName;
+         << dev->dHandle->compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 
@@ -101,6 +96,18 @@ namespace occa {
     // Windows refuses to load dll's that do not end with '.dll'
     cachedBinary = cachedBinary + ".dll";
 #endif
+
+    return cachedBinary;
+  }
+
+  template <>
+  kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,
+                                                          const std::string &functionName_,
+                                                          const kernelInfo &info_){
+    functionName = functionName_;
+
+    kernelInfo info = info_;
+    std::string cachedBinary = getCachedBinaryName(filename, info);
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -775,8 +782,7 @@ namespace occa {
          << parser::version
          << compilerEnvScript
          << compiler
-         << compilerFlags
-         << functionName;
+         << compilerFlags;
 
     std::string cachedBinary = getCachedName(filename, salt.str());
 

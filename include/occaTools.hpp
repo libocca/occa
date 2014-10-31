@@ -51,19 +51,26 @@ namespace occa {
                             std::string &prefix,
                             std::string &filename);
 
+  std::string getMidCachedBinaryName(const std::string &cachedBinary,
+                                     const std::string &namePrefix);
+
   std::string getFileLock(const std::string &filename);
 
   bool haveFile(const std::string &filename);
-
   void waitForFile(const std::string &filename);
-
   void releaseFile(const std::string &filename);
+
+  parsedKernelInfo parseFileForFunction(const std::string &filename,
+                                        const std::string &cachedBinary,
+                                        const std::string &functionName,
+                                        const kernelInfo &info);
 
   std::string fnv(const std::string &filename);
 
   bool fileExists(const std::string &filename);
   std::string readFile(const std::string &filename);
 
+  std::string getOCCADir();
   std::string getCachePath();
 
   std::string getCachedName(const std::string &filename,

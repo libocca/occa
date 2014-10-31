@@ -80,6 +80,10 @@ namespace occa {
   kernel_t<COI>::kernel_t(const kernel_t<COI> &k);
 
   template <>
+  std::string kernel_t<COI>::getCachedBinaryName(const std::string &filename,
+                                                 kernelInfo &info_);
+
+  template <>
   kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
                                                 const std::string &functionName_,
                                                 const kernelInfo &info_);

@@ -477,6 +477,9 @@ namespace occa {
   public:
     virtual inline ~kernel_v(){}
 
+    virtual std::string getCachedBinaryName(const std::string &filename,
+                                            kernelInfo &info_) = 0;
+
     virtual kernel_v* buildFromSource(const std::string &filename,
                                       const std::string &functionName_,
                                       const kernelInfo &info_ = defaultKernelInfo) = 0;
@@ -509,6 +512,9 @@ namespace occa {
     kernel_t<mode>& operator = (const kernel_t<mode> &k);
 
     ~kernel_t();
+
+    std::string getCachedBinaryName(const std::string &filename,
+                                    kernelInfo &info_);
 
     kernel_t<mode>* buildFromSource(const std::string &filename,
                                     const std::string &functionName_,

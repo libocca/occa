@@ -122,6 +122,20 @@ namespace occa {
     };
     //==============================================
   };
+
+  class parsedKernelInfo {
+  public:
+    std::string baseName;
+    int nestedKernels;
+
+    inline parsedKernelInfo() :
+      baseName(""),
+      nestedKernels(0) {}
+
+    inline parsedKernelInfo(parserNamespace::kernelInfo &kInfo) :
+      baseName(kInfo.baseName),
+      nestedKernels(kInfo.nestedKernels.size()) {}
+  };
 };
 
 #endif

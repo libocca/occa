@@ -111,6 +111,14 @@ namespace occa {
     filename = fullFilename.substr(lastSlash, chars - lastSlash);
   }
 
+  std::string getMidCachedBinaryName(const std::string &cachedBinary,
+                                     const std::string &namePrefix){
+    std::string prefix, name;
+    getFilePrefixAndName(cachedBinary, prefix, name);
+
+    return (prefix + namePrefix + "_" + name);
+  }
+
   std::string getFileLock(const std::string &filename){
     std::string prefix, name;
     getFilePrefixAndName(filename, prefix, name);
@@ -160,6 +168,40 @@ namespace occa {
 #endif
   }
 
+  parsedKernelInfo parseFileForFunction(const std::string &filename,
+                                        const std::string &cachedBinary,
+                                        const std::string &functionName,
+                                        const kernelInfo &info){
+    const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
+    const std::string pCachedBinary = getMidCachedBinaryName(cachedBinary, "p");
+
+    parser fileParser;
+
+    std::ofstream fs;
+    fs.open(pCachedBinary.c_str());
+
+    fs << info.header << readFile(filename);
+
+    fs.close();
+
+    fs.open(iCachedBinary.c_str());
+    fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
+
+    fs.close();
+
+    kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
+
+    if(kIt != fileParser.kernelInfoMap.end()){
+      return parsedKernelInfo( *((kIt++)->second) );
+    }
+
+    std::cout << "Could not find function ["
+              << functionName << "] in file ["
+              << filename     << "].\n";
+    throw 1;
+
+    return parsedKernelInfo();
+  }
 
   std::string fnv(const std::string &saltedString){
     const int len = saltedString.size();
@@ -210,13 +252,16 @@ namespace occa {
 
     const int chars = fileInfo.st_size;
 
-    if(status != 0)
-      printf("File [%s] gave a bad stat", filename.c_str());
+    if(status != 0){
+      printf("File [%s] does not exist or could not be properly opened\n", filename.c_str());
+      throw 1;
+    }
 
     char *buffer = (char*) malloc(chars);
     memset(buffer, '\0', chars);
 
     std::ifstream fs(filename.c_str());
+
     if(!fs) {
       std::cerr << "Unable to read file " << filename;
       throw 1;
@@ -229,6 +274,18 @@ namespace occa {
     free(buffer);
 
     return contents;
+  }
+
+  std::string getOCCADir(){
+    char *c_occaPath = getenv("OCCA_DIR");
+
+    if(c_occaPath != NULL)
+      return c_occaPath;
+
+    std::cout << "Environment variable [OCCA_DIR] is not set.\n";
+    throw 1;
+
+    return "";
   }
 
   std::string getCachePath(){
