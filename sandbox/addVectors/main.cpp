@@ -3,7 +3,7 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv){
-  int entries = 5;
+  int entries = 16;
 
   float *a  = new float[entries];
   float *b  = new float[entries];
@@ -51,7 +51,7 @@ int main(int argc, char **argv){
 
   occa::printTimer();
 
-  for(int i = 0; i < 5; ++i)
+  for(int i = 0; i < entries; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
   delete [] a;
