@@ -663,7 +663,15 @@ namespace occa {
                                                     functionName,
                                                     info);
 
-      k->buildFromSource(filename, functionName, info_);
+      struct stat buffer;
+      bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+
+      if(fileExists){
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        k->buildFromBinary(cachedBinary, functionName);
+      }
+      else
+        k->buildFromSource(filename, functionName, info_);
 
       k->nestedKernelCount = kInfo.nestedKernels;
 
