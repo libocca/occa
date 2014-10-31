@@ -1863,7 +1863,7 @@ namespace occa {
         statementNode *sn = (varUsedMap[&var]).right;
 
         while(sn){
-          std::cout << "s = " << *(sn->value) << '\n';
+          sn->value->expRoot.print();
 
           sn = sn->right;
         }
