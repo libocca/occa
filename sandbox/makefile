@@ -4,16 +4,11 @@ sPath = src
 iPath = inc
 #=================================================
 
-paths = -I./$(sPath) -I./$(iPath) -I${OCCA_DIR}/include -L${OCCA_DIR}/lib -locca
+paths = -I${OCCA_DIR}/include -L${OCCA_DIR}/lib -locca
 flags = -Qunused-arguments -D__extern_always_inline=inline -g -Wno-unused-value
 
-headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
-sources = $(wildcard $(sPath)/*.cpp)
-
-objects = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
-
-main: main.cpp $(objects) $(headers)
-	clang++ -o main $(flags) $(objects) $(paths) -lm main.cpp
+main: main.cpp
+	clang++ -o main $(flags) $(paths) -lm main.cpp
 
 $(oPath)/%.o:$(sPath)/%.cpp $(iPath)/%.hpp$(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
 	clang++ -o $@ $(flags) -c $(paths) $<
