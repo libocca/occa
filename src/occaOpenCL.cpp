@@ -1014,9 +1014,9 @@ namespace occa {
 
     int platformCount = occa::cl::platformCount();
 
-    std::cout << occa::deviceInfo::sLine   << '\n'
+    std::cout << occa::deviceInfo::sLine  << '\n'
               << occa::deviceInfo::header << '\n'
-              << occa::deviceInfo::sLine   << '\n';
+              << occa::deviceInfo::sLine  << '\n';
 
     for(int p = 0; p < platformCount; ++p){
       int deviceCount = occa::cl::deviceCountInPlatform(p);

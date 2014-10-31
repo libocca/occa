@@ -256,6 +256,8 @@ namespace occa {
     }
 
     void parserBase::loadMacroInfo(macroInfo &info, const char *&c){
+      const bool hasWhitespace = isWhitespace(*c);
+
       skipWhitespace(c);
 
       info.argc = 0;
@@ -269,7 +271,7 @@ namespace occa {
       if(*c == '\0')
         return;
 
-      if(*c != '('){
+      if((*c != '(') || hasWhitespace){
         const size_t chars = strlen(c);
 
         info.parts[0] = strip(c, chars);

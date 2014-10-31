@@ -3,8 +3,8 @@ occaKernel void addVectors(int entries,
                            float * b,
                            float * ab){
   for(int group = 0; group < ((entries + 15) / 16); ++group; outer0){
-    for(int item = 0; item < 8; ++item; inner0){
-      const int N = ((16 * group) + 0 + item);
+    for(int item = 0; item < 16; item += 2; inner0){
+      const int N = ((16 * group) + item + 0);
 
       if(N < entries)
         ab[N] = a[N] + b[N];
@@ -12,8 +12,8 @@ occaKernel void addVectors(int entries,
   }
 
   for(int group = 0; group < ((entries + 15) / 16); ++group; outer0){
-    for(int item = 0; item < 8; ++item; inner0){
-      const int N = ((16 * group) + 8 + item);
+    for(int item = 0; item < 16; item += 2; inner0){
+      const int N = ((16 * group) + item + 1);
 
       if(N < entries)
         ab[N] = a[N] + b[N];

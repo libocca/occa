@@ -27,6 +27,9 @@ int main(int argc, char **argv){
 
   device.setup(mode, platformID, deviceID);
 
+  occa::setDevice(0);
+  const int devID = occa::getDevice();
+
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
