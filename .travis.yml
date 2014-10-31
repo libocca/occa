@@ -9,6 +9,7 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1 opencl-headers gcc-4.8 g++-4.8 gfortran-4.8
 script:
+  - export OCCA_DIR=$PWD
   - make
   - cd examples/addVectors && make
   - LD_LIBRARY_PATH=../../lib:$LD_LIBRARY_PATH ./main
