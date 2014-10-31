@@ -691,8 +691,6 @@ namespace occa {
                                                       kInfo.baseName + ss.str(),
                                                       info_);
 
-        std::cout << "sKer.kHandle->nestedKernelCount = " << sKer.kHandle->nestedKernelCount << '\n';
-
         ss.str("");
       }
     }
