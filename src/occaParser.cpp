@@ -1069,7 +1069,7 @@ namespace occa {
       // Working Dim
       ss << ioLoopVar << '[' << loopNest << "] = "
          << '('
-         <<   "((" << bound << ") - (" << start << "))"
+         <<   "((" << bound << ") - (" << start << ")) + (" << stride << " - 1)";
          <<   " / (" << stride << ")"
          << ");";
 
