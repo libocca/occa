@@ -1066,6 +1066,16 @@ namespace occa {
 
       std::stringstream ss;
 
+      {
+        expNode *newNode  = s.createExpNodeFrom(bound);
+        expNode *fNewNode = newNode->makeFlatHandle();
+        newNode->print();
+
+        std::cout << "fNewNode = " << *fNewNode << '\n';
+
+        throw 1;
+      }
+
       // Working Dim
       ss << ioLoopVar << '[' << loopNest << "] = "
          << '('

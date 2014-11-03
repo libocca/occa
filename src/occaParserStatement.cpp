@@ -1869,6 +1869,106 @@ namespace occa {
     }
 
     //---[ Exp Info ]-----------------
+    int expNode::depth(){
+      int depth_ = 0;
+
+      while(up)
+        ++depth_;
+
+      return depth_;
+    }
+
+    int expNode::whichLeafAmI(){
+      if(up){
+        const int upLeafCount = up->leafCount;
+
+        for(int i = 0; i < upLeafCount; ++i)
+          if(up->leaves[i] == this)
+            return i;
+      }
+
+      return -1;
+    }
+
+    int expNode::nestedLeafCount(){
+      int ret = leafCount;
+
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->leafCount)
+          ret += leaves[i]->nestedLeafCount();
+      }
+
+      return ret;
+    }
+
+    expNode* expNode::makeFlatHandle(){
+      if(leafCount == 0)
+        return NULL;
+
+      expNode &flatNode = *(new expNode(*sInfo));
+
+      flatNode.info   = expType::printLeaves;
+      flatNode.leaves = new expNode*[nestedLeafCount()];
+
+      int offset = 0;
+      makeFlatHandle(offset, flatNode.leaves);
+
+      flatNode.leafCount = offset;
+
+      return &flatNode;
+    }
+
+    void expNode::makeFlatHandle(int &offset,
+                                 expNode **flatLeaves){
+      for(int i = 0; i < leafCount; ++i){
+        switch(leaves[i]->info){
+        case (expType::L):{
+          flatLeaves[offset++] = leaves[i];
+          flatLeaves[offset++] = leaves[i]->leaves[0];
+          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
+
+          break;
+        }
+
+        case (expType::R):{
+          flatLeaves[offset++] = leaves[i]->leaves[0];
+          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i];
+
+          break;
+        }
+
+        case (expType::L | expType::R):{
+          flatLeaves[offset++] = leaves[i]->leaves[0];
+          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i];
+          flatLeaves[offset++] = leaves[i]->leaves[1];
+          leaves[i]->leaves[1]->makeFlatHandle(offset, flatLeaves);
+
+          break;
+        }
+
+        case (expType::L | expType::C | expType::R):{
+          flatLeaves[offset++] = leaves[i]->leaves[0];
+          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i]->leaves[1];
+          leaves[i]->leaves[1]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i]->leaves[2];
+          leaves[i]->leaves[2]->makeFlatHandle(offset, flatLeaves);
+
+          break;
+        }
+        default:
+          flatLeaves[offset++] = leaves[i];
+
+          leaves[i]->makeFlatHandle(offset, flatLeaves);
+
+          break;
+        }
+      }
+    }
+
+
     void expNode::addNode(const int info_,
                           const int pos){
       expNode &newNode  = *(new expNode(*this));
@@ -2514,6 +2614,18 @@ namespace occa {
 
         break;
       }
+
+      case (expType::printLeaves):{
+        if(leafCount){
+          for(int i = 0; i < leafCount; ++i)
+            out << leaves[i]->value << ' ';
+
+          out << '\n';
+        }
+
+        break;
+      }
+
       default:{
         if(info & expType::typedef_){
           const int oldInfo = info;

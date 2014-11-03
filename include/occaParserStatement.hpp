@@ -43,7 +43,8 @@ namespace occa {
       static const int checkSInfo      = (1 << 25);
 
       static const int printValue      = (1 << 26);
-      static const int maxBit          = 26;
+      static const int printLeaves     = (1 << 27);
+      static const int maxBit          = 27;
     };
 
     class expNode {
@@ -191,6 +192,14 @@ namespace occa {
       expNode* lastLeaf();
 
       //---[ Exp Info ]-----------------
+      int depth();
+      int whichLeafAmI();
+      int nestedLeafCount();
+
+      expNode* makeFlatHandle();
+      void makeFlatHandle(int &offset,
+                          expNode **flatLeaves);
+
       void addNode(const int info_, const int pos = 0);
       void removeNode(const int pos = 0);
 
