@@ -191,23 +191,10 @@ namespace occa {
           }
 
           while(downNode->value == "*"){
-            if(downNode->down.size()){
-              if(nodeRoot == NULL){
-                std::cout << "Missing a [;] after:\n"
-                          << sInfo->prettyString(oldNodeRoot, "  ");
-                throw 1;
-              }
-
+            if(downNode->down.size())
               return declareStatementType;
-            }
 
             downNode = downNode->right;
-          }
-
-          if(nodeRoot == NULL){
-            std::cout << "Missing a [;] after:\n"
-                      << sInfo->prettyString(oldNodeRoot, "  ");
-            throw 1;
           }
 
           // [C++] Function call, not function pointer define
@@ -222,12 +209,6 @@ namespace occa {
                     << sInfo->prettyString(oldNodeRoot, "  ");
           throw 1;
         }
-      }
-
-      if(nodeRoot == NULL){
-        std::cout << "Missing a [;] after:\n"
-                  << sInfo->prettyString(oldNodeRoot, "  ");
-        throw 1;
       }
 
       return declareStatementType;
@@ -332,15 +313,15 @@ namespace occa {
       strNode *lastNewNode = lastNode(newNodeRoot);
 
       if(lastNewNode == NULL)
-        nodeRoot->print();
+        newNodeRoot->print();
 
       //---[ Extra Blocks ]---
       if(lastNewNode->down.size()){
         int downsAvailable = 0;
 
         if(sInfo->type & (forStatementType      |
-                         switchStatementType   |
-                         functionStatementType)){
+                          switchStatementType   |
+                          functionStatementType)){
 
           downsAvailable = 1;
         }
@@ -351,7 +332,7 @@ namespace occa {
         // Only [if] and [if else]
         else if((sInfo->type & ifStatementType) &&
                 (sInfo->type != elseStatementType)){
-            downsAvailable = 1;
+          downsAvailable = 1;
         }
 
         lastNewNode->down.erase(lastNewNode->down.begin() + downsAvailable,
@@ -576,15 +557,18 @@ namespace occa {
         const int argc = sInfo->getFunctionArgCount();
 
         for(int i = 0; i < argc; ++i){
-          expNode &arg  = *(sInfo->getFunctionArgNode(i));
-          varInfo &sVar = *(sInfo->scopeVarMap[ sInfo->getFunctionArgName(i) ]);
+          expNode &arg = *(sInfo->getFunctionArgNode(i));
 
-          // [const int] x[2]
-          arg.leaves[0]->setVarInfo(sVar);
+          if(arg.info & expType::variable){
+            varInfo &sVar = *(sInfo->scopeVarMap[ sInfo->getFunctionArgName(i) ]);
 
-          // const int x[[2]]
-          if(arg.leafCount == 3)
-            arg.leaves[2]->setVarInfo(sVar);
+            // [const int] x[2]
+            arg.leaves[0]->setVarInfo(sVar);
+
+            // const int x[[2]]
+            if(arg.leafCount == 3)
+              arg.leaves[2]->setVarInfo(sVar);
+          }
         }
       }
 
@@ -594,9 +578,16 @@ namespace occa {
     void expNode::splitDeclareStatement(){
       info = expType::declaration;
 
-      const bool hasType = ((leafCount) &&
-                            (leaves[0]->info & (expType::qualifier |
-                                                expType::type)));
+      if(leafCount == 0)
+        return;
+
+      if(leaves[leafCount - 1]->value != ";"){
+        addNode(expType::printValue, leafCount);
+        leaves[leafCount - 1]->value = ";";
+      }
+
+      const bool hasType = (leaves[0]->info & (expType::qualifier |
+                                               expType::type));
 
       int varCount = hasType;
 
@@ -1912,6 +1903,21 @@ namespace occa {
       --leafCount;
     }
 
+    void expNode::convertTo(const int info_){
+      if(info & expType::declaration){
+        if(info_ & expType::variable){
+          info = expType::variable;
+
+          leafCount = 2;
+
+          expNode *varNode = leaves[1]->leaves[0]->clone(*sInfo);
+
+          leaves[1]->free();
+          leaves[1] = varNode;
+        }
+      }
+    }
+
     bool expNode::hasQualifier(const std::string &qualifier) const {
       if(info & expType::type){
         if(!leafCount ||
@@ -2026,6 +2032,13 @@ namespace occa {
           leaves[0]->value = newType;
         else
           leaves[1]->value = newType;
+      }
+      else if(info & expType::declaration){
+        if(leafCount &&
+           (leaves[0]->info & expType::type)){
+
+          leaves[0]->changeType(newType);
+        }
       }
     }
 
@@ -3317,6 +3330,29 @@ namespace occa {
       return nodeRootEnd;
     }
 
+    expNode* statement::createExpNodeFrom(const std::string &source){
+      strNode *nodeRoot = parserNamespace::splitContent(source);
+      nodeRoot          = parserNamespace::labelCode(nodeRoot);
+
+      loadFromNode(nodeRoot);
+
+      statementNode *sn = statementEnd;
+
+      statementEnd = statementEnd->left;
+
+      if(statementEnd)
+        statementEnd->right = NULL;
+
+      --(statementCount);
+
+      expNode &ret = *(sn->value->expRoot.clone(*this));
+
+      delete sn->value;
+      delete sn;
+
+      return &ret;
+    }
+
     void statement::loadBlocksFromLastNode(strNode *end,
                                            const int startBlockPos){
       if(end == NULL)
@@ -3791,7 +3827,13 @@ namespace occa {
 
       statementNode *nodePos = statementStart;
 
-      for(int i = 0; i < statementCount; ++i){
+      // [-] Broken
+      // for(int i = 0; i < statementCount; ++i){
+      //   newStatement->addStatement( nodePos->value->clone() );
+      //   nodePos = nodePos->right;
+      // }
+
+      while(nodePos){
         newStatement->addStatement( nodePos->value->clone() );
         nodePos = nodePos->right;
       }
@@ -4010,17 +4052,38 @@ namespace occa {
       return NULL;
     }
 
+    std::string statement::getFunctionArgType(const int pos){
+      if(type & functionDefinitionType){
+        expNode &arg = *( getFunctionArgNode(pos) );
+
+        if(arg.leaves[0]->info & expType::type){
+          expNode &argType = *(arg.leaves[0]);
+
+          if(argType.leaves[0]->info & expType::type)
+            return argType.leaves[0]->value;
+          else
+            return argType.leaves[1]->value;
+        }
+      }
+
+      return "";
+    }
+
     std::string statement::getFunctionArgName(const int pos){
       if(type & functionDefinitionType){
         expNode &arg = *( getFunctionArgNode(pos) );
 
-        if(arg.leaves[0]->info & expType::variable)
-          return arg.leaves[0]->value;
-        else
-          return arg.leaves[1]->value;
+        if(arg.info & expType::variable){
+          if(arg.leaves[0]->info & expType::variable)
+            return arg.leaves[0]->value;
+          else
+            return arg.leaves[1]->value;
+        }
+        else if(arg.info & expType::presetValue)
+          return arg.value;
       }
 
-      return NULL;
+      return "";
     }
 
     varInfo* statement::getFunctionArgVar(const int pos){

@@ -119,7 +119,10 @@ namespace occa {
 
       statementNode* splitKernelStatement(statementNode *sn,
                                           kernelInfo &info);
+
       void loadKernelInfos();
+
+      void stripOccaFromKernel(statement &s);
 
       std::string occaScope(statement &s);
 

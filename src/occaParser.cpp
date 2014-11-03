@@ -1069,7 +1069,7 @@ namespace occa {
       // Working Dim
       ss << ioLoopVar << '[' << loopNest << "] = "
          << '('
-         <<   "((" << bound << ") - (" << start << ")) + (" << stride << " - 1)";
+         <<   "((" << bound << ") - (" << start << ") + (" << stride << " - 1))"
          <<   " / (" << stride << ")"
          << ");";
 
@@ -1853,18 +1853,27 @@ namespace occa {
 
         for(int i = 0; i < argc; ++i){
           expNode &argNode = *(s2.getFunctionArgNode(i));
-          varInfo &argVar  = *(s2.getFunctionArgVar(i));
 
-          if(argVar.pointerCount)
-            argNode.addQualifier("occaPointer");
-          else
-            argNode.addPostQualifier("occaVariable");
+          if(argNode.info & expType::variable){
+            varInfo &argVar  = *(s2.getFunctionArgVar(i));
+
+            if(argVar.pointerCount)
+              argNode.addQualifier("occaPointer");
+            else
+              argNode.addPostQualifier("occaVariable");
+          }
         }
 
-        expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
+        expNode &firstArgNode = *(s2.getFunctionArgNode(0));
 
-        argsNode.addNode(expType::printValue);
-        argsNode.leaves[0]->value = "occaKernelInfoArg";
+        if(!(firstArgNode.info & expType::presetValue) ||
+           (s2.getFunctionArgName(0) != "occaKernelInfoArg")){
+
+          expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
+
+          argsNode.addNode(expType::presetValue);
+          argsNode.leaves[0]->value = "occaKernelInfoArg";
+        }
       }
       // [-] Missing
       else if(var.hasDescriptor("occaFunction")){
@@ -2011,6 +2020,9 @@ namespace occa {
       statement &sUp       = *(s.up);
       statementNode *snPos = s.statementStart;
 
+      statement& hostKernel = *(s.clone());
+      stripOccaFromKernel(hostKernel);
+
       // Count sub-kernels
       while(snPos){
         statement &s2 = *(snPos->value);
@@ -2115,6 +2127,28 @@ namespace occa {
       }
       else
         argsStr = "";
+
+
+      // Change origin kernel argument types
+      expNode &argsNode = *(s.getFunctionArgsNode());
+
+      std::map<std::string,std::string> argTypes;
+
+      for(int i = 1; i < argc; ++i){
+        expNode &argNode = *(s.getFunctionArgNode(i));
+
+        std::string argName = s.getFunctionArgName(i);
+        argTypes[argName]   = s.getFunctionArgType(i);
+
+        expNode *newNode = s.createExpNodeFrom(std::string("const int &") +
+                                               argName);
+
+        newNode->convertTo(expType::variable);
+        newNode->changeType("kernelArg");
+
+        argsNode.leaves[i]->free();
+        argsNode.leaves[i] = newNode;
+      }
 
       // Add nestedKernels argument
       {
@@ -2292,6 +2326,15 @@ namespace occa {
         else
           snPos = snPos->right;
       }
+    }
+
+    void parserBase::stripOccaFromKernel(statement &s){
+      expNode &argsNode = *(s.getFunctionArgsNode());
+
+      argsNode.removeNode(0);
+
+      std::cout
+        << "s = " << s << '\n';
     }
 
     std::string parserBase::occaScope(statement &s){

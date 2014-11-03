@@ -194,6 +194,8 @@ namespace occa {
       void addNode(const int info_, const int pos = 0);
       void removeNode(const int pos = 0);
 
+      void convertTo(const int info_ = 0);
+
       bool hasQualifier(const std::string &qualifier) const;
 
       void addQualifier(const std::string &qualifier, const int pos = 0);
@@ -249,9 +251,6 @@ namespace occa {
       int statementCount;
       statementNode *statementStart, *statementEnd;
 
-      // Going away
-      bool hasTypeDefinition;
-
       statement(parserBase &pb);
 
       statement(const int depth_, statement *up_);
@@ -295,6 +294,8 @@ namespace occa {
 
       void loadAllFromNode(strNode *nodeRoot);
       strNode* loadFromNode(strNode *nodeRoot);
+
+      expNode* createExpNodeFrom(const std::string &source);
 
       void loadBlocksFromLastNode(strNode *end,
                                   const int startBlockPos = 0);
@@ -385,6 +386,7 @@ namespace occa {
       void setFunctionName(const std::string &newName);
       expNode* getFunctionArgsNode();
       expNode* getFunctionArgNode(const int pos);
+      std::string getFunctionArgType(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);
       int getFunctionArgCount() const;
