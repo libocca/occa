@@ -180,13 +180,13 @@ namespace occa {
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
 
-    fs << readFile(filename);
+    fs << info.header << readFile(filename);
 
     fs.close();
     fs.clear();
 
     fs.open(iCachedBinary.c_str());
-    fs << info.occaKeywords << info.header << fileParser.parseFile(pCachedBinary);
+    fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
 
     fs.close();
 

@@ -47,26 +47,25 @@ occaConstant tFloat xStencil[] = FD_STENCIL(sr, dx);
 // 0.9899*sqrt(8.0*log(10.0))/(PI*freq);
 occaConstant tFloat hat_t0 = 1.3523661426929/freq;
 
-occaDeviceFunction tFloat hatWavelet(tFloat t);
+occaFunction tFloat hatWavelet(tFloat t);
 
-occaDeviceFunction tFloat hatWavelet(tFloat t){
+occaFunction tFloat hatWavelet(tFloat t){
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
   return (1.0 - 2.0*pift2)*exp(-pift2);
 }
 
-occaKernel void fd2d(occaKernelInfoArg,
-                     occaPointer tFloat *u1,
-                     occaPointer tFloat *u2,
-                     occaPointer tFloat *u3,
-                     const       tFloat  occaVariable currentTime){
-  occaOuterFor1{
-    occaOuterFor0{
-      occaInnerFor1{
-        occaInnerFor0{
-          const int tx = occaGlobalId0;
-          const int ty = occaGlobalId1;
+occaKernel void fd2d(tFloat *u1,
+                     tFloat *u2,
+                     tFloat *u3,
+                     const tFloat currentTime){
+  for(int by = 0; by < h; by += By; outer1){
+    for(int bx = 0; bx < w; bx += Bx; outer0){
+      for(int ly = 0; ly < By; ++ly; inner1){
+        for(int lx = 0; lx < Bx; ++lx; inner0){
+          const int tx = bx + lx;
+          const int ty = by + ly;
 
           const int id = ty*w + tx;
 

@@ -380,17 +380,17 @@ namespace occa {
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | ignoreUntilNextHash);
-          else
             return (startHash | readUntilNextHash);
+          else
+            return (startHash | ignoreUntilNextHash);
         }
         else if(stringsAreEqual(c, (cEnd - c), "ifndef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | readUntilNextHash);
-          else
             return (startHash | ignoreUntilNextHash);
+          else
+            return (startHash | readUntilNextHash);
         }
         else if(stringsAreEqual(c, (cEnd - c), "endif")){
           return doneIgnoring;
@@ -415,7 +415,8 @@ namespace occa {
 
           loadMacroInfo(info, c);
 
-          return state;
+          return (state | keepMacro);
+          // return state;
         }
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
           if(state & ignoring)
@@ -426,7 +427,8 @@ namespace occa {
           if(macroMap.find(name) != macroMap.end())
             macroMap.erase(name);
 
-          return state;
+          return (state | keepMacro);
+          // return state;
         }
         else if(stringsAreEqual(c, (cEnd - c), "include")){
           if(state & ignoring)
@@ -567,23 +569,22 @@ namespace occa {
             if( !(currentState & ignoring) )
               nodePos->type = macroKeywordType;
           }
-          else{
-            // Nested #if's
-            if(currentState & startHash){
-              currentState &= ~startHash;
-              statusStack.push(oldState);
-            }
-
-            if(currentState & doneIgnoring){
-              if(statusStack.size()){
-                currentState = statusStack.top();
-                statusStack.pop();
-              }
-              else
-                currentState = doNothing;
-            }
-
+          else
             ignoreLine = true;
+
+          // Nested #if's
+          if(currentState & startHash){
+            currentState &= ~startHash;
+            statusStack.push(oldState);
+          }
+
+          if(currentState & doneIgnoring){
+            if(statusStack.size()){
+              currentState = statusStack.top();
+              statusStack.pop();
+            }
+            else
+              currentState = doNothing;
           }
         }
         else{
@@ -620,7 +621,7 @@ namespace occa {
     //====================================
 
     void parserBase::initMacros(){
-      if(!macrosAreInitialized)
+      if(macrosAreInitialized)
         return;
 
       macrosAreInitialized = true;
@@ -1877,13 +1878,13 @@ namespace occa {
       }
       // [-] Missing
       else if(var.hasDescriptor("occaFunction")){
-        statementNode *sn = (varUsedMap[&var]).right;
+        // statementNode *sn = (varUsedMap[&var]).right;
 
-        while(sn){
-          sn->value->expRoot.print();
+        // while(sn){
+        //   sn->value->expRoot.print();
 
-          sn = sn->right;
-        }
+        //   sn = sn->right;
+        // }
       }
     }
 

@@ -302,7 +302,7 @@ void setupSolver(){
   else
     fdInfo.addDefine("tFloat", "double");
 
-  fd2d = dev.buildKernelFromSource("fd2d.occa", "fd2d", fdInfo);
+  fd2d = dev.buildKernelFromSource("fd2d.okl", "fd2d", fdInfo);
 
   fd2d.setWorkingDims(dims, inner, outer);
 }
