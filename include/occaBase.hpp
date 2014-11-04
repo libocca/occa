@@ -378,10 +378,10 @@ namespace occa {
 
     inline kernelArg(const occa::memory &m);
 
-    inline kernelArg(void *arg_){
+    inline kernelArg(const void *arg_){
       dev = NULL;
 
-      arg.void_ = arg_;
+      arg.void_ = const_cast<void*>(arg_);
       size = sizeof(void*);
 
       pointer    = true;

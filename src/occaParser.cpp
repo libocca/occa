@@ -1066,16 +1066,6 @@ namespace occa {
 
       std::stringstream ss;
 
-      {
-        expNode *newNode  = s.createExpNodeFrom(bound);
-        expNode *fNewNode = newNode->makeFlatHandle();
-        newNode->print();
-
-        std::cout << "fNewNode = " << *fNewNode << '\n';
-
-        throw 1;
-      }
-
       // Working Dim
       ss << ioLoopVar << '[' << loopNest << "] = "
          << '('
@@ -2138,28 +2128,6 @@ namespace occa {
       else
         argsStr = "";
 
-
-      // Change origin kernel argument types
-      expNode &argsNode = *(s.getFunctionArgsNode());
-
-      std::map<std::string,std::string> argTypes;
-
-      for(int i = 1; i < argc; ++i){
-        expNode &argNode = *(s.getFunctionArgNode(i));
-
-        std::string argName = s.getFunctionArgName(i);
-        argTypes[argName]   = s.getFunctionArgType(i);
-
-        expNode *newNode = s.createExpNodeFrom(std::string("const int &") +
-                                               argName);
-
-        newNode->convertTo(expType::variable);
-        newNode->changeType("kernelArg");
-
-        argsNode.leaves[i]->free();
-        argsNode.leaves[i] = newNode;
-      }
-
       // Add nestedKernels argument
       {
         s.loadFromNode(labelCode( splitContent("int *nestedKernels;") ));
@@ -2339,12 +2307,12 @@ namespace occa {
     }
 
     void parserBase::stripOccaFromKernel(statement &s){
-      expNode &argsNode = *(s.getFunctionArgsNode());
+      // expNode &argsNode = *(s.getFunctionArgsNode());
 
-      argsNode.removeNode(0);
+      // argsNode.removeNode(0);
 
-      std::cout
-        << "s = " << s << '\n';
+      // std::cout
+      //   << "s = " << s << '\n';
     }
 
     std::string parserBase::occaScope(statement &s){
