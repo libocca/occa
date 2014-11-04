@@ -57,8 +57,8 @@ occaFunction tFloat hatWavelet(tFloat t){
 }
 
 occaKernel void fd2d(tFloat *u1,
-                     tFloat *u2,
-                     tFloat *u3,
+                     const tFloat *u2,
+                     const tFloat *u3,
                      const tFloat currentTime){
   for(int by = 0; by < h; by += By; outer1){
     for(int bx = 0; bx < w; bx += Bx; outer0){
