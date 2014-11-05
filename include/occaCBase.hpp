@@ -96,10 +96,10 @@ extern "C" {
 
   typedef void* occaStream;
 
-  union occaTag {
+  typedef union occaTag_t {
     double tagTime;
     void* otherStuff;
-  };
+  } occaTag;
 
   typedef void* occaKernelInfo;
 
