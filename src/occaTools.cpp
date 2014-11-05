@@ -315,7 +315,7 @@ namespace occa {
       char *c_home = getenv("HOME");
       ss << c_home << "/._occa";
 
-      std::string defaultCacheDir = ss.str();
+      occaCachePath = ss.str();
 #else
       char *c_home = getenv("USERPROFILE");
 
