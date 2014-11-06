@@ -954,14 +954,13 @@ namespace occa {
       else
         splitStructStatement();
 
-      expNode *lastLeaf  = leaves[leafCount - 1];
-      expNode *sLastLeaf = lastLeaf->leaves[lastLeaf->leafCount - 1];
+      expNode *sLastLeaf = lastLeaf()->lastLeaf();
 
       if(!splitStruct){
         sInfo->up->addTypeDef(sLastLeaf->value);
       }
       else{
-        expNode *ssLastLeaf = sLastLeaf->leaves[sLastLeaf->leafCount - 1];
+        expNode *ssLastLeaf = sLastLeaf->lastLeaf();
         sInfo->up->addTypeDef(ssLastLeaf->value);
       }
 
@@ -1036,7 +1035,10 @@ namespace occa {
           else{
             typeDef *nodeType = sInfo->hasTypeInScope(nodePos->value);
 
-            leaf->info = expType::unknown;
+            if(!nodeType)
+              leaf->info = expType::unknown;
+            else
+              leaf->info = expType::type;
           }
         }
 
@@ -1350,13 +1352,9 @@ namespace occa {
         if(leaves[leafPos]->info == (expType::operator_ |
                                      expType::qualifier)){
           if(leafPos){
-            if(leaves[leafPos - 1]->info & (expType::L           |
-                                            expType::R           |
-                                            expType::presetValue |
-                                            expType::variable    |
-                                            expType::function)){
 
-              leaves[leafPos]->info = expType::operator_;
+            if(leaves[leafPos - 1]->info & expType::qualifier){
+              leaves[leafPos]->info = expType::qualifier;
             }
 
             else if(leaves[leafPos - 1]->info & expType::unknown){
@@ -1364,6 +1362,15 @@ namespace occa {
                 leaves[leafPos]->info = expType::operator_;
               else
                 leaves[leafPos]->info = expType::qualifier;
+            }
+
+            else if(leaves[leafPos - 1]->info & (expType::L           |
+                                                 expType::R           |
+                                                 expType::presetValue |
+                                                 expType::variable    |
+                                                 expType::function)){
+
+              leaves[leafPos]->info = expType::operator_;
             }
 
             else if((leaves[leafPos - 1]->info & expType::C) &&
