@@ -53,6 +53,8 @@ void center_print(const char *s, int width);
 void border_print(void);
 void fancy_int(long a);
 
+int sprintf();
+
 NuclideGridPoint ** gpmatrix(size_t m, size_t n);
 
 void gpmatrix_free( NuclideGridPoint ** M );

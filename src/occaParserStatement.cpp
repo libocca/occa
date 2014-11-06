@@ -2417,10 +2417,12 @@ namespace occa {
 
           out << '(';
 
-          for(int i = 0; i < (argNode.leafCount - 1); ++i)
-            out << *(argNode.leaves[i]) << ", ";
+          if(argNode.leafCount){
+            for(int i = 0; i < (argNode.leafCount - 1); ++i)
+              out << *(argNode.leaves[i]) << ", ";
 
-          out << *(argNode.leaves[argNode.leafCount - 1]);
+            out << *(argNode.leaves[argNode.leafCount - 1]);
+          }
 
           out << ");\n";
         }
