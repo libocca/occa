@@ -621,8 +621,8 @@ namespace occa {
           newLeaf->leafCount = newLeafCount;
           newLeaf->leaves    = new expNode*[newLeafCount];
 
-          for(int i = 0; i < newLeafCount; ++i)
-            newLeaf->leaves[i] = leaves[first + i];
+          for(int j = 0; j < newLeafCount; ++j)
+            newLeaf->leaves[j] = leaves[first + j];
 
           newLeaf->organize();
 
@@ -898,13 +898,13 @@ namespace occa {
           newLeaf->leafCount = newLeafCount;
           newLeaf->leaves    = new expNode*[newLeafCount];
 
-          for(int i = 0; i < newLeafCount; ++i){
-            newLeaf->leaves[i] = leaves[first + i];
+          for(int j = 0; j < newLeafCount; ++j){
+            newLeaf->leaves[j] = leaves[first + j];
 
-            if((newLeaf->leaves[i]->info & expType::qualifier) &&
-               (newLeaf->leaves[i]->value == "struct")         &&
-               (  !(((i + 1) < newLeafCount) &&
-                    (sInfo->hasTypeInScope(leaves[first + i + 1]->value)))  )){
+            if((newLeaf->leaves[j]->info & expType::qualifier) &&
+               (newLeaf->leaves[j]->value == "struct")         &&
+               (  !(((j + 1) < newLeafCount) &&
+                    (sInfo->hasTypeInScope(leaves[first + j + 1]->value)))  )){
 
               newLeafIsAStruct = true;
             }
