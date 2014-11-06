@@ -1047,7 +1047,16 @@ namespace occa {
         }
 
         else if(nodePos->type & descriptorType){
-          if(nodePos->type & (qualifierType | structType))
+          if(nodePos->type == (specifierType | qualifierType)){
+            if((nodePos->right) &&
+               (sInfo->hasTypeInScope(nodePos->right->value))){
+
+              leaf->info = expType::qualifier;
+            }
+            else
+              leaf->info = expType::type;
+          }
+          else if(nodePos->type & (qualifierType | structType))
             leaf->info = expType::qualifier;
           else
             leaf->info = expType::type;
