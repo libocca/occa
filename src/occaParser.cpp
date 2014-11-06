@@ -3641,6 +3641,7 @@ namespace occa {
 
       keywordType["occaKernel"]   = (qualifierType | occaKeywordType);
       keywordType["occaFunction"] = (qualifierType | occaKeywordType);
+      keywordType["occaDeviceFunction"] = (qualifierType | occaKeywordType);
       keywordType["occaPointer"]  = (qualifierType | occaKeywordType);
       keywordType["occaVariable"] = (qualifierType | occaKeywordType);
       keywordType["occaShared"]   = (qualifierType | occaKeywordType);
