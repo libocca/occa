@@ -11,7 +11,7 @@ ifeq ($(OS),OSX)
 endif
 
 ifeq ($(OS),LINUX)
-	links += -lGLU -lglut -GL
+	links += -lGLU -lglut -lGL
 endif
 
 #---[ COMPILATION ]-------------------------------
