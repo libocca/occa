@@ -1117,7 +1117,7 @@ namespace occa {
 #if OCCA_DEBUG_ENABLED
       compilerFlags = "-cl-opt-disable";
 #else
-      compilerFlags = "-cl-single-precision-constant -cl-denorms-are-zero -cl-single-precision-constant -cl-fast-relaxed-math -cl-finite-math-only -cl-mad-enable -cl-no-signed-zeros";
+      compilerFlags = "";
 #endif
     }
   }

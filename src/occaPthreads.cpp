@@ -654,7 +654,7 @@ namespace occa {
 #if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
 #else
-      compilerFlags = "-D__extern_always_inline=inline -O3";
+      compilerFlags = "";
 #endif
     }
   }

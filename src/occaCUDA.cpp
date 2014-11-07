@@ -850,7 +850,7 @@ namespace occa {
 #if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
 #else
-      compilerFlags = "--compiler-options -O3 --use_fast_math";
+      compilerFlags = "";
 #endif
     }
   }
