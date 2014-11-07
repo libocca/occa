@@ -10,8 +10,7 @@ namespace occa {
     template <class TM>
     class node {
     public:
-      node *left, *right, *up;
-      std::vector< node<TM>* > down;
+      node *left, *right, *down, *up;
       TM value;
 
       node();
@@ -53,8 +52,7 @@ namespace occa {
     //---[ Str Node ]-------------------------------
     class strNode {
     public:
-      strNode *left, *right, *up;
-      std::vector<strNode*> down;
+      strNode *left, *right, *down, *up;
 
       std::string value;
       int type, depth, sideDepth;
@@ -87,8 +85,6 @@ namespace occa {
 
       strNode* pushDown(strNode *node);
       strNode* pushDown(const std::string &str);
-
-      bool hasType(const int type_);
 
       node<strNode*> getStrNodesWith(const std::string &name_,
                                      const int type_ = everythingType);

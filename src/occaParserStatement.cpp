@@ -114,9 +114,7 @@ namespace occa {
     }
 
     int expNode::loadStructStatement(strNode *&nodeRoot){
-      if((nodeRoot->value == "struct")       &&
-         (nodeRoot->down.size() == 0)        &&
-         (nodeRoot->right)                   &&
+      if((nodeRoot->right->down == NULL) &&
          (sInfo->hasTypeInScope(nodeRoot->right->value))){
 
         return sInfo->checkDescriptorStatementType(nodeRoot);
@@ -148,15 +146,12 @@ namespace occa {
       strNode *nodePos;
 
       // Skip descriptors
-      while((nodeRoot)                         &&
-            (nodeRoot->down.size() == 0)       &&
+      while((nodeRoot) &&
             ((nodeRoot->type & descriptorType) ||
              sInfo->nodeHasSpecifier(nodeRoot))){
 
-        if(nodeRoot->type & structType){
-          nodeRoot = oldNodeRoot;
-          return loadStructStatement(nodeRoot);
-        }
+        if(nodeRoot->type & structType)
+          return loadStructStatement(oldNodeRoot);
 
         nodeRoot = nodeRoot->right;
       }
@@ -167,48 +162,19 @@ namespace occa {
             !(nodeRoot->type & endStatement))
         nodeRoot = nodeRoot->right;
 
-      const int downCount = nodePos->down.size();
+      if(nodePos->right == NULL){
+        std::cout << "Function syntax is incorrect:\n"
+                  << sInfo->prettyString(oldNodeRoot, "  ");
+        throw 1;
+      }
 
       // Function {Proto, Def | Ptr}
-      if(downCount && (nodePos->down[0]->type & parentheses)){
-        if(downCount == 1)
+      if(nodePos->type & parentheses){
+        // [-] Check for function pointer
+        if(nodePos->right->type & endStatement)
           return functionPrototypeType;
-
-        strNode *downNode = nodePos->down[1];
-
-        if(downNode->type & brace){
-          nodeRoot = nodePos;
+        else
           return functionDefinitionType;
-        }
-
-        else if(downNode->type & parentheses){
-          downNode = downNode->right;
-
-          if(downNode->type & parentheses){
-            std::cout << "Function pointer needs a [*]:\n"
-                      << sInfo->prettyString(oldNodeRoot, "  ");
-            throw 1;
-          }
-
-          while(downNode->value == "*"){
-            if(downNode->down.size())
-              return declareStatementType;
-
-            downNode = downNode->right;
-          }
-
-          // [C++] Function call, not function pointer define
-          //    getFunc(0)(arg1, arg2);
-          if(sInfo->hasVariableInScope(downNode->value))
-            return updateStatementType;
-
-          return declareStatementType;
-        }
-        else{
-          std::cout << "You found the [Waldo 1] error in:\n"
-                    << sInfo->prettyString(oldNodeRoot, "  ");
-          throw 1;
-        }
       }
 
       return declareStatementType;
@@ -315,31 +281,6 @@ namespace occa {
       if(lastNewNode == NULL)
         newNodeRoot->print();
 
-      //---[ Extra Blocks ]---
-      if(lastNewNode->down.size()){
-        int downsAvailable = 0;
-
-        if(sInfo->type & (forStatementType      |
-                          switchStatementType   |
-                          functionStatementType)){
-
-          downsAvailable = 1;
-        }
-        // Skip do
-        else if(sInfo->type == whileStatementType){
-          downsAvailable = 1;
-        }
-        // Only [if] and [if else]
-        else if((sInfo->type & ifStatementType) &&
-                (sInfo->type != elseStatementType)){
-          downsAvailable = 1;
-        }
-
-        lastNewNode->down.erase(lastNewNode->down.begin() + downsAvailable,
-                                lastNewNode->down.end());
-      }
-      //======================
-
       splitAndOrganizeNode(newNodeRoot);
 
       // Only the root needs to free
@@ -386,6 +327,7 @@ namespace occa {
 
     // Disregards function pointers, those are "easy"
     void expNode::addNewVariables(strNode *nodePos){
+#if 0
       if((up != NULL) ||
          !(sInfo->type & (declareStatementType |
                           functionStatementType)) )
@@ -523,6 +465,7 @@ namespace occa {
 
       if(lastPos)
         lastPos->value = ")";
+#endif
     }
 
     void expNode::updateNewVariables(){
@@ -969,6 +912,7 @@ namespace occa {
 
     void expNode::initLoadFromNode(strNode *nodeRoot,
                                    const int initPos){
+#if 0
       strNode *nodePos = nodeRoot;
 
       // Root
@@ -1086,9 +1030,12 @@ namespace occa {
 
         nodePos = nodePos->right;
       }
+#endif
     }
 
     int expNode::initDownsFromNode(strNode *nodePos, int leafPos){
+      return 0;
+#if 0
       const int downCount = nodePos->down.size();
 
       if(downCount == 0)
@@ -1126,6 +1073,7 @@ namespace occa {
       }
 
       return leafPos;
+#endif
     }
 
     void expNode::initOrganization(){
@@ -2297,9 +2245,7 @@ namespace occa {
         for(int i = 0; i < leafCount; ++i)
           out << *(leaves[i]);
 
-        out << (char) ((')' * (startChar == '(')) +
-                       (']' * (startChar == '[')) +
-                       ('}' * (startChar == '{')));
+        out << segmentPair(startChar);
 
         break;
       }
@@ -2786,6 +2732,8 @@ namespace occa {
     }
 
     int statement::checkStructStatementType(strNode *&nodeRoot){
+      return 0;
+#if 0
       while(nodeRoot){
         if(nodeRoot->type & structType)
           break;
@@ -2809,6 +2757,7 @@ namespace occa {
       }
 
       return structStatementType;
+#endif
     }
 
     int statement::checkUpdateStatementType(strNode *&nodeRoot){
@@ -2823,6 +2772,8 @@ namespace occa {
     }
 
     int statement::checkDescriptorStatementType(strNode *&nodeRoot){
+      return 0;
+#if 0
 #if 1
       strNode *oldNodeRoot = nodeRoot;
       strNode *nodePos;
@@ -2957,6 +2908,7 @@ namespace occa {
 
       return declareStatementType;
 #endif
+#endif
     }
 
     int statement::checkGotoStatementType(strNode *&nodeRoot){
@@ -3040,7 +2992,8 @@ namespace occa {
 
     varInfo statement::loadVarInfo(strNode *&nodePos){
       varInfo info;
-
+      return info;
+#if 0
 #if 0
       while(nodePos &&
             ((nodePos->type & qualifierType) ||
@@ -3310,6 +3263,7 @@ namespace occa {
 
       return info;
 #endif
+#endif
     }
 
     typeDef* statement::hasTypeInScope(const std::string &typeName) const {
@@ -3368,6 +3322,8 @@ namespace occa {
     }
 
     strNode* statement::loadFromNode(strNode *nodeRoot){
+      return NULL;
+#if 0
       if(nodeRoot->type == 0){
         const int downCount = nodeRoot->down.size();
 
@@ -3458,6 +3414,7 @@ namespace occa {
                                                       nodeRootEnd);
 
       return nodeRootEnd;
+#endif
     }
 
     expNode* statement::createExpNodeFrom(const std::string &source){
@@ -3485,6 +3442,7 @@ namespace occa {
 
     void statement::loadBlocksFromLastNode(strNode *end,
                                            const int startBlockPos){
+#if 0
       if(end == NULL)
         return;
 
@@ -3497,6 +3455,7 @@ namespace occa {
         end->down.erase(end->down.begin() + startBlockPos,
                         end->down.end());
       }
+#endif
     }
 
     strNode* statement::loadSimpleFromNode(const int st,
@@ -3517,6 +3476,8 @@ namespace occa {
     strNode* statement::loadForFromNode(const int st,
                                         strNode *nodeRoot,
                                         strNode *nodeRootEnd){
+      return NULL;
+#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3577,11 +3538,14 @@ namespace occa {
       }
 
       return nextNode;
+#endif
     }
 
     strNode* statement::loadWhileFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd){
+      return NULL;
+#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3709,6 +3673,7 @@ namespace occa {
               (st == elseStatementType));
 
       return nextNode;
+#endif
     }
 
     // [-] Missing
@@ -3745,6 +3710,8 @@ namespace occa {
     strNode* statement::loadFunctionDefinitionFromNode(const int st,
                                                        strNode *nodeRoot,
                                                        strNode *nodeRootEnd){
+      return NULL;
+#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3794,6 +3761,7 @@ namespace occa {
       loadAllFromNode(blockStart);
 
       return nextNode;
+#endif
     }
 
     strNode* statement::loadFunctionPrototypeFromNode(const int st,
@@ -3812,6 +3780,8 @@ namespace occa {
     strNode* statement::loadBlockFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd){
+      return NULL;
+#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       // Load all down's before popping [{] and [}]'s
@@ -3833,6 +3803,7 @@ namespace occa {
       loadAllFromNode(nodeRoot);
 
       return nextNode;
+#endif
     }
 
     strNode* statement::loadStructFromNode(const int st,
@@ -4244,6 +4215,8 @@ namespace occa {
     std::string statement::prettyString(strNode *nodeRoot,
                                         const std::string &tab_,
                                         const bool autoMode) const {
+      return "";
+#if 0
       strNode *nodePos = nodeRoot;
 
       std::string tab = tab_;
@@ -4500,6 +4473,7 @@ namespace occa {
       }
 
       return ret;
+#endif
     }
 
     statement::operator std::string(){

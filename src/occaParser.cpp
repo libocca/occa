@@ -21,6 +21,8 @@ namespace occa {
 
     const std::string parserBase::parseSource(const char *cRoot){
       strNode *nodeRoot = splitAndPreprocessContent(cRoot);
+      nodeRoot->print();
+      throw 1;
 
       loadLanguageTypes();
 
@@ -100,6 +102,8 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
+      return typeHolder(*labelNodeRoot);
+#if 0
       if(labelNodeRoot->type & presetValue)
         return typeHolder(*labelNodeRoot);
 
@@ -253,6 +257,7 @@ namespace occa {
       typeHolder th(labelNodeRoot->value);
 
       return th;
+#endif
     }
 
     void parserBase::loadMacroInfo(macroInfo &info, const char *&c){
@@ -915,6 +920,8 @@ namespace occa {
     }
 
     bool parserBase::nodeHasUnknownVariable(strNode *n){
+      return false;
+#if 0
       while(n){
         if(n->type & unknownVariable)
           return true;
@@ -929,6 +936,7 @@ namespace occa {
       }
 
       return false;
+#endif
     }
 
     void parserBase::setupOccaFors(statement &s){
@@ -1112,6 +1120,7 @@ namespace occa {
     }
 
     void parserBase::loadScopeVarMap(statement &s){
+#if 0
       if((!(s.type & declareStatementType)   &&
           !(s.type & structStatementType)    &&
           !(s.type & forStatementType)       &&
@@ -1190,6 +1199,7 @@ namespace occa {
             nodePos = nodePos->right;
         }
       }
+#endif
     }
 
     bool parserBase::statementHasOccaOuterFor(statement &s){
@@ -1316,7 +1326,7 @@ namespace occa {
 
     void parserBase::setupCudaVariables(statement &s){
       return;
-
+#if 0
       if((!(s.type & declareStatementType)   &&
           !(s.type & forStatementType)       &&
           !(s.type & functionStatementType)) ||
@@ -1393,11 +1403,11 @@ namespace occa {
             nodePos = nodePos->right;
         }
       }
+#endif
     }
 
     void parserBase::addFunctionPrototypes(){
-      return;
-
+#if 0
       std::map<std::string,bool> prototypes;
 
       statementNode *statementPos = globalScope->statementStart;
@@ -1472,6 +1482,7 @@ namespace occa {
 
         statementPos = statementPos->right;
       }
+#endif
     }
 
     int parserBase::statementOccaForNest(statement &s){
@@ -1795,6 +1806,7 @@ namespace occa {
     }
 
     void parserBase::addKernelInfo(varInfo &info, statement &s){
+#if 0
       if( !(s.type & functionStatementType) ){
         node<strNode*> nNodeRoot = s.nodeStart->getStrNodesWith(info.name);
 
@@ -1830,6 +1842,7 @@ namespace occa {
           nNodePos = nNodePos->right;
         }
       }
+#endif
     }
 
     void parserBase::addArgQualifiers(varInfo &var, statement &s){
@@ -2500,6 +2513,7 @@ namespace occa {
     }
 
     void parserBase::checkPathForConditionals(statementNode *path){
+#if 0
       if((path == NULL) ||
          (path->value == NULL))
         return;
@@ -2519,12 +2533,15 @@ namespace occa {
 
       for(int i = 0; i < downCount; ++i)
         checkPathForConditionals(path->down[i]);
+#endif
     }
 
     int parserBase::findLoopSections(statement &s,
                                      statementNode *path,
                                      loopSection_t &loopSection,
                                      int section){
+      return 0;
+#if 0
       if(s.statementCount == 0)
         return section;
 
@@ -2570,6 +2587,7 @@ namespace occa {
       }
 
       return section;
+#endif
     }
 
     bool parserBase::varInTwoSegments(varInfo &info,
@@ -3379,6 +3397,7 @@ namespace occa {
       strNode *lineNodePos = lineNodeRoot;
 
       int depth = 0;
+      bool firstSectionNode = false;
 
       while(lineNodePos){
         const std::string &line = lineNodePos->value;
@@ -3407,7 +3426,13 @@ namespace occa {
           if(loadString){
             skipString(cRight);
 
-            nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
+            if(!firstSectionNode){
+              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
+            }
+            else{
+              nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
+              firstSectionNode = false;
+            }
 
             nodePos->type  = presetValue;
             nodePos->depth = depth;
@@ -3419,7 +3444,13 @@ namespace occa {
 
             skipNumber(cRight);
 
-            nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
+            if(!firstSectionNode){
+              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
+            }
+            else{
+              nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
+              firstSectionNode = false;
+            }
 
             nodePos->type  = presetValue;
             nodePos->depth = depth;
@@ -3432,36 +3463,63 @@ namespace occa {
             if(delimeterChars){
               strNode *newNode = new strNode(std::string(cLeft, delimeterChars));
 
-              newNode->type = keywordType[newNode->value];
-
+              newNode->type  = keywordType[newNode->value];
               newNode->depth = depth;
 
               if(newNode->type & startSection){
+                if(!firstSectionNode)
+                  nodePos = nodePos->push(newNode);
+                else
+                  nodePos = nodePos->pushDown(newNode);
+
                 ++depth;
 
-                nodePos = nodePos->pushDown(newNode);
+                firstSectionNode = true;
               }
               else if(newNode->type & endSection){
-                nodePos = nodePos->push(newNode);
+                if(!firstSectionNode)
+                  nodePos = nodePos->push(newNode);
+                else{
+                  nodePos = nodePos->pushDown(newNode);
+                  firstSectionNode = false;
+                }
 
                 --depth;
                 nodePos = nodePos->up;
               }
               else if(newNode->type & macroKeywordType){
                 newNode->value = line;
-                nodePos = nodePos->push(newNode);
+
+                if(!firstSectionNode)
+                  nodePos = nodePos->push(newNode);
+                else{
+                  nodePos = nodePos->pushDown(newNode);
+                  firstSectionNode = false;
+                }
 
                 cLeft = line.c_str() + strlen(line.c_str()) - delimeterChars;
               }
-              else
-                nodePos = nodePos->push(newNode);
+              else{
+                if(!firstSectionNode)
+                  nodePos = nodePos->push(newNode);
+                else{
+                  nodePos = nodePos->pushDown(newNode);
+                  firstSectionNode = false;
+                }
+              }
 
               cLeft += delimeterChars;
             }
             else{
               skipWord(cRight);
 
-              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
+              if(!firstSectionNode){
+                nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
+              }
+              else{
+                nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
+                firstSectionNode = false;
+              }
 
               keywordTypeMapIterator it = keywordType.find(nodePos->value);
 
@@ -3474,9 +3532,8 @@ namespace occa {
                 if((nodePos->type & flowControlType)       &&
                    (nodePos->left)                         &&
                    (nodePos->left->type & flowControlType) &&
-                   ((nodePos->value == "if")         &&
-                    (nodePos->left->value == "else") &&
-                    (nodePos->left->down.size() == 0))){
+                   (nodePos->value == "if")                &&
+                   (nodePos->left->value == "else")){
 
                   nodePos->value = "else if";
 
@@ -3499,8 +3556,7 @@ namespace occa {
         lineNodePos = lineNodePos->right;
       }
 
-      if((nodePos != nodeRoot) &&
-         (nodeRoot->down.size() == 0))
+      if(nodePos != nodeRoot)
         popAndGoRight(nodeRoot);
 
       free(lineNodeRoot);
