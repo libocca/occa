@@ -1,4 +1,4 @@
-./inc/
-./src/
-./inc/*
-./src/*
+inc/
+src/
+inc/*
+src/*
