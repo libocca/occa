@@ -3482,14 +3482,13 @@ namespace occa {
               }
               else if(newNode->type & endSection){
                 if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
-                else{
-                  nodePos = nodePos->pushDown(newNode);
-                  firstSectionNode = false;
-                }
+                  nodePos = nodePos->up;
+
+                delete newNode;
 
                 --depth;
-                nodePos = nodePos->up;
+
+                firstSectionNode = false;
               }
               else if(newNode->type & macroKeywordType){
                 newNode->value = line;

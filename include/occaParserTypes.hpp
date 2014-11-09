@@ -117,6 +117,16 @@ namespace occa {
                              strNode *nodePos,
                              _varInfo *varHasType = NULL);
 
+      strNode* loadTypeFrom(statement &s,
+                            strNode *nodePos,
+                            _varInfo *varHasType);
+
+      strNode* loadNameFrom(statement &s,
+                            strNode *nodePos);
+
+      strNode* loadStackPointersFrom(statement &s,
+                                     strNode *nodePos);
+
       std::string getString(const bool printType = true);
 
       operator std::string ();

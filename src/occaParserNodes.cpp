@@ -350,13 +350,23 @@ namespace occa {
       strNode *nodePos = this;
 
       while(nodePos){
-        if(nodePos->down == NULL){
+        if( !(nodePos->type & startSection) ){
           std::cout << tab << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
         }
         else{
+          const char startChar = nodePos->value[0];
+          const char endChar   = segmentPair(startChar);
+
+          const int startCharType = nodePos->type;
+          const int endCharType   = ((startCharType & ~startSection) | endSection);
+
           printf("--------------------------------------------\n");
-          std::cout << tab << "  " << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
-          nodePos->down->print(tab + "  ");
+          std::cout << tab << "  " << "[" << startChar << "] (" << getBits(startCharType) << ")\n";
+
+          if(nodePos->down)
+            nodePos->down->print(tab + "  ");
+
+          std::cout << tab << "  " << "[" << endChar << "] (" << getBits(endCharType) << ")\n";
           printf("--------------------------------------------\n");
         }
 

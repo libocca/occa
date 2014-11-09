@@ -149,8 +149,20 @@ namespace occa {
     strNode* _varInfo::loadValueFrom(statement &s,
                                      strNode *nodePos,
                                      _varInfo *varHasType){
-      strNode *nodeRoot = nodePos;
+      nodePos = loadTypeFrom(s, nodePos, varHasType);
 
+      nodePos = loadNameFrom(s, nodePos);
+      nodePos = loadStackPointersFrom(s, nodePos);
+
+      if(nodePos->value == ",")
+        nodePos = nodePos->right;
+
+      return nodePos;
+    }
+
+    strNode* _varInfo::loadTypeFrom(statement &s,
+                                    strNode *nodePos,
+                                    _varInfo *varHasType){
       if(varHasType == NULL){
         nodePos = leftQualifiers.loadFrom(s, nodePos);
 
@@ -166,16 +178,28 @@ namespace occa {
 
       nodePos = rightQualifiers.loadFrom(s, nodePos);
 
+      return nodePos;
+    }
+
+    strNode* _varInfo::loadNameFrom(statement &s,
+                                    strNode *nodePos){
       if(nodePos &&
          nodePos->type & unknownVariable){
         name    = nodePos->value;
         nodePos = nodePos->right;
       }
 
-      nodeRoot = nodePos;
+      return nodePos;
+    }
 
-      while(nodePos &&
-            (nodePos->value == "[")){
+    strNode* _varInfo::loadStackPointersFrom(statement &s,
+                                             strNode *nodePos){
+      strNode *nodeRoot = nodePos;
+
+      if(nodePos &&
+         (nodePos->value == "[") &&
+         (nodePos->down)){
+
         ++stackPointerCount;
         nodePos = nodePos->right;
       }
@@ -188,24 +212,16 @@ namespace occa {
         for(int i = 0; i < stackPointerCount; ++i){
           stackExpRoots[i].sInfo = &s;
 
-          if((nodePos->down != NULL) &&
-             (nodePos->down->value != "]")){
+          if(nodePos->down){
             strNode *downNode = nodePos->down;
             strNode *lastDown = lastNode(downNode);
 
-            lastDown->left->right = NULL;
-
             // s.setExpNodeFromStrNode(stackExpRoots[i], downNode);
-
-            lastDown->left->right = lastDown;
           }
 
           nodePos = nodePos->right;
         }
       }
-
-      if(nodePos->value == ",")
-        nodePos = nodePos->right;
 
       return nodePos;
     }
@@ -250,6 +266,7 @@ namespace occa {
       statement &s = *(p.globalScope);
 
       strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, c, d[3];");
+      nodeRoot->print();
 
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 
