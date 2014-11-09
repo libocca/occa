@@ -44,6 +44,7 @@ namespace occa {
 
       strNode* preprocessMacros(strNode *nodeRoot);
 
+      strNode* splitAndPreprocessContent(const std::string &s);
       strNode* splitAndPreprocessContent(const char *cRoot);
       //====================================
 

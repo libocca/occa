@@ -27,8 +27,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
@@ -610,6 +610,10 @@ namespace occa {
       }
 
       return nodeRoot;
+    }
+
+    strNode* parserBase::splitAndPreprocessContent(const std::string &s){
+      return splitAndPreprocessContent(s.c_str());
     }
 
     strNode* parserBase::splitAndPreprocessContent(const char *cRoot){

@@ -63,6 +63,69 @@ namespace occa {
     //==============================================
 
 
+    //---[ New Variable Info ]----------------------
+    class expNode;
+
+    class _qualifierInfo {
+    public:
+      int qualifierCount;
+      std::string *qualifiers;
+
+      _qualifierInfo();
+
+      _qualifierInfo(const _qualifierInfo &q);
+      _qualifierInfo& operator = (const _qualifierInfo &q);
+
+      _qualifierInfo clone();
+
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos);
+
+      std::string toString();
+    };
+
+    class _typeInfo {
+
+    };
+
+    class _varInfo {
+    public:
+      int info;
+
+      _qualifierInfo leftQualifiers, rightQualifiers;
+
+      typeDef *baseType;
+
+      std::string name;
+
+      int pointerCount, stackPointerCount;
+      expNode *stackExpRoots;
+
+      int argumentCount;
+      _varInfo *argumentVarInfos;
+
+      _varInfo *nestedFunctionPointer;
+
+      _varInfo();
+
+      _varInfo(const _varInfo &var);
+      _varInfo& operator = (const _varInfo &var);
+
+      static int variablesInStatement(strNode *nodePos);
+
+      strNode* loadValueFrom(statement &s,
+                             strNode *nodePos,
+                             _varInfo *varHasType = NULL);
+
+      std::string getString(const bool printType = true);
+
+      operator std::string ();
+
+      friend std::ostream& operator << (std::ostream &out, _varInfo &var);
+    };
+    //==============================================
+
+
     //---[ Variable Info ]--------------------------
     class varInfo {
     public:

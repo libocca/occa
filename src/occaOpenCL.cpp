@@ -210,8 +210,15 @@ namespace occa {
       if(error && cachedBinary.size())
         releaseFile(cachedBinary);
 
-      if(iCachedBinary.size())
-        std::cout << "OpenCL compiling " << functionName << " from [" << iCachedBinary << "]\n";
+      if(iCachedBinary.size()){
+        std::cout << "OpenCL compiling " << functionName
+                  << " from [" << iCachedBinary << "]";
+
+        if(flags.size())
+          std::cout << " with flags [" << flags << "]";
+
+        std::cout << '\n';
+      }
       else
         std::cout << "OpenCL compiling " << functionName << " from [Library]\n";
 
@@ -254,8 +261,14 @@ namespace occa {
 
       OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
 
-      if(iCachedBinary.size())
-        std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]\n";
+      if(iCachedBinary.size()){
+        std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]";
+
+        if(flags.size())
+          std::cout << " with flags [" << flags << "]";
+
+        std::cout << '\n';
+      }
       else
         std::cout << "OpenCL compiled " << functionName << " from [Library]\n";
     }

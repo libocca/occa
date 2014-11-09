@@ -50,7 +50,7 @@ namespace occa {
 
     void typeDef::loadFromNode(statement &s,
                                strNode *&n){
-
+#if 0
       if(n->value == "typedef"){
         typedefing = new typeDef;
 
@@ -155,6 +155,7 @@ namespace occa {
         else
           loadStructPartsFromNode(s, n);
       }
+#endif
     }
 
     void typeDef::loadStructPartsFromNode(statement &s,

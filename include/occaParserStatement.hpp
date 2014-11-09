@@ -59,9 +59,7 @@ namespace occa {
       int leafCount;
       expNode **leaves;
 
-      varInfo *varType;
-      int varPointerCount;
-
+      expNode();
       expNode(statement &s);
       expNode(expNode &up_);
 
@@ -86,7 +84,6 @@ namespace occa {
       void organize();
 
       void addNewVariables(strNode *nodePos);
-      void updateNewVariables();
 
       void splitDeclareStatement();
       void splitForStatement();
@@ -304,6 +301,10 @@ namespace occa {
       void loadAllFromNode(strNode *nodeRoot);
       strNode* loadFromNode(strNode *nodeRoot);
 
+      void setExpNodeFromStrNode(expNode &exp,
+                                 strNode *nodePos);
+
+      expNode* createExpNodeFrom(strNode *nodePos);
       expNode* createExpNodeFrom(const std::string &source);
 
       void loadBlocksFromLastNode(strNode *end,
