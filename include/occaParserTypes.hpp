@@ -11,11 +11,13 @@ namespace occa {
     class typeInfo;
     class varInfo;
 
+    struct varLeaf_t;
+
     //---[ Qualifier Info Class ]-----------------
     typedef union {
       typeInfo *type;
-      expNode *exp;
-    } typeOrExp;
+      varLeaf_t *varLeaf;
+    } typeOrVar;
 
     class qualifierInfo {
     public:
@@ -59,7 +61,7 @@ namespace occa {
 
       int nestedInfoCount;
       bool *nestedInfoIsType;
-      typeOrExp *nestedInfos;
+      typeOrVar *nestedInfos;
 
       typeInfo *typedefing;
       typeInfo *baseType;

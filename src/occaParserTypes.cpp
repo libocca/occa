@@ -267,7 +267,7 @@ namespace occa {
           nestedInfoCount = statementCountWithDelimeter(nodePos, ',');
 
         nestedInfoIsType = new bool[nestedInfoCount];
-        nestedInfos      = new typeOrExp[nestedInfoCount];
+        nestedInfos      = new typeOrVar[nestedInfoCount];
 
         for(int i = 0; i < nestedInfoCount; ++i){
           nestedInfoIsType[i] = (usesSemicolon                    ?
@@ -279,18 +279,24 @@ namespace occa {
             nodePos = nestedInfos[i].type->loadFrom(s, nodePos);
           }
           else{
-            nestedInfos[i].exp = new expNode;
+            nestedInfos[i].varLeaf      = new varLeaf_t;
+            nestedInfos[i].varLeaf->var = new varInfo;
+            nodePos = nestedInfos[i].varLeaf->var->loadFrom(s, nodePos);
 
-            statement *s2 = s.clone();
-            nodePos = s2->loadFromNode(nodePos);
+            if(nodePos->value == "="){
+              nestedInfos[i].varLeaf->exp = new expNode;
 
-            expNode::swap(*(nestedInfos[i].exp), s2->expRoot);
+              statement *s2 = s.clone();
+              nodePos = s2->loadFromNode(nodePos);
 
-            while(nodePos &&
-                  ((nodePos->value.size()) &&
-                   (nodePos->value[0] != delimiter))){
+              expNode::swap(*(nestedInfos[i].varLeaf->exp), s2->expRoot);
 
-              nodePos = nodePos->right;
+              while(nodePos &&
+                    ((nodePos->value.size()) &&
+                     (nodePos->value[0] != delimiter))){
+
+                nodePos = nodePos->right;
+              }
             }
 
             if(nodePos)
@@ -383,7 +389,12 @@ namespace occa {
               ret += nestedInfos[i].type->toString(tab + "  ");
             }
             else {
-              ret += nestedInfos[i].exp->getString(tab + "  ");
+              ret += tab + "  ";
+              ret += nestedInfos[i].varLeaf->var->toString();
+
+              if(nestedInfos[i].varLeaf->hasExp)
+                ret += nestedInfos[i].varLeaf->exp->getString();
+
               ret += ';';
             }
 

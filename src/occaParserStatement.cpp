@@ -278,6 +278,17 @@ namespace occa {
     void expNode::splitDeclareStatement(strNode *nodeRoot){
       printf("void expNode::splitDeclareStatement(strNode *nodeRoot){\n");
       info = expType::declaration;
+
+      leafCount = varInfo::variablesInStatement(nodeRoot);
+
+      if(leafCount){
+        varLeaves = new varLeaf_t[leafCount];
+
+        for(int i = 0; i < leafCount; ++i){
+          varLeaves[i].var = new varInfo;
+          nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
+        }
+      }
     }
 
     void expNode::splitForStatement(strNode *nodeRoot){
