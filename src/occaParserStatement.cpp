@@ -332,29 +332,15 @@ namespace occa {
       else
         info = (expType::function | expType::prototype);
 
-      while(nodeRoot->type != startParentheses)
-        nodeRoot = nodeRoot->right;
-
-      nodeRoot = nodeRoot->down;
-
       if(nodeRoot == NULL)
         return;
 
-      leafCount = varInfo::variablesInStatement(nodeRoot);
+      leafInfo  = leafType::var;
+      leafCount = 1;
+      varLeaves = new varLeaf_t[1];
 
-      if(leafCount){
-        leafInfo  = leafType::var;
-        varLeaves = new varLeaf_t[leafCount];
-
-        for(int i = 0; i < leafCount; ++i){
-          varLeaves[i].var = new varInfo;
-          nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
-
-          std::cout << "varLeaves[i].var = " << *(varLeaves[i].var) << '\n';
-
-          sInfo->addVariable( *(varLeaves[i].var) );
-        }
-      }
+      varLeaves[0].var = new varInfo;
+      varLeaves[0].var->loadFrom(*sInfo, nodeRoot);
     }
 
     void expNode::splitStructStatement(strNode *nodeRoot){
@@ -362,6 +348,7 @@ namespace occa {
       info = expType::struct_;
 
       leafInfo      = leafType::type;
+      leafCount     = 1;
       typeLeaves    = new typeInfo*[1];
       typeLeaves[0] = new typeInfo;
 
@@ -1525,11 +1512,6 @@ namespace occa {
         for(int i = 0; i < leafCount; ++i)
           out << *(leaves[i]);
 
-        // Change later
-        if((up == NULL) &&
-           (sInfo->type & declareStatementType))
-          out << ';';
-
         break;
       }
 
@@ -1640,54 +1622,26 @@ namespace occa {
       }
 
       case (expType::variable):{
-        // [[]
-        // out << *((newVarInfo*) leaves[0]);
+        std::cout << "leafCount = " << leafCount << '\n';
+
+        if(leafCount)
+          out << leaves[0]->value;
+        else
+          out << value;
 
         break;
       }
 
       case (expType::function | expType::prototype):{
-        if(leafCount){
-          // for(int i = 0; i < (leafCount - 1); ++i)
-          //   out << *(leaves[i]);
-
-          // expNode &argNode = *(leaves[leafCount - 1]);
-          expNode &argNode = *this;
-
-          out << '(';
-
-          if(argNode.leafCount){
-            for(int i = 0; i < (argNode.leafCount - 1); ++i)
-              out << *(argNode.varLeaves[i].var) << ", ";
-
-            out << *(argNode.varLeaves[argNode.leafCount - 1].var);
-          }
-
-          out << ");\n";
-        }
+        if(leafCount)
+          out << *(varLeaves[0].var) << ";\n";
 
         break;
       }
 
       case (expType::function | expType::declaration):{
-        if(leafCount){
-          // for(int i = 0; i < (leafCount - 1); ++i)
-          //   out << *(leaves[i]);
-
-          // expNode &argNode = *(leaves[leafCount - 1]);
-          expNode &argNode = *this;
-
-          out << '(';
-
-          if(argNode.leafCount){
-            for(int i = 0; i < (argNode.leafCount - 1); ++i)
-              out << *(argNode.varLeaves[i].var) << ", ";
-
-            out << *(argNode.varLeaves[argNode.leafCount - 1].var);
-          }
-
-          out << ')';
-        }
+        if(leafCount)
+          out << *(varLeaves[0].var);
 
         break;
       }

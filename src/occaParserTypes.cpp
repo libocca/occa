@@ -288,10 +288,8 @@ namespace occa {
             if(nodePos->value == "="){
               nestedInfos[i].varLeaf->exp = new expNode;
 
-              statement *s2 = s.clone();
-              nodePos = s2->loadFromNode(nodePos);
-
-              expNode::swap(*(nestedInfos[i].varLeaf->exp), s2->expRoot);
+              s.setExpNodeFromStrNode(*(nestedInfos[i].varLeaf->exp),
+                                      nodePos->left);
 
               while(nodePos &&
                     ((nodePos->value.size()) &&
@@ -663,12 +661,8 @@ namespace occa {
         for(int i = 0; i < stackPointerCount; ++i){
           stackExpRoots[i].sInfo = &s;
 
-          if(nodePos->down){
-            strNode *downNode = nodePos->down;
-            strNode *lastDown = lastNode(downNode);
-
-            s.setExpNodeFromStrNode(stackExpRoots[i], downNode);
-          }
+          if(nodePos->down)
+            s.setExpNodeFromStrNode(stackExpRoots[i], nodePos->down);
 
           nodePos = nodePos->right;
         }
