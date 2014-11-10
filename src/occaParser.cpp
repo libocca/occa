@@ -714,7 +714,9 @@ namespace occa {
       for(int t = 0; t < 7; ++t){
         for(int n = 0; n < 6; ++n){
           typeInfo &type = *(new typeInfo);
-          type.name = baseType[t] + suffix[n];
+
+          type.name     = baseType[t] + suffix[n];
+          type.baseType = &type;
 
           globalScope->scopeTypeMap[type.name] = &type;
 

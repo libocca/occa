@@ -132,43 +132,6 @@ namespace occa {
       if(typeInfo::statementIsATypeInfo(*sInfo, nodeRoot))
         return loadStructStatement(nodeRoot);
 
-#if 0
-      strNode *oldNodeRoot = nodeRoot;
-      strNode *nodePos;
-
-      // Skip descriptors
-      while((nodeRoot) &&
-            ((nodeRoot->type & descriptorType) ||
-             sInfo->nodeHasSpecifier(nodeRoot))){
-
-        if(nodeRoot->type & structType)
-          return loadStructStatement(oldNodeRoot);
-
-        nodeRoot = nodeRoot->right;
-      }
-
-      nodePos = nodeRoot;
-
-      while((nodeRoot) &&
-            !(nodeRoot->type & endStatement))
-        nodeRoot = nodeRoot->right;
-
-      if(nodePos->right == NULL){
-        std::cout << "Function syntax is incorrect:\n"
-                  << sInfo->prettyString(oldNodeRoot, "  ");
-        throw 1;
-      }
-
-      // Function {Proto, Def | Ptr}
-      if(nodePos->type & parentheses){
-        // [-] Check for function pointer
-        if(nodePos->right->type & endStatement)
-          return functionPrototypeType;
-        else
-          return functionDefinitionType;
-      }
-#endif
-
       return declareStatementType;
     }
 
@@ -231,6 +194,8 @@ namespace occa {
 
       labelStatement(nodePos);
 
+      std::cout << "sInfo = " << getBits(sInfo->type) << '\n';
+
       // Don't need to load stuff
       if(sInfo->type & (macroStatementType          |
                        gotoStatementType            |
@@ -275,6 +240,8 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
+      print();
+
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
@@ -309,14 +276,17 @@ namespace occa {
     }
 
     void expNode::splitDeclareStatement(strNode *nodeRoot){
+      printf("void expNode::splitDeclareStatement(strNode *nodeRoot){\n");
       info = expType::declaration;
     }
 
     void expNode::splitForStatement(strNode *nodeRoot){
+      printf("void expNode::splitForStatement(strNode *nodeRoot){\n");
       info = expType::checkSInfo;
     }
 
     void expNode::splitFunctionStatement(strNode *nodeRoot){
+      printf("void expNode::splitFunctionStatement(strNode *nodeRoot){\n");
       // if(sInfo->type & functionDefinitionType)
       //   info = (expType::function | expType::declaration);
       // else
@@ -324,7 +294,14 @@ namespace occa {
     }
 
     void expNode::splitStructStatement(strNode *nodeRoot){
+      printf("void expNode::splitStructStatement(strNode *nodeRoot){\n");
       info = expType::struct_;
+
+      typeLeaves    = new typeInfo*[1];
+      typeLeaves[0] = new typeInfo;
+
+      typeLeaves[0]->loadFrom(*sInfo, nodeRoot);
+      std::cout << "typeLeaves[0] = " << *typeLeaves[0] << '\n';
     }
 
     void expNode::initLoadFromNode(strNode *nodeRoot){
@@ -378,7 +355,7 @@ namespace occa {
         }
 
         else if(nodePos->type & descriptorType){
-          if(nodePos->type == (specifierType | qualifierType)){
+          if(nodePos->type == keywordType["long"]){
             if((nodePos->right) &&
                (sInfo->hasTypeInScope(nodePos->right->value))){
 
@@ -1919,51 +1896,6 @@ namespace occa {
       return ret;
     }
 
-    int statement::statementType(strNode *&nodeRoot){
-      if(nodeRoot == NULL)
-        return invalidStatementType;
-
-      else if(nodeRoot->type == macroKeywordType)
-        return checkMacroStatementType(nodeRoot);
-
-      else if(nodeRoot->type == keywordType["occaOuterFor0"])
-        return checkOccaForStatementType(nodeRoot);
-
-      else if(nodeRoot->type & structType)
-        return checkStructStatementType(nodeRoot);
-
-      else if(nodeRoot->type & operatorType)
-        return checkUpdateStatementType(nodeRoot);
-
-      else if(nodeHasDescriptor(nodeRoot))
-        return checkDescriptorStatementType(nodeRoot);
-
-      else if(nodeRoot->type & unknownVariable){
-        if(nodeRoot->right &&
-           nodeRoot->right->value == ":")
-          return checkGotoStatementType(nodeRoot);
-
-        return checkUpdateStatementType(nodeRoot);
-      }
-
-      else if(nodeRoot->type & flowControlType)
-        return checkFlowStatementType(nodeRoot);
-
-      else if(nodeRoot->type & specialKeywordType)
-        return checkSpecialStatementType(nodeRoot);
-
-      else if((nodeRoot->type == startBrace) &&
-              (nodeRoot->up)                 &&
-              !(nodeRoot->up->type & operatorType))
-        return checkBlockStatementType(nodeRoot);
-
-      while(nodeRoot &&
-            !(nodeRoot->type & endStatement))
-        nodeRoot = nodeRoot->right;
-
-      return declareStatementType;
-    }
-
     int statement::checkMacroStatementType(strNode *&nodeRoot){
       return macroStatementType;
     }
@@ -2209,13 +2141,17 @@ namespace occa {
 
       // short and long can be both:
       //    specifiers and qualifiers
-      if( !(n->type & specifierType) )
-        return true;
+      if(n->type == keywordType["long"]){
+        if((n->right) &&
+           (hasTypeInScope(n->right->value))){
 
-      if((n->right) == NULL)
-        return false;
+          return true;
+        }
+        else
+          return false;
+      }
 
-      return (n->right->type & descriptorType);
+      return true;
     }
 
     bool statement::nodeHasSpecifier(strNode *n) const {

@@ -1,7 +1,7 @@
 #ifndef __XSBENCH_HEADER_H__
 #define __XSBENCH_HEADER_H__
 
-typedef unsigned long long int size_t;
+typedef unsigned long long size_t;
 
 #include<stdio.h>
 #include<stdlib.h>

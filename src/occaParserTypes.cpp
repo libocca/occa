@@ -207,17 +207,39 @@ namespace occa {
 
         leftQualifiers.remove(1, (leftQualifiers.qualifierCount - 1));
 
-        typedefing = new typeInfo;
-        nodePos = typedefing->loadFrom(s, nodePos);
+        if(nodePos->type != startBrace){
+          typeInfo *tmp = s.hasTypeInScope(nodePos->value);
 
-        typedefing->leftQualifiers = newQuals;
-        baseType = typedefing;
+          if(tmp){
+            typedefing = tmp;
+          }
+          else{
+            typedefing           = new typeInfo;
+            typedefing->name     = nodePos->value;
+            typedefing->baseType = typedefing;
+          }
+
+          nodePos = nodePos->right;
+        }
+
+        if(nodePos->type == startBrace){
+          if(typedefing == NULL){
+            typedefing           = new typeInfo;
+            typedefing->baseType = typedefing;
+          }
+
+          nodePos = typedefing->loadFrom(s, nodePos);
+        }
+
+        baseType = typedefing->baseType;
 
         varInfo typedefVarInfo;
-        typedefVarInfo.baseType = NULL; //typedefing;
+        typedefVarInfo.baseType = typedefing;
 
         typedefVar = new varInfo;
         nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
+
+        std::cout << "typedefVar = " << *typedefVar << '\n';
 
         return nodePos;
       }

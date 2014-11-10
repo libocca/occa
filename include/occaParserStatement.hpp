@@ -47,8 +47,8 @@ namespace occa {
       static const int maxBit          = 27;
     };
 
-    class _varInfo;
-    class _typeInfo;
+    class varInfo;
+    class typeInfo;
 
     class expNode {
     public:
@@ -63,8 +63,8 @@ namespace occa {
 
       union {
         expNode **leaves;
-        _varInfo **varLeaves;
-        _typeInfo **typeLeaves;
+        varInfo **varLeaves;
+        typeInfo **typeLeaves;
       };
 
       expNode();
@@ -272,8 +272,6 @@ namespace occa {
       statement* makeSubStatement();
 
       std::string getTab() const;
-
-      int statementType(strNode *&nodeRoot);
 
       int checkMacroStatementType(strNode *&nodeRoot);
       int checkOccaForStatementType(strNode *&nodeRoot);
