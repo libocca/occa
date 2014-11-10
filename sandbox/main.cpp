@@ -87,7 +87,8 @@ namespace occa {
       argumentCount(0),
       argumentVarInfos(NULL),
 
-      nestedFunctionPointer(NULL) {}
+      functionNestCount(0),
+      functionNests(NULL) {}
 
     _varInfo::_varInfo(const _varInfo &var) :
       info(var.info),
@@ -106,7 +107,8 @@ namespace occa {
       argumentCount(var.argumentCount),
       argumentVarInfos(var.argumentVarInfos),
 
-      nestedFunctionPointer(var.nestedFunctionPointer) {}
+      functionNestCount(var.functionNestCount),
+      functionNests(var.functionNests) {}
 
     _varInfo& _varInfo::operator = (const _varInfo &var){
       info = var.info;
@@ -125,7 +127,8 @@ namespace occa {
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
 
-      nestedFunctionPointer = var.nestedFunctionPointer;
+      functionNestCount = var.functionNestCount;
+      functionNests     = var.functionNests;
 
       return *this;
     }
@@ -154,7 +157,11 @@ namespace occa {
       nodePos = loadTypeFrom(s, nodePos, varHasType);
 
       info = getVarInfoFrom(s, nodePos);
-      std::cout << "var.info = " << info << '\n';
+
+      if(info & _varType::functionPointer){
+        functionNestCount = getNestCountFrom(s, nodePos);
+        functionNests     = new _varInfo[functionNestCount];
+      }
 
       nodePos = loadNameFrom(s, nodePos);
       nodePos = loadArgsFrom(s, nodePos);
@@ -189,10 +196,27 @@ namespace occa {
 
     int _varInfo::getVarInfoFrom(statement &s,
                                  strNode *nodePos){
+      // No name var (argument for function)
       if(nodePos == NULL)
-        return 0;
+        return _varType::var;
 
       strNode *nextNode = nodePos->right;
+
+      const int nestCount = getNestCountFrom(s, nodePos);
+
+      if(nestCount)
+        return _varType::functionPointer;
+
+      if(nextNode &&
+         (nextNode->type == startParentheses))
+        return _varType::function;
+
+      return _varType::var;
+    }
+
+    int _varInfo::getNestCountFrom(statement &s,
+                                   strNode *nodePos){
+      int nestCount = 0;
 
       while(nodePos &&
             (nodePos->type == startParentheses)){
@@ -202,15 +226,12 @@ namespace occa {
         if(nodePos &&
            nodePos->value == "*"){
 
-          return _varType::functionPointer;
+          ++nestCount;
+          nodePos = nodePos->right;
         }
       }
 
-      if(nextNode &&
-         (nextNode->type == startParentheses))
-        return _varType::function;
-
-      return _varType::var;
+      return nestCount;
     }
 
     strNode* _varInfo::loadNameFrom(statement &s,
@@ -220,14 +241,28 @@ namespace occa {
 
       strNode *nextNode = nodePos->right;
 
+      int nestPos = 0;
+
       while(nodePos &&
             (nodePos->type == startParentheses)){
 
         nodePos = nodePos->down;
 
         if(nodePos &&
-           nodePos->value == "*")
+           nodePos->value == "*"){
+
           nodePos = nodePos->right;
+
+          if(nodePos        &&
+             nodePos->right &&
+             (nodePos->right->type == startParentheses)){
+
+            functionNests[nestPos].info = _varType::function;
+            functionNests[nestPos].loadArgsFrom(s, nodePos->right);
+          }
+
+          ++nestPos;
+        }
       }
 
       if(nodePos &&
@@ -309,7 +344,9 @@ namespace occa {
 
       if(printType){
         ret += leftQualifiers.toString();
-        ret += baseType->typeName;
+
+        if(baseType)
+          ret += baseType->typeName;
 
         if((rightQualifiers.qualifierCount) ||
            (name.size())){
@@ -319,12 +356,21 @@ namespace occa {
       }
 
       ret += rightQualifiers.toString();
+
+      for(int i = 0; i < functionNestCount; ++i)
+        ret += "(*";
+
       ret += name;
 
       for(int i = 0; i < stackPointerCount; ++i){
         ret += '[';
         ret += (std::string) stackExpRoots[i];
         ret += ']';
+      }
+
+      for(int i = 0; i < functionNestCount; ++i){
+        ret += ')';
+        ret += functionNests[i].toString();
       }
 
       if(info & _varType::functionType){
@@ -357,7 +403,7 @@ namespace occa {
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
 
-      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))();");
+      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double);");
 
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 

@@ -112,7 +112,8 @@ namespace occa {
       int argumentCount;
       _varInfo *argumentVarInfos;
 
-      _varInfo *nestedFunctionPointer;
+      int functionNestCount;
+      _varInfo *functionNests;
 
       _varInfo();
 
@@ -131,6 +132,9 @@ namespace occa {
 
       int getVarInfoFrom(statement &s,
                          strNode *nodePos);
+
+      int getNestCountFrom(statement &s,
+                           strNode *nodePos);
 
       strNode* loadNameFrom(statement &s,
                             strNode *nodePos);
