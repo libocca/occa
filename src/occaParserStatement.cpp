@@ -172,9 +172,6 @@ namespace occa {
       if(nodeValue != "else")
         nodeRoot = nodeRoot->right;
 
-      if(nodeRoot->type == startBrace)
-        nodeRoot = nodeRoot->right;
-
       if(nodeValue == "for")
         return forStatementType;
       else if(nodeValue == "while")
@@ -279,6 +276,9 @@ namespace occa {
 
       else if(sInfo->type & forStatementType)
         splitForStatement(nodeRoot);
+
+      // else if(sInfo->type & whileStatementType)
+      //   splitWhileStatement(nodeRoot);
 
       else if(sInfo->type & functionStatementType)
         splitFunctionStatement(nodeRoot);
@@ -386,6 +386,73 @@ namespace occa {
       leaves    = sLeaves;
       leafCount = statementCount;
     }
+
+#if 0
+    void expNode::splitWhileStatement(strNode *nodeRoot){
+      printf("void expNode::splitWhileStatement(strNode *nodeRoot){\n");
+      info = expType::checkSInfo;
+
+      initLoadFromNode(nodeRoot);
+
+      if((leafCount < 2) ||
+         (leaves[1]->value != "(")){
+        std::cout << "Wrong syntax for [for]:\n";
+        print();
+        throw 1;
+      }
+
+      expNode **sLeaves    = leaves[1]->leaves;
+      const int sLeafCount = leaves[1]->leafCount;
+
+      delete leaves[0];
+      delete leaves[1];
+
+      leafCount = sLeafCount;
+      leaves    = sLeaves;
+
+      int statementCount = 1;
+
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->value == ";")
+          ++statementCount;
+      }
+
+      sLeaves = new expNode*[statementCount];
+
+      int firstLeaf  = 0;
+      statementCount = 0;
+
+      for(int i = 0; i <= leafCount; ++i){
+        if((i == leafCount) ||
+           (leaves[i]->value == ";")){
+
+          expNode &ssLeaf = *(new expNode(*this));
+
+          if(firstLeaf != i){
+            ssLeaf.leafCount = (i - firstLeaf);
+            ssLeaf.leaves    = new expNode*[ssLeaf.leafCount];
+
+            for(int j = firstLeaf; j < i; ++j)
+              ssLeaf.leaves[j - firstLeaf] = leaves[j];
+          }
+
+          if(i < leafCount)
+            delete leaves[i];
+
+          if(i != 0)
+            ssLeaf.organize();
+          else
+            ssLeaf.splitDeclareStatement(nodeRoot);
+
+          sLeaves[statementCount++] = &ssLeaf;
+          firstLeaf = (i + 1);
+        }
+      }
+
+      leaves    = sLeaves;
+      leafCount = statementCount;
+    }
+#endif
 
     void expNode::splitFunctionStatement(strNode *nodeRoot){
       printf("void expNode::splitFunctionStatement(strNode *nodeRoot){\n");
@@ -2740,7 +2807,7 @@ namespace occa {
         if(nodeRootEnd->type == startBrace)
           loadAllFromNode(nodeRootEnd->down);
         else
-          loadFromNode(nodeRootEnd);
+          return loadFromNode(nodeRootEnd);
       }
 
       return nextNode;
@@ -2756,13 +2823,11 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      if(nextNode         &&
-         (nextNode->left)){
-
-        if(nextNode->left->type == startBrace)
-          loadAllFromNode(nextNode->left->down);
+      if(nodeRootEnd){
+        if(nodeRootEnd->type == startBrace)
+          loadAllFromNode(nodeRootEnd->down);
         else
-          loadFromNode(nextNode->left);
+          loadFromNode(nodeRootEnd);
       }
 
       return nextNode;
@@ -2779,7 +2844,6 @@ namespace occa {
         strNode * nodeRootEnd = nodeRoot;
 
         newStatement->expRoot.loadFromNode(nodeRootEnd);
-
         st = newStatement->type;
 
         if(st & invalidStatementType){
@@ -2794,8 +2858,19 @@ namespace occa {
         if(nodeRootEnd)
           nodeRootEnd->right = NULL;
 
-        nextNode = newStatement->loadFromNode(nextNode);
+        if(nodeRootEnd){
+          if(nodeRootEnd->type == startBrace)
+            loadAllFromNode(nodeRootEnd->down);
+          else
+            nextNode = loadFromNode(nodeRootEnd);
+        }
+
         addStatement(newStatement);
+
+        if(nextNode == NULL)
+          break;
+
+        nodeRoot = nodeRootEnd = nextNode;
 
         if(st == elseStatementType)
           break;
