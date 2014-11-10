@@ -48,6 +48,7 @@ namespace occa {
     };
 
     class _varInfo;
+    class _typeInfo;
 
     class expNode {
     public:
@@ -63,6 +64,7 @@ namespace occa {
       union {
         expNode **leaves;
         _varInfo **varLeaves;
+        _typeInfo **typeLeaves;
       };
 
       expNode();
