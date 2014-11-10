@@ -147,7 +147,12 @@ namespace occa {
         }
       }
 
-      return declareStatementType;
+      if(var.info & varType::var)
+        return declareStatementType;
+      else if(var.info & varType::functionDec)
+        return functionPrototypeType;
+      else
+        return functionDefinitionType;
     }
 
     int expNode::loadGotoStatement(strNode *&nodeRoot){
@@ -160,19 +165,27 @@ namespace occa {
     }
 
     int expNode::loadFlowStatement(strNode *&nodeRoot){
-      if(nodeRoot->value == "for")
+      std::string &nodeValue = nodeRoot->value;
+
+      if(nodeValue != "else")
+        nodeRoot = nodeRoot->right;
+
+      if(nodeRoot->type == startBrace)
+        nodeRoot = nodeRoot->right;
+
+      if(nodeValue == "for")
         return forStatementType;
-      else if(nodeRoot->value == "while")
+      else if(nodeValue == "while")
         return whileStatementType;
-      else if(nodeRoot->value == "do")
+      else if(nodeValue == "do")
         return doWhileStatementType;
-      else if(nodeRoot->value == "if")
+      else if(nodeValue == "if")
         return ifStatementType;
-      else if(nodeRoot->value == "else if")
+      else if(nodeValue == "else if")
         return elseIfStatementType;
-      else if(nodeRoot->value == "else")
+      else if(nodeValue == "else")
         return elseStatementType;
-      else if(nodeRoot->value == "switch")
+      else if(nodeValue == "switch")
         return switchStatementType;
 
       std::cout << "You found the [Waldo 2] error in:\n"
@@ -300,6 +313,8 @@ namespace occa {
           varLeaves[i].var = new varInfo;
           nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
 
+          std::cout << "varLeaves[i].var = " << *(varLeaves[i].var) << '\n';
+
           sInfo->up->addVariable( *(varLeaves[i].var) );
         }
       }
@@ -312,10 +327,34 @@ namespace occa {
 
     void expNode::splitFunctionStatement(strNode *nodeRoot){
       printf("void expNode::splitFunctionStatement(strNode *nodeRoot){\n");
-      // if(sInfo->type & functionDefinitionType)
-      //   info = (expType::function | expType::declaration);
-      // else
-      //   info = (expType::function | expType::prototype);
+      if(sInfo->type & functionDefinitionType)
+        info = (expType::function | expType::declaration);
+      else
+        info = (expType::function | expType::prototype);
+
+      while(nodeRoot->type != startParentheses)
+        nodeRoot = nodeRoot->right;
+
+      nodeRoot = nodeRoot->down;
+
+      if(nodeRoot == NULL)
+        return;
+
+      leafCount = varInfo::variablesInStatement(nodeRoot);
+
+      if(leafCount){
+        leafInfo  = leafType::var;
+        varLeaves = new varLeaf_t[leafCount];
+
+        for(int i = 0; i < leafCount; ++i){
+          varLeaves[i].var = new varInfo;
+          nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
+
+          std::cout << "varLeaves[i].var = " << *(varLeaves[i].var) << '\n';
+
+          sInfo->addVariable( *(varLeaves[i].var) );
+        }
+      }
     }
 
     void expNode::splitStructStatement(strNode *nodeRoot){
@@ -2608,6 +2647,11 @@ namespace occa {
                                                        nodeRoot,
                                                        nodeRootEnd);
       }
+      else if(st & blockStatementType)
+        nodeRootEnd = newStatement->loadBlockFromNode(st,
+                                                      nodeRoot,
+                                                      nodeRootEnd);
+
       else if(st & functionStatementType){
         if(st & functionDefinitionType)
           nodeRootEnd = newStatement->loadFunctionDefinitionFromNode(st,
@@ -2619,10 +2663,6 @@ namespace occa {
                                                                     nodeRoot,
                                                                     nodeRootEnd);
       }
-      else if(st & blockStatementType)
-        nodeRootEnd = newStatement->loadBlockFromNode(st,
-                                                      nodeRoot,
-                                                      nodeRootEnd);
 
       else if(st & structStatementType)
         nodeRootEnd = newStatement->loadStructFromNode(st,
@@ -2661,6 +2701,9 @@ namespace occa {
       loadFromNode(nodeRoot);
 
       statementNode *sn = statementEnd;
+
+      if(statementStart == statementEnd)
+        statementStart = statementEnd->left;
 
       statementEnd = statementEnd->left;
 
@@ -2711,7 +2754,16 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      return loadFromNode(nodeRootEnd);
+      if(nextNode         &&
+         (nextNode->left)){
+
+        if(nextNode->left->type == startBrace)
+          loadAllFromNode(nextNode->left->down);
+        else
+          loadFromNode(nextNode->left);
+      }
+
+      return nextNode;
     }
 
     strNode* statement::loadWhileFromNode(const int st,
@@ -2724,7 +2776,16 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      return loadFromNode(nodeRootEnd);
+      if(nextNode         &&
+         (nextNode->left)){
+
+        if(nextNode->left->type == startBrace)
+          loadAllFromNode(nextNode->left->down);
+        else
+          loadFromNode(nextNode->left);
+      }
+
+      return nextNode;
     }
 
     strNode* statement::loadIfFromNode(const int st_,
@@ -2801,6 +2862,13 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
+
+      if(nextNode         &&
+         (nextNode->left) &&
+         (nextNode->left->down)){
+
+        loadAllFromNode(nextNode->left->down);
+      }
 
       return nextNode;
     }

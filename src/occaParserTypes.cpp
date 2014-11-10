@@ -667,7 +667,7 @@ namespace occa {
             strNode *downNode = nodePos->down;
             strNode *lastDown = lastNode(downNode);
 
-            // s.setExpNodeFromStrNode(stackExpRoots[i], downNode);
+            s.setExpNodeFromStrNode(stackExpRoots[i], downNode);
           }
 
           nodePos = nodePos->right;
