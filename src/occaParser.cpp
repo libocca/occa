@@ -713,54 +713,56 @@ namespace occa {
 
       for(int t = 0; t < 7; ++t){
         for(int n = 0; n < 6; ++n){
-          typeDef &def = *(new typeDef);
-          def.typeName = baseType[t] + suffix[n];
+          typeInfo &type = *(new typeInfo);
+          type.name = baseType[t] + suffix[n];
 
-          globalScope->scopeTypeMap[def.typeName] = &def;
+          globalScope->scopeTypeMap[type.name] = &type;
 
+#if 0
           if(n){
-            def.typeInfo = structTypeDef;
+            type.addQualifier("struct");
 
             for(int n2 = 0; n2 < parts[n]; ++n2){
-              typeDef &uDef = *(new typeDef);
-              uDef.typeInfo = unionTypeDef;
+              typeInfo &uType = *(new typeInfo);
+              uType.addQualifier("union");
 
               if(n2 < 4){
                 std::string varName = "w";
                 varName[0] += ((n2 + 1) % 4);
 
-                typeDef &sDef = uDef.addType(varName);
-                sDef.typeName = baseType[t];
+                typeInfo &sDef = uType.addType(varName);
+                sType.name = baseType[t];
               }
 
               if(n2 < 10){
                 std::string varName = "s";
                 varName += '0' + n2;
 
-                typeDef &sDef = (n2 < 4) ? uDef.addType(varName) : def.addType(varName);
-                sDef.typeName = baseType[t];
+                typeInfo &sDef = (n2 < 4) ? uType.addType(varName) : type.addType(varName);
+                sType.name = baseType[t];
               }
               else{
                 std::string varName = "s";
 
-                typeDef &sDef1 = uDef.addType(varName + (char) ('a' + (n2 - 10)));
-                sDef1.typeName = baseType[t];
+                typeInfo &sDef1 = uType.addType(varName + (char) ('a' + (n2 - 10)));
+                sDef1.name = baseType[t];
 
-                typeDef &sDef2 = uDef.addType(varName + (char) ('A' + (n2 - 10)));
-                sDef2.typeName = baseType[t];
+                typeInfo &sDef2 = uType.addType(varName + (char) ('A' + (n2 - 10)));
+                sDef2.name = baseType[t];
               }
 
               if((n2 < 4) || (10 <= n2))
-                def.addType(&uDef);
+                type.addType(&uType);
               else
-                delete &uDef;
+                delete &uType;
             }
           }
+#endif
         }
       }
 
-      globalScope->addTypeDef("void");
-      globalScope->addTypeDef("__builtin_va_list");
+      globalScope->addTypedef("void");
+      globalScope->addTypedef("__builtin_va_list");
     }
 
     void parserBase::applyToAllStatements(statement &s,
@@ -886,7 +888,7 @@ namespace occa {
       //---[ Add loop counter ]---------
       varInfo ioDimVar;
       ioDimVar.name = obfuscate(ioLoop);
-      ioDimVar.extraInfo.push_back(loopNest);
+      ioDimVar.addQualifier(loopNest);
 
       varInfo *ioDimVar2 = s.hasVariableInScope(ioDimVar.name);
 
@@ -895,16 +897,8 @@ namespace occa {
         sOuterLoop.addVariable(ioDimVar);
       }
       else{
-        const int extras = ioDimVar2->extraInfo.size();
-        int i;
-
-        for(i = 0; i < extras; ++i){
-          if(ioDimVar2->extraInfo[i] == loopNest)
-            break;
-        }
-
-        if(i == extras)
-          ioDimVar2->extraInfo.push_back(loopNest);
+        if(!ioDimVar2->hasQualifier(loopNest))
+          ioDimVar2->addQualifier(loopNest);
       }
 
       //---[ Add loop iterations ]------
@@ -919,7 +913,7 @@ namespace occa {
           ioIterVar2 = sOuterLoop.addVariable(ioIterVar);
         }
 
-        ioIterVar2->extraInfo.push_back(loopIters);
+        ioIterVar2->addQualifier(loopIters);
       }
     }
 
@@ -1141,7 +1135,7 @@ namespace occa {
 #else
       if(s.type & structStatementType){
         if(s.typePtr->varName.size()){
-          typeDef &type = *(s.typePtr);
+          typeInfo &type = *(s.typePtr);
           varInfo info;
 
           info.type = &type;
@@ -1299,7 +1293,7 @@ namespace occa {
           s2.addQualifier("occaKernel");
 
           varInfo &var = *(s2.hasVariableInScope( s2.getFunctionName() ));
-          var.descriptors.insert(var.descriptors.begin(), "occaKernel");
+          var.addQualifier("occaKernel", 0);
         }
 
         snPos = snPos->right;
@@ -1736,14 +1730,12 @@ namespace occa {
       }
     }
 
-    strNode* parserBase::occaExclusiveStrNode(varInfo &info,
+    strNode* parserBase::occaExclusiveStrNode(varInfo &var,
                                               const int depth,
                                               const int sideDepth){
       strNode *nodeRoot;
 
-      const int typeInfo = info.typeInfo;
-
-      if(typeInfo & pointerType)
+      if(var.stackPointerCount)
         nodeRoot = new strNode("occaPrivateArray");
       else
         nodeRoot = new strNode("occaPrivate");
@@ -1757,46 +1749,37 @@ namespace occa {
       nodePos->type  = keywordType["("];
       nodePos->depth = depth + 1;
 
-      const int descriptorCount = info.descriptors.size();
+      var.removeQualifier("exclusive");
 
-      for(int i = 0; i < descriptorCount; ++i){
-        if(info.descriptors[i] == "exclusive")
-          continue;
-
-        nodePos       = nodePos->push(info.descriptors[i]);
+      for(int i = 0; i < var.leftQualifiers.qualifierCount; ++i){
+        nodePos       = nodePos->push(var.leftQualifiers.qualifiers[i]);
         nodePos->type = qualifierType;
       }
 
-      if(info.type){
-        nodePos       = nodePos->push(info.type->typeName);
-        nodePos->type = specifierType;
+      nodePos       = nodePos->push(var.baseType->name);
+      nodePos->type = specifierType;
 
-        if(typeInfo & heapPointerType){
-          for(int i = 0; i < info.pointerCount; ++i){
-            nodePos       = nodePos->push("*");
-            nodePos->type = keywordType["*"];
-          }
-        }
+      for(int i = 0; i < var.rightQualifiers.qualifierCount; ++i){
+        nodePos       = nodePos->push(var.rightQualifiers.qualifiers[i]);
+        nodePos->type = keywordType[var.rightQualifiers.qualifiers[i]];
       }
 
       nodePos       = nodePos->push(",");
       nodePos->type = keywordType[","];
 
-      nodePos       = nodePos->push(info.name);
+      nodePos       = nodePos->push(var.name);
       nodePos->type = unknownVariable;
 
-      if(typeInfo & stackPointerType){
-        const int heapCount = info.stackPointerSizes.size();
-
-        if(1 < heapCount){
-          std::cout << "Only 1D exclusive variables are currently supported [" << info << "]\n";
+      if(var.stackPointerCount){
+        if(1 < var.stackPointerCount){
+          std::cout << "Only 1D exclusive variables are currently supported [" << var << "]\n";
           throw 1;
         }
 
         nodePos       = nodePos->push(",");
         nodePos->type = keywordType[","];
 
-        nodePos       = nodePos->push(info.stackPointerSizes[0]);
+        nodePos       = nodePos->push((std::string) var.stackExpRoots[0]);
         nodePos->type = presetValue;
       }
 
@@ -1850,7 +1833,7 @@ namespace occa {
     }
 
     void parserBase::addArgQualifiers(varInfo &var, statement &s){
-      if(var.hasDescriptor("occaKernel")){
+      if(var.hasQualifier("occaKernel")){
         statementNode *snPos = s.statementStart;
 
         while(snPos){
@@ -1894,7 +1877,7 @@ namespace occa {
         }
       }
       // [-] Missing
-      else if(var.hasDescriptor("occaFunction")){
+      else if(var.hasQualifier("occaFunction")){
         // statementNode *sn = (varUsedMap[&var]).right;
 
         // while(sn){
@@ -1930,14 +1913,14 @@ namespace occa {
         expNode &argNode = *(s.getDeclarationVarNode(i));
         varInfo &var     = *(s.hasVariableInScope(s.getDeclarationVarName(i)));
 
-        const int isPrivateArray = var.stackPointerSizes.size();
+        const int isPrivateArray = var.stackPointerCount;
 
         ss << "occaPrivate";
 
         if(isPrivateArray)
           ss << "Array";
 
-        ss << "(" << typeNode << var.postTypeStr() << ", " << var.name;
+        ss << "(" << typeNode << var.leftQualifiers << ", " << var.name;
 
         if(isPrivateArray){
           ss << ", ";
@@ -1949,7 +1932,7 @@ namespace occa {
             throw 1;
           }
 
-          ss << var.stackPointerSizes[0];
+          ss << var.stackExpRoots[0];
         }
 
         ss << ");";
@@ -1990,7 +1973,7 @@ namespace occa {
       while(it != varUsedMap.end()){
         varInfo *infoPtr = it->first;
 
-        if(infoPtr->hasDescriptor("texture")){
+        if(infoPtr->hasQualifier("texture")){
           statement &os = *(varOriginMap[infoPtr]);
 
           strNode *osNodePos = os.nodeStart;
@@ -2181,7 +2164,7 @@ namespace occa {
           varInfo *loopIter = s2.hasVariableInScope( obfuscate("loop", "iters") );
 
           if(loopIter){
-            const int extras = loopIter->extraInfo.size();
+            const int extras = loopIter->leftQualifierCount();
 
             const int outerDim = getOuterMostForDim(s2) + 1;
             const int innerDim = getInnerMostForDim(s2) + 1;
@@ -2190,7 +2173,7 @@ namespace occa {
                << "  occa::dim outer, inner;\n";
 
             for(int i = 0; i < (outerDim + innerDim); ++i)
-              ss << "  " << loopIter->extraInfo[i] << "\n";
+              ss << "  " << loopIter->getLeftQualifier(i) << "\n";
 
             ss << "  nestedKernels[" << kernelCount << "].setWorkingDims(dims, inner, outer);\n";
           }
@@ -2409,10 +2392,10 @@ namespace occa {
       varInfo *info = s.hasVariableInScope(outerStr);
 
       if(info != NULL){
-        const int extras = info->extraInfo.size();
+        const int extras = info->leftQualifierCount();
 
         for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->extraInfo[i][0] - '0');
+          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
 
           if(outerDim < loopNest)
             outerDim = loopNest;
@@ -2448,10 +2431,10 @@ namespace occa {
       varInfo *info = s.hasVariableInScope(innerStr);
 
       if(info != NULL){
-        const int extras = info->extraInfo.size();
+        const int extras = info->leftQualifierCount();
 
         for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->extraInfo[i][0] - '0');
+          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
 
           if(innerDim < loopNest)
             innerDim = loopNest;
@@ -2495,10 +2478,10 @@ namespace occa {
       varInfo *info = s.hasVariableInScope(outerStr);
 
       if(info != NULL){
-        const int extras = info->extraInfo.size();
+        const int extras = info->leftQualifierCount();
 
         for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->extraInfo[i][0] - '0');
+          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
 
           if(outerDim < loopNest)
             outerDim = loopNest;
@@ -2597,9 +2580,9 @@ namespace occa {
     bool parserBase::varInTwoSegments(varInfo &info,
                                       loopSection_t &loopSection){
       // Don't count shared memory
-      if(info.hasDescriptor("occaPointer")  ||
-         info.hasDescriptor("occaVariable") ||
-         info.hasDescriptor("occaShared"))
+      if(info.hasQualifier("occaPointer")  ||
+         info.hasQualifier("occaVariable") ||
+         info.hasQualifier("occaShared"))
         return false;
 
       varUsedMapIterator it = varUsedMap.find(&info);
@@ -2640,7 +2623,7 @@ namespace occa {
 
           if(varInTwoSegments(info, loopSection)){
             // No longer const
-            info.removeDescriptor("occaConst");
+            info.removeQualifier("occaConst");
 
             if(root == NULL){
               root = new varInfoNode(&info);
@@ -2673,9 +2656,12 @@ namespace occa {
       return root;
     }
 
+    // Broken
     void parserBase::splitDefineForVariable(statement *&origin,
                                             varInfo &var, strNode *varNode,
                                             const int declPos){
+      return;
+
       const int declarationCount = origin->scopeVarMap.size();
       const bool addingStatement = ((declPos != 0) || (declarationCount > 1));
 
@@ -2759,8 +2745,9 @@ namespace occa {
 
       origin->scopeVarMap.erase(var.name);
 
-      var.descriptors.insert(var.descriptors.begin(), "exclusive");
-      strNode *newVarNode = var.makeStrNodeChain();
+      var.addQualifier("exclusive", 0);
+
+      strNode *newVarNode = NULL;//var.makeStrNodeChain();
 
       statement *newS = new statement(origin->depth,
                                       declareStatementType,

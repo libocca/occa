@@ -220,8 +220,6 @@ namespace occa {
       void changeType(const std::string &newType);
 
       std::string getVariableName() const;
-
-      void setVarInfo(varInfo &var);
       //================================
 
       void freeLeaf(const int leafPos);
@@ -295,7 +293,7 @@ namespace occa {
       int checkSpecialStatementType(strNode *&nodeRoot);
       int checkBlockStatementType(strNode *&nodeRoot);
 
-      void addTypeDef(const std::string &typeDefName);
+      void addTypedef(const std::string &typedefName);
 
       bool nodeHasQualifier(strNode *n) const;
       bool nodeHasSpecifier(strNode *n) const;
@@ -303,7 +301,7 @@ namespace occa {
 
       varInfo loadVarInfo(strNode *&nodePos);
 
-      typeDef* hasTypeInScope(const std::string &typeName) const;
+      typeInfo* hasTypeInScope(const std::string &typeName) const;
 
       varInfo* hasVariableInScope(const std::string &varName) const;
 

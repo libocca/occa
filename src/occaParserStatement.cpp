@@ -733,7 +733,7 @@ namespace occa {
          (pos != leafCount) &&
          !(leaves[pos - 1]->info & expType::qualifier)){
 
-        sInfo->up->addTypeDef(leaves[pos - 1]->value);
+        sInfo->up->addTypedef(leaves[pos - 1]->value);
       }
 
       leaves[pos]->splitStructStatements();
@@ -851,11 +851,11 @@ namespace occa {
       expNode *sLastLeaf = lastLeaf()->lastLeaf();
 
       if(!splitStruct){
-        sInfo->up->addTypeDef(sLastLeaf->value);
+        sInfo->up->addTypedef(sLastLeaf->value);
       }
       else{
         expNode *ssLastLeaf = sLastLeaf->lastLeaf();
-        sInfo->up->addTypeDef(ssLastLeaf->value);
+        sInfo->up->addTypedef(ssLastLeaf->value);
       }
 
       info |= expType::typedef_;
@@ -928,7 +928,7 @@ namespace occa {
             }
           }
           else{
-            typeDef *nodeType = sInfo->hasTypeInScope(nodePos->value);
+            typeInfo *nodeType = sInfo->hasTypeInScope(nodePos->value);
 
             if(!nodeType)
               leaf->info = expType::unknown;
@@ -1332,31 +1332,6 @@ namespace occa {
 
           const bool varHasRQualifiers = (((leafPos + 1) < leafCount) &&
                                           (leaves[leafPos + 1]->info & expType::qualifier));
-
-          varInfo &var = *(new varInfo);
-
-          if(varHasLQualifiers){
-            expNode &lqNode = *(leaves[leafPos - 1]);
-
-            var.descriptors.resize(lqNode.leafCount);
-
-            for(int i = 0; i < lqNode.leafCount; ++i)
-              var.descriptors[i] = lqNode.leaves[i]->value;
-          }
-
-          var.type = sInfo->hasTypeInScope(leaves[leafPos]->value);
-          var.pointerCount = 0;
-
-          if(varHasRQualifiers){
-            expNode &rqNode = *(leaves[leafPos + 1]);
-
-            var.descriptors.resize(rqNode.leafCount);
-
-            for(int i = 0; i < rqNode.leafCount; ++i){
-              if(rqNode.leaves[i]->value == "*")
-                ++(var.pointerCount);
-            }
-          }
 
           leafPos = mergeRange(expType::type,
                                leafPos - varHasLQualifiers,
@@ -2052,57 +2027,6 @@ namespace occa {
       }
 
       return "";
-    }
-
-    void expNode::setVarInfo(varInfo &var){
-      if(info & expType::type){
-        const bool hasLQualifier = ((leaves[0]->info & expType::qualifier) ||
-                                    (leaves[0]->leafCount &&
-                                     (leaves[0]->info & expType::type)));
-
-        const bool hasRQualifier = (((hasLQualifier + 1) < leafCount) &&
-                                    (leaves[hasLQualifier + 1]->info & (expType::qualifier |
-                                                                        expType::type)));
-
-        if(hasLQualifier){
-          expNode &lq = *(leaves[0]);
-
-          for(int i = 0; i < lq.leafCount; ++i)
-            var.descriptors.push_back(lq.leaves[i]->value);
-        }
-
-        var.type = sInfo->hasTypeInScope(leaves[hasLQualifier]->value);
-
-        if(hasRQualifier){
-          expNode &rq = *(leaves[hasLQualifier + 1]);
-
-          // [-] Missing * [const] * [const]
-          for(int i = 0; i < rq.leafCount; ++i){
-            if(rq.leaves[i]->value == "*")
-              ++(var.pointerCount);
-          }
-        }
-      }
-      else if(info & expType::qualifier){
-        if(leafCount){
-          for(int i = 0; i < leafCount; ++i){
-            if(leaves[i]->value == "*")
-              ++(var.pointerCount);
-            else if(leaves[i]->info & expType::C){
-              std::string stackSize = (std::string) *(leaves[i]);
-
-              // var[x]
-              if(2 < stackSize.size())
-                var.stackPointerSizes.push_back( stackSize.substr(1, stackSize.size() - 2) );
-            }
-          }
-        }
-        else
-          var.descriptors.push_back(value);
-      }
-
-      if(var.pointerCount)
-        var.typeInfo |= heapPointerType;
     }
     //================================
 
@@ -2876,10 +2800,10 @@ namespace occa {
       return blockStatementType;
     }
 
-    void statement::addTypeDef(const std::string &typeDefName){
-      typeDef &def = *(new typeDef);
-      def.typeName = typeDefName;
-      scopeTypeMap[typeDefName] = &def;
+    void statement::addTypedef(const std::string &typedefName){
+      typeInfo &type = *(new typeInfo);
+      type.name = typedefName;
+      scopeTypeMap[typedefName] = &type;
     }
 
     bool statement::nodeHasQualifier(strNode *n) const {
@@ -3186,7 +3110,7 @@ namespace occa {
 #endif
     }
 
-    typeDef* statement::hasTypeInScope(const std::string &typeName) const {
+    typeInfo* statement::hasTypeInScope(const std::string &typeName) const {
       cScopeTypeMapIterator it = scopeTypeMap.find(typeName);
 
       if(it != scopeTypeMap.end())
@@ -3217,7 +3141,7 @@ namespace occa {
       cScopeVarMapIterator it = scopeVarMap.begin();
 
       while(it != scopeVarMap.end()){
-        if((it->second)->hasDescriptor(descriptor))
+        if((it->second)->hasQualifier(descriptor))
           return true;
 
         ++it;
@@ -3812,9 +3736,9 @@ namespace occa {
                                     statement *origin){
       scopeVarMapIterator it = scopeVarMap.find(info.name);
 
-      if(it != scopeVarMap.end()       &&
-         !info.hasDescriptor("extern") &&
-         !((info.typeInfo & functionType) && ((it->second)->typeInfo & protoType))){
+      if(it != scopeVarMap.end()      &&
+         !info.hasQualifier("extern") &&
+         !((info.info & varType::functionDec))){
 
         std::cout << "Variable [" << info.name << "] defined in:\n"
                   << *origin
@@ -3928,7 +3852,7 @@ namespace occa {
       scopeTypeMapIterator it = scopeTypeMap.begin();
 
       while(it != scopeTypeMap.end()){
-        std::cout << (it->second)->print("  ") << '\n';
+        std::cout << (it->second)->toString("  ") << '\n';
 
         ++it;
       }
