@@ -1648,18 +1648,19 @@ namespace occa {
 
       case (expType::function | expType::prototype):{
         if(leafCount){
-          for(int i = 0; i < (leafCount - 1); ++i)
-            out << *(leaves[i]);
+          // for(int i = 0; i < (leafCount - 1); ++i)
+          //   out << *(leaves[i]);
 
-          expNode &argNode = *(leaves[leafCount - 1]);
+          // expNode &argNode = *(leaves[leafCount - 1]);
+          expNode &argNode = *this;
 
           out << '(';
 
           if(argNode.leafCount){
             for(int i = 0; i < (argNode.leafCount - 1); ++i)
-              out << *(argNode.leaves[i]) << ", ";
+              out << *(argNode.varLeaves[i].var) << ", ";
 
-            out << *(argNode.leaves[argNode.leafCount - 1]);
+            out << *(argNode.varLeaves[argNode.leafCount - 1].var);
           }
 
           out << ");\n";
@@ -1670,17 +1671,20 @@ namespace occa {
 
       case (expType::function | expType::declaration):{
         if(leafCount){
-          for(int i = 0; i < (leafCount - 1); ++i)
-            out << *(leaves[i]);
+          // for(int i = 0; i < (leafCount - 1); ++i)
+          //   out << *(leaves[i]);
 
-          expNode &argNode = *(leaves[leafCount - 1]);
+          // expNode &argNode = *(leaves[leafCount - 1]);
+          expNode &argNode = *this;
 
           out << '(';
 
-          for(int i = 0; i < (argNode.leafCount - 1); ++i)
-            out << *(argNode.leaves[i]) << ", ";
+          if(argNode.leafCount){
+            for(int i = 0; i < (argNode.leafCount - 1); ++i)
+              out << *(argNode.varLeaves[i].var) << ", ";
 
-          out << *(argNode.leaves[argNode.leafCount - 1]);
+            out << *(argNode.varLeaves[argNode.leafCount - 1].var);
+          }
 
           out << ')';
         }
@@ -1717,22 +1721,12 @@ namespace occa {
 
       case (expType::declaration):{
         if(leafCount){
-          // Delarations are used in
-          //   typedef struct {} [a]
-          // where there is no type
-          const int typeAndVar = 2 - !(leaves[0]->info & expType::type);
+          out << *(varLeaves[0].var);
 
-          if(typeAndVar == 2)
-            out << tab;
+          for(int i = 1; i < leafCount; ++i)
+            out << ", " << varLeaves[i].var->toString(false);
 
-          for(int i = 0; i < typeAndVar; ++i)
-            out << *(leaves[i]);
-
-          for(int i = typeAndVar; i < leafCount; ++i)
-            out << ", " << *(leaves[i]);
-
-          if(typeAndVar == 2)
-            out << ";\n";
+          out << ";\n";
         }
 
         break;
