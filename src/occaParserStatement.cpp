@@ -13,6 +13,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
+      leafInfo(leafType::exp),
       leaves(NULL) {}
 
     expNode::expNode(statement &s) :
@@ -24,6 +25,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
+      leafInfo(leafType::exp),
       leaves(NULL) {}
 
     expNode::expNode(expNode &up_) :
@@ -35,6 +37,7 @@ namespace occa {
       up(&up_),
 
       leafCount(0),
+      leafInfo(leafType::exp),
       leaves(NULL) {}
 
     void expNode::labelStatement(strNode *&nodeRoot){
@@ -247,6 +250,8 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
+      print();
+
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
@@ -287,6 +292,7 @@ namespace occa {
       leafCount = varInfo::variablesInStatement(nodeRoot);
 
       if(leafCount){
+        leafInfo  = leafType::var;
         varLeaves = new varLeaf_t[leafCount];
 
         for(int i = 0; i < leafCount; ++i){
@@ -317,6 +323,7 @@ namespace occa {
       printf("void expNode::splitStructStatement(strNode *nodeRoot){\n");
       info = expType::struct_;
 
+      leafInfo      = leafType::type;
       typeLeaves    = new typeInfo*[1];
       typeLeaves[0] = new typeInfo;
 
@@ -1085,9 +1092,20 @@ namespace occa {
       if(leafCount){
         newRoot.leaves = new expNode*[leafCount];
 
-        for(int i = 0; i < leafCount; ++i){
-          newRoot.leaves[i]     = clone(leaves[i]);
-          newRoot.leaves[i]->up = &newRoot;
+        // Broken
+        if(leafInfo & leafType::exp){
+          for(int i = 0; i < leafCount; ++i){
+            newRoot.leaves[i]     = clone(leaves[i]);
+            newRoot.leaves[i]->up = &newRoot;
+          }
+        }
+        else if(leafInfo & leafType::type){
+          for(int i = 0; i < leafCount; ++i)
+            ;
+        }
+        else {
+          for(int i = 0; i < leafCount; ++i)
+            ;
         }
       }
 
@@ -1445,8 +1463,22 @@ namespace occa {
     void expNode::print(const std::string &tab){
       std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
-      for(int i = 0; i < leafCount; ++i)
-        leaves[i]->print(tab + "    ");
+      if(leafInfo & leafType::exp){
+        for(int i = 0; i < leafCount; ++i)
+          leaves[i]->print(tab + "    ");
+      }
+      else if(leafInfo & leafType::type){
+        for(int i = 0; i < leafCount; ++i)
+          std::cout << typeLeaves[i]->toString(tab + "    ");
+      }
+      else {
+        for(int i = 0; i < leafCount; ++i){
+          std::cout << tab + "    " << varLeaves[i].var->toString();
+
+          if(varLeaves[i].hasExp)
+            varLeaves[i].exp->print();
+        }
+      }
     }
 
     void expNode::printOn(std::ostream &out, const std::string &tab){

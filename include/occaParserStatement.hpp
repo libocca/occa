@@ -47,6 +47,12 @@ namespace occa {
       static const int maxBit          = 27;
     };
 
+    namespace leafType {
+      static const char exp  = (1 << 0);
+      static const char type = (1 << 1);
+      static const char var  = (1 << 2);
+    };
+
     class varInfo;
     class typeInfo;
     class expNode;
@@ -75,6 +81,7 @@ namespace occa {
       expNode *up;
 
       int leafCount;
+      char leafInfo;
 
       union {
         expNode **leaves;
