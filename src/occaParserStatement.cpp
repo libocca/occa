@@ -167,6 +167,8 @@ namespace occa {
     int expNode::loadFlowStatement(strNode *&nodeRoot){
       std::string &nodeValue = nodeRoot->value;
 
+      nodeRoot = nodeRoot->right;
+
       if(nodeValue != "else")
         nodeRoot = nodeRoot->right;
 
@@ -323,6 +325,66 @@ namespace occa {
     void expNode::splitForStatement(strNode *nodeRoot){
       printf("void expNode::splitForStatement(strNode *nodeRoot){\n");
       info = expType::checkSInfo;
+
+      initLoadFromNode(nodeRoot);
+
+      if((leafCount < 2) ||
+         (leaves[1]->value != "(")){
+        std::cout << "Wrong syntax for [for]:\n";
+        print();
+        throw 1;
+      }
+
+      expNode **sLeaves    = leaves[1]->leaves;
+      const int sLeafCount = leaves[1]->leafCount;
+
+      delete leaves[0];
+      delete leaves[1];
+
+      leafCount = sLeafCount;
+      leaves    = sLeaves;
+
+      int statementCount = 1;
+
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->value == ";")
+          ++statementCount;
+      }
+
+      sLeaves = new expNode*[statementCount];
+
+      int firstLeaf  = 0;
+      statementCount = 0;
+
+      for(int i = 0; i <= leafCount; ++i){
+        if((i == leafCount) ||
+           (leaves[i]->value == ";")){
+
+          expNode &ssLeaf = *(new expNode(*this));
+
+          if(firstLeaf != i){
+            ssLeaf.leafCount = (i - firstLeaf);
+            ssLeaf.leaves    = new expNode*[ssLeaf.leafCount];
+
+            for(int j = firstLeaf; j < i; ++j)
+              ssLeaf.leaves[j - firstLeaf] = leaves[j];
+          }
+
+          if(i < leafCount)
+            delete leaves[i];
+
+          if(i != 0)
+            ssLeaf.organize();
+          else
+            ssLeaf.splitDeclareStatement(nodeRoot);
+
+          sLeaves[statementCount++] = &ssLeaf;
+          firstLeaf = (i + 1);
+        }
+      }
+
+      leaves    = sLeaves;
+      leafCount = statementCount;
     }
 
     void expNode::splitFunctionStatement(strNode *nodeRoot){
@@ -1622,10 +1684,8 @@ namespace occa {
       }
 
       case (expType::variable):{
-        std::cout << "leafCount = " << leafCount << '\n';
-
         if(leafCount)
-          out << leaves[0]->value;
+          out << tab << leaves[0]->value;
         else
           out << value;
 
@@ -1634,14 +1694,14 @@ namespace occa {
 
       case (expType::function | expType::prototype):{
         if(leafCount)
-          out << *(varLeaves[0].var) << ";\n";
+          out << tab << *(varLeaves[0].var) << ";\n";
 
         break;
       }
 
       case (expType::function | expType::declaration):{
         if(leafCount)
-          out << *(varLeaves[0].var);
+          out << tab << *(varLeaves[0].var);
 
         break;
       }
@@ -1675,7 +1735,7 @@ namespace occa {
 
       case (expType::declaration):{
         if(leafCount){
-          out << *(varLeaves[0].var);
+          out << tab << *(varLeaves[0].var);
 
           for(int i = 1; i < leafCount; ++i)
             out << ", " << varLeaves[i].var->toString(false);
@@ -1687,34 +1747,8 @@ namespace occa {
       }
 
       case (expType::struct_):{
-        if(leafCount){
-          out << tab;
-
-          // Qualifiers
-          for(int i = 0; i < leafCount; ++i){
-            expNode &leaf = *(leaves[i]);
-
-            if(leaf.value == "{"){
-              out << "{\n";
-
-              for(int j = 0; j < leaf.leafCount; ++j)
-                leaf.leaves[j]->printOn(out, tab + "  ");
-
-              if(i != (leafCount - 1))
-                out << tab << "} ";
-              else
-                out << tab << "};\n";
-            }
-            else{
-              out << leaf;
-
-              if(i < (leafCount - 1))
-                out << ' ';
-            }
-          }
-        }
-        else
-          out << ";";
+        if(leafCount)
+          out << (typeLeaves[0]->toString(tab));
 
         break;
       }
@@ -2702,13 +2736,11 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      if(nextNode         &&
-         (nextNode->left)){
-
-        if(nextNode->left->type == startBrace)
-          loadAllFromNode(nextNode->left->down);
+      if(nodeRootEnd){
+        if(nodeRootEnd->type == startBrace)
+          loadAllFromNode(nodeRootEnd->down);
         else
-          loadFromNode(nextNode->left);
+          loadFromNode(nodeRootEnd);
       }
 
       return nextNode;
@@ -2811,12 +2843,8 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      if(nextNode         &&
-         (nextNode->left) &&
-         (nextNode->left->down)){
-
-        loadAllFromNode(nextNode->left->down);
-      }
+      if(nodeRootEnd)
+        loadAllFromNode(nodeRootEnd->down);
 
       return nextNode;
     }
@@ -3592,7 +3620,7 @@ namespace occa {
         return ret;
       }
       else if(type & structStatementType){
-        return expRoot.getString(tab);
+        return expRoot.getString(tab) + "\n";
       }
       else if(type & macroStatementType){
         return expRoot.getString(tab);
