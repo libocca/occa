@@ -41,7 +41,7 @@ namespace occa {
 };
 
 int main(int argc, char **argv){
-  occa::parserNamespace::test();
+  // occa::parserNamespace::test();
 
   // {
   //   occa::parser parser;

@@ -91,20 +91,12 @@ namespace occa {
       void splitAndOrganizeNode(strNode *nodeRoot);
       void organize();
 
-      void addNewVariables(strNode *nodePos);
+      void splitDeclareStatement(strNode *nodeRoot);
+      void splitForStatement(strNode *nodeRoot);
+      void splitFunctionStatement(strNode *nodeRoot);
+      void splitStructStatement(strNode *nodeRoot);
 
-      void splitDeclareStatement();
-      void splitForStatement();
-      void splitFunctionStatement();
-      void splitStructStatement();
-      void splitStructStatements();
-      void splitTypedefStatement();
-
-      void initLoadFromNode(strNode *nodeRoot,
-                            const int initPos = 0);
-
-      int initDownsFromNode(strNode *nodeRoot,
-                            int leafPos = 0);
+      void initLoadFromNode(strNode *nodeRoot);
 
       void initOrganization();
 

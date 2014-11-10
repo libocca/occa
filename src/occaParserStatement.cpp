@@ -48,10 +48,8 @@ namespace occa {
       else if(nodeRoot->type == keywordType["occaOuterFor0"])
         sInfo->type = loadOccaForStatement(nodeRoot);
 
-      else if(nodeRoot->type & typedefType)
-        sInfo->type = loadTypedefStatement(nodeRoot);
-
-      else if(nodeRoot->type & structType)
+      else if((nodeRoot->type & typedefType) |
+              (nodeRoot->type & structType))
         sInfo->type = loadStructStatement(nodeRoot);
 
       else if(nodeRoot->type & (operatorType |
@@ -105,23 +103,9 @@ namespace occa {
       return keywordType["occaOuterFor0"];
     }
 
-    int expNode::loadTypedefStatement(strNode *&nodeRoot){
-      while(nodeRoot){
-        if(nodeRoot->type & endStatement)
-          break;
-
-        nodeRoot = nodeRoot->right;
-      }
-
-      return typedefStatementType;
-    }
-
     int expNode::loadStructStatement(strNode *&nodeRoot){
-      if((nodeRoot->right->down == NULL) &&
-         (sInfo->hasTypeInScope(nodeRoot->right->value))){
-
+      if(!typeInfo::statementIsATypeInfo(*sInfo, nodeRoot))
         return sInfo->checkDescriptorStatementType(nodeRoot);
-      }
 
       while(nodeRoot){
         if(nodeRoot->type & endStatement)
@@ -145,6 +129,10 @@ namespace occa {
     }
 
     int expNode::loadDescriptorStatement(strNode *&nodeRoot){
+      if(typeInfo::statementIsATypeInfo(*sInfo, nodeRoot))
+        return loadStructStatement(nodeRoot);
+
+#if 0
       strNode *oldNodeRoot = nodeRoot;
       strNode *nodePos;
 
@@ -179,6 +167,7 @@ namespace occa {
         else
           return functionDefinitionType;
       }
+#endif
 
       return declareStatementType;
     }
@@ -292,30 +281,23 @@ namespace occa {
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
-      addNewVariables(nodeRoot);
-      initLoadFromNode(nodeRoot);
-
       if(sInfo->type & declareStatementType)
-        splitDeclareStatement();
+        splitDeclareStatement(nodeRoot);
 
       else if(sInfo->type & forStatementType)
-        splitForStatement();
+        splitForStatement(nodeRoot);
 
       else if(sInfo->type & functionStatementType)
-        splitFunctionStatement();
+        splitFunctionStatement(nodeRoot);
 
       else if(sInfo->type & structStatementType)
-        splitStructStatement();
+        splitStructStatement(nodeRoot);
 
-      else if(sInfo->type & typedefStatementType)
-        splitTypedefStatement();
+      else{
+        initLoadFromNode(nodeRoot);
 
-      else
         organize();
-
-      // [-] Need to fix typedef output
-      // print();
-      // std::cout << "this = " << *this << '\n';
+      }
     }
 
     void expNode::organize(){
@@ -326,554 +308,30 @@ namespace occa {
       organizeLeaves();
     }
 
-    // Disregards function pointers, those are "easy"
-    void expNode::addNewVariables(strNode *nodePos){
-      if((up != NULL) ||
-         !(sInfo->type & (declareStatementType |
-                          functionStatementType)) )
-        return;
-#if 0
-      strNode *lastPos = NULL;
-
-      if(sInfo->type & functionStatementType){
-        nodePos = lastNode(nodePos);
-
-        // Function Definition: void f(){}
-        // Function Prototype : void f()[;]
-        //                   Extra node _^p
-        if(sInfo->type & functionPrototypeType)
-          nodePos = nodePos->left;
-
-        //---[ Add Function ]-----------
-        varInfo newVar;
-        newVar.name = nodePos->value;
-
-        if( !(sInfo->up->hasVariableInScope(newVar.name)) )
-          sInfo->up->addVariable(newVar);
-        //==============================
-
-        // [[]
-        // nodePos = nodePos->down[0];
-        // lastPos = lastNode(nodePos);
-        // lastPos->value = ";";
-
-        // if(nodePos->down.size() == 0)
-        //   nodePos = nodePos->right;
-      }
-
-      bool loadingFunctionPointer;
-
-      while(nodePos){
-        // Skip Type
-        while((nodePos) &&
-              (nodePos->type & qualifierType)){
-
-          nodePos = nodePos->right;
-        }
-
-        if(sInfo->nodeHasSpecifier(nodePos))
-          nodePos = nodePos->right;
-
-        if((nodePos->down.size() == 0) ||
-           (nodePos->down[0]->type != startParentheses)){
-
-          loadingFunctionPointer = false;
-        }
-        else{
-          loadingFunctionPointer = true;
-        }
-
-        varInfo newVar;
-
-        if(!loadingFunctionPointer){
-          // Mark pointer qualifiers
-          while((nodePos) &&
-                (nodePos->type & qualifierType)){
-
-            nodePos = nodePos->right;
-          }
-
-          const int downCount = nodePos->down.size();
-
-          // Not a function pointer
-          if((downCount == 0) ||
-             (nodePos->down[0]->type != startParentheses)){
-
-            newVar.name = nodePos->value;
-
-            for(int i = 0; i < downCount; ++i){
-              if(nodePos->down[i]->type == startBracket){
-                strNode *leftBracket  = nodePos->down[i];
-                strNode *rightBracket = lastNode(leftBracket);
-
-                if(leftBracket->right != rightBracket){
-                  strNode *lastDown = rightBracket->left;
-                  lastDown->right = NULL;
-
-                  newVar.stackPointerSizes.push_back((std::string) *(leftBracket->right));
-
-                  lastDown->right = rightBracket;
-                }
-                else
-                  newVar.stackPointerSizes.push_back("");
-              }
-              else
-                break;
-            }
-
-            // Add new variables
-            sInfo->addVariable(newVar);
-
-            nodePos = nodePos->right;
-          }
-        }
-
-        // int [(*f)()], [(*g)()]
-        else{
-          strNode *downNode = nodePos->down[0];
-          downNode = downNode->right;
-
-          if((downNode) &&
-             (downNode->value == "*")){
-
-            while((downNode) &&
-                  (downNode->type & qualifierType)){
-
-              downNode = downNode->right;
-            }
-
-            newVar.name = downNode->value;
-
-            // [-] Not fully true
-            sInfo->addVariable(newVar);
-          }
-        }
-
-        // Go to [,] or [;]
-        while((nodePos)               &&
-              (nodePos->value != ",") &&
-              (nodePos->value != ";")){
-
-          nodePos = nodePos->right;
-        }
-
-        if(nodePos){
-          loadingFunctionPointer = (nodePos->down.size() != 0);
-
-          nodePos = nodePos->right;
-        }
-      }
-
-      if(lastPos)
-        lastPos->value = ")";
-#endif
-    }
-
-    void expNode::splitDeclareStatement(){
+    void expNode::splitDeclareStatement(strNode *nodeRoot){
       info = expType::declaration;
-
-      if(leafCount == 0)
-        return;
-
-      if(leaves[leafCount - 1]->value != ";"){
-        addNode(expType::printValue, leafCount);
-        leaves[leafCount - 1]->value = ";";
-      }
-
-      const bool hasType = (leaves[0]->info & (expType::qualifier |
-                                               expType::type));
-
-      int varCount = hasType;
-
-      for(int i = 0; i < leafCount; ++i){
-        if((leaves[i]->info & expType::operator_) &&
-           (leaves[i]->value == ",")){
-
-          ++varCount;
-        }
-      }
-
-      expNode **newLeaves = new expNode*[1 + varCount];
-
-      int first = 0;
-      varCount  = 0;
-
-      for(int i = 0; i < leafCount; ++i){
-        const bool addingType = (hasType && (first == 0));
-
-        const bool delimeterStop = (!addingType && ((leaves[i]->value == ",") ||
-                                                    (leaves[i]->value == ";")));
-
-        const bool addingTypeStop = (addingType && !(leaves[i]->info & (expType::qualifier |
-                                                                        expType::type)));
-
-        if(delimeterStop | addingTypeStop){
-          expNode *newLeaf = new expNode(*this);
-          const int newLeafCount = (i - first);
-
-          newLeaf->info      = expType::root;
-          newLeaf->leafCount = newLeafCount;
-          newLeaf->leaves    = new expNode*[newLeafCount];
-
-          for(int j = 0; j < newLeafCount; ++j)
-            newLeaf->leaves[j] = leaves[first + j];
-
-          newLeaf->organize();
-
-          if(delimeterStop){
-            delete leaves[i];
-
-            first = (i + 1);
-
-            newLeaves[varCount++] = newLeaf;
-          }
-          else{
-            first = i;
-
-            newLeaves[varCount++] = newLeaf->leaves[0];
-
-            delete [] newLeaf->leaves;
-            delete newLeaf;
-          }
-        }
-      }
-
-      delete [] leaves;
-
-      leaves    = newLeaves;
-      leafCount = varCount;
     }
 
-    void expNode::splitForStatement(){
+    void expNode::splitForStatement(strNode *nodeRoot){
       info = expType::checkSInfo;
-
-      // [+]
-      // print();
-
-      if((leafCount < 2) ||
-         (leaves[1]->value != "(")){
-        std::cout << "Wrong syntax for [for]:\n";
-        print();
-        throw 1;
-      }
-
-      expNode **sLeaves    = leaves[1]->leaves;
-      const int sLeafCount = leaves[1]->leafCount;
-
-      delete leaves[0];
-      delete leaves[1];
-
-      leafCount = sLeafCount;
-      leaves    = sLeaves;
-
-      int statementCount = 1;
-
-      for(int i = 0; i < leafCount; ++i){
-        if(leaves[i]->value == ";")
-          ++statementCount;
-      }
-
-      sLeaves = new expNode*[statementCount];
-
-      int firstLeaf  = 0;
-      statementCount = 0;
-
-      for(int i = 0; i <= leafCount; ++i){
-        if((i == leafCount) ||
-           (leaves[i]->value == ";")){
-
-          expNode &ssLeaf = *(new expNode(*this));
-
-          if(firstLeaf != i){
-            ssLeaf.leafCount = (i - firstLeaf);
-            ssLeaf.leaves    = new expNode*[ssLeaf.leafCount];
-
-            for(int j = firstLeaf; j < i; ++j)
-              ssLeaf.leaves[j - firstLeaf] = leaves[j];
-          }
-
-          if(i < leafCount)
-            delete leaves[i];
-
-          if(i != 0)
-            ssLeaf.organize();
-          else
-            ssLeaf.splitDeclareStatement();
-
-          sLeaves[statementCount++] = &ssLeaf;
-          firstLeaf = (i + 1);
-        }
-      }
-
-      leaves    = sLeaves;
-      leafCount = statementCount;
     }
 
-    void expNode::splitFunctionStatement(){
-      if(sInfo->type & functionDefinitionType)
-        info = (expType::function | expType::declaration);
-      else
-        info = (expType::function | expType::prototype);
-
-      int argPos = 0;
-      int argc   = 0;
-      int pos    = 0;
-
-      for(argPos = 0; argPos < leafCount; ++argPos){
-        if(leaves[argPos]->info == expType::C)
-          break;
-      }
-
-      if(argPos){
-        int typePos = (argPos - 1);
-
-        const int trueLeafCount = leafCount;
-        leafCount = typePos;
-
-        organize();
-
-        const int newArgPos = leafCount;
-
-        for(int i = typePos; i < trueLeafCount; ++i)
-          leaves[newArgPos + i - typePos] = leaves[i];
-
-        leafCount = trueLeafCount - (typePos - newArgPos);
-        argPos    = (newArgPos + 1);
-      }
-
-      expNode &argNode = *(leaves[argPos]);
-
-      // [-] Remove [;] on prototypes
-      if((argPos + 1) < leafCount)
-        leafCount = argPos + 1;
-
-      if(argNode.leafCount){
-        argc = 1;
-
-        for(int i = 0; i < argNode.leafCount; ++i){
-          if(argNode.leaves[i]->value == ",")
-            ++argc;
-        }
-
-        expNode **sLeaves = new expNode*[argc];
-        argc = 0;
-
-        for(int i = 0; i <= argNode.leafCount; ++i){
-          if((i == argNode.leafCount) ||
-             (argNode.leaves[i]->value == ",")){
-
-            expNode &sLeaf = *(new expNode(argNode));
-            sLeaves[argc]  = &sLeaf;
-
-            sLeaf.leafCount = (i - pos);
-            sLeaf.leaves    = new expNode*[sLeaf.leafCount];
-
-            for(int j = pos; j < i; ++j)
-              sLeaf.leaves[j - pos] = argNode.leaves[j];
-
-            sLeaf.organize();
-
-            expNode *ssLeaf = sLeaf.leaves[0];
-            delete &sLeaf;
-
-            sLeaves[argc] = ssLeaf;
-            ssLeaf->up    = sLeaves[argc];
-
-            ++argc;
-            pos = (i + 1);
-          }
-        }
-
-        delete [] argNode.leaves;
-
-        argNode.leaves    = sLeaves;
-        argNode.leafCount = argc;
-      }
+    void expNode::splitFunctionStatement(strNode *nodeRoot){
+      // if(sInfo->type & functionDefinitionType)
+      //   info = (expType::function | expType::declaration);
+      // else
+      //   info = (expType::function | expType::prototype);
     }
 
-    void expNode::splitStructStatement(){
+    void expNode::splitStructStatement(strNode *nodeRoot){
       info = expType::struct_;
-
-      int pos = 0;
-
-      //---[ Merge qualifiers ]---------
-      for(pos = 0; pos < leafCount; ++pos){
-        if( !(leaves[pos]->info & expType::qualifier) )
-          break;
-      }
-
-      if(pos){
-        expNode *sNewLeaf = new expNode(*this);
-
-        sNewLeaf->info      = expType::qualifier;
-        sNewLeaf->leafCount = pos;
-        sNewLeaf->leaves    = new expNode*[pos];
-
-        for(int i = 0; i < pos; ++i){
-          sNewLeaf->leaves[i] = leaves[i];
-          leaves[i]->up       = sNewLeaf;
-        }
-
-        leaves[0] = sNewLeaf;
-
-        for(int i = pos; i < leafCount; ++i)
-          leaves[i - pos + 1] = leaves[i];
-
-        leafCount -= (pos - 1);
-      }
-      //================================
-
-      for(pos = 0; pos < leafCount; ++pos){
-        if((leaves[pos]->info == expType::C) ||
-           (leaves[pos]->value == ";")) // Empty struct
-          break;
-      }
-
-      if((pos)              &&
-         (pos != leafCount) &&
-         !(leaves[pos - 1]->info & expType::qualifier)){
-
-        sInfo->up->addTypedef(leaves[pos - 1]->value);
-      }
-
-      leaves[pos]->splitStructStatements();
-
-      // Skip {}
-      ++pos;
-
-      // Return if pos is at [;]
-      if(pos == (leafCount - 1)){
-        --leafCount; // Remove [;]
-        return;
-      }
-
-      expNode *newLeaf = new expNode(*this);
-      const int newLeafCount = (leafCount - pos);
-
-      newLeaf->up        = this;
-      newLeaf->info      = expType::root;
-      newLeaf->leafCount = newLeafCount;
-      newLeaf->leaves    = new expNode*[newLeafCount];
-
-      for(int i = 0; i < newLeafCount; ++i)
-        newLeaf->leaves[i] = leaves[pos + i];
-
-      newLeaf->splitDeclareStatement();
-
-      leaves[pos] = newLeaf;
-      leafCount = (pos + 1);
     }
 
-    void expNode::splitStructStatements(){
-      int extras = 0;
-
-      for(int i = 0; i < leafCount; ++i){
-        if(leaves[i]->value == ";")
-          ++extras;
-      }
-
-      if(extras == 0)
-        return;
-
-      expNode **newLeaves = new expNode*[extras];
-      extras = 0;
-
-      int first = 0;
-
-      for(int i = 0; i < leafCount; ++i){
-        if(leaves[i]->value == ";"){
-          bool newLeafIsAStruct = false;
-
-          expNode *newLeaf = new expNode(*this);
-          const int newLeafCount = (i - first + 1);
-
-          newLeaf->up        = this;
-          newLeaf->info      = expType::root;
-          newLeaf->leafCount = newLeafCount;
-          newLeaf->leaves    = new expNode*[newLeafCount];
-
-          for(int j = 0; j < newLeafCount; ++j){
-            newLeaf->leaves[j] = leaves[first + j];
-
-            if((newLeaf->leaves[j]->info & expType::qualifier) &&
-               (newLeaf->leaves[j]->value == "struct")         &&
-               (  !(((j + 1) < newLeafCount) &&
-                    (sInfo->hasTypeInScope(leaves[first + j + 1]->value)))  )){
-
-              newLeafIsAStruct = true;
-            }
-          }
-
-          if(!newLeafIsAStruct)
-            newLeaf->splitDeclareStatement();
-          else
-            newLeaf->splitStructStatement();
-
-          first = i + 1;
-          newLeaves[extras++] = newLeaf;
-        }
-      }
-
-      delete [] leaves;
-
-      leaves    = newLeaves;
-      leafCount = extras;
-    }
-
-    void expNode::splitTypedefStatement(){
-      --leafCount;
-
-      bool splitStruct = false;
-
-      for(int i = 0; i < leafCount; ++i){
-        leaves[i] = leaves[i + 1];
-
-        if((leaves[i]->info & expType::qualifier) &&
-           ((leaves[i]->value == "struct") ||
-            (leaves[i]->value == "union") ||
-            (leaves[i]->value == "enum"))){
-
-          // Make sure struct is not being used as a qualifier
-          if(  !((leaves[i]->value == "struct") &&
-                 ((i + 2) < leafCount)          &&
-                 (sInfo->hasTypeInScope(leaves[i + 2]->value)))  ){
-
-            splitStruct = true;
-          }
-        }
-      }
-
-      if(!splitStruct)
-        splitDeclareStatement();
-      else
-        splitStructStatement();
-
-      expNode *sLastLeaf = lastLeaf()->lastLeaf();
-
-      if(!splitStruct){
-        sInfo->up->addTypedef(sLastLeaf->value);
-      }
-      else{
-        expNode *ssLastLeaf = sLastLeaf->lastLeaf();
-        sInfo->up->addTypedef(ssLastLeaf->value);
-      }
-
-      info |= expType::typedef_;
-    }
-
-    void expNode::initLoadFromNode(strNode *nodeRoot,
-                                   const int initPos){
-#if 0
+    void expNode::initLoadFromNode(strNode *nodeRoot){
       strNode *nodePos = nodeRoot;
 
-      // Root
-      if(nodePos->type == 0){
-        leafCount += nodePos->down.size();
-        nodePos = nodePos->right;
-      }
-
       while(nodePos){
-        leafCount += (1 + nodePos->down.size());
+        ++leafCount;
         nodePos = nodePos->right;
       }
 
@@ -882,32 +340,10 @@ namespace occa {
 
       nodePos = nodeRoot;
 
-      int leafPos;
-
-      if(initPos){
-        expNode **sLeaves = new expNode*[leafCount];
-
-        for(int i = 0; i < initPos; ++i)
-          sLeaves[i] = leaves[i];
-
-        delete [] leaves;
-
-        leaves  = sLeaves;
-        leafPos = initPos;
-      }
-      else{
-        leaves = new expNode*[leafCount];
-        leafPos = 0;
-      }
+      leaves = new expNode*[leafCount];
+      int leafPos = 0;
 
       while(nodePos){
-        if(nodePos->type == 0){
-          leafPos = initDownsFromNode(nodePos, leafPos);
-          nodePos = nodePos->right;
-
-          continue;
-        }
-
         expNode *&leaf = leaves[leafPos++];
 
         leaf        = new expNode(*this);
@@ -918,7 +354,7 @@ namespace occa {
           varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
 
           if(nodeVar){
-            if( !(nodeVar->typeInfo & functionType) )
+            if( !(nodeVar->info & varType::functionType) )
               leaf->info = expType::variable;
             else{
               if( !(sInfo->type & functionStatementType) )
@@ -969,6 +405,13 @@ namespace occa {
           leaf->info = expType::operator_;
         }
 
+        else if(nodePos->type & startSection){
+          leaf->info  = expType::C;
+
+          if(nodePos->down)
+            leaf->initLoadFromNode(nodePos->down);
+        }
+
         else
           leaf->info = expType::printValue;
 
@@ -977,54 +420,8 @@ namespace occa {
           --leafPos;
         }
 
-        leafPos = initDownsFromNode(nodePos, leafPos);
-
         nodePos = nodePos->right;
       }
-#endif
-    }
-
-    int expNode::initDownsFromNode(strNode *nodePos, int leafPos){
-      return 0;
-#if 0
-      const int downCount = nodePos->down.size();
-
-      if(downCount == 0)
-        return leafPos;
-
-      if(leafCount == 0){
-        leafCount = downCount;
-        leaves    = new expNode*[leafCount];
-      }
-
-      for(int i = 0; i < downCount; ++i){
-        strNode *downNode = nodePos->down[i];
-        strNode *lastDown = lastNode(downNode);
-
-        popAndGoLeft(lastDown);
-
-        std::string sValue = downNode->value;
-
-        expNode *&sLeaf = leaves[leafPos++];
-
-        sLeaf        = new expNode(*this);
-        sLeaf->value = sValue;
-        sLeaf->info  = expType::C;
-
-        int sLeafCount = 0;
-
-        // (downNode == lastDown) if loading [()]
-        if(downNode->down.size())
-          sLeafCount = sLeaf->initDownsFromNode(downNode);
-
-        if(downNode != lastDown){
-          // Don't pop (root's free will screw up)
-          sLeaf->initLoadFromNode(downNode->right, sLeafCount);
-        }
-      }
-
-      return leafPos;
-#endif
     }
 
     void expNode::initOrganization(){
@@ -3173,8 +2570,8 @@ namespace occa {
       newStatement->expRoot.loadFromNode(nodeRootEnd);
       const int st = newStatement->type;
 
-      return nodeRootEnd;
-#if 0
+      // std::cout << "newStatement->expRoot = " << newStatement->expRoot << '\n';
+      // nodeRootEnd->print();
 
       if(st & invalidStatementType){
         std::cout << "Not a valid statement\n";
@@ -3251,7 +2648,6 @@ namespace occa {
                                                       nodeRootEnd);
 
       return nodeRootEnd;
-#endif
     }
 
     void statement::setExpNodeFromStrNode(expNode &exp,
@@ -3300,24 +2696,6 @@ namespace occa {
       return ret;
     }
 
-    void statement::loadBlocksFromLastNode(strNode *end,
-                                           const int startBlockPos){
-#if 0
-      if(end == NULL)
-        return;
-
-      const int downCount = end->down.size();
-
-      if(startBlockPos <= downCount){
-        for(int i = startBlockPos; i < downCount; ++i)
-          up->loadAllFromNode(end->down[i]);
-
-        end->down.erase(end->down.begin() + startBlockPos,
-                        end->down.end());
-      }
-#endif
-    }
-
     strNode* statement::loadSimpleFromNode(const int st,
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd){
@@ -3328,16 +2706,12 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      loadBlocksFromLastNode(nodeRootEnd);
-
       return nextNode;
     }
 
     strNode* statement::loadForFromNode(const int st,
                                         strNode *nodeRoot,
                                         strNode *nodeRootEnd){
-      return NULL;
-#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3345,67 +2719,12 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      const int downCount = nodeRootEnd->down.size();
-
-      if(downCount == 1){
-        // for(;;)
-        //   stuff;
-        if(nodeRoot->down[0]->type == startParentheses)
-          return loadFromNode(nextNode);
-
-        // occaOuterFor {
-        // }
-        else{
-          strNode *blockStart = nodeRootEnd->down[0];
-          strNode *blockEnd   = lastNode(blockStart);
-
-          nodeRootEnd->down.erase(nodeRootEnd->down.begin() + 0,
-                                  nodeRootEnd->down.begin() + 1);
-
-          // Load all down's before popping [{] and [}]'s
-          const int blockDownCount = blockStart->down.size();
-
-          for(int i = 0; i < blockDownCount; ++i)
-            loadAllFromNode( blockStart->down[i] );
-
-          if(blockStart->right != blockEnd){
-            popAndGoRight(blockStart);
-            popAndGoLeft(blockEnd);
-
-            loadAllFromNode(blockStart);
-          }
-        }
-      }
-      else{
-        strNode *blockStart = nodeRootEnd->down[1];
-        strNode *blockEnd   = lastNode(blockStart);
-
-        nodeRootEnd->down.erase(nodeRootEnd->down.begin() + 1,
-                                nodeRootEnd->down.begin() + 2);
-
-        // Load all down's before popping [{] and [}]'s
-        const int blockDownCount = blockStart->down.size();
-
-        for(int i = 0; i < blockDownCount; ++i)
-          loadAllFromNode( blockStart->down[i] );
-
-        loadBlocksFromLastNode(nodeRootEnd, 1);
-
-        popAndGoRight(blockStart);
-        popAndGoLeft(blockEnd);
-
-        loadAllFromNode(blockStart);
-      }
-
-      return nextNode;
-#endif
+      return loadFromNode(nodeRootEnd);
     }
 
     strNode* statement::loadWhileFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd){
-      return NULL;
-#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3413,44 +2732,12 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      int allowedDowns = (st == whileStatementType);
-
-      const int downCount = nodeRootEnd->down.size();
-
-      if(downCount == allowedDowns){
-        return loadFromNode(nextNode);
-      }
-
-      else{
-        strNode *blockStart = nodeRoot->down[allowedDowns];
-        strNode *blockEnd   = lastNode(blockStart);
-
-        nodeRoot->down.erase(nodeRoot->down.begin() + allowedDowns + 0,
-                             nodeRoot->down.begin() + allowedDowns + 1);
-
-        // Load all down's before popping [{] and [}]'s
-        const int downCount = blockStart->down.size();
-
-        for(int i = 0; i < downCount; ++i)
-          loadAllFromNode( blockStart->down[i] );
-
-        loadBlocksFromLastNode(nodeRootEnd, allowedDowns);
-
-        popAndGoRight(blockStart);
-        popAndGoLeft(blockEnd);
-
-        loadAllFromNode(blockStart);
-      }
-
-      return nextNode;
-#endif
+      return loadFromNode(nodeRootEnd);
     }
 
     strNode* statement::loadIfFromNode(const int st_,
                                        strNode *nodeRoot,
                                        strNode *nodeRootEnd){
-      return NULL;
-#if 0
       strNode *nextNode;
       int st = st_;
 
@@ -3474,69 +2761,16 @@ namespace occa {
         if(nodeRootEnd)
           nodeRootEnd->right = NULL;
 
-        const int downCount = nodeRootEnd->down.size();
+        nextNode = newStatement->loadFromNode(nextNode);
+        addStatement(newStatement);
 
-        if(((downCount == 1) && (st != elseStatementType)) ||
-           ((downCount == 0) && (st == elseStatementType))){
-          // if()           or    else
-          //   statement;           statement;
-
-          nextNode = newStatement->loadFromNode(nextNode);
-          addStatement(newStatement);
-
-          if(st == elseStatementType)
-            break;
-        }
-        else{
-          int blockPos = (st != elseStatementType) ? 1 : 0;
-
-          strNode *blockStart = nodeRoot->down[blockPos];
-          strNode *blockEnd   = lastNode(blockStart);
-
-          nodeRoot->down.erase(nodeRoot->down.begin() + blockPos,
-                               nodeRoot->down.begin() + blockPos + 1);
-
-          // Load all down's before popping [{] and [}]'s
-          const int blockDownCount = blockStart->down.size();
-
-          for(int i = 0; i < blockDownCount; ++i)
-            newStatement->loadAllFromNode( blockStart->down[i] );
-
-          loadBlocksFromLastNode(nodeRootEnd, blockPos);
-
-          popAndGoRight(blockStart);
-          popAndGoLeft(blockEnd);
-
-          newStatement->loadAllFromNode(blockStart);
-          addStatement(newStatement);
-
+        if(st == elseStatementType)
           break;
-        }
-
-        if(nextNode == NULL)
-          break;
-
-        nodeRoot = nodeRootEnd = nextNode;
-
-        // statement *newStatement = makeSubStatement();
-        // strNode * nodeRootEnd = nodeRoot;
-
-        // newStatement->expRoot.loadFromNode(nodeRootEnd);
-        // const int st = newStatement->type;
-
-        st = statementType(nodeRootEnd);
-
-        if(st & invalidStatementType){
-          std::cout << "Not a valid statement:\n";
-          prettyString(nodeRoot, "", false);
-          throw 1;
-        }
 
       } while((st == elseIfStatementType) ||
               (st == elseStatementType));
 
       return nextNode;
-#endif
     }
 
     // [-] Missing
@@ -3549,8 +2783,6 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
-
-      loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
     }
@@ -3565,16 +2797,12 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      loadBlocksFromLastNode(nodeRootEnd);
-
       return nextNode;
     }
 
     strNode* statement::loadFunctionDefinitionFromNode(const int st,
                                                        strNode *nodeRoot,
                                                        strNode *nodeRootEnd){
-      return NULL;
-#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3582,49 +2810,7 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      strNode *blockStart = nodeRootEnd->down[1];
-      strNode *blockEnd   = lastNode(blockStart);
-
-      nodeRootEnd->down.erase(nodeRootEnd->down.begin() + 1,
-                              nodeRootEnd->down.begin() + 2);
-
-      // Load all down's before popping [{] and [}]'s
-      const int downCount = blockStart->down.size();
-
-      bool brokeDowns = false;
-
-      for(int i = 0; i < downCount; ++i){
-        if(blockStart->down[i]->type != startBrace){
-          if(i != 0)
-            blockStart->down.erase(nodeRootEnd->down.begin(),
-                                   nodeRootEnd->down.begin() + i);
-
-          brokeDowns = true;
-          break;
-        }
-
-        loadAllFromNode( blockStart->down[i] );
-      }
-
-      if(!brokeDowns){
-        popAndGoRight(blockStart);
-        popAndGoLeft(blockEnd);
-      }
-      else{
-        blockStart->type  = 0;
-        blockStart->value = "";
-
-        popAndGoLeft(blockEnd);
-      }
-
-      if(brokeDowns &&
-         (blockStart->right == blockEnd))
-        return nextNode;
-
-      loadAllFromNode(blockStart);
-
       return nextNode;
-#endif
     }
 
     strNode* statement::loadFunctionPrototypeFromNode(const int st,
@@ -3643,30 +2829,12 @@ namespace occa {
     strNode* statement::loadBlockFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd){
-      return NULL;
-#if 0
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
-      // Load all down's before popping [{] and [}]'s
-      const int downCount = nodeRoot->down.size();
-
-      for(int i = 0; i < downCount; ++i)
-        loadAllFromNode( nodeRoot->down[i] );
-
-      if(nodeRoot->right == nodeRootEnd){
-        popAndGoRight(nodeRoot);
-        popAndGoLeft(nodeRootEnd);
-
-        return nextNode;
-      }
-
-      popAndGoRight(nodeRoot);
-      popAndGoLeft(nodeRootEnd);
-
-      loadAllFromNode(nodeRoot);
+      if(nodeRoot->down)
+        loadAllFromNode(nodeRoot->down);
 
       return nextNode;
-#endif
     }
 
     strNode* statement::loadStructFromNode(const int st,
@@ -3678,8 +2846,6 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
-
-      loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
     }
@@ -3695,8 +2861,6 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      loadBlocksFromLastNode(nodeRootEnd);
-
       return nextNode;
     }
 
@@ -3710,8 +2874,6 @@ namespace occa {
         nodeRoot->left = NULL;
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
-
-      loadBlocksFromLastNode(nodeRootEnd);
 
       return nextNode;
     }

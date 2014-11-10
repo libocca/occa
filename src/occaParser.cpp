@@ -21,8 +21,8 @@ namespace occa {
 
     const std::string parserBase::parseSource(const char *cRoot){
       strNode *nodeRoot = splitAndPreprocessContent(cRoot);
-      nodeRoot->print();
-      throw 1;
+      // nodeRoot->print();
+      // throw 1;
 
       loadLanguageTypes();
 
