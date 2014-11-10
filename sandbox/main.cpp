@@ -368,9 +368,9 @@ namespace occa {
         ret += ']';
       }
 
-      for(int i = 0; i < functionNestCount; ++i){
-        ret += ')';
+      for(int i = (functionNestCount - 1); 0 <= i; --i){
         ret += functionNests[i].toString();
+        ret += ')';
       }
 
       if(info & _varType::functionType){
@@ -403,7 +403,7 @@ namespace occa {
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
 
-      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double);");
+      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double);");
 
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 
