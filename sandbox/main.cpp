@@ -53,6 +53,27 @@ namespace occa {
       return nodePos;
     }
 
+    bool _qualifierInfo::has(const std::string &qName){
+      for(int i = 0; i < qualifierCount; ++i){
+        if(qualifiers[i] == qName)
+          return true;
+      }
+
+      return false;
+    }
+
+    const std::string& _qualifierInfo::get(const int pos){
+      if((pos < 0) ||
+         (qualifierCount <= pos)){
+        std::cout << "There are only ["
+                  << qualifierCount << "] qualifiers (asking for ["
+                  << pos << "])\n";
+        throw 1;
+      }
+
+      return qualifiers[pos];
+    }
+
     std::string _qualifierInfo::toString(){
       std::string ret;
 
@@ -339,8 +360,32 @@ namespace occa {
       return nextNode;
     }
 
+    //---[ Variable Info ]------------
+    bool _varInfo::hasQualifier(const std::string &qName){
+      return leftQualifiers.has(qName);
+    }
+
+    const std::string& _varInfo::getLeftQualifier(const int pos){
+      return leftQualifiers.get(pos);
+    }
+
+    const std::string& _varInfo::getRightQualifier(const int pos){
+      return rightQualifiers.get(pos);
+    }
+
+    const std::string& _varInfo::getLastLeftQualifier(){
+      return leftQualifiers.get(leftQualifiers.qualifierCount - 1);
+    }
+
+    const std::string& _varInfo::getLastRightQualifier(){
+      return rightQualifiers.get(rightQualifiers.qualifierCount - 1);
+    }
+    //================================
+
     std::string _varInfo::toString(const bool printType){
       std::string ret;
+
+      bool addSpaceBeforeName = false;
 
       if(printType){
         ret += leftQualifiers.toString();
@@ -348,17 +393,29 @@ namespace occa {
         if(baseType)
           ret += baseType->typeName;
 
-        if((rightQualifiers.qualifierCount) ||
-           (name.size())){
+        addSpaceBeforeName = !((rightQualifiers.qualifierCount) ||
+                               (name.size()));
 
-          ret += ' ';
+        if(!addSpaceBeforeName){
+          if((info & _varType::functionType)  &&
+             (rightQualifiers.qualifierCount) &&
+             (getLastRightQualifier() == "*")){
+
+            addSpaceBeforeName = true;
+          }
         }
+
+        if(!addSpaceBeforeName)
+          ret += ' ';
       }
 
       ret += rightQualifiers.toString();
 
       for(int i = 0; i < functionNestCount; ++i)
         ret += "(*";
+
+      if(addSpaceBeforeName)
+        ret += ' ';
 
       ret += name;
 
@@ -403,7 +460,9 @@ namespace occa {
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
 
-      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double);");
+      strNode *nodeRoot = p.splitAndPreprocessContent("const int * func(){}");
+
+      // strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double);");
 
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 

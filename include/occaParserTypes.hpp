@@ -81,6 +81,9 @@ namespace occa {
       strNode* loadFrom(statement &s,
                         strNode *nodePos);
 
+      bool has(const std::string &qName);
+      const std::string& get(const int pos);
+
       std::string toString();
     };
 
@@ -144,6 +147,16 @@ namespace occa {
 
       strNode* loadArgsFrom(statement &s,
                             strNode *nodePos);
+
+      //---[ Variable Info ]------------
+      bool hasQualifier(const std::string &qName);
+
+      const std::string& getLeftQualifier(const int pos);
+      const std::string& getRightQualifier(const int pos);
+
+      const std::string& getLastLeftQualifier();
+      const std::string& getLastRightQualifier();
+      //================================
 
       std::string toString(const bool printType = true);
 
