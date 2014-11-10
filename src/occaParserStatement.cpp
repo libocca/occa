@@ -2549,6 +2549,23 @@ namespace occa {
       statementEnd(NULL) {}
 
     statement::statement(const int depth_,
+                         varOriginMap_t &varOriginMap_,
+                         varUsedMap_t &varUsedMap_) :
+      depth(depth_),
+      type(blockStatementType),
+
+      up(NULL),
+
+      varOriginMap(varOriginMap_),
+      varUsedMap(varUsedMap_),
+
+      expRoot(*this),
+
+      statementCount(0),
+      statementStart(NULL),
+      statementEnd(NULL) {}
+
+    statement::statement(const int depth_,
                          const int type_,
                          statement *up_) :
       depth(depth_),
@@ -3833,8 +3850,17 @@ namespace occa {
     }
 
     statement* statement::clone(){
-      statement *newStatement = new statement(depth,
-                                              type, up);
+      statement *newStatement;
+
+      if(up){
+        newStatement = new statement(depth,
+                                     type, up);
+      }
+      else {
+        newStatement = new statement(depth,
+                                     varOriginMap,
+                                     varUsedMap);
+      }
 
       expRoot.cloneTo(newStatement->expRoot);
 

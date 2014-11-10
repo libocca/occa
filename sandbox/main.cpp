@@ -2,6 +2,7 @@
 
 namespace occa {
   namespace parserNamespace {
+    //---[ Qualifier Info Class ]-----------------
     _qualifierInfo::_qualifierInfo() :
       qualifierCount(0),
       qualifiers(NULL) {}
@@ -74,6 +75,23 @@ namespace occa {
       return qualifiers[pos];
     }
 
+    void _qualifierInfo::remove(const std::string &qName){
+      for(int i = 0; i < qualifierCount; ++i){
+        if(qualifiers[i] == qName){
+          remove(i);
+          return;
+        }
+      }
+    }
+
+    void _qualifierInfo::remove(const int pos,
+                                const int count){
+      for(int i = (pos + count); i < qualifierCount; ++i)
+        qualifiers[i - count] = qualifiers[i];
+
+      qualifierCount -= count;
+    }
+
     std::string _qualifierInfo::toString(){
       std::string ret;
 
@@ -90,7 +108,247 @@ namespace occa {
 
       return ret;
     }
+    //============================================
 
+
+    //---[ Type Info Class ]----------------------
+    _typeInfo::_typeInfo() :
+      leftQualifiers(),
+
+      name(""),
+
+      nestedInfoCount(0),
+      nestedInfoIsType(NULL),
+      nestedInfos(NULL),
+
+      typedefing(NULL),
+      baseType(NULL),
+
+      typedefVar(NULL) {}
+
+    _typeInfo::_typeInfo(const _typeInfo &type) :
+      leftQualifiers(type.leftQualifiers),
+
+      name(type.name),
+
+      nestedInfoCount(type.nestedInfoCount),
+      nestedInfoIsType(type.nestedInfoIsType),
+      nestedInfos(type.nestedInfos),
+
+      typedefing(type.typedefing),
+      baseType(type.baseType),
+
+      typedefVar(type.typedefVar)  {}
+
+    _typeInfo& _typeInfo::operator = (const _typeInfo &type){
+      leftQualifiers = type.leftQualifiers;
+
+      name = type.name;
+
+      nestedInfoCount  = type.nestedInfoCount;
+      nestedInfoIsType = type.nestedInfoIsType;
+      nestedInfos      = type.nestedInfos;
+
+      typedefing = type.typedefing;
+      baseType   = type.baseType;
+
+      typedefVar = type.typedefVar;
+
+      return *this;
+    }
+
+    strNode* _typeInfo::loadFrom(statement &s,
+                                 strNode *nodePos){
+      if(nodePos == NULL)
+        return NULL;
+
+      nodePos = leftQualifiers.loadFrom(s, nodePos);
+
+      const bool hasTypedef = leftQualifiers.has("typedef");
+
+      if(hasTypedef){
+        _qualifierInfo newQuals = leftQualifiers.clone();
+        newQuals.remove("typedef");
+
+        leftQualifiers.remove(1, (leftQualifiers.qualifierCount - 1));
+
+        typedefing = new _typeInfo;
+        nodePos = typedefing->loadFrom(s, nodePos);
+
+        typedefing->leftQualifiers = newQuals;
+        baseType = typedefing;
+
+        _varInfo typedefVarInfo;
+        typedefVarInfo.baseType = NULL; //typedefing;
+
+        typedefVar = new _varInfo;
+        nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
+
+        return nodePos;
+      }
+
+      if(nodePos &&
+         (nodePos->type & unknownVariable)){
+
+        if(s.hasTypeInScope(nodePos->value))
+          name = nodePos->value;
+        else // Type is temporary?
+          name = nodePos->value;
+
+        nodePos = nodePos->right;
+      }
+
+      if(nodePos &&
+         (nodePos->type == startBrace)){
+        strNode *nextNode = nodePos->right;
+        nodePos = nodePos->down;
+
+        const bool usesSemicolon = !leftQualifiers.has("enum");
+        const char delimiter = (usesSemicolon ? ';' : ',');
+
+        if(usesSemicolon)
+          nestedInfoCount = statementCountWithDelimeter(nodePos, ';');
+        else
+          nestedInfoCount = statementCountWithDelimeter(nodePos, ',');
+
+        nestedInfoIsType = new bool[nestedInfoCount];
+        nestedInfos      = new typeOrExp[nestedInfoCount];
+
+        for(int i = 0; i < nestedInfoCount; ++i){
+          nestedInfoIsType[i] = (usesSemicolon                    ?
+                                 statementIsATypeInfo(s, nodePos) :
+                                 false);
+
+          if(nestedInfoIsType[i]){
+            nestedInfos[i].type = new _typeInfo;
+            nodePos = nestedInfos[i].type->loadFrom(s, nodePos);
+          }
+          else{
+            nestedInfos[i].exp = new expNode;
+
+            statement *s2 = s.clone();
+            s2->loadFromNode(nodePos);
+
+            expNode::swap(*(nestedInfos[i].exp), s2->expRoot);
+
+            while(nodePos &&
+                  ((nodePos->value.size()) &&
+                   (nodePos->value[0] != delimiter))){
+
+              nodePos = nodePos->right;
+            }
+
+            if(nodePos)
+              nodePos = nodePos->right;
+          }
+        }
+
+        nodePos = nextNode;
+      }
+
+      return nodePos;
+    }
+
+    int _typeInfo::statementCountWithDelimeter(strNode *nodePos,
+                                               const char delimiter){
+      if(nodePos == NULL)
+        return 0;
+
+      int count = 0;
+
+      while(nodePos){
+        if(nodePos->value.size() &&
+           (nodePos->value[0] == delimiter))
+          ++count;
+
+        nodePos = nodePos->right;
+      }
+
+      return count;
+    }
+
+    bool _typeInfo::statementIsATypeInfo(statement &s,
+                                         strNode *nodePos){
+      if(nodePos == NULL)
+        return false;
+
+      _qualifierInfo qualifiers;
+
+      nodePos = qualifiers.loadFrom(s, nodePos);
+
+      if(qualifiers.has("typedef"))
+        return true;
+
+      if(nodePos                           &&
+         (nodePos->type & unknownVariable) &&
+         (!s.hasTypeInScope(nodePos->value))){
+
+        return true;
+      }
+
+      if(nodePos &&
+         (nodePos->type == startBrace)){
+
+        return true;
+      }
+
+      return false;
+    }
+
+    std::string _typeInfo::toString(const std::string &tab){
+      std::string ret;
+
+      if(typedefing &&
+         (typedefing == baseType)){
+        ret += tab;
+        ret += "typedef ";
+        ret += typedefing->toString();
+        ret += ' ';
+        ret += typedefVar->toString();
+        ret += ';';
+      }
+      else{
+        ret += tab;
+        ret += leftQualifiers.toString();
+        ret += name;
+
+        if(nestedInfoCount){
+          ret += '{';
+          ret += '\n';
+
+          for(int i = 0; i < nestedInfoCount; ++i){
+            if(nestedInfoIsType[i]){
+              ret += nestedInfos[i].type->toString(tab + "  ");
+            }
+            else {
+              ret += nestedInfos[i].exp->getString(tab + "  ");
+              ret += ';';
+            }
+
+            ret += '\n';
+          }
+
+          ret += tab;
+          ret += '}';
+        }
+      }
+
+      return ret;
+    }
+
+    _typeInfo::operator std::string (){
+      return toString();
+    }
+
+    std::ostream& operator << (std::ostream &out, _typeInfo &type){
+      out << type.toString();
+
+      return out;
+    }
+    //============================================
+
+
+    //---[ Variable Info Class ]------------------
     _varInfo::_varInfo() :
       info(0),
 
@@ -172,9 +430,9 @@ namespace occa {
       return argc;
     }
 
-    strNode* _varInfo::loadValueFrom(statement &s,
-                                     strNode *nodePos,
-                                     _varInfo *varHasType){
+    strNode* _varInfo::loadFrom(statement &s,
+                                strNode *nodePos,
+                                _varInfo *varHasType){
       nodePos = loadTypeFrom(s, nodePos, varHasType);
 
       info = getVarInfoFrom(s, nodePos);
@@ -354,7 +612,7 @@ namespace occa {
         argumentVarInfos = new _varInfo[argumentCount];
 
         for(int i = 0; i < argumentCount; ++i)
-          nodePos = argumentVarInfos[i].loadValueFrom(s, nodePos);
+          nodePos = argumentVarInfos[i].loadFrom(s, nodePos);
       }
 
       return nextNode;
@@ -405,7 +663,7 @@ namespace occa {
           }
         }
 
-        if(!addSpaceBeforeName)
+        if(!addSpaceBeforeName && baseType)
           ret += ' ';
       }
 
@@ -414,7 +672,8 @@ namespace occa {
       for(int i = 0; i < functionNestCount; ++i)
         ret += "(*";
 
-      if(addSpaceBeforeName)
+      if(addSpaceBeforeName &&
+         (name.size() != 0))
         ret += ' ';
 
       ret += name;
@@ -450,38 +709,42 @@ namespace occa {
       out << var.toString();
       return out;
     }
-
-    expNode* addNewVariables(strNode *nodePos){
-      return NULL;
-    }
+    //============================================
 
     void test(){
       parser p;
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
 
-      strNode *nodeRoot = p.splitAndPreprocessContent("const int * func(){}");
+      strNode *nodeRoot = p.splitAndPreprocessContent("typedef struct a { int b, c; struct b {};} *b2;");
+      // strNode *nodeRoot = p.splitAndPreprocessContent("const int * func(){}");
 
       // strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double);");
 
+#if 0
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 
       if(varCount){
         _varInfo *variables = new _varInfo[varCount];
 
-        nodeRoot = variables[0].loadValueFrom(s, nodeRoot);
+        nodeRoot = variables[0].loadFrom(s, nodeRoot);
         std::cout << "variables[0] = " << variables[0] << '\n';
 
         for(int i = 1; i < varCount; ++i){
-          nodeRoot = variables[i].loadValueFrom(s, nodeRoot, &(variables[0]));
+          nodeRoot = variables[i].loadFrom(s, nodeRoot, &(variables[0]));
           std::cout << "variables[" << i << "] = " << variables[i] << '\n';
         }
       }
+#else
+      _typeInfo type;
+      nodeRoot = type.loadFrom(s, nodeRoot);
+      std::cout << "type = " << type << '\n';
+#endif
 
-      // expNode *expRoot = addNewVariables(nodeRoot);
-      // expRoot->print();
+        // expNode *expRoot = addNewVariables(nodeRoot);
+        // expRoot->print();
 
-      throw 1;
+        throw 1;
     }
   };
 };

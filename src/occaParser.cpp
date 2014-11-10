@@ -3658,11 +3658,11 @@ namespace occa {
       keywordType["occaAligned"]  = (qualifierType | occaKeywordType);
       keywordType["occaConstant"] = (qualifierType | occaKeywordType);
 
-      keywordType["enum"]    = (structType);
       keywordType["class"]   = (structType);
-      keywordType["union"]   = (structType);
+      keywordType["enum"]    = (structType | qualifierType);
+      keywordType["union"]   = (structType | qualifierType);
       keywordType["struct"]  = (structType | qualifierType);
-      keywordType["typedef"] = (typedefType);
+      keywordType["typedef"] = (typedefType | qualifierType);
 
       //---[ C++ ]----------------------
       keywordType["virtual"]   = qualifierType;

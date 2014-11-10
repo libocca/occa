@@ -267,6 +267,10 @@ namespace occa {
 
       statement(parserBase &pb);
 
+      statement(const int depth_,
+                varOriginMap_t &varOriginMap_,
+                varUsedMap_t &varUsedMap_);
+
       statement(const int depth_, statement *up_);
 
       statement(const int depth_,

@@ -65,6 +65,13 @@ namespace occa {
 
     //---[ New Variable Info ]----------------------
     class expNode;
+    class _typeInfo;
+    class _varInfo;
+
+    typedef union {
+      _typeInfo *type;
+      expNode *exp;
+    } typeOrExp;
 
     class _qualifierInfo {
     public:
@@ -84,11 +91,44 @@ namespace occa {
       bool has(const std::string &qName);
       const std::string& get(const int pos);
 
+      void remove(const std::string &qName);
+      void remove(const int pos, const int count = 1);
+
       std::string toString();
     };
 
     class _typeInfo {
+    public:
+      _qualifierInfo leftQualifiers;
+      std::string name;
 
+      int nestedInfoCount;
+      bool *nestedInfoIsType;
+      typeOrExp *nestedInfos;
+
+      _typeInfo *typedefing;
+      _typeInfo *baseType;
+
+      _varInfo *typedefVar;
+
+      _typeInfo();
+
+      _typeInfo(const _typeInfo &type);
+      _typeInfo& operator = (const _typeInfo &type);
+
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos);
+
+      static int statementCountWithDelimeter(strNode *nodePos,
+                                             const char delimiter);
+
+      static bool statementIsATypeInfo(statement &s,
+                                       strNode *nodePos);
+
+      std::string toString(const std::string &tab = "");
+      operator std::string ();
+
+      friend std::ostream& operator << (std::ostream &out, _typeInfo &type);
     };
 
     namespace _varType {
@@ -125,22 +165,22 @@ namespace occa {
 
       static int variablesInStatement(strNode *nodePos);
 
-      strNode* loadValueFrom(statement &s,
-                             strNode *nodePos,
-                             _varInfo *varHasType = NULL);
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos,
+                        _varInfo *varHasType = NULL);
 
       strNode* loadTypeFrom(statement &s,
                             strNode *nodePos,
                             _varInfo *varHasType);
+
+      strNode* loadNameFrom(statement &s,
+                            strNode *nodePos);
 
       int getVarInfoFrom(statement &s,
                          strNode *nodePos);
 
       int getNestCountFrom(statement &s,
                            strNode *nodePos);
-
-      strNode* loadNameFrom(statement &s,
-                            strNode *nodePos);
 
       strNode* loadStackPointersFrom(statement &s,
                                      strNode *nodePos);
@@ -159,7 +199,6 @@ namespace occa {
       //================================
 
       std::string toString(const bool printType = true);
-
       operator std::string ();
 
       friend std::ostream& operator << (std::ostream &out, _varInfo &var);
