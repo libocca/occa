@@ -293,6 +293,8 @@ namespace occa {
           varLeaves[i].var = new varInfo;
           nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
 
+          sInfo->up->addVariable( *(varLeaves[i].var) );
+
           std::cout<< "varLeaves[" << i << "].var = " << *(varLeaves[i].var) << '\n';
         }
       }
@@ -319,7 +321,10 @@ namespace occa {
       typeLeaves[0] = new typeInfo;
 
       typeLeaves[0]->loadFrom(*sInfo, nodeRoot);
-      std::cout << "typeLeaves[0] = " << *typeLeaves[0] << '\n';
+      std::cout << "typeLeaves[0] = " << *typeLeaves[0] << '\n'
+                << "typeLeaves[0]->name = " << typeLeaves[0]->name << '\n';
+
+      sInfo->up->addType( *(typeLeaves[0]) );
     }
 
     void expNode::initLoadFromNode(strNode *nodeRoot){
@@ -2145,6 +2150,10 @@ namespace occa {
       nodeRoot = lastNode(nodeRoot);
 
       return blockStatementType;
+    }
+
+    void statement::addType(typeInfo &type){
+      scopeTypeMap[type.name] = &type;
     }
 
     void statement::addTypedef(const std::string &typedefName){

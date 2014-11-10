@@ -298,6 +298,7 @@ namespace occa {
       int checkSpecialStatementType(strNode *&nodeRoot);
       int checkBlockStatementType(strNode *&nodeRoot);
 
+      void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);
 
       bool nodeHasQualifier(strNode *n) const;

@@ -239,6 +239,8 @@ namespace occa {
         typedefVar = new varInfo;
         nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
 
+        name = typedefVar->name;
+
         return nodePos;
       }
 
