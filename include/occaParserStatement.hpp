@@ -47,6 +47,8 @@ namespace occa {
       static const int maxBit          = 27;
     };
 
+    class _varInfo;
+
     class expNode {
     public:
       statement *sInfo;
@@ -57,7 +59,11 @@ namespace occa {
       expNode *up;
 
       int leafCount;
-      expNode **leaves;
+
+      union {
+        expNode **leaves;
+        _varInfo **varLeaves;
+      };
 
       expNode();
       expNode(statement &s);

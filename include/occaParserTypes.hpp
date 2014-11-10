@@ -88,6 +88,14 @@ namespace occa {
 
     };
 
+    namespace _varType {
+      static const int var             = (1 << 0);
+
+      static const int functionType    = (3 << 1);
+      static const int function        = (1 << 1);
+      static const int functionPointer = (1 << 2);
+    };
+
     class _varInfo {
     public:
       int info;
@@ -121,11 +129,17 @@ namespace occa {
                             strNode *nodePos,
                             _varInfo *varHasType);
 
+      int getVarInfoFrom(statement &s,
+                         strNode *nodePos);
+
       strNode* loadNameFrom(statement &s,
                             strNode *nodePos);
 
       strNode* loadStackPointersFrom(statement &s,
                                      strNode *nodePos);
+
+      strNode* loadArgsFrom(statement &s,
+                            strNode *nodePos);
 
       std::string getString(const bool printType = true);
 

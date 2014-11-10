@@ -151,8 +151,11 @@ namespace occa {
                                      _varInfo *varHasType){
       nodePos = loadTypeFrom(s, nodePos, varHasType);
 
+      info = getVarInfoFrom(s, nodePos);
+      std::cout << "var.info = " << info << '\n';
+
       nodePos = loadNameFrom(s, nodePos);
-      nodePos = loadStackPointersFrom(s, nodePos);
+      nodePos = loadArgsFrom(s, nodePos);
 
       if(nodePos->value == ",")
         nodePos = nodePos->right;
@@ -181,15 +184,64 @@ namespace occa {
       return nodePos;
     }
 
-    strNode* _varInfo::loadNameFrom(statement &s,
-                                    strNode *nodePos){
-      if(nodePos &&
-         nodePos->type & unknownVariable){
-        name    = nodePos->value;
-        nodePos = nodePos->right;
+    int _varInfo::getVarInfoFrom(statement &s,
+                                 strNode *nodePos){
+      if(nodePos == NULL)
+        return 0;
+
+      strNode *nextNode = nodePos->right;
+
+      while(nodePos &&
+            (nodePos->type == startParentheses)){
+
+        nodePos = nodePos->down;
+
+        if(nodePos &&
+           nodePos->value == "*"){
+
+          return _varType::functionPointer;
+        }
       }
 
-      return nodePos;
+      std::cout << "nextNode = " << *nextNode << '\n';
+
+      if(nextNode &&
+         (nextNode->type == startParentheses))
+        return _varType::function;
+
+      return _varType::var;
+    }
+
+    strNode* _varInfo::loadNameFrom(statement &s,
+                                    strNode *nodePos){
+      if(nodePos == NULL)
+        return NULL;
+
+      strNode *nextNode = nodePos->right;
+
+      while(nodePos &&
+            (nodePos->type == startParentheses)){
+
+        nodePos = nodePos->down;
+
+        if(nodePos &&
+           nodePos->value == "*")
+          nodePos = nodePos->right;
+      }
+
+      if(nodePos &&
+         (nodePos->type & unknownVariable)){
+
+        name    = nodePos->value;
+        nodePos = nodePos->right;
+
+        if(nodePos == nextNode)
+          nextNode = loadStackPointersFrom(s, nextNode);
+        else
+          nodePos = loadStackPointersFrom(s, nodePos);
+      }
+
+      return nextNode;
     }
 
     strNode* _varInfo::loadStackPointersFrom(statement &s,
@@ -224,6 +276,23 @@ namespace occa {
       }
 
       return nodePos;
+    }
+
+    strNode* _varInfo::loadArgsFrom(statement &s,
+                                    strNode *nodePos){
+      if( !(info & _varType::functionType) )
+        return nodePos;
+
+      if(nodePos == NULL){
+        std::cout << "Missing arguments from function variable\n";
+        throw 1;
+      }
+
+      strNode *nextNode = nodePos->right;
+
+      d
+
+      return nextNode;
     }
 
     std::string _varInfo::getString(const bool printType){
@@ -265,8 +334,7 @@ namespace occa {
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
 
-      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, c, d[3];");
-      nodeRoot->print();
+      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))();");
 
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 
