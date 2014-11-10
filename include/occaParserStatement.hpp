@@ -51,10 +51,18 @@ namespace occa {
     class typeInfo;
     class expNode;
 
-    struct varLeaf_t {
+    class varLeaf_t {
+    public:
       bool hasExp;
+
       varInfo *var;
       expNode *exp;
+
+      varLeaf_t() :
+        hasExp(false),
+
+        var(NULL),
+        exp(NULL) {}
     };
 
     class expNode {

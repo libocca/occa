@@ -11,7 +11,7 @@ namespace occa {
     class typeInfo;
     class varInfo;
 
-    struct varLeaf_t;
+    class varLeaf_t;
 
     //---[ Qualifier Info Class ]-----------------
     typedef union {

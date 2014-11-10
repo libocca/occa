@@ -132,6 +132,13 @@ namespace occa {
       if(typeInfo::statementIsATypeInfo(*sInfo, nodeRoot))
         return loadStructStatement(nodeRoot);
 
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
       return declareStatementType;
     }
 
@@ -240,8 +247,6 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
-      print();
-
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
@@ -287,6 +292,8 @@ namespace occa {
         for(int i = 0; i < leafCount; ++i){
           varLeaves[i].var = new varInfo;
           nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
+
+          std::cout<< "varLeaves[" << i << "].var = " << *(varLeaves[i].var) << '\n';
         }
       }
     }
