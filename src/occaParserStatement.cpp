@@ -135,11 +135,16 @@ namespace occa {
       if(typeInfo::statementIsATypeInfo(*sInfo, nodeRoot))
         return loadStructStatement(nodeRoot);
 
-      while(nodeRoot){
-        if(nodeRoot->type & endStatement)
-          break;
+      varInfo var;
+      nodeRoot = var.loadFrom(*sInfo, nodeRoot);
 
-        nodeRoot = nodeRoot->right;
+      if( !(var.info & varType::functionDef) ){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
       }
 
       return declareStatementType;
@@ -204,8 +209,6 @@ namespace occa {
 
       labelStatement(nodePos);
 
-      std::cout << "sInfo = " << getBits(sInfo->type) << '\n';
-
       // Don't need to load stuff
       if(sInfo->type & (macroStatementType          |
                        gotoStatementType            |
@@ -249,8 +252,6 @@ namespace occa {
         newNodeRoot->print();
 
       splitAndOrganizeNode(newNodeRoot);
-
-      print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -300,8 +301,6 @@ namespace occa {
           nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
 
           sInfo->up->addVariable( *(varLeaves[i].var) );
-
-          std::cout<< "varLeaves[" << i << "].var = " << *(varLeaves[i].var) << '\n';
         }
       }
     }
@@ -328,8 +327,6 @@ namespace occa {
       typeLeaves[0] = new typeInfo;
 
       typeLeaves[0]->loadFrom(*sInfo, nodeRoot);
-      std::cout << "typeLeaves[0] = " << *typeLeaves[0] << '\n'
-                << "typeLeaves[0]->name = " << typeLeaves[0]->name << '\n';
 
       sInfo->up->addType( *(typeLeaves[0]) );
     }
@@ -2895,7 +2892,7 @@ namespace occa {
 
       if(it != scopeVarMap.end()      &&
          !info.hasQualifier("extern") &&
-         !((info.info & varType::functionDec))){
+         !((info.info & varType::functionDef))){
 
         std::cout << "Variable [" << info.name << "] defined in:\n"
                   << *origin
