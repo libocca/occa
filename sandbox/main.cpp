@@ -98,9 +98,11 @@ namespace occa {
       for(int i = 0; i < qualifierCount; ++i){
         ret += qualifiers[i];
 
-        if((qualifiers[i][0] != '*') ||
+        if(((qualifiers[i][0] != '*') &&
+            (qualifiers[i][0] != '&')) ||
            ( ((i + 1) < qualifierCount) &&
-             (qualifiers[i + 1][0] != '*') )){
+             ((qualifiers[i + 1][0] != '*') &&
+              (qualifiers[i + 1][0] != '&')))){
 
           ret += ' ';
         }
@@ -657,7 +659,8 @@ namespace occa {
         if(!addSpaceBeforeName){
           if((info & _varType::functionType)  &&
              (rightQualifiers.qualifierCount) &&
-             (getLastRightQualifier() == "*")){
+             ((getLastRightQualifier() == "*") ||
+              (getLastRightQualifier() == "&"))){
 
             addSpaceBeforeName = true;
           }
@@ -692,8 +695,14 @@ namespace occa {
       if(info & _varType::functionType){
         ret += '(';
 
-        for(int i = 0; i < argumentCount; ++i)
-          ret += argumentVarInfos[i].toString();
+        if(argumentCount){
+          ret += argumentVarInfos[0].toString();
+
+          for(int i = 1; i < argumentCount; ++i){
+            ret += ", ";
+            ret += argumentVarInfos[i].toString();
+          }
+        }
 
         ret += ')';
       }
@@ -716,12 +725,12 @@ namespace occa {
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
 
-      strNode *nodeRoot = p.splitAndPreprocessContent("typedef struct a { int b, c; struct b {};} *b2;");
-      // strNode *nodeRoot = p.splitAndPreprocessContent("const int * func(){}");
+      // strNode *nodeRoot = p.splitAndPreprocessContent("typedef struct a { int b, c; struct b {};} *b2;");
+      strNode *nodeRoot = p.splitAndPreprocessContent("const int * func(const int a, const int &b){}");
 
       // strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double);");
 
-#if 0
+#if 1
       const int varCount = _varInfo::variablesInStatement(nodeRoot);
 
       if(varCount){
