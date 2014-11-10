@@ -139,6 +139,8 @@ namespace occa {
 
           ++argc;
         }
+        else if((nodePos->right) == NULL)
+          ++argc;
 
         nodePos = nodePos->right;
       }
@@ -157,7 +159,8 @@ namespace occa {
       nodePos = loadNameFrom(s, nodePos);
       nodePos = loadArgsFrom(s, nodePos);
 
-      if(nodePos->value == ",")
+      if(nodePos &&
+         (nodePos->value == ","))
         nodePos = nodePos->right;
 
       return nodePos;
@@ -202,8 +205,6 @@ namespace occa {
           return _varType::functionPointer;
         }
       }
-
-      std::cout << "nextNode = " << *nextNode << '\n';
 
       if(nextNode &&
          (nextNode->type == startParentheses))
@@ -290,18 +291,31 @@ namespace occa {
 
       strNode *nextNode = nodePos->right;
 
-      d
+      if(nodePos->down){
+        nodePos = nodePos->down;
+
+        argumentCount    = variablesInStatement(nodePos);
+        argumentVarInfos = new _varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i)
+          nodePos = argumentVarInfos[i].loadValueFrom(s, nodePos);
+      }
 
       return nextNode;
     }
 
-    std::string _varInfo::getString(const bool printType){
+    std::string _varInfo::toString(const bool printType){
       std::string ret;
 
       if(printType){
         ret += leftQualifiers.toString();
         ret += baseType->typeName;
-        ret += ' ';
+
+        if((rightQualifiers.qualifierCount) ||
+           (name.size())){
+
+          ret += ' ';
+        }
       }
 
       ret += rightQualifiers.toString();
@@ -313,15 +327,24 @@ namespace occa {
         ret += ']';
       }
 
+      if(info & _varType::functionType){
+        ret += '(';
+
+        for(int i = 0; i < argumentCount; ++i)
+          ret += argumentVarInfos[i].toString();
+
+        ret += ')';
+      }
+
       return ret;
     }
 
     _varInfo::operator std::string (){
-      return getString();
+      return toString();
     }
 
     std::ostream& operator << (std::ostream &out, _varInfo &var){
-      out << var.getString();
+      out << var.toString();
       return out;
     }
 

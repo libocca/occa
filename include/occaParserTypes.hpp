@@ -141,7 +141,7 @@ namespace occa {
       strNode* loadArgsFrom(statement &s,
                             strNode *nodePos);
 
-      std::string getString(const bool printType = true);
+      std::string toString(const bool printType = true);
 
       operator std::string ();
 
