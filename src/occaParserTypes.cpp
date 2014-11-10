@@ -239,8 +239,6 @@ namespace occa {
         typedefVar = new varInfo;
         nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
 
-        std::cout << "typedefVar = " << *typedefVar << '\n';
-
         return nodePos;
       }
 
@@ -284,7 +282,7 @@ namespace occa {
             nestedInfos[i].exp = new expNode;
 
             statement *s2 = s.clone();
-            s2->loadFromNode(nodePos);
+            nodePos = s2->loadFromNode(nodePos);
 
             expNode::swap(*(nestedInfos[i].exp), s2->expRoot);
 
