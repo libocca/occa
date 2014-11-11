@@ -327,12 +327,10 @@ namespace occa {
         splitFunctionStatement(nodeRoot);
 
       else if(sInfo->type & structStatementType)
-        splitStructStatement(nodeRoot);
+        splitStructStatement();
 
-      else{
-
+      else
         organize();
-      }
     }
 
     void expNode::organize(){
@@ -359,6 +357,7 @@ namespace occa {
         expNode &leaf = newExp[i];
 
         varInfo &var = leaf.addVarInfoNode(0);
+        sInfo->up->addVariable(var);
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
 
@@ -394,33 +393,26 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitDeclareStatement(strNode *nodeRoot){
-      printf("void expNode::splitDeclareStatement(strNode *nodeRoot){\n");
-      info = expType::declaration;
+    void expNode::splitStructStatement(){
+      printf("void expNode::splitStructStatement(strNode *nodeRoot){\n");
+      info = expType::struct_;
 
-      leafCount = varInfo::variablesInStatement(nodeRoot);
+      // Store type
+      expNode newExp(*sInfo);
 
-      if(leafCount){
-        leafInfo  = leafType::var;
-        varLeaves = new varLeaf_t[leafCount];
+      typeInfo &type = newExp.addTypeInfoNode(0);
+      sInfo->addType(type);
 
-        for(int i = 0; i < leafCount; ++i){
-          varLeaves[i].var = new varInfo;
-          nodeRoot = varLeaves[i].var->loadFrom(*sInfo, nodeRoot);
+      int leafPos = type.loadFrom(*this, 0);
 
-          std::cout << "varLeaves[i].var = " << *(varLeaves[i].var) << '\n';
-
-          sInfo->up->addVariable( *(varLeaves[i].var) );
-        }
-      }
+      expNode::swap(*this, newExp);
     }
 
     void expNode::splitForStatement(strNode *nodeRoot){
       printf("void expNode::splitForStatement(strNode *nodeRoot){\n");
       info = expType::checkSInfo;
 
-      initLoadFromNode(nodeRoot);
-
+#if 0
       if((leafCount < 2) ||
          (leaves[1]->value != "(")){
         std::cout << "Wrong syntax for [for]:\n";
@@ -478,6 +470,7 @@ namespace occa {
 
       leaves    = sLeaves;
       leafCount = statementCount;
+#endif
     }
 
 #if 0
@@ -965,16 +958,8 @@ namespace occa {
 
       while(leafPos < leafCount){
         if(leaves[leafPos]->info & expType::qualifier){
-          print();
-
-          std::cout << "1. leafPos = " << leafPos << '\n';
-
           typeInfo type;
           leafPos = type.loadFrom(*this, leafPos);
-
-          std::cout << "2. leafPos = " << leafPos << '\n';
-
-          std::cout << "type = " << type << '\n';
         }
         else if(leaves[leafPos]->info & expType::type){
           ++leafPos;
@@ -1690,7 +1675,7 @@ namespace occa {
       }
       else if(info & expType::typeInfo){
         typeInfo &type = *((typeInfo*) leaves[0]);
-        std::cout << tab << "    [typeInfo] " << type << '\n';
+        std::cout << tab << "    [typeInfo]\n" << type.toString(tab + "        ") << '\n';
       }
     }
 

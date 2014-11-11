@@ -122,8 +122,8 @@ namespace occa {
       void organize();
 
       void splitDeclareStatement();
+      void splitStructStatement();
 
-      void splitDeclareStatement(strNode *nodeRoot);
       void splitForStatement(strNode *nodeRoot);
       void splitFunctionStatement(strNode *nodeRoot);
       void splitStructStatement(strNode *nodeRoot);

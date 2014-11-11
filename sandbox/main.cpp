@@ -42,9 +42,9 @@ namespace occa {
       parser p;
       p.loadLanguageTypes();
       statement &s = *(p.globalScope);
-      // strNode *nodeRoot = p.splitAndPreprocessContent("struct a {int b;int c; double d,e; struct f {float g;};};");
+      strNode *nodeRoot = p.splitAndPreprocessContent("struct a {int b;int c; double d,e; struct f {float g;};};");
       // strNode *nodeRoot = p.splitAndPreprocessContent("const int * const func(const int a, const int &b){}");
-      strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b = NULL, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double), j = 3;");
+      // strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b = NULL, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double), j = 3;");
 
       s.expRoot.loadFromNode(nodeRoot);
       s.expRoot.print();
