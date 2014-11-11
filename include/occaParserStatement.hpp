@@ -152,19 +152,6 @@ namespace occa {
       // const int [*] x
       void labelReferenceQualifiers();
 
-      // [const] int x
-      void mergeQualifiers();
-
-      // [[const] [int] [*]] x
-      void mergeTypes();
-
-      // [[[const] [int] [*]] [x]]
-      void mergeVariables();
-
-      // 1 [type]                           2 [(]       3 [(]
-      // [[qualifiers] [type] [qualifiers]] [(*[name])] [([args])]
-      void mergeFunctionPointers();
-
       // class(...), class{1,2,3}
       void mergeClassConstructs();
 
@@ -202,10 +189,6 @@ namespace occa {
 
       // a [?] b : c
       int mergeTernary(const int leafPos);
-
-      //---[ Custom Functions ]---------
-      void labelNewVariables();
-      //================================
 
       //---[ Custom Type Info ]---------
       bool qualifierEndsWithStar() const;

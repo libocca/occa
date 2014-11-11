@@ -315,6 +315,9 @@ namespace occa {
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
       initLoadFromNode(nodeRoot);
+      initOrganization();
+
+      print();
 
       if(sInfo->type & declareStatementType)
         splitDeclareStatement();
@@ -335,13 +338,14 @@ namespace occa {
 
       else
         organize();
+
+      print();
     }
 
     void expNode::organize(){
       if(leafCount == 0)
         return;
 
-      initOrganization();
       organizeLeaves();
     }
 
@@ -362,10 +366,10 @@ namespace occa {
         expNode &leaf = newExp[i];
         varInfo &var  = leaf.addVarInfoNode(0);
 
+        int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+
         if(addVariablesToScope)
           sInfo->up->addVariable(var);
-
-        int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
 
         if(i == 0){
           leaf.leaves[0]->info |= expType::type;
@@ -504,7 +508,6 @@ namespace occa {
         expNode *&leaf = leaves[leafPos++];
 
         leaf        = new expNode(*this);
-        leaf->up    = this;
         leaf->value = nodePos->value;
 
         if(nodePos->type & unknownVariable){
@@ -582,6 +585,9 @@ namespace occa {
     }
 
     void expNode::initOrganization(){
+      if(leafCount == 0)
+        return;
+
       // Init ()'s bottom -> up
       // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
@@ -600,11 +606,8 @@ namespace occa {
       // [(class)]
       labelCasts();
 
-      // [[const] [int] [*]] x
-      mergeTypes();
-
-      if(sInfo->type & declareStatementType)
-        labelNewVariables();
+      // const int [*] x
+      labelReferenceQualifiers();
       //====================
     }
 
@@ -773,28 +776,6 @@ namespace occa {
       }
     }
 
-    // [(class)]
-    void expNode::labelCasts(){
-      // Don't mistake:
-      //   int main(int) -> int main[(int)]
-      if(sInfo->type & functionStatementType)
-        return;
-
-      int leafPos = 0;
-
-      while(leafPos < leafCount){
-        if((leaves[leafPos]->info == expType::C) &&
-           (leaves[leafPos]->value == "(")       &&
-           (leaves[leafPos]->leafCount)          &&
-           (leaves[leafPos]->leaves[0]->info & expType::type)){
-
-          leaves[leafPos]->info |= expType::cast_;
-        }
-
-        ++leafPos;
-      }
-    }
-
     // const int [*] x
     void expNode::labelReferenceQualifiers(){
       int leafPos = 0;
@@ -843,41 +824,25 @@ namespace occa {
       }
     }
 
-    // [const] int x
-    void expNode::mergeQualifiers(){
+    // [(class)]
+    void expNode::labelCasts(){
+      // Don't mistake:
+      //   int main(int) -> int main[(int)]
+      if(sInfo->type & functionStatementType)
+        return;
+
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if(leaves[leafPos]->info & expType::qualifier){
-          int leafPosStart = leafPos;
-          int leafPosEnd   = leafPos;
+        if((leaves[leafPos]->info == expType::C) &&
+           (leaves[leafPos]->value == "(")       &&
+           (leaves[leafPos]->leafCount)          &&
+           (leaves[leafPos]->leaves[0]->info & expType::type)){
 
-          while((leafPosEnd < leafCount) &&
-                (leaves[leafPosEnd]->info & expType::qualifier))
-            ++leafPosEnd;
-
-          leafPos = mergeRange(expType::qualifier,
-                               leafPosStart, leafPosEnd - 1);
+          leaves[leafPos]->info |= expType::cast_;
         }
-        else
-          ++leafPos;
-      }
-    }
 
-    // [[const] [int] [*]] x
-    void expNode::mergeTypes(){
-      int leafPos = 0;
-
-      while(leafPos < leafCount){
-        if(leaves[leafPos]->info & expType::qualifier){
-          typeInfo type;
-          leafPos = type.loadFrom(*this, leafPos);
-        }
-        else if(leaves[leafPos]->info & expType::type){
-          ++leafPos;
-        }
-        else
-          ++leafPos;
+        ++leafPos;
       }
     }
 
@@ -1103,14 +1068,6 @@ namespace occa {
 
       return leafPos;
     }
-
-
-    //---[ Custom Functions ]---------
-    void expNode::labelNewVariables(){
-
-    }
-    //================================
-
 
     //---[ Custom Type Info ]---------
     bool expNode::qualifierEndsWithStar() const {

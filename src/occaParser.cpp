@@ -3843,8 +3843,8 @@ namespace occa {
       opLevelMap[ 2]["-" ]  = lUnitaryOperatorType;
       opLevelMap[ 2]["!" ]  = lUnitaryOperatorType;
       opLevelMap[ 2]["~" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["*" ]  = qualifierType;
-      opLevelMap[ 2]["&" ]  = qualifierType;
+      opLevelMap[ 2]["*" ]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["&" ]  = lUnitaryOperatorType;
       opLevelMap[ 3][".*" ] = binaryOperatorType;
       opLevelMap[ 3]["->*"] = binaryOperatorType;
       opLevelMap[ 4]["*" ]  = binaryOperatorType;
