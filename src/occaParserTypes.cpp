@@ -819,14 +819,14 @@ namespace occa {
           ++nestPos;
 
           if(1 < leaf->leafCount){
-            leaf = leaf->leaves[1];
-
             if((2 < leaf->leafCount) &&
                (leaf->leaves[2]->value == "(")){
 
               functionNests[nestPos - 1].info = varType::function;
               functionNests[nestPos - 1].loadArgsFrom(*leaf, 2);
             }
+
+            leaf = leaf->leaves[1];
           }
           else
             break;
