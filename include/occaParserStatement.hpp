@@ -128,7 +128,7 @@ namespace occa {
       void organize();
 
       void splitDeclareStatement(const bool addVariablesToScope = true);
-      void splitForStatement();
+      void splitFlowStatement();
       void splitFunctionStatement(const bool addVariablesToScope = true);
       void splitStructStatement(const bool addTypesToScope = true);
 
