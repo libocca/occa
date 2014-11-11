@@ -713,12 +713,6 @@ namespace occa {
       leafPos = loadNameFrom(expRoot, leafPos);
       leafPos = loadArgsFrom(expRoot, leafPos);
 
-      if((expRoot.leafCount <= leafPos) &&
-         (expRoot[leafPos].value == ",")){
-
-        ++leafPos;
-      }
-
       return leafPos;
     }
 
@@ -815,6 +809,9 @@ namespace occa {
 
       expNode *leaf = expRoot.leaves[leafPos];
 
+      if(leaf->value == "(")
+        ++leafPos;
+
       while((leaf->value == "(") &&
             (leaf->leafCount != 0)){
 
@@ -837,9 +834,6 @@ namespace occa {
         else
           leaf = leaf->leaves[0];
       }
-
-      if(nestPos)
-        ++leafPos;
 
       if(leaf->info & expType::unknown){
         name = leaf->value;
@@ -883,9 +877,7 @@ namespace occa {
       if( !(info & varType::functionType) )
         return leafPos;
 
-      if((expRoot.leafCount <= leafPos) ||
-         (expRoot[leafPos].value != "(")){
-
+      if(expRoot.leafCount <= leafPos){
         std::cout << "Missing arguments from function variable\n";
         throw 1;
       }
@@ -901,9 +893,11 @@ namespace occa {
           sLeafPos = argumentVarInfos[i].loadFrom(leaf, sLeafPos);
           sLeafPos = typeInfo::nextDelimeter(leaf, sLeafPos, ",") + 1;
         }
+
+        return (leafPos + 1);
       }
 
-      return (leafPos + 1);
+      return leafPos;
     }
     //========================
 

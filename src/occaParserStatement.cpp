@@ -348,11 +348,16 @@ namespace occa {
       int varCount = 1 + typeInfo::delimeterCount(*this, ",");
       int leafPos  = 0;
 
+      varInfo *firstVar = NULL;
+
       for(int i = 0; i < varCount; ++i){
         varInfo &var = addVarInfoNode(i);
         ++leafPos;
 
-        int nextLeafPos = var.loadFrom(*this, leafPos);
+        int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+
+        if(i == 0)
+          firstVar = &var;
 
         std::cout << "var = " << var << '\n';
 
