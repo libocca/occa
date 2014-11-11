@@ -324,7 +324,7 @@ namespace occa {
       //   splitWhileStatement(nodeRoot);
 
       else if(sInfo->type & functionStatementType)
-        splitFunctionStatement(nodeRoot);
+        splitFunctionStatement();
 
       else if(sInfo->type & structStatementType)
         splitStructStatement();
@@ -414,6 +414,32 @@ namespace occa {
       int leafPos = type.loadFrom(*this, 0);
 
       expNode::swap(*this, newExp);
+    }
+
+    void expNode::splitFunctionStatement(const bool addVariablesToScope){
+      printf("void expNode::splitFunctionStatement(strNode *nodeRoot){\n");
+
+      if(sInfo->type & functionDefinitionType)
+        info = (expType::function | expType::declaration);
+      else
+        info = (expType::function | expType::prototype);
+
+      if(leafCount == 0)
+        return;
+
+      varInfo &var = addVarInfoNode(0);
+
+      if((addVariablesToScope) &&
+         (sInfo->up != NULL)   &&
+         (sInfo->up->scopeVarMap.find(var.name) !=
+          sInfo->up->scopeVarMap.end())){
+
+          sInfo->up->addVariable(var);
+      }
+
+      int leafPos = var.loadFrom(*this, 1);
+
+      removeNodes(1, leafPos);
     }
 
     void expNode::splitForStatement(strNode *nodeRoot){
@@ -564,20 +590,6 @@ namespace occa {
 
       varLeaves[0].var = new varInfo;
       varLeaves[0].var->loadFrom(*sInfo, nodeRoot);
-    }
-
-    void expNode::splitStructStatement(strNode *nodeRoot){
-      printf("void expNode::splitStructStatement(strNode *nodeRoot){\n");
-      info = expType::struct_;
-
-      leafInfo      = leafType::type;
-      leafCount     = 1;
-      typeLeaves    = new typeInfo*[1];
-      typeLeaves[0] = new typeInfo;
-
-      typeLeaves[0]->loadFrom(*sInfo, nodeRoot);
-
-      sInfo->up->addType( *(typeLeaves[0]) );
     }
 
     void expNode::initLoadFromNode(strNode *nodeRoot){
@@ -1820,15 +1832,21 @@ namespace occa {
       }
 
       case (expType::function | expType::prototype):{
-        if(leafCount)
-          out << tab << *(varLeaves[0].var) << ";\n";
+        if(leafCount){
+          varInfo &var = *((varInfo*) leaves[0]->leaves[0]);
+          out << tab << var.toString() << ";\n";
+        }
 
         break;
       }
 
       case (expType::function | expType::declaration):{
-        if(leafCount)
-          out << tab << *(varLeaves[0].var);
+        if(leafCount){
+          varInfo &var = *((varInfo*) leaves[0]->leaves[0]);
+          out << tab << var.toString() << "{\n";
+
+          out << tab << "}\n";
+        }
 
         break;
       }

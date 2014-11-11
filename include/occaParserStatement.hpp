@@ -123,10 +123,10 @@ namespace occa {
 
       void splitDeclareStatement(const bool addVariablesToScope = true);
       void splitStructStatement(const bool addTypesToScope = true);
+      void splitFunctionStatement(const bool addVariablesToScope = true);
 
       void splitForStatement(strNode *nodeRoot);
       void splitFunctionStatement(strNode *nodeRoot);
-      void splitStructStatement(strNode *nodeRoot);
 
       void initLoadFromNode(strNode *nodeRoot);
 
