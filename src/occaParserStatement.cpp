@@ -317,8 +317,6 @@ namespace occa {
       initLoadFromNode(nodeRoot);
       initOrganization();
 
-      print();
-
       if(sInfo->type & declareStatementType)
         splitDeclareStatement();
 
@@ -338,8 +336,6 @@ namespace occa {
 
       else
         organize();
-
-      print();
     }
 
     void expNode::organize(){
@@ -480,10 +476,10 @@ namespace occa {
 
       typeInfo &type = newExp.addTypeInfoNode(0);
 
-      if(addTypesToScope)
-        sInfo->addType(type);
-
       int leafPos = type.loadFrom(*this, 0);
+
+      if(addTypesToScope)
+        sInfo->up->addType(type);
 
       expNode::swap(*this, newExp);
     }
@@ -1674,10 +1670,39 @@ namespace occa {
       }
 
       case (expType::variable):{
-        if(leafCount)
-          out << tab << leaves[0]->value;
-        else
+        // [[[const] [int] [*]] [x]]
+        if(leafCount){
+          const bool hasLQualifier = (leaves[0]->info & (expType::qualifier |
+                                                         expType::type));
+
+          const bool hasRQualifier = (((hasLQualifier + 1) < leafCount) &&
+                                      (leaves[hasLQualifier + 1]->info & (expType::qualifier |
+                                                                          expType::type)));
+
+          if(hasLQualifier){
+            out << *(leaves[0]);
+
+            if((leaves[0]->info & expType::qualifier) ||
+               ((leaves[0]->leafCount) &&
+                (leaves[0]->lastLeaf()->info & expType::qualifier))){
+
+              out << ' ';
+            }
+          }
+
+          out << *(leaves[hasLQualifier]);
+
+          if(hasRQualifier){
+            if( !(leaves[hasLQualifier + 1]->hasAnArrayQualifier()) )
+              out << ' ';
+
+            out << *(leaves[hasLQualifier + 1]);
+          }
+        }
+        // [x]
+        else{
           out << value;
+        }
 
         break;
       }
