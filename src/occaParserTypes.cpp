@@ -893,11 +893,9 @@ namespace occa {
           sLeafPos = argumentVarInfos[i].loadFrom(leaf, sLeafPos);
           sLeafPos = typeInfo::nextDelimeter(leaf, sLeafPos, ",") + 1;
         }
-
-        return (leafPos + 1);
       }
 
-      return leafPos;
+      return (leafPos + 1);
     }
     //========================
 

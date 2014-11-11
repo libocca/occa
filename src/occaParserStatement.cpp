@@ -350,15 +350,36 @@ namespace occa {
 
       varInfo *firstVar = NULL;
 
+      // Store variables and expressions
+      expNode newExp;
+      newExp.addNodes(0, 0, varCount);
+
       for(int i = 0; i < varCount; ++i){
-        varInfo &var = addVarInfoNode(i);
-        ++leafPos;
+        newExp.leaves[i] = new expNode;
+        expNode &leaf    = newExp[i];
+
+        varInfo &var = leaf.addVarInfoNode(0);
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
 
         removeNodes(leafPos, nextLeafPos - leafPos);
 
-        leafPos = typeInfo::nextDelimeter(*this, leafPos, ",");
+        int sExpStart = leafPos;
+        int sExpEnd   = typeInfo::nextDelimeter(*this, leafPos, ",");
+
+        leafPos = sExpEnd;
+
+        // Don't put the [;]
+        if((sExpEnd == leafCount) &&
+           (leaves[sExpEnd]->value != ","))
+          --sExpEnd;
+
+        if(sExpStart < sExpEnd){
+          leaf.addNodes(0, 1, sExpEnd - sExpStart);
+
+          for(int j = sExpStart; j < sExpEnd; ++j)
+            leaf.leaves[j - sExpStart + 1] = leaves[j];
+        }
 
         if(leafPos < leafCount)
           removeNode(leafPos);
@@ -366,6 +387,8 @@ namespace occa {
         if(i == 0)
           firstVar = &var;
       }
+
+      expNode::swap(*this, newExp);
     }
 
     void expNode::splitDeclareStatement(strNode *nodeRoot){
@@ -1406,31 +1429,39 @@ namespace occa {
       }
     }
 
-    void expNode::addNode(const int info_,
-                          const int pos){
-      expNode &newNode  = *(new expNode(*this));
+    void expNode::addNodes(const int info_,
+                           const int pos,
+                           const int count){
 
-      newNode.info      = info_;
-      newNode.leafCount = 0;
-      newNode.leaves    = NULL;
-
-      expNode **newLeaves = new expNode*[leafCount + 1];
+      expNode **newLeaves = new expNode*[leafCount + count];
 
       //---[ Add Leaves ]-----
       for(int i = 0; i < pos; ++i)
         newLeaves[i] = leaves[i];
 
-      newLeaves[pos] = &newNode;
+      for(int i = pos; i < (pos + count); ++i){
+        newLeaves[i] = new expNode;
+
+        newLeaves[i]->info      = info_;
+        newLeaves[i]->leafCount = 0;
+        newLeaves[i]->leaves    = NULL;
+      }
 
       for(int i = pos; i < leafCount; ++i)
-        newLeaves[i + 1] = leaves[i];
+        newLeaves[i + count] = leaves[i];
       //======================
 
       if(leafCount)
         delete [] leaves;
 
       leaves = newLeaves;
-      ++leafCount;
+
+      leafCount += count;
+    }
+
+    void expNode::addNode(const int info_,
+                          const int pos){
+      addNodes(info_, pos, 1);
     }
 
     varInfo& expNode::addVarInfoNode(const int pos){
