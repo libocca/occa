@@ -306,6 +306,8 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
+      std::cout << "this = " << *this << '\n';
+
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
@@ -362,8 +364,12 @@ namespace occa {
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
 
-        if(addVariablesToScope)
-          sInfo->up->addVariable(var);
+        if(addVariablesToScope){
+          if(sInfo->up != NULL)
+            sInfo->up->addVariable(var);
+          else
+            sInfo->addVariable(var);
+        }
 
         if(i == 0){
           leaf.leaves[0]->info |= expType::type;
@@ -476,8 +482,12 @@ namespace occa {
 
       int leafPos = type.loadFrom(*this, 0);
 
-      if(addTypesToScope)
-        sInfo->up->addType(type);
+      if(addTypesToScope){
+        if(sInfo->up != NULL)
+          sInfo->up->addType(type);
+        else
+          sInfo->addType(type);
+      }
 
       expNode::swap(*this, newExp);
     }
@@ -664,7 +674,9 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if(leaves[leafPos]->leafCount){
+        if((leaves[leafPos]->leafCount) ||
+           (leaves[leafPos]->info == expType::qualifier)){
+
           ++leafPos;
           continue;
         }
@@ -688,8 +700,11 @@ namespace occa {
               (leaves[leafPos]->value[0] == '-'))){
 
             if(leafPos &&
-               !(leaves[leafPos - 1]->info & expType::operator_))
+               ((leaves[leafPos - 1]->leafCount != 0) ||
+                !(leaves[leafPos - 1]->info & expType::operator_))){
+
               updateNow = false;
+            }
           }
 
           if(updateNow){
@@ -777,30 +792,35 @@ namespace occa {
       while(leafPos < leafCount){
         if(leaves[leafPos]->info == (expType::operator_ |
                                      expType::qualifier)){
-          if(leafPos){
+          if(leafPos == 0){
+            leaves[leafPos]->info = expType::qualifier;
+          }
+          else{
+            expNode &lLeaf = *(leaves[leafPos - 1]);
 
-            if(leaves[leafPos - 1]->info & expType::qualifier){
+            if(lLeaf.info & expType::qualifier){
               leaves[leafPos]->info = expType::qualifier;
             }
 
-            else if(leaves[leafPos - 1]->info & expType::unknown){
-              if(!sInfo->hasTypeInScope(leaves[leafPos - 1]->value))
+            else if(lLeaf.info & expType::unknown){
+              if(!sInfo->hasTypeInScope(lLeaf.value))
                 leaves[leafPos]->info = expType::operator_;
               else
                 leaves[leafPos]->info = expType::qualifier;
             }
 
-            else if(leaves[leafPos - 1]->info & (expType::L           |
-                                                 expType::R           |
-                                                 expType::presetValue |
-                                                 expType::variable    |
-                                                 expType::function)){
+            else if(lLeaf.info & (expType::L           |
+                                  expType::R           |
+                                  expType::presetValue |
+                                  expType::variable    |
+                                  expType::function)){
 
               leaves[leafPos]->info = expType::operator_;
             }
 
-            else if((leaves[leafPos - 1]->info & expType::C) &&
-                    ~(leaves[leafPos - 1]->info & expType::cast_)){
+            else if((lLeaf.info & expType::C)      &&
+                    !(lLeaf.info & expType::cast_) &&
+                    (lLeaf.value != "{")){
 
               leaves[leafPos]->info = expType::operator_;
             }
@@ -808,9 +828,6 @@ namespace occa {
             else{
               leaves[leafPos]->info = expType::qualifier;
             }
-          }
-          else{
-            leaves[leafPos]->info = expType::qualifier;
           }
         }
 
@@ -828,10 +845,11 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if((leaves[leafPos]->info == expType::C) &&
-           (leaves[leafPos]->value == "(")       &&
+        if((leaves[leafPos]->value == "(")       &&
            (leaves[leafPos]->leafCount)          &&
-           (leaves[leafPos]->leaves[0]->info & expType::type)){
+           (leaves[leafPos]->leaves[0]->info & (expType::type      |
+                                                expType::qualifier |
+                                                expType::typeInfo))){
 
           leaves[leafPos]->info |= expType::cast_;
         }
@@ -2783,12 +2801,14 @@ namespace occa {
 
       if(nodeRoot)
         nodeRoot->left = NULL;
-      if(nodeRootEnd)
-        nodeRootEnd->right = NULL;
 
       if(nodeRootEnd){
-        if(nodeRootEnd->type == startBrace)
+        if(nodeRootEnd->type == startBrace){
+          if(nodeRootEnd)
+            nodeRootEnd->right = NULL;
+
           loadAllFromNode(nodeRootEnd->down);
+        }
         else
           return loadFromNode(nodeRootEnd);
       }
