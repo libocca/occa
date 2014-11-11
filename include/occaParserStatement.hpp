@@ -50,6 +50,12 @@ namespace occa {
       static const int maxBit          = 29;
     };
 
+    namespace expFlag {
+      static const int none        = 0;
+      static const int noNewline   = (1 << 0);
+      static const int noSemicolon = (1 << 1);
+    }
+
     namespace leafType {
       static const char exp  = (1 << 0);
       static const char type = (1 << 1);
@@ -122,11 +128,9 @@ namespace occa {
       void organize();
 
       void splitDeclareStatement(const bool addVariablesToScope = true);
-      void splitStructStatement(const bool addTypesToScope = true);
+      void splitForStatement();
       void splitFunctionStatement(const bool addVariablesToScope = true);
-
-      void splitForStatement(strNode *nodeRoot);
-      void splitFunctionStatement(strNode *nodeRoot);
+      void splitStructStatement(const bool addTypesToScope = true);
 
       void initLoadFromNode(strNode *nodeRoot);
 
@@ -257,7 +261,9 @@ namespace occa {
       void free();
 
       void print(const std::string &tab = "");
-      void printOn(std::ostream &out, const std::string &tab = "");
+      void printOn(std::ostream &out,
+                   const std::string &tab = "",
+                   const int flags = expFlag::none);
 
       std::string toString(const std::string &tab = "");
       operator std::string ();
