@@ -146,10 +146,10 @@ occaFunction long grid_search( const long int n, const double quarry, GridPoint 
 		examinationPoint = lowerLimit + ( length / 2 );
 
     // Some optimizations exist in CUDA XSBench but are not included here
-		if( A[examinationPoint].energy > quarry )
-			upperLimit = examinationPoint;
-		else
-			lowerLimit = examinationPoint;
+		/* if( A[examinationPoint].energy > quarry ) */
+		/* 	upperLimit = examinationPoint; */
+		/* else */
+		/* 	lowerLimit = examinationPoint; */
 
 		length = upperLimit - lowerLimit;
 	}
@@ -189,8 +189,8 @@ occaFunction int pick_mat( unsigned long int * seed ) {
 		double running = 0;
 		for( int j = i; j > 0; j-- )
 			running += dist[j];
-		if( roll < running )
-			return i;
+		/* if( roll < running ) */
+		/* 	return i; */
 	}
 
 	return 0;
@@ -241,10 +241,10 @@ occaKernel void lookup_kernel(
 
           // Get pointers to bounding values on nuclide energy grid
           NuclideGridPoint *low, *high;
-          if( energy_grid[idx].xs_ptrs[nuc] == n_gridpoints - 1 )
-            low = &nuclide_grids[ (nuc * n_gridpoints) + (energy_grid[idx].xs_ptrs[nuc] - 1) ];
-          else
-            low = &nuclide_grids[ (nuc * n_gridpoints) + (energy_grid[idx].xs_ptrs[nuc]) ];
+          /* if( energy_grid[idx].xs_ptrs[nuc] == n_gridpoints - 1 ) */
+          /*   low = &nuclide_grids[ (nuc * n_gridpoints) + (energy_grid[idx].xs_ptrs[nuc] - 1) ]; */
+          /* else */
+          /*   low = &nuclide_grids[ (nuc * n_gridpoints) + (energy_grid[idx].xs_ptrs[nuc]) ]; */
           high = low + 1;
 
           // Get interpolation factors

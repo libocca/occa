@@ -306,7 +306,7 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
-      std::cout << "this = " << *this << '\n';
+      // std::cout << "this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
@@ -391,12 +391,9 @@ namespace occa {
         if(sExpStart < sExpEnd){
           leaf.addNodes(0, 1, sExpEnd - sExpStart);
 
-          for(int j = sExpStart; j < sExpEnd; ++j){
+          for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
-            delete leaves[j];
-          }
 
-          leaf.initOrganization();
           leaf.organizeLeaves();
         }
 
@@ -616,6 +613,10 @@ namespace occa {
     }
 
     void expNode::organizeLeaves(){
+      if(info & (expType::varInfo |
+                 expType::typeInfo))
+        return;
+
       // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->leafCount) &&
@@ -1013,10 +1014,10 @@ namespace occa {
 
       leaves[leafPos - 1] = leaf;
 
-      --leafCount;
+      for(int i = (leafPos + 1); i < leafCount; ++i)
+        leaves[i - 1] = leaves[i];
 
-      for(int i = leafPos; i < leafCount; ++i)
-        leaves[i] = leaves[i + 1];
+      --leafCount;
 
       leaf->info      = expType::R;
       leaf->leafCount = 1;
@@ -1036,10 +1037,10 @@ namespace occa {
 
       leaves[leafPos - 1] = leaf;
 
-      leafCount -= 2;
+      for(int i = (leafPos + 2); i < leafCount; ++i)
+        leaves[i - 2] = leaves[i];
 
-      for(int i = leafPos; i < leafCount; ++i)
-        leaves[i] = leaves[i + 2];
+      leafCount -= 2;
 
       leaf->info      = (expType::L | expType::R);
       leaf->leafCount = 2;
@@ -1796,6 +1797,7 @@ namespace occa {
 
       case (expType::varInfo | expType::type):{
         varInfo &var = *((varInfo*) leaves[0]);
+
         out << var.toString();
 
         break;
@@ -3648,7 +3650,7 @@ namespace occa {
         std::string ret = expRoot.toString(tab);
 
         if(statementCount > 1)
-          ret += " {";
+          ret += "{";
 
         ret += '\n';
 
