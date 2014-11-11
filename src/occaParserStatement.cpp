@@ -359,8 +359,6 @@ namespace occa {
         if(i == 0)
           firstVar = &var;
 
-        std::cout << "var = " << var << '\n';
-
         leafPos = 1 + typeInfo::nextDelimeter(*this, nextLeafPos, ",");
       }
 
@@ -1639,14 +1637,22 @@ namespace occa {
     }
 
     void expNode::print(const std::string &tab){
-      if(info & (expType::varInfo |
-                 expType::typeInfo))
-        return;
-
       std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
-      for(int i = 0; i < leafCount; ++i)
-        leaves[i]->print(tab + "    ");
+      if( !(info & (expType::varInfo |
+                    expType::typeInfo)) ){
+
+        for(int i = 0; i < leafCount; ++i)
+          leaves[i]->print(tab + "    ");
+      }
+      else if(info & expType::varInfo){
+        varInfo &var = *((varInfo*) leaves[0]);
+        std::cout << tab << "    [varInfo] " << var << '\n';
+      }
+      else if(info & expType::typeInfo){
+        typeInfo &type = *((typeInfo*) leaves[0]);
+        std::cout << tab << "    [typeInfo] " << type << '\n';
+      }
     }
 
     void expNode::printOn(std::ostream &out, const std::string &tab){
