@@ -349,15 +349,17 @@ namespace occa {
       int leafPos  = 0;
 
       for(int i = 0; i < varCount; ++i){
-        varInfo &var = addVarInfoNode(leafPos);
+        varInfo &var = addVarInfoNode(i);
+        ++leafPos;
+
+        int nextLeafPos = var.loadFrom(*this, leafPos);
+
         std::cout << "var = " << var << '\n';
 
-        // int nextLeafPos = var.loadFrom(*this, leafPos + 1);
-
-        // removeNodes(leafPos + 1, leafPos - nextLeafPos);
-
-        leafPos = typeInfo::nextDelimeter(*this, leafPos, ",");
+        leafPos = 1 + typeInfo::nextDelimeter(*this, nextLeafPos, ",");
       }
+
+      leafCount = varCount;
     }
 
     void expNode::splitDeclareStatement(strNode *nodeRoot){
@@ -1632,24 +1634,14 @@ namespace occa {
     }
 
     void expNode::print(const std::string &tab){
+      if(info & (expType::varInfo |
+                 expType::typeInfo))
+        return;
+
       std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
-      if(leafInfo & leafType::exp){
-        for(int i = 0; i < leafCount; ++i)
-          leaves[i]->print(tab + "    ");
-      }
-      else if(leafInfo & leafType::type){
-        for(int i = 0; i < leafCount; ++i)
-          std::cout << typeLeaves[i]->toString(tab + "    ");
-      }
-      else {
-        for(int i = 0; i < leafCount; ++i){
-          std::cout << tab + "    " << varLeaves[i].var->toString();
-
-          if(varLeaves[i].hasExp)
-            varLeaves[i].exp->print();
-        }
-      }
+      for(int i = 0; i < leafCount; ++i)
+        leaves[i]->print(tab + "    ");
     }
 
     void expNode::printOn(std::ostream &out, const std::string &tab){

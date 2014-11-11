@@ -791,9 +791,7 @@ namespace occa {
       while((leaf->value == "(") &&
             (leaf->leafCount != 0)){
 
-        if(leaf->leaves[0] &&
-           (leaf->leaves[0]->value == "*")){
-
+        if(leaf->leaves[0]->value == "*"){
           ++nestCount;
 
           if(1 < leaf->leafCount)
@@ -801,6 +799,8 @@ namespace occa {
           else
             break;
         }
+        else
+          leaf = leaf->leaves[0];
       }
 
       return nestCount;
@@ -818,9 +818,7 @@ namespace occa {
       while((leaf->value == "(") &&
             (leaf->leafCount != 0)){
 
-        if(leaf->leaves[0] &&
-           (leaf->leaves[0]->value == "*")){
-
+        if(leaf->leaves[0]->value == "*"){
           ++nestPos;
 
           if(1 < leaf->leafCount){
@@ -836,6 +834,8 @@ namespace occa {
           else
             break;
         }
+        else
+          leaf = leaf->leaves[0];
       }
 
       if(nestPos)
@@ -846,8 +846,9 @@ namespace occa {
 
         int sLeafPos = leaf->whichLeafAmI();
 
-        if(leaf->up == &expRoot)
+        if(leaf->up == &expRoot){
           return loadStackPointersFrom(expRoot, sLeafPos + 1);
+        }
         else
           loadStackPointersFrom(*leaf, sLeafPos + 1);
       }
@@ -863,6 +864,8 @@ namespace occa {
       for(int i = leafPos; i < expRoot.leafCount; ++i){
         if(expRoot[i].value == "[")
           ++stackPointerCount;
+        else
+          break;
       }
 
       if(stackPointerCount){
@@ -894,8 +897,10 @@ namespace occa {
         argumentCount    = 1 + typeInfo::delimeterCount(leaf, ",");
         argumentVarInfos = new varInfo[argumentCount];
 
-        for(int i = 0; i < argumentCount; ++i)
+        for(int i = 0; i < argumentCount; ++i){
           sLeafPos = argumentVarInfos[i].loadFrom(leaf, sLeafPos);
+          sLeafPos = typeInfo::nextDelimeter(leaf, sLeafPos, ",") + 1;
+        }
       }
 
       return (leafPos + 1);
@@ -1173,11 +1178,8 @@ namespace occa {
 
       ret += name;
 
-      for(int i = 0; i < stackPointerCount; ++i){
-        ret += '[';
+      for(int i = 0; i < stackPointerCount; ++i)
         ret += (std::string) stackExpRoots[i];
-        ret += ']';
-      }
 
       for(int i = (functionNestCount - 1); 0 <= i; --i){
         ret += functionNests[i].toString();
