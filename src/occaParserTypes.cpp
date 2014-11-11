@@ -32,6 +32,28 @@ namespace occa {
       return q;
     }
 
+    int qualifierInfo::loadFrom(expNode &expRoot,
+                                int leafPos){
+      const int leafRoot = leafPos;
+
+      while((leafPos < expRoot.leafCount) &&
+            (expRoot.leaves[leafPos]->info & expType::qualifier)){
+
+        ++leafPos;
+      }
+
+      qualifierCount = (leafPos - leafRoot);
+
+      if(qualifierCount){
+        qualifiers = new std::string[qualifierCount];
+
+        for(int i = 0; i < qualifierCount; ++i)
+          qualifiers[i] = expRoot.leaves[leafRoot + i]->value;
+      }
+
+      return leafPos;
+    }
+
     strNode* qualifierInfo::loadFrom(statement &s,
                                       strNode *nodePos){
       strNode *nodeRoot = nodePos;
@@ -107,7 +129,7 @@ namespace occa {
     }
 
     void qualifierInfo::remove(const int pos,
-                                const int count){
+                               const int count){
       for(int i = (pos + count); i < qualifierCount; ++i)
         qualifiers[i - count] = qualifiers[i];
 
@@ -261,13 +283,9 @@ namespace occa {
         nodePos = nodePos->down;
 
         const bool usesSemicolon = !leftQualifiers.has("enum");
-        const char delimiter = (usesSemicolon ? ';' : ',');
+        const char *delimiter    = (usesSemicolon ? ";" : ",");
 
-        if(usesSemicolon)
-          nestedInfoCount = statementCountWithDelimeter(nodePos, ';');
-        else
-          nestedInfoCount = statementCountWithDelimeter(nodePos, ',');
-
+        nestedInfoCount  = statementCountWithDelimeter(nodePos, delimiter);
         nestedInfoIsType = new bool[nestedInfoCount];
         nestedInfos      = new typeOrVar[nestedInfoCount];
 
@@ -292,8 +310,7 @@ namespace occa {
                                       nodePos->left);
 
               while(nodePos &&
-                    ((nodePos->value.size()) &&
-                     (nodePos->value[0] != delimiter))){
+                    (nodePos->value != delimiter)){
 
                 nodePos = nodePos->right;
               }
@@ -311,15 +328,14 @@ namespace occa {
     }
 
     int typeInfo::statementCountWithDelimeter(strNode *nodePos,
-                                              const char delimiter){
+                                              const char *delimiter){
       if(nodePos == NULL)
         return 0;
 
       int count = 0;
 
       while(nodePos){
-        if(nodePos->value.size() &&
-           (nodePos->value[0] == delimiter))
+        if((nodePos->value == delimiter))
           ++count;
 
         nodePos = nodePos->right;
@@ -356,6 +372,32 @@ namespace occa {
       return false;
     }
 
+    bool typeInfo::statementIsATypeInfo(expNode &expRoot,
+                                        int leafPos){
+      if(expRoot.leafCount == 0)
+        return false;
+
+      qualifierInfo qualifiers;
+
+      leafPos = qualifiers.loadFrom(expRoot, leafPos);
+
+      if(qualifiers.has("typedef"))
+        return true;
+
+      if(leafPos < expRoot.leafCount){
+        if((expRoot[leafPos].info & expType::unknown) &&
+           (!expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value))){
+
+          return true;
+        }
+
+        if(expRoot[leafPos].value == "{")
+          return true;
+      }
+
+      return false;
+    }
+
     //---[ Type Info ]------------------
     void typeInfo::addQualifier(const std::string &qName,
                                 int pos){
@@ -381,10 +423,16 @@ namespace occa {
         ret += name;
 
         if(nestedInfoCount){
+          if(name.size())
+            ret += ' ';
+
           ret += '{';
           ret += '\n';
 
           for(int i = 0; i < nestedInfoCount; ++i){
+#if 1
+            ret += nestedExps[i].getString(tab + "  ");
+#else
             if(nestedInfoIsType[i]){
               ret += nestedInfos[i].type->toString(tab + "  ");
             }
@@ -397,6 +445,7 @@ namespace occa {
 
               ret += ';';
             }
+#endif
 
             ret += '\n';
           }
@@ -502,6 +551,14 @@ namespace occa {
 
       return argc;
     }
+
+    //---[ NEW ]--------------
+    int varInfo::loadFrom(expNode &exp,
+                          int leafPos,
+                          varInfo *varHasType){
+      return leafPos;
+    }
+    //========================
 
     strNode* varInfo::loadFrom(statement &s,
                                strNode *nodePos,

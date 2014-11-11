@@ -42,9 +42,12 @@ namespace occa {
       static const int occaFor         = (1 << 24);
       static const int checkSInfo      = (1 << 25);
 
-      static const int printValue      = (1 << 26);
-      static const int printLeaves     = (1 << 27);
-      static const int maxBit          = 27;
+      static const int varInfo         = (1 << 26);
+      static const int typeInfo        = (1 << 27);
+
+      static const int printValue      = (1 << 28);
+      static const int printLeaves     = (1 << 29);
+      static const int maxBit          = 29;
     };
 
     namespace leafType {
@@ -93,8 +96,13 @@ namespace occa {
       expNode(statement &s);
       expNode(expNode &up_);
 
+      inline expNode& operator [] (const int i){
+        return *leaves[i];
+      }
+
       //---[ Find Statement ]-----------
       void labelStatement(strNode *&nodeRoot);
+      int getStatementType();
 
       int loadMacroStatement(strNode *&nodeRoot);
       int loadOccaForStatement(strNode *&nodeRoot);

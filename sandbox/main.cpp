@@ -37,11 +37,165 @@ namespace occa {
 
         throw 1;
     }
+
+    int typeInfo::loadFrom(expNode &expRoot,
+                           int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+
+      if(leftQualifiers.has("typedef"))
+        return loadTypedefFrom(expRoot, leafPos);
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].info & expType::unknown)){
+
+        name = expRoot[leafPos++].value;
+      }
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "{")){
+
+        expNode &leaf = expRoot[leafPos++];
+
+        const bool usesSemicolon = !leftQualifiers.has("enum");
+        const char *delimiter = (usesSemicolon ? ";" : ",");
+
+        nestedInfoCount = statementCountWithDelimeter(leaf, delimiter);
+        nestedExps      = new expNode[nestedInfoCount];
+
+        int sLeafPos = 0;
+
+        for(int i = 0; i < nestedInfoCount; ++i){
+          int sNextLeafPos = nextDelimeter(leaf, sLeafPos, delimiter);
+
+          // Empty statements
+          if(sNextLeafPos != sLeafPos){
+            sNextLeafPos = leaf.mergeRange(expType::root,
+                                           sLeafPos,
+                                           sNextLeafPos);
+
+            expNode::swap(nestedExps[i], leaf[sLeafPos]);
+
+            nestedExps[i].print();
+            nestedExps[i].organize();
+            nestedExps[i].print();
+
+            leaf.leaves[sLeafPos] = &(nestedExps[i]);
+          }
+          else{
+            --i;
+            --nestedInfoCount;
+            ++sNextLeafPos;
+          }
+
+          sLeafPos = sNextLeafPos;
+        }
+      }
+
+      return leafPos;
+    }
+
+    int typeInfo::statementCountWithDelimeter(expNode &expRoot,
+                                              const char *delimiter){
+      int count = 0;
+
+      for(int i = 0; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          ++count;
+      }
+
+      return count;
+    }
+
+    int typeInfo::nextDelimeter(expNode &expRoot,
+                                int leafPos,
+                                const char *delimiter){
+      for(int i = leafPos; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          return i;
+      }
+
+      return expRoot.leafCount;
+    }
+
+    int typeInfo::loadTypedefFrom(expNode &expRoot,
+                                  int leafPos){
+      return leafPos;
+#if 0
+      qualifierInfo newQuals = leftQualifiers.clone();
+      newQuals.remove("typedef");
+
+      leftQualifiers.remove(1, (leftQualifiers.qualifierCount - 1));
+
+      if(nodePos->type != startBrace){
+        typeInfo *tmp = s.hasTypeInScope(nodePos->value);
+
+        if(tmp){
+          typedefing = tmp;
+        }
+        else{
+          typedefing           = new typeInfo;
+          typedefing->name     = nodePos->value;
+          typedefing->baseType = typedefing;
+        }
+
+        nodePos = nodePos->right;
+      }
+
+      if(nodePos->type == startBrace){
+        if(typedefing == NULL){
+          typedefing           = new typeInfo;
+          typedefing->baseType = typedefing;
+        }
+
+        nodePos = typedefing->loadFrom(s, nodePos);
+      }
+
+      baseType = typedefing->baseType;
+
+      varInfo typedefVarInfo;
+      typedefVarInfo.baseType = typedefing;
+
+      typedefVar = new varInfo;
+      nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
+
+      name = typedefVar->name;
+
+      return nodePos;
+#endif
+    }
+
+    void test2(){
+      parser p;
+      p.loadLanguageTypes();
+      statement &s = *(p.globalScope);
+      strNode *nodeRoot = p.splitAndPreprocessContent("struct a {int b;int c; double d,e; struct f {float g;};};");
+      // strNode *nodeRoot = p.splitAndPreprocessContent("const int * const func(const int a, const int &b){}");
+      strNode *nodePos = nodeRoot;
+
+      s.expRoot.labelStatement(nodePos);
+
+      strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
+
+      s.expRoot.initLoadFromNode(newNodeRoot);
+
+      s.expRoot.print();
+
+      typeInfo type;
+      int leafPos = type.loadFrom(s.expRoot, 0);
+
+      std::cout << "type = " << type << '\n';
+
+      throw 1;
+    }
   };
 };
 
 int main(int argc, char **argv){
   // occa::parserNamespace::test();
+  occa::parserNamespace::test2();
 
   // {
   //   occa::parser parser;

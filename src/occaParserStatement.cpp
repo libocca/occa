@@ -92,6 +92,47 @@ namespace occa {
       }
     }
 
+    int expNode::getStatementType(){
+      if(info & expType::macro_)
+        return macroStatementType;
+
+      else if(info & expType::occaFor)
+        return keywordType["occaOuterFor0"];
+
+      else if(info & (expType::qualifier |
+                      expType::type)){
+
+        if(typeInfo::statementIsATypeInfo(*this, 0))
+          return structStatementType;
+
+        varInfo var;
+        var.loadFrom(*this, 0);
+
+        if(var.info & varType::var)
+          return declareStatementType;
+        else if(var.info & varType::functionDec)
+          return functionPrototypeType;
+        else
+          return functionDefinitionType;
+      }
+
+      else if((info & (expType::unknown |
+                       expType::variable)) &&
+              (1 < leafCount) &&
+              (leaves[1]->value == ":")){
+
+        return gotoStatementType;
+      }
+
+      else if((info == expType::C) &&
+              (leaves[0]->value == "{")){
+
+        return blockStatementType;
+      }
+
+      return updateStatementType;
+    }
+
     int expNode::loadMacroStatement(strNode *&nodeRoot){
       info  = expType::macro_;
       value = nodeRoot->value;

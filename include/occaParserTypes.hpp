@@ -34,6 +34,9 @@ namespace occa {
       strNode* loadFrom(statement &s,
                         strNode *nodePos);
 
+      int loadFrom(expNode &expRoot,
+                   int leafPos);
+
       //---[ Qualifier Info ]-----------
       bool has(const std::string &qName) const;
       const std::string& get(const int pos) const;
@@ -63,6 +66,9 @@ namespace occa {
       bool *nestedInfoIsType;
       typeOrVar *nestedInfos;
 
+      // int nestedInfoCount;
+      expNode *nestedExps;
+
       typeInfo *typedefing;
       typeInfo *baseType;
 
@@ -76,11 +82,27 @@ namespace occa {
       strNode* loadFrom(statement &s,
                         strNode *nodePos);
 
+      int loadFrom(expNode &expRoot,
+                   int leafPos);
+
+      int loadTypedefFrom(expNode &expRoot,
+                          int leafPos);
+
       static int statementCountWithDelimeter(strNode *nodePos,
-                                             const char delimiter);
+                                             const char *delimiter);
+
+      static int statementCountWithDelimeter(expNode &expRoot,
+                                             const char *delimiter);
+
+      static int nextDelimeter(expNode &expRoot,
+                               int leafPos,
+                               const char *delimiter);
 
       static bool statementIsATypeInfo(statement &s,
                                        strNode *nodePos);
+
+      static bool statementIsATypeInfo(expNode &expRoot,
+                                       int leafPos);
 
       //---[ Type Info ]----------------
       void addQualifier(const std::string &qName,
@@ -131,6 +153,12 @@ namespace occa {
       varInfo& operator = (const varInfo &var);
 
       static int variablesInStatement(strNode *nodePos);
+
+      //---[ NEW ]------------
+      int loadFrom(expNode &exp,
+                   int leafPos,
+                   varInfo *varHasType = NULL);
+      //======================
 
       strNode* loadFrom(statement &s,
                         strNode *nodePos,
