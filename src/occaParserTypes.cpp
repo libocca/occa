@@ -310,35 +310,37 @@ namespace occa {
 
     int typeInfo::loadTypedefFrom(expNode &expRoot,
                                   int leafPos){
-      return leafPos;
-#if 0
       qualifierInfo newQuals = leftQualifiers.clone();
       newQuals.remove("typedef");
 
-      leftQualifiers.remove(1, (leftQualifiers.qualifierCount - 1));
+      leftQualifiers.remove(0, leftQualifiers.qualifierCount);
+      leftQualifiers.add("typedef");
 
-      if(nodePos->type != startBrace){
-        typeInfo *tmp = s.hasTypeInScope(nodePos->value);
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value != "{")){
+        typeInfo *tmp = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
 
         if(tmp){
           typedefing = tmp;
         }
         else{
           typedefing           = new typeInfo;
-          typedefing->name     = nodePos->value;
+          typedefing->name     = expRoot[leafPos].value;
           typedefing->baseType = typedefing;
         }
 
-        nodePos = nodePos->right;
+        ++leafPos;
       }
 
-      if(nodePos->type == startBrace){
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "{")){
+        // Anonymous type
         if(typedefing == NULL){
           typedefing           = new typeInfo;
           typedefing->baseType = typedefing;
         }
 
-        nodePos = typedefing->loadFrom(s, nodePos);
+        leafPos = typedefing->loadFrom(expRoot, leafPos);
       }
 
       baseType = typedefing->baseType;
@@ -347,12 +349,11 @@ namespace occa {
       typedefVarInfo.baseType = typedefing;
 
       typedefVar = new varInfo;
-      nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
+      leafPos = typedefVar->loadFrom(expRoot, leafPos, &typedefVarInfo);
 
       name = typedefVar->name;
 
-      return nodePos;
-#endif
+      return leafPos;
     }
     //========================
 
@@ -387,6 +388,7 @@ namespace occa {
         }
 
         if(nodePos->type == startBrace){
+          // Anonymous type
           if(typedefing == NULL){
             typedefing           = new typeInfo;
             typedefing->baseType = typedefing;
@@ -561,8 +563,7 @@ namespace occa {
         ret += "typedef ";
         ret += typedefing->toString();
         ret += ' ';
-        ret += typedefVar->toString();
-        ret += ';';
+        ret += typedefVar->toString(false);
       }
       else{
         ret += tab;

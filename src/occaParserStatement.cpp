@@ -306,6 +306,8 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
+      std::cout << "this = " << *this << '\n';
+
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
