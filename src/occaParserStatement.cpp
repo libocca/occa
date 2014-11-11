@@ -312,8 +312,10 @@ namespace occa {
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
+      initLoadFromNode(nodeRoot);
+
       if(sInfo->type & declareStatementType)
-        splitDeclareStatement(nodeRoot);
+        splitDeclareStatement();
 
       else if(sInfo->type & forStatementType)
         splitForStatement(nodeRoot);
@@ -328,7 +330,6 @@ namespace occa {
         splitStructStatement(nodeRoot);
 
       else{
-        initLoadFromNode(nodeRoot);
 
         organize();
       }
