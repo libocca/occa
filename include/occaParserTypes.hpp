@@ -71,6 +71,7 @@ namespace occa {
       // int nestedInfoCount;
       expNode *nestedExps;
 
+      bool typedefHasDefinition;
       typeInfo *typedefing;
       typeInfo *baseType;
 

@@ -319,8 +319,6 @@ namespace occa {
       if(sInfo->type & declareStatementType)
         splitDeclareStatement();
 
-
-
       else if((sInfo->type & (forStatementType   |
                               whileStatementType)) ||
               (sInfo->type == ifStatementType)     ||
@@ -382,8 +380,8 @@ namespace occa {
         leafPos = sExpEnd;
 
         // Don't put the [;]
-        if((sExpEnd < leafCount) &&
-           (leaves[sExpEnd]->value == ";"))
+        if((sExpEnd == leafCount) &&
+           (leaves[sExpEnd - 1]->value == ";"))
           --sExpEnd;
 
         if(sExpStart < sExpEnd){

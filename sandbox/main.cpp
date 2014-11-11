@@ -46,7 +46,7 @@ namespace occa {
       // strNode *nodeRoot = p.splitAndPreprocessContent("const int * const func(const int a, const int &b){}");
       // strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b = NULL, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double), j = 3;");
       // strNode *nodeRoot = p.splitAndPreprocessContent("for(int i = 0; i < 3; ++i){}");
-      strNode *nodeRoot = p.splitAndPreprocessContent("typedef const int *a[3]");
+      strNode *nodeRoot = p.splitAndPreprocessContent("typedef struct a {int b;int c; double d,e; struct f {float g;};} *a[3];");
 
       s.expRoot.loadFromNode(nodeRoot);
       std::cout << s.expRoot << '\n';

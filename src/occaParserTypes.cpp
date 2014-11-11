@@ -186,6 +186,9 @@ namespace occa {
       nestedInfoIsType(NULL),
       nestedInfos(NULL),
 
+      nestedExps(NULL),
+
+      typedefHasDefinition(false),
       typedefing(NULL),
       baseType(NULL),
 
@@ -200,6 +203,9 @@ namespace occa {
       nestedInfoIsType(type.nestedInfoIsType),
       nestedInfos(type.nestedInfos),
 
+      nestedExps(type.nestedExps),
+
+      typedefHasDefinition(type.typedefHasDefinition),
       typedefing(type.typedefing),
       baseType(type.baseType),
 
@@ -214,8 +220,11 @@ namespace occa {
       nestedInfoIsType = type.nestedInfoIsType;
       nestedInfos      = type.nestedInfos;
 
-      typedefing = type.typedefing;
-      baseType   = type.baseType;
+      nestedExps = type.nestedExps;
+
+      typedefHasDefinition = type.typedefHasDefinition;
+      typedefing           = type.typedefing;
+      baseType             = type.baseType;
 
       typedefVar = type.typedefVar;
 
@@ -310,11 +319,7 @@ namespace occa {
 
     int typeInfo::loadTypedefFrom(expNode &expRoot,
                                   int leafPos){
-      qualifierInfo newQuals = leftQualifiers.clone();
-      newQuals.remove("typedef");
-
-      leftQualifiers.remove(0, leftQualifiers.qualifierCount);
-      leftQualifiers.add("typedef");
+      leftQualifiers.remove("typedef");
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value != "{")){
@@ -340,7 +345,10 @@ namespace occa {
           typedefing->baseType = typedefing;
         }
 
-        leafPos = typedefing->loadFrom(expRoot, leafPos);
+        typedefing->loadFrom(expRoot, leafPos);
+        ++leafPos;
+
+        typedefHasDefinition = true;
       }
 
       baseType = typedefing->baseType;
@@ -557,11 +565,16 @@ namespace occa {
     std::string typeInfo::toString(const std::string &tab){
       std::string ret;
 
-      if(typedefing &&
-         (typedefing == baseType)){
+      if(typedefing){
         ret += tab;
         ret += "typedef ";
-        ret += typedefing->toString();
+        ret += leftQualifiers.toString();
+
+        if(typedefHasDefinition)
+          ret += typedefing->toString();
+        else
+          ret += typedefing->name;
+
         ret += ' ';
         ret += typedefVar->toString(false);
       }
