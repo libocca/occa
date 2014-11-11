@@ -435,8 +435,6 @@ namespace occa {
             leaf.organize();
           else
             leaf.splitDeclareStatement(false); // Add variables to this statement
-
-          leaf.print();
         }
 
         leafPos = (nextLeafPos + 1);
