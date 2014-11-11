@@ -350,13 +350,12 @@ namespace occa {
 
       varInfo *firstVar = NULL;
 
-      // Store variables and expressions
-      expNode newExp;
+      // Store variables and stuff
+      expNode newExp(*sInfo);
       newExp.addNodes(0, 0, varCount);
 
       for(int i = 0; i < varCount; ++i){
-        newExp.leaves[i] = new expNode;
-        expNode &leaf    = newExp[i];
+        expNode &leaf = newExp[i];
 
         varInfo &var = leaf.addVarInfoNode(0);
 
@@ -379,6 +378,9 @@ namespace occa {
 
           for(int j = sExpStart; j < sExpEnd; ++j)
             leaf.leaves[j - sExpStart + 1] = leaves[j];
+
+          leaf.initOrganization();
+          leaf.organizeLeaves();
         }
 
         if(leafPos < leafCount)
@@ -675,9 +677,14 @@ namespace occa {
 
     void expNode::initOrganization(){
       // Init ()'s bottom -> up
+      // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
-        if(leaves[i]->leafCount)
+        if((leaves[i]->leafCount) &&
+           !(leaves[i]->info & (expType::varInfo |
+                                expType::typeInfo))){
+
           leaves[i]->initOrganization();
+        }
       }
 
       //---[ Level 0 ]------
@@ -699,10 +706,8 @@ namespace occa {
       // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->leafCount) &&
-           !(leaves[i]->info & (expType::type      |
-                                expType::qualifier |
-                                expType::function  |
-                                expType::functionPointer))){
+           !(leaves[i]->info & (expType::varInfo |
+                                expType::typeInfo))){
 
           leaves[i]->organizeLeaves();
         }
@@ -1440,7 +1445,7 @@ namespace occa {
         newLeaves[i] = leaves[i];
 
       for(int i = pos; i < (pos + count); ++i){
-        newLeaves[i] = new expNode;
+        newLeaves[i] = new expNode(*this);
 
         newLeaves[i]->info      = info_;
         newLeaves[i]->leafCount = 0;

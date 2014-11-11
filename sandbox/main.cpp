@@ -48,6 +48,7 @@ namespace occa {
 
       strNode *nodePos = nodeRoot;
 
+      s.expRoot.sInfo = &s;
       s.expRoot.labelStatement(nodePos);
 
       strNode *newNodeRoot = nodeRoot->cloneTo(nodePos);
