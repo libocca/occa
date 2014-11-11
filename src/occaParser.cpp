@@ -574,8 +574,9 @@ namespace occa {
             if( !(currentState & ignoring) )
               nodePos->type = macroKeywordType;
           }
-          else
-            ignoreLine = true;
+          // // Let's keep all the macros for now
+          // else
+          //   ignoreLine = true;
 
           // Nested #if's
           if(currentState & startHash){
