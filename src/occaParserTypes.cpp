@@ -19,6 +19,11 @@ namespace occa {
       return *this;
     }
 
+    void qualifierInfo::free(){
+      if(qualifiers)
+        delete [] qualifiers;
+    }
+
     qualifierInfo qualifierInfo::clone(){
       qualifierInfo q;
 
@@ -34,6 +39,9 @@ namespace occa {
 
     int qualifierInfo::loadFrom(expNode &expRoot,
                                 int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
       const int leafRoot = leafPos;
 
       while((leafPos < expRoot.leafCount) &&
@@ -214,6 +222,135 @@ namespace occa {
       return *this;
     }
 
+    //---[ NEW ]--------------
+    int typeInfo::loadFrom(expNode &expRoot,
+                           int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+
+      if(leftQualifiers.has("typedef"))
+        return loadTypedefFrom(expRoot, leafPos);
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].info & expType::unknown)){
+
+        name = expRoot[leafPos++].value;
+      }
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "{")){
+
+        expNode &leaf = expRoot[leafPos++];
+
+        const bool usesSemicolon = !leftQualifiers.has("enum");
+        const char *delimiter = (usesSemicolon ? ";" : ",");
+
+        nestedInfoCount = delimeterCount(leaf, delimiter);
+        nestedExps      = new expNode[nestedInfoCount];
+
+        int sLeafPos = 0;
+
+        for(int i = 0; i < nestedInfoCount; ++i){
+          int sNextLeafPos = nextDelimeter(leaf, sLeafPos, delimiter);
+
+          // Empty statements
+          if(sNextLeafPos != sLeafPos){
+            sNextLeafPos = leaf.mergeRange(expType::root,
+                                           sLeafPos,
+                                           sNextLeafPos);
+
+            expNode::swap(nestedExps[i], leaf[sLeafPos]);
+
+            nestedExps[i].organize();
+
+            leaf.leaves[sLeafPos] = &(nestedExps[i]);
+          }
+          else{
+            --i;
+            --nestedInfoCount;
+            ++sNextLeafPos;
+          }
+
+          sLeafPos = sNextLeafPos;
+        }
+      }
+
+      return leafPos;
+    }
+
+    int typeInfo::delimeterCount(expNode &expRoot,
+                                 const char *delimiter){
+      int count = 0;
+
+      for(int i = 0; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          ++count;
+      }
+
+      return count;
+    }
+
+    int typeInfo::nextDelimeter(expNode &expRoot,
+                                int leafPos,
+                                const char *delimiter){
+      for(int i = leafPos; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          return i;
+      }
+
+      return expRoot.leafCount;
+    }
+
+    int typeInfo::loadTypedefFrom(expNode &expRoot,
+                                  int leafPos){
+      return leafPos;
+#if 0
+      qualifierInfo newQuals = leftQualifiers.clone();
+      newQuals.remove("typedef");
+
+      leftQualifiers.remove(1, (leftQualifiers.qualifierCount - 1));
+
+      if(nodePos->type != startBrace){
+        typeInfo *tmp = s.hasTypeInScope(nodePos->value);
+
+        if(tmp){
+          typedefing = tmp;
+        }
+        else{
+          typedefing           = new typeInfo;
+          typedefing->name     = nodePos->value;
+          typedefing->baseType = typedefing;
+        }
+
+        nodePos = nodePos->right;
+      }
+
+      if(nodePos->type == startBrace){
+        if(typedefing == NULL){
+          typedefing           = new typeInfo;
+          typedefing->baseType = typedefing;
+        }
+
+        nodePos = typedefing->loadFrom(s, nodePos);
+      }
+
+      baseType = typedefing->baseType;
+
+      varInfo typedefVarInfo;
+      typedefVarInfo.baseType = typedefing;
+
+      typedefVar = new varInfo;
+      nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
+
+      name = typedefVar->name;
+
+      return nodePos;
+#endif
+    }
+    //========================
+
     strNode* typeInfo::loadFrom(statement &s,
                                 strNode *nodePos){
       if(nodePos == NULL)
@@ -353,22 +490,27 @@ namespace occa {
 
       nodePos = qualifiers.loadFrom(s, nodePos);
 
-      if(qualifiers.has("typedef"))
+      if(qualifiers.has("typedef")){
+        qualifiers.free();
         return true;
+      }
 
       if(nodePos                           &&
          (nodePos->type & unknownVariable) &&
          (!s.hasTypeInScope(nodePos->value))){
 
+        qualifiers.free();
         return true;
       }
 
       if(nodePos &&
          (nodePos->type == startBrace)){
 
+        qualifiers.free();
         return true;
       }
 
+      qualifiers.free();
       return false;
     }
 
@@ -553,10 +695,210 @@ namespace occa {
     }
 
     //---[ NEW ]--------------
-    int varInfo::loadFrom(expNode &exp,
+    int varInfo::loadFrom(expNode &expRoot,
                           int leafPos,
                           varInfo *varHasType){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      leafPos = loadTypeFrom(expRoot, leafPos, varHasType);
+
+      info = getVarInfoFrom(expRoot, leafPos);
+
+      if(info & varType::functionPointer){
+        functionNestCount = getNestCountFrom(expRoot, leafPos);
+        functionNests     = new varInfo[functionNestCount];
+      }
+
+      leafPos = loadNameFrom(expRoot, leafPos);
+      leafPos = loadArgsFrom(expRoot, leafPos);
+
+      if((expRoot.leafCount <= leafPos) &&
+         (expRoot[leafPos].value == ",")){
+
+        ++leafPos;
+      }
+
       return leafPos;
+    }
+
+    int varInfo::loadTypeFrom(expNode &expRoot,
+                              int leafPos,
+                              varInfo *varHasType){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      if(varHasType == NULL){
+        leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+
+        if(leafPos < expRoot.leafCount){
+          baseType = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+
+          if(baseType)
+            ++leafPos;
+        }
+      }
+      else{
+        leftQualifiers = varHasType->leftQualifiers;
+        baseType       = varHasType->baseType;
+      }
+
+      leafPos = rightQualifiers.loadFrom(expRoot, leafPos);
+
+      return leafPos;
+    }
+
+    int varInfo::getVarInfoFrom(expNode &expRoot,
+                                int leafPos){
+      // No name var (argument for function)
+      if(expRoot.leafCount <= leafPos)
+        return varType::var;
+
+      const int nestCount = getNestCountFrom(expRoot, leafPos);
+
+      if(nestCount)
+        return varType::functionPointer;
+
+      ++leafPos;
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "(")){
+
+        ++leafPos;
+
+        if((leafPos < expRoot.leafCount) &&
+           (expRoot[leafPos].value == "{")){
+
+          return varType::functionDef;
+        }
+        else{
+          return varType::functionDec;
+        }
+      }
+
+      return varType::var;
+    }
+
+    int varInfo::getNestCountFrom(expNode &expRoot,
+                                  int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return 0;
+
+      int nestCount = 0;
+
+      expNode *leaf = expRoot.leaves[leafPos];
+
+      while((leaf->value == "(") &&
+            (leaf->leafCount != 0)){
+
+        if(leaf->leaves[0] &&
+           (leaf->leaves[0]->value == "*")){
+
+          ++nestCount;
+
+          if(1 < leaf->leafCount)
+            leaf = leaf->leaves[1];
+          else
+            break;
+        }
+      }
+
+      return nestCount;
+    }
+
+    int varInfo::loadNameFrom(expNode &expRoot,
+                              int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      int nestPos = 0;
+
+      expNode *leaf = expRoot.leaves[leafPos];
+
+      while((leaf->value == "(") &&
+            (leaf->leafCount != 0)){
+
+        if(leaf->leaves[0] &&
+           (leaf->leaves[0]->value == "*")){
+
+          ++nestPos;
+
+          if(1 < leaf->leafCount){
+            leaf = leaf->leaves[1];
+
+            if((2 < leaf->leafCount) &&
+               (leaf->leaves[2]->value == "(")){
+
+              functionNests[nestPos - 1].info = varType::function;
+              functionNests[nestPos - 1].loadArgsFrom(*leaf, 2);
+            }
+          }
+          else
+            break;
+        }
+      }
+
+      if(nestPos)
+        ++leafPos;
+
+      if(leaf->info & expType::unknown){
+        name = leaf->value;
+
+        int sLeafPos = leaf->whichLeafAmI();
+
+        if(leaf->up == &expRoot)
+          return loadStackPointersFrom(expRoot, sLeafPos + 1);
+        else
+          loadStackPointersFrom(*leaf, sLeafPos + 1);
+      }
+
+      return leafPos;
+    }
+
+    int varInfo::loadStackPointersFrom(expNode &expRoot,
+                                       int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      for(int i = leafPos; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == "[")
+          ++stackPointerCount;
+      }
+
+      if(stackPointerCount){
+        stackExpRoots = new expNode[stackPointerCount];
+
+        for(int i = 0; i < stackPointerCount; ++i)
+          expNode::swap(stackExpRoots[i], expRoot[leafPos + i]);
+      }
+
+      return (leafPos + stackPointerCount);
+    }
+
+    int varInfo::loadArgsFrom(expNode &expRoot,
+                              int leafPos){
+      if( !(info & varType::functionType) )
+        return leafPos;
+
+      if((expRoot.leafCount <= leafPos) ||
+         (expRoot[leafPos].value != "(")){
+
+        std::cout << "Missing arguments from function variable\n";
+        throw 1;
+      }
+
+      if(expRoot[leafPos].leafCount){
+        expNode &leaf = expRoot[leafPos];
+        int sLeafPos  = 0;
+
+        argumentCount    = 1 + typeInfo::delimeterCount(leaf, ",");
+        argumentVarInfos = new varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i)
+          sLeafPos = argumentVarInfos[i].loadFrom(leaf, sLeafPos);
+      }
+
+      return (leafPos + 1);
     }
     //========================
 

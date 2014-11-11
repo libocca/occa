@@ -342,6 +342,24 @@ namespace occa {
       organizeLeaves();
     }
 
+    void expNode::splitDeclareStatement(){
+      info = expType::declaration;
+
+      int varCount = 1 + typeInfo::delimeterCount(*this, ",");
+      int leafPos  = 0;
+
+      for(int i = 0; i < varCount; ++i){
+        varInfo &var = addVarInfoNode(leafPos);
+        std::cout << "var = " << var << '\n';
+
+        // int nextLeafPos = var.loadFrom(*this, leafPos + 1);
+
+        // removeNodes(leafPos + 1, leafPos - nextLeafPos);
+
+        leafPos = typeInfo::nextDelimeter(*this, leafPos, ",");
+      }
+    }
+
     void expNode::splitDeclareStatement(strNode *nodeRoot){
       printf("void expNode::splitDeclareStatement(strNode *nodeRoot){\n");
       info = expType::declaration;
@@ -638,25 +656,11 @@ namespace occa {
       // [(class)]
       labelCasts();
 
-      // const int [*] x
-      labelReferenceQualifiers();
-
-      // [const] int [*] x
-      mergeQualifiers();
-
       // [[const] [int] [*]] x
       mergeTypes();
 
-      // [qualifiers] [type] (*[name]) ([args])
-      mergeFunctionPointers();
-
-      if(sInfo->type & declareStatementType){
+      if(sInfo->type & declareStatementType)
         labelNewVariables();
-      }
-      else{
-        // [[[const] [int] [*]] [x]]
-        mergeVariables();
-      }
       //====================
     }
 
@@ -923,75 +927,20 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if(leaves[leafPos]->info & expType::type){
-          const bool varHasLQualifiers = (leafPos &&
-                                          (leaves[leafPos - 1]->info & expType::qualifier));
+        if(leaves[leafPos]->info & expType::qualifier){
+          print();
 
-          const bool varHasRQualifiers = (((leafPos + 1) < leafCount) &&
-                                          (leaves[leafPos + 1]->info & expType::qualifier));
+          std::cout << "1. leafPos = " << leafPos << '\n';
 
-          leafPos = mergeRange(expType::type,
-                               leafPos - varHasLQualifiers,
-                               leafPos + varHasRQualifiers);
+          typeInfo type;
+          leafPos = type.loadFrom(*this, leafPos);
+
+          std::cout << "2. leafPos = " << leafPos << '\n';
+
+          std::cout << "type = " << type << '\n';
         }
-        else
+        else if(leaves[leafPos]->info & expType::type){
           ++leafPos;
-      }
-    }
-
-    // [[[const] [int] [*]] [x]]
-    void expNode::mergeVariables(){
-      int leafPos = 0;
-
-      while(leafPos < leafCount){
-        if((leaves[leafPos]->info & expType::type) && // [[const] [int] [*]]
-           ((leafPos + 1) < leafCount)             && // [x]
-           (leaves[leafPos + 1]->info & expType::variable)){
-
-          leafPos = mergeRange(expType::variable,
-                               leafPos, leafPos + 1);
-        }
-        else
-          ++leafPos;
-      }
-    }
-
-    // 1 [type]                           2 [(]       3 [(]
-    // [[qualifiers] [type] [qualifiers]] [(*[name])] [([args])]
-    void expNode::mergeFunctionPointers(){
-      int leafPos = 0;
-
-      while(leafPos < leafCount){
-        if((leaves[leafPos]->info & expType::type)   &&     // 1
-           ((leafPos + 2) < leafCount)               &&     // Has 2 & 3
-           (leaves[leafPos + 1]->info == expType::C) &&     // 2
-           (leaves[leafPos + 2]->info == expType::C) &&     // 3
-           (leaves[leafPos + 1]->leaves[0]->value == "*")){ // 2.5
-
-          expNode *newLeaf = new expNode(*this);
-
-          newLeaf->up        = this;
-          newLeaf->info      = expType::functionPointer;
-          newLeaf->leafCount = 3;
-          newLeaf->leaves    = new expNode*[3];
-          newLeaf->leaves[0] = leaves[leafPos];
-          newLeaf->leaves[1] = leaves[leafPos + 1]->leaves[1];
-          newLeaf->leaves[2] = leaves[leafPos + 2];
-
-          // Merge arguments in [leafPos + 2]
-          newLeaf->leaves[2]->mergeArguments();
-
-          // Don't kill the name of the function pointer
-          leaves[leafPos + 1]->leafCount = 1;
-          freeLeaf(leafPos + 1);
-
-          leaves[leafPos] = newLeaf;
-
-          for(int i = (leafPos + 3); i < leafCount; ++i)
-            leaves[i - 2] = leaves[i];
-
-          ++leafPos;
-          leafCount -= 2;
         }
         else
           ++leafPos;
@@ -1449,7 +1398,6 @@ namespace occa {
       }
     }
 
-
     void expNode::addNode(const int info_,
                           const int pos){
       expNode &newNode  = *(new expNode(*this));
@@ -1477,11 +1425,41 @@ namespace occa {
       ++leafCount;
     }
 
-    void expNode::removeNode(const int pos){
-      for(int i = (pos + 1); i < leafCount; ++i)
-        leaves[i - 1] = leaves[i];
+    varInfo& expNode::addVarInfoNode(const int pos){
+      addNode(expType::varInfo, pos);
+      leaves[pos]->addNode(0);
 
-      --leafCount;
+      varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
+      varInfo *&varLeaf   = varLeaves[0];
+
+      varLeaf = new varInfo;
+      return *varLeaf;
+    }
+
+    typeInfo& expNode::addTypeInfoNode(const int pos){
+      addNode(expType::typeInfo, pos);
+      leaves[pos]->addNode(0);
+
+      typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
+      typeInfo *&typeLeaf   = typeLeaves[0];
+
+      typeLeaf = new typeInfo;
+      return *typeLeaf;
+    }
+
+    void expNode::removeNodes(const int pos, const int count){
+      int removed = 0;
+
+      for(int i = (pos + count); i < leafCount; ++i){
+        leaves[i - count] = leaves[i];
+        ++removed;
+      }
+
+      leafCount -= removed;
+    }
+
+    void expNode::removeNode(const int pos){
+      removeNodes(pos, 1);
     }
 
     void expNode::convertTo(const int info_){

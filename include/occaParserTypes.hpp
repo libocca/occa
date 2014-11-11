@@ -29,6 +29,8 @@ namespace occa {
       qualifierInfo(const qualifierInfo &q);
       qualifierInfo& operator = (const qualifierInfo &q);
 
+      void free();
+
       qualifierInfo clone();
 
       strNode* loadFrom(statement &s,
@@ -79,30 +81,32 @@ namespace occa {
       typeInfo(const typeInfo &type);
       typeInfo& operator = (const typeInfo &type);
 
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos);
-
+      //---[ NEW ]------------
       int loadFrom(expNode &expRoot,
                    int leafPos);
 
       int loadTypedefFrom(expNode &expRoot,
                           int leafPos);
 
-      static int statementCountWithDelimeter(strNode *nodePos,
-                                             const char *delimiter);
-
-      static int statementCountWithDelimeter(expNode &expRoot,
-                                             const char *delimiter);
+      static int delimeterCount(expNode &expRoot,
+                                const char *delimiter);
 
       static int nextDelimeter(expNode &expRoot,
                                int leafPos,
                                const char *delimiter);
 
-      static bool statementIsATypeInfo(statement &s,
-                                       strNode *nodePos);
-
       static bool statementIsATypeInfo(expNode &expRoot,
                                        int leafPos);
+      //======================
+
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos);
+
+      static int statementCountWithDelimeter(strNode *nodePos,
+                                             const char *delimiter);
+
+      static bool statementIsATypeInfo(statement &s,
+                                       strNode *nodePos);
 
       //---[ Type Info ]----------------
       void addQualifier(const std::string &qName,
@@ -155,9 +159,28 @@ namespace occa {
       static int variablesInStatement(strNode *nodePos);
 
       //---[ NEW ]------------
-      int loadFrom(expNode &exp,
+      int loadFrom(expNode &expRoot,
                    int leafPos,
                    varInfo *varHasType = NULL);
+
+      int loadTypeFrom(expNode &expRoot,
+                       int leafPos,
+                       varInfo *varHasType);
+
+      int loadNameFrom(expNode &expRoot,
+                       int leafPos);
+
+      int getVarInfoFrom(expNode &expRoot,
+                         int leafPos);
+
+      int getNestCountFrom(expNode &expRoot,
+                           int leafPos);
+
+      int loadStackPointersFrom(expNode &expRoot,
+                                int leafPos);
+
+      int loadArgsFrom(expNode &expRoot,
+                       int leafPos);
       //======================
 
       strNode* loadFrom(statement &s,

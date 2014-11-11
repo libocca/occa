@@ -121,6 +121,8 @@ namespace occa {
       void splitAndOrganizeNode(strNode *nodeRoot);
       void organize();
 
+      void splitDeclareStatement();
+
       void splitDeclareStatement(strNode *nodeRoot);
       void splitForStatement(strNode *nodeRoot);
       void splitFunctionStatement(strNode *nodeRoot);
@@ -228,6 +230,11 @@ namespace occa {
                           expNode **flatLeaves);
 
       void addNode(const int info_, const int pos = 0);
+
+      varInfo& addVarInfoNode(const int pos = 0);
+      typeInfo& addTypeInfoNode(const int pos = 0);
+
+      void removeNodes(const int pos, const int count = 1);
       void removeNode(const int pos = 0);
 
       void convertTo(const int info_ = 0);
