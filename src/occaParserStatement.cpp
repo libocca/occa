@@ -306,8 +306,6 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
-      std::cout << "this = " << *this << '\n';
-
       // Only the root needs to free
       if(up == NULL)
         occa::parserNamespace::free(newNodeRoot);
@@ -1719,9 +1717,7 @@ namespace occa {
       case (expType::function | expType::declaration):{
         if(leafCount){
           varInfo &var = *((varInfo*) leaves[0]->leaves[0]);
-          out << tab << var.toString() << "{\n";
-
-          out << tab << "}\n";
+          out << tab << var.toString();
         }
 
         break;
