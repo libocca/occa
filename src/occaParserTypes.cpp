@@ -257,13 +257,18 @@ namespace occa {
 
           // Empty statements
           if(sNextLeafPos != sLeafPos){
+            const bool loadType = typeInfo::statementIsATypeInfo(leaf, sLeafPos);
+
             sNextLeafPos = leaf.mergeRange(expType::root,
                                            sLeafPos,
                                            sNextLeafPos);
 
             expNode::swap(nestedExps[i], leaf[sLeafPos]);
 
-            nestedExps[i].organize();
+            if(!loadType)
+              nestedExps[i].splitDeclareStatement(false);
+            else
+              nestedExps[i].splitStructStatement(false);
 
             leaf.leaves[sLeafPos] = &(nestedExps[i]);
           }
@@ -571,26 +576,8 @@ namespace occa {
           ret += '{';
           ret += '\n';
 
-          for(int i = 0; i < nestedInfoCount; ++i){
-#if 1
-            ret += nestedExps[i].getString(tab + "  ");
-#else
-            if(nestedInfoIsType[i]){
-              ret += nestedInfos[i].type->toString(tab + "  ");
-            }
-            else {
-              ret += tab + "  ";
-              ret += nestedInfos[i].varLeaf->var->toString();
-
-              if(nestedInfos[i].varLeaf->hasExp)
-                ret += nestedInfos[i].varLeaf->exp->getString();
-
-              ret += ';';
-            }
-#endif
-
-            ret += '\n';
-          }
+          for(int i = 0; i < nestedInfoCount; ++i)
+            ret += nestedExps[i].toString(tab + "  ");
 
           ret += tab;
           ret += '}';

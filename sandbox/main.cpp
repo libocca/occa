@@ -47,7 +47,7 @@ namespace occa {
       // strNode *nodeRoot = p.splitAndPreprocessContent("const int *const ** const***a[2], *b = NULL, ((c)), d[3], e(int), (f), ((*g))(), (*(*h)(int))(double), (*(*(*i)())(int))(double), j = 3;");
 
       s.expRoot.loadFromNode(nodeRoot);
-      s.expRoot.print();
+      std::cout << s.expRoot << '\n';
 
       throw 1;
     }

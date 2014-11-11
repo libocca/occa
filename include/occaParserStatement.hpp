@@ -121,8 +121,8 @@ namespace occa {
       void splitAndOrganizeNode(strNode *nodeRoot);
       void organize();
 
-      void splitDeclareStatement();
-      void splitStructStatement();
+      void splitDeclareStatement(const bool addVariablesToScope = true);
+      void splitStructStatement(const bool addTypesToScope = true);
 
       void splitForStatement(strNode *nodeRoot);
       void splitFunctionStatement(strNode *nodeRoot);
@@ -259,7 +259,7 @@ namespace occa {
       void print(const std::string &tab = "");
       void printOn(std::ostream &out, const std::string &tab = "");
 
-      std::string getString(const std::string &tab = "");
+      std::string toString(const std::string &tab = "");
       operator std::string ();
 
       friend std::ostream& operator << (std::ostream &out, expNode &n);

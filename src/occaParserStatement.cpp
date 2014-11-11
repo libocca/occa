@@ -264,8 +264,8 @@ namespace occa {
 
       // Don't need to load stuff
       if(sInfo->type & (macroStatementType          |
-                       gotoStatementType            |
-                       blockStatementType) ||
+                        gotoStatementType            |
+                        blockStatementType) ||
          (sInfo->type == keywordType["occaOuterFor0"])){
 
         return;
@@ -341,7 +341,7 @@ namespace occa {
       organizeLeaves();
     }
 
-    void expNode::splitDeclareStatement(){
+    void expNode::splitDeclareStatement(const bool addVariablesToScope){
       info = expType::declaration;
 
       int varCount = 1 + typeInfo::delimeterCount(*this, ",");
@@ -351,15 +351,22 @@ namespace occa {
 
       // Store variables and stuff
       expNode newExp(*sInfo);
-      newExp.addNodes(0, 0, varCount);
+      newExp.info = info;
+      newExp.addNodes(expType::root, 0, varCount);
 
       for(int i = 0; i < varCount; ++i){
         expNode &leaf = newExp[i];
+        varInfo &var  = leaf.addVarInfoNode(0);
 
-        varInfo &var = leaf.addVarInfoNode(0);
-        sInfo->up->addVariable(var);
+        if(addVariablesToScope)
+          sInfo->up->addVariable(var);
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+
+        if(i == 0){
+          leaf.leaves[0]->info |= expType::type;
+          firstVar = &var;
+        }
 
         removeNodes(leafPos, nextLeafPos - leafPos);
 
@@ -369,15 +376,16 @@ namespace occa {
         leafPos = sExpEnd;
 
         // Don't put the [;]
-        if((sExpEnd == leafCount) &&
-           (leaves[sExpEnd]->value != ","))
+        if(sExpEnd == leafCount)
           --sExpEnd;
 
         if(sExpStart < sExpEnd){
           leaf.addNodes(0, 1, sExpEnd - sExpStart);
 
-          for(int j = sExpStart; j < sExpEnd; ++j)
-            leaf.leaves[j - sExpStart + 1] = leaves[j];
+          for(int j = sExpStart; j < sExpEnd; ++j){
+            expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
+            delete leaves[j];
+          }
 
           leaf.initOrganization();
           leaf.organizeLeaves();
@@ -385,23 +393,23 @@ namespace occa {
 
         if(leafPos < leafCount)
           removeNode(leafPos);
-
-        if(i == 0)
-          firstVar = &var;
       }
 
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitStructStatement(){
+    void expNode::splitStructStatement(const bool addTypesToScope){
       printf("void expNode::splitStructStatement(strNode *nodeRoot){\n");
       info = expType::struct_;
 
       // Store type
       expNode newExp(*sInfo);
+      newExp.info = info;
 
       typeInfo &type = newExp.addTypeInfoNode(0);
-      sInfo->addType(type);
+
+      if(addTypesToScope)
+        sInfo->addType(type);
 
       int leafPos = type.loadFrom(*this, 0);
 
@@ -1243,6 +1251,12 @@ namespace occa {
 
       swapValues(a.leafCount, b.leafCount);
       swapValues(a.leaves   , b.leaves);
+
+      for(int i = 0; i < a.leafCount; ++i)
+        a.leaves[i]->up = &a;
+
+      for(int i = 0; i < b.leafCount; ++i)
+        b.leaves[i]->up = &b;
     }
 
     expNode* expNode::clone(statement &s){
@@ -1848,10 +1862,10 @@ namespace occa {
 
       case (expType::declaration):{
         if(leafCount){
-          out << tab << *(varLeaves[0].var);
+          out << tab << leaves[0]->toString();
 
           for(int i = 1; i < leafCount; ++i)
-            out << ", " << varLeaves[i].var->toString(false);
+            out << ", " << leaves[i]->toString();
 
           out << ";\n";
         }
@@ -1860,8 +1874,31 @@ namespace occa {
       }
 
       case (expType::struct_):{
-        if(leafCount)
-          out << (typeLeaves[0]->toString(tab));
+        if(leafCount){
+          typeInfo &type = *((typeInfo*) leaves[0]->leaves[0]);
+          out << type.toString(tab) << ";\n";
+        }
+
+        break;
+      }
+
+      case (expType::varInfo | expType::type):{
+        varInfo &var = *((varInfo*) leaves[0]);
+        out << var.toString();
+
+        break;
+      }
+
+      case (expType::varInfo):{
+        varInfo &var = *((varInfo*) leaves[0]);
+        out << var.toString(false);
+
+        break;
+      }
+
+      case (expType::typeInfo):{
+        typeInfo &type = *((typeInfo*) leaves[0]);
+        out << type.toString(tab) << ";\n";
 
         break;
       }
@@ -1952,8 +1989,8 @@ namespace occa {
           }
 
           if( !(sInfo->type & (doWhileStatementType |
-                                elseStatementType    |
-                                gotoStatementType)) )
+                               elseStatementType    |
+                               gotoStatementType)) )
             out << ")";
           else if(sInfo->type & gotoStatementType)
             out << ":";
@@ -1996,7 +2033,7 @@ namespace occa {
       };
     }
 
-    std::string expNode::getString(const std::string &tab){
+    std::string expNode::toString(const std::string &tab){
       std::stringstream ss;
 
       printOn(ss, tab);
@@ -2005,7 +2042,7 @@ namespace occa {
     }
 
     expNode::operator std::string (){
-      return getString();
+      return toString();
     }
 
     std::ostream& operator << (std::ostream &out, expNode &n){
@@ -2105,7 +2142,7 @@ namespace occa {
          (nodeRoot->right)                   &&
          (hasTypeInScope(nodeRoot->right->value))){
 
-          return checkDescriptorStatementType(nodeRoot);
+        return checkDescriptorStatementType(nodeRoot);
       }
 
       while(nodeRoot){
@@ -3667,7 +3704,7 @@ namespace occa {
 
       // OCCA For's
       if(type == (occaStatementType | forStatementType)){
-        std::string ret = expRoot.getString(tab) + " {\n";
+        std::string ret = expRoot.toString(tab) + " {\n";
 
         while(statementPos){
           ret += (std::string) *(statementPos->value);
@@ -3680,15 +3717,15 @@ namespace occa {
       }
 
       else if(type & declareStatementType){
-        return expRoot.getString(tab);
+        return expRoot.toString(tab);
       }
 
       else if(type & (simpleStatementType | gotoStatementType)){
-        return expRoot.getString(tab) + "\n";
+        return expRoot.toString(tab) + "\n";
       }
 
       else if(type & flowStatementType){
-        std::string ret = expRoot.getString(tab);
+        std::string ret = expRoot.toString(tab);
 
         if(statementCount > 1)
           ret += " {";
@@ -3708,7 +3745,7 @@ namespace occa {
 
       else if(type & functionStatementType){
         if(type & functionDefinitionType){
-          std::string ret = expRoot.getString(tab);
+          std::string ret = expRoot.toString(tab);
 
           ret += " {\n";
 
@@ -3722,7 +3759,7 @@ namespace occa {
           return ret;
         }
         else if(type & functionPrototypeType)
-          return expRoot.getString(tab);
+          return expRoot.toString(tab);
       }
       else if(type & blockStatementType){
         std::string ret = "";
@@ -3741,13 +3778,13 @@ namespace occa {
         return ret;
       }
       else if(type & structStatementType){
-        return expRoot.getString(tab) + "\n";
+        return expRoot.toString(tab) + "\n";
       }
       else if(type & macroStatementType){
-        return expRoot.getString(tab);
+        return expRoot.toString(tab);
       }
 
-      return expRoot.getString(tab);
+      return expRoot.toString(tab);
     }
 
     std::ostream& operator << (std::ostream &out, statement &s){
