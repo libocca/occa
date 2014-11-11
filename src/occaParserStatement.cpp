@@ -356,13 +356,16 @@ namespace occa {
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
 
+        removeNodes(leafPos, nextLeafPos - leafPos);
+
+        leafPos = typeInfo::nextDelimeter(*this, leafPos, ",");
+
+        if(leafPos < leafCount)
+          removeNode(leafPos);
+
         if(i == 0)
           firstVar = &var;
-
-        leafPos = 1 + typeInfo::nextDelimeter(*this, nextLeafPos, ",");
       }
-
-      leafCount = varCount;
     }
 
     void expNode::splitDeclareStatement(strNode *nodeRoot){
@@ -1453,12 +1456,11 @@ namespace occa {
     }
 
     void expNode::removeNodes(const int pos, const int count){
-      int removed = 0;
+      const int removed = (((pos + count) <= leafCount) ?
+                           count : (leafCount - pos));
 
-      for(int i = (pos + count); i < leafCount; ++i){
+      for(int i = (pos + count); i < leafCount; ++i)
         leaves[i - count] = leaves[i];
-        ++removed;
-      }
 
       leafCount -= removed;
     }
