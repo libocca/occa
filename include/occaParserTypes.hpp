@@ -220,6 +220,8 @@ namespace occa {
 
       const std::string& getLastLeftQualifier() const;
       const std::string& getLastRightQualifier() const;
+
+      void removeStackPointers();
       //================================
 
       std::string toString(const bool printType = true) const;

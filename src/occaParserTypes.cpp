@@ -20,8 +20,12 @@ namespace occa {
     }
 
     void qualifierInfo::free(){
-      if(qualifiers)
+      if(qualifiers){
+        qualifierCount = 0;
+
         delete [] qualifiers;
+        qualifiers = NULL;
+      }
     }
 
     qualifierInfo qualifierInfo::clone(){
@@ -237,6 +241,8 @@ namespace occa {
 
     typeInfo typeInfo::clone(){
       typeInfo c = *this;
+
+      c.leftQualifiers = leftQualifiers.clone();
 
       if(nestedInfoCount){
         c.nestedInfoIsType = new bool[nestedInfoCount];
@@ -572,9 +578,10 @@ namespace occa {
     }
 
     varInfo varInfo::clone(){
-      varInfo v;
+      varInfo v = *this;
 
-      v = *this;
+      v.leftQualifiers  = leftQualifiers.clone();
+      v.rightQualifiers = rightQualifiers.clone();
 
       if(stackPointerCount){
         v.stackExpRoots = new expNode[stackPointerCount];
@@ -1052,6 +1059,15 @@ namespace occa {
 
     const std::string& varInfo::getLastRightQualifier() const {
       return rightQualifiers.get(rightQualifiers.qualifierCount - 1);
+    }
+
+    void varInfo::removeStackPointers(){
+      if(stackPointerCount){
+        stackPointerCount = 0;
+
+        delete [] stackExpRoots;
+        stackExpRoots = NULL;
+      }
     }
     //================================
 

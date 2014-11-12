@@ -1814,7 +1814,20 @@ namespace occa {
 
       varInfo &var0 = s.getDeclarationVarInfo(0);
 
-      expNode *newRoot = s.expRoot.clone(s);
+      expNode &newRoot = *(s.expRoot.clone(s));
+      varInfo &newVar0 = newRoot.getVariableInfoNode(0)->getVarInfo();
+
+      newVar0.leftQualifiers.clear();
+      newVar0.baseType = NULL;
+
+      for(int i = 0; i < argc; ++i){
+        varInfo &newVar = newRoot.getVariableInfoNode(i)->getVarInfo();
+
+        // newVar.rightQualifiers.clear();
+        newVar.removeStackPointers();
+      }
+
+      std::cout << "newRoot = " << newRoot << '\n';
 
       for(int i = 0; i < argc; ++i){
         varInfo &var = s.getDeclarationVarInfo(i);
