@@ -1471,7 +1471,20 @@ namespace occa {
       delete leaves[leafPos];
     }
 
+    // [-] Not properly done for varInfo and typeInfo
     void expNode::free(){
+      if(info & (expType::varInfo | expType::typeInfo)){
+
+        if(info & expType::varInfo)
+          delete (varInfo*) leaves[0];
+        if(info & expType::typeInfo)
+          delete (typeInfo*) leaves[0];
+
+        delete [] leaves;
+
+        return;
+      }
+
       for(int i = 0; i < leafCount; ++i){
         leaves[i]->free();
         delete leaves[i];
