@@ -37,6 +37,8 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       // Broken
       addFunctionPrototypes();
@@ -56,8 +58,6 @@ namespace occa {
       modifyTextureVariables();
 
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
-      std::cout << (std::string) *globalScope;
-      throw 1;
 
       loadKernelInfos();
 
