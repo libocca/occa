@@ -988,8 +988,6 @@ namespace occa {
       expNode &node2 = *(s.expRoot.leaves[1]);
       expNode &node3 = *(s.expRoot.leaves[2]);
 
-      node1.print();
-
       //---[ Node 1 ]---------
       if((node1.info != expType::declaration) ||
          (node1.getVariableCount() != 1)      ||
@@ -1003,39 +1001,39 @@ namespace occa {
 
       //---[ Node 2 ]---------
       if((node2.leafCount != 1) ||
-         ((node2.leaves[0]->value != "<=") &&
-          (node2.leaves[0]->value != "<" ) &&
-          (node2.leaves[0]->value != ">" ) &&
-          (node2.leaves[0]->value != ">="))){
+         ((node2[0].value != "<=") &&
+          (node2[0].value != "<" ) &&
+          (node2[0].value != ">" ) &&
+          (node2[0].value != ">="))){
 
         std::cout << "Wrong 2nd statement for:\n  " << s.expRoot << '\n';
         throw 1;
       }
 
-      if(node2.leaves[0]->leaves[0]->value == iter){
-        bound = (std::string) *(node2.leaves[0]->leaves[1]);
+      if(node2[0][0].value == iter){
+        bound = (std::string) node2[0][1];
       }
-      else if(node2.leaves[0]->leaves[1]->value == iter){
-        bound = (std::string) *(node2.leaves[0]->leaves[0]);
+      else if(node2[0][1].value == iter){
+        bound = (std::string) node2[0][0];
       }
       else {
         std::cout << "Wrong 2nd statement for:\n  " << s.expRoot << '\n';
         throw 1;
       }
 
-      iterCheck = node2.leaves[0]->value;
+      iterCheck = node2[0].value;
 
       //---[ Node 3 ]---------
       if((node3.leafCount != 1) ||
-         ((node3.leaves[0]->value != "++") &&
-          (node3.leaves[0]->value != "--") &&
-          (node3.leaves[0]->value != "+=") &&
-          (node3.leaves[0]->value != "-="))){
+         ((node3[0].value != "++") &&
+          (node3[0].value != "--") &&
+          (node3[0].value != "+=") &&
+          (node3[0].value != "-="))){
         std::cout << "Wrong 3nd statement for:\n  " << s.expRoot << '\n';
         throw 1;
       }
 
-      iterOp = node3.leaves[0]->value;
+      iterOp = node3[0].value;
 
       // [+]+, [+]=
       // [-]-, [-]=
@@ -1044,11 +1042,11 @@ namespace occa {
       if((iterOp == "++") || (iterOp == "--"))
         opStride = "1";
       else{
-        if(node3.leaves[0]->leaves[0]->value == iter){
-          opStride = (std::string) *(node3.leaves[0]->leaves[1]);
+        if(node3[0][0].value == iter){
+          opStride = (std::string) node3[0][1];
         }
-        else if(node3.leaves[0]->leaves[1]->value == iter){
-          opStride = (std::string) *(node3.leaves[0]->leaves[0]);
+        else if(node3[0][1].value == iter){
+          opStride = (std::string) node3[0][0];
         }
         else {
           std::cout << "Wrong 3rd statement for:\n  " << s.expRoot << '\n';
