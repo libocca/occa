@@ -1,4 +1,4 @@
-#if
+#if 0
 #  define sr     1
 #  define tFloat bool
 #elif (1.2f < (+1e0f + 0.3)) && (1 & 3) && (true || false)

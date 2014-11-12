@@ -137,7 +137,7 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
-      std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
+      // std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
@@ -2675,9 +2675,11 @@ namespace occa {
           nodeRoot    = nextNode;
           nodeRootEnd = nextNode;
 
-          st = findStatementType(nodeRootEnd);
+          if(nodeRootEnd){
+            st = findStatementType(nodeRootEnd);
 
-          nodeRootEnd = nextNode;
+            nodeRootEnd = nextNode;
+          }
         }
       }
 

@@ -102,25 +102,15 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
-      return typeHolder(*labelNodeRoot);
-#if 0
       if(labelNodeRoot->type & presetValue)
         return typeHolder(*labelNodeRoot);
 
       strNode *labelNodePos = labelNodeRoot;
 
       while(labelNodePos){
-        if(labelNodePos->down.size()){
-          // () () is not allowed (down.size is 0 or 1)
-          strNode *downNode = labelNodePos->down[0];
-          labelNodePos->down.clear();
-
-          if(labelNodePos->type)
-            labelNodePos = labelNodePos->push( evaluateLabelNode(downNode) );
-          else
-            labelNodePos->value = evaluateLabelNode(downNode);
-
-          labelNodePos->type = presetValue;
+        if(labelNodePos->down){
+          labelNodePos->value = evaluateLabelNode(labelNodePos->down);
+          labelNodePos->type  = presetValue;
         }
 
         if(labelNodePos->right == NULL)
@@ -130,15 +120,6 @@ namespace occa {
       }
 
       strNode *labelNodeEnd = labelNodePos;
-
-      if(labelNodeEnd && labelNodeRoot){
-        if((labelNodeRoot->type & startParentheses) &&
-           (labelNodeEnd->type  & endParentheses)){
-
-          popAndGoRight(labelNodeRoot);
-          labelNodeEnd->pop();
-        }
-      }
 
       strNode *minOpNode;
       int minPrecedence, minOpType;
@@ -257,7 +238,6 @@ namespace occa {
       typeHolder th(labelNodeRoot->value);
 
       return th;
-#endif
     }
 
     void parserBase::loadMacroInfo(macroInfo &info, const char *&c){
