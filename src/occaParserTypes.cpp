@@ -149,6 +149,13 @@ namespace occa {
         qualifiers[i - count] = qualifiers[i];
 
       qualifierCount -= count;
+
+      if((qualifierCount == 0) &&
+         (count != 0)){
+
+        delete [] qualifiers;
+        qualifiers = NULL;
+      }
     }
 
     void qualifierInfo::clear(){
@@ -606,7 +613,7 @@ namespace occa {
           v.functionNests[i] = functionNests[i].clone();
       }
 
-      return *this;
+      return v;
     }
 
     int varInfo::variablesInStatement(strNode *nodePos){
@@ -666,7 +673,7 @@ namespace occa {
         }
       }
       else{
-        leftQualifiers = varHasType->leftQualifiers;
+        leftQualifiers = varHasType->leftQualifiers.clone();
         baseType       = varHasType->baseType;
       }
 
@@ -867,7 +874,7 @@ namespace occa {
           nodePos = nodePos->right;
       }
       else{
-        leftQualifiers = varHasType->leftQualifiers;
+        leftQualifiers = varHasType->leftQualifiers.clone();
         baseType       = varHasType->baseType;
       }
 

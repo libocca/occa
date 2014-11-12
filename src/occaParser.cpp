@@ -1808,7 +1808,7 @@ namespace occa {
 
       std::stringstream ss;
 
-      s.removeQualifier("exclusive");
+      // s.removeQualifier("exclusive");
 
       const int argc = s.getDeclarationVarCount();
 
@@ -1856,27 +1856,32 @@ namespace occa {
 
       for(int i = 0; i < argc; ++i){
         varInfo &var = s.getDeclarationVarInfo(i);
+        var.removeQualifier("exclusive");
 
-        const int isPrivateArray = var.pointerCount;
-#if 0
+        const int isPrivateArray = var.stackPointerCount;
+
         ss << "occaPrivate";
 
         if(isPrivateArray)
           ss << "Array";
 
-        ss << "(" << typeNode << var.leftQualifiers << ", " << var.name;
+        ss << "("
+           << var.leftQualifiers
+           << var.baseType->name
+           << var.rightQualifiers << ", "
+           << var.name;
 
         if(isPrivateArray){
           ss << ", ";
 
           // [-] Only supports 1D arrays
-          if(1 < isPrivateArray){
+          if(1 < var.stackPointerCount){
             std::cout << "Only 1D exclusive arrays are supported:\n"
                       << "exclusive " << s << '\n';
             throw 1;
           }
 
-          ss << var.stackExpRoots[0];
+          ss << var.stackExpRoots[0][0];
         }
 
         ss << ");";
@@ -1887,9 +1892,8 @@ namespace occa {
         s.statementEnd->value->depth = s.depth;
 
         ss.str("");
-#endif
       }
-#if 0
+
       statementNode *sn = s.getStatementNode();
 
       if(s.up->statementStart != sn){
@@ -1908,7 +1912,6 @@ namespace occa {
 
       s.statementStart = s.statementEnd = NULL;
       s.statementCount = 0;
-#endif
     }
 
     void parserBase::modifyTextureVariables(){

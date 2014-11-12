@@ -1033,7 +1033,6 @@ namespace occa {
     }
 
     void expNode::cloneTo(expNode &newRoot){
-      newRoot.value = value;
       newRoot.info  = info;
 
       if(info & (expType::varInfo | expType::typeInfo)){
@@ -1047,6 +1046,7 @@ namespace occa {
         }
       }
       else {
+        newRoot.value     = value;
         newRoot.leafCount = leafCount;
 
         if(leafCount){
