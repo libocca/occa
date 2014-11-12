@@ -1076,20 +1076,27 @@ namespace occa {
 
       ss.str("");
 
-      if( !s.hasQualifier("const") )
-        s.addQualifier("const");
+      // if( !s.hasQualifier("const") )
+      //   s.addQualifier("const");
 
       if(opStride != "1"){
-        ss << node1 << ' '
+        node1.printOn(ss, "", expFlag::noSemicolon);
+
+        ss << ' '
            << opSign
            << " (occa" << ioLoop << "Id" << loopNest
            << " * (" << opStride << "));";
       }
       else{
-        ss << node1 << ' '
+        node1.printOn(ss, "", expFlag::noSemicolon);
+
+        ss << ' '
            << opSign
            << " occa" << ioLoop << "Id" << loopNest << ";";
       }
+
+      s.scopeTypeMap.clear();
+      s.scopeVarMap.clear();
 
       s.loadFromNode(labelCode( splitContent(ss.str()) ));
 
