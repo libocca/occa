@@ -3468,7 +3468,7 @@ namespace occa {
         if((statementCount > 1) ||
            (type == doWhileStatementType)){
 
-            ret += tab + "}";
+            ret += tab + "}\n";
         }
 
         if(type == doWhileStatementType){
