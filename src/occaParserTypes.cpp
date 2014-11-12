@@ -125,6 +125,7 @@ namespace occa {
       delete [] qualifiers;
 
       qualifiers = newQualifiers;
+      ++qualifierCount;
     }
 
     void qualifierInfo::remove(const std::string &qName){
@@ -1107,8 +1108,7 @@ namespace occa {
       return leftQualifiers.has(qName);
     }
 
-    void varInfo::addQualifier(const std::string &qName,
-                               int pos){
+    void varInfo::addQualifier(const std::string &qName, int pos){
       leftQualifiers.add(qName, pos);
     }
 

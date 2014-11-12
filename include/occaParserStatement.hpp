@@ -54,6 +54,10 @@ namespace occa {
       static const int none        = 0;
       static const int noNewline   = (1 << 0);
       static const int noSemicolon = (1 << 1);
+
+      static const int addVarToScope  = (1 << 0);
+      static const int addTypeToScope = (1 << 1);
+      static const int addToParent    = (1 << 2);
     }
 
     namespace leafType {
@@ -115,10 +119,16 @@ namespace occa {
       void splitAndOrganizeNode(strNode *nodeRoot);
       void organize();
 
-      void splitDeclareStatement(const bool addVariablesToScope = true);
+      void splitDeclareStatement(const int flags = (expFlag::addVarToScope |
+                                                    expFlag::addToParent));
+
       void splitFlowStatement();
-      void splitFunctionStatement(const bool addVariablesToScope = true);
-      void splitStructStatement(const bool addTypesToScope = true);
+
+      void splitFunctionStatement(const int flags = (expFlag::addVarToScope |
+                                                     expFlag::addToParent));
+
+      void splitStructStatement(const int flags = (expFlag::addTypeToScope |
+                                                   expFlag::addToParent));
 
       void initLoadFromNode(strNode *nodeRoot);
 
@@ -209,6 +219,18 @@ namespace occa {
 
       varInfo& addVarInfoNode(const int pos = 0);
       typeInfo& addTypeInfoNode(const int pos = 0);
+
+      varInfo& getVarInfo();
+      const varInfo& getVarInfo() const;
+
+      varInfo& getVarInfo(const int pos);
+      const varInfo& getVarInfo(const int pos) const;
+
+      typeInfo& getTypeInfo();
+      const typeInfo& getTypeInfo() const;
+
+      typeInfo& getTypeInfo(const int pos);
+      const typeInfo& getTypeInfo(const int pos) const;
 
       void removeNodes(const int pos, const int count = 1);
       void removeNode(const int pos = 0);
@@ -390,7 +412,7 @@ namespace occa {
 
       statementNode* getStatementNode();
 
-      varInfo* addVariable(const varInfo &info,
+      varInfo* addVariable(varInfo &var,
                            statement *origin = NULL);
 
       void addStatement(statement *newStatement);

@@ -176,7 +176,7 @@ namespace occa {
       organizeLeaves();
     }
 
-    void expNode::splitDeclareStatement(const bool addVariablesToScope){
+    void expNode::splitDeclareStatement(const int flags){
       info = expType::declaration;
 
       int varCount = 1 + typeInfo::delimeterCount(*this, ",");
@@ -195,9 +195,11 @@ namespace occa {
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
 
-        if(addVariablesToScope){
-          if(sInfo->up != NULL)
-            sInfo->up->addVariable(var);
+        if(flags & expFlag::addVarToScope){
+          if(flags & expFlag::addToParent){
+            if(sInfo->up != NULL)
+              sInfo->up->addVariable(var);
+          }
           else
             sInfo->addVariable(var);
         }
@@ -266,7 +268,7 @@ namespace occa {
           if(i != 0)
             leaf.organize();
           else
-            leaf.splitDeclareStatement(false); // Add variables to this statement
+            leaf.splitDeclareStatement(expFlag::addVarToScope);
         }
 
         leafPos = (nextLeafPos + 1);
@@ -275,7 +277,7 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitFunctionStatement(const bool addVariablesToScope){
+    void expNode::splitFunctionStatement(const int flags){
       if(sInfo->type & functionDefinitionType)
         info = (expType::function | expType::declaration);
       else
@@ -285,21 +287,20 @@ namespace occa {
         return;
 
       varInfo &var = addVarInfoNode(0);
+      int leafPos  = var.loadFrom(*this, 1);
 
-      if((addVariablesToScope) &&
-         (sInfo->up != NULL)   &&
-         (sInfo->up->scopeVarMap.find(var.name) !=
+      if((flags & expFlag::addVarToScope) &&
+         (sInfo->up != NULL)              &&
+         (sInfo->up->scopeVarMap.find(var.name) ==
           sInfo->up->scopeVarMap.end())){
 
-          sInfo->up->addVariable(var);
+        sInfo->up->addVariable(var);
       }
-
-      int leafPos = var.loadFrom(*this, 1);
 
       removeNodes(1, leafPos);
     }
 
-    void expNode::splitStructStatement(const bool addTypesToScope){
+    void expNode::splitStructStatement(const int flags){
       info = expType::struct_;
 
       // Store type
@@ -310,9 +311,11 @@ namespace occa {
 
       int leafPos = type.loadFrom(*this, 0);
 
-      if(addTypesToScope){
-        if(sInfo->up != NULL)
-          sInfo->up->addType(type);
+      if(flags & expFlag::addTypeToScope){
+        if(flags & expFlag::addToParent){
+          if(sInfo->up != NULL)
+            sInfo->up->addType(type);
+        }
         else
           sInfo->addType(type);
       }
@@ -1196,6 +1199,50 @@ namespace occa {
       return *typeLeaf;
     }
 
+    varInfo& expNode::getVarInfo(){
+      return *((varInfo*) leaves[0]);
+    }
+
+    const varInfo& expNode::getVarInfo() const {
+      return *((const varInfo*) leaves[0]);
+    }
+
+    varInfo& expNode::getVarInfo(const int pos){
+      varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
+      varInfo *&varLeaf   = varLeaves[0];
+
+      return *varLeaf;
+    }
+
+    const varInfo& expNode::getVarInfo(const int pos) const {
+      const varInfo **varLeaves = (const varInfo**) leaves[pos]->leaves;
+      const varInfo *&varLeaf   = varLeaves[0];
+
+      return *varLeaf;
+    }
+
+    typeInfo& expNode::getTypeInfo(){
+      return *((typeInfo*) leaves[0]);
+    }
+
+    const typeInfo& expNode::getTypeInfo() const {
+      return *((const typeInfo*) leaves[0]);
+    }
+
+    typeInfo& expNode::getTypeInfo(const int pos){
+      typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
+      typeInfo *&typeLeaf   = typeLeaves[0];
+
+      return *typeLeaf;
+    }
+
+    const typeInfo& expNode::getTypeInfo(const int pos) const {
+      const typeInfo **typeLeaves = (const typeInfo**) leaves[pos]->leaves;
+      const typeInfo *&typeLeaf   = typeLeaves[0];
+
+      return *typeLeaf;
+    }
+
     void expNode::removeNodes(const int pos, const int count){
       const int removed = (((pos + count) <= leafCount) ?
                            count : (leafCount - pos));
@@ -1389,12 +1436,10 @@ namespace occa {
           leaves[i]->print(tab + "    ");
       }
       else if(info & expType::varInfo){
-        varInfo &var = *((varInfo*) leaves[0]);
-        std::cout << tab << "    [varInfo] " << var << '\n';
+        std::cout << tab << "    [varInfo] " << getVarInfo() << '\n';
       }
       else if(info & expType::typeInfo){
-        typeInfo &type = *((typeInfo*) leaves[0]);
-        std::cout << tab << "    [typeInfo]\n" << type.toString(tab + "        ") << '\n';
+        std::cout << tab << "    [typeInfo]\n" << getTypeInfo().toString(tab + "        ") << '\n';
       }
     }
 
@@ -1556,19 +1601,15 @@ namespace occa {
       }
 
       case (expType::function | expType::prototype):{
-        if(leafCount){
-          varInfo &var = *((varInfo*) leaves[0]->leaves[0]);
-          out << tab << var.toString() << ";\n";
-        }
+        if(leafCount)
+          out << tab << getVarInfo(0) << ";\n";
 
         break;
       }
 
       case (expType::function | expType::declaration):{
-        if(leafCount){
-          varInfo &var = *((varInfo*) leaves[0]->leaves[0]);
-          out << tab << var.toString();
-        }
+        if(leafCount)
+          out << tab << getVarInfo(0);
 
         break;
       }
@@ -1627,23 +1668,19 @@ namespace occa {
       }
 
       case (expType::varInfo | expType::type):{
-        varInfo &var = *((varInfo*) leaves[0]);
-
-        out << var.toString();
+        out << getVarInfo();
 
         break;
       }
 
       case (expType::varInfo):{
-        varInfo &var = *((varInfo*) leaves[0]);
-        out << var.toString(false);
+        out << getVarInfo().toString(false);
 
         break;
       }
 
       case (expType::typeInfo):{
-        typeInfo &type = *((typeInfo*) leaves[0]);
-        out << type.toString(tab) << ";\n";
+        out << getTypeInfo().toString(tab) << ";\n";
 
         break;
       }
@@ -2810,30 +2847,30 @@ namespace occa {
       return NULL;
     }
 
-    varInfo* statement::addVariable(const varInfo &info,
+    varInfo* statement::addVariable(varInfo &var,
                                     statement *origin){
-      scopeVarMapIterator it = scopeVarMap.find(info.name);
+      scopeVarMapIterator it = scopeVarMap.find(var.name);
 
       if(it != scopeVarMap.end()      &&
-         !info.hasQualifier("extern") &&
-         !((info.info & varType::functionDef))){
+         !var.hasQualifier("extern") &&
+         !((var.info & varType::functionDef))){
 
-        std::cout << "Variable [" << info.name << "] defined in:\n"
+        std::cout << "Variable [" << var.name << "] defined in:\n"
                   << *origin
                   << "is already defined in:\n"
                   << *this;
         throw 1;
       }
 
-      varInfo *&newInfo = scopeVarMap[info.name];
+      varInfo *&newInfo = scopeVarMap[var.name];
 
-      newInfo = new varInfo(info);
+      newInfo = new varInfo(var);
 
       if(origin == NULL)
         varOriginMap[newInfo] = this;
       else{
         varOriginMap[newInfo]          = origin;
-        origin->scopeVarMap[info.name] = newInfo;
+        origin->scopeVarMap[var.name] = newInfo;
       }
 
       return newInfo;
@@ -2979,17 +3016,8 @@ namespace occa {
       if(type & declareStatementType){
       }
       else if(type & functionStatementType){
-        expNode &typeNode = *(expRoot.leaves[0]);
-
-        if( !(typeNode.leaves[0]->info & expType::qualifier) )
-          typeNode.addNode(expType::qualifier, 0);
-
-        expNode &qualNode = *(typeNode.leaves[0]);
-
-        qualNode.addNode(expType::qualifier, pos);
-
-        expNode &sNewQualNode = *(qualNode.leaves[pos]);
-        sNewQualNode.value    = qualifier;
+        varInfo &var = expRoot.getVarInfo(pos);
+        var.addQualifier(qualifier);
       }
       else if(type & forStatementType){
         if(expRoot.leafCount){
@@ -3064,11 +3092,13 @@ namespace occa {
 
     std::string statement::getFunctionName() const {
       if(type & functionStatementType){
-        return (expRoot.leaves[1]->value);
+        const varInfo &var = expRoot.getVarInfo(0);
+        return var.name;
       }
 
       printf("Not added yet\n");
       throw 1;
+
       return "";
     }
 

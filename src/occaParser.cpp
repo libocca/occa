@@ -27,11 +27,13 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       // Broken
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
@@ -342,6 +344,7 @@ namespace occa {
           else
             return (startHash | ignoreUntilNextHash);
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "elif")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
             return ignoreUntilEnd;
@@ -355,12 +358,14 @@ namespace occa {
           else
             return ignoreUntilNextHash;
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "else")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
             return ignoreUntilEnd;
           else
             return readUntilNextHash;
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "ifdef")){
           std::string name = getMacroName(c);
 
@@ -369,6 +374,7 @@ namespace occa {
           else
             return (startHash | ignoreUntilNextHash);
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "ifndef")){
           std::string name = getMacroName(c);
 
@@ -377,9 +383,11 @@ namespace occa {
           else
             return (startHash | readUntilNextHash);
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "endif")){
           return doneIgnoring;
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "define")){
           if(state & ignoring)
             return state;
@@ -400,9 +408,9 @@ namespace occa {
 
           loadMacroInfo(info, c);
 
-          return (state | keepMacro);
-          // return state;
+          return state;
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
           if(state & ignoring)
             return state;
@@ -412,17 +420,21 @@ namespace occa {
           if(macroMap.find(name) != macroMap.end())
             macroMap.erase(name);
 
-          return (state | keepMacro);
-          // return state;
+          return state;
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "include")){
           if(state & ignoring)
             return state;
 
-          return (state | keepMacro);
+          // Stick include file here
+
+          return state;
         }
+
         else if(stringsAreEqual(c, (cEnd - c), "pragma"))
           return (state | keepMacro);
+
         else
           return (state | keepMacro);
 
@@ -554,7 +566,7 @@ namespace occa {
             if( !(currentState & ignoring) )
               nodePos->type = macroKeywordType;
           }
-          // // Let's keep all the macros for now
+          // Let's keep all the macros for now
           // else
           //   ignoreLine = true;
 
