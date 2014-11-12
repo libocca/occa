@@ -1098,8 +1098,7 @@ namespace occa {
            << " occa" << ioLoop << "Id" << loopNest << ";";
       }
 
-      s.scopeTypeMap.clear();
-      s.scopeVarMap.clear();
+      s.scopeVarMap.erase(iter);
 
       s.pushLeftFromSource(s.statementStart, ss.str());
 
