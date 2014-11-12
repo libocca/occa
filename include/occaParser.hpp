@@ -155,8 +155,7 @@ namespace occa {
                                        loopSection_t &loopSection);
 
       void splitDefineForVariable(statement *&origin,
-                                  varInfo &var, strNode *varNode,
-                                  const int declPos);
+                                  varInfo &var);
 
       void addInnerForsToStatement(statement &s,
                                    const int innerDim);

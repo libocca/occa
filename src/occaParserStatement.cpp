@@ -198,7 +198,7 @@ namespace occa {
         if(flags & expFlag::addVarToScope){
           if(flags & expFlag::addToParent){
             if(sInfo->up != NULL)
-              sInfo->up->addVariable(var);
+              sInfo->up->addVariable(var, sInfo);
           }
           else
             sInfo->addVariable(var);

@@ -42,8 +42,8 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
@@ -2074,7 +2074,7 @@ namespace occa {
             const int innerDim = getInnerMostForDim(s2) + 1;
 
             ss << "  const int dims = " << outerDim << ";\n"
-               << "  occa::dim outer, inner;\n";
+               << "  int outer, inner;\n";
 
             for(int i = 0; i < (outerDim + innerDim); ++i)
               ss << "  " << loopIter->getLeftQualifier(i) << "\n";
@@ -2091,6 +2091,17 @@ namespace occa {
           statementNode *newSN  = s.statementEnd;
           s.statementEnd        = newSN->left;
           s.statementEnd->right = NULL;
+
+          //---[ Change type ]----------
+          statement &newS   = *(newSN->value);
+          varInfo &outerVar = *(newS.hasVariableInScope("outer"));
+          statement &outerS = *(varOriginMap[&outerVar]);
+
+          typeInfo &type = *(new typeInfo);
+          type.name = "occa::dim";
+
+          outerS.getDeclarationVarInfo(0).baseType = &type;
+          //============================
 
           if(snPosStart){
             newSN->left = snPosStart->left;
@@ -2564,264 +2575,10 @@ namespace occa {
       return root;
     }
 
-    // Broken
     void parserBase::splitDefineForVariable(statement *&origin,
-                                            varInfo &var, strNode *varNode,
-                                            const int declPos){
+                                            varInfo &var){
+
       return;
-
-      const int declarationCount = origin->scopeVarMap.size();
-      const bool addingStatement = ((declPos != 0) || (declarationCount > 1));
-
-      statement &originUp  = *(origin->up);
-      statementNode *snPos = NULL;
-
-      bool removeVarStatement = true;
-      bool ignoringFirst      = false;
-      bool ignoringSecond     = false;
-
-      snPos = originUp.statementStart;
-
-      while(snPos->value != origin)
-        snPos = snPos->right;
-
-      // If it's something like
-      //   const int [a = 0], b = 0 ...
-      // stitch
-      //   const int b = 0 ...
-      // and paste
-      //   a = 0;
-      if(varNode->right->value == "="){
-        removeVarStatement = false;
-
-        if(addingStatement)
-          varNode = varNode->left;
-      }
-
-      if(declPos == 0){
-        // const int [a = 0];
-        if(declarationCount == 1){
-          while(origin->nodeStart != varNode)
-            popAndGoRight(origin->nodeStart);
-
-          origin->type = updateStatementType;
-        }
-        // const int [a = 0], ...;
-        else{
-          ignoringSecond = true;
-
-          // Removing const int [* const] a = NULL
-          while(varNode->type != specifierType)
-            popAndGoLeft(varNode);
-
-          varNode = varNode->right;
-
-          if(removeVarStatement){
-            ignoringFirst = true;
-
-            while(varNode->value != ",")
-              popAndGoRight(varNode);
-          }
-          else{
-            while(varNode->value != ",")
-              varNode = varNode->right;
-          }
-
-          // Remove the right [,]
-          popAndGoRight(varNode);
-        }
-      }
-      // const int a = 0, [b = 0], ...;
-      else{
-        while(varNode->value != ",")
-          popAndGoLeft(varNode);
-
-        if(removeVarStatement){
-          while((varNode->value != ",") &&
-                (varNode->value != ";"))
-            popAndGoRight(varNode);
-        }
-        else{
-          while((varNode->value != ",") &&
-                (varNode->value != ";"))
-            varNode = varNode->right;
-        }
-
-        // Remove the right [,]
-        popAndGoRight(varNode);
-      }
-
-      origin->scopeVarMap.erase(var.name);
-
-      var.addQualifier("exclusive", 0);
-
-      strNode *newVarNode = NULL;//var.makeStrNodeChain();
-
-      statement *newS = new statement(origin->depth,
-                                      declareStatementType,
-                                      origin->up);
-
-      varOriginMap[&var]          = newS;
-      newS->scopeVarMap[var.name] = &var;
-
-      statementNode *newVarSN = new statementNode(newS);
-
-      statement *rootStatement = origin;
-
-      while( !(rootStatement->type & (forStatementType |
-                                      functionStatementType)) )
-        rootStatement = rootStatement->up;
-
-      statementNode *oldFirstPos = rootStatement->statementStart;
-
-      rootStatement->statementStart = newVarSN;
-      newVarSN->right               = oldFirstPos;
-      oldFirstPos->left             = newVarSN;
-
-      newS->depth = rootStatement->depth + 1;
-      newS->up    = rootStatement;
-
-      if(!addingStatement){
-        if((declarationCount == 1) && removeVarStatement){
-          if(originUp.statementStart == snPos)
-            originUp.statementStart = snPos->right;
-
-          if(snPos->left)
-            snPos->left->right = snPos->right;
-
-          if(snPos->right)
-            snPos->right->left = snPos->left;
-        }
-
-        return;
-      }
-
-      varUsedMap[&var].push(origin);
-
-      strNode *firstNodeStart = firstNode(varNode);
-      strNode *firstNodeEnd    = varNode->left;
-      strNode *secondNodeStart = varNode;
-
-      secondNodeStart->left = NULL;
-
-      if(firstNodeEnd){
-        firstNodeEnd->right = NULL;
-        firstNodeEnd        = firstNodeEnd->push(";");
-        firstNodeEnd->type  = keywordType[";"];
-
-        // Seal off first define
-        origin->nodeEnd = firstNodeEnd;
-      }
-
-      strNode *secondNodeEnd = secondNodeStart;
-
-      if(ignoringSecond){
-        while(secondNodeEnd->value != ";")
-          secondNodeEnd = secondNodeEnd->right;
-      }
-      else{
-        while((secondNodeEnd->value != ",") &&
-              (secondNodeEnd->value != ";"))
-          secondNodeEnd = secondNodeEnd->right;
-      }
-
-      secondNodeEnd->value = ";";
-      secondNodeEnd->type  = keywordType[";"];
-
-      // Create second update
-      if(!ignoringSecond &&
-         !removeVarStatement){
-        statement *secondS = new statement(origin->depth,
-                                           updateStatementType,
-                                           origin->up);
-
-        snPos = snPos->push(secondS);
-        varUsedMap[&var].push(secondS);
-      }
-
-      // Create third define
-      strNode *thirdNodeStart = ignoringSecond ? secondNodeStart : secondNodeEnd->right;
-      strNode *thirdNodeEnd   = lastNode(thirdNodeStart);
-
-      if(thirdNodeStart){
-        secondNodeEnd->right = NULL;
-        thirdNodeStart->left = NULL;
-
-        // Copy over the desciptors to the next statement
-        strNode *thirdPrefix = firstNodeStart->clone();
-
-        if( !(thirdPrefix->type & specifierType) ){
-          strNode *firstNodePos = firstNodeStart->right;
-
-          while( !(firstNodePos->type & specifierType) ){
-            thirdPrefix = thirdPrefix->push( firstNodePos->clone() );
-            firstNodePos = firstNodePos->right;
-          }
-        }
-
-        thirdPrefix->right   = thirdNodeStart;
-        thirdNodeStart->left = thirdPrefix;
-
-        thirdNodeStart = firstNode(thirdNodeStart);
-
-        statement *thirdS;
-
-        if(!ignoringFirst){
-          thirdS = new statement(origin->depth,
-                                 declareStatementType,
-                                 origin->up);
-
-          snPos = snPos->push(thirdS);
-        }
-        else
-          thirdS = origin;
-
-        thirdNodeEnd = thirdNodeStart;
-
-        while(thirdNodeEnd){
-          if(thirdNodeEnd->type & unknownVariable){
-            scopeVarMapIterator it = origin->scopeVarMap.find(thirdNodeEnd->value);
-            varInfo &movingVar = *(it->second);
-
-            origin->scopeVarMap.erase(it);
-
-            varOriginMap[&movingVar]            = thirdS;
-            thirdS->scopeVarMap[movingVar.name] = &movingVar;
-
-            while((thirdNodeEnd->value != ",") &&
-                  (thirdNodeEnd->value != ";"))
-              thirdNodeEnd = thirdNodeEnd->right;
-          }
-
-          thirdNodeEnd = thirdNodeEnd->right;
-        }
-      }
-
-      if(!ignoringFirst){
-        // Gotta remove the descriptors
-        if(ignoringSecond){
-          while( !(firstNodeStart->type & unknownVariable) )
-            popAndGoRight(firstNodeStart);
-        }
-
-        origin->nodeStart = firstNodeStart;
-        origin->nodeEnd   = firstNodeEnd;
-      }
-      else{
-        origin->nodeStart = thirdNodeStart;
-        origin->nodeEnd   = thirdNodeEnd;
-      }
-
-      if((declarationCount == 1) && removeVarStatement){
-        if(originUp.statementStart == snPos)
-          originUp.statementStart = snPos->right;
-
-        if(snPos->left)
-          snPos->left->right = snPos->right;
-
-        if(snPos->right)
-          snPos->right->left = snPos->left;
-      }
     }
 
     void parserBase::addInnerForsToStatement(statement &s,
@@ -2999,23 +2756,7 @@ namespace occa {
 
         varInfo &info = *(varPos->value);
 
-        strNode *nodePos = origin->nodeStart;
-        int declPos = 0;
-
-        while(nodePos){
-          if(nodePos->type & unknownVariable){
-            if(nodePos->value == info.name)
-              break;
-
-            ++declPos;
-          }
-
-          nodePos = nodePos->right;
-        }
-
-        splitDefineForVariable(origin,
-                               info, nodePos,
-                               declPos);
+        splitDefineForVariable(origin, info);
 
         varPos = varPos->left;
       }
