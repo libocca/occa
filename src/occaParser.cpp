@@ -886,8 +886,12 @@ namespace occa {
       varInfo *ioDimVar2 = s.hasVariableInScope(ioDimVar.name);
 
       if(ioDimVar2 == NULL){
-        statement &sOuterLoop = *(getStatementOuterMostLoop(s));
-        sOuterLoop.addVariable(ioDimVar);
+        statement *sPlace = getStatementOuterMostLoop(s);
+
+        if(sPlace == NULL)
+          sPlace = getStatementKernel(s);
+
+        sPlace->addVariable(ioDimVar);
       }
       else{
         if(!ioDimVar2->hasQualifier(loopNest))
@@ -1278,6 +1282,9 @@ namespace occa {
           leaf.leafCount = 0;
         }
       }
+
+      delete [] flatRoot.leaves;
+      delete &flatRoot;
     }
 
     void parserBase::addFunctionPrototypes(){
@@ -3188,53 +3195,54 @@ namespace occa {
     }
 
     void parserBase::setupOccaVariables(statement &s){
-      return;
+      if(s.expRoot.leafCount == 0)
+        return;
 
-      const int idKeywordType = keywordType["occaInnerId0"];
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
-      strNode *nodePos = s.nodeStart;
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        std::string &value = flatRoot[i].value;
+        std::string occaValue;
 
-      while(nodePos){
-        if(nodePos->type & idKeywordType){
-          bool isInnerId = ((nodePos->value == "occaInnerId0") ||
-                            (nodePos->value == "occaInnerId1") ||
-                            (nodePos->value == "occaInnerId2"));
+        bool isInnerId = ((value == "occaInnerId0") ||
+                          (value == "occaInnerId1") ||
+                          (value == "occaInnerId2"));
 
-          bool isOuterId = ((nodePos->value == "occaOuterId0") ||
-                            (nodePos->value == "occaOuterId1") ||
-                            (nodePos->value == "occaOuterId2"));
+        bool isOuterId = ((value == "occaOuterId0") ||
+                          (value == "occaOuterId1") ||
+                          (value == "occaOuterId2"));
 
-          bool isInnerDim = ((nodePos->value == "occaInnerDim0") ||
-                             (nodePos->value == "occaInnerDim1") ||
-                             (nodePos->value == "occaInnerDim2"));
+        bool isInnerDim = ((value == "occaInnerDim0") ||
+                           (value == "occaInnerDim1") ||
+                           (value == "occaInnerDim2"));
 
-          bool isOuterDim = ((nodePos->value == "occaOuterDim0") ||
-                             (nodePos->value == "occaOuterDim1") ||
-                             (nodePos->value == "occaOuterDim2"));
+        bool isOuterDim = ((value == "occaOuterDim0") ||
+                           (value == "occaOuterDim1") ||
+                           (value == "occaOuterDim2"));
 
-          if(isInnerId  || isOuterId ||
-             isInnerDim || isOuterDim){
-            std::string ioLoop, loopNest;
+        if(isInnerId  || isOuterId ||
+           isInnerDim || isOuterDim){
+          std::string ioLoop, loopNest;
 
-            if(isInnerId || isOuterId){
-              // [occa][-----][Id#]
-              ioLoop = nodePos->value.substr(4,5);
-              // [occa][-----Id][#]
-              loopNest = nodePos->value.substr(11,1);
-            }
-            else{
-              // [occa][-----][Dim#]
-              ioLoop = nodePos->value.substr(4,5);
-              // [occa][-----Dim][#]
-              loopNest = nodePos->value.substr(12,1);
-            }
-
-            addOccaForCounter(s, ioLoop, loopNest);
+          if(isInnerId || isOuterId){
+            // [occa][-----][Id#]
+            ioLoop = value.substr(4,5);
+            // [occa][-----Id][#]
+            loopNest = value.substr(11,1);
           }
-        }
+          else{
+            // [occa][-----][Dim#]
+            ioLoop = value.substr(4,5);
+            // [occa][-----Dim][#]
+            loopNest = value.substr(12,1);
+          }
 
-        nodePos = nodePos->right;
+          addOccaForCounter(s, ioLoop, loopNest);
+        }
       }
+
+      delete [] flatRoot.leaves;
+      delete &flatRoot;
     }
     //==============================================
 
