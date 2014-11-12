@@ -61,11 +61,11 @@ int main(int argc, char **argv){
   // occa::parserNamespace::test();
   // occa::parserNamespace::test2();
 
-  // {
-  //   occa::parser parser;
-  //   std::string parsedContent = parser.parseFile("tests/easy.c");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("tests/easy.c");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   occa::parser parser;
@@ -115,9 +115,9 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 }

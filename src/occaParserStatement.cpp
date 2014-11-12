@@ -96,7 +96,8 @@ namespace occa {
                         gotoStatementType   |
                         blockStatementType)            ||
          (sInfo->type == keywordType["occaOuterFor0"]) ||
-         (sInfo->type == elseStatementType)){
+         (sInfo->type == elseStatementType)            ||
+         (sInfo->type == doWhileStatementType)){
 
         return;
       }
@@ -136,7 +137,7 @@ namespace occa {
 
       splitAndOrganizeNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
+      std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
@@ -150,10 +151,10 @@ namespace occa {
       if(sInfo->type & declareStatementType)
         splitDeclareStatement();
 
-      else if((sInfo->type & (forStatementType   |
-                              whileStatementType)) ||
-              (sInfo->type == ifStatementType)     ||
-              (sInfo->type == elseIfStatementType)){
+      else if((sInfo->type & (ifStatementType  |
+                              forStatementType |
+                              whileStatementType)) &&
+              (sInfo->type != elseStatementType)){
 
         splitFlowStatement();
       }
@@ -1714,8 +1715,6 @@ namespace occa {
             out << "for(";
           else if(sInfo->type & whileStatementType)
             out << "while(";
-          else if(sInfo->type & doWhileStatementType)
-            out << "do";
           else if(sInfo->type & ifStatementType){
             if(sInfo->type == ifStatementType)
               out << "if(";
@@ -1739,8 +1738,7 @@ namespace occa {
           }
 
           if( !(sInfo->type & gotoStatementType) &&
-              (sInfo->type != elseStatementType) &&
-              (sInfo->type != doWhileStatementType) ){
+              (sInfo->type != elseStatementType) ){
             out << ")";
           }
           else if(sInfo->type & gotoStatementType){
@@ -1917,6 +1915,10 @@ namespace occa {
       else if(nodeRoot->type & parentheses)
         return checkUpdateStatementType(nodeRoot, expPtr);
 
+      // Statement: [;]
+      else if(nodeRoot->type & endStatement)
+        return checkUpdateStatementType(nodeRoot, expPtr);
+
       else {
         while(nodeRoot &&
               !(nodeRoot->type & endStatement))
@@ -1940,6 +1942,8 @@ namespace occa {
         expPtr->info  = expType::occaFor;
         expPtr->value = nodeRoot->value;
       }
+
+      nodeRoot = nodeRoot->right;
 
       return keywordType["occaOuterFor0"];
     }
@@ -2012,8 +2016,11 @@ namespace occa {
 
       nodeRoot = nodeRoot->right;
 
-      if(nodeValue != "else")
+      if((nodeValue != "else") &&
+         (nodeValue != "do")){
+
         nodeRoot = nodeRoot->right;
+      }
 
       if(nodeValue == "for")
         return forStatementType;
@@ -2599,8 +2606,25 @@ namespace occa {
     strNode* statement::loadWhileFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd){
+      if(st == whileStatementType)
+        return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
+      else{
+        strNode *nextNode = loadOneStatementFromNode(st, nodeRootEnd, nodeRootEnd);
+        type = whileStatementType;
 
-      return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
+        expRoot.loadFromNode(nextNode);
+
+        type = doWhileStatementType;
+
+        // Skip the [;] after [while()]
+        if(nextNode &&
+           (nextNode->value == ";")){
+
+          nextNode = nextNode->right;
+        }
+
+        return nextNode;
+      }
     }
 
     strNode* statement::loadIfFromNode(const int st_,
@@ -3421,20 +3445,37 @@ namespace occa {
       }
 
       else if(type & flowStatementType){
-        std::string ret = expRoot.toString(tab);
+        std::string ret;
 
-        if(statementCount > 1)
-          ret += "{";
+        if(type != doWhileStatementType){
+          ret += expRoot.toString(tab);
 
-        ret += '\n';
+          if(statementCount > 1)
+            ret += "{";
+
+          ret += '\n';
+        }
+        else{
+          ret += tab;
+          ret += "do {\n";
+        }
 
         while(statementPos){
           ret += (std::string) *(statementPos->value);
           statementPos = statementPos->right;
         }
 
-        if(statementCount > 1)
-          ret += tab + "}\n";
+        if((statementCount > 1) ||
+           (type == doWhileStatementType)){
+
+            ret += tab + "}";
+        }
+
+        if(type == doWhileStatementType){
+          ret += ' ';
+          ret += expRoot.toString();
+          ret += ";\n\n";
+        }
 
         return ret;
       }
