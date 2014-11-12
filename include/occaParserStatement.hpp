@@ -246,7 +246,13 @@ namespace occa {
 
       void changeType(const std::string &newType);
 
-      std::string getVariableName() const;
+      int getVariableCount() const;
+      bool variableHasInit(const int pos) const;
+
+      expNode* getVariableNode(const int pos) const;
+      expNode* getVariableInitNode(const int pos) const;
+
+      std::string getVariableName(const int pos = 0) const;
       //================================
 
       void freeLeaf(const int leafPos);

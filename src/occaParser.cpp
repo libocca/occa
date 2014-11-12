@@ -47,9 +47,9 @@ namespace occa {
       addOccaFors();
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
+      applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       std::cout << (std::string) *globalScope;
       throw 1;
-      applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       // Broken?
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
@@ -988,19 +988,18 @@ namespace occa {
       expNode &node2 = *(s.expRoot.leaves[1]);
       expNode &node3 = *(s.expRoot.leaves[2]);
 
-      //---[ Node 1 ]---------
-      if((node1.leafCount < 2) ||
-         (node1.leaves[1]->value != "=")){
+      node1.print();
 
+      //---[ Node 1 ]---------
+      if((node1.info != expType::declaration) ||
+         (node1.getVariableCount() != 1)      ||
+         !node1.variableHasInit(0)){
         std::cout << "Wrong 1st statement for:\n  " << s.expRoot << '\n';
         throw 1;
       }
 
-      // [int] [=]
-      //        |    \
-      //       [group] [0]
-      iter  = node1.leaves[1]->leaves[0]->value;
-      start = (std::string) *(node1.leaves[1]->leaves[1]);
+      iter  = node1.getVariableName(0);
+      start = *(node1.getVariableInitNode(0));
 
       //---[ Node 2 ]---------
       if((node2.leafCount != 1) ||

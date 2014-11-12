@@ -1396,8 +1396,63 @@ namespace occa {
       }
     }
 
-    std::string expNode::getVariableName() const {
-      if(info & expType::variable){
+    int expNode::getVariableCount() const {
+      if(info & expType::declaration){
+        return leafCount;
+      }
+
+      return 0;
+    }
+
+    bool expNode::variableHasInit(const int pos) const {
+      if(info & expType::declaration){
+        const expNode &varNode = *(getVariableNode(pos));
+
+        return (varNode.leafCount &&
+                (varNode.leaves[0]->value == "="));
+      }
+
+      return false;
+    }
+
+    expNode* expNode::getVariableNode(const int pos) const {
+      if(info & expType::declaration){
+        return leaves[pos];
+      }
+
+      return NULL;
+    }
+
+    expNode* expNode::getVariableInitNode(const int pos) const {
+      if(info & expType::declaration){
+        if(variableHasInit(pos)){
+          const expNode &varNode = *(getVariableNode(pos));
+
+          if(varNode.leafCount &&
+             (varNode.leaves[0]->value == "=")){
+
+            return varNode.leaves[0]->leaves[1];
+          }
+        }
+      }
+
+      return NULL;
+    }
+
+    std::string expNode::getVariableName(const int pos) const {
+      if(info & expType::declaration){
+        expNode &leaf = *(leaves[pos]);
+
+        if(leaf.info & expType::varInfo){
+          return leaf.getVarInfo().name;
+        }
+        else if(leaf.leafCount &&
+                (leaf[0].value == "=")){
+
+          return leaf[0].getVarInfo(0).name;
+        }
+      }
+      else if(info & expType::variable){
         if(leafCount){
           const bool hasLQualifier = (leaves[0]->info & expType::type);
 
