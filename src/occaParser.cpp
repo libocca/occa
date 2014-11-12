@@ -42,8 +42,8 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
@@ -2045,26 +2045,15 @@ namespace occa {
 
       // Add nestedKernels argument
       {
-#if 0 // Broken
-        s.loadFromNode(labelCode( splitContent("int *nestedKernels;") ));
+        varInfo arg;
+        arg.loadFrom(s, labelCode( splitContent("int *nestedKernels") ));
 
-        statementNode *nkSN   = s.statementEnd;
-        s.statementEnd        = nkSN->left;
-        s.statementEnd->right = NULL;
+        typeInfo &type = *(new typeInfo);
+        type.name = "occa::kernel";
 
-        --(s.statementCount);
+        arg.baseType = &type;
 
-        expNode &argsNode = *(sKernel.getFunctionArgsNode());
-
-        argsNode.addNode(expType::printValue, 1);
-
-        *(argsNode.leaves[1])    = nkSN->value->expRoot;
-        argsNode.leaves[1]->info = expType::variable;
-        argsNode.leaves[1]->changeType("occa::kernel");
-
-        delete nkSN->value;
-        delete nkSN;
-#endif
+        s.addFunctionArg(1, arg);
       }
 
       // Add kernel bodies
