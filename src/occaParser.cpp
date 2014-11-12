@@ -42,8 +42,8 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
@@ -2245,14 +2245,18 @@ namespace occa {
     }
 
     bool parserBase::statementHasBarrier(statement &s){
-      strNode *n = s.nodeStart;
+      if(s.expRoot.leafCount == 0)
+        return false;
 
-      while(n){
-        if(n->value == "occaBarrier")
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(flatRoot[i].value == "occaBarrier")
           return true;
-
-        n = n->right;
       }
+
+      delete [] flatRoot.leaves;
+      delete &flatRoot;
 
       return false;
     }
@@ -3155,8 +3159,6 @@ namespace occa {
     }
 
     void parserBase::addOccaForsToKernel(statement &s){
-      return;
-
       addInnerFors(s);
       addOuterFors(s);
     }
