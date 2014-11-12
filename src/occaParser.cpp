@@ -3039,11 +3039,9 @@ namespace occa {
         statement *newStatement = new statement(sPos->depth + 1,
                                                 occaForType, &s);
 
-        newStatement->nodeStart = new strNode("occaOuterFor");
-        newStatement->nodeStart->value += '0' + o;
-        newStatement->nodeStart->type   = occaForType;
-
-        newStatement->nodeEnd = newStatement->nodeStart;
+        newStatement->expRoot.info   = expType::printValue;
+        newStatement->expRoot.value  = "occaInnerFor";
+        newStatement->expRoot.value += ('0' + o);
 
         newStatement->scopeVarMap = sPos->scopeVarMap;
 
