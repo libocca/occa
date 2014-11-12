@@ -29,6 +29,10 @@ namespace occa {
       qualifierInfo(const qualifierInfo &q);
       qualifierInfo& operator = (const qualifierInfo &q);
 
+      inline std::string& operator [] (const int pos){
+        return qualifiers[pos];
+      }
+
       void free();
 
       qualifierInfo clone();
@@ -212,6 +216,9 @@ namespace occa {
 
       void addQualifier(const std::string &qName,
                         int pos = -1);
+
+      void addRightQualifier(const std::string &qName,
+                             int pos = -1);
 
       void removeQualifier(const std::string &qName);
 

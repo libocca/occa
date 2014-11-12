@@ -459,8 +459,6 @@ namespace occa {
 
       std::string getFunctionName() const;
       void setFunctionName(const std::string &newName);
-      expNode* getFunctionArgsNode();
-      expNode* getFunctionArgNode(const int pos);
       std::string getFunctionArgType(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);

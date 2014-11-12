@@ -679,6 +679,11 @@ namespace occa {
 
       leafPos = rightQualifiers.loadFrom(expRoot, leafPos);
 
+      for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
+        if(rightQualifiers[i] == "*")
+          ++pointerCount;
+      }
+
       return leafPos;
     }
 
@@ -880,6 +885,11 @@ namespace occa {
 
       nodePos = rightQualifiers.loadFrom(s, nodePos);
 
+      for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
+        if(rightQualifiers[i] == "*")
+          ++pointerCount;
+      }
+
       return nodePos;
     }
 
@@ -1048,6 +1058,10 @@ namespace occa {
 
     void varInfo::addQualifier(const std::string &qName, int pos){
       leftQualifiers.add(qName, pos);
+    }
+
+    void varInfo::addRightQualifier(const std::string &qName, int pos){
+      rightQualifiers.add(qName, pos);
     }
 
     void varInfo::removeQualifier(const std::string &qName){

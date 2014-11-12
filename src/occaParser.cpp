@@ -52,12 +52,12 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
-      std::cout << (std::string) *globalScope;
-      throw 1;
       // Broken
       modifyTextureVariables();
 
       applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       loadKernelInfos();
 
@@ -1762,28 +1762,23 @@ namespace occa {
         const int argc = s2.getFunctionArgCount();
 
         for(int i = 0; i < argc; ++i){
-          expNode &argNode = *(s2.getFunctionArgNode(i));
+          varInfo &argVar = *(s2.getFunctionArgVar(i));
 
-          if(argNode.info & expType::variable){
-            varInfo &argVar  = *(s2.getFunctionArgVar(i));
-
-            if(argVar.pointerCount)
-              argNode.addQualifier("occaPointer");
-            else
-              argNode.addPostQualifier("occaVariable");
-          }
+          if(argVar.pointerCount)
+            argVar.addQualifier("occaPointer", 0);
+          else
+            argVar.addRightQualifier("occaVariable");
         }
 
-        expNode &firstArgNode = *(s2.getFunctionArgNode(0));
+        // [-] Missing
+        // if(!(firstArgNode.info & expType::presetValue) ||
+        //    (s2.getFunctionArgName(0) != "occaKernelInfoArg")){
 
-        if(!(firstArgNode.info & expType::presetValue) ||
-           (s2.getFunctionArgName(0) != "occaKernelInfoArg")){
+        //   expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
 
-          expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
-
-          argsNode.addNode(expType::presetValue);
-          argsNode.leaves[0]->value = "occaKernelInfoArg";
-        }
+        //   argsNode.addNode(expType::presetValue);
+        //   argsNode.leaves[0]->value = "occaKernelInfoArg";
+        // }
       }
       // [-] Missing
       else if(var.hasQualifier("occaFunction")){
@@ -2080,6 +2075,7 @@ namespace occa {
 
       // Add nestedKernels argument
       {
+#if 0 // Broken
         s.loadFromNode(labelCode( splitContent("int *nestedKernels;") ));
 
         statementNode *nkSN   = s.statementEnd;
@@ -2098,6 +2094,7 @@ namespace occa {
 
         delete nkSN->value;
         delete nkSN;
+#endif
       }
 
       // Add kernel bodies

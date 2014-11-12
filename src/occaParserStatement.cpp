@@ -3247,7 +3247,9 @@ namespace occa {
 
     void statement::setFunctionName(const std::string &newName){
       if(type & functionStatementType){
-        expRoot.leaves[1]->value = newName;
+        varInfo &var = expRoot.getVarInfo(0);
+        var.name = newName;
+
         return;
       }
 
@@ -3255,32 +3257,10 @@ namespace occa {
       throw 1;
     }
 
-    expNode* statement::getFunctionArgsNode(){
-      if(type & functionDefinitionType)
-        return expRoot.leaves[2];
-
-      return NULL;
-    }
-
-    expNode* statement::getFunctionArgNode(const int pos){
-      if(type & functionDefinitionType)
-        return getFunctionArgsNode()->leaves[pos];
-
-      return NULL;
-    }
-
     std::string statement::getFunctionArgType(const int pos){
       if(type & functionDefinitionType){
-        expNode &arg = *( getFunctionArgNode(pos) );
-
-        if(arg.leaves[0]->info & expType::type){
-          expNode &argType = *(arg.leaves[0]);
-
-          if(argType.leaves[0]->info & expType::type)
-            return argType.leaves[0]->value;
-          else
-            return argType.leaves[1]->value;
-        }
+        varInfo &var = expRoot.getVarInfo(0);
+        return (var.baseType->name);
       }
 
       return "";
@@ -3288,16 +3268,8 @@ namespace occa {
 
     std::string statement::getFunctionArgName(const int pos){
       if(type & functionDefinitionType){
-        expNode &arg = *( getFunctionArgNode(pos) );
-
-        if(arg.info & expType::variable){
-          if(arg.leaves[0]->info & expType::variable)
-            return arg.leaves[0]->value;
-          else
-            return arg.leaves[1]->value;
-        }
-        else if(arg.info & expType::presetValue)
-          return arg.value;
+        varInfo &var = expRoot.getVarInfo(0);
+        return var.argumentVarInfos[pos].name;
       }
 
       return "";
@@ -3305,15 +3277,18 @@ namespace occa {
 
     varInfo* statement::getFunctionArgVar(const int pos){
       if(type & functionDefinitionType){
-        return scopeVarMap[ getFunctionArgName(pos) ];
+        varInfo &var = expRoot.getVarInfo(0);
+        return &(var.argumentVarInfos[pos]);
       }
 
       return NULL;
     }
 
     int statement::getFunctionArgCount() const {
-      if(type & functionStatementType)
-        return (expRoot.leaves[2]->leafCount);
+      if(type & functionStatementType){
+        const varInfo &var = expRoot.cGetVarInfo(0);
+        return var.argumentCount;
+      }
 
       return 0;
     }
