@@ -2573,16 +2573,7 @@ namespace occa {
     }
 
     bool statement::hasDescriptorVariable(const std::string descriptor) const {
-      cScopeVarMapIterator it = scopeVarMap.begin();
-
-      while(it != scopeVarMap.end()){
-        if((it->second)->hasQualifier(descriptor))
-          return true;
-
-        ++it;
-      }
-
-      return false;
+      return hasQualifier(descriptor);
     }
 
     bool statement::hasDescriptorVariableInScope(const std::string descriptor) const {
@@ -3151,9 +3142,9 @@ namespace occa {
       expNode::swap(expRoot, s.expRoot);
     }
 
-    bool statement::hasQualifier(const std::string &qualifier) {
+    bool statement::hasQualifier(const std::string &qualifier) const {
       if(type & declareStatementType){
-        varInfo &var = getDeclarationVarInfo(0);
+        const varInfo &var = cGetDeclarationVarInfo(0);
         return var.hasQualifier(qualifier);
       }
       else if(type & functionStatementType){
@@ -3220,6 +3211,11 @@ namespace occa {
     varInfo& statement::getDeclarationVarInfo(const int pos){
       expNode *varNode = expRoot.getVariableInfoNode(pos);
       return varNode->getVarInfo();
+    }
+
+    const varInfo& statement::cGetDeclarationVarInfo(const int pos) const {
+      expNode *varNode = expRoot.getVariableInfoNode(pos);
+      return varNode->cGetVarInfo();
     }
 
     expNode* statement::getDeclarationVarNode(const int pos){

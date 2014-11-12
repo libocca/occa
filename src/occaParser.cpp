@@ -35,16 +35,15 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
-      std::cout << (std::string) *globalScope;
-      throw 1;
 
       // Broken
       addFunctionPrototypes();
       // Broken
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
-      // Broken
       addOccaFors();
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);

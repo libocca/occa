@@ -448,11 +448,12 @@ namespace occa {
       //---[ Statement Info ]-----------
       void swapExpWith(statement &s);
 
-      bool hasQualifier(const std::string &qualifier);
+      bool hasQualifier(const std::string &qualifier) const;
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void removeQualifier(const std::string &qualifier);
 
       varInfo& getDeclarationVarInfo(const int pos);
+      const varInfo& cGetDeclarationVarInfo(const int pos) const ;
       expNode* getDeclarationVarNode(const int pos);
       std::string getDeclarationVarName(const int pos);
       int getDeclarationVarCount() const;
