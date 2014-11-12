@@ -33,10 +33,12 @@ namespace occa {
 
       q.qualifierCount = qualifierCount;
 
-      q.qualifiers = new std::string[qualifierCount];
+      if(qualifierCount){
+        q.qualifiers = new std::string[qualifierCount];
 
-      for(int i = 0; i < qualifierCount; ++i)
-        q.qualifiers[i] = qualifiers[i];
+        for(int i = 0; i < qualifierCount; ++i)
+          q.qualifiers[i] = qualifiers[i];
+      }
 
       return q;
     }

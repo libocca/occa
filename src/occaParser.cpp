@@ -1823,7 +1823,7 @@ namespace occa {
       for(int i = 0; i < argc; ++i){
         varInfo &newVar = newRoot.getVariableInfoNode(i)->getVarInfo();
 
-        // newVar.rightQualifiers.clear();
+        newVar.rightQualifiers.clear();
         newVar.removeStackPointers();
       }
 
