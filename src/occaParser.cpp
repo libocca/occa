@@ -2896,11 +2896,9 @@ namespace occa {
         statement *newStatement = new statement(includeStart->value->depth,
                                                 occaForType, &origin);
 
-        newStatement->nodeStart = new strNode("occaInnerFor");
-        newStatement->nodeStart->value += '0' + i;
-        newStatement->nodeStart->type   = occaForType;
-
-        newStatement->nodeEnd = newStatement->nodeStart;
+        newStatement->expRoot.info   = expType::printValue;
+        newStatement->expRoot.value  = "occaInnerFor";
+        newStatement->expRoot.value += ('0' + i);
 
         if(i == innerDim){
           outerMostLoop = newStatement;

@@ -3590,7 +3590,7 @@ namespace occa {
 
       // OCCA For's
       if(type == (occaStatementType | forStatementType)){
-        std::string ret = expRoot.toString(tab) + " {\n";
+        std::string ret = tab + expRoot.toString() + "{\n";
 
         while(statementPos){
           ret += (std::string) *(statementPos->value);
