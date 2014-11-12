@@ -48,6 +48,8 @@ namespace occa {
 
       void remove(const std::string &qName);
       void remove(const int pos, const int count = 1);
+
+      void clear();
       //================================
 
       std::string toString() const;
@@ -66,9 +68,6 @@ namespace occa {
 
       int nestedInfoCount;
       bool *nestedInfoIsType;
-      typeOrVar *nestedInfos;
-
-      // int nestedInfoCount;
       expNode *nestedExps;
 
       bool typedefHasDefinition;
@@ -81,6 +80,8 @@ namespace occa {
 
       typeInfo(const typeInfo &type);
       typeInfo& operator = (const typeInfo &type);
+
+      typeInfo clone();
 
       //---[ NEW ]------------
       int loadFrom(expNode &expRoot,
@@ -99,12 +100,6 @@ namespace occa {
       static bool statementIsATypeInfo(expNode &expRoot,
                                        int leafPos);
       //======================
-
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos);
-
-      static int statementCountWithDelimeter(strNode *nodePos,
-                                             const char *delimiter);
 
       static bool statementIsATypeInfo(statement &s,
                                        strNode *nodePos);
@@ -156,6 +151,8 @@ namespace occa {
 
       varInfo(const varInfo &var);
       varInfo& operator = (const varInfo &var);
+
+      varInfo clone();
 
       static int variablesInStatement(strNode *nodePos);
 

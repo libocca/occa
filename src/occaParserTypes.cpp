@@ -144,6 +144,15 @@ namespace occa {
 
       qualifierCount -= count;
     }
+
+    void qualifierInfo::clear(){
+      if(qualifierCount){
+        qualifierCount = 0;
+
+        delete [] qualifiers;
+        qualifiers = NULL;
+      }
+    }
     //==================================
 
     std::string qualifierInfo::toString() const {
@@ -185,8 +194,6 @@ namespace occa {
 
       nestedInfoCount(0),
       nestedInfoIsType(NULL),
-      nestedInfos(NULL),
-
       nestedExps(NULL),
 
       typedefHasDefinition(false),
@@ -202,8 +209,6 @@ namespace occa {
 
       nestedInfoCount(type.nestedInfoCount),
       nestedInfoIsType(type.nestedInfoIsType),
-      nestedInfos(type.nestedInfos),
-
       nestedExps(type.nestedExps),
 
       typedefHasDefinition(type.typedefHasDefinition),
@@ -219,9 +224,7 @@ namespace occa {
 
       nestedInfoCount  = type.nestedInfoCount;
       nestedInfoIsType = type.nestedInfoIsType;
-      nestedInfos      = type.nestedInfos;
-
-      nestedExps = type.nestedExps;
+      nestedExps       = type.nestedExps;
 
       typedefHasDefinition = type.typedefHasDefinition;
       typedefing           = type.typedefing;
@@ -230,6 +233,27 @@ namespace occa {
       typedefVar = type.typedefVar;
 
       return *this;
+    }
+
+    typeInfo typeInfo::clone(){
+      typeInfo c = *this;
+
+      if(nestedInfoCount){
+        c.nestedInfoIsType = new bool[nestedInfoCount];
+        c.nestedExps       = new expNode[nestedInfoCount];
+
+        for(int i = 0; i < nestedInfoCount; ++i){
+          c.nestedInfoIsType[i] = nestedInfoIsType[i];
+          nestedExps[i].cloneTo(c.nestedExps[i]);
+        }
+      }
+
+      if(typedefVar){
+        c.typedefVar = new varInfo;
+        *c.typedefVar = typedefVar->clone();
+      }
+
+      return c;
     }
 
     //---[ NEW ]--------------
@@ -365,137 +389,6 @@ namespace occa {
       return leafPos;
     }
     //========================
-
-    strNode* typeInfo::loadFrom(statement &s,
-                                strNode *nodePos){
-      if(nodePos == NULL)
-        return NULL;
-
-      nodePos = leftQualifiers.loadFrom(s, nodePos);
-
-      const bool hasTypedef = leftQualifiers.has("typedef");
-
-      if(hasTypedef){
-        qualifierInfo newQuals = leftQualifiers.clone();
-        newQuals.remove("typedef");
-
-        leftQualifiers.remove(1, (leftQualifiers.qualifierCount - 1));
-
-        if(nodePos->type != startBrace){
-          typeInfo *tmp = s.hasTypeInScope(nodePos->value);
-
-          if(tmp){
-            typedefing = tmp;
-          }
-          else{
-            typedefing           = new typeInfo;
-            typedefing->name     = nodePos->value;
-            typedefing->baseType = typedefing;
-          }
-
-          nodePos = nodePos->right;
-        }
-
-        if(nodePos->type == startBrace){
-          // Anonymous type
-          if(typedefing == NULL){
-            typedefing           = new typeInfo;
-            typedefing->baseType = typedefing;
-          }
-
-          nodePos = typedefing->loadFrom(s, nodePos);
-        }
-
-        baseType = typedefing->baseType;
-
-        varInfo typedefVarInfo;
-        typedefVarInfo.baseType = typedefing;
-
-        typedefVar = new varInfo;
-        nodePos = typedefVar->loadFrom(s, nodePos, &typedefVarInfo);
-
-        name = typedefVar->name;
-
-        return nodePos;
-      }
-
-      if(nodePos &&
-         (nodePos->type & unknownVariable)){
-
-        if(s.hasTypeInScope(nodePos->value))
-          name = nodePos->value;
-        else // Type is temporary?
-          name = nodePos->value;
-
-        nodePos = nodePos->right;
-      }
-
-      if(nodePos &&
-         (nodePos->type == startBrace)){
-        strNode *nextNode = nodePos->right;
-        nodePos = nodePos->down;
-
-        const bool usesSemicolon = !leftQualifiers.has("enum");
-        const char *delimiter    = (usesSemicolon ? ";" : ",");
-
-        nestedInfoCount  = statementCountWithDelimeter(nodePos, delimiter);
-        nestedInfoIsType = new bool[nestedInfoCount];
-        nestedInfos      = new typeOrVar[nestedInfoCount];
-
-        for(int i = 0; i < nestedInfoCount; ++i){
-          nestedInfoIsType[i] = (usesSemicolon                    ?
-                                 statementIsATypeInfo(s, nodePos) :
-                                 false);
-
-          if(nestedInfoIsType[i]){
-            nestedInfos[i].type = new typeInfo;
-            nodePos = nestedInfos[i].type->loadFrom(s, nodePos);
-          }
-          else{
-            nestedInfos[i].varLeaf      = new varLeaf_t;
-            nestedInfos[i].varLeaf->var = new varInfo;
-            nodePos = nestedInfos[i].varLeaf->var->loadFrom(s, nodePos);
-
-            if(nodePos->value == "="){
-              nestedInfos[i].varLeaf->exp = new expNode;
-
-              s.setExpNodeFromStrNode(*(nestedInfos[i].varLeaf->exp),
-                                      nodePos->left);
-
-              while(nodePos &&
-                    (nodePos->value != delimiter)){
-
-                nodePos = nodePos->right;
-              }
-            }
-
-            if(nodePos)
-              nodePos = nodePos->right;
-          }
-        }
-
-        nodePos = nextNode;
-      }
-
-      return nodePos;
-    }
-
-    int typeInfo::statementCountWithDelimeter(strNode *nodePos,
-                                              const char *delimiter){
-      if(nodePos == NULL)
-        return 0;
-
-      int count = 0;
-
-      while(nodePos){
-        if((nodePos->value == delimiter))
-          ++count;
-
-        nodePos = nodePos->right;
-      }
-
-      return count;
-    }
 
     bool typeInfo::statementIsATypeInfo(statement &s,
                                         strNode *nodePos){
@@ -674,6 +567,35 @@ namespace occa {
 
       functionNestCount = var.functionNestCount;
       functionNests     = var.functionNests;
+
+      return *this;
+    }
+
+    varInfo varInfo::clone(){
+      varInfo v;
+
+      v = *this;
+
+      if(stackPointerCount){
+        v.stackExpRoots = new expNode[stackPointerCount];
+
+        for(int i = 0; i < stackPointerCount; ++i)
+          stackExpRoots[i].cloneTo(v.stackExpRoots[i]);
+      }
+
+      if(argumentCount){
+        v.argumentVarInfos = new varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i)
+          v.argumentVarInfos[i] = argumentVarInfos[i].clone();
+      }
+
+      if(functionNestCount){
+        v.functionNests = new varInfo[functionNestCount];
+
+        for(int i = 0; i < functionNestCount; ++i)
+          v.functionNests[i] = functionNests[i].clone();
+      }
 
       return *this;
     }

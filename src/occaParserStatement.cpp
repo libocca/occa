@@ -970,28 +970,29 @@ namespace occa {
     expNode* expNode::clone(statement &s){
       expNode &newRoot = *(new expNode(s));
 
-      newRoot.value = value;
-      newRoot.info  = info;
+      newRoot.info = info;
 
-      newRoot.leafCount = leafCount;
+      if(info & (expType::varInfo | expType::typeInfo)){
+        if(info & expType::varInfo){
+          varInfo &var = newRoot.addVarInfoNode();
+          var = getVarInfo().clone();
+        }
+        if(info & expType::typeInfo){
+          typeInfo &type = newRoot.addTypeInfoNode();
+          type = getTypeInfo().clone();
+        }
+      }
+      else {
+        newRoot.value     = value;
+        newRoot.leafCount = leafCount;
 
-      if(leafCount){
-        newRoot.leaves = new expNode*[leafCount];
+        if(leafCount){
+          newRoot.leaves = new expNode*[leafCount];
 
-        // Broken
-        if(leafInfo & leafType::exp){
           for(int i = 0; i < leafCount; ++i){
             newRoot.leaves[i]     = clone(leaves[i]);
             newRoot.leaves[i]->up = &newRoot;
           }
-        }
-        else if(leafInfo & leafType::type){
-          for(int i = 0; i < leafCount; ++i)
-            ;
-        }
-        else {
-          for(int i = 0; i < leafCount; ++i)
-            ;
         }
       }
 
@@ -1002,17 +1003,29 @@ namespace occa {
       expNode &newLeaf = *(new expNode(*this));
       expNode &o = *original;
 
-      newLeaf.value = o.value;
-      newLeaf.info  = o.info;
+      newLeaf.info = o.info;
 
-      newLeaf.leafCount = o.leafCount;
+      if(o.info & (expType::varInfo | expType::typeInfo)){
+        if(o.info & expType::varInfo){
+          varInfo &var = newLeaf.addVarInfoNode();
+          var = o.getVarInfo().clone();
+        }
+        else if(o.info & expType::typeInfo){
+          typeInfo &type = newLeaf.addTypeInfoNode();
+          type = o.getTypeInfo().clone();
+        }
+      }
+      else {
+        newLeaf.value     = o.value;
+        newLeaf.leafCount = o.leafCount;
 
-      if(o.leafCount){
-        newLeaf.leaves = new expNode*[o.leafCount];
+        if(o.leafCount){
+          newLeaf.leaves = new expNode*[o.leafCount];
 
-        for(int i = 0; i < o.leafCount; ++i){
-          newLeaf.leaves[i]     = o.clone(o.leaves[i]);
-          newLeaf.leaves[i]->up = &newLeaf;
+          for(int i = 0; i < o.leafCount; ++i){
+            newLeaf.leaves[i]     = o.clone(o.leaves[i]);
+            newLeaf.leaves[i]->up = &newLeaf;
+          }
         }
       }
 
@@ -1023,14 +1036,26 @@ namespace occa {
       newRoot.value = value;
       newRoot.info  = info;
 
-      newRoot.leafCount = leafCount;
+      if(info & (expType::varInfo | expType::typeInfo)){
+        if(info & expType::varInfo){
+          varInfo &var = newRoot.addVarInfoNode();
+          var = getVarInfo().clone();
+        }
+        else if(info & expType::typeInfo){
+          typeInfo &type = newRoot.addTypeInfoNode();
+          type = getTypeInfo().clone();
+        }
+      }
+      else {
+        newRoot.leafCount = leafCount;
 
-      if(leafCount){
-        newRoot.leaves = new expNode*[leafCount];
+        if(leafCount){
+          newRoot.leaves = new expNode*[leafCount];
 
-        for(int i = 0; i < leafCount; ++i){
-          newRoot.leaves[i]     = clone(leaves[i]);
-          newRoot.leaves[i]->up = &newRoot;
+          for(int i = 0; i < leafCount; ++i){
+            newRoot.leaves[i]     = clone(leaves[i]);
+            newRoot.leaves[i]->up = &newRoot;
+          }
         }
       }
     }
@@ -1177,26 +1202,34 @@ namespace occa {
       addNodes(info_, pos, 1);
     }
 
-    varInfo& expNode::addVarInfoNode(const int pos){
-      addNode(expType::varInfo, pos);
-      leaves[pos]->addNode(0);
+    varInfo& expNode::addVarInfoNode(){
+      addNode(0);
 
-      varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
+      varInfo **varLeaves = (varInfo**) leaves;
       varInfo *&varLeaf   = varLeaves[0];
 
       varLeaf = new varInfo;
       return *varLeaf;
     }
 
-    typeInfo& expNode::addTypeInfoNode(const int pos){
-      addNode(expType::typeInfo, pos);
-      leaves[pos]->addNode(0);
+    varInfo& expNode::addVarInfoNode(const int pos){
+      addNode(expType::varInfo, pos);
+      return leaves[pos]->addVarInfoNode();
+    }
 
-      typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
+    typeInfo& expNode::addTypeInfoNode(){
+      addNode(0);
+
+      typeInfo **typeLeaves = (typeInfo**) leaves;
       typeInfo *&typeLeaf   = typeLeaves[0];
 
       typeLeaf = new typeInfo;
       return *typeLeaf;
+    }
+
+    typeInfo& expNode::addTypeInfoNode(const int pos){
+      addNode(expType::typeInfo, pos);
+      return leaves[pos]->addTypeInfoNode();
     }
 
     varInfo& expNode::getVarInfo(){

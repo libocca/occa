@@ -1109,89 +1109,6 @@ namespace occa {
       s.expRoot.free();
     }
 
-    void parserBase::loadScopeVarMap(statement &s){
-#if 0
-      if((!(s.type & declareStatementType)   &&
-          !(s.type & structStatementType)    &&
-          !(s.type & forStatementType)       &&
-          !(s.type & gotoStatementType)      &&
-          !(s.type & functionStatementType)) ||
-         // OCCA for's don't have arguments
-         (s.type == (forStatementType | occaStatementType)))
-        return;
-
-      // Check for struct defs
-#if 1
-      if(s.type & structStatementType)
-        return;
-#else
-      if(s.type & structStatementType){
-        if(s.typePtr->varName.size()){
-          typeInfo &type = *(s.typePtr);
-          varInfo info;
-
-          info.type = &type;
-          info.name = type.varName;
-
-          info.pointerCount      = type.pointerCount;
-          info.stackPointerSizes = type.stackPointerSizes;
-
-          (s.up)->addVariable(info, &s);
-        }
-
-        return;
-      }
-#endif
-
-      strNode *nodePos = s.nodeStart;
-
-      statement *up = s.up;
-
-      if(s.type & functionStatementType){
-        varInfo info = s.loadVarInfo(nodePos);
-        (s.up)->addVariable(info, &s);
-      }
-
-      if(s.type & (forStatementType |
-                   functionStatementType)){
-        while(nodePos->down.size() == 0)
-          nodePos = nodePos->right;
-
-        nodePos = nodePos->down[0]->right;
-
-        up = &s;
-      }
-
-      if( !(s.type & functionPrototypeType) ){
-        varInfo info = s.loadVarInfo(nodePos);
-
-        if((info.type == NULL) ||
-           (info.typeInfo & functionCallType))
-          return;
-
-        up->addVariable(info, &s);
-
-        while(nodePos){
-          if(nodePos->value == ","){
-            nodePos = nodePos->right;
-
-            varInfo info2 = s.loadVarInfo(nodePos);
-
-            // Functions have types for each argument
-            if( !(s.type & functionStatementType) ){
-              info2.type        = info.type;
-              info2.descriptors = info.descriptors;
-            }
-
-            up->addVariable(info2, &s);
-          }
-          else
-            nodePos = nodePos->right;
-        }
-      }
-#endif
-    }
-
     bool parserBase::statementHasOccaOuterFor(statement &s){
       if(s.type == keywordType["occaOuterFor0"]){
         std::string &forName = s.expRoot.value;
@@ -1897,12 +1814,12 @@ namespace occa {
 
       varInfo &var0 = s.getDeclarationVarInfo(0);
 
+      expNode *newRoot = s.expRoot.clone(s);
+
       for(int i = 0; i < argc; ++i){
         varInfo &var = s.getDeclarationVarInfo(i);
 
         const int isPrivateArray = var.pointerCount;
-
-        std::cout << "var = " << var << '\n';
 #if 0
         ss << "occaPrivate";
 

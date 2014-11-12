@@ -79,8 +79,6 @@ namespace occa {
 
       void setupOccaFors(statement &s);
 
-      void loadScopeVarMap(statement &s);
-
       bool statementHasOccaOuterFor(statement &s);
       bool statementHasOccaFor(statement &s);
 
