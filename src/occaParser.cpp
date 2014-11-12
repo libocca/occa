@@ -1806,28 +1806,53 @@ namespace occa {
         return;
       }
 
-      s.removeQualifier("exclusive");
-
       std::stringstream ss;
+
+      s.removeQualifier("exclusive");
 
       const int argc = s.getDeclarationVarCount();
 
-      varInfo &var0 = s.getDeclarationVarInfo(0);
-
+      //---[ Setup update statement ]---
       expNode &newRoot = *(s.expRoot.clone(s));
       varInfo &newVar0 = newRoot.getVariableInfoNode(0)->getVarInfo();
 
       newVar0.leftQualifiers.clear();
       newVar0.baseType = NULL;
 
-      for(int i = 0; i < argc; ++i){
-        varInfo &newVar = newRoot.getVariableInfoNode(i)->getVarInfo();
+      bool *keepVar = new bool[argc];
+      int varsKept = 0;
 
-        newVar.rightQualifiers.clear();
-        newVar.removeStackPointers();
+      for(int i = 0; i < argc; ++i){
+        keepVar[i] = newRoot.variableHasInit(i);
+
+        if(keepVar[i])
+          ++varsKept;
       }
 
-      std::cout << "newRoot = " << newRoot << '\n';
+      if(varsKept){
+        int pos = 0;
+
+        for(int i = 0; i < argc; ++i){
+          if(keepVar[i]){
+            varInfo &newVar = newRoot.getVariableInfoNode(i)->getVarInfo();
+
+            newVar.rightQualifiers.clear();
+            newVar.removeStackPointers();
+
+            if(pos != i)
+              newRoot.leaves[pos] = newRoot.leaves[i];
+
+            ++pos;
+          }
+        }
+
+        newRoot.leafCount = varsKept;
+      }
+      else{
+        newRoot.free();
+        delete &newRoot;
+      }
+      //================================
 
       for(int i = 0; i < argc; ++i){
         varInfo &var = s.getDeclarationVarInfo(i);
