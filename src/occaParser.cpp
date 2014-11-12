@@ -996,7 +996,12 @@ namespace occa {
         throw 1;
       }
 
-      iter  = node1.getVariableName(0);
+      varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
+
+      if( !iterVar.hasQualifier("occaConst") )
+        iterVar.addQualifier("occaConst");
+
+      iter  = iterVar.name;
       start = *(node1.getVariableInitNode(0));
 
       //---[ Node 2 ]---------
@@ -1075,9 +1080,6 @@ namespace occa {
       addOccaForCounter(s, ioLoop, loopNest, ss.str());
 
       ss.str("");
-
-      // if( !s.hasQualifier("const") )
-      //   s.addQualifier("const");
 
       if(opStride != "1"){
         node1.printOn(ss, "", expFlag::noSemicolon);

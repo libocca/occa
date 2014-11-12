@@ -1423,6 +1423,24 @@ namespace occa {
       return NULL;
     }
 
+    expNode* expNode::getVariableInfoNode(const int pos) const {
+      if(info & expType::declaration){
+        if(variableHasInit(pos)){
+          const expNode &varNode = *(getVariableNode(pos));
+
+          if(varNode.leaves[0]->info == expType::varInfo)
+            return varNode.leaves[0];
+          else if(varNode.leafCount &&
+                  (varNode.leaves[0]->value == "=")){
+
+            return varNode.leaves[0]->leaves[0];
+          }
+        }
+      }
+
+      return NULL;
+    }
+
     expNode* expNode::getVariableInitNode(const int pos) const {
       if(info & expType::declaration){
         if(variableHasInit(pos)){
