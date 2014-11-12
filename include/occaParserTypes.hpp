@@ -50,10 +50,10 @@ namespace occa {
       void remove(const int pos, const int count = 1);
       //================================
 
-      std::string toString();
-      operator std::string ();
+      std::string toString() const;
+      operator std::string () const;
 
-      friend std::ostream& operator << (std::ostream &out, qualifierInfo &type);
+      friend std::ostream& operator << (std::ostream &out, const qualifierInfo &type);
     };
     //============================================
 
@@ -114,10 +114,10 @@ namespace occa {
                         int pos = -1);
       //================================
 
-      std::string toString(const std::string &tab = "");
-      operator std::string ();
+      std::string toString(const std::string &tab = "") const;
+      operator std::string () const;
 
-      friend std::ostream& operator << (std::ostream &out, typeInfo &type);
+      friend std::ostream& operator << (std::ostream &out, const typeInfo &type);
     };
     //============================================
 
@@ -225,10 +225,10 @@ namespace occa {
       const std::string& getLastRightQualifier() const;
       //================================
 
-      std::string toString(const bool printType = true);
-      operator std::string ();
+      std::string toString(const bool printType = true) const;
+      operator std::string () const;
 
-      friend std::ostream& operator << (std::ostream &out, varInfo &var);
+      friend std::ostream& operator << (std::ostream &out, const varInfo &var);
     };
     //==============================================
 

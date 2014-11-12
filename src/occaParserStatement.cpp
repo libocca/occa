@@ -1425,16 +1425,14 @@ namespace occa {
 
     expNode* expNode::getVariableInfoNode(const int pos) const {
       if(info & expType::declaration){
-        if(variableHasInit(pos)){
-          const expNode &varNode = *(getVariableNode(pos));
+        const expNode &varNode = *(getVariableNode(pos));
 
-          if(varNode.leaves[0]->info == expType::varInfo)
-            return varNode.leaves[0];
-          else if(varNode.leafCount &&
-                  (varNode.leaves[0]->value == "=")){
+        if(varNode.leaves[0]->info & expType::varInfo)
+          return varNode.leaves[0];
+        else if(varNode.leafCount &&
+                (varNode.leaves[0]->value == "=")){
 
-            return varNode.leaves[0]->leaves[0];
-          }
+          return varNode.leaves[0]->leaves[0];
         }
       }
 
@@ -2552,6 +2550,7 @@ namespace occa {
       return false;
     }
 
+    //---[ Loading ]--------------------
     void statement::loadAllFromNode(strNode *nodeRoot){
       while(nodeRoot)
         nodeRoot = loadFromNode(nodeRoot);
@@ -2916,6 +2915,49 @@ namespace occa {
 
       return nextNode;
     }
+    //==================================
+
+    void statement::pushLeftFromSource(statementNode *target,
+                                       const std::string &source){
+      loadFromNode(labelCode( splitContent(source) ));
+
+      statementNode *newSN = statementEnd;
+
+      statementEnd = statementEnd->left;
+
+      if(statementEnd)
+        statementEnd->right = NULL;
+
+      if(statementStart == target)
+        statementStart = newSN;
+
+      if(target->left)
+        target->left->right = newSN;
+
+      target->left = newSN;
+      newSN->right = target;
+    }
+
+    void statement::pushRightFromSource(statementNode *target,
+                                        const std::string &source){
+      loadFromNode(labelCode( splitContent(source) ));
+
+      statementNode *newSN = statementEnd;
+
+      statementEnd = statementEnd->left;
+
+      if(statementEnd)
+        statementEnd->right = NULL;
+
+      if(statementEnd == target)
+        statementEnd = newSN;
+
+      if(target->right)
+        target->right->left = newSN;
+
+      target->right = newSN;
+      newSN->left   = target;
+    }
 
     statementNode* statement::getStatementNode(){
       if(up != NULL){
@@ -3064,9 +3106,10 @@ namespace occa {
       expNode::swap(expRoot, s.expRoot);
     }
 
-    bool statement::hasQualifier(const std::string &qualifier) const {
+    bool statement::hasQualifier(const std::string &qualifier) {
       if(type & declareStatementType){
-        return expRoot.leaves[0]->hasQualifier(qualifier);
+        varInfo &var = getDeclarationVarInfo(0);
+        return var.hasQualifier(qualifier);
       }
       else if(type & functionStatementType){
         const varInfo &var = expRoot.cGetVarInfo(0);
@@ -3095,6 +3138,8 @@ namespace occa {
         return;
 
       if(type & declareStatementType){
+        varInfo &var = getDeclarationVarInfo(0);
+        var.addQualifier(qualifier);
       }
       else if(type & functionStatementType){
         varInfo &var = expRoot.getVarInfo(0);
@@ -3118,7 +3163,8 @@ namespace occa {
         return;
 
       if(type & declareStatementType){
-        expRoot.leaves[0]->removeQualifier(qualifier);
+        varInfo &var = getDeclarationVarInfo(0);
+        var.removeQualifier(qualifier);
       }
       else if(type & functionStatementType){
       }
@@ -3126,39 +3172,22 @@ namespace occa {
       }
     }
 
-    expNode* statement::getDeclarationTypeNode(){
-      if(type & declareStatementType)
-        return expRoot.leaves[0];
-
-      return NULL;
+    varInfo& statement::getDeclarationVarInfo(const int pos){
+      expNode *varNode = expRoot.getVariableInfoNode(pos);
+      return varNode->getVarInfo();
     }
 
     expNode* statement::getDeclarationVarNode(const int pos){
       if(type & declareStatementType)
-        return expRoot.leaves[1 + pos];
+        return expRoot.leaves[pos];
 
       return NULL;
     }
 
-    std::string statement::getDeclarationVarName(const int pos) const {
+    std::string statement::getDeclarationVarName(const int pos){
       if(type & declareStatementType){
-        expNode &argNode = *(expRoot.leaves[1 + pos]);
-
-        // First entry might be
-        //   int [*] blah
-        if(argNode.leaves[0]->info & expType::variable)
-          return argNode.leaves[0]->getVariableName();
-        else if(argNode.leaves[1]->info & expType::variable)
-          return argNode.leaves[1]->getVariableName();
-        else {
-          // int i = 0  -->  [=] has [i,0]
-          if(argNode.leaves[0]->info & expType::LCR){
-            return argNode.leaves[0]->leaves[0]->getVariableName();
-          }
-          else {
-            return argNode.leaves[1]->leaves[0]->getVariableName();
-          }
-        }
+        varInfo &var = getDeclarationVarInfo(pos);
+        return var.name;
       }
 
       return "";
@@ -3166,7 +3195,7 @@ namespace occa {
 
     int statement::getDeclarationVarCount() const {
       if(type & declareStatementType)
-        return (expRoot.leafCount - 1);
+        return expRoot.leafCount;
 
       return 0;
     }

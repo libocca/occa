@@ -146,7 +146,7 @@ namespace occa {
     }
     //==================================
 
-    std::string qualifierInfo::toString(){
+    std::string qualifierInfo::toString() const {
       std::string ret;
 
       for(int i = 0; i < qualifierCount; ++i){
@@ -165,11 +165,11 @@ namespace occa {
       return ret;
     }
 
-    qualifierInfo::operator std::string (){
+    qualifierInfo::operator std::string () const {
       return toString();
     }
 
-    std::ostream& operator << (std::ostream &out, qualifierInfo &q){
+    std::ostream& operator << (std::ostream &out, const qualifierInfo &q){
       out << q.toString();
 
       return out;
@@ -563,7 +563,7 @@ namespace occa {
     }
     //==================================
 
-    std::string typeInfo::toString(const std::string &tab){
+    std::string typeInfo::toString(const std::string &tab) const {
       std::string ret;
 
       if(typedefing){
@@ -602,11 +602,11 @@ namespace occa {
       return ret;
     }
 
-    typeInfo::operator std::string (){
+    typeInfo::operator std::string () const {
       return toString();
     }
 
-    std::ostream& operator << (std::ostream &out, typeInfo &type){
+    std::ostream& operator << (std::ostream &out, const typeInfo &type){
       out << type.toString();
 
       return out;
@@ -1133,7 +1133,7 @@ namespace occa {
     }
     //================================
 
-    std::string varInfo::toString(const bool printType){
+    std::string varInfo::toString(const bool printType) const {
       std::string ret;
 
       bool addSpaceBeforeName = false;
@@ -1198,11 +1198,11 @@ namespace occa {
       return ret;
     }
 
-    varInfo::operator std::string (){
+    varInfo::operator std::string () const {
       return toString();
     }
 
-    std::ostream& operator << (std::ostream &out, varInfo &var){
+    std::ostream& operator << (std::ostream &out, const varInfo &var){
       out << var.toString();
       return out;
     }

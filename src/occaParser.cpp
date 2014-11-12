@@ -48,12 +48,12 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
-      std::cout << (std::string) *globalScope;
-      throw 1;
       // Broken?
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
+      std::cout << (std::string) *globalScope;
+      throw 1;
       // Broken
       modifyTextureVariables();
 
@@ -1100,16 +1100,7 @@ namespace occa {
       s.scopeTypeMap.clear();
       s.scopeVarMap.clear();
 
-      s.loadFromNode(labelCode( splitContent(ss.str()) ));
-
-      statement *newS2       = s.statementEnd->value;
-      statementNode *newNode = new statementNode(newS2);
-
-      s.statementEnd        = s.statementEnd->left;
-      s.statementEnd->right = NULL;
-
-      newNode->right   = s.statementStart;
-      s.statementStart = newNode;
+      s.pushLeftFromSource(s.statementStart, ss.str());
 
       std::string occaForName = "occa" + ioLoop + "For" + loopNest;
 
@@ -1890,17 +1881,13 @@ namespace occa {
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
-      if(!(s.type & declareStatementType))
-        return;
+      if( !(s.type & declareStatementType)   ||
+          (getStatementKernel(s) == NULL)    ||
+          (statementKernelUsesNativeOCCA(s)) ||
+          (!s.hasQualifier("exclusive")) ){
 
-      if(getStatementKernel(s) == NULL)
         return;
-
-      if(statementKernelUsesNativeOCCA(s))
-        return;
-
-      if(!s.hasQualifier("exclusive"))
-        return;
+      }
 
       s.removeQualifier("exclusive");
 
@@ -1908,14 +1895,15 @@ namespace occa {
 
       const int argc = s.getDeclarationVarCount();
 
-      expNode &typeNode = *(s.getDeclarationTypeNode());
+      varInfo &var0 = s.getDeclarationVarInfo(0);
 
       for(int i = 0; i < argc; ++i){
-        expNode &argNode = *(s.getDeclarationVarNode(i));
-        varInfo &var     = *(s.hasVariableInScope(s.getDeclarationVarName(i)));
+        varInfo &var = s.getDeclarationVarInfo(i);
 
-        const int isPrivateArray = var.stackPointerCount;
+        const int isPrivateArray = var.pointerCount;
 
+        std::cout << "var = " << var << '\n';
+#if 0
         ss << "occaPrivate";
 
         if(isPrivateArray)
@@ -1944,8 +1932,9 @@ namespace occa {
         s.statementEnd->value->depth = s.depth;
 
         ss.str("");
+#endif
       }
-
+#if 0
       statementNode *sn = s.getStatementNode();
 
       if(s.up->statementStart != sn){
@@ -1964,6 +1953,7 @@ namespace occa {
 
       s.statementStart = s.statementEnd = NULL;
       s.statementCount = 0;
+#endif
     }
 
     void parserBase::modifyTextureVariables(){

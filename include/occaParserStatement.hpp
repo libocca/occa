@@ -349,6 +349,7 @@ namespace occa {
       bool hasDescriptorVariable(const std::string descriptor) const;
       bool hasDescriptorVariableInScope(const std::string descriptor) const;
 
+      //---[ Loading ]------------------
       void loadAllFromNode(strNode *nodeRoot);
       strNode* loadFromNode(strNode *nodeRoot);
 
@@ -416,6 +417,13 @@ namespace occa {
       strNode* loadMacroFromNode(const int st,
                                  strNode *nodeRoot,
                                  strNode *nodeRootEnd);
+      //================================
+
+      void pushLeftFromSource(statementNode *target,
+                              const std::string &source);
+
+      void pushRightFromSource(statementNode *target,
+                               const std::string &source);
 
       statementNode* getStatementNode();
 
@@ -437,14 +445,13 @@ namespace occa {
       //---[ Statement Info ]-----------
       void swapExpWith(statement &s);
 
-      bool hasQualifier(const std::string &qualifier) const;
-
+      bool hasQualifier(const std::string &qualifier);
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void removeQualifier(const std::string &qualifier);
 
-      expNode* getDeclarationTypeNode();
+      varInfo& getDeclarationVarInfo(const int pos);
       expNode* getDeclarationVarNode(const int pos);
-      std::string getDeclarationVarName(const int pos) const;
+      std::string getDeclarationVarName(const int pos);
       int getDeclarationVarCount() const;
 
       std::string getFunctionName() const;
