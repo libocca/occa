@@ -92,10 +92,11 @@ namespace occa {
       sInfo->labelStatement(nodePos, this);
 
       // Don't need to load stuff
-      if(sInfo->type & (macroStatementType          |
-                        gotoStatementType           |
-                        blockStatementType) ||
-         (sInfo->type == keywordType["occaOuterFor0"])){
+      if(sInfo->type & (macroStatementType  |
+                        gotoStatementType   |
+                        blockStatementType)            ||
+         (sInfo->type == keywordType["occaOuterFor0"]) ||
+         (sInfo->type == elseStatementType)){
 
         return;
       }
@@ -1715,12 +1716,14 @@ namespace occa {
             out << "while(";
           else if(sInfo->type & doWhileStatementType)
             out << "do";
-          else if(sInfo->type & ifStatementType)
-            out << "if(";
-          else if(sInfo->type & elseIfStatementType)
-            out << "else if(";
-          else if(sInfo->type & elseStatementType)
-            out << "else";
+          else if(sInfo->type & ifStatementType){
+            if(sInfo->type == ifStatementType)
+              out << "if(";
+            else if(sInfo->type == elseIfStatementType)
+              out << "else if(";
+            else
+              out << "else";
+          }
           else if(sInfo->type & switchStatementType)
             out << "switch(";
 
@@ -1735,8 +1738,8 @@ namespace occa {
               out << "; " << *(leaves[i]);
           }
 
-          if( !(sInfo->type & (elseStatementType    |
-                               gotoStatementType)) ||
+          if( !(sInfo->type & gotoStatementType) &&
+              (sInfo->type != elseStatementType) &&
               (sInfo->type != doWhileStatementType) ){
             out << ")";
           }
@@ -2002,6 +2005,9 @@ namespace occa {
     }
 
     int statement::checkFlowStatementType(strNode *&nodeRoot, expNode *expPtr){
+      if(expPtr)
+        expPtr->info  = expType::checkSInfo;
+
       std::string &nodeValue = nodeRoot->value;
 
       nodeRoot = nodeRoot->right;
@@ -2453,11 +2459,10 @@ namespace occa {
                                                         nodeRoot,
                                                         nodeRootEnd);
 
-        else if(st & ifStatementType){
+        else if(st & ifStatementType)
           nodeRootEnd = loadIfFromNode(st,
                                        nodeRoot,
                                        nodeRootEnd);
-        }
 
         else if(st & switchStatementType)
           nodeRootEnd = newStatement->loadSwitchFromNode(st,
@@ -2566,9 +2571,9 @@ namespace occa {
       return nextNode;
     }
 
-    strNode* statement::loadForFromNode(const int st,
-                                        strNode *nodeRoot,
-                                        strNode *nodeRootEnd){
+    strNode* statement::loadOneStatementFromNode(const int st,
+                                                 strNode *nodeRoot,
+                                                 strNode *nodeRootEnd){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2584,146 +2589,75 @@ namespace occa {
       return nextNode;
     }
 
+    strNode* statement::loadForFromNode(const int st,
+                                        strNode *nodeRoot,
+                                        strNode *nodeRootEnd){
+
+      return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
+    }
+
     strNode* statement::loadWhileFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd){
-      strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
-      if(nodeRoot)
-        nodeRoot->left = NULL;
-      if(nodeRootEnd)
-        nodeRootEnd->right = NULL;
-
-      if(nodeRootEnd){
-        if(nodeRootEnd->type == startBrace)
-          loadAllFromNode(nodeRootEnd->down);
-        else
-          loadFromNode(nodeRootEnd);
-      }
-
-      return nextNode;
+      return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
     }
 
     strNode* statement::loadIfFromNode(const int st_,
                                        strNode *nodeRoot,
                                        strNode *nodeRootEnd){
-      return NULL;
-#if 0
-      strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
+      statement *newStatement = statementEnd->value;
 
-      if(nodeRoot)
-        nodeRoot->left = NULL;
-      if(nodeRootEnd)
-        nodeRootEnd->right = NULL;
+      strNode *nextNode = newStatement->loadOneStatementFromNode(st_,
+                                                                 nodeRoot,
+                                                                 nodeRootEnd);
 
-      if(nodeRootEnd){
-        if(nodeRootEnd->type == startBrace)
-          loadAllFromNode(nodeRootEnd->down);
-        else
-          loadFromNode(nodeRootEnd);
-      }
+      if(nextNode == NULL)
+        return NULL;
 
-      int st = expNode::getStatementType(nodeRoot);
+      nodeRoot    = nextNode;
+      nodeRootEnd = nextNode;
 
-      while(st == elseIfStatementType){
+      int st      = findStatementType(nodeRootEnd);
+      int stCheck = elseIfStatementType;
 
-      }
+      nodeRootEnd = nextNode;
 
-      if(st == elseStatementType){
-
-      }
-
-      statement *newStatement = makeSubStatement();
-      nodeRootEnd = nodeRoot;
-
-      newStatement->expRoot.loadFromNode(nodeRootEnd);
-
-      int st = newStatement->type;
-
-
-      do {
-        statement *newStatement = makeSubStatement();
-        strNode * nodeRootEnd = nodeRoot;
-
-        newStatement->expRoot.loadFromNode(nodeRootEnd);
-
-        st = newStatement->type;
-
-        if(st & invalidStatementType){
-          std::cout << "Not a valid statement\n";
-          throw 1;
-        }
-
-        nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
-
-        if(nodeRoot)
-          nodeRoot->left = NULL;
-        if(nodeRootEnd)
-          nodeRootEnd->right = NULL;
-
-        const int downCount = nodeRootEnd->down.size();
-
-        if(((downCount == 1) && (st != elseStatementType)) ||
-           ((downCount == 0) && (st == elseStatementType))){
-          // if()           or    else
-          //   statement;           statement;
-
-          nextNode = newStatement->loadFromNode(nextNode);
-          addStatement(newStatement);
-
-          if(st == elseStatementType)
+      while(true){
+        if(st != stCheck){
+          if(stCheck == elseIfStatementType)
+            stCheck = elseStatementType;
+          else
             break;
         }
+        else if(nextNode == NULL){
+          break;
+        }
         else{
-          int blockPos = (st != elseStatementType) ? 1 : 0;
+          newStatement = makeSubStatement();
+          newStatement->expRoot.loadFromNode(nodeRootEnd);
 
-          strNode *blockStart = nodeRoot->down[blockPos];
-          strNode *blockEnd   = lastNode(blockStart);
+          if(st & invalidStatementType){
+            std::cout << "Not a valid statement\n";
+            throw 1;
+          }
 
-          nodeRoot->down.erase(nodeRoot->down.begin() + blockPos,
-                               nodeRoot->down.begin() + blockPos + 1);
-
-          // Load all down's before popping [{] and [}]'s
-          const int blockDownCount = blockStart->down.size();
-
-          for(int i = 0; i < blockDownCount; ++i)
-            newStatement->loadAllFromNode( blockStart->down[i] );
-
-          loadBlocksFromLastNode(nodeRootEnd, blockPos);
-
-          popAndGoRight(blockStart);
-          popAndGoLeft(blockEnd);
-
-          newStatement->loadAllFromNode(blockStart);
           addStatement(newStatement);
 
-          break;
+          nextNode = newStatement->loadOneStatementFromNode(st,
+                                                            nodeRoot,
+                                                            nodeRootEnd);
+
+          nodeRoot    = nextNode;
+          nodeRootEnd = nextNode;
+
+          st = findStatementType(nodeRootEnd);
+
+          nodeRootEnd = nextNode;
         }
-
-        if(nextNode == NULL)
-          break;
-
-        nodeRoot = nodeRootEnd = nextNode;
-
-        // statement *newStatement = makeSubStatement();
-        // strNode * nodeRootEnd = nodeRoot;
-
-        // newStatement->expRoot.loadFromNode(nodeRootEnd);
-        // const int st = newStatement->type;
-
-        st = statementType(nodeRootEnd);
-
-        if(st & invalidStatementType){
-          std::cout << "Not a valid statement:\n";
-          prettyString(nodeRoot, "", false);
-          throw 1;
-        }
-
-      } while((st == elseIfStatementType) ||
-              (st == elseStatementType));
+      }
 
       return nextNode;
-#endif
     }
 
     // [-] Missing

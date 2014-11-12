@@ -336,6 +336,10 @@ namespace occa {
                                   strNode *nodeRoot,
                                   strNode *nodeRootEnd);
 
+      strNode* loadOneStatementFromNode(const int st,
+                                        strNode *nodeRoot,
+                                        strNode *nodeRootEnd);
+
       strNode* loadForFromNode(const int st,
                                strNode *nodeRoot,
                                strNode *nodeRootEnd);
