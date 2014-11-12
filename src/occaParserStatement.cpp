@@ -265,7 +265,7 @@ namespace occa {
             leaf.leaves[j]->up = &leaf;
           }
 
-          if(i != 0)
+          if(!(sInfo->type & forStatementType) || (i != 0))
             leaf.organize();
           else
             leaf.splitDeclareStatement(expFlag::addVarToScope);
@@ -2090,7 +2090,7 @@ namespace occa {
               !(nodeRoot->type & endStatement))
           nodeRoot = nodeRoot->right;
 
-        return declareStatementType;
+        return updateStatementType;
       }
     }
 

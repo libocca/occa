@@ -780,8 +780,9 @@ namespace occa {
           leaf = leaf->leaves[0];
       }
 
-      if(leaf->info & (expType::unknown |
-                       expType::variable)){
+      if(leaf->info & (expType::unknown  |
+                       expType::variable |
+                       expType::function)){
         name = leaf->value;
 
         int sLeafPos = leaf->whichLeafAmI();
