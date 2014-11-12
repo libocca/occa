@@ -107,19 +107,7 @@ namespace occa {
       }
 
       //---[ Find Statement ]-----------
-      void labelStatement(strNode *&nodeRoot);
       int getStatementType();
-
-      int loadMacroStatement(strNode *&nodeRoot);
-      int loadOccaForStatement(strNode *&nodeRoot);
-      int loadTypedefStatement(strNode *&nodeRoot);
-      int loadStructStatement(strNode *&nodeRoot);
-      int loadUpdateStatement(strNode *&nodeRoot);
-      int loadDescriptorStatement(strNode *&nodeRoot);
-      int loadGotoStatement(strNode *&nodeRoot);
-      int loadFlowStatement(strNode *&nodeRoot);
-      int loadSpecialStatement(strNode *&nodeRoot);
-      int loadBlockStatement(strNode *&nodeRoot);
       //================================
 
       void loadFromNode(strNode *&nodePos);
@@ -300,15 +288,21 @@ namespace occa {
 
       std::string getTab() const;
 
-      int checkMacroStatementType(strNode *&nodeRoot);
-      int checkOccaForStatementType(strNode *&nodeRoot);
-      int checkStructStatementType(strNode *&nodeRoot);
-      int checkUpdateStatementType(strNode *&nodeRoot);
-      int checkDescriptorStatementType(strNode *&nodeRoot);
-      int checkGotoStatementType(strNode *&nodeRoot);
-      int checkFlowStatementType(strNode *&nodeRoot);
-      int checkSpecialStatementType(strNode *&nodeRoot);
-      int checkBlockStatementType(strNode *&nodeRoot);
+      //---[ Find Statement ]-----------
+      void labelStatement(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int findStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+
+      int checkMacroStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkOccaForStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkStructStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkUpdateStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkGotoStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkFlowStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkSpecialStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkBlockStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int getStatementType();
+      //================================
 
       void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);
