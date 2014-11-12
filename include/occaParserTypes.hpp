@@ -7,108 +7,237 @@
 
 namespace occa {
   namespace parserNamespace {
-    //---[ Type Definitions ]-----------------------
-    /*
-      | struct {          |  members    = {float x, float y, float z}
-      |   union {         |  allMembers = {union{float x, float y}, float z}
-      |     float x;      |
-      |     float y;      |
-      |   }               |
-      |   float z;        |
-      | }                 |
-      |                   |
-      | int (*f)(void *a) | allMembers = {int, void* a}
-    */
-    class typeDef {
+    class expNode;
+    class typeInfo;
+    class varInfo;
+
+    class varLeaf_t;
+
+    //---[ Qualifier Info Class ]-----------------
+    typedef union {
+      typeInfo *type;
+      varLeaf_t *varLeaf;
+    } typeOrVar;
+
+    class qualifierInfo {
     public:
-      typeDef *up;
+      int qualifierCount;
+      std::string *qualifiers;
 
-      std::string typeName, varName;
-      int typeInfo;
+      qualifierInfo();
 
-      int pointerCount;
-      std::vector<std::string> stackPointerSizes;
+      qualifierInfo(const qualifierInfo &q);
+      qualifierInfo& operator = (const qualifierInfo &q);
 
-      int bitField;
+      inline std::string& operator [] (const int pos){
+        return qualifiers[pos];
+      }
 
-      scopeTypeMap_t memberTypes;
-      scopeVarMap_t  memberVars;
+      void free();
 
-      std::vector<void*> allMembers;
-      std::vector<char> memberInfo;
+      qualifierInfo clone();
 
-      typeDef *typedefing, *typedefingBase;
-      bool typedefUsesName;
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos);
 
-      typeDef();
+      int loadFrom(expNode &expRoot,
+                   int leafPos);
 
-      void addVar(varInfo *def);
+      //---[ Qualifier Info ]-----------
+      bool has(const std::string &qName) const;
+      const std::string& get(const int pos) const;
 
-      void addType(typeDef *def);
+      void add(const std::string &qName,
+               int pos = -1);
 
-      typeDef& addType(const std::string &newVarName);
+      void remove(const std::string &qName);
+      void remove(const int pos, const int count = 1);
 
-      void loadFromNode(statement &s,
-                        strNode *&n);
+      void clear();
+      //================================
 
-      void loadStructPartsFromNode(statement &s, strNode *n);
-      void loadEnumPartsFromNode(statement &s, strNode *n);
+      std::string toString() const;
+      operator std::string () const;
 
-      std::string print(const std::string &tab = "", const int printStyle = 0) const;
+      friend std::ostream& operator << (std::ostream &out, const qualifierInfo &type);
+    };
+    //============================================
 
-      operator std::string() const;
+
+    //---[ Type Info Class ]----------------------
+    class typeInfo {
+    public:
+      qualifierInfo leftQualifiers;
+      std::string name;
+
+      int nestedInfoCount;
+      bool *nestedInfoIsType;
+      expNode *nestedExps;
+
+      bool typedefHasDefinition;
+      typeInfo *typedefing;
+      typeInfo *baseType;
+
+      varInfo *typedefVar;
+
+      typeInfo();
+
+      typeInfo(const typeInfo &type);
+      typeInfo& operator = (const typeInfo &type);
+
+      typeInfo clone();
+
+      //---[ NEW ]------------
+      int loadFrom(expNode &expRoot,
+                   int leafPos);
+
+      int loadTypedefFrom(expNode &expRoot,
+                          int leafPos);
+
+      static int delimeterCount(expNode &expRoot,
+                                const char *delimiter);
+
+      static int nextDelimeter(expNode &expRoot,
+                               int leafPos,
+                               const char *delimiter);
+
+      static bool statementIsATypeInfo(expNode &expRoot,
+                                       int leafPos);
+      //======================
+
+      static bool statementIsATypeInfo(statement &s,
+                                       strNode *nodePos);
+
+      //---[ Type Info ]----------------
+      void addQualifier(const std::string &qName,
+                        int pos = -1);
+      //================================
+
+      std::string toString(const std::string &tab = "") const;
+      operator std::string () const;
+
+      friend std::ostream& operator << (std::ostream &out, const typeInfo &type);
+    };
+    //============================================
+
+
+    //---[ Variable Info Class ]------------------
+    namespace varType {
+      static const int var             = (1 << 0);
+
+      static const int functionType    = (7 << 1);
+      static const int function        = (3 << 1);
+      static const int functionDec     = (1 << 1);
+      static const int functionDef     = (1 << 2);
+      static const int functionPointer = (1 << 3);
     };
 
-    std::ostream& operator << (std::ostream &out, const typeDef &def);
-    //==============================================
-
-
-    //---[ Variable Info ]--------------------------
     class varInfo {
     public:
-      typeDef *type;
-      std::string altType, name;
-      int typeInfo;
+      int info;
 
-      int bitField;
+      qualifierInfo leftQualifiers, rightQualifiers;
 
-      int pointerCount;
-      std::vector<std::string> descriptors;
-      std::vector<std::string> stackPointerSizes;
+      typeInfo *baseType;
 
-      // Function {Proto, Def | Ptr}
-      //    { arg1 , arg2 , ... }
-      std::vector<varInfo*> vars;
+      std::string name;
 
-      std::vector<std::string> extraInfo;
+      int pointerCount, stackPointerCount;
+      expNode *stackExpRoots;
+
+      int argumentCount;
+      varInfo *argumentVarInfos;
+
+      int functionNestCount;
+      varInfo *functionNests;
 
       varInfo();
-      varInfo(const varInfo &vi);
 
-      varInfo& operator = (const varInfo &vi);
+      varInfo(const varInfo &var);
+      varInfo& operator = (const varInfo &var);
 
-      std::string postTypeStr() const;
+      varInfo clone();
 
-      std::string decoratedType() const;
+      static int variablesInStatement(strNode *nodePos);
 
-      int hasDescriptor(const std::string descriptor) const;
+      //---[ NEW ]------------
+      int loadFrom(expNode &expRoot,
+                   int leafPos,
+                   varInfo *varHasType = NULL);
 
-      void removeDescriptor(const std::string descriptor);
-      void removeDescriptor(const int descPos);
+      int loadTypeFrom(expNode &expRoot,
+                       int leafPos,
+                       varInfo *varHasType);
 
-      strNode* makeStrNodeChain(const int depth     = 0,
-                                const int sideDepth = 0) const;
+      int loadNameFrom(expNode &expRoot,
+                       int leafPos);
 
-      operator std::string() const;
+      int getVarInfoFrom(expNode &expRoot,
+                         int leafPos);
 
-      std::string podString() const;
+      int getNestCountFrom(expNode &expRoot,
+                           int leafPos);
 
-      std::string functionString() const;
+      int loadStackPointersFrom(expNode &expRoot,
+                                int leafPos);
 
-      std::string functionPointerString() const;
+      int loadArgsFrom(expNode &expRoot,
+                       int leafPos);
+      //======================
+
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos,
+                        varInfo *varHasType = NULL);
+
+      strNode* loadTypeFrom(statement &s,
+                            strNode *nodePos,
+                            varInfo *varHasType);
+
+      strNode* loadNameFrom(statement &s,
+                            strNode *nodePos);
+
+      int getVarInfoFrom(statement &s,
+                         strNode *nodePos);
+
+      int getNestCountFrom(statement &s,
+                           strNode *nodePos);
+
+      strNode* loadStackPointersFrom(statement &s,
+                                     strNode *nodePos);
+
+      strNode* loadArgsFrom(statement &s,
+                            strNode *nodePos);
+
+      //---[ Variable Info ]------------
+      int leftQualifierCount() const;
+      int rightQualifierCount() const;
+
+      bool hasQualifier(const std::string &qName) const;
+
+      void addQualifier(const std::string &qName,
+                        int pos = -1);
+
+      void addRightQualifier(const std::string &qName,
+                             int pos = -1);
+
+      void removeQualifier(const std::string &qName);
+
+      const std::string& getLeftQualifier(const int pos) const;
+      const std::string& getRightQualifier(const int pos) const;
+
+      const std::string& getLastLeftQualifier() const;
+      const std::string& getLastRightQualifier() const;
+
+      void removeStackPointers();
+
+      void addArgument(const int pos, varInfo &arg);
+      //================================
+
+      std::string toString(const bool printType = true) const;
+      operator std::string () const;
+
+      friend std::ostream& operator << (std::ostream &out, const varInfo &var);
     };
-
-    std::ostream& operator << (std::ostream &out, const varInfo &info);
     //==============================================
 
 

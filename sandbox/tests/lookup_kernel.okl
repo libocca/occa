@@ -1,7 +1,7 @@
 #ifndef __XSBENCH_HEADER_H__
 #define __XSBENCH_HEADER_H__
 
-typedef unsigned long long int size_t;
+typedef unsigned long long size_t;
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -146,10 +146,10 @@ occaFunction long grid_search( const long int n, const double quarry, GridPoint 
 		examinationPoint = lowerLimit + ( length / 2 );
 
     // Some optimizations exist in CUDA XSBench but are not included here
-		if( A[examinationPoint].energy > quarry )
-			upperLimit = examinationPoint;
-		else
-			lowerLimit = examinationPoint;
+		/* if( A[examinationPoint].energy > quarry ) */
+		/* 	upperLimit = examinationPoint; */
+		/* else */
+		/* 	lowerLimit = examinationPoint; */
 
 		length = upperLimit - lowerLimit;
 	}

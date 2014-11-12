@@ -42,9 +42,46 @@ namespace occa {
       static const int occaFor         = (1 << 24);
       static const int checkSInfo      = (1 << 25);
 
-      static const int printValue      = (1 << 26);
-      static const int printLeaves     = (1 << 27);
-      static const int maxBit          = 27;
+      static const int varInfo         = (1 << 26);
+      static const int typeInfo        = (1 << 27);
+
+      static const int printValue      = (1 << 28);
+      static const int printLeaves     = (1 << 29);
+      static const int maxBit          = 29;
+    };
+
+    namespace expFlag {
+      static const int none        = 0;
+      static const int noNewline   = (1 << 0);
+      static const int noSemicolon = (1 << 1);
+
+      static const int addVarToScope  = (1 << 0);
+      static const int addTypeToScope = (1 << 1);
+      static const int addToParent    = (1 << 2);
+    }
+
+    namespace leafType {
+      static const char exp  = (1 << 0);
+      static const char type = (1 << 1);
+      static const char var  = (1 << 2);
+    };
+
+    class varInfo;
+    class typeInfo;
+    class expNode;
+
+    class varLeaf_t {
+    public:
+      bool hasExp;
+
+      varInfo *var;
+      expNode *exp;
+
+      varLeaf_t() :
+        hasExp(false),
+
+        var(NULL),
+        exp(NULL) {}
     };
 
     class expNode {
@@ -57,27 +94,24 @@ namespace occa {
       expNode *up;
 
       int leafCount;
-      expNode **leaves;
+      char leafInfo;
 
-      varInfo *varType;
-      int varPointerCount;
+      union {
+        expNode **leaves;
+        typeInfo **typeLeaves;
+        varLeaf_t *varLeaves;
+      };
 
+      expNode();
       expNode(statement &s);
       expNode(expNode &up_);
 
-      //---[ Find Statement ]-----------
-      void labelStatement(strNode *&nodeRoot);
+      inline expNode& operator [] (const int i){
+        return *leaves[i];
+      }
 
-      int loadMacroStatement(strNode *&nodeRoot);
-      int loadOccaForStatement(strNode *&nodeRoot);
-      int loadTypedefStatement(strNode *&nodeRoot);
-      int loadStructStatement(strNode *&nodeRoot);
-      int loadUpdateStatement(strNode *&nodeRoot);
-      int loadDescriptorStatement(strNode *&nodeRoot);
-      int loadGotoStatement(strNode *&nodeRoot);
-      int loadFlowStatement(strNode *&nodeRoot);
-      int loadSpecialStatement(strNode *&nodeRoot);
-      int loadBlockStatement(strNode *&nodeRoot);
+      //---[ Find Statement ]-----------
+      int getStatementType();
       //================================
 
       void loadFromNode(strNode *&nodePos);
@@ -85,21 +119,18 @@ namespace occa {
       void splitAndOrganizeNode(strNode *nodeRoot);
       void organize();
 
-      void addNewVariables(strNode *nodePos);
-      void updateNewVariables();
+      void splitDeclareStatement(const int flags = (expFlag::addVarToScope |
+                                                    expFlag::addToParent));
 
-      void splitDeclareStatement();
-      void splitForStatement();
-      void splitFunctionStatement();
-      void splitStructStatement();
-      void splitStructStatements();
-      void splitTypedefStatement();
+      void splitFlowStatement();
 
-      void initLoadFromNode(strNode *nodeRoot,
-                            const int initPos = 0);
+      void splitFunctionStatement(const int flags = (expFlag::addVarToScope |
+                                                     expFlag::addToParent));
 
-      int initDownsFromNode(strNode *nodeRoot,
-                            int leafPos = 0);
+      void splitStructStatement(const int flags = (expFlag::addTypeToScope |
+                                                   expFlag::addToParent));
+
+      void initLoadFromNode(strNode *nodeRoot);
 
       void initOrganization();
 
@@ -118,19 +149,6 @@ namespace occa {
 
       // const int [*] x
       void labelReferenceQualifiers();
-
-      // [const] int x
-      void mergeQualifiers();
-
-      // [[const] [int] [*]] x
-      void mergeTypes();
-
-      // [[[const] [int] [*]] [x]]
-      void mergeVariables();
-
-      // 1 [type]                           2 [(]       3 [(]
-      // [[qualifiers] [type] [qualifiers]] [(*[name])] [([args])]
-      void mergeFunctionPointers();
 
       // class(...), class{1,2,3}
       void mergeClassConstructs();
@@ -170,10 +188,6 @@ namespace occa {
       // a [?] b : c
       int mergeTernary(const int leafPos);
 
-      //---[ Custom Functions ]---------
-      void labelNewVariables();
-      //================================
-
       //---[ Custom Type Info ]---------
       bool qualifierEndsWithStar() const;
 
@@ -201,6 +215,27 @@ namespace occa {
                           expNode **flatLeaves);
 
       void addNode(const int info_, const int pos = 0);
+      void addNodes(const int info_, const int pos, const int count = 1);
+
+      varInfo& addVarInfoNode();
+      varInfo& addVarInfoNode(const int pos);
+
+      typeInfo& addTypeInfoNode();
+      typeInfo& addTypeInfoNode(const int pos);
+
+      varInfo& getVarInfo();
+      const varInfo& cGetVarInfo() const;
+
+      varInfo& getVarInfo(const int pos);
+      const varInfo& cGetVarInfo(const int pos) const;
+
+      typeInfo& getTypeInfo();
+      const typeInfo& cGetTypeInfo() const;
+
+      typeInfo& getTypeInfo(const int pos);
+      const typeInfo& cGetTypeInfo(const int pos) const;
+
+      void removeNodes(const int pos, const int count = 1);
       void removeNode(const int pos = 0);
 
       void convertTo(const int info_ = 0);
@@ -214,9 +249,14 @@ namespace occa {
 
       void changeType(const std::string &newType);
 
-      std::string getVariableName() const;
+      int getVariableCount() const;
+      bool variableHasInit(const int pos) const;
 
-      void setVarInfo(varInfo &var);
+      expNode* getVariableNode(const int pos) const;
+      expNode* getVariableInfoNode(const int pos) const;
+      expNode* getVariableInitNode(const int pos) const;
+
+      std::string getVariableName(const int pos = 0) const;
       //================================
 
       void freeLeaf(const int leafPos);
@@ -224,9 +264,11 @@ namespace occa {
       void free();
 
       void print(const std::string &tab = "");
-      void printOn(std::ostream &out, const std::string &tab = "");
+      void printOn(std::ostream &out,
+                   const std::string &tab = "",
+                   const int flags = expFlag::none);
 
-      std::string getString(const std::string &tab = "");
+      std::string toString(const std::string &tab = "");
       operator std::string ();
 
       friend std::ostream& operator << (std::ostream &out, expNode &n);
@@ -262,6 +304,10 @@ namespace occa {
 
       statement(parserBase &pb);
 
+      statement(const int depth_,
+                varOriginMap_t &varOriginMap_,
+                varUsedMap_t &varUsedMap_);
+
       statement(const int depth_, statement *up_);
 
       statement(const int depth_,
@@ -274,19 +320,24 @@ namespace occa {
 
       std::string getTab() const;
 
-      int statementType(strNode *&nodeRoot);
+      //---[ Find Statement ]-----------
+      void labelStatement(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int findStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
 
-      int checkMacroStatementType(strNode *&nodeRoot);
-      int checkOccaForStatementType(strNode *&nodeRoot);
-      int checkStructStatementType(strNode *&nodeRoot);
-      int checkUpdateStatementType(strNode *&nodeRoot);
-      int checkDescriptorStatementType(strNode *&nodeRoot);
-      int checkGotoStatementType(strNode *&nodeRoot);
-      int checkFlowStatementType(strNode *&nodeRoot);
-      int checkSpecialStatementType(strNode *&nodeRoot);
-      int checkBlockStatementType(strNode *&nodeRoot);
+      int checkMacroStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkOccaForStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkStructStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkUpdateStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkGotoStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkFlowStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkSpecialStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkBlockStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int getStatementType();
+      //================================
 
-      void addTypeDef(const std::string &typeDefName);
+      void addType(typeInfo &type);
+      void addTypedef(const std::string &typedefName);
 
       bool nodeHasQualifier(strNode *n) const;
       bool nodeHasSpecifier(strNode *n) const;
@@ -294,16 +345,21 @@ namespace occa {
 
       varInfo loadVarInfo(strNode *&nodePos);
 
-      typeDef* hasTypeInScope(const std::string &typeName) const;
+      typeInfo* hasTypeInScope(const std::string &typeName) const;
 
       varInfo* hasVariableInScope(const std::string &varName) const;
 
       bool hasDescriptorVariable(const std::string descriptor) const;
       bool hasDescriptorVariableInScope(const std::string descriptor) const;
 
+      //---[ Loading ]------------------
       void loadAllFromNode(strNode *nodeRoot);
       strNode* loadFromNode(strNode *nodeRoot);
 
+      void setExpNodeFromStrNode(expNode &exp,
+                                 strNode *nodePos);
+
+      expNode* createExpNodeFrom(strNode *nodePos);
       expNode* createExpNodeFrom(const std::string &source);
 
       void loadBlocksFromLastNode(strNode *end,
@@ -312,6 +368,10 @@ namespace occa {
       strNode* loadSimpleFromNode(const int st,
                                   strNode *nodeRoot,
                                   strNode *nodeRootEnd);
+
+      strNode* loadOneStatementFromNode(const int st,
+                                        strNode *nodeRoot,
+                                        strNode *nodeRootEnd);
 
       strNode* loadForFromNode(const int st,
                                strNode *nodeRoot,
@@ -360,10 +420,17 @@ namespace occa {
       strNode* loadMacroFromNode(const int st,
                                  strNode *nodeRoot,
                                  strNode *nodeRootEnd);
+      //================================
+
+      void pushLeftFromSource(statementNode *target,
+                              const std::string &source);
+
+      void pushRightFromSource(statementNode *target,
+                               const std::string &source);
 
       statementNode* getStatementNode();
 
-      varInfo* addVariable(const varInfo &info,
+      varInfo* addVariable(varInfo &var,
                            statement *origin = NULL);
 
       void addStatement(statement *newStatement);
@@ -382,23 +449,23 @@ namespace occa {
       void swapExpWith(statement &s);
 
       bool hasQualifier(const std::string &qualifier) const;
-
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void removeQualifier(const std::string &qualifier);
 
-      expNode* getDeclarationTypeNode();
+      varInfo& getDeclarationVarInfo(const int pos);
+      const varInfo& cGetDeclarationVarInfo(const int pos) const ;
       expNode* getDeclarationVarNode(const int pos);
-      std::string getDeclarationVarName(const int pos) const;
+      std::string getDeclarationVarName(const int pos);
       int getDeclarationVarCount() const;
 
       std::string getFunctionName() const;
       void setFunctionName(const std::string &newName);
-      expNode* getFunctionArgsNode();
-      expNode* getFunctionArgNode(const int pos);
       std::string getFunctionArgType(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);
       int getFunctionArgCount() const;
+
+      void addFunctionArg(const int pos, varInfo &var);
 
       int getForStatementCount() const;
       //================================

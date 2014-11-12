@@ -44,6 +44,7 @@ namespace occa {
 
       strNode* preprocessMacros(strNode *nodeRoot);
 
+      strNode* splitAndPreprocessContent(const std::string &s);
       strNode* splitAndPreprocessContent(const char *cRoot);
       //====================================
 
@@ -77,8 +78,6 @@ namespace occa {
       bool nodeHasUnknownVariable(strNode *n);
 
       void setupOccaFors(statement &s);
-
-      void loadScopeVarMap(statement &s);
 
       bool statementHasOccaOuterFor(statement &s);
       bool statementHasOccaFor(statement &s);
@@ -156,8 +155,7 @@ namespace occa {
                                        loopSection_t &loopSection);
 
       void splitDefineForVariable(statement *&origin,
-                                  varInfo &var, strNode *varNode,
-                                  const int declPos);
+                                  varInfo &var);
 
       void addInnerForsToStatement(statement &s,
                                    const int innerDim);

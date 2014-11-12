@@ -27,7 +27,7 @@ namespace occa {
 
     class statement;
 
-    class typeDef;
+    class typeInfo;
     class varInfo;
     class kernelInfo;
 
@@ -53,9 +53,9 @@ namespace occa {
   typedef opTypeMap_t::iterator                   opTypeMapIterator;
   typedef opTypeMap_t::const_iterator             cOpTypeMapIterator;
 
-  typedef std::vector<parserNamespace::typeDef*> anonymousTypeMap_t;
+  typedef std::vector<parserNamespace::typeInfo*> anonymousTypeMap_t;
 
-  typedef std::map<std::string,parserNamespace::typeDef*> scopeTypeMap_t;
+  typedef std::map<std::string,parserNamespace::typeInfo*> scopeTypeMap_t;
   typedef scopeTypeMap_t::iterator                        scopeTypeMapIterator;
   typedef scopeTypeMap_t::const_iterator                  cScopeTypeMapIterator;
 
@@ -193,11 +193,6 @@ namespace occa {
     static const int functionTypeDef     = (1 << 26);
 
     static const int templateTypeDef     = (1 << 27);
-
-    namespace typeDefStyle {
-      static const int skipFirstLineIndent = (1 << 0);
-      static const int skipSemicolon       = (1 << 1);
-    };
 
     //   ---[ Instructions ]----
     static const int doNothing           = (1 << 0);

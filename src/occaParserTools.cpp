@@ -372,6 +372,15 @@ namespace occa {
 
       return status;
     }
+
+    char segmentPair(const char c){
+      return ((')' * (c == '(')) +
+              (']' * (c == '[')) +
+              ('}' * (c == '{')) +
+              ('(' * (c == ')')) +
+              ('[' * (c == ']')) +
+              ('{' * (c == '}')));
+    }
     //==============================================
 
     std::string getBits(const int value){

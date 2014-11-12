@@ -3,611 +3,1189 @@
 
 namespace occa {
   namespace parserNamespace {
-    typeDef::typeDef() :
-      up(NULL),
-
-      typeName(""),
-      varName(""),
-      typeInfo(podTypeDef),
-
-      pointerCount(0),
-
-      bitField(-1),
-
-      typedefing(NULL),
-      typedefingBase(NULL) {}
-
-    void typeDef::addVar(varInfo *def){
-      if(def->name.size())
-        memberVars[def->name] = def;
-
-      allMembers.push_back(def);
-      memberInfo.push_back(isVarInfo);
-    }
-
-    void typeDef::addType(typeDef *def){
-      def->up = this;
-
-      if(def->typeName.size())
-        memberTypes[typeName] = def;
-
-      allMembers.push_back(def);
-      memberInfo.push_back(isTypeDef);
-    }
-
-    typeDef& typeDef::addType(const std::string &newVarName){
-      typeDef &def = *(new typeDef);
-
-      def.up      = this;
-      def.varName = newVarName;
-
-      memberTypes[newVarName] = &def;
-      allMembers.push_back(&def);
-      memberInfo.push_back(isTypeDef);
-
-      return def;
-    }
-
-    void typeDef::loadFromNode(statement &s,
-                               strNode *&n){
-
-      if(n->value == "typedef"){
-        typedefing = new typeDef;
-
-        n = n->right;
-
-        const bool isPOD = (!(n->type & structType) ||
-                            ((n->right) &&
-                             (s.nodeHasDescriptor(n->right))));
-
-        if(isPOD){
-          strNode *nRoot = n;
-
-          while(s.nodeHasQualifier(n))
-            n = n->right;
-
-          typedefing = s.hasTypeInScope(n->value);
-
-          if(typedefing == NULL){
-            std::cout << "Type [" << n->value << "] not defined in scope\n";
-            throw 1;
-          }
-
-          if(typedefing->typedefing)
-            typedefingBase = typedefing->typedefingBase;
-          else
-            typedefingBase = typedefing;
-
-          while(nRoot != n){
-            typeName += nRoot->value + " ";
-            nRoot = nRoot->right;
-          }
-
-          typeName += n->value;
-
-          varName += n->right->value;
-
-          typedefUsesName = true;
-
-          s.up->scopeTypeMap[varName] = this;
-        }
-        else{
-          typedefing->up = this;
-          typedefing->loadFromNode(s, n);
-
-          typedefingBase = typedefing;
-
-          typedefUsesName = false;
-
-          s.up->scopeTypeMap[typedefing->varName] = this;
-        }
-      }
-      else{
-        if(n->value == "struct"){
-          if(!s.nodeHasSpecifier(n->right))
-            typeInfo = structTypeDef;
-        }
-        else if(n->value == "class")
-          typeInfo = classTypeDef;
-        else if(n->value == "union")
-          typeInfo = unionTypeDef;
-        else if(n->value == "enum")
-          typeInfo = enumTypeDef;
-
-        if( !(typeInfo & podTypeDef) ){
-          // [--]
-          // std::cout << "1. HERE\n";
-          // n->print();
-
-          if(n->down.size() == 0){
-            n = n->right;
-            typeName = n->value;
-
-            if(up == NULL)
-              s.up->scopeTypeMap[typeName] = this;
-
-            // Empty struct
-            if((n->down.size() == 0) &&
-               (n->right)            &&
-               (n->right->type & endStatement)){
-              n->print();
-
-              n = n->right;
-              return;
-            }
-          }
-
-          strNode *nDown    = n->down[0];
-          strNode *nDownEnd = lastNode(nDown);
-
-          popAndGoRight(nDown);
-          popAndGoLeft(nDownEnd);
-
-          if( !(typeInfo & enumTypeDef) )
-            loadStructPartsFromNode(s, nDown);
-          else
-            loadEnumPartsFromNode(s, nDown);
-
-          if((n->right) &&
-             (n->right->type & unknownVariable))
-            varName = n->right->value;
-        }
-        else
-          loadStructPartsFromNode(s, n);
-      }
-    }
-
-    void typeDef::loadStructPartsFromNode(statement &s,
-                                          strNode *n){
-      bool usingPreviousInfo = false;
-      varInfo *lastInfo, *info;
-
-      while(n){
-        bool isBitFieldOnly = (n->value == ":");
-
-        const bool isPOD = (usingPreviousInfo ||
-                            !(n->type & structType) ||
-                            ((n->right) &&
-                             (s.nodeHasDescriptor(n->right))));
-
-        if(isPOD){
-          info  = new varInfo;
-          *info = s.loadVarInfo(n);
-
-          if(usingPreviousInfo){
-            info->type        = lastInfo->type;
-            info->typeInfo    = lastInfo->typeInfo;
-            info->descriptors = lastInfo->descriptors;
-          }
-
-          lastInfo = info;
-
-          addVar(info);
-        }
-        else{
-          typeDef &sDef= *(new typeDef);
-          sDef.up = this;
-
-          sDef.loadFromNode(s, n);
-
-          addType(&sDef);
-
-          while(n){
-            if(n->type & endStatement)
-              break;
-
-            n = n->right;
-          }
-        }
-
-        usingPreviousInfo = (n && (n->value == ","));
-
-        n = (n ? n->right : NULL);
-      }
-    }
-
-    void typeDef::loadEnumPartsFromNode(statement &s,
-                                        strNode *n){
-      n->print();
-    }
-
-    std::string typeDef::print(const std::string &tab, const int printStyle) const {
-      std::string ret = "";
-
-      if(!typedefing && (typeInfo & podTypeDef)){
-        if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
-          ret += tab;
-        else
-          ret = "";
-
-        const int heapCount = stackPointerSizes.size();
-
-        const bool hasType = typeName.size();
-        const bool hasVar  = varName.size();
-
-        bool needsSpace = false;
-
-        if(hasType){
-          ret += typeName;
-          needsSpace = true;
-        }
-
-        if(pointerCount){
-          if(needsSpace){
-            ret += " ";
-            needsSpace = false;
-          }
-
-          for(int i = 0; i < pointerCount; ++i)
-            ret += "*";
-        }
-
-        if(typeInfo & referenceType){
-          if(needsSpace){
-            ret += " ";
-            needsSpace = false;
-          }
-
-          ret += "&";
-        }
-
-        if(hasVar){
-          if(needsSpace)
-            ret += " ";
-
-          needsSpace = true;
-
-          ret += varName;
-        }
-
-        if(typeInfo & constPointerType){
-          if(needsSpace)
-            ret += " ";
-
-          ret += "const";
-        }
-
-        for(int i = 0; i < heapCount; ++i){
-          ret += "[";
-          ret += stackPointerSizes[i];
-          ret += "]";
-        }
-
-        if(0 <= bitField){
-          char sBitField[10];
-          sprintf(sBitField, "%d", bitField);
-
-          ret += " : ";
-          ret += sBitField;
-        }
-
-        if( !(printStyle & typeDefStyle::skipSemicolon) )
-          ret += ";";
-
-        return ret;
-      }
-
-      if(typedefing){
-        if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
-          ret += tab;
-
-        ret += "typedef ";
-
-        if(typedefUsesName)
-          ret += typeName + " " + varName;
-        else
-          ret += typedefing->print(tab, (typeDefStyle::skipFirstLineIndent |
-                                         typeDefStyle::skipSemicolon));
-
-        ret += ";";
-
-        return ret;
-      }
-
-      if( !(printStyle & typeDefStyle::skipFirstLineIndent) )
-        ret += tab;
-
-      const int memberCount = allMembers.size();
-
-      if(typeInfo & structTypeDef)
-        ret += "struct ";
-      else if(typeInfo & classTypeDef)
-        ret += "class ";
-      else if(typeInfo & unionTypeDef)
-        ret += "union ";
-      else if(typeInfo & enumTypeDef)
-        ret += "enum ";
-
-      if(typeName.size()){
-        ret += typeName;
-
-        if(memberCount)
-          ret += " ";
-      }
-
-      if(memberCount)
-        ret += "{\n";
-
-      for(int i = 0; i < memberCount; ++i){
-        if(memberInfo[i] & isTypeDef)
-          ret += ((typeDef*) allMembers[i])->print(tab + "  ");
-        else{
-          ret += tab + "  ";
-          ret += (std::string) *((varInfo*) allMembers[i]);
-          ret += ";";
-        }
-        ret +=  + "\n";
-      }
-
-      if(memberCount){
-        ret += tab;
-        ret += "}";
-      }
-
-      if(varName.size()){
-        ret += " ";
-        ret += varName;
-      }
-
-      if(0 <= bitField){
-        char sBitField[10];
-        sprintf(sBitField, "%d", bitField);
-
-        ret += " : ";
-        ret += sBitField;
-      }
-
-      if( !(printStyle & typeDefStyle::skipSemicolon) )
-        ret += ";";
-
-      return ret;
-    }
-
-    typeDef::operator std::string() const {
-      return print();
-    }
-
-    std::ostream& operator << (std::ostream &out, const typeDef &def){
-      out << (std::string) def;
-
-      return out;
-    }
-    //==============================================
-
-
-    //---[ Variable Info ]--------------------------
-    varInfo::varInfo() :
-      type(NULL),
-      name(""),
-      typeInfo(0),
-
-      bitField(-1),
-
-      pointerCount(0) {};
-
-    varInfo::varInfo(const varInfo &vi){
-      *this = vi;
-    }
-
-    varInfo& varInfo::operator = (const varInfo &vi){
-      type     = vi.type;
-      altType  = vi.altType;
-      name     = vi.name;
-      typeInfo = vi.typeInfo;
-
-      bitField = vi.bitField;
-
-      pointerCount = vi.pointerCount;
-
-      descriptors       = vi.descriptors;
-      stackPointerSizes = vi.stackPointerSizes;
-
-      vars = vi.vars;
-
-      extraInfo = vi.extraInfo;
+    //---[ Qualifier Info Class ]-----------------
+    qualifierInfo::qualifierInfo() :
+      qualifierCount(0),
+      qualifiers(NULL) {}
+
+    qualifierInfo::qualifierInfo(const qualifierInfo &q) :
+      qualifierCount(q.qualifierCount),
+      qualifiers(q.qualifiers) {}
+
+    qualifierInfo& qualifierInfo::operator = (const qualifierInfo &q){
+      qualifierCount = q.qualifierCount;
+      qualifiers     = q.qualifiers;
 
       return *this;
     }
 
-    std::string varInfo::postTypeStr() const {
-      std::string ret = "";
+    void qualifierInfo::free(){
+      if(qualifiers){
+        qualifierCount = 0;
 
-      if(typeInfo & pointerType){
-        if(typeInfo & heapPointerType){
-          for(int i = 0; i < pointerCount; ++i)
-            ret += '*';
+        delete [] qualifiers;
+        qualifiers = NULL;
+      }
+    }
+
+    qualifierInfo qualifierInfo::clone(){
+      qualifierInfo q;
+
+      q.qualifierCount = qualifierCount;
+
+      if(qualifierCount){
+        q.qualifiers = new std::string[qualifierCount];
+
+        for(int i = 0; i < qualifierCount; ++i)
+          q.qualifiers[i] = qualifiers[i];
+      }
+
+      return q;
+    }
+
+    int qualifierInfo::loadFrom(expNode &expRoot,
+                                int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      const int leafRoot = leafPos;
+
+      while((leafPos < expRoot.leafCount) &&
+            (expRoot.leaves[leafPos]->info & expType::qualifier)){
+
+        ++leafPos;
+      }
+
+      qualifierCount = (leafPos - leafRoot);
+
+      if(qualifierCount){
+        qualifiers = new std::string[qualifierCount];
+
+        for(int i = 0; i < qualifierCount; ++i)
+          qualifiers[i] = expRoot.leaves[leafRoot + i]->value;
+      }
+
+      return leafPos;
+    }
+
+    strNode* qualifierInfo::loadFrom(statement &s,
+                                      strNode *nodePos){
+      strNode *nodeRoot = nodePos;
+
+      while(nodePos &&
+            s.nodeHasQualifier(nodePos)){
+        ++qualifierCount;
+        nodePos = nodePos->right;
+      }
+
+      if(qualifierCount){
+        qualifiers = new std::string[qualifierCount];
+        nodePos = nodeRoot;
+
+        for(int i = 0; i < qualifierCount; ++i){
+          qualifiers[i] = nodePos->value;
+          nodePos = nodePos->right;
         }
-
-        if(typeInfo & constPointerType)
-          ret += " const ";
       }
 
-      if(typeInfo & referenceType)
-        ret += '&';
-
-      return ret;
+      return nodePos;
     }
 
-    std::string varInfo::decoratedType() const {
-      const int descriptorCount = descriptors.size();
-
-      if(descriptorCount == 0)
-        return (type ? type->typeName : "");
-
-      std::string ret = descriptors[0];
-
-      for(int i = 1; i < descriptorCount; ++i){
-        ret += " ";
-        ret += descriptors[i];
+    //---[ Qualifier Info ]-------------
+    bool qualifierInfo::has(const std::string &qName) const {
+      for(int i = 0; i < qualifierCount; ++i){
+        if(qualifiers[i] == qName)
+          return true;
       }
 
-      ret += " ";
-      ret += type->typeName;
-      ret += postTypeStr();
-
-      return ret;
+      return false;
     }
 
-    int varInfo::hasDescriptor(const std::string descriptor) const {
-      const int descriptorCount = descriptors.size();
-
-      for(int i = 0; i < descriptorCount; ++i){
-        if(descriptors[i] == descriptor)
-          return (i + 1);
+    const std::string& qualifierInfo::get(const int pos) const {
+      if((pos < 0) ||
+         (qualifierCount <= pos)){
+        std::cout << "There are only ["
+                  << qualifierCount << "] qualifiers (asking for ["
+                  << pos << "])\n";
+        throw 1;
       }
 
-      return 0;
+      return qualifiers[pos];
     }
 
-    void varInfo::removeDescriptor(const std::string descriptor){
-      const int pos = hasDescriptor(descriptor);
+    void qualifierInfo::add(const std::string &qName,
+                            int pos){
+      std::string *newQualifiers = new std::string[qualifierCount + 1];
 
-      if(pos)
-        descriptors.erase(descriptors.begin() + pos - 1, // 1 indexed
-                          descriptors.begin() + pos);
+      if(pos < 0)
+        pos = qualifierCount;
+
+      for(int i = 0; i < pos; ++i)
+        newQualifiers[i] = qualifiers[i];
+
+      newQualifiers[pos] = qName;
+
+      for(int i = (pos + 1); i < qualifierCount; ++i)
+        newQualifiers[i] = qualifiers[i - 1];
+
+      delete [] qualifiers;
+
+      qualifiers = newQualifiers;
+      ++qualifierCount;
     }
 
-    void varInfo::removeDescriptor(const int descPos){
-      descriptors.erase(descriptors.begin() + descPos,
-                        descriptors.begin() + descPos + 1);
+    void qualifierInfo::remove(const std::string &qName){
+      for(int i = 0; i < qualifierCount; ++i){
+        if(qualifiers[i] == qName){
+          remove(i);
+          return;
+        }
+      }
     }
 
-    strNode* varInfo::makeStrNodeChain(const int depth,
-                                       const int sideDepth) const {
+    void qualifierInfo::remove(const int pos,
+                               const int count){
+      for(int i = (pos + count); i < qualifierCount; ++i)
+        qualifiers[i - count] = qualifiers[i];
 
-      std::string str = (std::string) *this;
+      qualifierCount -= count;
 
-      if( !(typeInfo & gotoType) )
-        str += ";";
+      if((qualifierCount == 0) &&
+         (count != 0)){
 
-      return labelCode( splitContent(str) );
+        delete [] qualifiers;
+        qualifiers = NULL;
+      }
     }
 
-    varInfo::operator std::string() const {
-      if( !(typeInfo & functionTypeMask) )
-        return podString();
-      else if(typeInfo & functionPointerType)
-        return functionPointerString();
-      else
-        return functionString();
-    }
+    void qualifierInfo::clear(){
+      if(qualifierCount){
+        qualifierCount = 0;
 
-    std::string varInfo::podString() const {
-      const int descriptorCount = descriptors.size();
+        delete [] qualifiers;
+        qualifiers = NULL;
+      }
+    }
+    //==================================
+
+    std::string qualifierInfo::toString() const {
       std::string ret;
 
-      for(int i = 0; i < descriptorCount; ++i){
-        ret += descriptors[i];
-        ret += ' ';
-      }
+      for(int i = 0; i < qualifierCount; ++i){
+        ret += qualifiers[i];
 
-      if(type){
-        ret += type->typeName;
-        ret +=  ' ';
-      }
+        if(((qualifiers[i][0] != '*') &&
+            (qualifiers[i][0] != '&')) ||
+           ( ((i + 1) < qualifierCount) &&
+             ((qualifiers[i + 1][0] != '*') &&
+              (qualifiers[i + 1][0] != '&')))){
 
-      if(typeInfo & pointerType){
-        if(typeInfo & heapPointerType){
-          for(int i = 0; i < pointerCount; ++i)
-            ret += '*';
+          ret += ' ';
         }
-
-        if(typeInfo & constPointerType)
-          ret += " const ";
-      }
-
-      if(typeInfo & referenceType)
-        ret += '&';
-
-      ret += name;
-
-      const int heapCount = stackPointerSizes.size();
-
-      for(int i = 0; i < heapCount; ++i){
-        ret += '[';
-        ret += stackPointerSizes[i];
-        ret += ']';
-      }
-
-      if(typeInfo & gotoType)
-        ret += ':';
-
-      if(0 <= bitField){
-        ret += " : ";
-
-        char sBitField[10];
-        sprintf(sBitField, "%d", bitField);
-
-        ret += sBitField;
       }
 
       return ret;
     }
 
-    std::string varInfo::functionString() const {
-      std::string ret = decoratedType();
-
-      ret += " ";
-      ret += name;
-      ret += "(";
-
-      const int varCount = vars.size();
-
-      for(int i = 0; i < varCount; ++i){
-        ret += *(vars[i]);
-
-        if(i != (varCount - 1))
-          ret += ", ";
-      }
-
-
-      ret += ")";
-
-      return ret;
+    qualifierInfo::operator std::string () const {
+      return toString();
     }
 
-    std::string varInfo::functionPointerString() const {
-      std::string ret = decoratedType();
+    std::ostream& operator << (std::ostream &out, const qualifierInfo &q){
+      out << q.toString();
 
-      //---[ void <(*fp)>(void, void); ]--------
-      ret += " (";
-
-      for(int i = 0; i < pointerCount; ++i)
-        ret += "*";
-
-      ret += name;
-
-      const int heapCount = stackPointerSizes.size();
-
-      for(int i = 0; i < heapCount; ++i){
-        ret += '[';
-        ret += stackPointerSizes[i];
-        ret += ']';
-      }
-
-      ret += ")";
-
-      //---[ void (*fp)<(void, void)>; ]--------
-      ret += "(";
-
-      const int varCount = vars.size();
-
-      for(int i = 0; i < varCount; ++i){
-        ret += (std::string) *(vars[i]);
-
-        if(i != (varCount - 1))
-          ret += ", ";
-      }
-
-      ret += ")";
-
-      return ret;
-    }
-
-    std::ostream& operator << (std::ostream &out, const varInfo &info){
-      out << (std::string) info;
       return out;
     }
-    //==============================================
+    //============================================
+
+
+    //---[ Type Info Class ]----------------------
+    typeInfo::typeInfo() :
+      leftQualifiers(),
+
+      name(""),
+
+      nestedInfoCount(0),
+      nestedInfoIsType(NULL),
+      nestedExps(NULL),
+
+      typedefHasDefinition(false),
+      typedefing(NULL),
+      baseType(NULL),
+
+      typedefVar(NULL) {}
+
+    typeInfo::typeInfo(const typeInfo &type) :
+      leftQualifiers(type.leftQualifiers),
+
+      name(type.name),
+
+      nestedInfoCount(type.nestedInfoCount),
+      nestedInfoIsType(type.nestedInfoIsType),
+      nestedExps(type.nestedExps),
+
+      typedefHasDefinition(type.typedefHasDefinition),
+      typedefing(type.typedefing),
+      baseType(type.baseType),
+
+      typedefVar(type.typedefVar)  {}
+
+    typeInfo& typeInfo::operator = (const typeInfo &type){
+      leftQualifiers = type.leftQualifiers;
+
+      name = type.name;
+
+      nestedInfoCount  = type.nestedInfoCount;
+      nestedInfoIsType = type.nestedInfoIsType;
+      nestedExps       = type.nestedExps;
+
+      typedefHasDefinition = type.typedefHasDefinition;
+      typedefing           = type.typedefing;
+      baseType             = type.baseType;
+
+      typedefVar = type.typedefVar;
+
+      return *this;
+    }
+
+    typeInfo typeInfo::clone(){
+      typeInfo c = *this;
+
+      c.leftQualifiers = leftQualifiers.clone();
+
+      if(nestedInfoCount){
+        c.nestedInfoIsType = new bool[nestedInfoCount];
+        c.nestedExps       = new expNode[nestedInfoCount];
+
+        for(int i = 0; i < nestedInfoCount; ++i){
+          c.nestedInfoIsType[i] = nestedInfoIsType[i];
+          nestedExps[i].cloneTo(c.nestedExps[i]);
+        }
+      }
+
+      if(typedefVar){
+        c.typedefVar = new varInfo;
+        *c.typedefVar = typedefVar->clone();
+      }
+
+      return c;
+    }
+
+    //---[ NEW ]--------------
+    int typeInfo::loadFrom(expNode &expRoot,
+                           int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+
+      if(leftQualifiers.has("typedef"))
+        return loadTypedefFrom(expRoot, leafPos);
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].info & expType::unknown)){
+
+        name = expRoot[leafPos++].value;
+      }
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "{")){
+
+        expNode &leaf = expRoot[leafPos++];
+
+        const bool usesSemicolon = !leftQualifiers.has("enum");
+        const char *delimiter = (usesSemicolon ? ";" : ",");
+
+        nestedInfoCount = delimeterCount(leaf, delimiter);
+        nestedExps      = new expNode[nestedInfoCount];
+
+        int sLeafPos = 0;
+
+        for(int i = 0; i < nestedInfoCount; ++i){
+          int sNextLeafPos = nextDelimeter(leaf, sLeafPos, delimiter);
+
+          // Empty statements
+          if(sNextLeafPos != sLeafPos){
+            const bool loadType = typeInfo::statementIsATypeInfo(leaf, sLeafPos);
+
+            sNextLeafPos = leaf.mergeRange(expType::root,
+                                           sLeafPos,
+                                           sNextLeafPos);
+
+            expNode::swap(nestedExps[i], leaf[sLeafPos]);
+
+            if(!loadType)
+              nestedExps[i].splitDeclareStatement(false);
+            else
+              nestedExps[i].splitStructStatement(false);
+
+            leaf.leaves[sLeafPos] = &(nestedExps[i]);
+          }
+          else{
+            --i;
+            --nestedInfoCount;
+            ++sNextLeafPos;
+          }
+
+          sLeafPos = sNextLeafPos;
+        }
+      }
+
+      return leafPos;
+    }
+
+    int typeInfo::delimeterCount(expNode &expRoot,
+                                 const char *delimiter){
+      int count = 0;
+
+      for(int i = 0; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          ++count;
+      }
+
+      return count;
+    }
+
+    int typeInfo::nextDelimeter(expNode &expRoot,
+                                int leafPos,
+                                const char *delimiter){
+      for(int i = leafPos; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          return i;
+      }
+
+      return expRoot.leafCount;
+    }
+
+    int typeInfo::loadTypedefFrom(expNode &expRoot,
+                                  int leafPos){
+      leftQualifiers.remove("typedef");
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value != "{")){
+        typeInfo *tmp = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+
+        if(tmp){
+          typedefing = tmp;
+        }
+        else{
+          typedefing           = new typeInfo;
+          typedefing->name     = expRoot[leafPos].value;
+          typedefing->baseType = typedefing;
+        }
+
+        ++leafPos;
+      }
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "{")){
+        // Anonymous type
+        if(typedefing == NULL){
+          typedefing           = new typeInfo;
+          typedefing->baseType = typedefing;
+        }
+
+        typedefing->loadFrom(expRoot, leafPos);
+        ++leafPos;
+
+        typedefHasDefinition = true;
+      }
+
+      baseType = typedefing->baseType;
+
+      varInfo typedefVarInfo;
+      typedefVarInfo.baseType = typedefing;
+
+      typedefVar = new varInfo;
+      leafPos = typedefVar->loadFrom(expRoot, leafPos, &typedefVarInfo);
+
+      name = typedefVar->name;
+
+      return leafPos;
+    }
+    //========================
+
+    bool typeInfo::statementIsATypeInfo(statement &s,
+                                        strNode *nodePos){
+      if(nodePos == NULL)
+        return false;
+
+      qualifierInfo qualifiers;
+
+      nodePos = qualifiers.loadFrom(s, nodePos);
+
+      if(qualifiers.has("typedef")){
+        qualifiers.free();
+        return true;
+      }
+
+      if(nodePos                           &&
+         (nodePos->type & unknownVariable) &&
+         (!s.hasTypeInScope(nodePos->value))){
+
+        qualifiers.free();
+        return true;
+      }
+
+      if(nodePos &&
+         (nodePos->type == startBrace)){
+
+        qualifiers.free();
+        return true;
+      }
+
+      qualifiers.free();
+      return false;
+    }
+
+    bool typeInfo::statementIsATypeInfo(expNode &expRoot,
+                                        int leafPos){
+      if(expRoot.leafCount == 0)
+        return false;
+
+      qualifierInfo qualifiers;
+
+      leafPos = qualifiers.loadFrom(expRoot, leafPos);
+
+      if(qualifiers.has("typedef"))
+        return true;
+
+      if(leafPos < expRoot.leafCount){
+        if((expRoot[leafPos].info & expType::unknown) &&
+           (!expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value))){
+
+          return true;
+        }
+
+        if(expRoot[leafPos].value == "{")
+          return true;
+      }
+
+      return false;
+    }
+
+    //---[ Type Info ]------------------
+    void typeInfo::addQualifier(const std::string &qName,
+                                int pos){
+      leftQualifiers.add(qName, pos);
+    }
+    //==================================
+
+    std::string typeInfo::toString(const std::string &tab) const {
+      std::string ret;
+
+      if(typedefing){
+        ret += tab;
+        ret += "typedef ";
+        ret += leftQualifiers.toString();
+
+        if(typedefHasDefinition)
+          ret += typedefing->toString();
+        else
+          ret += typedefing->name;
+
+        ret += ' ';
+        ret += typedefVar->toString(false);
+      }
+      else{
+        ret += tab;
+        ret += leftQualifiers.toString();
+        ret += name;
+
+        if(nestedInfoCount){
+          if(name.size())
+            ret += ' ';
+
+          ret += '{';
+          ret += '\n';
+
+          for(int i = 0; i < nestedInfoCount; ++i)
+            ret += nestedExps[i].toString(tab + "  ");
+
+          ret += tab;
+          ret += '}';
+        }
+      }
+
+      return ret;
+    }
+
+    typeInfo::operator std::string () const {
+      return toString();
+    }
+
+    std::ostream& operator << (std::ostream &out, const typeInfo &type){
+      out << type.toString();
+
+      return out;
+    }
+    //============================================
+
+
+    //---[ Variable Info Class ]------------------
+    varInfo::varInfo() :
+      info(0),
+
+      leftQualifiers(),
+      rightQualifiers(),
+
+      baseType(NULL),
+
+      name(""),
+
+      pointerCount(0),
+      stackPointerCount(0),
+      stackExpRoots(NULL),
+
+      argumentCount(0),
+      argumentVarInfos(NULL),
+
+      functionNestCount(0),
+      functionNests(NULL) {}
+
+    varInfo::varInfo(const varInfo &var) :
+      info(var.info),
+
+      leftQualifiers(var.leftQualifiers),
+      rightQualifiers(var.rightQualifiers),
+
+      baseType(var.baseType),
+
+      name(var.name),
+
+      pointerCount(var.pointerCount),
+      stackPointerCount(var.stackPointerCount),
+      stackExpRoots(var.stackExpRoots),
+
+      argumentCount(var.argumentCount),
+      argumentVarInfos(var.argumentVarInfos),
+
+      functionNestCount(var.functionNestCount),
+      functionNests(var.functionNests) {}
+
+    varInfo& varInfo::operator = (const varInfo &var){
+      info = var.info;
+
+      leftQualifiers  = var.leftQualifiers;
+      rightQualifiers = var.rightQualifiers;
+
+      baseType = var.baseType;
+
+      name = var.name;
+
+      pointerCount      = var.pointerCount;
+      stackPointerCount = var.stackPointerCount;
+      stackExpRoots     = var.stackExpRoots;
+
+      argumentCount    = var.argumentCount;
+      argumentVarInfos = var.argumentVarInfos;
+
+      functionNestCount = var.functionNestCount;
+      functionNests     = var.functionNests;
+
+      return *this;
+    }
+
+    varInfo varInfo::clone(){
+      varInfo v = *this;
+
+      v.leftQualifiers  = leftQualifiers.clone();
+      v.rightQualifiers = rightQualifiers.clone();
+
+      if(stackPointerCount){
+        v.stackExpRoots = new expNode[stackPointerCount];
+
+        for(int i = 0; i < stackPointerCount; ++i)
+          stackExpRoots[i].cloneTo(v.stackExpRoots[i]);
+      }
+
+      if(argumentCount){
+        v.argumentVarInfos = new varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i)
+          v.argumentVarInfos[i] = argumentVarInfos[i].clone();
+      }
+
+      if(functionNestCount){
+        v.functionNests = new varInfo[functionNestCount];
+
+        for(int i = 0; i < functionNestCount; ++i)
+          v.functionNests[i] = functionNests[i].clone();
+      }
+
+      return v;
+    }
+
+    int varInfo::variablesInStatement(strNode *nodePos){
+      int argc = 0;
+
+      while(nodePos){
+        if((nodePos->value == ",") ||
+           (nodePos->value == ";")){
+
+          ++argc;
+        }
+        else if((nodePos->right) == NULL)
+          ++argc;
+
+        nodePos = nodePos->right;
+      }
+
+      return argc;
+    }
+
+    //---[ NEW ]--------------
+    int varInfo::loadFrom(expNode &expRoot,
+                          int leafPos,
+                          varInfo *varHasType){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      leafPos = loadTypeFrom(expRoot, leafPos, varHasType);
+
+      info = getVarInfoFrom(expRoot, leafPos);
+
+      if(info & varType::functionPointer){
+        functionNestCount = getNestCountFrom(expRoot, leafPos);
+        functionNests     = new varInfo[functionNestCount];
+      }
+
+      leafPos = loadNameFrom(expRoot, leafPos);
+      leafPos = loadArgsFrom(expRoot, leafPos);
+
+      return leafPos;
+    }
+
+    int varInfo::loadTypeFrom(expNode &expRoot,
+                              int leafPos,
+                              varInfo *varHasType){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      if(varHasType == NULL){
+        leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+
+        if(leafPos < expRoot.leafCount){
+          baseType = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+
+          if(baseType)
+            ++leafPos;
+        }
+      }
+      else{
+        leftQualifiers = varHasType->leftQualifiers.clone();
+        baseType       = varHasType->baseType;
+      }
+
+      leafPos = rightQualifiers.loadFrom(expRoot, leafPos);
+
+      for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
+        if(rightQualifiers[i] == "*")
+          ++pointerCount;
+      }
+
+      return leafPos;
+    }
+
+    int varInfo::getVarInfoFrom(expNode &expRoot,
+                                int leafPos){
+      // No name var (argument for function)
+      if(expRoot.leafCount <= leafPos)
+        return varType::var;
+
+      const int nestCount = getNestCountFrom(expRoot, leafPos);
+
+      if(nestCount)
+        return varType::functionPointer;
+
+      ++leafPos;
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "(")){
+
+        ++leafPos;
+
+        if((leafPos < expRoot.leafCount) &&
+           (expRoot[leafPos].value == "{")){
+
+          return varType::functionDef;
+        }
+        else{
+          return varType::functionDec;
+        }
+      }
+
+      return varType::var;
+    }
+
+    int varInfo::getNestCountFrom(expNode &expRoot,
+                                  int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return 0;
+
+      int nestCount = 0;
+
+      expNode *leaf = expRoot.leaves[leafPos];
+
+      while((leaf->value == "(") &&
+            (leaf->leafCount != 0)){
+
+        if(leaf->leaves[0]->value == "*"){
+          ++nestCount;
+
+          if(1 < leaf->leafCount)
+            leaf = leaf->leaves[1];
+          else
+            break;
+        }
+        else
+          leaf = leaf->leaves[0];
+      }
+
+      return nestCount;
+    }
+
+    int varInfo::loadNameFrom(expNode &expRoot,
+                              int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      int nestPos = 0;
+
+      expNode *leaf = expRoot.leaves[leafPos];
+
+      if(leaf->value == "(")
+        ++leafPos;
+
+      while((leaf->value == "(") &&
+            (leaf->leafCount != 0)){
+
+        if(leaf->leaves[0]->value == "*"){
+          ++nestPos;
+
+          if(1 < leaf->leafCount){
+            if((2 < leaf->leafCount) &&
+               (leaf->leaves[2]->value == "(")){
+
+              functionNests[nestPos - 1].info = varType::function;
+              functionNests[nestPos - 1].loadArgsFrom(*leaf, 2);
+            }
+
+            leaf = leaf->leaves[1];
+          }
+          else
+            break;
+        }
+        else
+          leaf = leaf->leaves[0];
+      }
+
+      if(leaf->info & (expType::unknown  |
+                       expType::variable |
+                       expType::function)){
+        name = leaf->value;
+
+        int sLeafPos = leaf->whichLeafAmI();
+
+        if(leaf->up == &expRoot){
+          return loadStackPointersFrom(expRoot, sLeafPos + 1);
+        }
+        else
+          loadStackPointersFrom(*leaf, sLeafPos + 1);
+      }
+
+      return leafPos;
+    }
+
+    int varInfo::loadStackPointersFrom(expNode &expRoot,
+                                       int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      for(int i = leafPos; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == "[")
+          ++stackPointerCount;
+        else
+          break;
+      }
+
+      if(stackPointerCount){
+        stackExpRoots = new expNode[stackPointerCount];
+
+        for(int i = 0; i < stackPointerCount; ++i)
+          expNode::swap(stackExpRoots[i], expRoot[leafPos + i]);
+      }
+
+      return (leafPos + stackPointerCount);
+    }
+
+    int varInfo::loadArgsFrom(expNode &expRoot,
+                              int leafPos){
+      if( !(info & varType::functionType) )
+        return leafPos;
+
+      if(expRoot.leafCount <= leafPos){
+        std::cout << "Missing arguments from function variable\n";
+        throw 1;
+      }
+
+      if(expRoot[leafPos].leafCount){
+        expNode &leaf = expRoot[leafPos];
+        int sLeafPos  = 0;
+
+        argumentCount    = 1 + typeInfo::delimeterCount(leaf, ",");
+        argumentVarInfos = new varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i){
+          sLeafPos = argumentVarInfos[i].loadFrom(leaf, sLeafPos);
+          sLeafPos = typeInfo::nextDelimeter(leaf, sLeafPos, ",") + 1;
+        }
+      }
+
+      return (leafPos + 1);
+    }
+    //========================
+
+    strNode* varInfo::loadFrom(statement &s,
+                               strNode *nodePos,
+                               varInfo *varHasType){
+      nodePos = loadTypeFrom(s, nodePos, varHasType);
+
+      info = getVarInfoFrom(s, nodePos);
+
+      if(info & varType::functionPointer){
+        functionNestCount = getNestCountFrom(s, nodePos);
+        functionNests     = new varInfo[functionNestCount];
+      }
+
+      nodePos = loadNameFrom(s, nodePos);
+      nodePos = loadArgsFrom(s, nodePos);
+
+      if(nodePos &&
+         (nodePos->value == ","))
+        nodePos = nodePos->right;
+
+      return nodePos;
+    }
+
+    strNode* varInfo::loadTypeFrom(statement &s,
+                                   strNode *nodePos,
+                                   varInfo *varHasType){
+      if(varHasType == NULL){
+        nodePos = leftQualifiers.loadFrom(s, nodePos);
+
+        baseType = s.hasTypeInScope(nodePos->value);
+
+        if(baseType)
+          nodePos = nodePos->right;
+      }
+      else{
+        leftQualifiers = varHasType->leftQualifiers.clone();
+        baseType       = varHasType->baseType;
+      }
+
+      nodePos = rightQualifiers.loadFrom(s, nodePos);
+
+      for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
+        if(rightQualifiers[i] == "*")
+          ++pointerCount;
+      }
+
+      return nodePos;
+    }
+
+    int varInfo::getVarInfoFrom(statement &s,
+                                strNode *nodePos){
+      // No name var (argument for function)
+      if(nodePos == NULL)
+        return varType::var;
+
+      strNode *nextNode = nodePos->right;
+
+      const int nestCount = getNestCountFrom(s, nodePos);
+
+      if(nestCount)
+        return varType::functionPointer;
+
+      if(nextNode &&
+         (nextNode->type == startParentheses)){
+
+        if((nextNode->right)       &&
+           (nextNode->right->type == startBrace)){
+
+          return varType::functionDef;
+        }
+        else{
+          return varType::functionDec;
+        }
+      }
+
+      return varType::var;
+    }
+
+    int varInfo::getNestCountFrom(statement &s,
+                                  strNode *nodePos){
+      int nestCount = 0;
+
+      while(nodePos &&
+            (nodePos->type == startParentheses)){
+
+        nodePos = nodePos->down;
+
+        if(nodePos &&
+           nodePos->value == "*"){
+
+          ++nestCount;
+          nodePos = nodePos->right;
+        }
+      }
+
+      return nestCount;
+    }
+
+    strNode* varInfo::loadNameFrom(statement &s,
+                                   strNode *nodePos){
+      if(nodePos == NULL)
+        return NULL;
+
+      strNode *nextNode = nodePos->right;
+
+      int nestPos = 0;
+
+      while(nodePos &&
+            (nodePos->type == startParentheses)){
+
+        nodePos = nodePos->down;
+
+        if(nodePos &&
+           nodePos->value == "*"){
+
+          nodePos = nodePos->right;
+
+          if(nodePos        &&
+             nodePos->right &&
+             (nodePos->right->type == startParentheses)){
+
+            functionNests[nestPos].info = varType::function;
+            functionNests[nestPos].loadArgsFrom(s, nodePos->right);
+          }
+
+          ++nestPos;
+        }
+      }
+
+      if(nodePos &&
+         (nodePos->type & unknownVariable)){
+
+        name    = nodePos->value;
+        nodePos = nodePos->right;
+
+        if(nodePos == nextNode)
+          nextNode = loadStackPointersFrom(s, nextNode);
+        else
+          nodePos = loadStackPointersFrom(s, nodePos);
+      }
+
+      return nextNode;
+    }
+
+    strNode* varInfo::loadStackPointersFrom(statement &s,
+                                            strNode *nodePos){
+      strNode *nodeRoot = nodePos;
+
+      if(nodePos &&
+         (nodePos->value == "[") &&
+         (nodePos->down)){
+
+        ++stackPointerCount;
+        nodePos = nodePos->right;
+      }
+
+      if(stackPointerCount){
+        nodePos = nodeRoot;
+
+        stackExpRoots = new expNode[stackPointerCount];
+
+        for(int i = 0; i < stackPointerCount; ++i){
+          stackExpRoots[i].sInfo = &s;
+
+          if(nodePos->down)
+            s.setExpNodeFromStrNode(stackExpRoots[i], nodePos->down);
+
+          nodePos = nodePos->right;
+        }
+      }
+
+      return nodePos;
+    }
+
+    strNode* varInfo::loadArgsFrom(statement &s,
+                                   strNode *nodePos){
+      if( !(info & varType::functionType) )
+        return nodePos;
+
+      if(nodePos == NULL){
+        std::cout << "Missing arguments from function variable\n";
+        throw 1;
+      }
+
+      strNode *nextNode = nodePos->right;
+
+      if(nodePos->down){
+        nodePos = nodePos->down;
+
+        argumentCount    = variablesInStatement(nodePos);
+        argumentVarInfos = new varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i)
+          nodePos = argumentVarInfos[i].loadFrom(s, nodePos);
+      }
+
+      return nextNode;
+    }
+
+    //---[ Variable Info ]------------
+    int varInfo::leftQualifierCount() const {
+      return leftQualifiers.qualifierCount;
+    }
+
+    int varInfo::rightQualifierCount() const {
+      return rightQualifiers.qualifierCount;
+    }
+
+    bool varInfo::hasQualifier(const std::string &qName) const {
+      return leftQualifiers.has(qName);
+    }
+
+    void varInfo::addQualifier(const std::string &qName, int pos){
+      leftQualifiers.add(qName, pos);
+    }
+
+    void varInfo::addRightQualifier(const std::string &qName, int pos){
+      rightQualifiers.add(qName, pos);
+    }
+
+    void varInfo::removeQualifier(const std::string &qName){
+      leftQualifiers.remove(qName);
+    }
+
+    const std::string& varInfo::getLeftQualifier(const int pos) const {
+      return leftQualifiers.get(pos);
+    }
+
+    const std::string& varInfo::getRightQualifier(const int pos) const {
+      return rightQualifiers.get(pos);
+    }
+
+    const std::string& varInfo::getLastLeftQualifier() const {
+      return leftQualifiers.get(leftQualifiers.qualifierCount - 1);
+    }
+
+    const std::string& varInfo::getLastRightQualifier() const {
+      return rightQualifiers.get(rightQualifiers.qualifierCount - 1);
+    }
+
+    void varInfo::removeStackPointers(){
+      if(stackPointerCount){
+        stackPointerCount = 0;
+
+        delete [] stackExpRoots;
+        stackExpRoots = NULL;
+      }
+    }
+
+    void varInfo::addArgument(const int pos, varInfo &arg){
+      varInfo *newArgumentVarInfos = new varInfo[argumentCount + 1];
+
+      for(int i = 0; i < pos; ++i)
+        newArgumentVarInfos[i] = argumentVarInfos[i];
+
+      newArgumentVarInfos[pos] = arg;
+
+      for(int i = pos; i < argumentCount; ++i)
+        newArgumentVarInfos[i + 1] = argumentVarInfos[i];
+
+      if(argumentCount)
+        delete [] argumentVarInfos;
+
+      argumentVarInfos = newArgumentVarInfos;
+      ++argumentCount;
+    }
+    //================================
+
+    std::string varInfo::toString(const bool printType) const {
+      std::string ret;
+
+      bool addSpaceBeforeName = false;
+
+      if(printType){
+        ret += leftQualifiers.toString();
+
+        if(baseType)
+          ret += baseType->name;
+
+        addSpaceBeforeName = !((rightQualifiers.qualifierCount) ||
+                               (name.size()));
+
+        if(!addSpaceBeforeName){
+          if((info & varType::functionType)  &&
+             (rightQualifiers.qualifierCount) &&
+             ((getLastRightQualifier() == "*") ||
+              (getLastRightQualifier() == "&"))){
+
+            addSpaceBeforeName = true;
+          }
+        }
+
+        if(!addSpaceBeforeName && baseType)
+          ret += ' ';
+      }
+
+      ret += rightQualifiers.toString();
+
+      for(int i = 0; i < functionNestCount; ++i)
+        ret += "(*";
+
+      if(addSpaceBeforeName &&
+         (name.size() != 0))
+        ret += ' ';
+
+      ret += name;
+
+      for(int i = 0; i < stackPointerCount; ++i)
+        ret += (std::string) stackExpRoots[i];
+
+      for(int i = (functionNestCount - 1); 0 <= i; --i){
+        ret += functionNests[i].toString();
+        ret += ')';
+      }
+
+      if(info & varType::functionType){
+        ret += '(';
+
+        if(argumentCount){
+          ret += argumentVarInfos[0].toString();
+
+          for(int i = 1; i < argumentCount; ++i){
+            ret += ", ";
+            ret += argumentVarInfos[i].toString();
+          }
+        }
+
+        ret += ')';
+      }
+
+      return ret;
+    }
+
+    varInfo::operator std::string () const {
+      return toString();
+    }
+
+    std::ostream& operator << (std::ostream &out, const varInfo &var){
+      out << var.toString();
+      return out;
+    }
+    //============================================
   };
 };

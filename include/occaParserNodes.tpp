@@ -5,13 +5,15 @@ namespace occa {
     node<TM>::node() :
       left(NULL),
       right(NULL),
-      up(NULL) {}
+      up(NULL),
+      down(NULL) {}
 
     template <class TM>
     node<TM>::node(const TM &t) :
       left(NULL),
       right(NULL),
       up(NULL),
+      down(NULL),
 
       value(t) {}
 
@@ -68,9 +70,7 @@ namespace occa {
     template <class TM>
     node<TM>* node<TM>::pushDown(node<TM> *n){
       n->up = this;
-
-      down.push_back(n);
-
+      down  = n;
       return n;
     }
 
@@ -84,17 +84,17 @@ namespace occa {
       node *nodePos = this;
 
       while(nodePos){
-        std::cout  << tab << nodePos->value << '\n';
+        printf("--------------------------------------------\n");
 
-        const int downCount = (nodePos->down).size();
-
-        if(downCount)
-          printf("--------------------------------------------\n");
-
-        for(int i = 0; i < downCount; ++i){
-          (nodePos->down[i])->print(tab + "  ");
-          printf("--------------------------------------------\n");
+        if(down == NULL){
+          std::cout << tab << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
         }
+        else{
+          std::cout << tab << "  " << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
+          down->print(tab + "  ");
+        }
+
+        printf("--------------------------------------------\n");
 
         nodePos = nodePos->right;
       }
@@ -105,17 +105,17 @@ namespace occa {
       node *nodePos = this;
 
       while(nodePos){
-        std::cout << tab << *(nodePos->value) << '\n';
+        printf("--------------------------------------------\n");
 
-        const int downCount = (nodePos->down).size();
-
-        if(downCount)
-          printf("--------------------------------------------\n");
-
-        for(int i = 0; i < downCount; ++i){
-          (nodePos->down[i])->printPtr(tab + "  ");
-          printf("--------------------------------------------\n");
+        if(down == NULL){
+          std::cout << tab << "[" << *(nodePos->value) << "] (" << getBits(nodePos->type) << ")\n";
         }
+        else{
+          std::cout << tab << "  " << "[" << *(nodePos->value) << "] (" << getBits(nodePos->type) << ")\n";
+          down->print(tab + "  ");
+        }
+
+        printf("--------------------------------------------\n");
 
         nodePos = nodePos->right;
       }
