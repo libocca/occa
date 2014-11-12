@@ -229,6 +229,8 @@ namespace occa {
       const std::string& getLastRightQualifier() const;
 
       void removeStackPointers();
+
+      void addArgument(const int pos, varInfo &arg);
       //================================
 
       std::string toString(const bool printType = true) const;

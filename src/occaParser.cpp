@@ -1770,15 +1770,12 @@ namespace occa {
             argVar.addRightQualifier("occaVariable");
         }
 
-        // [-] Missing
-        // if(!(firstArgNode.info & expType::presetValue) ||
-        //    (s2.getFunctionArgName(0) != "occaKernelInfoArg")){
+        if(s2.getFunctionArgName(0) != "occaKernelInfoArg"){
+          varInfo v;
+          v.name = "occaKernelInfoArg";
 
-        //   expNode &argsNode = *(s2.expRoot.leaves[s2.expRoot.leafCount - 1]);
-
-        //   argsNode.addNode(expType::presetValue);
-        //   argsNode.leaves[0]->value = "occaKernelInfoArg";
-        // }
+          s2.addFunctionArg(0, v);
+        }
       }
       // [-] Missing
       else if(var.hasQualifier("occaFunction")){

@@ -464,6 +464,8 @@ namespace occa {
       varInfo* getFunctionArgVar(const int pos);
       int getFunctionArgCount() const;
 
+      void addFunctionArg(const int pos, varInfo &var);
+
       int getForStatementCount() const;
       //================================
 

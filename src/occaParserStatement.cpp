@@ -3293,6 +3293,14 @@ namespace occa {
       return 0;
     }
 
+    void statement::addFunctionArg(const int pos, varInfo &var){
+      if( !(type & functionStatementType) )
+        return;
+
+      varInfo &func = expRoot.getVarInfo(0);
+
+      func.addArgument(pos, var);
+    }
 
     int statement::getForStatementCount() const {
       if(type & forStatementType)

@@ -1092,6 +1092,24 @@ namespace occa {
         stackExpRoots = NULL;
       }
     }
+
+    void varInfo::addArgument(const int pos, varInfo &arg){
+      varInfo *newArgumentVarInfos = new varInfo[argumentCount + 1];
+
+      for(int i = 0; i < pos; ++i)
+        newArgumentVarInfos[i] = argumentVarInfos[i];
+
+      newArgumentVarInfos[pos] = arg;
+
+      for(int i = pos; i < argumentCount; ++i)
+        newArgumentVarInfos[i + 1] = argumentVarInfos[i];
+
+      if(argumentCount)
+        delete [] argumentVarInfos;
+
+      argumentVarInfos = newArgumentVarInfos;
+      ++argumentCount;
+    }
     //================================
 
     std::string varInfo::toString(const bool printType) const {
