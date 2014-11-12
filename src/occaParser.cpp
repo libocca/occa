@@ -42,8 +42,6 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
 
       addOccaFors();
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
@@ -2090,17 +2088,25 @@ namespace occa {
 
           statementNode *newSN  = s.statementEnd;
           s.statementEnd        = newSN->left;
-          s.statementEnd->right = NULL;
+
+          if(s.statementEnd)
+            s.statementEnd->right = NULL;
 
           //---[ Change type ]----------
-          statement &newS   = *(newSN->value);
-          varInfo &outerVar = *(newS.hasVariableInScope("outer"));
-          statement &outerS = *(varOriginMap[&outerVar]);
+          if(loopIter){
+            statement &newS = *(newSN->value);
+            newS.expRoot.print();
 
-          typeInfo &type = *(new typeInfo);
-          type.name = "occa::dim";
+            varInfo &outerVar = *(newS.hasVariableInScope("outer"));
+            statement &outerS = *(varOriginMap[&outerVar]);
 
-          outerS.getDeclarationVarInfo(0).baseType = &type;
+            typeInfo &type = *(new typeInfo);
+            type.name = "occa::dim";
+
+            outerS.expRoot.print();
+
+            outerS.getDeclarationVarInfo(0).baseType = &type;
+          }
           //============================
 
           if(snPosStart){
@@ -2577,6 +2583,7 @@ namespace occa {
 
     void parserBase::splitDefineForVariable(statement *&origin,
                                             varInfo &var){
+      origin->expRoot.print();
 
       return;
     }
