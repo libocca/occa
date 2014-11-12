@@ -1090,6 +1090,12 @@ namespace occa {
     }
 
     int expNode::nestedLeafCount(){
+      if(info & (expType::varInfo |
+                 expType::typeInfo) ){
+
+        return 0;
+      }
+
       int ret = leafCount;
 
       for(int i = 0; i < leafCount; ++i){
@@ -1119,6 +1125,12 @@ namespace occa {
 
     void expNode::makeFlatHandle(int &offset,
                                  expNode **flatLeaves){
+      if(info & (expType::varInfo |
+                 expType::typeInfo) ){
+
+        return;
+      }
+
       for(int i = 0; i < leafCount; ++i){
         switch(leaves[i]->info){
         case (expType::L):{

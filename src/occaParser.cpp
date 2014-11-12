@@ -33,9 +33,7 @@ namespace occa {
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
 
-      // Broken
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
-      // Broken
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
       std::cout << (std::string) *globalScope;
       throw 1;
@@ -1232,9 +1230,7 @@ namespace occa {
     }
 
     void parserBase::setupCudaVariables(statement &s){
-      return;
-#if 0
-      if((!(s.type & declareStatementType)   &&
+      if((!(s.type & simpleStatementType)    &&
           !(s.type & forStatementType)       &&
           !(s.type & functionStatementType)) ||
          // OCCA for's don't have arguments
@@ -1247,70 +1243,41 @@ namespace occa {
       if(statementKernelUsesNativeLanguage(s))
         return;
 
-      strNode *nodePos = s.nodeStart;
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
-      statement *up = s.up;
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        std::string &value = flatRoot[i].value;
+        std::string occaValue;
 
-      // Go to [(]
-      if(s.type & functionStatementType)
-        s.loadVarInfo(nodePos);
+        bool compressing = false;
 
-      if(s.type & (forStatementType |
-                   functionStatementType)){
-        while(nodePos->down.size() == 0)
-          nodePos = nodePos->right;
+        if(value == "threadIdx"){
+          compressing = true;
+          occaValue = "occaInnerId";
+        }
+        else if(value == "blockDim"){
+          compressing = true;
+          occaValue = "occaInnerDim";
+        }
+        else if(value == "blockIdx"){
+          compressing = true;
+          occaValue = "occaOuterId";
+        }
+        else if(value == "gridDim"){
+          compressing = true;
+          occaValue = "occaOuterDim";
+        }
 
-        nodePos = nodePos->down[0]->right;
+        if(compressing){
+          expNode &leaf    = *(flatRoot[i].up);
+          const char coord = (leaf[1].value[0] + ('0' - 'x'));
 
-        up = &s;
-      }
+          leaf.info  = expType::presetValue;
+          leaf.value = occaValue + coord;
 
-      if( !(s.type & functionPrototypeType) ){
-        while(nodePos){
-          if((nodePos->type & cudaKeywordType) &&
-             (nodePos->right)                  &&
-             (nodePos->right->value == ".")    &&
-             (nodePos->right->right)){
-
-            std::string &coord = nodePos->right->right->value;
-
-            if((coord.size() == 1) &&
-               ('x' <= coord[0]) && (coord[0] <= 'z')){
-              std::string occaCoord = coord.substr(0,1);
-              occaCoord[0] += ('0' - 'x');
-
-              bool compressing = false;
-
-              if(nodePos->value == "threadIdx"){
-                compressing = true;
-                nodePos->value = "occaInnerId" + occaCoord;
-              }
-              else if(nodePos->value == "blockDim"){
-                compressing = true;
-                nodePos->value = "occaInnerDim" + occaCoord;
-              }
-              else if(nodePos->value == "blockIdx"){
-                compressing = true;
-                nodePos->value = "occaOuterId" + occaCoord;
-              }
-              else if(nodePos->value == "gridDim"){
-                compressing = true;
-                nodePos->value = "occaOuterDim" + occaCoord;
-              }
-
-              if(compressing){
-                nodePos->type = keywordType[nodePos->value];
-                nodePos->right->pop();
-                nodePos->right->pop();
-              }
-            }
-          }
-
-          if(nodePos != NULL)
-            nodePos = nodePos->right;
+          leaf.leafCount = 0;
         }
       }
-#endif
     }
 
     void parserBase::addFunctionPrototypes(){
