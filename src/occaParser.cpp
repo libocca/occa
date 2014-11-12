@@ -32,8 +32,6 @@ namespace occa {
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
-      std::cout << (std::string) *globalScope;
-      throw 1;
 
       // Broken
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
@@ -49,6 +47,8 @@ namespace occa {
       addOccaFors();
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
+      std::cout << (std::string) *globalScope;
+      throw 1;
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       // Broken?
       applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers

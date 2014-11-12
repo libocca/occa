@@ -221,16 +221,16 @@ namespace occa {
       typeInfo& addTypeInfoNode(const int pos = 0);
 
       varInfo& getVarInfo();
-      const varInfo& getVarInfo() const;
+      const varInfo& cGetVarInfo() const;
 
       varInfo& getVarInfo(const int pos);
-      const varInfo& getVarInfo(const int pos) const;
+      const varInfo& cGetVarInfo(const int pos) const;
 
       typeInfo& getTypeInfo();
-      const typeInfo& getTypeInfo() const;
+      const typeInfo& cGetTypeInfo() const;
 
       typeInfo& getTypeInfo(const int pos);
-      const typeInfo& getTypeInfo(const int pos) const;
+      const typeInfo& cGetTypeInfo(const int pos) const;
 
       void removeNodes(const int pos, const int count = 1);
       void removeNode(const int pos = 0);

@@ -1203,7 +1203,7 @@ namespace occa {
       return *((varInfo*) leaves[0]);
     }
 
-    const varInfo& expNode::getVarInfo() const {
+    const varInfo& expNode::cGetVarInfo() const {
       return *((const varInfo*) leaves[0]);
     }
 
@@ -1214,7 +1214,7 @@ namespace occa {
       return *varLeaf;
     }
 
-    const varInfo& expNode::getVarInfo(const int pos) const {
+    const varInfo& expNode::cGetVarInfo(const int pos) const {
       const varInfo **varLeaves = (const varInfo**) leaves[pos]->leaves;
       const varInfo *&varLeaf   = varLeaves[0];
 
@@ -1225,7 +1225,7 @@ namespace occa {
       return *((typeInfo*) leaves[0]);
     }
 
-    const typeInfo& expNode::getTypeInfo() const {
+    const typeInfo& expNode::cGetTypeInfo() const {
       return *((const typeInfo*) leaves[0]);
     }
 
@@ -1236,7 +1236,7 @@ namespace occa {
       return *typeLeaf;
     }
 
-    const typeInfo& expNode::getTypeInfo(const int pos) const {
+    const typeInfo& expNode::cGetTypeInfo(const int pos) const {
       const typeInfo **typeLeaves = (const typeInfo**) leaves[pos]->leaves;
       const typeInfo *&typeLeaf   = typeLeaves[0];
 
@@ -2983,13 +2983,8 @@ namespace occa {
         return expRoot.leaves[0]->hasQualifier(qualifier);
       }
       else if(type & functionStatementType){
-        expNode &typeNode = *(expRoot.leaves[0]);
-        expNode &qualNode = *(typeNode.leaves[0]);
-
-        if( !(qualNode.info & expType::qualifier) )
-          return false;
-
-        return qualNode.hasQualifier(qualifier);
+        const varInfo &var = expRoot.cGetVarInfo(0);
+        return var.hasQualifier(qualifier);
       }
       else if(type & forStatementType){
         if(expRoot.leafCount){
@@ -3016,8 +3011,8 @@ namespace occa {
       if(type & declareStatementType){
       }
       else if(type & functionStatementType){
-        varInfo &var = expRoot.getVarInfo(pos);
-        var.addQualifier(qualifier);
+        varInfo &var = expRoot.getVarInfo(0);
+        var.addQualifier(qualifier, pos);
       }
       else if(type & forStatementType){
         if(expRoot.leafCount){
@@ -3092,7 +3087,7 @@ namespace occa {
 
     std::string statement::getFunctionName() const {
       if(type & functionStatementType){
-        const varInfo &var = expRoot.getVarInfo(0);
+        const varInfo &var = expRoot.cGetVarInfo(0);
         return var.name;
       }
 
