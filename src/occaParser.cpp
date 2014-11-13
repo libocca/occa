@@ -2643,10 +2643,10 @@ namespace occa {
         if(statementHasBarrier( *(includeEnd->value) ))
           break;
 
-        if(includeEnd->value->type & forStatementType){
-          stoppedAtFor = true;
-          break;
-        }
+        // if(includeEnd->value->type & forStatementType){
+        //   stoppedAtFor = true;
+        //   break;
+        // }
 
         includeEnd = includeEnd->right;
       }

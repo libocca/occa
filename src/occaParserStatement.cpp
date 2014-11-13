@@ -231,6 +231,7 @@ namespace occa {
           for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
 
+          leaf.labelUsedVariables();
           leaf.organizeLeaves();
         }
 
