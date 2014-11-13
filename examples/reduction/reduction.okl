@@ -1,0 +1,30 @@
+occaKernel void reduction(const int entries,
+			  const float *a,
+			  float *reda){
+  
+  // partial reduction of vector using loop tiles of size p_Nred (power of 2)
+  for(int group = 0; group < ((entries + p_Nred - 1) / p_Nred); ++group; outer0){
+
+    shared float s_a[p_Nred];
+
+    for(int item = 0; item < p_Nred; ++item; inner0){
+      s_a[item] = a[group*p_Nred + item];
+    }
+    
+    for(int alive=p_Nred/2;alive>=1;alive/=2){
+
+      barrier(localMemFence);
+      
+      for(int item = 0; item < p_Nred; ++item; inner0){
+	if(item<alive)
+	  s_a[item] += s_a[item+alive];
+      }
+    }
+
+    for(int item = 0; item < p_Nred; ++item; inner0){
+      if(item==0){
+	reda[group] = s_a[0];
+      }
+    }
+  }
+}
