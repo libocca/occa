@@ -165,8 +165,12 @@ namespace occa {
       else if(sInfo->type & structStatementType)
         splitStructStatement();
 
-      else
+      else{
+        // Add used vars to varUsedMap
+        labelUsedVariables();
+
         organize();
+      }
     }
 
     void expNode::organize(){
@@ -349,9 +353,6 @@ namespace occa {
           varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
 
           if(nodeVar){
-            if( !(sInfo->type & functionStatementType) )
-              sInfo->varUsedMap[nodeVar].push(sInfo);
-
             if( !(nodeVar->info & varType::functionType) )
               leaf->info = expType::variable;
             else
@@ -690,6 +691,36 @@ namespace occa {
 
         ++leafPos;
       }
+    }
+
+    // Add used vars to varUsedMap
+    void expNode::labelUsedVariables(){
+      if(info & (expType::varInfo |
+                 expType::typeInfo))
+        return;
+
+      // Organize leaves bottom -> up
+      for(int i = 0; i < leafCount; ++i){
+        if((leaves[i]->leafCount) &&
+           !(leaves[i]->info & (expType::varInfo |
+                                expType::typeInfo))){
+
+          leaves[i]->labelUsedVariables();
+        }
+      }
+
+      expNode &flatRoot = *(makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(flatRoot[i].info & (expType::variable |
+                               expType::function)){
+          varInfo &var = *(sInfo->hasVariableInScope(flatRoot[i].value));
+
+          sInfo->varUsedMap[&var].push(sInfo);
+        }
+      }
+
+      freeFlatHandle(flatRoot);
     }
 
     // class(...), class{1,2,3}
@@ -1176,6 +1207,11 @@ namespace occa {
           break;
         }
       }
+    }
+
+    void expNode::freeFlatHandle(expNode &flatRoot){
+      delete [] flatRoot.leaves;
+      delete &flatRoot;
     }
 
     void expNode::addNodes(const int info_,
@@ -3251,10 +3287,20 @@ namespace occa {
       return 0;
     }
 
-    std::string statement::getFunctionName() const {
+    varInfo* statement::getFunctionVar(){
       if(type & functionStatementType){
-        const varInfo &var = expRoot.cGetVarInfo(0);
-        return var.name;
+        return &(expRoot.getVarInfo(0));
+      }
+
+      printf("Not added yet\n");
+      throw 1;
+
+      return NULL;
+    }
+
+    std::string statement::getFunctionName(){
+      if(type & functionStatementType){
+        return getFunctionVar()->name;
       }
 
       printf("Not added yet\n");
@@ -3265,9 +3311,7 @@ namespace occa {
 
     void statement::setFunctionName(const std::string &newName){
       if(type & functionStatementType){
-        varInfo &var = expRoot.getVarInfo(0);
-        var.name = newName;
-
+        getFunctionVar()->name = newName;
         return;
       }
 
@@ -3275,10 +3319,26 @@ namespace occa {
       throw 1;
     }
 
+    bool statement::functionHasQualifier(const std::string &qName){
+      if(type & functionStatementType){
+        return getFunctionVar()->hasQualifier(qName);
+      }
+
+      printf("Not added yet\n");
+      throw 1;
+    }
+
+    int statement::getFunctionArgCount(){
+      if(type & functionStatementType){
+        return getFunctionVar()->argumentCount;
+      }
+
+      return 0;
+    }
+
     std::string statement::getFunctionArgType(const int pos){
       if(type & functionDefinitionType){
-        varInfo &var = expRoot.getVarInfo(0);
-        return (var.baseType->name);
+        return getFunctionVar()->baseType->name;
       }
 
       return "";
@@ -3286,8 +3346,7 @@ namespace occa {
 
     std::string statement::getFunctionArgName(const int pos){
       if(type & functionDefinitionType){
-        varInfo &var = expRoot.getVarInfo(0);
-        return var.argumentVarInfos[pos].name;
+        return getFunctionVar()->argumentVarInfos[pos].name;
       }
 
       return "";
@@ -3295,29 +3354,17 @@ namespace occa {
 
     varInfo* statement::getFunctionArgVar(const int pos){
       if(type & functionDefinitionType){
-        varInfo &var = expRoot.getVarInfo(0);
-        return &(var.argumentVarInfos[pos]);
+        return &(getFunctionVar()->argumentVarInfos[pos]);
       }
 
       return NULL;
-    }
-
-    int statement::getFunctionArgCount() const {
-      if(type & functionStatementType){
-        const varInfo &var = expRoot.cGetVarInfo(0);
-        return var.argumentCount;
-      }
-
-      return 0;
     }
 
     void statement::addFunctionArg(const int pos, varInfo &var){
       if( !(type & functionStatementType) )
         return;
 
-      varInfo &func = expRoot.getVarInfo(0);
-
-      func.addArgument(pos, var);
+      getFunctionVar()->addArgument(pos, var);
     }
 
     int statement::getForStatementCount() const {

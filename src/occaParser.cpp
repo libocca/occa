@@ -52,7 +52,7 @@ namespace occa {
       // Broken
       modifyTextureVariables();
 
-      applyToStatementsDefiningVar(&parserBase::addArgQualifiers);
+      addArgQualifiers();
 
       loadKernelInfos();
 
@@ -767,16 +767,6 @@ namespace occa {
       }
     }
 
-    void parserBase::applyToStatementsDefiningVar(applyToStatementsDefiningVar_t func){
-      varOriginMapIterator it = varOriginMap.begin();
-
-      while(it != varOriginMap.end()){
-        (this->*func)(*(it->first), *(it->second));
-
-        ++it;
-      }
-    }
-
     void parserBase::applyToStatementsUsingVar(varInfo &info,
                                                applyToStatementsUsingVar_t func){
       varUsedMapIterator it = varUsedMap.find(&info);
@@ -1197,10 +1187,8 @@ namespace occa {
         }
 
         if(statementHasOccaStuff(s2)){
-          s2.addQualifier("occaKernel");
-
-          varInfo &var = *(s2.hasVariableInScope( s2.getFunctionName() ));
-          var.addQualifier("occaKernel", 0);
+          varInfo &fVar = *(s2.getFunctionVar());
+          fVar.addQualifier("occaKernel", 0);
         }
 
         snPos = snPos->right;
@@ -1279,8 +1267,7 @@ namespace occa {
         }
       }
 
-      delete [] flatRoot.leaves;
-      delete &flatRoot;
+      expNode::freeFlatHandle(flatRoot);
     }
 
     void parserBase::addFunctionPrototypes(){
@@ -1711,51 +1698,35 @@ namespace occa {
 #endif
     }
 
-    void parserBase::addArgQualifiers(varInfo &var, statement &s){
-      if(var.hasQualifier("occaKernel")){
-        statementNode *snPos = s.statementStart;
+    void parserBase::addArgQualifiers(){
+      statementNode *statementPos = globalScope->statementStart;
 
-        while(snPos){
-          statement &s2 = *(snPos->value);
+      while(statementPos){
+        statement &s = *(statementPos->value);
 
-          if((s2.type & functionStatementType) &&
-             (var.name == s2.getFunctionName())){
+        if((s.type & functionDefinitionType) &&
+           (s.functionHasQualifier("occaKernel"))){
 
-            break;
+          const int argc = s.getFunctionArgCount();
+
+          for(int i = 0; i < argc; ++i){
+            varInfo &argVar = *(s.getFunctionArgVar(i));
+
+            if(argVar.pointerCount)
+              argVar.addQualifier("occaPointer", 0);
+            else
+              argVar.addRightQualifier("occaVariable");
           }
 
-          snPos = snPos->right;
+          if(s.getFunctionArgName(0) != "occaKernelInfoArg"){
+            varInfo arg0;
+            arg0.name = "occaKernelInfoArg";
+
+            s.addFunctionArg(0, arg0);
+          }
         }
 
-        statement &s2 = *(snPos->value);
-
-        const int argc = s2.getFunctionArgCount();
-
-        for(int i = 0; i < argc; ++i){
-          varInfo &argVar = *(s2.getFunctionArgVar(i));
-
-          if(argVar.pointerCount)
-            argVar.addQualifier("occaPointer", 0);
-          else
-            argVar.addRightQualifier("occaVariable");
-        }
-
-        if(s2.getFunctionArgName(0) != "occaKernelInfoArg"){
-          varInfo v;
-          v.name = "occaKernelInfoArg";
-
-          s2.addFunctionArg(0, v);
-        }
-      }
-      // [-] Missing
-      else if(var.hasQualifier("occaFunction")){
-        // statementNode *sn = (varUsedMap[&var]).right;
-
-        // while(sn){
-        //   sn->value->expRoot.print();
-
-        //   sn = sn->right;
-        // }
+        statementPos = statementPos->right;
       }
     }
 
@@ -1979,7 +1950,6 @@ namespace occa {
       info.nestedKernels.clear();
 
       scopeVarMapIterator it = globalScope->scopeVarMap.find(info.name);
-      varInfo &originalVar   = *(it->second);
 
       // Create empty kernels
       for(int k = 0; k < kernelCount; ++k){
@@ -1995,12 +1965,12 @@ namespace occa {
 
         ss << k;
 
-        originalVar.name = s.getFunctionName() + ss.str();
-        s2.setFunctionName(originalVar.name);
+        varInfo &kVar = *(s2.getFunctionVar());
+        kVar.name    += ss.str();
 
         ss.str("");
 
-        globalScope->addVariable(&originalVar);
+        globalScope->addVariable(&kVar);
 
         if(k)
           newSNEnd = newSNEnd->push(new statementNode(info.nestedKernels.back()));
@@ -2095,15 +2065,12 @@ namespace occa {
           //---[ Change type ]----------
           if(loopIter){
             statement &newS = *(newSN->value);
-            newS.expRoot.print();
 
             varInfo &outerVar = *(newS.hasVariableInScope("outer"));
             statement &outerS = *(varOriginMap[&outerVar]);
 
             typeInfo &type = *(new typeInfo);
             type.name = "occa::dim";
-
-            outerS.expRoot.print();
 
             outerS.getDeclarationVarInfo(0).baseType = &type;
           }
@@ -2272,8 +2239,7 @@ namespace occa {
           return true;
       }
 
-      delete [] flatRoot.leaves;
-      delete &flatRoot;
+      expNode::freeFlatHandle(flatRoot);
 
       return false;
     }
@@ -2513,10 +2479,9 @@ namespace occa {
       if(it == varUsedMap.end())
         return false;
 
-      statementNode *pos = (it->second).right;
+      const int segment = loopSection[varOriginMap[&var]];
 
-      const int segment = loopSection[pos->value];
-      pos = pos->right;
+      statementNode *pos = (it->second).right;
 
       while(pos){
         if(segment != loopSection[pos->value])
@@ -2592,6 +2557,9 @@ namespace occa {
           break;
         }
       }
+
+      std::cout << "argPos = " << argPos << '\n'
+                << "var = " << var << '\n';
 
       return;
     }
@@ -2796,7 +2764,7 @@ namespace occa {
                                                 occaForType, &s);
 
         newStatement->expRoot.info   = expType::printValue;
-        newStatement->expRoot.value  = "occaInnerFor";
+        newStatement->expRoot.value  = "occaOuterFor";
         newStatement->expRoot.value += ('0' + o);
 
         newStatement->scopeVarMap = sPos->scopeVarMap;
@@ -2982,8 +2950,7 @@ namespace occa {
         }
       }
 
-      delete [] flatRoot.leaves;
-      delete &flatRoot;
+      expNode::freeFlatHandle(flatRoot);
     }
     //==============================================
 

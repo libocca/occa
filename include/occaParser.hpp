@@ -110,7 +110,7 @@ namespace occa {
 
       void addKernelInfo(varInfo &info, statement &s);
 
-      void addArgQualifiers(varInfo &info, statement &s);
+      void addArgQualifiers();
 
       void modifyExclusiveVariables(statement &s);
 

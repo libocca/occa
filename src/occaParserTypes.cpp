@@ -125,8 +125,8 @@ namespace occa {
 
       newQualifiers[pos] = qName;
 
-      for(int i = (pos + 1); i < qualifierCount; ++i)
-        newQualifiers[i] = qualifiers[i - 1];
+      for(int i = pos; i < qualifierCount; ++i)
+        newQualifiers[i + 1] = qualifiers[i];
 
       delete [] qualifiers;
 

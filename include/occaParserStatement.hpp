@@ -150,6 +150,9 @@ namespace occa {
       // const int [*] x
       void labelReferenceQualifiers();
 
+      // Add used vars to varUsedMap
+      void labelUsedVariables();
+
       // class(...), class{1,2,3}
       void mergeClassConstructs();
 
@@ -213,6 +216,8 @@ namespace occa {
       expNode* makeFlatHandle();
       void makeFlatHandle(int &offset,
                           expNode **flatLeaves);
+
+      static void freeFlatHandle(expNode &flatRoot);
 
       void addNode(const int info_, const int pos = 0);
       void addNodes(const int info_, const int pos, const int count = 1);
@@ -466,12 +471,15 @@ namespace occa {
       std::string getDeclarationVarName(const int pos);
       int getDeclarationVarCount() const;
 
-      std::string getFunctionName() const;
+      varInfo* getFunctionVar();
+      std::string getFunctionName();
       void setFunctionName(const std::string &newName);
+      bool functionHasQualifier(const std::string &qName);
+
+      int getFunctionArgCount();
       std::string getFunctionArgType(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);
-      int getFunctionArgCount() const;
 
       void addFunctionArg(const int pos, varInfo &var);
 
