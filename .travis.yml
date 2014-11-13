@@ -1,7 +1,6 @@
 language: cpp
 compiler:
   - gcc
-  - clang++
 env:
 before_install:
   - OCCA_DIR=$TRAVIS_BUILD_DIR
