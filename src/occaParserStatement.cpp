@@ -1904,7 +1904,7 @@ namespace occa {
       }
 
       case (expType::occaFor):{
-        out << tab << value;
+        out << value << ' ';
         break;
       }
 
@@ -3005,8 +3005,10 @@ namespace occa {
       if(target->left)
         target->left->right = newSN;
 
-      target->left = newSN;
+      newSN->left  = target->left;
       newSN->right = target;
+
+      target->left = newSN;
     }
 
     void statement::pushRightFromSource(statementNode *target,
@@ -3026,16 +3028,17 @@ namespace occa {
       if(target->right)
         target->right->left = newSN;
 
-      target->right = newSN;
+      newSN->right  = target->right;
       newSN->left   = target;
+
+      target->right = newSN;
     }
 
     statementNode* statement::getStatementNode(){
       if(up != NULL){
         statementNode *ret = up->statementStart;
-        const int upNodes  = up->statementCount;
 
-        for(int i = 0; i < upNodes; ++i){
+        while(ret){
           if(ret->value == this)
             return ret;
 
@@ -3064,11 +3067,12 @@ namespace occa {
 
     varInfo& statement::addVariable(varInfo &var,
                                     statement *origin){
-      varInfo *newVar = new varInfo(var);
+      varInfo &newVar = *(new varInfo);
+      newVar = var.clone();
 
-      addVariable(newVar, origin);
+      addVariable(&newVar, origin);
 
-      return *newVar;
+      return newVar;
     }
 
     void statement::addVariable(varInfo *var,
@@ -3077,13 +3081,10 @@ namespace occa {
 
       scopeVarMap[var->name] = var;
 
-      if(origin == NULL){
+      if(origin == NULL)
         varOriginMap[var] = this;
-      }
-      else{
-        varOriginMap[var]              = origin;
-        origin->scopeVarMap[var->name] = var;
-      }
+      else
+        varOriginMap[var] = origin;
     }
 
     void statement::addStatement(statement *newStatement){
@@ -3278,6 +3279,13 @@ namespace occa {
       }
 
       return "";
+    }
+
+    expNode* statement::getDeclarationVarInitNode(const int pos){
+      if(type & declareStatementType)
+        return expRoot.getVariableInitNode(pos);
+
+      return NULL;
     }
 
     int statement::getDeclarationVarCount() const {

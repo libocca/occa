@@ -1741,8 +1741,6 @@ namespace occa {
 
       std::stringstream ss;
 
-      // s.removeQualifier("exclusive");
-
       const int argc = s.getDeclarationVarCount();
 
       //---[ Setup update statement ]---
@@ -1970,7 +1968,7 @@ namespace occa {
 
         ss.str("");
 
-        globalScope->addVariable(&kVar);
+        globalScope->addVariable(&kVar, &s2);
 
         if(k)
           newSNEnd = newSNEnd->push(new statementNode(info.nestedKernels.back()));
@@ -2549,6 +2547,22 @@ namespace occa {
       int argc   = origin.getFunctionArgCount();
       int argPos = 0;
 
+      if(argc == 0){
+        if(!var.hasQualifier("exclusive"))
+          var.addQualifier("exclusive");
+
+        if(origin.expRoot.variableHasInit(argPos)){
+          std::stringstream ss;
+
+          ss << var.name << " = " << *(origin.expRoot.getVariableInitNode(0)) << ";";
+
+          origin.up->pushRightFromSource(origin.getStatementNode(),
+                                         ss.str());
+        }
+
+        return;
+      }
+
       for(int i = 0; i < argc; ++i){
         varInfo &argVar = *(origin.getFunctionArgVar(i));
 
@@ -2559,7 +2573,7 @@ namespace occa {
       }
 
       std::cout << "argPos = " << argPos << '\n'
-                << "var = " << var << '\n';
+                << "var    = " << var << '\n';
 
       return;
     }
@@ -2636,7 +2650,7 @@ namespace occa {
         statement *newStatement = new statement(includeStart->value->depth,
                                                 occaForType, &origin);
 
-        newStatement->expRoot.info   = expType::printValue;
+        newStatement->expRoot.info   = expType::occaFor;
         newStatement->expRoot.value  = "occaInnerFor";
         newStatement->expRoot.value += ('0' + i);
 
@@ -2656,6 +2670,7 @@ namespace occa {
             (includeStart->value->hasDescriptorVariable("occaShared") ||
              includeStart->value->hasDescriptorVariable("exclusive"))){
 
+        includeStart->value->up = innerMostLoop;
         includeStart = includeStart->right;
       }
 
@@ -2684,14 +2699,12 @@ namespace occa {
       }
 
       innerMostLoop->statementStart = includeStart;
+      innerMostLoop->statementEnd   = includeEnd;
 
-      while(includeStart != includeEnd){
+      while(includeStart){
         includeStart->value->up = innerMostLoop;
         includeStart = includeStart->right;
       }
-
-      if(includeEnd)
-        includeStart->value->up = innerMostLoop;
 
       // Increment the depth of statements in the loops
       for(int i = 0; i < innerDim; ++i){
@@ -2744,6 +2757,7 @@ namespace occa {
         varPos = varPos->left;
       }
 
+      floatSharedVarsInKernel(s);
       addInnerForsToStatement(s, innerDim);
     }
 
@@ -2895,7 +2909,6 @@ namespace occa {
            !statementKernelUsesNativeOCCA(*s)){ //   not OCCA
 
           removeUnnecessaryBlocksInKernel(*s);
-          floatSharedVarsInKernel(*s);
           addOccaForsToKernel(*s);
         }
 

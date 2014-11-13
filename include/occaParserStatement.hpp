@@ -469,6 +469,7 @@ namespace occa {
       const varInfo& cGetDeclarationVarInfo(const int pos) const ;
       expNode* getDeclarationVarNode(const int pos);
       std::string getDeclarationVarName(const int pos);
+      expNode* getDeclarationVarInitNode(const int pos);
       int getDeclarationVarCount() const;
 
       varInfo* getFunctionVar();
