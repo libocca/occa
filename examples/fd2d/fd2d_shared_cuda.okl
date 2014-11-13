@@ -64,11 +64,11 @@ __global__ void fd2d(tFloat *u1,
                      const tFloat *u2,
                      const tFloat *u3,
                      const tFloat currentTime){
-  const int bx = blockIdx.x;
-  const int by = blockIdx.y;
-
   __shared__ tFloat Lu[By + 2*sr][Bx + 2*sr];
   tFloat r_u2, r_u3;
+
+  const int bx = (blockIdx.x * Bx);
+  const int by = (blockIdx.y * By);
 
   const int lx = threadIdx.x;
   const int ly = threadIdx.y;
