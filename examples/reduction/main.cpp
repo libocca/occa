@@ -20,7 +20,7 @@ int main(int argc, char **argv){
 
   // occa::availableDevices<occa::OpenCL>();
 
-  std::string mode = "OpenCL";
+  std::string mode = "OpenMP";
   int platformID = 0;
   int deviceID   = 2;
 
