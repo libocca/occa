@@ -641,7 +641,7 @@ namespace occa {
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
-    const bool usingParser = (getFileExtension(filename) == "okl");
+    const bool usingParser = fileNeedsParser(filename);
 
     kernel ker;
 

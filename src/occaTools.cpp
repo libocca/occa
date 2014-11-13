@@ -374,6 +374,14 @@ namespace occa {
     return occaCachePath;
   }
 
+  bool fileNeedsParser(const std::string &filename){
+    std::string ext = getFileExtension(filename);
+
+    return ((ext == "okl") ||
+            (ext == "cl") ||
+            (ext == "cu"));
+  }
+
   std::string getCachedName(const std::string &filename,
                             const std::string &salt){
 
@@ -393,11 +401,9 @@ namespace occa {
     std::string prefix, name;
     getFilePrefixAndName(cachedBinary, prefix, name);
 
-    std::string extension = getFileExtension(filename);
-
     const std::string iCachedBinary = prefix + "i_" + name;
 
-    if(extension == "okl"){
+    if(fileNeedsParser(filename)){
       const std::string pCachedBinary = prefix + "p_" + name;
       parser fileParser;
 

@@ -73,6 +73,8 @@ namespace occa {
   std::string getOCCADir();
   std::string getCachePath();
 
+  bool fileNeedsParser(const std::string &filename);
+
   std::string getCachedName(const std::string &filename,
                             const std::string &salt);
 
