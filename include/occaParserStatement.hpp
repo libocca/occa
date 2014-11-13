@@ -427,13 +427,16 @@ namespace occa {
                                  strNode *nodeRootEnd);
       //================================
 
+      statementNode* getStatementNode();
+
+      statement& pushNewStatementLeft(const int type_ = 0);
+      statement& pushNewStatementRight(const int type_ = 0);
+
       void pushLeftFromSource(statementNode *target,
                               const std::string &source);
 
       void pushRightFromSource(statementNode *target,
                                const std::string &source);
-
-      statementNode* getStatementNode();
 
       void checkIfVariableIsDefined(varInfo &var,
                                     statement *origin);

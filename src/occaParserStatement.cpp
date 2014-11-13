@@ -2988,6 +2988,66 @@ namespace occa {
     }
     //==================================
 
+
+    statementNode* statement::getStatementNode(){
+      if(up != NULL){
+        statementNode *ret = up->statementStart;
+
+        while(ret){
+          if(ret->value == this)
+            return ret;
+
+          ret = ret->right;
+        }
+      }
+
+      return NULL;
+    }
+
+    statement& statement::pushNewStatementLeft(const int type_){
+      statementNode *newSN = new statementNode(up->makeSubStatement());
+
+      statement *newS = newSN->value;
+      newS->type      = type_;
+
+      statementNode *sn = getStatementNode();
+
+      if(up->statementStart == sn)
+        up->statementStart = newSN;
+
+      if(sn->left)
+        sn->left->right = newSN;
+
+      newSN->left  = sn->left;
+      newSN->right = sn;
+
+      sn->left = newSN;
+
+      return *newS;
+    }
+
+    statement& statement::pushNewStatementRight(const int type_){
+      statementNode *newSN = new statementNode(up->makeSubStatement());
+
+      statement *newS = newSN->value;
+      newS->type      = type_;
+
+      statementNode *sn = getStatementNode();
+
+      if(up->statementEnd == sn)
+        up->statementEnd = newSN;
+
+      if(sn->right)
+        sn->right->left = newSN;
+
+      newSN->right  = sn->right;
+      newSN->left   = sn;
+
+      sn->right = newSN;
+
+      return *newS;
+    }
+
     void statement::pushLeftFromSource(statementNode *target,
                                        const std::string &source){
       loadFromNode(labelCode( splitContent(source) ));
@@ -3032,21 +3092,6 @@ namespace occa {
       newSN->left   = target;
 
       target->right = newSN;
-    }
-
-    statementNode* statement::getStatementNode(){
-      if(up != NULL){
-        statementNode *ret = up->statementStart;
-
-        while(ret){
-          if(ret->value == this)
-            return ret;
-
-          ret = ret->right;
-        }
-      }
-
-      return NULL;
     }
 
     void statement::checkIfVariableIsDefined(varInfo &var,

@@ -2544,27 +2544,11 @@ namespace occa {
 
     void parserBase::splitDefineForVariable(statement &origin,
                                             varInfo &var){
-      int argc   = origin.getFunctionArgCount();
+      int argc   = origin.getDeclarationVarCount();
       int argPos = 0;
 
-      if(argc == 0){
-        if(!var.hasQualifier("exclusive"))
-          var.addQualifier("exclusive");
-
-        if(origin.expRoot.variableHasInit(argPos)){
-          std::stringstream ss;
-
-          ss << var.name << " = " << *(origin.expRoot.getVariableInitNode(0)) << ";";
-
-          origin.up->pushRightFromSource(origin.getStatementNode(),
-                                         ss.str());
-        }
-
-        return;
-      }
-
       for(int i = 0; i < argc; ++i){
-        varInfo &argVar = *(origin.getFunctionArgVar(i));
+        varInfo &argVar = origin.getDeclarationVarInfo(i);
 
         if(&argVar == &var){
           argPos = i;
@@ -2572,8 +2556,50 @@ namespace occa {
         }
       }
 
-      std::cout << "argPos = " << argPos << '\n'
-                << "var    = " << var << '\n';
+      if(!var.hasQualifier("exclusive"))
+        var.addQualifier("exclusive");
+
+      if(argPos){
+        statement &s = origin.pushNewStatementLeft(declareStatementType);
+        s.expRoot.info      = origin.expRoot.info;
+        s.expRoot.leaves    = new expNode*[argPos];
+        s.expRoot.leafCount = argPos;
+
+        for(int i = 0; i < argPos; ++i){
+          varInfo &argVar = origin.getDeclarationVarInfo(i);
+
+          s.expRoot.leaves[i]   = origin.expRoot.leaves[i];
+          varOriginMap[&argVar] = &s;
+        }
+      }
+
+      if((argPos + 1) < argc){
+        const int newLeafCount = (argc - (argPos + 1));
+
+        statement &s = origin.pushNewStatementLeft(declareStatementType);
+        s.expRoot.info      = origin.expRoot.info;
+        s.expRoot.leaves    = new expNode*[newLeafCount];
+        s.expRoot.leafCount = newLeafCount;
+
+        for(int i = 0; i < newLeafCount; ++i){
+          varInfo &argVar = origin.getDeclarationVarInfo(argPos + 1 + i);
+
+          s.expRoot.leaves[i]   = origin.expRoot.leaves[argPos + 1 + i];
+          varOriginMap[&argVar] = &s;
+        }
+      }
+
+      origin.expRoot.leaves[0] = origin.expRoot.leaves[argPos];
+      origin.expRoot.leafCount = 1;
+
+      if(origin.expRoot.variableHasInit(0)){
+        std::stringstream ss;
+
+        ss << var.name << " = " << *(origin.expRoot.getVariableInitNode(0)) << ";";
+
+        origin.up->pushRightFromSource(origin.getStatementNode(),
+                                       ss.str());
+      }
 
       return;
     }

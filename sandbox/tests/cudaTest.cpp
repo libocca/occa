@@ -146,9 +146,11 @@ kernel void fd2d(tFloat *u1,
 
   a.b = 3;
 
-  tFloat lap = 0.0;
+  tFloat lap = 0.0, lap2 = 3;
 
   __syncthreads();
+
+  lap2 = 4;
 
   if(true)
     blah;
