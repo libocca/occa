@@ -165,12 +165,8 @@ namespace occa {
       else if(sInfo->type & structStatementType)
         splitStructStatement();
 
-      else{
-        // Add used vars to varUsedMap
-        labelUsedVariables();
-
+      else
         organize();
-      }
     }
 
     void expNode::organize(){
@@ -231,7 +227,6 @@ namespace occa {
           for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
 
-          leaf.labelUsedVariables();
           leaf.organizeLeaves();
         }
 
@@ -461,6 +456,9 @@ namespace occa {
           leaves[i]->organizeLeaves();
         }
       }
+
+      // Add used vars to varUsedMap
+      labelUsedVariables();
 
       //---[ Level 1 ]------
       // class(...), class{1,2,3}
