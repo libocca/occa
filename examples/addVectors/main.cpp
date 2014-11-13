@@ -35,7 +35,7 @@ int main(int argc, char **argv){
                                             "addVectors");
 
   int dims = 1;
-  int itemsPerGroup(2);
+  int itemsPerGroup(16);
   int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
 
   addVectors.setWorkingDims(dims, itemsPerGroup, groups);
