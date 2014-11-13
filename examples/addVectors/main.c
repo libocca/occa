@@ -67,6 +67,11 @@ int main(int argc, char **argv){
   for(i = 0; i < 5; ++i)
     printf("%d = %f\n", i, ab[i]);
 
+  for(i = 0; i < entries; ++i){
+    if(ab[i] != (a[i] + b[i]))
+      exit(1);
+  }
+
   free(a);
   free(b);
   free(ab);

@@ -60,6 +60,11 @@ int main(int argc, char **argv){
   for(int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
 
+  for(int i = 0; i < entries; ++i){
+    if(ab[i] != (a[i] + b[i]))
+      throw 1;
+  }
+
   delete [] a;
   delete [] b;
   delete [] ab;
