@@ -198,10 +198,10 @@ namespace occa {
         if(flags & expFlag::addVarToScope){
           if(flags & expFlag::addToParent){
             if(sInfo->up != NULL)
-              sInfo->up->addVariable(var, sInfo);
+              sInfo->up->addVariable(&var, sInfo);
           }
           else
-            sInfo->addVariable(var);
+            sInfo->addVariable(&var);
         }
 
         if(i == 0){
@@ -294,7 +294,7 @@ namespace occa {
          (sInfo->up->scopeVarMap.find(var.name) ==
           sInfo->up->scopeVarMap.end())){
 
-        sInfo->up->addVariable(var);
+        sInfo->up->addVariable(&var);
       }
 
       removeNodes(1, leafPos);
@@ -349,14 +349,13 @@ namespace occa {
           varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
 
           if(nodeVar){
+            if( !(sInfo->type & functionStatementType) )
+              sInfo->varUsedMap[nodeVar].push(sInfo);
+
             if( !(nodeVar->info & varType::functionType) )
               leaf->info = expType::variable;
-            else{
-              if( !(sInfo->type & functionStatementType) )
-                sInfo->varUsedMap[nodeVar].push(sInfo);
-
+            else
               leaf->info = expType::function;
-            }
           }
           else{
             typeInfo *nodeType = sInfo->hasTypeInScope(nodePos->value);
@@ -3011,8 +3010,8 @@ namespace occa {
       return NULL;
     }
 
-    varInfo* statement::addVariable(varInfo &var,
-                                    statement *origin){
+    void statement::checkIfVariableIsDefined(varInfo &var,
+                                             statement *origin){
       scopeVarMapIterator it = scopeVarMap.find(var.name);
 
       if(it != scopeVarMap.end()      &&
@@ -3025,19 +3024,30 @@ namespace occa {
                   << *this;
         throw 1;
       }
+    }
 
-      varInfo *&newInfo = scopeVarMap[var.name];
+    varInfo& statement::addVariable(varInfo &var,
+                                    statement *origin){
+      varInfo *newVar = new varInfo(var);
 
-      newInfo = new varInfo(var);
+      addVariable(newVar, origin);
 
-      if(origin == NULL)
-        varOriginMap[newInfo] = this;
-      else{
-        varOriginMap[newInfo]          = origin;
-        origin->scopeVarMap[var.name] = newInfo;
+      return *newVar;
+    }
+
+    void statement::addVariable(varInfo *var,
+                                statement *origin){
+      checkIfVariableIsDefined(*var, origin);
+
+      scopeVarMap[var->name] = var;
+
+      if(origin == NULL){
+        varOriginMap[var] = this;
       }
-
-      return newInfo;
+      else{
+        varOriginMap[var]              = origin;
+        origin->scopeVarMap[var->name] = var;
+      }
     }
 
     void statement::addStatement(statement *newStatement){

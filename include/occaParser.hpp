@@ -148,13 +148,13 @@ namespace occa {
                            loopSection_t &loopSection,
                            int section = 0);
 
-      bool varInTwoSegments(varInfo &info,
+      bool varInTwoSegments(varInfo &var,
                             loopSection_t &loopSection);
 
       varInfoNode* findVarsMovingToTop(statement &s,
                                        loopSection_t &loopSection);
 
-      void splitDefineForVariable(statement *&origin,
+      void splitDefineForVariable(statement &origin,
                                   varInfo &var);
 
       void addInnerForsToStatement(statement &s,

@@ -904,7 +904,7 @@ namespace occa {
 
         if(ioIterVar2 == NULL){
           statement &sOuterLoop = *(getStatementOuterMostLoop(s));
-          ioIterVar2 = sOuterLoop.addVariable(ioIterVar);
+          ioIterVar2 = &(sOuterLoop.addVariable(ioIterVar));
         }
 
         ioIterVar2->addQualifier(loopIters);
@@ -2000,7 +2000,7 @@ namespace occa {
 
         ss.str("");
 
-        globalScope->addVariable(originalVar);
+        globalScope->addVariable(&originalVar);
 
         if(k)
           newSNEnd = newSNEnd->push(new statementNode(info.nestedKernels.back()));
@@ -2280,27 +2280,31 @@ namespace occa {
 
     statementNode* parserBase::findStatementWith(statement &s,
                                                  findStatementWith_t func){
-      statementNode *ret = new statementNode(&s);
+      statementNode *ret     = new statementNode(&s);
+      statementNode *retDown = NULL;
 
       if((this->*func)(s))
         return ret;
 
       statementNode *statementPos = s.statementStart;
 
-      int found = 0;
-
       while(statementPos){
         statementNode *ret2 = findStatementWith(*(statementPos->value), func);
 
         if(ret2 != NULL){
-          ret->pushDown(ret2);
-          ++found;
+          if(retDown){
+            retDown = retDown->push(ret2);
+          }
+          else{
+            ret->down = ret2;
+            retDown   = ret2;
+          }
         }
 
         statementPos = statementPos->right;
       }
 
-      if(found)
+      if(retDown)
         return ret;
 
       delete ret;
@@ -2425,7 +2429,6 @@ namespace occa {
     }
 
     void parserBase::checkPathForConditionals(statementNode *path){
-#if 0
       if((path == NULL) ||
          (path->value == NULL))
         return;
@@ -2441,50 +2444,45 @@ namespace occa {
                   << "+---------+--------------------------------------------------+\n\n";
       }
 
-      const int downCount = path->down.size();
+      if(path->down){
+        statementNode *nodePos = path->down;
 
-      for(int i = 0; i < downCount; ++i)
-        checkPathForConditionals(path->down[i]);
-#endif
+        while(nodePos){
+          checkPathForConditionals(nodePos);
+          nodePos = nodePos->right;
+        }
+      }
     }
 
     int parserBase::findLoopSections(statement &s,
                                      statementNode *path,
                                      loopSection_t &loopSection,
                                      int section){
-      return 0;
-#if 0
       if(s.statementCount == 0)
         return section;
 
-      int downCount = 0;
-      int downPos   = 0;
+      statementNode *sPos  = s.statementStart;
+      statementNode *sNext = NULL;
 
-      statementNode *sPos = s.statementStart;
-      statement *sNext = NULL;
+      if((path != NULL) &&
+         (path->down != NULL)){
 
-      if(path != NULL){
-        downCount = path->down.size();
-
-        if(downCount)
-          sNext = path->down[0]->value;
+        sNext = path->down;
       }
 
       while(sPos){
-        if(sPos->value == sNext){
+        if(sNext &&
+           (sPos->value == sNext->value)){
           // Last one is a barrier
-          if(path->down[downPos]->down.size() == 0)
+          if(sNext->down == NULL)
             ++section;
 
           section = findLoopSections(*(sPos->value),
-                                     path->down[downPos],
+                                     sNext,
                                      loopSection,
                                      section);
 
-          if(++downPos < downCount)
-            sNext = path->down[downPos]->value;
-          else
-            sNext = NULL;
+          sNext = sNext->right;
         }
         else{
           loopSection[sPos->value] = section;
@@ -2499,18 +2497,17 @@ namespace occa {
       }
 
       return section;
-#endif
     }
 
-    bool parserBase::varInTwoSegments(varInfo &info,
+    bool parserBase::varInTwoSegments(varInfo &var,
                                       loopSection_t &loopSection){
       // Don't count shared memory
-      if(info.hasQualifier("occaPointer")  ||
-         info.hasQualifier("occaVariable") ||
-         info.hasQualifier("occaShared"))
+      if(var.hasQualifier("occaPointer")  ||
+         var.hasQualifier("occaVariable") ||
+         var.hasQualifier("occaShared"))
         return false;
 
-      varUsedMapIterator it = varUsedMap.find(&info);
+      varUsedMapIterator it = varUsedMap.find(&var);
 
       // Variable is not used
       if(it == varUsedMap.end())
@@ -2544,18 +2541,19 @@ namespace occa {
 
       if(!ignoringVariables){
         while(it != s.scopeVarMap.end()){
-          varInfo &info = *(it->second);
+          varInfo &var = *(it->second);
 
-          if(varInTwoSegments(info, loopSection)){
+          if(varInTwoSegments(var, loopSection)){
             // No longer const
-            info.removeQualifier("occaConst");
+            if(var.hasQualifier("occaConst"))
+              var.removeQualifier("occaConst");
 
             if(root == NULL){
-              root = new varInfoNode(&info);
+              root = new varInfoNode(&var);
               pos  = root;
             }
             else
-              pos = pos->push(&info);
+              pos = pos->push(&var);
           }
 
           ++it;
@@ -2581,9 +2579,19 @@ namespace occa {
       return root;
     }
 
-    void parserBase::splitDefineForVariable(statement *&origin,
+    void parserBase::splitDefineForVariable(statement &origin,
                                             varInfo &var){
-      origin->expRoot.print();
+      int argc   = origin.getFunctionArgCount();
+      int argPos = 0;
+
+      for(int i = 0; i < argc; ++i){
+        varInfo &argVar = *(origin.getFunctionArgVar(i));
+
+        if(&argVar == &var){
+          argPos = i;
+          break;
+        }
+      }
 
       return;
     }
@@ -2753,10 +2761,10 @@ namespace occa {
       statementNode *newStatementPos   = NULL;
 
       while(varPos){
-        statement *origin = (varOriginMap[varPos->value]);
+        statement &origin = *(varOriginMap[varPos->value]);
 
         // Ignore kernel arguments
-        if(origin->type & functionStatementType){
+        if(origin.type & functionStatementType){
           varPos = varPos->left;
           continue;
         }

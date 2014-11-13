@@ -430,8 +430,16 @@ namespace occa {
 
       statementNode* getStatementNode();
 
-      varInfo* addVariable(varInfo &var,
+      void checkIfVariableIsDefined(varInfo &var,
+                                    statement *origin);
+
+      // Add from stack memory
+      varInfo& addVariable(varInfo &var,
                            statement *origin = NULL);
+
+      // Add from pre-allocated memory
+      void addVariable(varInfo *var,
+                       statement *origin = NULL);
 
       void addStatement(statement *newStatement);
 
