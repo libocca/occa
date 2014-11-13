@@ -7,7 +7,7 @@ program main
   integer(4) :: i, entries = 5
 
   integer(4) :: platformID = 0, deviceID = 0, dims
-  character(len=1024) :: mode = "OpenCL"
+  character(len=1024) :: mode = "OpenMP"
 
   real(4), allocatable :: a(:), b(:), ab(:)
 
