@@ -2643,6 +2643,7 @@ namespace occa {
         if(statementHasBarrier( *(includeEnd->value) ))
           break;
 
+        // [-] Re-add if we want to split between for-loops
         // if(includeEnd->value->type & forStatementType){
         //   stoppedAtFor = true;
         //   break;
