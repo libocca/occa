@@ -10,13 +10,7 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
-executables = main 
-
-ifdef OCCA_FORTRAN_ENABLED
-ifeq ($(OCCA_FORTRAN_ENABLED), 1)
-	executables += main_f90
-endif
-endif
+executables = main
 
 all: $(executables)
 

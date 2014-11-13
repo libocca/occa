@@ -1,6 +1,7 @@
 language: cpp
 compiler:
   - gcc
+  - clang++
 env:
   - OCCA_DIR=$TRAVIS_BUILD_DIR
   - OMP_NUM_THREADS=4
