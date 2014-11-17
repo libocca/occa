@@ -37,7 +37,7 @@ namespace occa {
       bool evaluateMacroStatement(const char *&c);
       static typeHolder evaluateLabelNode(strNode *labelNodeRoot);
 
-      void loadMacroInfo(macroInfo &info, const char *&c);
+      static void loadMacroInfo(macroInfo &info, const char *&c);
       int loadMacro(const std::string &line, const int state = doNothing);
 
       void applyMacros(std::string &line);

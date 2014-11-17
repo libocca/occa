@@ -85,11 +85,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    occa::parser parser;
-    std::string parsedContent = parser.parseFile("tests/fd2d_cuda.okl");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("tests/fd2d_cuda.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   occa::parser parser;
@@ -126,4 +126,16 @@ int main(int argc, char **argv){
   //   std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
   //   std::cout << parsedContent << '\n';
   // }
+
+  // {
+  //   occa::parser parser;
+  //   std::string parsedContent = parser.parseFile("tests/reduction.cl");
+  //   std::cout << parsedContent << '\n';
+  // }
+
+  {
+    occa::parser parser;
+    std::string parsedContent = parser.parseFile("tests/loopy.cl");
+    std::cout << parsedContent << '\n';
+  }
 }
