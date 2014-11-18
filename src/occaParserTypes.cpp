@@ -1057,6 +1057,10 @@ namespace occa {
       return leftQualifiers.has(qName);
     }
 
+    bool varInfo::hasRightQualifier(const std::string &qName) const {
+      return rightQualifiers.has(qName);
+    }
+
     void varInfo::addQualifier(const std::string &qName, int pos){
       leftQualifiers.add(qName, pos);
     }

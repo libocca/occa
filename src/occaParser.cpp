@@ -1712,10 +1712,14 @@ namespace occa {
           for(int i = 0; i < argc; ++i){
             varInfo &argVar = *(s.getFunctionArgVar(i));
 
-            if(argVar.pointerCount)
-              argVar.addQualifier("occaPointer", 0);
-            else
-              argVar.addRightQualifier("occaVariable");
+            if(argVar.pointerCount){
+              if(!argVar.hasQualifier("occaPointer"))
+                argVar.addQualifier("occaPointer", 0);
+            }
+            else{
+              if(!argVar.hasRightQualifier("occaVariable"))
+                argVar.addRightQualifier("occaVariable");
+            }
           }
 
           if(s.getFunctionArgName(0) != "occaKernelInfoArg"){
@@ -2953,40 +2957,71 @@ namespace occa {
         std::string &value = flatRoot[i].value;
         std::string occaValue;
 
-        bool isInnerId = ((value == "occaInnerId0") ||
-                          (value == "occaInnerId1") ||
-                          (value == "occaInnerId2"));
+        const bool isInnerId = ((value == "occaInnerId0") ||
+                                (value == "occaInnerId1") ||
+                                (value == "occaInnerId2"));
 
-        bool isOuterId = ((value == "occaOuterId0") ||
-                          (value == "occaOuterId1") ||
-                          (value == "occaOuterId2"));
+        const bool isOuterId = ((value == "occaOuterId0") ||
+                                (value == "occaOuterId1") ||
+                                (value == "occaOuterId2"));
 
-        bool isInnerDim = ((value == "occaInnerDim0") ||
-                           (value == "occaInnerDim1") ||
-                           (value == "occaInnerDim2"));
+        const bool isGlobalId = ((value == "occaGlobalId0") ||
+                                 (value == "occaGlobalId1") ||
+                                 (value == "occaGlobalId2"));
 
-        bool isOuterDim = ((value == "occaOuterDim0") ||
-                           (value == "occaOuterDim1") ||
-                           (value == "occaOuterDim2"));
+        const bool isInnerDim = ((value == "occaInnerDim0") ||
+                                 (value == "occaInnerDim1") ||
+                                 (value == "occaInnerDim2"));
 
-        if(isInnerId  || isOuterId ||
-           isInnerDim || isOuterDim){
+        const bool isOuterDim = ((value == "occaOuterDim0") ||
+                                 (value == "occaOuterDim1") ||
+                                 (value == "occaOuterDim2"));
+
+        const bool isGlobalDim = ((value == "occaGlobalDim0") ||
+                                  (value == "occaGlobalDim1") ||
+                                  (value == "occaGlobalDim2"));
+
+        const bool isId  = (isInnerId  || isOuterId  || isGlobalId);
+        const bool isDim = (isInnerDim || isOuterDim || isGlobalDim);
+
+        if(isId || isDim){
           std::string ioLoop, loopNest;
 
-          if(isInnerId || isOuterId){
-            // [occa][-----][Id#]
-            ioLoop = value.substr(4,5);
-            // [occa][-----Id][#]
-            loopNest = value.substr(11,1);
+          if(isId){
+            if(isInnerId || isOuterId){
+              // [occa][-----][Id#]
+              ioLoop = value.substr(4,5);
+              // [occa][-----Id][#]
+              loopNest = value.substr(11,1);
+
+              addOccaForCounter(s, ioLoop, loopNest);
+            }
+            else { // isGlobalId
+              // [occa][------Id][#]
+              loopNest = value.substr(12,1);
+
+              addOccaForCounter(s, "Inner", loopNest);
+              addOccaForCounter(s, "Outer", loopNest);
+            }
           }
-          else{
-            // [occa][-----][Dim#]
-            ioLoop = value.substr(4,5);
-            // [occa][-----Dim][#]
-            loopNest = value.substr(12,1);
+          else { // isDim
+            if(isInnerDim || isOuterDim){
+              // [occa][-----][Dim#]
+              ioLoop = value.substr(4,5);
+              // [occa][-----Dim][#]
+              loopNest = value.substr(12,1);
+
+              addOccaForCounter(s, ioLoop, loopNest);
+            }
+            else { // isGlobalDim
+              // [occa][------Dim][#]
+              loopNest = value.substr(13,1);
+
+              addOccaForCounter(s, "Inner", loopNest);
+              addOccaForCounter(s, "Outer", loopNest);
+            }
           }
 
-          addOccaForCounter(s, ioLoop, loopNest);
         }
       }
 

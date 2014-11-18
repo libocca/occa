@@ -213,6 +213,7 @@ namespace occa {
       int rightQualifierCount() const;
 
       bool hasQualifier(const std::string &qName) const;
+      bool hasRightQualifier(const std::string &qName) const;
 
       void addQualifier(const std::string &qName,
                         int pos = -1);
