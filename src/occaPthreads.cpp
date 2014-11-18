@@ -228,7 +228,7 @@ namespace occa {
     functionName = functionName_;
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    data_.dlHandle = dlopen(filename.c_str(), RTLD_LAZY | RTLD_LOCAL);
+    data_.dlHandle = dlopen(filename.c_str(), RTLD_NOW);
 #else
     data_.dlHandle = LoadLibraryA(filename.c_str());
 
