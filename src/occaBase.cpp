@@ -206,14 +206,14 @@ namespace occa {
   }
 
   void kernel::free(){
-    kHandle->free();
-
     if(kHandle->nestedKernelCount){
       for(int k = 0; k < kHandle->nestedKernelCount; ++k)
         kHandle->nestedKernels[k].free();
 
       delete [] kHandle->nestedKernels;
     }
+
+    kHandle->free();
 
     delete kHandle;
   }

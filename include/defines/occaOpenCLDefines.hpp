@@ -153,6 +153,10 @@
 #define occaFastExp   half_exp
 #define occaNativeExp native_exp
 
+#define occaExpm1       expm1
+#define occaFastExpm1   expm1
+#define occaNativeExpm1 expm1
+
 #define occaPow       pow
 #define occaFastPow   half_pow
 #define occaNativePow native_pow
