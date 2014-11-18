@@ -3221,8 +3221,20 @@ namespace occa {
 
                     cRight = cRight2;
                   }
-                  else
-                    nodePos->type = qualifierType;
+
+                  // [-] Early fix
+                  if(nodePos->left){
+                    nodePos = nodePos->left;
+
+                    delete nodePos->right;
+                    nodePos->right = NULL;
+                  }
+                  else if(nodePos->up){
+                    nodePos = nodePos->up;
+
+                    delete nodePos->down;
+                    nodePos->down = NULL;
+                  }
                 }
               }
 
