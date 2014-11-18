@@ -1,7 +1,8 @@
 +---[ (0) README ]------------------------------------------
 |   Installing:
-|      Using a termianl, go to your occa directory
+|      Using a terminal, go to your OCCA directory
 |         You should see: this README, include, src, lib
+|         Set OCCA_DIR (check (2) below)
 |         Type "make" to compile libocca
 |
 |   Running Examples:  (After compiling libocca)
@@ -15,29 +16,33 @@
 
 
 +---[ (1) ENVIRONMENT VARIABLES ]---------------------------
-|  Useful environment variables:
-|    (2) OCCA_DIR
-|    (3) OCCA_CACHE_DIR
-|    (4) LD_LIBRARY_PATH
 |
-|    (5) Pthreads Options
+|    (2) OCCA_DIR (Required!)
+|
+|    (3) Useful environment variables:
+|            LD_LIBRARY_PATH
+|            OCCA_CACHE_DIR
+|            OCCA_INCLUDE_PATH
+|            OCCA_LIBRARY_PATH
+|
+|    (4) Pthreads Options
 |            OCCA_PTHREADS_ENABLED
 |            OCCA_PTHREADS_COUNT, OCCA_PTHREADS_COMPILER,
 |            OCCA_PTHREADS_COMPILER_FLAGS
 |
-|    (6) OpenMP Options
+|    (5) OpenMP Options
 |            OCCA_OPENMP_ENABLED
 |            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
 |
-|    (7) OpenCL Options
+|    (6) OpenCL Options
 |            OCCA_OPENCL_ENABLED
 |            OCCA_OPENCL_COMPILER_FLAGS
 |
-|    (8) CUDA Options
+|    (7) CUDA Options
 |            OCCA_CUDA_ENABLED
 |            OCCA_CUDA_COMPILER, OCCA_CUDA_COMPILER_FLAGS
 |
-|    (9) COI Options
+|    (8) COI Options
 |            OCCA_COI_ENABLED
 |            OCCA_COI_COMPILER, OCCA_COI_COMPILER_FLAGS
 |
@@ -47,9 +52,10 @@
 +===========================================================
 
 
-+---[ (2) OCCA_DIR ]----------------------------------------
+
++---[ (2) OCCA_DIR (Required!) ]----------------------------
 |  Info:
-|    Directory where occa/ is stored:
+|    Absolute path to the OCCA2, used to find:
 |      $OCCA_DIR/include
 |      $OCCA_DIR/src
 |      $OCCA_DIR/lib
@@ -59,27 +65,52 @@
 +===========================================================
 
 
-+---[ (3) OCCA_CACHE_DIR ]----------------------------------
-|  Info:
-|    Directory where compile kernels are
-|      stored (caching binaries)
++---[ (3) Useful environment variables ]--------------------
 |
-|  Setting it:
-|    export OCCA_CACHE_DIR=/absolute/path/to/dir
+|     +---[ LD_LIBRARY_PATH ]---------------------
+|     |  Info:
+|     |    Append directory where libocca is stored:
+|     |      $OCCA_DIR/lib
+|     |    to link libocca to your application
+|     |
+|     |  Setting it:
+|     |    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH":${OCCA_DIR}/lib"
+|     +===========================================
+|
+|     +---[ OCCA_CACHE_DIR ]----------------------
+|     |  Info:
+|     |    Directory where compile kernels are
+|     |      stored (caching binaries). This defaults
+|     |      to:
+|     |    ~/._occa
+|     |
+|     |  Setting it:
+|     |    export OCCA_CACHE_DIR=/absolute/path/to/dir
+|     +===========================================
+|
+|     +---[ OCCA_INCLUDE_PATH ]-------------------
+|     |  Info:
+|     |    Append paths for OCCA-mode headers, such as:
+|     |      /path/to/CL     (for #include <CL/cl.h>)
+|     |      /path/to/cuda.h (for #include <cuda.h>)
+|     |
+|     |  Setting it:
+|     |    export OCCA_INCLUDE_PATH="/path/to/CL:/path/to/cuda.h"
+|     +===========================================
+|
+|     +---[ OCCA_LIBRARY_PATH ]-------------------
+|     |  Info:
+|     |    Append paths for OCCA-mode libraries, such as:
+|     |      /path/to/libOpenCL
+|     |      /path/to/libcuda
+|     |
+|     |  Setting it:
+|     |    export OCCA_LIBRARY_PATH="/path/to/libOpenCL:/path/to/libcuda"
+|     +===========================================
 +===========================================================
 
 
-+---[ (4) LD_LIBRARY_PATH ]---------------------------------
-|  Info:
-|    Append directory where libocca is stored
-|      $OCCA_DIR/lib
-|
-|  Setting it:
-|    export LD_LIBRARY_PATH=$LD_LIBRARY_PATH":${OCCA_DIR}/lib"
-+===========================================================
-
-
-+---[ (5) Pthreads Options ]--------------------------------
++---[ (4) Pthreads Options ]--------------------------------
 |  Info:
 |    OCCA_PTHREAD_ENABLED        : Allow Pthread-mode to be used
 |    OCCA_PTHREAD_COUNT          : Threads spawned at each kernel
@@ -93,7 +124,7 @@
 +===========================================================
 
 
-+---[ (6) OpenMP Options ]----------------------------------
++---[ (5) OpenMP Options ]----------------------------------
 |  Info:
 |    OCCA_OPENMP_ENABLED       : Allow OpenMP-mode to be used
 |    OCCA_OPENMP_COMPILER      : OpenMP Compiler
@@ -105,7 +136,7 @@
 +===========================================================
 
 
-+---[ (7) OpenCL Options ]----------------------------------
++---[ (6) OpenCL Options ]----------------------------------
 |  Info:
 |    OCCA_OPENCL_ENABLED       : Allow OpenCL-mode to be used
 |    OCCA_OPENCL_COMPILER_FLAGS: OpenCL Compiler Flags
@@ -115,7 +146,7 @@
 +===========================================================
 
 
-+---[ (8) CUDA Options ]------------------------------------
++---[ (7) CUDA Options ]------------------------------------
 |  Info:
 |    OCCA_CUDA_ENABLED       : Allow CUDA-mode to be used
 |    OCCA_CUDA_COMPILER      : CUDA Compiler
@@ -127,7 +158,7 @@
 +===========================================================
 
 
-+---[ (9) COI Options ]-------------------------------------
++---[ (8) COI Options ]-------------------------------------
 |  Info:
 |    OCCA_COI_ENABLED       : Allow COI-mode to be used
 |    OCCA_COI_COMPILER      : COI Compiler
