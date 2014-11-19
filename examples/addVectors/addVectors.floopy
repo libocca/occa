@@ -1,8 +1,8 @@
-subroutine fill(entries, a, b, ab)
+subroutine addVectors(entries, a, b, ab)
   implicit none
 
-  integer entries
-  real*8 a(entries), b(entries), ab(entries)
+  integer*4 entries
+  real*4 a(entries), b(entries), ab(entries)
 
   do i = 1, entries
     ab(i) = a(i) + b(i)
@@ -11,7 +11,7 @@ end
 
 !$loopy begin transform
 !
-! fill = lp.split_iname(fill, "i", 16,
+! addVectors = lp.split_iname(addVectors, "i", 16,
 !     outer_tag="g.0", inner_tag="l.0")
 !
 !$loopy end transform

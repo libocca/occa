@@ -1,5 +1,7 @@
 main
 main.o
 main_c
+mainFloopy
 main.dSYM
 main_c.dSYM
+mainFloopy.dSYM

@@ -15,8 +15,8 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  std::string mode = "OpenMP";
-  int platformID = 0;
+  std::string mode = "OpenCL";
+  int platformID = 1;
   int deviceID   = 0;
 
   occa::device device;
@@ -32,6 +32,12 @@ int main(int argc, char **argv){
   addVectors = device.buildKernelFromLoopy("addVectors.floopy",
                                            "addVectors",
                                            occa::useFloopy);
+
+  int dims = 1;
+  int itemsPerGroup(16);
+  int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
+
+  addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);
