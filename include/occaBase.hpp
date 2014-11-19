@@ -360,29 +360,34 @@ namespace occa {
       return *this;
     }
 
-    OCCA_KERNEL_ARG_CONSTRUCTOR(int);
-    OCCA_KERNEL_ARG_CONSTRUCTOR(char);
-    OCCA_KERNEL_ARG_CONSTRUCTOR(short);
-    OCCA_KERNEL_ARG_CONSTRUCTOR(long);
-
-    OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned int  , uint);
-    OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned char , uchar);
-    OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned short, ushort);
-
-    OCCA_KERNEL_ARG_CONSTRUCTOR(float);
-    OCCA_KERNEL_ARG_CONSTRUCTOR(double);
-    // 32 bit: uintptr_t == unsigned int
-#if OCCA_64_BIT
-    OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
-#endif
-
-    inline kernelArg(const occa::memory &m);
-
-    inline kernelArg(const void *arg_){
+    template <class TM>
+    inline kernelArg(const TM &arg_){
       dev = NULL;
 
-      arg.void_ = const_cast<void*>(arg_);
-      size = sizeof(void*);
+      arg.void_ = const_cast<TM*>(&arg_);
+      size = sizeof(TM);
+
+      pointer    = true;
+      hasTwoArgs = false;
+    }
+
+    template <class TM>
+    inline kernelArg(TM *arg_){
+      dev = NULL;
+
+      arg.void_ = arg_;
+      size      = sizeof(TM*);
+
+      pointer    = true;
+      hasTwoArgs = false;
+    }
+
+    template <class TM>
+    inline kernelArg(const TM *arg_){
+      dev = NULL;
+
+      arg.void_ = const_cast<TM*>(arg_);
+      size      = sizeof(TM*);
 
       pointer    = true;
       hasTwoArgs = false;
@@ -392,6 +397,22 @@ namespace occa {
       return pointer ? arg.void_ : (void*) &arg;
     }
   };
+
+  OCCA_KERNEL_ARG_CONSTRUCTOR(int);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(char);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(short);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(long);
+
+  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned int  , uint);
+  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned char , uchar);
+  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned short, ushort);
+
+  OCCA_KERNEL_ARG_CONSTRUCTOR(float);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(double);
+  // 32 bit: uintptr_t == unsigned int
+#if OCCA_64_BIT
+  OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+#endif
 
   union tag {
     double tagTime;
@@ -851,6 +872,7 @@ namespace occa {
   };
 
   //---[ KernelArg ]----------
+  template <>
   inline kernelArg::kernelArg(const occa::memory &m){
     dev = m.mHandle->dev;
 

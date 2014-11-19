@@ -73,19 +73,21 @@
 
 
 //---[ Base ]---------------------------
-#define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)       \
-  inline kernelArg(const TYPE &arg_){           \
-    arg.TYPE##_ = arg_;                         \
-    size = sizeof(TYPE);                        \
-                                                \
-    pointer    = false;                         \
-    hasTwoArgs = false;                         \
+#define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)         \
+  template <>                                     \
+  inline kernelArg::kernelArg(const TYPE &arg_){  \
+    arg.TYPE##_ = arg_;                           \
+    size      = sizeof(TYPE);                     \
+                                                  \
+    pointer    = false;                           \
+    hasTwoArgs = false;                           \
   }
 
 #define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
-  inline kernelArg(const TYPE &arg_){                   \
+  template <>                                           \
+  inline kernelArg::kernelArg(const TYPE &arg_){        \
     arg.ALIAS##_ = arg_;                                \
-    size = sizeof(TYPE);                                \
+    size         = sizeof(TYPE);                        \
                                                         \
     pointer    = false;                                 \
     hasTwoArgs = false;                                 \

@@ -190,17 +190,6 @@ namespace occa {
 
     fs.close();
 
-    {
-      kernelInfoIterator kIt = fileParser.kernelInfoMap.begin();
-
-      while(kIt != fileParser.kernelInfoMap.end()){
-        std::cout
-          << "kIt = " << (kIt->first) << '\n';
-
-        ++kIt;
-      }
-    }
-
     kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
 
     if(kIt != fileParser.kernelInfoMap.end()){
