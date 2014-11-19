@@ -86,10 +86,8 @@ namespace occa {
 
       // Check if a variable snuck in
       while(labelNodePos){
-        if(labelNodePos->type & unknownVariable){
-          std::cout << "Variable [" << *labelNodePos << "] not known at compile time.\n";
-          throw 1;
-        }
+        if(labelNodePos->type & unknownVariable)
+          return false;
 
         labelNodePos = labelNodePos->right;
       }
