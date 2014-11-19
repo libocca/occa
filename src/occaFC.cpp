@@ -114,6 +114,7 @@ do {\
 #define  OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsourcenokernelinfo_fc  , OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC)
 #define  OCCABUILDKERNELFROMBINARY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc  , OCCABUILDKERNELFROMBINARY_FC)
 #define  OCCABUILDKERNELFROMLOOPY_FC     OCCA_F2C_GLOBAL_(occabuildkernelfromloopy_fc   , OCCABUILDKERNELFROMLOOPY_FC)
+#define  OCCABUILDKERNELFROMFLOOPY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromfloopy_fc  , OCCABUILDKERNELFROMFLOOPY_FC)
 #define  OCCADEVICEMALLOCNULL_FC         OCCA_F2C_GLOBAL_(occadevicemallocnull_fc       , OCCADEVICEMALLOCNULL_FC)
 #define  OCCADEVICEMALLOC_FC             OCCA_F2C_GLOBAL_(occadevicemalloc_fc           , OCCADEVICEMALLOC_FC)
 #define  OCCADEVICEFLUSH_FC              OCCA_F2C_GLOBAL_(occadeviceflush_fc            , OCCADEVICEFLUSH_FC)
@@ -334,12 +335,12 @@ extern "C" {
   }
 
   void OCCABUILDKERNELFROMLOOPY_FC(occaKernel *kernel, occaDevice *device,
-                                         const char *filename     OCCA_F2C_LSTR(filename_l),
-                                         const char *functionName OCCA_F2C_LSTR(functionName_l),
-                                         const char *pythonCode   OCCA_F2C_LSTR(pythonCode_l)
-                                         OCCA_F2C_RSTR(filename_l)
-                                         OCCA_F2C_RSTR(functionName_l)
-                                         OCCA_F2C_RSTR(pythonCode_l)){
+                                   const char *filename     OCCA_F2C_LSTR(filename_l),
+                                   const char *functionName OCCA_F2C_LSTR(functionName_l),
+                                   const char *pythonCode   OCCA_F2C_LSTR(pythonCode_l)
+                                   OCCA_F2C_RSTR(filename_l)
+                                   OCCA_F2C_RSTR(functionName_l)
+                                   OCCA_F2C_RSTR(pythonCode_l)){
     char *filename_c, *functionName_c, *pythonCode_c;
 
     OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);

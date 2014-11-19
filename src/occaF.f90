@@ -11,6 +11,7 @@ module occa
     occaBuildKernelFromSource,  &
     occaBuildKernelFromBinary,  &
     occaBuildKernelFromLoopy,   &
+    occaBuildKernelFromFloopy,  &
     occaDeviceMalloc,           &
     occaDeviceFlush,            &
     occaDeviceFinish,           &
@@ -100,6 +101,10 @@ module occa
   interface occaBuildKernelFromLoopy
     module procedure occaBuildKernelFromLoopy_func
   end interface occaBuildKernelFromLoopy
+
+  interface occaBuildKernelFromFloopy
+    module procedure occaBuildKernelFromFloopy_func
+  end interface occaBuildKernelFromFloopy
 
   interface occaDeviceMalloc
     module procedure occaDeviceMalloc_null
@@ -993,6 +998,27 @@ contains
 
     call occaBuildKernelFromLoopy_fc(kernel, device, filename, functionName, pythonCode)
   end function occaBuildKernelFromLoopy_func
+
+  type(occaKernel) function occaBuildKernelFromFloopy_func(device, filename, functionName, pythonCode) result(kernel)
+    type(occaDevice),     intent(in)  :: device
+    character(len=*),     intent(in)  :: filename
+    character(len=*),     intent(in)  :: functionName
+    character(len=*),     intent(in)  :: pythonCode
+
+    interface
+      subroutine occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, pythonCode)
+        use occaFTypes_m
+        implicit none
+        type(occaKernel),     intent(out) :: kernel
+        type(occaDevice),     intent(in)  :: device
+        character(len=*),     intent(in)  :: filename
+        character(len=*),     intent(in)  :: functionName
+        character(len=*),     intent(in)  :: pythonCode
+      end subroutine occaBuildKernelFromFloopy_fc
+    end interface
+
+    call occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, pythonCode)
+  end function occaBuildKernelFromFloopy_func
 
 
   type(occaMemory) function occaDeviceMalloc_null(device, sz) result(mem)

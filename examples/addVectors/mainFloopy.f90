@@ -6,7 +6,7 @@ program main
 
   integer(4) :: i, entries = 5
 
-  integer(4) :: platformID = 0, deviceID = 0, dims
+  integer(4) :: platformID = 0, deviceID = 0, dims, innerDim
   character(len=1024) :: mode = "OpenMP"
 
   real(4), allocatable :: a(:), b(:), ab(:)
@@ -35,9 +35,12 @@ program main
 
   ! list = occaGenArgumentList()
 
-  dims = 1
-  call occaKernelSetAllWorkingDims(addVectors, dims, 2_8, 1_8, 1_8, &
-                                   int((entries + 2 - 1)/2,8), 1_8, 1_8)
+  dims     = 1
+  innerDim = 16
+
+  call occaKernelSetAllWorkingDims(addVectors, dims, &
+                                   int(innerDim,8), 1_8, 1_8, &
+                                   int((entries + innerDim - 1)/innerDim,8), 1_8, 1_8)
 
   ! call occaArgumentListAddArg(list, 0, entries)
   ! call occaArgumentListAddArg(list, 1, o_a)
