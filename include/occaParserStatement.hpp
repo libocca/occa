@@ -487,6 +487,7 @@ namespace occa {
 
       void addFunctionArg(const int pos, varInfo &var);
 
+      expNode* getForStatement(const int pos);
       int getForStatementCount() const;
       //================================
 

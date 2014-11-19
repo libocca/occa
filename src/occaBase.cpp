@@ -758,8 +758,8 @@ namespace occa {
 
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
-    const std::string pCachedBinary = prefix + "p_" + cacheName;
-    const std::string iCachedBinary = prefix + "i_" + cacheName;
+    const std::string loopyFile1 = prefix + "loopy1_" + cacheName + ".loopy";
+    const std::string loopyFile2 = prefix + "loopy2_" + cacheName + ".cl";
 
     std::string loopyLang   = "loopy";
     std::string loopyHeader = pythonCode;
@@ -771,7 +771,7 @@ namespace occa {
     }
 
     std::ofstream fs;
-    fs.open(pCachedBinary.c_str());
+    fs.open(loopyFile1.c_str());
 
     fs << loopyHeader << "\n\n" << readFile(filename);
 
@@ -780,7 +780,7 @@ namespace occa {
     std::stringstream command;
 
     command << "floopy --lang=" << loopyLang << " --target=cl:0,0 "
-            << pCachedBinary << " " << iCachedBinary;
+            << loopyFile1 << " " << loopyFile2;
 
     const std::string &sCommand = command.str();
 
@@ -788,7 +788,7 @@ namespace occa {
 
     system(sCommand.c_str());
 
-    return buildKernelFromSource(iCachedBinary, functionName);
+    return buildKernelFromSource(loopyFile2, functionName);
   }
 
   memory device::wrapMemory(void *handle_,

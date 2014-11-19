@@ -98,7 +98,7 @@ namespace occa {
       bool statementIsAnOccaFor(statement &s);
 
       void fixOccaForStatementOrder(statement &origin, statementNode *sn);
-      void fixOccaForOrder(statement &s);
+      void fixOccaForOrder();
 
       void addParallelFors(statement &s);
 
