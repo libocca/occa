@@ -3419,6 +3419,13 @@ namespace occa {
       getFunctionVar()->addArgument(pos, var);
     }
 
+    expNode* statement::getForStatement(const int pos){
+      if(type & forStatementType)
+        return expRoot.leaves[pos];
+
+      return NULL;
+    }
+
     int statement::getForStatementCount() const {
       if(type & forStatementType)
         return expRoot.leafCount;

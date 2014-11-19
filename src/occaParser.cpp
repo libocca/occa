@@ -36,6 +36,9 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
 
+      // Broken?
+      // fixOccaForOrder(); // + auto-adds barriers
+
       // Broken
       addFunctionPrototypes();
       // Broken
@@ -45,8 +48,6 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
-      // Broken?
-      applyToAllStatements(*globalScope, &parserBase::fixOccaForOrder); // + auto-adds barriers
 
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
       // Broken
@@ -1228,8 +1229,9 @@ namespace occa {
       if(getStatementKernel(s) == NULL)
         return;
 
-      if(statementKernelUsesNativeLanguage(s))
-        return;
+      // [-] Go Franken-kernels ...
+      // if(statementKernelUsesNativeLanguage(s))
+      //   return;
 
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
@@ -1351,14 +1353,16 @@ namespace occa {
 
     int parserBase::statementOccaForNest(statement &s){
       if((s.type != forStatementType) ||
-         (s.expRoot.leafCount != 4)){
+         (s.getForStatementCount() != 4)){
 
         return notAnOccaFor;
       }
 
       int ret = notAnOccaFor;
 
-      const std::string &forName = s.expRoot.leaves[3]->leaves[0]->value;
+      expNode &labelNode = *(s.getForStatement(3));
+
+      const std::string &forName = (std::string) labelNode;
 
       if((forName.find("outer") != std::string::npos) &&
          ((forName == "outer0") ||
@@ -1516,13 +1520,17 @@ namespace occa {
       }
     }
 
-    void parserBase::fixOccaForOrder(statement &s){
-      return;
+    void parserBase::fixOccaForOrder(){
+      statementNode *snPos = globalScope->statementStart;
 
-      if( !statementIsAKernel(s) )
-        return;
+      while(snPos){
+        statement &s = *(snPos->value);
 
-      fixOccaForStatementOrder(s, s.statementStart);
+        if(statementIsAKernel(s))
+          fixOccaForStatementOrder(s, s.statementStart);
+
+        snPos = snPos->right;
+      }
     }
 
     void parserBase::addParallelFors(statement &s){
