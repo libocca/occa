@@ -381,6 +381,30 @@ namespace occa {
               ('[' * (c == ']')) +
               ('{' * (c == '}')));
     }
+
+
+    void skipPair(const char *&c){
+      if(*c == '\0')
+        return;
+
+      const char pair = segmentPair(*c);
+
+      if(pair == 0)
+        return;
+
+      ++c;
+
+      while((*c != '\0') &&
+            (*c != pair)){
+        if(segmentPair(*c))
+          skipPair(c);
+        else
+          ++c;
+      }
+
+      if(*c != '\0')
+        ++c;
+    }
     //==============================================
 
     std::string getBits(const int value){

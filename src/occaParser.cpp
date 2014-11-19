@@ -3238,24 +3238,8 @@ namespace occa {
                 else if((nodePos->type & specialKeywordType) &&
                         (nodePos->value == "__attribute__")){
 
-                  const char *cRight2 = cRight;
-
-                  skipWhitespace(cRight2);
-
-                  if(cRight &&
-                     (cRight2[0] == '(')){
-
-                    cRight2 = cRight;
-
-                    macroInfo attributeM;
-                    attributeM.name = "__attribute__";
-
-                    parser::loadMacroInfo(attributeM, cRight2);
-
-                    nodePos->value += attributeM.parts[0];
-
-                    cRight = cRight2;
-                  }
+                  skipWhitespace(cRight);
+                  skipPair(cRight);
 
                   // [-] Early fix
                   if(nodePos->left){

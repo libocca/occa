@@ -45,6 +45,7 @@ namespace occa {
     int stripComments(std::string &line);
 
     char segmentPair(const char c);
+    void skipPair(const char *&c);
 
     template <class TM>
     inline void swapValues(TM &a, TM &b){
