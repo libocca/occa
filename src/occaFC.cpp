@@ -353,6 +353,26 @@ extern "C" {
     OCCA_F2C_FREE_STR(pythonCode  , pythonCode_c);
   }
 
+  void OCCABUILDKERNELFROMFLOOPY_FC(occaKernel *kernel, occaDevice *device,
+                                    const char *filename     OCCA_F2C_LSTR(filename_l),
+                                    const char *functionName OCCA_F2C_LSTR(functionName_l),
+                                    const char *pythonCode   OCCA_F2C_LSTR(pythonCode_l)
+                                    OCCA_F2C_RSTR(filename_l)
+                                    OCCA_F2C_RSTR(functionName_l)
+                                    OCCA_F2C_RSTR(pythonCode_l)){
+    char *filename_c, *functionName_c, *pythonCode_c;
+
+    OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
+    OCCA_F2C_ALLOC_STR(pythonCode  , pythonCode_l  , pythonCode_c);
+
+    *kernel = occaBuildKernelFromFloopy(*device, filename_c, functionName_c, pythonCode_c);
+
+    OCCA_F2C_FREE_STR(filename    , filename_c);
+    OCCA_F2C_FREE_STR(functionName, functionName_c);
+    OCCA_F2C_FREE_STR(pythonCode  , pythonCode_c);
+  }
+
   void OCCADEVICEMALLOC_FC(occaMemory *buf, occaDevice *device,
                            int64_t *bytes, void *source){
     *buf = occaDeviceMalloc(*device, *bytes, source);

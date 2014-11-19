@@ -220,7 +220,24 @@ extern "C" {
 
     *kernel = device_.buildKernelFromLoopy(filename,
                                            functionName,
-                                           pythonCode);
+                                           pythonCode,
+                                           occa::useLoopy);
+
+    return (occaKernel) kernel;
+  }
+
+  occaKernel LIBOCCA_CALLINGCONV occaBuildKernelFromFloopy(occaDevice device,
+                                                           const char *filename,
+                                                           const char *functionName,
+                                                           const char *pythonCode){
+    occa::device &device_  = *((occa::device*) device);
+
+    occa::kernel *kernel = new occa::kernel();
+
+    *kernel = device_.buildKernelFromLoopy(filename,
+                                           functionName,
+                                           pythonCode,
+                                           occa::useFloopy);
 
     return (occaKernel) kernel;
   }

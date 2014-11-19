@@ -21,6 +21,13 @@ endif
 ifdef OCCA_FLOOPY_ENABLED
 ifeq ($(OCCA_FLOOPY_ENABLED), 1)
 	executables += mainFloopy
+
+ifdef OCCA_FORTRAN_ENABLED
+ifeq ($(OCCA_FORTRAN_ENABLED), 1)
+	executables += mainFloopy_f90
+endif
+endif
+
 endif
 endif
 
@@ -38,10 +45,13 @@ main_f90: main.f90
 mainFloopy: $(objects) $(headers) mainFloopy.cpp
 	$(compiler) $(compilerFlags) -o mainFloopy $(flags) $(objects) mainFloopy.cpp $(paths) $(links)
 
+mainFloopy_f90: $(objects) $(headers) mainFloopy.f90
+	$(Fcompiler) $(FcompilerFlags) -o mainFloopy_f90 $(flags) $(objects) mainFloopy.f90 $(paths) $(links)
+
 $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 clean:
 	rm -f $(oPath)/*;
-	rm -f main main_c main_f90 mainFloopy
+	rm -f main main_c main_f90 mainFloopy mainFloopy_f90
 #=================================================

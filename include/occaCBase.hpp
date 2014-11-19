@@ -114,7 +114,6 @@ extern "C" {
 
   extern LIBOCCA_API const uintptr_t occaTypeSize[OCCA_TYPE_COUNT];
 
-
   //---[ TypeCasting ]------------------
   LIBOCCA_API occaType LIBOCCA_CALLINGCONV occaInt(int value);
   LIBOCCA_API occaType LIBOCCA_CALLINGCONV occaUInt(unsigned int value);
@@ -160,6 +159,11 @@ extern "C" {
                                                                       const char *filename,
                                                                       const char *functionName,
                                                                       const char *pythonCode);
+
+  LIBOCCA_API occaKernel LIBOCCA_CALLINGCONV occaBuildKernelFromFloopy(occaDevice device,
+                                                                       const char *filename,
+                                                                       const char *functionName,
+                                                                       const char *pythonCode);
 
   LIBOCCA_API occaMemory LIBOCCA_CALLINGCONV occaDeviceMalloc(occaDevice device,
                                                               uintptr_t bytes,
