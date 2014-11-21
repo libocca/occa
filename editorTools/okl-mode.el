@@ -4,6 +4,8 @@
 ;;
 ;; to your ~/.emacs file to use [okl-mode] for .okl files
 
+;;---[ OKL Mode ]-------------
+
 (define-derived-mode okl-mode c++-mode
   "OKL"
   "[O]CCA [K]ernel [L]anguage mode."
