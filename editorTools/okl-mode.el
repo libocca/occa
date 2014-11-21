@@ -1,7 +1,6 @@
 ;; Add:
 ;;
-;;    (load-file (concat (getenv "OCCA_DIR") "/tools/okl-mode.el"))
-;;    (require 'okl-mode)
+;;    (load-file (concat (getenv "OCCA_DIR") "/editorTools/okl-mode.el"))
 ;;
 ;; to your ~/.emacs file to use [okl-mode] for .okl files
 
