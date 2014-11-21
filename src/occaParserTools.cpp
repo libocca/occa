@@ -141,7 +141,8 @@ namespace occa {
         skipInt(c);
       }
 
-      if(*c == 'f')
+      if((*c == 'f') || (*c == 'F') ||
+         (*c == 'l') || (*c == 'L'))
         ++c;
     }
 

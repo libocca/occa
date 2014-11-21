@@ -1,0 +1,42 @@
+real(4) function addTwoNumbers1(a, b) !$occa function
+  implicit none
+
+  real(4), intent(in) :: a, b
+
+  addTwoNumbers = a + b
+
+end function addTwoNumbers
+
+subroutine addTwoNumbers2(ab, a, b) !$occa subroutine
+  implicit none
+
+  real(4), intent(in)  :: a, b
+  real(4), intent(out) :: ab
+
+  ab = a + b
+
+end subroutine addTwoNumbers
+
+function addVectors(entries, a, b, ab) !$occa kernel
+  implicit none
+
+  integer(4), intent(in)  :: entries
+  real(4)   , intent(in)  :: a(*), b(*)
+  real(4)   , intent(out) :: ab(*)
+
+  integer(4) :: sharedVar(16) !$occa shared
+  integer(4) :: exclusiveVar  !$occa exclusive
+
+  integer :: group, item, N
+
+  do group = 1, ((entries + 15) / 16) !$occa outer0
+     do item = 1, 16                  !$occa inner0
+        N = (item + (16 * (group - 1)))
+
+        if (N < entries) then
+           ab(i) = a(i) + b(i)
+        end if
+     end do
+  end do
+
+end function addVectors

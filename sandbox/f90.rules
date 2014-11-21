@@ -1,0 +1,122 @@
+subroutine name([arg ...])
+  implicit none
+
+  integer[*bytes]
+  integer[(bytes)]
+  integer[(kind = X)]
+
+  character[*chars]
+  character[(len = {*,chars})] A*10
+  !                             ^__ char A[10]
+
+  TYPE(float2) f2
+
+end subroutine name
+
+!------------------+---------+---------+---------+---------+---------+--------+
+!                  | 1       | 2       | 4       | 8       | 10      | 16     |
+!------------------+---------+---------+---------+---------+---------+--------+
+! LOGICAL          | char    | short   | int     | long    | X       | X      |
+! INTEGER          | char    | short   | int     | long    | X       | X      |
+! REAL             | X       | X       | float   | double  | X       | X      |
+! DOUBLE PRECISION | X       | X       | float   | double  | X       | X      |
+! COMPLEX          | X       | X       | float2  | double2 | X       | X      |
+! CHARACTER        | char    | X       | int     | X       | X       | X      |
+!------------------+---------+---------+---------+---------+---------+--------+
+
+!-------------+---------------------------------------+
+! ALLOCATABLE | Pointer                               |
+! POINTER     | Pointer                               |
+! AUTOMATIC   | (Stack memory)                        |
+! PRIVATE     | (Private)                             |
+! DIMENSION   | (Label pointer, set default size)     |
+! PUBLIC      | (Private)                             |
+! EXTERNAL    | extern                                |
+! SAVE        | static                                |
+! IMPLICIT    | [I:N]* are INTEGERs, others are REAL  |
+! INTENT      | [IN: const] [OUT: &] [INOUT: &]       |
+! STATIC      | (Stack memory)                        |
+! INTRINSIC   | (Tell compiler to use intrinsic call) |
+! TARGET      | (Pointers can point to it (=>))       |
+! OPTIONAL    | (Optional argument)                   |
+! VOLATILE    | volatile                              |
+! PARAMETER   | const                                 |
+! RECURSIVE   | Allows function to be recursive       |
+!-------------+---------------------------------------+
+
+!----------------------------------------+---------------------------------------+
+! ALLOCATE(character(len=chars) :: A)    | A = (char*) malloc(chars);            |
+! ALLOCATE(A(N))                         | A = (TYPE*) malloc(N * sizeof(TYPE)); |
+! ALLOCATE(A(N), STAT = AllocateStatus)  | A = ^; STAT = (A == NULL);            |
+!----------------------------------------+---------------------------------------+
+! DEALLOCATE(A)                          | free(A);                              |
+! DEALLOCATE(A, STAT = DeAllocateStatus) | free(A); STAT = 0;                    |
+!----------------------------------------+---------------------------------------+
+
+!----------------+------------------------------------+
+! ALLOCATED(A)   | A != NULL                          |
+! PRESENT(A)     | OPTIONAL :: A, true if A is passed |
+! NULL()         | NULL                               |
+! LEN(A)         | strlen(A)                          |
+!----------------+------------------------------------+
+
+!----------------+------------------------------------+
+! CYCLE          | continue                           |
+! EXIT           | break                              |
+!----------------+------------------------------------+
+
+!----------------+------------------------------------+
+! .TRUE.         | true                               |
+! .FALSE.        | false                              |
+! .LT.           | <                                  |
+! .GT.           | >                                  |
+! .LE.           | <=                                 |
+! .GE.           | >=                                 |
+! .EQ.           | ==                                 |
+! .NE.           | !=                                 |
+!----------------+------------------------------------+
+
+!-------+---------+
+! TYPE  | struct  |
+! %     | . or -> |
+!-------+---------+
+
+!----------------------------------------------+
+! A = (/ 11, 12, 13, 14, 15, 16, 17, 18, 19 /) |
+! A = { 11, 12, 13, 14, 15, 16, 17, 18, 19 };  |
+!----------------------------------------------+
+
+!--------+-----+
+! float  | 1e2 |
+! double | 1e2 |
+!--------+-----+
+
+!------------+-------------+
+! "We'll go" | 'We''ll go' |
+! """Yep"""  | '"Yep"'     |
+!------------+-------------+
+
+! No keywords!
+
+!----+-------+-------+----+----+---+----+
+! <- | **    |       |    |    |   |    | Highest
+! -> | *     | /     |    |    |   |    |
+! -> | +     | -     |    |    |   |    |   |
+!    | <     | <=    | == | >= | > | /= |   |
+! <- | .NOT. |       |    |    |   |    |   |
+! -> | .AND. |       |    |    |   |    |   v
+! -> | .OR.  |       |    |    |   |    |
+! -> | .EQV. | .NEQV |    |    |   |    | Lowest
+!----+-------+-------+----+----+---+----+
+
+! "A" // "B" | std::string("A") + std::string("B")
+
+! i = 0; j = 1
+
+!-------+
+! 1     |
+! 1-5   |
+! 6     |
+! 7-72  |
+! 73-80 |
+!-------+
