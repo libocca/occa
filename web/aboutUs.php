@@ -1,13 +1,13 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/header.php'); ?>
 
 <?php
-   $currentTab = "documentation";
+   $currentTab = "aboutUs";
    absInclude("menu.php");
-   ?>
+?>
 
 <div id="id_body">
 
-  <?php absInclude("documentation/menu.php") ?>
+  <!--[BODY GOES HERE]-->
 
 </div> <!--[ id_body ]-->
 

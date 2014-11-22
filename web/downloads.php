@@ -1,49 +1,15 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <!-- Site Properities -->
-    <title>OCCA</title>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/header.php'); ?>
 
-    <link rel="stylesheet" type="text/css" href="/library/css/semantic.min.css">
+<?php
+   $currentTab = "downloads";
+   absInclude("menu.php");
+   ?>
 
-    <link type="text/css" rel="stylesheet" href="/main.css">
+<div id="id_body">
 
-    <script>
-      (function () {
-      var
-      eventSupport = ('querySelector' in document && 'addEventListener' in window)
-      jsonSupport  = (typeof JSON !== 'undefined'),
-      jQuery       = (eventSupport && jsonSupport)
-      ? '/library/js//jquery.min.js'
-      : '/library/js//jquery.legacy.min.js'
-      ;
-      document.write('<script src="' + jQuery + '"><\/script>');
-          }());
-      </script>
+  <!--[BODY GOES HERE]-->
 
-      <script type="text/javascript" src="/library/js/jquery.address.js"></script>
-      <script type="text/javascript" src="/library/js/semantic.min.js"></script>
+</div> <!--[ id_body ]-->
 
-      <script type="text/javascript" src="/main.js"></script>
-  </head>
 
-  <body>
-    <div id="id_bodyWrapper">
-      <div id="id_bodyWrapper2">
-
-        <?php
-           $currentTab = "downloads";
-           include("menu.php");
-        ?>
-
-        <div id="id_body">
-
-          <!--[BODY GOES HERE]-->
-
-        </div> <!--[ id_body ]-->
-      </div> <!--[ id_bodyWrapper2 ]-->
-    </div> <!--[ id_bodyWrapper ]-->
-
-    <?php include("footer.php") ?>
-  </body>
-</html>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/footer.php'); ?>

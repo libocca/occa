@@ -162,7 +162,7 @@ div#id_bodyContents {
     max-width: 1024px;
 }
 
-div#id_body.tutorial {
+div#id_body.getStarted {
     min-width: 782px;
     max-width: 1024px;
     height: 100%;
@@ -173,7 +173,7 @@ div#id_body.tutorial {
     padding-top: 30px;
 }
 
-#id_tutorialMenu {
+#id_getStartedMenu {
     display: inline-block;
     width: 220px;
     height: 600px;
@@ -181,13 +181,13 @@ div#id_body.tutorial {
     vertical-align: top;
 }
 
-#id_tutorialContents {
+#id_getStartedContents {
     display: inline-block;
     margin-left: 20px;
     vertical-align: top;
 }
 
-.tutorial.tab {
+.getStarted.tab {
     min-width: 782px;
     max-width: 1024px;
     margin: auto;
@@ -234,7 +234,7 @@ div#id_body.tutorial {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.about.tab {
+.aboutUs.tab {
 }
 
 .support.tab {

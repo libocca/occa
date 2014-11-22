@@ -3,11 +3,11 @@
 <?php
    $currentTab = "documentation";
    absInclude("menu.php");
-   ?>
+?>
 
 <div id="id_body">
 
-  <?php absInclude("documentation/menu.php") ?>
+  <?php absInclude("/documentation/menu.php") ?>
 
 </div> <!--[ id_body ]-->
 
