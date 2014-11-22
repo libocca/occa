@@ -96,7 +96,7 @@ div#id_footer {
     padding: 14px;
 
     opacity   : 1;
-    transition: opacity 0.7s ease-in;
+    transition: opacity 0.2s ease-out;
 }
 
 #id_logo_div .bottom.logo:hover {
