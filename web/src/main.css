@@ -1,0 +1,219 @@
+@font-face {
+    font-family:"notoSansRegular";
+    src: url("../../library/fonts/noto_sans_regular.ttf");
+}
+
+@font-face {
+    font-family:"openSansLight";
+    src: url("../../library/fonts/openSans/light.ttf");
+}
+
+@font-face {
+    font-family:"openSansRegular";
+    src: url("../../library/fonts/openSans/regular.ttf");
+}
+
+
+/*---[ Start of cleanStickyFooter ]---*/
+html, body {
+    height: 100%;
+}
+
+body {
+    margin : 0px;
+    padding: 0px;
+}
+
+div#id_bodyWrapper {
+    width     : 100%;
+    min-height: 100% !important;
+    height    : auto !important;
+    height    : 100%;
+    margin    : 0px 0px -40px 0px;
+}
+
+div#id_footerWrapper {
+    width : 100%;
+    height: 40px;
+}
+
+div#id_bodyWrapper2 {
+    width  : 100%;
+    padding: 0px 0px 41px 0px;
+}
+
+div#id_footerWrapper, div#id_bodyWrapper2 {
+    min-width: 100%;
+}
+
+div#id_footer {
+    min-width: 100%;
+    margin: 0px auto;
+}
+/*---[ End of cleanStickyFooter ]---*/
+
+#id_topMenu {
+    border-bottom-style: solid;
+    border-bottom-color: rgba(231, 231, 231, 0.1);
+    border-bottom-width: 1px;
+
+    padding-top   : 0px;
+    padding-bottom: 0px;
+
+    margin-bottom: 1px;
+}
+
+.top.wrapper {
+    width: 1024px;
+    margin: auto;
+}
+
+#id_logo {
+    display: block;
+    float  : left;
+    height : 58px!important;
+
+    padding: 14px;
+}
+
+.top.menu .right.menu {
+    margin-right:10px;
+}
+
+.top.menu .right.menu .topMenu.item {
+    font-family: 'openSansLight';
+    font-size  : 18px;
+    color      : rgb(108, 108, 108);
+
+    margin-top    : 0px;
+    margin-bottom : 0px;
+
+    padding-top   : 21px;
+    padding-bottom: 21px;
+
+    padding-left : 22px;
+    padding-right: 22px;
+}
+
+.top.menu .right.menu .active.topMenu.item {
+    box-shadow: none;
+
+    background-color: rgba(81, 134, 171, 0.06);
+}
+
+/*---[ Line between items]---*/
+.top.menu .right.menu .topMenu.item:before {
+    width: 1px;
+
+    height: 30px;
+
+    margin-top   :15px;
+    margin-bottom:15px;
+}
+
+/*---[ Line between items]---*/
+.top.menu .right.menu .topMenu.item:hover {
+    background-color: rgba(0, 0, 0, 0.018);
+    color           : rgba(0, 0, 0, 0.4);
+}
+
+.top.menu .right.menu .active.topMenu.item:hover {
+    background-color: rgba(81, 134, 171, 0.06);
+    color           : rgb(108, 108, 108);
+}
+
+body {
+    margin: 0px;
+    background-color: white;
+}
+
+div#id_body {
+    height: 100%;
+}
+
+.tutorial.tab {
+    width : 1024px;
+    margin: auto;
+
+    background-color: white;
+
+    padding-top: 16px;
+}
+
+.downloads.tab {
+}
+
+.documentation.tab {
+}
+
+.documentation.tab .menu .wrapper {
+    width : 1024px;
+    margin: auto;
+}
+
+.documentation.tab .menu .wrapper .item {
+    width     : 100px;
+    text-align: center;
+}
+
+.documentation.tab .menu .wrapper .item:before {
+    width: 0px;
+}
+
+.about.tab {
+}
+
+.support.tab {
+}
+
+#id_footer {
+    border-top-style: solid;
+    border-top-color: rgba(0, 0, 0, 0.1);
+    border-top-width: 1px;
+
+    background-color: white;
+    color           : rgb(58, 58, 58);
+
+    height     : 40px;
+    line-height: 40px;
+    text-align : center;
+
+    font-family: 'openSansRegular';
+    font-size  : 13px;
+}
+
+/*---[ Custom ACE theme ]---*/
+#editor {
+    margin: auto;
+    width: 600px;
+    border-radius:10px;
+    border: 5px;
+
+    background-color: white;
+
+    border-style: solid;
+    border-color: rgba(231, 231, 231, 0.1);
+    border-width: 1px;
+
+    box-shadow: 0 0 0 1px rgba(0,0,0,.1)
+}
+
+.ace-chrome .ace_storage.ace_type {
+    color: rgb(132, 175, 213) !important;
+}
+
+.ace-chrome .ace_storage.ace_modifier {
+    color: rgb(52, 180, 170) !important;
+}
+
+.ace-chrome .ace_comment {
+    color: rgb(213, 24, 22) !important;
+}
+
+.ace-chrome .ace_keyword.ace_control {
+    color: rgb(174, 100, 174) !important;
+}
+
+.ace-chrome .ace_constant.ace_numeric {
+    color: black !important;
+}
