@@ -1,9 +1,6 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/header.php'); ?>
 
-<?php
-   $currentTab = "documentation";
-   absInclude("menu.php");
-   ?>
+<?php absInclude("menu.php"); ?>
 
 <div id="id_body">
 
