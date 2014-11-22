@@ -272,6 +272,10 @@ div#id_body.tutorial {
     box-shadow: 0 0 0 1px rgba(0,0,0,.1)
 }
 
+.ace_hidden-cursors {
+    opacity:0
+}
+
 .ace-chrome .ace_storage.ace_type {
     color: rgb(132, 175, 213) !important;
 }

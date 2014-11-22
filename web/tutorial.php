@@ -43,21 +43,9 @@
           </div> <!--[ id_tutorialMenu ]-->
 
           <div id="id_tutorialContents">
-            <div id="editor">
-occaKernel void addVectors(const int entries,
-                           const float *a,
-                           const float *b,
-                           float *ab){
-  for(int group = 0; group < ((entries + 15) / 16); ++group; outer0){
-    for(int item = 0; item < 16; ++item; inner0){
-      const int N = (item + (16 * group));
 
-      if(N < entries)
-        ab[N] = a[N] + b[N];
-    }
-  }
-}
-             </div> <!--[ editor ]-->
+            <pre id="editor"><?php echo file_get_contents($_SERVER['DOCUMENT_ROOT'] . "/src/addVectors.okl"); ?></pre>
+
           </div> <!--[ id_tutorialContents ]-->
 
         </div> <!--[ id_body ]-->
