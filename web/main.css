@@ -74,7 +74,8 @@ div#id_footer {
 }
 
 .top.wrapper {
-    width: 1024px;
+    min-width: 782px;
+    max-width: 1024px;
     margin: auto;
 }
 
@@ -124,7 +125,7 @@ div#id_footer {
 .top.menu .right.menu .active.topMenu.item {
     box-shadow: none;
 
-    background-color: rgba(81, 134, 171, 0.06);
+    background-color: rgba(132, 175, 213, 0.1);
 }
 
 /*---[ Line between items]---*/
@@ -138,12 +139,12 @@ div#id_footer {
 }
 
 .top.menu .right.menu .topMenu.item:hover {
-    background-color: rgba(0, 0, 0, 0.018);
+    background-color: rgba(132, 175, 213, 0.05);
     color           : rgba(0, 0, 0, 0.4);
 }
 
 .top.menu .right.menu .active.topMenu.item:hover {
-    background-color: rgba(81, 134, 171, 0.06);
+    background-color: rgba(132, 175, 213, 0.1);
     color           : rgb(108, 108, 108);
 }
 
@@ -156,8 +157,39 @@ div#id_body {
     height: 100%;
 }
 
+div#id_bodyContents {
+    min-width: 782px;
+    max-width: 1024px;
+}
+
+div#id_body.tutorial {
+    min-width: 782px;
+    max-width: 1024px;
+    height: 100%;
+    margin: auto;
+
+    overflow: auto;
+    white-space: nowrap;
+    padding-top: 30px;
+}
+
+#id_tutorialMenu {
+    display: inline-block;
+    width: 220px;
+    height: 600px;
+    background-color: rgba(132, 175, 213, 0.3);
+    vertical-align: top;
+}
+
+#id_tutorialContents {
+    display: inline-block;
+    margin-left: 20px;
+    vertical-align: top;
+}
+
 .tutorial.tab {
-    width : 1024px;
+    min-width: 782px;
+    max-width: 1024px;
     margin: auto;
 
     background-color: white;
@@ -172,7 +204,8 @@ div#id_body {
 }
 
 .documentation.menu .wrapper {
-    width : 1024px;
+    min-width: 782px;
+    max-width: 1024px;
     margin: auto;
 }
 

@@ -34,11 +34,16 @@
         <?php
            $currentTab = "tutorial";
            include("menu.php");
-        ?>
+         ?>
 
-        <div id="id_body">
+        <div id="id_body" class="tutorial">
 
-          <div id="editor">
+          <div id="id_tutorialMenu">
+
+          </div> <!--[ id_tutorialMenu ]-->
+
+          <div id="id_tutorialContents">
+            <div id="editor">
 occaKernel void addVectors(const int entries,
                            const float *a,
                            const float *b,
@@ -52,7 +57,8 @@ occaKernel void addVectors(const int entries,
     }
   }
 }
-          </div> <!--[ editor ]-->
+             </div> <!--[ editor ]-->
+          </div> <!--[ id_tutorialContents ]-->
 
         </div> <!--[ id_body ]-->
       </div> <!--[ id_bodyWrapper2 ]-->
