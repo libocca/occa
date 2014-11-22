@@ -1,16 +1,26 @@
 @font-face {
     font-family:"notoSansRegular";
-    src: url("../../library/fonts/noto_sans_regular.ttf");
+    src: url("/library/fonts/noto_sans_regular.ttf");
 }
 
 @font-face {
     font-family:"openSansLight";
-    src: url("../../library/fonts/openSans/light.ttf");
+    src: url("/library/fonts/openSans/light.ttf");
 }
 
 @font-face {
     font-family:"openSansRegular";
-    src: url("../../library/fonts/openSans/regular.ttf");
+    src: url("/library/fonts/openSans/regular.ttf");
+}
+
+@font-face {
+    font-family:"ralewayLight";
+    src: url("/library/fonts/raleway/light.ttf");
+}
+
+@font-face {
+    font-family:"ralewayRegular";
+    src: url("/library/fonts/raleway/regular.ttf");
 }
 
 
@@ -68,12 +78,28 @@ div#id_footer {
     margin: auto;
 }
 
-#id_logo {
-    display: block;
-    float  : left;
-    height : 58px!important;
+#id_logo_div {
+    padding: 0px;
+}
+#id_logo_div:hover {
+    position: relative;
+    height  :60px;
+    background-color: white;
+}
+
+#id_logo_div .logo {
+    position :absolute;
+    left     : 0px;
+    height   : 32px !important;
 
     padding: 14px;
+
+    opacity   : 1;
+    transition: opacity 0.7s ease-in;
+}
+
+#id_logo_div .bottom.logo:hover {
+    opacity: 0;
 }
 
 .top.menu .right.menu {
@@ -111,7 +137,6 @@ div#id_footer {
     margin-bottom:15px;
 }
 
-/*---[ Line between items]---*/
 .top.menu .right.menu .topMenu.item:hover {
     background-color: rgba(0, 0, 0, 0.018);
     color           : rgba(0, 0, 0, 0.4);
@@ -146,18 +171,34 @@ div#id_body {
 .documentation.tab {
 }
 
-.documentation.tab .menu .wrapper {
+.documentation.menu .wrapper {
     width : 1024px;
     margin: auto;
 }
 
-.documentation.tab .menu .wrapper .item {
-    width     : 100px;
+.documentation.menu .wrapper .item {
+    width     : 110px;
     text-align: center;
+
+    color      : rgb(245, 245, 245);
+    font-family: "ralewayLight";
+    font-weight: 100;
 }
 
-.documentation.tab .menu .wrapper .item:before {
+.documentation.menu .wrapper .item:before {
     width: 0px;
+}
+
+.documentation.menu .wrapper a.item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.documentation.menu .wrapper a.active.item {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.documentation.menu .wrapper a.active.item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
 
 .about.tab {
@@ -172,13 +213,13 @@ div#id_body {
     border-top-width: 1px;
 
     background-color: white;
-    color           : rgb(58, 58, 58);
+    color           : rgb(100,100,100);
 
     height     : 40px;
     line-height: 40px;
     text-align : center;
 
-    font-family: 'openSansRegular';
+    font-family: 'openSansLight';
     font-size  : 13px;
 }
 

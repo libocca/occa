@@ -6,7 +6,7 @@
 
     <link rel="stylesheet" type="text/css" href="/library/css/semantic.min.css">
 
-    <link type="text/css" rel="stylesheet" href="/src/main.css">
+    <link type="text/css" rel="stylesheet" href="/main.css">
 
     <script>
       (function () {
@@ -24,21 +24,14 @@
       <script type="text/javascript" src="/library/js/jquery.address.js"></script>
       <script type="text/javascript" src="/library/js/semantic.min.js"></script>
 
-      <script type="text/javascript" src="/src/main.js"></script>
-
-      <script>
-        $(function(){
-          $('#id_menu').load('/src/menu.html');
-          $('#id_footer').load('/src/footer.html');
-        });
-      </script>
+      <script type="text/javascript" src="/main.js"></script>
   </head>
 
   <body>
     <div id="id_bodyWrapper">
       <div id="id_bodyWrapper2">
 
-        <div id="id_menu"></div>
+        <?php include("menu.php"); ?>
 
         <div id="id_body">
 
@@ -46,19 +39,6 @@
       </div> <!--[ id_bodyWrapper2 ]-->
     </div> <!--[ id_bodyWrapper ]-->
 
-    <div id="id_footer"></div>
-
-    <script src="/library/js/aceMin/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script>
-      var editor = ace.edit("editor");
-      editor.setTheme("ace/theme/chrome");
-      editor.getSession().setMode("ace/mode/c_cpp");
-      editor.setReadOnly(true);
-      editor.renderer.setShowGutter(false);
-      editor.setHighlightActiveLine(false);
-      editor.setDisplayIndentGuides(false);
-      editor.setShowPrintMargin(false);
-      editor.setOption("maxLines", 20);
-    </script>
+    <?php include("footer.php") ?>
   </body>
 </html>
