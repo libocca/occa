@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Site Properities -->
+    <title>OCCA</title>
+
+    <link rel="stylesheet" type="text/css" href="library/css/semantic.min.css">
+
+    <link type="text/css" rel="stylesheet" href="src/menu/menu.css">
+
+    <script>
+      (function () {
+      var
+      eventSupport = ('querySelector' in document && 'addEventListener' in window)
+      jsonSupport  = (typeof JSON !== 'undefined'),
+      jQuery       = (eventSupport && jsonSupport)
+      ? 'library/js//jquery.min.js'
+      : 'library/js//jquery.legacy.min.js'
+      ;
+      document.write('<script src="' + jQuery + '"><\/script>');
+          }());
+      </script>
+
+      <script type="text/javascript" src="library/js/jquery.address.js"></script>
+      <script type="text/javascript" src="library/js/semantic.min.js"></script>
+
+      <script type="text/javascript" src="src/menu/menu.js"></script>
+
+      <!-- <script> -->
+      <!--   $(function(){ -->
+      <!--     $("#id_header").load("src/header.html"); -->
+      <!--   }); -->
+      <!-- </script> -->
+  </head>
+
+  <body>
+    <!-- Menu -->
+    <div class="ui top menu" id="id_topMenu">
+      <div class="top wrapper">
+        <img id="id_logo" class="logo item" src="images/occaLogo.png"/>
+
+        <div class="right menu">
+          <a class="light topMenu black item" data-tab="Tutorial">
+            Tutorial
+          </a>
+          <a class="light topMenu black item" data-tab="Downloads">
+            Downloads
+          </a>
+	        <a class="light topMenu black item" data-tab="Documentation">
+	          Documentation
+	        </a>
+	        <a class="light topMenu black item" data-tab="About">
+	          About
+	        </a>
+          <a class="light topMenu black item" data-tab="Support">
+            Support
+          </a>
+        </div> <!--[ right menu ]-->
+      </div> <!--[ top wrapper ]-->
+    </div> <!--[ id_topMenu ]-->
+
+    <div id="id_body">
+      <div class="ui tab" data-tab="Tutorial">
+        Tutorial
+      </div>
+
+      <div class="ui tab " data-tab="Downloads">
+        Downloads
+      </div>
+
+      <div class="ui tab " data-tab="Documentation">
+        Documentation
+      </div>
+
+      <div class="ui tab " data-tab="About">
+        About
+      </div>
+
+      <div class="ui tab " data-tab="Support">
+        Support
+      </div>
+    </div> <!--[ id_body ]-->
+
+    <footer>
+      <div class="copyright footer">
+        David S Medina and Tim Warburton &copy 2014
+      </div>
+    </footer>
+  </body>
+</html>
