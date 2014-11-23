@@ -434,6 +434,27 @@ div#id_body.aboutUs {
     margin-right: 4px;
 }
 
+.aboutUs .profile .info .links a.tooltip {
+    display : inline;
+    position: relative;
+}
+
+.aboutUs .profile .info .links a.tooltip:hover:after {
+    background: rgba(0,0,0,.4);
+    color     : #fff;
+
+    border-radius: 5px;
+
+    bottom: 25px;
+
+    content: attr(tooltip);
+
+    position: absolute;
+    padding : 5px 10px;
+    left    : 20%;
+    z-index : 98;
+}
+
 .aboutUs .profile.segment .infoDivider {
     width:180px;
     margin:auto;

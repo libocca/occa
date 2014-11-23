@@ -15,16 +15,16 @@
       <p align="center" class="name"> David S Medina </p>
       <p align="center" class="location"> Rice University </p>
       <div class="links">
-        <a href="http://www.linkedin.com/pub/david-medina/50/3/17a">
+        <a href="http://www.linkedin.com/pub/david-medina/50/3/17a" tooltip="LinkedIn" class="f_os light tooltip">
           <i class="large linkedin sign link icon"></i>
         </a>
-        <a href="https://github.com/dmed256">
+        <a href="https://github.com/dmed256" tooltip="Github" class="f_os light tooltip">
           <i class="large github alternate link icon"></i>
         </a>
-        <a href="http://lnkd.in/bNPCtVe">
+        <a href="http://lnkd.in/bNPCtVe" tooltip="CV" class="f_os light tooltip">
           <i class="large text file outline link icon"></i>
         </a>
-        <a href="mailto:dsm5@rice.edu">
+        <a href="mailto:dsm5@rice.edu" tooltip="Email" class="f_os light tooltip">
           <i class="large mail outline link icon"></i>
         </a>
       </div>
@@ -39,16 +39,16 @@
       <p align="center" class="name"> Tim Warburton </p>
       <p align="center" class="location"> Rice University </p>
       <div class="links">
-        <a href="http://www.linkedin.com/pub/tim-warburton/1/878/705/">
+        <a href="http://www.linkedin.com/pub/tim-warburton/1/878/705/" tooltip="LinkedIn" class="f_os light tooltip">
           <i class="large linkedin sign link icon"></i>
         </a>
-        <a href="https://github.com/tcew">
+        <a href="https://github.com/tcew" tooltip="Github" class="f_os light tooltip">
           <i class="large github alternate link icon"></i>
         </a>
-        <a href="http://www.caam.rice.edu/~timwar/warburtoncv14.pdf">
+        <a href="http://www.caam.rice.edu/~timwar/warburtoncv14.pdf" tooltip="CV" class="f_os light tooltip">
           <i class="large text file outline link icon"></i>
         </a>
-        <a href="mailto:spam.warburton@gmail.com">
+        <a href="mailto:spam.warburton@gmail.com" tooltip="Email" class="f_os light tooltip">
           <i class="large mail outline link icon"></i>
         </a>
       </div>
