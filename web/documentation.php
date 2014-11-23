@@ -10,6 +10,8 @@
     <a href="/documentation/hostAPI.php"> Host API </a>
   </h2>
 
+  We have A B C
+
   <h2 class="ui dividing header">
     <a href="/documentation/deviceAPI.php"> Device API </a>
   </h2>

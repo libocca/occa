@@ -76,6 +76,60 @@
     </div>
   </div>
 
+  <h2 class="ui dividing header"> Collaborations </h2>
+
+  <div class="ui collaborator celled grid">
+    <div class="row">
+
+      <div class="column">
+	      <div class="ui segment">
+		      <a href="https://cesar.mcs.anl.gov/">
+		        <img class="image" src="/images/places/anl.png"/>
+		      </a>
+	      </div>
+      </div> <!--[ column ]-->
+
+      <div class="column">
+	      <div class="ui segment">
+		      <a href="https://wci.llnl.gov/">
+		        <img class="image" src="/images/places/llnl.png"/>
+		      </a>
+        </div>
+      </div> <!--[ column ]-->
+    </div> <!--[ row ]-->
+  </div> <!--[ celled grid ]-->
+
+  <h2 class="ui dividing header"> Support Received </h2>
+
+  <div class="ui support celled grid">
+    <div class="row">
+
+      <div class="column">
+	      <div class="ui segment">
+		      <a href="https://cesar.mcs.anl.gov/">
+		        <img class="image" src="/images/places/anl.png"/>
+		      </a>
+	      </div>
+      </div> <!--[ column ]-->
+
+      <div class="column">
+	      <div class="ui segment">
+		      <a href="http://shell.com">
+		        <img class="image" src="/images/places/shell.png"/>
+		      </a>
+        </div>
+      </div> <!--[ column ]-->
+
+      <div class="column">
+	      <div class="ui segment">
+		      <a href = "https://earthsystemcog.org/projects/espc-numa/">
+		        <img class="image" src="/images/places/onr.png"/>
+		      </a>
+        </div>
+      </div> <!--[ column ]-->
+    </div> <!--[ row ]-->
+  </div> <!--[ celled grid ]-->
+
 </div> <!--[ id_body ]-->
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/footer.php'); ?>

@@ -33,6 +33,7 @@
 /*---[ Start of cleanStickyFooter ]---*/
 html, body {
     height: 100%;
+    font-family: "ralewayRegular";
 }
 
 body {
@@ -218,6 +219,12 @@ div#id_body.getStarted {
     margin-top: 30px;
 }
 
+.documentation h2.header a {
+    color: rgb(81, 134, 174);
+
+    text-decoration: none;
+}
+
 /*  ---[ Host API ]---*/
 .hostAPI.menu .wrapper {
     min-width: 782px;
@@ -385,6 +392,81 @@ div#id_body.getStarted {
     width:180px;
     margin:auto;
 }
+
+/*  ---[ Collaborators ]---*/
+.ui.collaborator.celled.grid {
+    /* 160 [30 160] */
+
+    -moz-box-shadow   : 0px 0px 0px rgba(0,0,0,0) !important;
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0) !important;
+    box-shadow        : 0px 0px 0px rgba(0,0,0,0) !important;
+
+    width: 350px;
+}
+
+.collaborator .row {
+    -moz-box-shadow   : 0px 0px 0px rgba(0,0,0,0) !important;
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0) !important;
+    box-shadow        : 0px 0px 0px rgba(0,0,0,0) !important;
+}
+
+.collaborator .column {
+    -moz-box-shadow   : 0px 0px 0px rgba(0,0,0,0) !important;
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0) !important;
+    box-shadow        : 0px 0px 0px rgba(0,0,0,0) !important;
+}
+
+.collaborator .segment {
+    width : 140px;
+    height: 140px;
+
+    padding: 16px;
+}
+
+.collaborator .segment .image {
+    width : 108px;
+    height: 108px;
+
+    margin: 0px !important;
+}
+/*  ===[ Collaborators ]===*/
+
+/*  ---[ Support From ]---*/
+.ui.support.celled.grid {
+    -moz-box-shadow   : 0px 0px 0px rgba(0,0,0,0) !important;
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0) !important;
+    box-shadow        : 0px 0px 0px rgba(0,0,0,0) !important;
+
+    width: 540px;
+}
+
+.support .row {
+    -moz-box-shadow   : 0px 0px 0px rgba(0,0,0,0) !important;
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0) !important;
+    box-shadow        : 0px 0px 0px rgba(0,0,0,0) !important;
+}
+
+.support .column {
+    -moz-box-shadow   : 0px 0px 0px rgba(0,0,0,0) !important;
+    -webkit-box-shadow: 0px 0px 0px rgba(0,0,0,0) !important;
+    box-shadow        : 0px 0px 0px rgba(0,0,0,0) !important;
+}
+
+.support .segment {
+    width : 140px;
+    height: 140px;
+
+    padding: 16px;
+}
+
+.support .segment .image {
+    width : 108px;
+    height: 108px;
+
+    margin: 0px !important;
+}
+/*  ===[ Support From ]===*/
+
 /*===[ About Us ]===*/
 
 #id_footer {
