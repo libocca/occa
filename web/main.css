@@ -107,10 +107,16 @@ div#id_footer {
     margin-right:10px;
 }
 
-.top.menu .right.menu .topMenu.item {
+.top.menu .right.menu .topMenu.item, .top.menu .right.menu .topMenu.item .topMenu {
     font-family: 'openSansLight';
     font-size  : 18px;
     color      : rgb(108, 108, 108);
+    text-decoration :none;
+
+    text-align    : center;
+    vertical-align: middle;
+
+    display: inline-block;
 
     margin-top    : 0px;
     margin-bottom : 0px;
@@ -120,6 +126,16 @@ div#id_footer {
 
     padding-left : 22px;
     padding-right: 22px;
+}
+
+.top.menu .right.menu .topMenu.dropdown.item {
+    height: 60px;
+
+    padding-top   : 0px;
+    padding-bottom: 0px;
+
+    padding-left : 0px;
+    padding-right: 0px;
 }
 
 .top.menu .right.menu .selected.topMenu.item {

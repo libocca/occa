@@ -3,8 +3,7 @@ $(document)
     $('.ui.dropdown')
       .dropdown({
         on      : 'hover',
-        delay   : {show: 0},
-        duration: 150
+        duration: 0
       })
     ;
   });

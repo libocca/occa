@@ -16,25 +16,24 @@
         Downloads
       </a>
 
-
-      <a class="topMenu" href="/documentation.php" style="text-decoration:none;">
-	      <div class="ui light topMenu black dropdown link item <?php addSelected('documentation') ?>">
-          Documentation
-          <div class="menu">
-            <a class="item" href="/documentation/hostAPI.php">Host API</a>
-            <a class="item" href="/documentation/devAPI.php">Device API</a>
-          </div>
-        </div>
+      <a class="light topMenu black item <?php addSelected('tutorials') ?>"
+         href="/tutorials.php">
+        Tutorials
       </a>
+
+	    <div class="ui light topMenu black simple dropdown item <?php addSelected('documentation') ?>">
+        <a class="topMenu" href="/documentation.php">
+          Documentation
+        </a>
+        <div class="menu">
+          <a class="item" href="/documentation/hostAPI.php">Host API</a>
+          <a class="item" href="/documentation/devAPI.php">Device API</a>
+        </div>
+      </div>
 
 	    <a class="light topMenu black item <?php addSelected('aboutUs') ?>"
          href="/aboutUs.php">
         About Us
-      </a>
-
-      <a class="light topMenu black item <?php addSelected('support') ?>"
-         href="/support.php">
-        Support
       </a>
     </div> <!--[ right menu ]-->
   </div> <!--[ top wrapper ]-->
