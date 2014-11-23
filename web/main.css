@@ -122,7 +122,7 @@ div#id_footer {
     padding-right: 22px;
 }
 
-.top.menu .right.menu .active.topMenu.item {
+.top.menu .right.menu .selected.topMenu.item {
     box-shadow: none;
 
     background-color: rgba(132, 175, 213, 0.1);
@@ -130,8 +130,7 @@ div#id_footer {
 
 /*---[ Line between items]---*/
 .top.menu .right.menu .topMenu.item:before {
-    width: 1px;
-
+    width : 1px;
     height: 30px;
 
     margin-top   :15px;
@@ -143,7 +142,7 @@ div#id_footer {
     color           : rgba(0, 0, 0, 0.4);
 }
 
-.top.menu .right.menu .active.topMenu.item:hover {
+.top.menu .right.menu .selected.topMenu.item:hover {
     background-color: rgba(132, 175, 213, 0.1);
     color           : rgb(108, 108, 108);
 }
@@ -187,29 +186,15 @@ div#id_body.getStarted {
     vertical-align: top;
 }
 
-.getStarted.tab {
-    min-width: 782px;
-    max-width: 1024px;
-    margin: auto;
-
-    background-color: white;
-
-    padding-top: 16px;
-}
-
-.downloads.tab {
-}
-
-.documentation.tab {
-}
-
-.documentation.menu .wrapper {
+/*---[ Documentation ]---*/
+/*  ---[ Host API ]---*/
+.hostAPI.menu .wrapper {
     min-width: 782px;
     max-width: 1024px;
     margin: auto;
 }
 
-.documentation.menu .wrapper .item {
+.hostAPI.menu .wrapper .item {
     width     : 110px;
     text-align: center;
 
@@ -218,27 +203,63 @@ div#id_body.getStarted {
     font-weight: 100;
 }
 
-.documentation.menu .wrapper .item:before {
-    width: 0px;
+.hostAPI.menu .wrapper .item:before {
+    width : 1px;
+    height: 23px;
+
+    margin-top   : 10px;
+    margin-bottom: 10px;
 }
 
-.documentation.menu .wrapper a.item:hover {
+.hostAPI.menu .wrapper a.item:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.documentation.menu .wrapper a.active.item {
+.hostAPI.menu .wrapper a.selected.item {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.documentation.menu .wrapper a.active.item:hover {
+.hostAPI.menu .wrapper a.selected.item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+/*  ===[ Host API ]===*/
+/*  ---[ Device API ]---*/
+.devAPI.menu .wrapper {
+    min-width: 782px;
+    max-width: 1024px;
+    margin: auto;
+}
+
+.devAPI.menu .wrapper .item {
+    width     : 110px;
+    text-align: center;
+
+    color      : rgb(245, 245, 245);
+    font-family: "ralewayLight";
+    font-weight: 100;
+}
+
+.devAPI.menu .wrapper .item:before {
+    width : 1px;
+    height: 23px;
+
+    margin-top   : 10px;
+    margin-bottom: 10px;
+}
+
+.devAPI.menu .wrapper a.item:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.devAPI.menu .wrapper a.selected.item {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.aboutUs.tab {
+.devAPI.menu .wrapper a.selected.item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
 }
-
-.support.tab {
-}
+/*  ===[ Device API ]===*/
+/*===[ Documentation ]===*/
 
 #id_footer {
     border-top-style: solid;

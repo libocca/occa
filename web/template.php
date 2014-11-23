@@ -33,7 +33,7 @@
 
         <?php
            $currentTab = "";
-           include("menu.php");
+           include("/menu.php");
         ?>
 
         <div id="id_body">
