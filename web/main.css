@@ -260,6 +260,10 @@ a.dsm5.link {
 .f_rw.bold {
     font-family: "ralewayBold";
 }
+
+h2.header, h3.header, h4.header {
+    font-family: "openSansLight";
+}
 /*===[ Shared Stuff ]===*/
 
 /*---[ Downloads ]---*/
