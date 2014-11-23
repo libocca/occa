@@ -3,7 +3,7 @@
 
 <?php absInclude("/menu.php"); ?>
 
-<div id="id_body" class="aboutUs body">
+<div id="id_body" class="aboutUs fixed body">
 
   <h2 class="ui dividing header"> Team </h2>
 

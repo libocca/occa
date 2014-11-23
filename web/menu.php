@@ -6,14 +6,14 @@
     </a>
 
     <div class="right menu">
-      <a class="light topMenu black item <?php addSelected('getStarted') ?>"
-         href="/getStarted.php">
-        Get Started
-      </a>
-
       <a class="light topMenu black item <?php addSelected('downloads') ?>"
          href="/downloads.php">
         Downloads
+      </a>
+
+      <a class="light topMenu black item <?php addSelected('getStarted') ?>"
+         href="/getStarted.php">
+        Get Started
       </a>
 
       <a class="light topMenu black item <?php addSelected('tutorials') ?>"

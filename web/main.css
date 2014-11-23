@@ -20,6 +20,11 @@
 }
 
 @font-face {
+    font-family:"openSansBold";
+    src: url("/library/fonts/openSans/bold.ttf");
+}
+
+@font-face {
     font-family:"ralewayLight";
     src: url("/library/fonts/raleway/light.ttf");
 }
@@ -27,6 +32,11 @@
 @font-face {
     font-family:"ralewayRegular";
     src: url("/library/fonts/raleway/regular.ttf");
+}
+
+@font-face {
+    font-family:"ralewayBold";
+    src: url("/library/fonts/raleway/bold.ttf");
 }
 
 
@@ -177,6 +187,8 @@ body {
 
 div#id_body {
     height: 100%;
+
+    line-height: 200%;
 }
 
 div#id_bodyContents {
@@ -209,8 +221,8 @@ div#id_body.getStarted {
     vertical-align: top;
 }
 
-/*---[ Documentation ]---*/
-.documentation.body {
+/*---[ Shared Stuff ]---*/
+.fixed.body {
     min-width: 782px;
     max-width: 1024px;
 
@@ -219,12 +231,45 @@ div#id_body.getStarted {
     margin-top: 30px;
 }
 
-.documentation h2.header a {
+a.dsm5.link {
     color: rgb(81, 134, 174);
 
     text-decoration: none;
 }
 
+.f_os {
+    font-family: "openSansRegular";
+}
+
+.f_os.light {
+    font-family: "openSansLight";
+}
+
+.f_os.bold {
+    font-family: "openSansBold";
+}
+
+.f_rw {
+    font-family: "ralewayRegular";
+}
+
+.f_rw.light {
+    font-family: "ralewayLight";
+}
+
+.f_rw.bold {
+    font-family: "ralewayBold";
+}
+/*===[ Shared Stuff ]===*/
+
+/*---[ Downloads ]---*/
+.dsm5.indent1 { margin-left: 20px; }
+.dsm5.indent2 { margin-left: 40px; }
+.dsm5.indent3 { margin-left: 60px; }
+.dsm5.indent4 { margin-left: 80px; }
+/*===[ Downloads ]===*/
+
+/*---[ Documentation ]---*/
 /*  ---[ Host API ]---*/
 .hostAPI.menu .wrapper {
     min-width: 782px;
@@ -301,13 +346,8 @@ div#id_body.getStarted {
 
 
 /*---[ About Us ]---*/
-.aboutUs.body {
-    min-width: 782px;
-    max-width: 1024px;
-
-    margin: auto;
-
-    margin-top: 30px;
+div#id_body.aboutUs {
+    line-height: 100%;
 }
 
 .aboutUs .profile.segment {

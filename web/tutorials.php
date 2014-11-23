@@ -3,7 +3,8 @@
 
 <?php absInclude("/menu.php"); ?>
 
-<div id="id_body">
+<div id="id_body" class="tutorials body">
+
 </div> <!--[ id_body ]-->
 
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/footer.php'); ?>
