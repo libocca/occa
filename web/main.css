@@ -1,3 +1,9 @@
+/*
+  Menu
+  30 px
+  Source
+*/
+
 @font-face {
     font-family:"notoSansRegular";
     src: url("/library/fonts/noto_sans_regular.ttf");
@@ -203,6 +209,15 @@ div#id_body.getStarted {
 }
 
 /*---[ Documentation ]---*/
+.documentation.body {
+    min-width: 782px;
+    max-width: 1024px;
+
+    margin: auto;
+
+    margin-top: 30px;
+}
+
 /*  ---[ Host API ]---*/
 .hostAPI.menu .wrapper {
     min-width: 782px;
@@ -240,13 +255,13 @@ div#id_body.getStarted {
 }
 /*  ===[ Host API ]===*/
 /*  ---[ Device API ]---*/
-.devAPI.menu .wrapper {
+.deviceAPI.menu .wrapper {
     min-width: 782px;
     max-width: 1024px;
     margin: auto;
 }
 
-.devAPI.menu .wrapper .item {
+.deviceAPI.menu .wrapper .item {
     width     : 110px;
     text-align: center;
 
@@ -255,7 +270,7 @@ div#id_body.getStarted {
     font-weight: 100;
 }
 
-.devAPI.menu .wrapper .item:before {
+.deviceAPI.menu .wrapper .item:before {
     width : 1px;
     height: 23px;
 
@@ -263,19 +278,114 @@ div#id_body.getStarted {
     margin-bottom: 10px;
 }
 
-.devAPI.menu .wrapper a.item:hover {
+.deviceAPI.menu .wrapper a.item:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.devAPI.menu .wrapper a.selected.item {
+.deviceAPI.menu .wrapper a.selected.item {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.devAPI.menu .wrapper a.selected.item:hover {
+.deviceAPI.menu .wrapper a.selected.item:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 /*  ===[ Device API ]===*/
 /*===[ Documentation ]===*/
+
+
+/*---[ About Us ]---*/
+.aboutUs.body {
+    min-width: 782px;
+    max-width: 1024px;
+
+    margin: auto;
+
+    margin-top: 30px;
+}
+
+.aboutUs .profile.segment {
+    display: inline-block;
+    padding: 0px;
+
+    vertical-align: top;
+
+    margin-top  : 10px;
+    margin-right: 30px;
+
+    width : 200px;
+    height: 260px;
+}
+
+.aboutUs .contributor.profile.segment {
+    height: 230px;
+}
+
+.aboutUs .image {
+    display: block;
+
+    height: 120px;
+    width : 120px;
+    margin: auto;
+
+    margin-top:20px !important;
+}
+
+.aboutUs .image img {
+    height: 120px;
+    margin: auto;
+}
+
+.aboutUs .profile.segment .info {
+    display: block;
+
+    padding-top   : 10px;
+    padding-bottom: 10px;
+
+    margin: auto;
+    padding: 0;
+}
+
+.aboutUs .profile .info .name {
+    font-family: 'openSansRegular';
+    font-size  : 16px;
+
+    margin: 20px 0px 0px 0px;
+}
+
+.aboutUs .profile .info .location {
+    font-family: 'openSansLight';
+    font-size  : 14px;
+    color      : rgb(150, 150, 150);
+
+    margin: 2px 0px 0px 0px;
+}
+
+.aboutUs .profile .info .links {
+    display: block;
+
+    width: 165px;
+
+    margin: auto;
+    margin-top   : 15px;
+    margin-bottom: 15px;
+}
+
+.aboutUs .profile .info .links a {
+    text-decoration: none;
+
+    color: rgb(20, 20, 20);
+}
+
+.aboutUs .profile .info .links a .icon {
+    margin-left : 4px;
+    margin-right: 4px;
+}
+
+.aboutUs .profile.segment .infoDivider {
+    width:180px;
+    margin:auto;
+}
+/*===[ About Us ]===*/
 
 #id_footer {
     border-top-style: solid;

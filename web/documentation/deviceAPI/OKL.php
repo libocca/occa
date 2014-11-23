@@ -4,7 +4,7 @@
 
 <div id="id_body">
 
-  <?php absInclude("/documentation/devAPI/menu.php") ?>
+  <?php absInclude("/documentation/deviceAPI/menu.php") ?>
 
 </div> <!--[ id_body ]-->
 

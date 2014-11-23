@@ -1,8 +1,8 @@
 <div class="ui top menu" id="id_topMenu">
   <div class="top wrapper">
     <a class="item" id="id_logo_div" href="/index.php">
-      <img id="id_top_logo"    class="top logo"    src="/images/blueOccaLogo.png"/>
-      <img id="id_bottom_logo" class="bottom logo" src="/images/blackOccaLogo.png"/>
+      <img id="id_top_logo"    class="top logo"    src="/images/logo/blueOccaLogo.png"/>
+      <img id="id_bottom_logo" class="bottom logo" src="/images/logo/blackOccaLogo.png"/>
     </a>
 
     <div class="right menu">
@@ -27,7 +27,7 @@
         </a>
         <div class="menu">
           <a class="item" href="/documentation/hostAPI.php">Host API</a>
-          <a class="item" href="/documentation/devAPI.php">Device API</a>
+          <a class="item" href="/documentation/deviceAPI.php">Device API</a>
         </div>
       </div>
 
