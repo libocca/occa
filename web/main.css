@@ -203,7 +203,6 @@ div#id_body.getStarted {
     margin: auto;
 
     overflow: auto;
-    white-space: nowrap;
     padding-top: 30px;
 }
 
@@ -223,6 +222,8 @@ div#id_body.getStarted {
 
 /*---[ Shared Stuff ]---*/
 .fixed.body {
+    display: block;
+
     min-width: 782px;
     max-width: 1024px;
 
@@ -264,13 +265,14 @@ a.dsm5.link {
 h2.header, h3.header, h4.header {
     font-family: "openSansLight";
 }
-/*===[ Shared Stuff ]===*/
 
-/*---[ Downloads ]---*/
 .dsm5.indent1 { margin-left: 20px; }
 .dsm5.indent2 { margin-left: 40px; }
 .dsm5.indent3 { margin-left: 60px; }
 .dsm5.indent4 { margin-left: 80px; }
+/*===[ Shared Stuff ]===*/
+
+/*---[ Downloads ]---*/
 /*===[ Downloads ]===*/
 
 /*---[ Documentation ]---*/
