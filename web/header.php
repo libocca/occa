@@ -2,7 +2,7 @@
 <html>
   <head>
     <!-- Site Properities -->
-    <title>OCCA</title>
+    <title><!--TITLE--></title>
 
     <link rel="stylesheet" type="text/css" href="/library/css/semantic.min.css">
 
@@ -25,8 +25,6 @@
       <script type="text/javascript" src="/library/js/semantic.min.js"></script>
 
       <script type="text/javascript" src="/main.js"></script>
-
-      <?php include($_SERVER['DOCUMENT_ROOT'] . '/main.php'); ?>
   </head>
 
   <body>

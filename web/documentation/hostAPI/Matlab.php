@@ -1,4 +1,5 @@
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/header.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/main.php'); ?>
+<?php addHeader('OCCA: Matlab API') ?>
 
 <?php absInclude("/menu.php"); ?>
 

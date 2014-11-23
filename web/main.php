@@ -1,4 +1,15 @@
 <?php
+function addHeader($pageTitle){
+  ob_start();
+
+  include($_SERVER['DOCUMENT_ROOT'] . '/header.php');
+  $headerContents = ob_get_contents();
+
+  ob_end_clean();
+
+  echo str_replace('<!--TITLE-->', $pageTitle, $headerContents);
+}
+
 function absInclude($path){
   include($_SERVER['DOCUMENT_ROOT'] . $path);
 }

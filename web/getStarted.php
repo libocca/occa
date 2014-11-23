@@ -1,4 +1,5 @@
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/header.php'); ?>
+<?php include($_SERVER['DOCUMENT_ROOT'] . '/main.php'); ?>
+<?php addHeader('OCCA: Get Started') ?>
 
 <?php absInclude("/menu.php"); ?>
 
