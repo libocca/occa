@@ -9,4 +9,11 @@ function addSelected($tag){
   else if(dirname($_SERVER['PHP_SELF']) == '/' . $tag)
     echo "selected";
 }
+
+function addCopyright($startYear){
+  if(intval($startYear) == @date('Y'))
+    echo '&copy ' . intval($startYear);
+  else
+    echo '&copy ' . intval($startYear) . ' - ' . @date('Y');
+}
 ?>
