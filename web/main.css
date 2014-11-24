@@ -196,20 +196,6 @@ div#id_bodyContents {
     max-width: 1024px;
 }
 
-#id_getStartedMenu {
-    display: inline-block;
-    width: 220px;
-    height: 600px;
-    background-color: rgba(132, 175, 213, 0.3);
-    vertical-align: top;
-}
-
-#id_getStartedContents {
-    display: inline-block;
-    margin-left: 20px;
-    vertical-align: top;
-}
-
 /*---[ Shared Stuff ]---*/
 .fixed.body {
     display: block;
@@ -302,7 +288,7 @@ span.highlight {
 }
 
 .ui.toc.sidebar .button {
-    background-color: rgba(92, 97, 102, 0.3);
+    background-color: rgba(92, 97, 102, 0.6);
     color           : rgba(255, 255, 255, 0.8);
 
     position: absolute;
@@ -321,7 +307,55 @@ span.highlight {
 
     vertical-align: top;
 }
+
+.sidebar.body {
+    width: calc(100% - 42px);
+
+    position: absolute;
+    top : 80px;
+    left: -2px;
+    background-color: rgba(219, 230, 238, 0.9);
+
+    padding: 0px 20px 10px 20px;
+
+    border: 2px;
+    border-style : solid;
+    border-color: rgba(81, 134, 174, 0.4);
+}
+
+.sidebar.body .content.title {
+    margin-top   : 10px;
+    margin-bottom: 10px;
+
+    text-align: center;
+}
+
+.sidebar.body .content.title a {
+    font-family: "ralewayBold";
+    font-size  : 18px;
+
+    color: rgb(81, 134, 174);
+
+    text-decoration: none;
+}
+
+.sidebar.body .entry {
+    margin-top   : 10px;
+    margin-bottom: 10px;
+}
+
+.sidebar.body .entry a {
+    font-family: "ralewayLight";
+    font-size  : 18px;
+
+    text-decoration: none;
+
+    color: rgba(20, 20, 20, 0.5);
+}
 /*===[ Sidebar ]===*/
+
+/*---[ Get Started ]---*/
+/*===[ Get Started ]===*/
 
 /*---[ Downloads ]---*/
 /*===[ Downloads ]===*/

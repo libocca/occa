@@ -4,12 +4,16 @@
 <?php absInclude("/menu.php"); ?>
 
 <?php absInclude("/sidebarStart.php"); ?>
-<!--[ Sidebar Body ]-->
+
+<div class="entry"><a href="#Linux"  >1. Linux</a></div>
+<div class="entry"><a href="#MacOSX" >2. Mac OS X</a></div>
+<div class="entry"><a href="#Windows">3. Windows</a></div>
+
 <?php absInclude("/sidebarEnd.php"); ?>
 
 <div id="id_body" class="fixed body">
 
-  <h2 class="ui dividing header"> Linux </h2>
+  <h2 id="Linux" class="ui dividing header"> Linux </h2>
   <div class="dsm5 indent1">
     <h4 class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
@@ -64,7 +68,7 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
     </div>
   </div>
 
-  <h2 class="ui dividing header"> Mac OS X </h2>
+  <h2 id="MacOSX" class="ui dividing header"> Mac OS X </h2>
   <div class="dsm5 indent1">
     <h4 class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
@@ -117,7 +121,7 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
     </div>
   </div>
 
-  <h2 class="ui dividing header"> Windows </h2>
+  <h2 id="Windows" class="ui dividing header"> Windows </h2>
   <div class="dsm5 indent1">
     <h4 class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
