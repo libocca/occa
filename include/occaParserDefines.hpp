@@ -91,14 +91,20 @@ namespace occa {
 
   namespace parserNamespace {
     extern keywordTypeMap_t keywordType;
+    extern keywordTypeMap_t cKeywordType, fortranKeywordType;
 
-    extern bool keywordsAreInitialized;
+    extern bool cKeywordsAreInitialized;
+    extern bool fortranKeywordsAreInitialized;
 
     //   ---[ Delimeters ]---------
     static const char whitespace[]     = " \t\r\n\v\f\0";
-    static const char wordDelimeter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
-    static const char wordDelimeter2[] = "!=##%=&&&=*=+++=-=--->.*.*../=::<<<===>=>>^=|=||\0";
-    static const char wordDelimeter3[] = "->*...<<=>>=\0";
+
+    static const char cWordDelimeter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
+    static const char cWordDelimeter2[] = "!=##%=&&&=*=+++=-=--->.*.*../=::<<<===>=>>^=|=||\0";
+    static const char cWordDelimeter3[] = "->*...<<=>>=\0";
+
+    static const char fortranWordDelimeter[]  = " \t\r\n\v\f\"%'()*+,-./:;<=>\0";
+    static const char fortranWordDelimeter2[] = "**/=::<===>=\0";
 
     //   ---[ Keyword Types ]---
     static const int everythingType       = 0xFFFFFFFF;

@@ -16,6 +16,15 @@ namespace occa {
     bool charIsIn2(const char *c, const char *delimeters);
     bool charIsIn3(const char *c, const char *delimeters);
 
+    char upChar(const char c);
+    char downChar(const char c);
+
+    std::string upString(const char *c, const int chars);
+    std::string upString(const std::string &s);
+
+    bool upStringCheck(const std::string &a,
+                       const std::string &b);
+
     bool isWhitespace(const char c);
     void skipWhitespace(const char *&c);
     void skipToWhitespace(const char *&c);
@@ -26,14 +35,19 @@ namespace occa {
     bool isANumber(const char *c);
 
     void skipInt(const char *&c);
-    void skipNumber(const char *&c);
+
+    void skipNumber(const char *&c, const bool parsingC = true);
+    void skipFortranNumber(const char *&c);
+
     void skipString(const char *&c);
 
-    char isAWordDelimeter(const char *c);
+    char isAWordDelimeter(const char *c, const bool parsingC = true);
+    char isAFortranWordDelimeter(const char *c);
 
-    int skipWord(const char *&c);
+    int skipWord(const char *&c, const bool parsingC = true);
 
-    const char* readLine(const char *c);
+    const char* readLine(const char *c, const bool parsingC = true);
+    const char* readFortranLine(const char *c);
 
     std::string compressWhitespace(const std::string &str);
 
@@ -42,7 +56,8 @@ namespace occa {
 
     char* cReadFile(const std::string &filename);
 
-    int stripComments(std::string &line);
+    int stripComments(std::string &line, const bool parsingC = true);
+    int stripFortranComments(std::string &line);
 
     char segmentPair(const char c);
     void skipPair(const char *&c);

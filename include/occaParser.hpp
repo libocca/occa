@@ -7,12 +7,15 @@
 #include "occaParserNodes.hpp"
 #include "occaParserTypes.hpp"
 #include "occaParserStatement.hpp"
+#include "occaTools.hpp"
 
 namespace occa {
   namespace parserNamespace {
     class parserBase {
     public:
       static const int version = 100;
+
+      bool parsingC;
 
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
@@ -46,6 +49,7 @@ namespace occa {
 
       strNode* splitAndPreprocessContent(const std::string &s);
       strNode* splitAndPreprocessContent(const char *cRoot);
+      strNode* splitAndPreprocessFortranContent(const char *cRoot);
       //====================================
 
       void initMacros();
@@ -176,12 +180,22 @@ namespace occa {
       void setupOccaVariables(statement &s);
     };
 
-    strNode* splitContent(const std::string &str);
-    strNode* splitContent(const char *cRoot);
+    strNode* splitContent(const std::string &str, const bool parsingC = true);
+    strNode* splitContent(const char *cRoot, const bool parsingC = true);
 
-    strNode* labelCode(strNode *lineNodeRoot);
+    bool checkWithLeft(strNode *nodePos,
+                       const std::string &leftValue,
+                       const std::string &rightValue,
+                       const bool parsingC = true);
 
-    void initKeywords();
+    void mergeNodeWithLeft(strNode *&nodePos,
+                           const bool addSpace = true,
+                           const bool parsingC = true);
+
+    strNode* labelCode(strNode *lineNodeRoot, const bool parsingC = true);
+
+    void initKeywords(const bool parsingC = true);
+    void initFortranKeywords();
     //==============================================
   };
 

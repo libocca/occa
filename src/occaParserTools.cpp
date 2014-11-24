@@ -61,6 +61,49 @@ namespace occa {
       return false;
     }
 
+    char upChar(const char c){
+      if(('a' <= c) && (c <= 'z'))
+        return ((c + 'A') - 'a');
+
+      return c;
+    }
+
+    char downChar(const char c){
+      if(('A' <= c) && (c <= 'Z'))
+        return ((c + 'a') - 'A');
+
+      return c;
+    }
+
+    std::string upString(const char *c, const int chars){
+      std::string ret(c, chars);
+
+      for(int i = 0; i < chars; ++i)
+        ret[i] = upChar(ret[i]);
+
+      return ret;
+    }
+
+    std::string upString(const std::string &s){
+      return upString(s.c_str(), s.size());
+    }
+
+    bool upStringCheck(const std::string &a,
+                       const std::string &b){
+      const int aSize = a.size();
+      const int bSize = b.size();
+
+      if(aSize != bSize)
+        return false;
+
+      for(int i = 0; i < aSize; ++i){
+        if(upChar(a[i]) != upChar(b[i]))
+          return false;
+      }
+
+      return true;
+    }
+
     bool isWhitespace(const char c){
       return charIsIn(c, whitespace);
     }
@@ -120,7 +163,12 @@ namespace occa {
         ++c;
     }
 
-    void skipNumber(const char *&c){
+    void skipNumber(const char *&c, const bool parsingC){
+      if(!parsingC){
+        skipFortranNumber(c);
+        return;
+      }
+
       if((*c == '+') || (*c == '-'))
         ++c;
 
@@ -146,6 +194,34 @@ namespace occa {
         ++c;
     }
 
+    void skipFortranNumber(const char *&c){
+      if((*c == '+') || (*c == '-'))
+        ++c;
+
+      skipInt(c);
+
+      if(*c == '.'){
+        ++c;
+
+        skipInt(c);
+      }
+
+      const char nextChar = upChar(*c);
+
+      if((nextChar == 'D') ||
+         (nextChar == 'E')){
+        ++c;
+
+        if((*c == '+') || (*c == '-'))
+          ++c;
+
+        skipInt(c);
+      }
+
+      if(*c == '_')
+        c += 2;
+    }
+
     void skipString(const char *&c){
       if(!isAString(c))
         return;
@@ -164,10 +240,13 @@ namespace occa {
       }
     }
 
-    char isAWordDelimeter(const char *c){
-      if( charIsIn(c[0], wordDelimeter) ){
-        if(charIsIn2(c, wordDelimeter2)){
-          if(charIsIn3(c, wordDelimeter3))
+    char isAWordDelimeter(const char *c, const bool parsingC){
+      if(!parsingC)
+        return isAFortranWordDelimeter(c);
+
+      if(charIsIn(c[0], cWordDelimeter)){
+        if(charIsIn2(c, cWordDelimeter2)){
+          if(charIsIn3(c, cWordDelimeter3))
             return 3;
 
           return 2;
@@ -179,9 +258,29 @@ namespace occa {
       return 0;
     }
 
-    int skipWord(const char *&c){
+    char isAFortranWordDelimeter(const char *c){
+      if(charIsIn(c[0], fortranWordDelimeter)){
+        if(charIsIn2(c, fortranWordDelimeter2))
+          return 2;
+
+        if(c[0] == '.'){
+          const char *c2 = (c + 1);
+
+          while(*c2 != '.')
+            ++c2;
+
+          return (c2 - c + 1);
+        }
+
+        return 1;
+      }
+
+      return 0;
+    }
+
+    int skipWord(const char *&c, const bool parsingC){
       while(!charIsIn(*c, whitespace) && (*c != '\0')){
-        const int delimeterChars = isAWordDelimeter(c);
+        const int delimeterChars = isAWordDelimeter(c, parsingC);
 
         if(delimeterChars == 0)
           ++c;
@@ -192,7 +291,10 @@ namespace occa {
       return 0;
     }
 
-    const char* readLine(const char *c){
+    const char* readLine(const char *c, const bool parsingC){
+      if(!parsingC)
+        return readFortranLine(c);
+
       const char *c0 = c;
       bool breakNextLine = true;
 
@@ -232,6 +334,51 @@ namespace occa {
 
             return c;
           }
+        }
+
+        ++c;
+      }
+
+      return ((c[0] != '\0') ? (c + 1) : c);
+    }
+
+    const char* readFortranLine(const char *c){
+      const char *c0 = c;
+      bool breakNextLine = true;
+
+      // Starting with [c] means line is a comment
+      if(*c == 'c'){
+        while((*c != '\n') &&
+              (*c != '\0')){
+
+          ++c;
+        }
+
+        return c;
+      }
+
+      while(*c != '\0'){
+        skipString(c);
+
+        if(*c == '\0')
+          break;
+
+        if(*c == '\n'){
+          if(breakNextLine)
+            break;
+
+          breakNextLine = false;
+        }
+        // Append next line
+        else if((c[0] == '&') && isWhitespace(c[1])){
+          breakNextLine = true;
+          ++c;
+        }
+        else if(c[0] == '!'){
+          while((*c != '\n') && (*c != '\0'))
+            ++c;
+
+          return c;
         }
 
         ++c;
@@ -333,7 +480,10 @@ namespace occa {
       return fileContent;
     }
 
-    int stripComments(std::string &line){
+    int stripComments(std::string &line, const bool parsingC){
+      if(!parsingC)
+        return stripFortranComments(line);
+
       std::string line2  = line;
       line = "";
 
@@ -363,6 +513,35 @@ namespace occa {
           else
             status = finishedCommentBlock;
           cLeft = cRight + 2;
+        }
+
+        ++cRight;
+      }
+
+      if(cLeft != cRight)
+        line += std::string(cLeft, cRight - cLeft);
+
+      return status;
+    }
+
+    int stripFortranComments(std::string &line){
+      std::string line2  = line;
+      line = "";
+
+      const char *cLeft  = line2.c_str();
+      const char *cRight = cLeft;
+
+      int status = readingCode;
+
+      while(*cRight != '\0'){
+        skipString(cRight);
+
+        if((*cRight == '\0') || (*cRight == '\n'))
+          break;
+
+        if(*cRight == '!'){
+          line += std::string(cLeft, cRight - cLeft);
+          return readingCode;
         }
 
         ++cRight;

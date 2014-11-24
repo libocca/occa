@@ -3,7 +3,10 @@
 namespace occa {
   namespace parserNamespace {
     keywordTypeMap_t keywordType;
+    keywordTypeMap_t cKeywordType, fortranKeywordType;
 
-    bool keywordsAreInitialized = false;
+    bool usingCKeywords                = false;
+    bool cKeywordsAreInitialized       = false;
+    bool fortranKeywordsAreInitialized = false;
   };
 };
