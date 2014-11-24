@@ -16,9 +16,17 @@ function absInclude($path){
 
 function addSelected($tag){
   if(basename($_SERVER['PHP_SELF'], '.php') == $tag)
-    echo "selected";
+    echo 'selected';
   else if(dirname($_SERVER['PHP_SELF']) == '/' . $tag)
-    echo "selected";
+    echo 'selected';
+}
+
+function highlight($content){
+  echo '<span class="f_rw bold highlight">' . $content . '</span>';
+}
+
+function addCodeFromFile($filename){
+  echo '<pre class="code block">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
 }
 
 function addCopyright($startYear){

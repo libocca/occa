@@ -270,6 +270,10 @@ h2.header, h3.header, h4.header {
 .dsm5.indent2 { margin-left: 40px; }
 .dsm5.indent3 { margin-left: 60px; }
 .dsm5.indent4 { margin-left: 80px; }
+
+span.highlight {
+    color: rgb(239, 169, 104);
+}
 /*===[ Shared Stuff ]===*/
 
 /*---[ Downloads ]---*/
@@ -277,9 +281,14 @@ h2.header, h3.header, h4.header {
 
 /*---[ Documentation ]---*/
 /*  ---[ Host API ]---*/
+.hostAPI.menu {
+    margin-top: 0px;
+}
+
 .hostAPI.menu .wrapper {
     min-width: 782px;
     max-width: 1024px;
+
     margin: auto;
 }
 
@@ -313,9 +322,14 @@ h2.header, h3.header, h4.header {
 }
 /*  ===[ Host API ]===*/
 /*  ---[ Device API ]---*/
+.deviceAPI.menu {
+    margin-top: 0px;
+}
+
 .deviceAPI.menu .wrapper {
     min-width: 782px;
     max-width: 1024px;
+
     margin: auto;
 }
 
@@ -553,17 +567,15 @@ div#id_body.aboutUs {
 }
 
 /*---[ Custom ACE theme ]---*/
-#editor {
+pre.code.block {
     margin: auto;
-    width: 600px;
-    border-radius:10px;
-    border: 5px;
+
+    border-style : solid;
+    border-radius: 10px;
+    border-width : 10px 10px 10px 10px;
 
     background-color: white;
-
-    border-style: solid;
-    border-color: rgba(231, 231, 231, 0.1);
-    border-width: 1px;
+    border-color    : white;
 
     box-shadow: 0 0 0 1px rgba(0,0,0,.1)
 }

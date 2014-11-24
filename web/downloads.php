@@ -24,8 +24,8 @@
     <div class="dsm5 indent1">
       There is an
       <a href="https://github.com/tcew/OCCA2/blob/master/editorTools/okl-mode.el" class="dsm5 link f_rw bold">okl-mode.el</a>
-      file in OCCA2/editorTools which sets [okl-mode] for files with the [.okl] extension.
-      <br/>The file also contains [occa-mode] for the older version of the kernel language (loads on [.occa] extension files).
+      file in OCCA2/editorTools which sets <?php highlight('okl-mode') ?> for files with the <?php highlight('.okl') ?> extension.
+      <br/>The file also contains <?php highlight('occa-mode') ?> for the older version of the kernel language (loads on <?php highlight('.occa') ?> extension files).
     </div>
 
     <h4 class="ui dividing header"> Vim </h4>

@@ -25,6 +25,8 @@
       <script type="text/javascript" src="/library/js/semantic.min.js"></script>
 
       <script type="text/javascript" src="/main.js"></script>
+
+      <script src="/library/js/aceMin/ace.js" type="text/javascript" charset="utf-8"></script>
   </head>
 
   <body>
