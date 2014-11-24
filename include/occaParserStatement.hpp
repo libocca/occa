@@ -469,6 +469,10 @@ namespace occa {
       static strNode* skipNodeUntil(strNode *nodePos,
                                     const std::string &value,
                                     int *separation = NULL);
+
+      static strNode* skipAfterStatement(strNode *nodePos);
+      static strNode* skipUntilStatementEnd(strNode *nodePos);
+
       //================================
 
       statementNode* getStatementNode();

@@ -2582,14 +2582,7 @@ namespace occa {
       }
 
       if(st & skipStatementType){
-        while(nodeRootEnd){
-          if(nodeRootEnd->type & endStatement){
-            nodeRootEnd = nodeRootEnd->right;
-            break;
-          }
-
-          nodeRootEnd = nodeRootEnd->right;
-        }
+        nodeRootEnd = skipAfterStatement(nodeRootEnd);
 
         delete newStatement;
         return nodeRootEnd;
@@ -2985,23 +2978,13 @@ namespace occa {
     //  ---[ Fortran ]--------
     // [+] Missing
     int statement::checkFortranStructStatementType(strNode *&nodeRoot, expNode *expPtr){
-      while(nodeRoot){
-        if(nodeRoot->type & endStatement)
-          break;
-
-        nodeRoot = nodeRoot->right;
-      }
+      nodeRoot = skipUntilStatementEnd(nodeRoot);
 
       return structStatementType;
     }
 
     int statement::checkFortranUpdateStatementType(strNode *&nodeRoot, expNode *expPtr){
-      while(nodeRoot){
-        if(nodeRoot->type & endStatement)
-          break;
-
-        nodeRoot = nodeRoot->right;
-      }
+      nodeRoot = skipUntilStatementEnd(nodeRoot);
 
       return updateStatementType;
     }
@@ -3010,12 +2993,7 @@ namespace occa {
       if((nodeRoot        && (nodeRoot->value        == "IMPLICIT")) &&
          (nodeRoot->right && (nodeRoot->right->value == "NONE"))){
 
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
+        nodeRoot = skipUntilStatementEnd(nodeRoot);
 
         return skipStatementType;
       }
@@ -3024,12 +3002,7 @@ namespace occa {
       nodeRoot = var.loadFromFortran(*this, nodeRoot);
 
       if( !(var.info & varType::functionDef) ){
-        while(nodeRoot){
-          if(nodeRoot->type & endStatement)
-            break;
-
-          nodeRoot = nodeRoot->right;
-        }
+        nodeRoot = skipUntilStatementEnd(nodeRoot);
       }
 
       if(var.info & varType::var)
@@ -3067,12 +3040,7 @@ namespace occa {
     }
 
     int statement::checkFortranSpecialStatementType(strNode *&nodeRoot, expNode *expPtr){
-      while(nodeRoot){
-        if(nodeRoot->type & endStatement)
-          break;
-
-        nodeRoot = nodeRoot->right;
-      }
+      nodeRoot = skipUntilStatementEnd(nodeRoot);
 
       return blankStatementType;
     }
@@ -3150,6 +3118,26 @@ namespace occa {
 
       if(separation)
         *separation = count;
+
+      return nodePos;
+    }
+
+    strNode* statement::skipUntilStatementEnd(strNode *nodePos){
+      while(nodePos){
+        if(nodePos->type & endStatement)
+          break;
+
+        nodePos = nodePos->right;
+      }
+
+      return nodePos;
+    }
+
+    strNode* statement::skipAfterStatement(strNode *nodePos){
+      nodePos = skipUntilStatementEnd(nodePos);
+
+      if(nodePos)
+        nodePos = nodePos->right;
 
       return nodePos;
     }
