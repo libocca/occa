@@ -114,7 +114,7 @@ namespace occa {
       int getStatementType();
       //================================
 
-      void loadFromNode(strNode *&nodePos);
+      void loadFromNode(strNode *&nodePos, const bool parsingC = true);
 
       void splitAndOrganizeNode(strNode *nodeRoot);
       void organize();
@@ -326,8 +326,16 @@ namespace occa {
       std::string getTab() const;
 
       //---[ Find Statement ]-----------
-      void labelStatement(strNode *&nodeRoot, expNode *expPtr = NULL);
-      int findStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      void labelStatement(strNode *&nodeRoot,
+                          expNode *expPtr = NULL,
+                          const bool parsingC = true);
+
+      int findStatementType(strNode *&nodeRoot,
+                            expNode *expPtr = NULL,
+                          const bool parsingC = true);
+
+      int findFortranStatementType(strNode *&nodeRoot,
+                                   expNode *expPtr = NULL);
 
       int checkMacroStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
       int checkOccaForStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
@@ -338,6 +346,15 @@ namespace occa {
       int checkFlowStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
       int checkSpecialStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
       int checkBlockStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+
+      //  ---[ Fortran ]------
+
+      int checkFortranStructStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkFortranUpdateStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkFortranDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkFortranFlowStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+      int checkFortranSpecialStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
+
       int getStatementType();
       //================================
 
@@ -348,8 +365,6 @@ namespace occa {
       bool nodeHasSpecifier(strNode *n) const;
       bool nodeHasDescriptor(strNode *n) const;
 
-      varInfo loadVarInfo(strNode *&nodePos);
-
       typeInfo* hasTypeInScope(const std::string &typeName) const;
 
       varInfo* hasVariableInScope(const std::string &varName) const;
@@ -358,8 +373,9 @@ namespace occa {
       bool hasDescriptorVariableInScope(const std::string descriptor) const;
 
       //---[ Loading ]------------------
-      void loadAllFromNode(strNode *nodeRoot);
-      strNode* loadFromNode(strNode *nodeRoot);
+      void loadAllFromNode(strNode *nodeRoot, const bool parsingC = true);
+
+      strNode* loadFromNode(strNode *nodeRoot, const bool parsingC = true);
 
       void setExpNodeFromStrNode(expNode &exp,
                                  strNode *nodePos);
@@ -367,64 +383,81 @@ namespace occa {
       expNode* createExpNodeFrom(strNode *nodePos);
       expNode* createExpNodeFrom(const std::string &source);
 
-      void loadBlocksFromLastNode(strNode *end,
-                                  const int startBlockPos = 0);
-
       strNode* loadSimpleFromNode(const int st,
                                   strNode *nodeRoot,
-                                  strNode *nodeRootEnd);
+                                  strNode *nodeRootEnd,
+                                  const bool parsingC = true);
 
       strNode* loadOneStatementFromNode(const int st,
                                         strNode *nodeRoot,
-                                        strNode *nodeRootEnd);
+                                        strNode *nodeRootEnd,
+                                        const bool parsingC = true);
 
       strNode* loadForFromNode(const int st,
                                strNode *nodeRoot,
-                               strNode *nodeRootEnd);
+                               strNode *nodeRootEnd,
+                               const bool parsingC = true);
 
       strNode* loadWhileFromNode(const int st,
                                  strNode *nodeRoot,
-                                 strNode *nodeRootEnd);
+                                 strNode *nodeRootEnd,
+                                 const bool parsingC = true);
 
       strNode* loadIfFromNode(const int st,
                               strNode *nodeRoot,
-                              strNode *nodeRootEnd);
+                              strNode *nodeRootEnd,
+                              const bool parsingC = true);
 
       // [-] Missing
       strNode* loadSwitchFromNode(const int st,
                                   strNode *nodeRoot,
-                                  strNode *nodeRootEnd);
+                                  strNode *nodeRootEnd,
+                                  const bool parsingC = true);
 
       strNode* loadGotoFromNode(const int st,
                                 strNode *nodeRoot,
-                                strNode *nodeRootEnd);
+                                strNode *nodeRootEnd,
+                                const bool parsingC = true);
 
       strNode* loadFunctionDefinitionFromNode(const int st,
                                               strNode *nodeRoot,
-                                              strNode *nodeRootEnd);
+                                              strNode *nodeRootEnd,
+                                              const bool parsingC = true);
 
       strNode* loadFunctionPrototypeFromNode(const int st,
                                              strNode *nodeRoot,
-                                             strNode *nodeRootEnd);
+                                             strNode *nodeRootEnd,
+                                             const bool parsingC = true);
 
       strNode* loadBlockFromNode(const int st,
                                  strNode *nodeRoot,
-                                 strNode *nodeRootEnd);
+                                 strNode *nodeRootEnd,
+                                 const bool parsingC = true);
 
       // [-] Missing
       strNode* loadStructFromNode(const int st,
                                   strNode *nodeRoot,
-                                  strNode *nodeRootEnd);
+                                  strNode *nodeRootEnd,
+                                  const bool parsingC = true);
 
       // [-] Missing
       strNode* loadBlankFromNode(const int st,
                                  strNode *nodeRoot,
-                                 strNode *nodeRootEnd);
+                                 strNode *nodeRootEnd,
+                                 const bool parsingC = true);
 
       // [-] Missing
       strNode* loadMacroFromNode(const int st,
                                  strNode *nodeRoot,
-                                 strNode *nodeRootEnd);
+                                 strNode *nodeRootEnd,
+                                 const bool parsingC = true);
+
+      static strNode* getFortranEnd(strNode *nodePos,
+                                    const std::string &value);
+
+      static strNode* skipNodeUntil(strNode *nodePos,
+                                    const std::string &value,
+                                    int *separation = NULL);
       //================================
 
       statementNode* getStatementNode();

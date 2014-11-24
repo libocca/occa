@@ -81,7 +81,7 @@ namespace occa {
       return updateStatementType;
     }
 
-    void expNode::loadFromNode(strNode *&nodePos){
+    void expNode::loadFromNode(strNode *&nodePos, const bool parsingC){
       if(nodePos == NULL){
         sInfo->type = invalidStatementType;
         return;
@@ -89,7 +89,7 @@ namespace occa {
 
       strNode *nodeRoot = nodePos;
 
-      sInfo->labelStatement(nodePos, this);
+      sInfo->labelStatement(nodePos, this, parsingC);
 
       // Don't need to load stuff
       if(sInfo->type & (macroStatementType  |
@@ -2069,11 +2069,19 @@ namespace occa {
       return ret;
     }
 
-    void statement::labelStatement(strNode *&nodeRoot, expNode *expPtr){
-      type = findStatementType(nodeRoot, expPtr);
+    void statement::labelStatement(strNode *&nodeRoot,
+                                   expNode *expPtr,
+                                   const bool parsingC){
+
+      type = findStatementType(nodeRoot, expPtr, parsingC);
     }
 
-    int statement::findStatementType(strNode *&nodeRoot, expNode *expPtr){
+    int statement::findStatementType(strNode *&nodeRoot,
+                                     expNode *expPtr,
+                                     const bool parsingC){
+      if(!parsingC)
+        return findFortranStatementType(nodeRoot, expPtr);
+
       if(nodeRoot->type == macroKeywordType)
         return checkMacroStatementType(nodeRoot, expPtr);
 
@@ -2118,6 +2126,36 @@ namespace occa {
       // Statement: [;]
       else if(nodeRoot->type & endStatement)
         return checkUpdateStatementType(nodeRoot, expPtr);
+
+      else {
+        while(nodeRoot &&
+              !(nodeRoot->type & endStatement))
+          nodeRoot = nodeRoot->right;
+
+        return updateStatementType;
+      }
+    }
+
+    int statement::findFortranStatementType(strNode *&nodeRoot,
+                                            expNode *expPtr){
+      if(nodeRoot->type == 0)
+        return 0;
+
+      else if(nodeHasDescriptor(nodeRoot))
+        return checkFortranDescriptorStatementType(nodeRoot, expPtr);
+
+      else if(nodeRoot->type & unknownVariable)
+        return checkFortranUpdateStatementType(nodeRoot, expPtr);
+
+      else if(nodeRoot->type & flowControlType)
+        return checkFortranFlowStatementType(nodeRoot, expPtr);
+
+      else if(nodeRoot->type & specialKeywordType)
+        return checkFortranSpecialStatementType(nodeRoot, expPtr);
+
+      // Statement: [;]
+      else if(nodeRoot->type & endStatement)
+        return checkFortranUpdateStatementType(nodeRoot, expPtr);
 
       else {
         while(nodeRoot &&
@@ -2303,282 +2341,6 @@ namespace occa {
       return false;
     }
 
-    varInfo statement::loadVarInfo(strNode *&nodePos){
-      varInfo info;
-      return info;
-#if 0
-#if 0
-      while(nodePos &&
-            ((nodePos->type & qualifierType) ||
-             nodeHasSpecifier(nodePos))){
-
-        if(nodePos->type & structType){
-          info.descriptors.push_back(*nodePos);
-          info.typeInfo |= structType;
-        }
-
-        else if(nodeHasQualifier(nodePos)){
-          if(nodePos->value == "*"){
-            info.typeInfo |= heapPointerType;
-            ++info.pointerCount;
-
-            if(nodePos->right &&
-               nodePos->right->value == "const"){
-              info.typeInfo |= constPointerType;
-              nodePos = nodePos->right;
-            }
-          }
-          else if(nodePos->value == "&")
-            info.typeInfo |= referenceType;
-          else{
-            if((nodePos->value  == "texture")              ||
-               ((nodePos->value == "image1d_t")            ||
-                (nodePos->value == "image2d_t"))           ||
-               (nodePos->value  == "cudaSurfaceObject_t"))
-              info.typeInfo |= textureType;
-
-            info.descriptors.push_back(nodePos->value);
-          }
-        }
-
-        else if(nodeHasSpecifier(nodePos)){
-          info.type = hasTypeInScope(*nodePos);
-
-          if(info.type == NULL){
-            std::cout << "Type [" << *nodePos << "] is not defined.\nFound in:\n";
-            nodePos->print();
-            throw 1;
-          }
-        }
-
-        if(nodePos->down.size() != 0)
-          break;
-
-        nodePos = nodePos->right;
-      }
-
-      if((nodePos == NULL) ||
-         (nodePos->type & (endSection |
-                           endStatement))){
-
-        if(nodePos &&
-           nodePos->value == ":"){
-
-          info.bitField = atoi(nodePos->right->value.c_str());
-          nodePos = nodePos->right->right;
-        }
-
-        return info;
-      }
-
-      const int downCount = nodePos->down.size();
-
-      if(downCount == 0){
-        info.name      = nodePos->value;
-        info.typeInfo |= variableType;
-
-        nodePos = nodePos->right;
-
-        if(nodePos &&
-           nodePos->value == ":"){
-
-          info.bitField = atoi(nodePos->right->value.c_str());
-          nodePos = nodePos->right->right;
-
-          return info;
-        }
-      }
-      else{
-        strNode *downNode = nodePos->down[0];
-
-        if(downNode->type == startParentheses){
-          // [-] Only for C
-          if((2 <= downCount) &&
-             (nodePos->down[1]->type == startParentheses)){
-
-            downNode = downNode->right;
-
-            while(downNode->value == "*"){
-              ++(info.pointerCount);
-              downNode = downNode->right;
-            }
-
-            info.name      = downNode->value;
-            info.typeInfo |= functionPointerType;
-
-            if(downNode->down.size()){
-              const int downCount2 = downNode->down.size();
-
-              for(int i = 0; i < downCount2; ++i){
-                if(downNode->down[i]->type != startBracket)
-                  break;
-
-                std::string sps = prettyString(downNode->down[i]);
-                sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
-
-                info.stackPointerSizes.push_back(sps);
-              }
-            }
-
-            downNode = nodePos->down[1]->right;
-
-            while(downNode){
-              varInfo &arg = *(new varInfo);
-              arg = loadVarInfo(downNode);
-
-              info.vars.push_back(&arg);
-
-              // Loaded last arg
-              if((downNode == NULL) ||
-                 (downNode->right == NULL))
-                break;
-
-              downNode = downNode->right;
-            }
-
-            nodePos = nodePos->right;
-          }
-          else{
-            info.name      = nodePos->value;
-            info.typeInfo |= functionType;
-
-            downNode = downNode->right;
-
-            while(downNode){
-              varInfo &arg = *(new varInfo);
-              arg = loadVarInfo(downNode);
-
-              info.vars.push_back(&arg);
-
-              downNode = downNode->right;
-
-              // Loaded last arg
-              if(downNode == NULL)
-                break;
-            }
-
-            // Distinguish between prototypes and function calls
-            if(nodePos->right &&
-               (nodePos->right->value == ";")){
-              if(info.type)
-                info.typeInfo |= protoType;
-              else
-                info.typeInfo |= functionCallType;
-            }
-          }
-        }
-        else if(downNode->type == startBracket){
-          info.name      = nodePos->value;
-          info.typeInfo |= (variableType | stackPointerType);
-
-          for(int i = 0; i < downCount; ++i){
-            if(nodePos->down[i]->type != startBracket)
-              break;
-
-            std::string sps = prettyString(nodePos->down[i]);
-            sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
-
-            info.stackPointerSizes.push_back(sps);
-          }
-        }
-      }
-
-      return info;
-#else
-      while(nodePos                         &&
-            !(nodePos->type & presetValue)  &&
-            !(nodePos->type & endStatement) && // For bitfields
-            (!(nodePos->type & unknownVariable) ||
-             hasTypeInScope(nodePos->value))){
-
-        if(nodePos->type & structType){
-          info.descriptors.push_back(*nodePos);
-          info.typeInfo |= structType;
-        }
-
-        else if(nodeHasQualifier(nodePos)){
-          if(nodePos->value == "*"){
-            info.typeInfo |= heapPointerType;
-            ++info.pointerCount;
-
-            if(nodePos->right &&
-               nodePos->right->value == "const"){
-              info.typeInfo |= constPointerType;
-              nodePos = nodePos->right;
-            }
-          }
-          else if(nodePos->value == "&")
-            info.typeInfo |= referenceType;
-          else{
-            if((nodePos->value  == "texture")              ||
-               ((nodePos->value == "image1d_t")            ||
-                (nodePos->value == "image2d_t"))           ||
-               (nodePos->value  == "cudaSurfaceObject_t"))
-              info.typeInfo |= textureType;
-
-            info.descriptors.push_back(*nodePos);
-          }
-        }
-
-        else if(nodeHasSpecifier(nodePos)){
-          info.type = hasTypeInScope(*nodePos);
-
-          if(info.type == NULL){
-            std::cout << "Type [" << *nodePos << "] is not defined.\nFound in:\n";
-            nodePos->print();
-            throw 1;
-          }
-        }
-
-        nodePos = nodePos->right;
-      }
-
-      if((nodePos == NULL) ||
-         (nodePos->type & endStatement)) // For bitfields
-        return info;
-
-      info.name = *nodePos;
-
-      const int downCount = nodePos->down.size();
-
-      if(downCount){
-        if(nodePos->down[0]->type == startParentheses){
-          strNode *argPos = nodePos->down[0];
-          info.typeInfo |= functionType;
-
-          strNode *lastPos = lastNode(nodePos);
-
-          // Distinguish between prototypes and function calls
-          if(lastPos->value == ";"){
-            if(info.type)
-              info.typeInfo |= protoType;
-            else
-              info.typeInfo |= functionCallType;
-          }
-        }
-        else if(nodePos->down[0]->type == startBracket){
-          info.typeInfo |= (variableType | stackPointerType);
-
-          for(int i = 0; i < downCount; ++i){
-            nodePos->down[i]->type = startBracket;
-
-            std::string sps = prettyString(nodePos->down[i]);
-            sps = sps.substr(1, sps.size() - 2); // Remove '[' and ']'
-
-            info.stackPointerSizes.push_back(sps);
-          }
-        }
-      }
-      else{
-        info.typeInfo |= variableType;
-        nodePos = nodePos->right;
-      }
-
-      return info;
-#endif
-#endif
-    }
-
     typeInfo* statement::hasTypeInScope(const std::string &typeName) const {
       cScopeTypeMapIterator it = scopeTypeMap.find(typeName);
 
@@ -2621,17 +2383,16 @@ namespace occa {
     }
 
     //---[ Loading ]--------------------
-    void statement::loadAllFromNode(strNode *nodeRoot){
+    void statement::loadAllFromNode(strNode *nodeRoot, const bool parsingC){
       while(nodeRoot)
-        nodeRoot = loadFromNode(nodeRoot);
+        nodeRoot = loadFromNode(nodeRoot, parsingC);
     }
 
-    // [+]
-    strNode* statement::loadFromNode(strNode *nodeRoot){
+    strNode* statement::loadFromNode(strNode *nodeRoot, const bool parsingC){
       statement *newStatement = makeSubStatement();
       strNode * nodeRootEnd   = nodeRoot;
 
-      newStatement->expRoot.loadFromNode(nodeRootEnd);
+      newStatement->expRoot.loadFromNode(nodeRootEnd, parsingC);
       const int st = newStatement->type;
 
       if(st & invalidStatementType){
@@ -2644,66 +2405,78 @@ namespace occa {
       if(st & simpleStatementType){
         nodeRootEnd = newStatement->loadSimpleFromNode(st,
                                                        nodeRoot,
-                                                       nodeRootEnd);
+                                                       nodeRootEnd,
+                                                       parsingC);
       }
 
       else if(st & flowStatementType){
         if(st & forStatementType)
           nodeRootEnd = newStatement->loadForFromNode(st,
                                                       nodeRoot,
-                                                      nodeRootEnd);
+                                                      nodeRootEnd,
+                                                      parsingC);
 
         else if(st & whileStatementType)
           nodeRootEnd = newStatement->loadWhileFromNode(st,
                                                         nodeRoot,
-                                                        nodeRootEnd);
+                                                        nodeRootEnd,
+                                                        parsingC);
 
         else if(st & ifStatementType)
           nodeRootEnd = loadIfFromNode(st,
                                        nodeRoot,
-                                       nodeRootEnd);
+                                       nodeRootEnd,
+                                       parsingC);
 
         else if(st & switchStatementType)
           nodeRootEnd = newStatement->loadSwitchFromNode(st,
                                                          nodeRoot,
-                                                         nodeRootEnd);
+                                                         nodeRootEnd,
+                                                         parsingC);
 
         else if(st & gotoStatementType)
           nodeRootEnd = newStatement->loadGotoFromNode(st,
                                                        nodeRoot,
-                                                       nodeRootEnd);
+                                                       nodeRootEnd,
+                                                       parsingC);
       }
       else if(st & blockStatementType)
         nodeRootEnd = newStatement->loadBlockFromNode(st,
                                                       nodeRoot,
-                                                      nodeRootEnd);
+                                                      nodeRootEnd,
+                                                      parsingC);
 
       else if(st & functionStatementType){
         if(st & functionDefinitionType)
           nodeRootEnd = newStatement->loadFunctionDefinitionFromNode(st,
                                                                      nodeRoot,
-                                                                     nodeRootEnd);
+                                                                     nodeRootEnd,
+                                                                     parsingC);
 
         else if(st & functionPrototypeType)
           nodeRootEnd = newStatement->loadFunctionPrototypeFromNode(st,
                                                                     nodeRoot,
-                                                                    nodeRootEnd);
+                                                                    nodeRootEnd,
+                                                                    parsingC);
       }
 
       else if(st & structStatementType)
         nodeRootEnd = newStatement->loadStructFromNode(st,
                                                        nodeRoot,
-                                                       nodeRootEnd);
+                                                       nodeRootEnd,
+                                                       parsingC);
 
       else if(st & blankStatementType)
         nodeRootEnd = newStatement->loadBlankFromNode(st,
                                                       nodeRoot,
-                                                      nodeRootEnd);
+                                                      nodeRootEnd,
+                                                      parsingC);
 
       else if(st & macroStatementType)
         nodeRootEnd = newStatement->loadMacroFromNode(st,
                                                       nodeRoot,
-                                                      nodeRootEnd);
+                                                      nodeRootEnd,
+                                                      parsingC);
 
       return nodeRootEnd;
     }
@@ -2757,9 +2530,11 @@ namespace occa {
       return ret;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadSimpleFromNode(const int st,
                                            strNode *nodeRoot,
-                                           strNode *nodeRootEnd){
+                                           strNode *nodeRootEnd,
+                                           const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2770,9 +2545,11 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadOneStatementFromNode(const int st,
                                                  strNode *nodeRoot,
-                                                 strNode *nodeRootEnd){
+                                                 strNode *nodeRootEnd,
+                                                 const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2788,16 +2565,20 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadForFromNode(const int st,
                                         strNode *nodeRoot,
-                                        strNode *nodeRootEnd){
+                                        strNode *nodeRootEnd,
+                                        const bool parsingC){
 
       return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadWhileFromNode(const int st,
                                           strNode *nodeRoot,
-                                          strNode *nodeRootEnd){
+                                          strNode *nodeRootEnd,
+                                          const bool parsingC){
       if(st == whileStatementType)
         return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
       else{
@@ -2819,9 +2600,11 @@ namespace occa {
       }
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadIfFromNode(const int st_,
                                        strNode *nodeRoot,
-                                       strNode *nodeRootEnd){
+                                       strNode *nodeRootEnd,
+                                       const bool parsingC){
       statement *newStatement = statementEnd->value;
 
       strNode *nextNode = newStatement->loadOneStatementFromNode(st_,
@@ -2879,9 +2662,11 @@ namespace occa {
     }
 
     // [-] Missing
+    // [-] Missing Fortran
     strNode* statement::loadSwitchFromNode(const int st,
                                            strNode *nodeRoot,
-                                           strNode *nodeRootEnd){
+                                           strNode *nodeRootEnd,
+                                           const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2892,9 +2677,11 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadGotoFromNode(const int st,
                                          strNode *nodeRoot,
-                                         strNode *nodeRootEnd){
+                                         strNode *nodeRootEnd,
+                                         const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2905,9 +2692,11 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadFunctionDefinitionFromNode(const int st,
                                                        strNode *nodeRoot,
-                                                       strNode *nodeRootEnd){
+                                                       strNode *nodeRootEnd,
+                                                       const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2921,9 +2710,11 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadFunctionPrototypeFromNode(const int st,
                                                       strNode *nodeRoot,
-                                                      strNode *nodeRootEnd){
+                                                      strNode *nodeRootEnd,
+                                                      const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2934,9 +2725,11 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadBlockFromNode(const int st,
                                           strNode *nodeRoot,
-                                          strNode *nodeRootEnd){
+                                          strNode *nodeRootEnd,
+                                          const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot->down)
@@ -2945,9 +2738,11 @@ namespace occa {
       return nextNode;
     }
 
+    // [-] Missing Fortran
     strNode* statement::loadStructFromNode(const int st,
                                            strNode *nodeRoot,
-                                           strNode *nodeRootEnd){
+                                           strNode *nodeRootEnd,
+                                           const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2961,7 +2756,8 @@ namespace occa {
     // [-] Missing
     strNode* statement::loadBlankFromNode(const int st,
                                           strNode *nodeRoot,
-                                          strNode *nodeRootEnd){
+                                          strNode *nodeRootEnd,
+                                          const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2975,7 +2771,8 @@ namespace occa {
     // [-] Missing
     strNode* statement::loadMacroFromNode(const int st,
                                           strNode *nodeRoot,
-                                          strNode *nodeRootEnd){
+                                          strNode *nodeRootEnd,
+                                          const bool parsingC){
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -2984,6 +2781,147 @@ namespace occa {
         nodeRootEnd->right = NULL;
 
       return nextNode;
+    }
+
+    //  ---[ Fortran ]--------
+    // [+] Missing
+    int statement::checkFortranStructStatementType(strNode *&nodeRoot, expNode *expPtr){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return structStatementType;
+    }
+
+    int statement::checkFortranUpdateStatementType(strNode *&nodeRoot, expNode *expPtr){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return updateStatementType;
+    }
+
+    int statement::checkFortranDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr){
+      varInfo var;
+      nodeRoot = var.loadFrom(*this, nodeRoot);
+
+      if( !(var.info & varType::functionDef) ){
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+      }
+
+      if(var.info & varType::var)
+        return declareStatementType;
+      else
+        return functionDefinitionType;
+    }
+
+    int statement::checkFortranFlowStatementType(strNode *&nodeRoot, expNode *expPtr){
+      if(expPtr)
+        expPtr->info  = expType::checkSInfo;
+
+      std::string &nodeValue = nodeRoot->value;
+
+      nodeRoot = getFortranEnd(nodeRoot, nodeValue);
+
+      if(nodeValue == "DO")
+        return forStatementType;
+      else if(nodeValue == "DO WHILE")
+        return whileStatementType;
+      else if(nodeValue == "IF")
+        return ifStatementType;
+      else if(nodeValue == "ELSE IF")
+        return elseIfStatementType;
+      else if(nodeValue == "ELSE")
+        return elseStatementType;
+      else if(nodeValue == "SWITCH")
+        return switchStatementType;
+
+      std::cout << "You found the [Waldo 2] error in:\n"
+                << prettyString(nodeRoot, "  ");
+      throw 1;
+
+      return 0;
+    }
+
+    int statement::checkFortranSpecialStatementType(strNode *&nodeRoot, expNode *expPtr){
+      while(nodeRoot){
+        if(nodeRoot->type & endStatement)
+          break;
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      return blankStatementType;
+    }
+
+    strNode* statement::getFortranEnd(strNode *nodePos,
+                                      const std::string &value){
+      if((value == "DO") ||
+         (value == "DO WHILE")){
+
+        return skipNodeUntil(nodePos, "ENDDO");
+      }
+      else if((value == "IF") ||
+              (value == "ELSE IF")){
+        int pos1, pos2, pos3;
+
+        strNode *node1 = skipNodeUntil(nodePos, "ENDIF"  , &pos1);
+        strNode *node2 = skipNodeUntil(nodePos, "ELSE IF", &pos2);
+        strNode *node3 = skipNodeUntil(nodePos, "ELSE"   , &pos3);
+
+        if(pos1 < pos2){
+          if(pos1 < pos3)
+            return node1;
+          else
+            return node3;
+        }
+        else{
+          if(pos2 < pos3)
+            return node2;
+          else
+            return node3;
+        }
+      }
+      else if(value == "ELSE"){
+        return skipNodeUntil(nodePos, "ENDIF");
+      }
+      else if(value == "FUNCTION"){
+        return skipNodeUntil(nodePos, "ENDFUNCTION");
+      }
+      else if(value == "SUBROUTINE"){
+        return skipNodeUntil(nodePos, "ENDSUBROUTINE");
+      }
+
+      return nodePos;
+    }
+
+    strNode* statement::skipNodeUntil(strNode *nodePos,
+                                      const std::string &value,
+                                      int *separation){
+      int count = 0;
+
+      while(nodePos &&
+            (nodePos->value != value)){
+
+        ++count;
+        nodePos = nodePos->right;
+      }
+
+      if(separation)
+        *separation = count;
+
+      return nodePos;
     }
     //==================================
 

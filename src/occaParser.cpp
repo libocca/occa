@@ -27,17 +27,15 @@ namespace occa {
     const std::string parserBase::parseSource(const char *cRoot){
       strNode *nodeRoot = splitAndPreprocessContent(cRoot);
 
-      if(!parsingC){
-        nodeRoot->print();
-        throw 1;
-      }
-
-      if(!parsingC)
+      if(parsingC)
         loadLanguageTypes();
 
-      globalScope->loadAllFromNode(nodeRoot);
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
+      globalScope->loadAllFromNode(nodeRoot, parsingC);
+
+      if(!parsingC){
+        std::cout << (std::string) *globalScope;
+        throw 1;
+      }
 
       markKernelFunctions(*globalScope);
       applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
