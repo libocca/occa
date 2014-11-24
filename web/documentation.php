@@ -3,6 +3,10 @@
 
 <?php absInclude("/menu.php"); ?>
 
+<?php absInclude("/sidebarStart.php"); ?>
+<!--[ Sidebar Body ]-->
+<?php absInclude("/sidebarEnd.php"); ?>
+
 <div id="id_body" class="documentation fixed body">
 
   <h2 class="ui dividing header"> Quick Introduction </h2>

@@ -22,6 +22,7 @@
       </script>
 
       <script type="text/javascript" src="/library/js/jquery.address.js"></script>
+      <script type="text/javascript" src="/library/js/jquery.min.js"></script>
       <script type="text/javascript" src="/library/js/semantic.min.js"></script>
 
       <script type="text/javascript" src="/main.js"></script>

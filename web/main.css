@@ -283,6 +283,46 @@ span.highlight {
 }
 /*===[ Shared Stuff ]===*/
 
+/*---[ Sidebar ]---*/
+.ui.toc.sidebar {
+  width: 250px !important;
+  margin-left: -250px !important;
+
+  duration: 100;
+
+  overflow: visible;
+}
+
+.ui.active.toc.sidebar {
+  margin-left: 0px !important;
+}
+
+.ui.active.right.toc.sidebar {
+  margin-left: -250px !important;
+}
+
+.ui.toc.sidebar .button {
+    background-color: rgba(92, 97, 102, 0.3);
+    color           : rgba(255, 255, 255, 0.8);
+
+    position: absolute;
+
+    left: 250px;
+    top : 100px;
+
+    height: 64px;
+    width: 60px;
+
+    padding: 20px 0px 20px 10px;
+}
+
+.ui.toc.sidebar .button .icon {
+    padding-top: 3px;
+
+    vertical-align: top;
+}
+/*===[ Sidebar ]===*/
+
 /*---[ Downloads ]---*/
 /*===[ Downloads ]===*/
 

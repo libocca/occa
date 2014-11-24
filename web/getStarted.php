@@ -3,17 +3,9 @@
 
 <?php absInclude("/menu.php"); ?>
 
-<div class="ui toc floating sidebar" style="overlay: true">
-  a
-</div>
-<div class="ui black huge launch right attached button" style="position: fixed; height: 64px; width: 60px; padding: 20px 0px 20px 10px;">
-	<i class="icon list layout" style="padding-top: 3px; vertical-align: top;"></i>
-	<span class="text f_os light" style="display: none;">Contents</span>
-</div>
-<!-- <div class="ui black huge launch right attached button" style="position: fixed; width: 60px;"> -->
-<!-- 	<i class="icon list layout"></i> -->
-<!-- 	<span class="text f_os light" style="display: none; ">Contents</span> -->
-<!-- </div> -->
+<?php absInclude("/sidebarStart.php"); ?>
+<!--[ Sidebar Body ]-->
+<?php absInclude("/sidebarEnd.php"); ?>
 
 <div id="id_body" class="fixed body">
 
