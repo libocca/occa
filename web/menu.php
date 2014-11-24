@@ -26,8 +26,8 @@
           Documentation
         </a>
         <div class="menu">
-          <a class="item" href="/documentation/hostAPI.php">Host API</a>
-          <a class="item" href="/documentation/deviceAPI.php">Device API</a>
+          <a class="item" href="/documentation.php#Host-API">Host API</a>
+          <a class="item" href="/documentation.php#Device-API">Device API</a>
         </div>
       </div>
 

@@ -5,9 +5,9 @@
 
 <?php absInclude("/sidebarStart.php"); ?>
 
-<div class="entry"><a href="#Linux"  >1. Linux</a></div>
-<div class="entry"><a href="#MacOSX" >2. Mac OS X</a></div>
-<div class="entry"><a href="#Windows">3. Windows</a></div>
+<div class="entry1"><a href="#Linux"  >1. Linux</a></div>
+<div class="entry1"><a href="#MacOSX" >2. Mac OS X</a></div>
+<div class="entry1"><a href="#Windows">3. Windows</a></div>
 
 <?php absInclude("/sidebarEnd.php"); ?>
 

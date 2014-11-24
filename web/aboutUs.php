@@ -5,10 +5,10 @@
 
 <?php absInclude("/sidebarStart.php"); ?>
 
-<div class="entry"><a href="#Team"         >1. Team         </a></div>
-<div class="entry"><a href="#Contributors" >2. Contributors </a></div>
-<div class="entry"><a href="#Collaborators">3. Collaborators</a></div>
-<div class="entry"><a href="#Support"      >4. Support      </a></div>
+<div class="entry1"><a href="#Team"         >1. Team         </a></div>
+<div class="entry1"><a href="#Contributors" >2. Contributors </a></div>
+<div class="entry1"><a href="#Collaborators">3. Collaborators</a></div>
+<div class="entry1"><a href="#Support"      >4. Support      </a></div>
 
 <?php absInclude("/sidebarEnd.php"); ?>
 

@@ -338,12 +338,18 @@ span.highlight {
     text-decoration: none;
 }
 
-.sidebar.body .entry {
+.sidebar.body .entry1 {
     margin-top   : 10px;
     margin-bottom: 10px;
 }
 
-.sidebar.body .entry a {
+.sidebar.body .entry2 {
+    margin-top   : 10px;
+    margin-bottom: 10px;
+    margin-left  : 20px;
+}
+
+.sidebar.body .entry1 a, .sidebar.body .entry2 a {
     font-family: "ralewayRegular";
     font-size  : 18px;
 
@@ -360,6 +366,47 @@ span.highlight {
 /*===[ Downloads ]===*/
 
 /*---[ Documentation ]---*/
+.api.buttons.wrapper {
+    /*---[ Center Content ]---*/
+    /* display: table; */
+    /* margin: 0 auto; */
+}
+
+.api.buttons.wrapper a {
+    text-decoration: none;
+}
+
+.api.buttons.wrapper a .segment {
+    display: inline-block;
+
+    height: 155px;
+    width : 120px;
+
+    padding: 10px;
+
+    margin-right : 10px;
+    margin-bottom: 15px;
+}
+
+.api.buttons.wrapper a .segment .wrapper {
+    margin: auto;
+}
+
+.api.buttons.wrapper a .segment .wrapper img {
+    height: 100px;
+    width : 100px;
+}
+
+.api.buttons.wrapper a .segment .name {
+    display: inline-block;
+
+    width     : 100px;
+    text-align: center;
+
+    font-family: 'openSansRegular';
+    font-size  : 16px;
+}
+
 /*  ---[ Host API ]---*/
 .hostAPI.menu {
     margin-top: 0px;
