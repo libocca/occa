@@ -149,6 +149,10 @@ namespace occa {
 
     bool qualifierInfo::updateFortranVar(varInfo &var,
                                          const std::string &fortranQualifier){
+      if(fortranQualifier == "KERNEL"){
+        add("occaKernel");
+        return true;
+      }
       if(fortranQualifier == "DEVICE"){
         add("occaFunction");
         return true;

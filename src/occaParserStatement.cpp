@@ -1033,6 +1033,9 @@ namespace occa {
 
     // [++]i
     int expNode::mergeLeftUnary(const int leafPos){
+      if(leafCount <= (leafPos + 1))
+        return leafPos + 1;
+
       expNode *leaf  = leaves[leafPos];
       expNode *sLeaf = leaves[leafPos + 1];
 
@@ -1053,6 +1056,9 @@ namespace occa {
 
     // i[++]
     int expNode::mergeRightUnary(const int leafPos){
+      if(0 == leafPos)
+        return leafPos + 1;
+
       expNode *leaf  = leaves[leafPos];
       expNode *sLeaf = leaves[leafPos - 1];
 
@@ -1075,6 +1081,9 @@ namespace occa {
 
     // a [+] b
     int expNode::mergeBinary(const int leafPos){
+      if((0 == leafPos) || (leafCount <= (leafPos + 1)))
+        return leafPos + 1;
+
       expNode *leaf   = leaves[leafPos];
       expNode *sLeafL = leaves[leafPos - 1];
       expNode *sLeafR = leaves[leafPos + 1];
@@ -1100,6 +1109,9 @@ namespace occa {
 
     // a [?] b : c
     int expNode::mergeTernary(const int leafPos){
+      if((0 == leafPos) || (leafCount <= (leafPos + 3)))
+        return leafPos + 1;
+
       expNode *leaf   = leaves[leafPos];
       expNode *sLeafL = leaves[leafPos - 1];
       expNode *sLeafC = leaves[leafPos + 1];
