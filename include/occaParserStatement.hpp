@@ -464,6 +464,8 @@ namespace occa {
       static strNode* getFortranEnd(strNode *nodePos,
                                     const std::string &value);
 
+      strNode* loadUntilFortranEnd(strNode *nodePos);
+
       static strNode* skipNodeUntil(strNode *nodePos,
                                     const std::string &value,
                                     int *separation = NULL);

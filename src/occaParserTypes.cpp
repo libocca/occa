@@ -80,12 +80,6 @@ namespace occa {
         if(newLeafPos == leafPos)
           break;
 
-        std::cout << "expRoot[leafPos]    = " << expRoot[leafPos] << '\n'
-                  << "expRoot[newLeafPos] = " << expRoot[newLeafPos] << '\n';
-
-        if(var.baseType)
-          std::cout << "baseType->name = " << var.baseType->name << '\n';
-
         if(leafPos < expRoot.leafCount){
           if(expRoot[newLeafPos].value == ","){
             ++newLeafPos;
@@ -186,8 +180,6 @@ namespace occa {
 
         std::string typeName = varInfo::getFullFortranType(expPos, nextLeafPos);
         var.baseType = expPos.sInfo->hasTypeInScope(typeName);
-        std::cout << "typeName = " << typeName << '\n'
-        << "var.baseType = " << var.baseType << '\n';
 
         return nextLeafPos;
       }
@@ -1060,16 +1052,9 @@ namespace occa {
             info    |= varType::functionDec;
             ++leafPos;
           }
-          else{
-            std::string typeName = getFullFortranType(expRoot, leafPos);
-            baseType = expRoot.sInfo->hasTypeInScope(typeName);
-
-            if((leafPos < expRoot.leafCount) &&
-               (expRoot[leafPos].value == "FUNCTION")){
-
-              info |= varType::functionDec;
-              ++leafPos;
-            }
+          else if(expRoot[leafPos].value == "FUNCTION"){
+            info |= varType::functionDec;
+            ++leafPos;
           }
         }
       }
@@ -1337,16 +1322,9 @@ namespace occa {
             info    |= varType::functionDec;
             nodePos  = nodePos->right;
           }
-          else{
-            std::string typeName = getFullFortranType(nodePos);
-            baseType = s.hasTypeInScope(typeName);
-
-            if(nodePos &&
-               (nodePos->value == "FUNCTION")){
-
-              info |= varType::functionDec;
-              nodePos = nodePos->right;
-            }
+          else if(nodePos->value == "FUNCTION"){
+            info |= varType::functionDec;
+            nodePos = nodePos->right;
           }
         }
       }

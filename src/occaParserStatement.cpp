@@ -176,6 +176,9 @@ namespace occa {
     void expNode::splitAndOrganizeFortranNode(strNode *nodeRoot){
       initLoadFromFortranNode(nodeRoot);
 
+      if(leaves[leafCount - 1]->value == "\\n")
+        --leafCount;
+
       if(sInfo->type & declareStatementType)
         splitFortranDeclareStatement();
 
@@ -2579,6 +2582,15 @@ namespace occa {
       }
 
       if(st & skipStatementType){
+        while(nodeRootEnd){
+          if(nodeRootEnd->type & endStatement){
+            nodeRootEnd = nodeRootEnd->right;
+            break;
+          }
+
+          nodeRootEnd = nodeRootEnd->right;
+        }
+
         delete newStatement;
         return nodeRootEnd;
       }
@@ -2887,10 +2899,14 @@ namespace occa {
       if(nodeRootEnd)
         nodeRootEnd->right = NULL;
 
-      if(nodeRootEnd)
-        loadAllFromNode(nodeRootEnd->down);
+      if(parsingC){
+        if(nodeRootEnd)
+          loadAllFromNode(nodeRootEnd->down);
 
-      return nextNode;
+        return nextNode;
+      }
+      else
+        return loadUntilFortranEnd(nextNode);
     }
 
     // [-] Missing Fortran
@@ -3007,8 +3023,6 @@ namespace occa {
       varInfo var;
       nodeRoot = var.loadFromFortran(*this, nodeRoot);
 
-      std::cout << "var = " << var << '\n';
-
       if( !(var.info & varType::functionDef) ){
         while(nodeRoot){
           if(nodeRoot->type & endStatement)
@@ -3100,6 +3114,24 @@ namespace occa {
       else if(value == "SUBROUTINE"){
         return skipNodeUntil(nodePos, "ENDSUBROUTINE");
       }
+
+      return nodePos;
+    }
+
+    strNode* statement::loadUntilFortranEnd(strNode *nodePos){
+      if(type & functionDefinitionType){
+        const std::string &typeName = (getFunctionVar()->baseType->name);
+        const std::string endTag    = ((typeName == "void") ?
+                                       "ENDSUBROUTINE" : "ENDFUNCTION");
+
+        while(nodePos &&
+              (nodePos->value != endTag)){
+
+          nodePos = loadFromNode(nodePos, false);
+        }
+      }
+
+      std::cout << "this = " << *this << '\n';
 
       return nodePos;
     }
