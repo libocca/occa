@@ -135,7 +135,10 @@ namespace occa {
       if(lastNewNode == NULL)
         newNodeRoot->print();
 
-      splitAndOrganizeNode(newNodeRoot);
+      if(parsingC)
+        splitAndOrganizeNode(newNodeRoot);
+      else
+        splitAndOrganizeFortranNode(newNodeRoot);
 
       // std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
 
@@ -150,6 +153,30 @@ namespace occa {
 
       if(sInfo->type & declareStatementType)
         splitDeclareStatement();
+
+      else if((sInfo->type & (ifStatementType  |
+                              forStatementType |
+                              whileStatementType)) &&
+              (sInfo->type != elseStatementType)){
+
+        splitFlowStatement();
+      }
+
+      else if(sInfo->type & functionStatementType)
+        splitFunctionStatement();
+
+      else if(sInfo->type & structStatementType)
+        splitStructStatement();
+
+      else
+        organize();
+    }
+
+    void expNode::splitAndOrganizeFortranNode(strNode *nodeRoot){
+      initLoadFromFortranNode(nodeRoot);
+
+      if(sInfo->type & declareStatementType)
+        splitFortranDeclareStatement();
 
       else if((sInfo->type & (ifStatementType  |
                               forStatementType |
@@ -323,6 +350,65 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
+    //  ---[ Fortran ]--------
+    void expNode::splitFortranDeclareStatement(){
+      info = expType::declaration;
+
+      std::cout << "HERE\n";
+
+      int varCount = 1 + typeInfo::delimeterCount(*this, ",");
+      int leafPos  = 0;
+
+      varInfo *firstVar = NULL;
+
+      // Store variables and stuff
+      expNode newExp(*sInfo);
+      newExp.info = info;
+      newExp.addNodes(expType::root, 0, varCount);
+
+      for(int i = 0; i < varCount; ++i){
+        expNode &leaf = newExp[i];
+        varInfo &var  = leaf.addVarInfoNode(0);
+
+        int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+
+        if(sInfo->up != NULL)
+          sInfo->up->addVariable(&var, sInfo);
+
+        if(i == 0){
+          leaf.leaves[0]->info |= expType::type;
+          firstVar = &var;
+        }
+
+        removeNodes(leafPos, nextLeafPos - leafPos);
+
+        int sExpStart = leafPos;
+        int sExpEnd   = typeInfo::nextDelimeter(*this, leafPos, ",");
+
+        leafPos = sExpEnd;
+
+        // Don't put the [;]
+        if((sExpEnd == leafCount) &&
+           (leaves[sExpEnd - 1]->value == ";"))
+          --sExpEnd;
+
+        if(sExpStart < sExpEnd){
+          leaf.addNodes(0, 1, sExpEnd - sExpStart);
+
+          for(int j = sExpStart; j < sExpEnd; ++j)
+            expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
+
+          leaf.organizeLeaves();
+        }
+
+        if(leafPos < leafCount)
+          removeNode(leafPos);
+      }
+
+      expNode::swap(*this, newExp);
+    }
+    //  ======================
+
     void expNode::initLoadFromNode(strNode *nodeRoot){
       strNode *nodePos = nodeRoot;
 
@@ -413,6 +499,124 @@ namespace occa {
 
         nodePos = nodePos->right;
       }
+    }
+
+    void expNode::initLoadFromFortranNode(strNode *nodeRoot){
+      strNode *nodePos = nodeRoot;
+
+      while(nodePos){
+        ++leafCount;
+        nodePos = nodePos->right;
+      }
+
+      if(leafCount == 0)
+        return;
+
+      nodePos = nodeRoot;
+
+      leaves = new expNode*[leafCount];
+      int leafPos = 0;
+
+      while(nodePos){
+        expNode *&leaf = leaves[leafPos++];
+
+        leaf        = new expNode(*this);
+        leaf->value = nodePos->value;
+
+        if(nodePos->type & unknownVariable){
+          varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
+
+          if(nodeVar)
+            leaf->info = expType::variable;
+          else
+            leaf->info = expType::unknown;
+        }
+
+        else if(nodePos->type & presetValue){
+          leaf->info = expType::presetValue;
+        }
+
+        else if(nodePos->type & descriptorType){
+          if(nodePos->type & qualifierType)
+            leaf->info = expType::qualifier;
+          else{
+            leaf->info  = expType::type;
+            leaf->value = getFullFortranType(nodePos);
+          }
+        }
+
+        else if(nodePos->type & operatorType){
+          leaf->info = expType::operator_;
+        }
+
+        else if(nodePos->type & startSection){
+          leaf->info  = expType::C;
+
+          if(nodePos->down)
+            leaf->initLoadFromNode(nodePos->down);
+        }
+
+        else
+          leaf->info = expType::printValue;
+
+        if(nodePos->type == 0){
+          delete leaf;
+          --leafPos;
+        }
+
+        nodePos = nodePos->right;
+      }
+    }
+
+    std::string expNode::getFullFortranType(strNode *&nodePos){
+      if( !(nodePos->type & specifierType) )
+        return "";
+
+      const std::string &typeStr = nodePos->value;
+
+      nodePos = nodePos->right;
+
+      if(nodePos){
+        int bytes = -1;
+
+        if(nodePos->value == "*"){
+          nodePos = nodePos->right;
+          bytes   = atoi(nodePos->value.c_str());
+          nodePos = nodePos->right;
+        }
+        else if((nodePos->value == "(") &&
+                (nodePos->down)){
+          bytes   = atoi(nodePos->down->value.c_str());
+          nodePos = nodePos->right;
+        }
+
+        // [-] Ignoring complex case
+        const bool isFloat = ((typeStr == "REAL")   ||
+                              (typeStr == "DOUBLE") ||
+                              (typeStr == "COMPLEX"));
+
+        switch(bytes){
+        case 1:
+          return "char";
+        case 2:
+          return "short";
+        case 4:
+          if(isFloat)
+            return "float";
+          else
+            return "int";
+        case 8:
+          if(isFloat)
+            return "double";
+          else
+            return "long long";
+        default:
+          std::cout << "Error loading " << typeStr << "(" << bytes << ")\n";
+          throw 1;
+        }
+      }
+
+      return "";
     }
 
     void expNode::initOrganization(){

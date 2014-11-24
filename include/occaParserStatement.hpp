@@ -117,7 +117,10 @@ namespace occa {
       void loadFromNode(strNode *&nodePos, const bool parsingC = true);
 
       void splitAndOrganizeNode(strNode *nodeRoot);
+      void splitAndOrganizeFortranNode(strNode *nodeRoot);
+
       void organize();
+      void organizeFortran();
 
       void splitDeclareStatement(const int flags = (expFlag::addVarToScope |
                                                     expFlag::addToParent));
@@ -130,7 +133,14 @@ namespace occa {
       void splitStructStatement(const int flags = (expFlag::addTypeToScope |
                                                    expFlag::addToParent));
 
+      //  ---[ Fortran ]------
+      void splitFortranDeclareStatement();
+      //  ====================
+
       void initLoadFromNode(strNode *nodeRoot);
+      void initLoadFromFortranNode(strNode *nodeRoot);
+
+      std::string getFullFortranType(strNode *&nodePos);
 
       void initOrganization();
 
