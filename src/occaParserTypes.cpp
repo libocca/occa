@@ -1391,7 +1391,7 @@ namespace occa {
       strNode *nodeRoot = nodePos;
       strNode *nextNode = nodePos->right;
 
-      std::string &typeNode = nodePos->value;
+      std::string typeNode = nodePos->value;
 
       if(nextNode){
         int bytes = -1;
@@ -1459,7 +1459,7 @@ namespace occa {
       if( !(expRoot[leafPos].info & expType::type) )
         return "";
 
-      std::string &typeNode = expRoot[leafPos++].value;
+      std::string typeNode = expRoot[leafPos++].value;
 
       if(leafPos < expRoot.leafCount){
         int bytes = -1;
