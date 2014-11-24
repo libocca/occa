@@ -32,7 +32,7 @@
     <a href="/documentation/hostAPI/CPP.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/general/mu.png"/>
         </div>
         <div class="name"> C++ </div>
       </div>
@@ -40,7 +40,7 @@
     <a href="/documentation/hostAPI/C.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/general/mu.png"/>
         </div>
         <div class="name"> C </div>
       </div>
@@ -48,7 +48,7 @@
     <a href="/documentation/hostAPI/CS.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/general/mu.png"/>
         </div>
         <div class="name"> C# </div>
       </div>
@@ -64,7 +64,7 @@
     <a href="/documentation/hostAPI/Fortran.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/general/mu.png"/>
         </div>
         <div class="name"> Fortran </div>
       </div>
@@ -72,7 +72,7 @@
     <a href="/documentation/hostAPI/Julia.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/apiLogos/julia.png"/>
         </div>
         <div class="name"> Julia </div>
       </div>
@@ -80,9 +80,9 @@
     <a href="/documentation/hostAPI/Matlab.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/apiLogos/matlab.png"/>
         </div>
-        <div class="name"> Matlab </div>
+        <div class="name"> MATLAB </div>
       </div>
     </a>
   </div>
@@ -93,7 +93,7 @@
     <a href="/documentation/deviceAPI/OKL.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/general/mu.png"/>
         </div>
         <div class="name"> OKL </div>
       </div>
@@ -101,7 +101,7 @@
     <a href="/documentation/deviceAPI/OFL.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img src="/images/general/mu.png"/>
         </div>
         <div class="name"> OFL </div>
       </div>
