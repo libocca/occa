@@ -4,12 +4,17 @@
 <?php absInclude("/menu.php"); ?>
 
 <?php absInclude("/sidebarStart.php"); ?>
-<!--[ Sidebar Body ]-->
+
+<div class="entry"><a href="#Team"         >1. Team         </a></div>
+<div class="entry"><a href="#Contributors" >2. Contributors </a></div>
+<div class="entry"><a href="#Collaborators">3. Collaborators</a></div>
+<div class="entry"><a href="#Support"      >4. Support      </a></div>
+
 <?php absInclude("/sidebarEnd.php"); ?>
 
 <div id="id_body" class="aboutUs fixed body">
 
-  <h2 class="ui dividing header"> Team </h2>
+  <h2 id="Team" class="ui dividing header"> Team </h2>
 
   <div class="ui profile segment">
     <a class="ui rounded image" href="http://davidmedinawiki.wordpress.com/">
@@ -59,7 +64,7 @@
     </div>
   </div>
 
-  <h2 class="ui dividing header"> Contributors </h2>
+  <h2 id="Contributors" class="ui dividing header"> Contributors </h2>
 
   <div class="ui contributor profile segment">
     <a class="ui rounded image" href="http://lucaswilcox.com/">
@@ -81,7 +86,7 @@
     </div>
   </div>
 
-  <h2 class="ui dividing header"> Collaborations </h2>
+  <h2 id="Collaborations" class="ui dividing header"> Collaborations </h2>
 
   <div class="ui collaborator celled grid">
     <div class="row">
@@ -104,7 +109,7 @@
     </div> <!--[ row ]-->
   </div> <!--[ celled grid ]-->
 
-  <h2 class="ui dividing header"> Support Received </h2>
+  <h2 id="Support" class="ui dividing header"> Support Received </h2>
 
   <div class="ui support celled grid">
     <div class="row">
