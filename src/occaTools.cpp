@@ -246,31 +246,27 @@ namespace occa {
   }
 
   std::string readFile(const std::string &filename){
-    struct stat fileInfo;
+    // NBN: handle EOL chars on Windows
+    FILE *fp = fopen(filename.c_str(), "r");
 
-    int fileHandle = ::open(filename.c_str(), O_RDWR);
-    const int status = fstat(fileHandle, &fileInfo);
-
-    const int chars = fileInfo.st_size;
-
-    if(status != 0){
-      printf("File [%s] does not exist or could not be properly opened\n", filename.c_str());
+    if(!fp){
+      printf("Failed to open: %s\n", filename.c_str());
       throw 1;
     }
 
-    char *buffer = (char*) malloc(chars);
-    memset(buffer, '\0', chars);
+    struct stat statbuf;
+    stat(filename.c_str(), &statbuf);
 
-    std::ifstream fs(filename.c_str());
+    const size_t nchars = statbuf.st_size;
 
-    if(!fs) {
-      std::cerr << "Unable to read file " << filename;
-      throw 1;
-    }
+    char *buffer = (char*) calloc(nchars + 1, sizeof(char));
+    size_t nread = fread(buffer, sizeof(char), nchars, fp);
 
-    fs.read(buffer, chars);
+    buffer[nread] = '\0';
 
-    std::string contents(buffer, chars);
+    fclose(fp);
+
+    std::string contents(buffer);
 
     free(buffer);
 

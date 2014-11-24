@@ -360,11 +360,8 @@ namespace occa {
       int varCount = 1;
 
       for(int i = 0; i < leafCount; ++i){
-        std::cout << "1. leaves[i]->value = " << leaves[i]->value << '\n';
         if(leaves[i]->value == "::"){
           for(; i < leafCount; ++i){
-            std::cout << "2. leaves[i]->value = " << leaves[i]->value << '\n';
-
             if(leaves[i]->value == ",")
               ++varCount;
           }
@@ -372,8 +369,6 @@ namespace occa {
           break;
         }
       }
-
-      std::cout << "varCount = " << varCount << '\n';
 
       int leafPos  = 0;
 
@@ -429,8 +424,6 @@ namespace occa {
 
       varInfo &var = addVarInfoNode(0);
       int leafPos  = var.loadFromFortran(*this, 1);
-
-      std::cout << "1. var = " << var << '\n';
 
       if((sInfo->up != NULL)              &&
          (sInfo->up->scopeVarMap.find(var.name) ==
@@ -3014,7 +3007,7 @@ namespace occa {
       varInfo var;
       nodeRoot = var.loadFromFortran(*this, nodeRoot);
 
-      std::cout << "2. var = " << var << '\n';
+      std::cout << "var = " << var << '\n';
 
       if( !(var.info & varType::functionDef) ){
         while(nodeRoot){

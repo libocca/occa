@@ -1325,35 +1325,9 @@ namespace occa {
     }
 
     inline void addInclude(const std::string &filename){
-      int fileHandle = ::open(filename.c_str(), O_RDWR);
-
-      if(fileHandle == 0){
-        printf("File [ %s ] does not exist.\n", filename.c_str());
-        throw 1;
-      }
-
-      struct stat fileInfo;
-      const int status = fstat(fileHandle, &fileInfo);
-
-      if(status != 0){
-        printf( "File [ %s ] gave a bad fstat.\n" , filename.c_str());
-        throw 1;
-      }
-
-      const uintptr_t fileSize = fileInfo.st_size;
-
-      char *cFile = new char[fileSize + 1];
-      cFile[fileSize] = '\0';
-
-      ::read(fileHandle, cFile, fileSize);
-
-      ::close(fileHandle);
-
       header += '\n';
-      header += cFile;
+      header += readFile(filename);
       header += '\n';
-
-      delete [] cFile;
     }
 
     template <class TM>

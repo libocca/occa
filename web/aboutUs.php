@@ -86,6 +86,15 @@
     </div>
   </div>
 
+  <div class="ui contributor profile segment">
+    <div class="image">
+      <img src="/images/aboutUs/nigel.png"/>
+    </div>
+    <div class="info">
+      <p align="center" class="name"> Nigel Nunn </p>
+    </div>
+  </div>
+
   <h2 id="Collaborations" class="ui dividing header"> Collaborations </h2>
 
   <div class="ui collaborator celled grid">

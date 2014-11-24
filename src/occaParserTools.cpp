@@ -453,31 +453,27 @@ namespace occa {
     }
 
     char* cReadFile(const std::string &filename){
-      int fileHandle = ::open(filename.c_str(), O_RDWR);
+      // NBN: handle EOL chars on Windows
+      FILE *fp = fopen(filename.c_str(), "r");
 
-      if(fileHandle == 0){
-        printf("File [ %s ] does not exist.\n", filename.c_str());
+      if(!fp){
+        printf("Failed to open: %s\n", filename.c_str());
         throw 1;
       }
 
-      struct stat fileInfo;
-      const int status = fstat(fileHandle, &fileInfo);
+      struct stat statbuf;
+      stat(filename.c_str(), &statbuf);
 
-      if(status != 0){
-        printf( "File [ %s ] gave a bad fstat.\n" , filename.c_str());
-        throw 1;
-      }
+      const size_t nchars = statbuf.st_size;
 
-      const uintptr_t chars = fileInfo.st_size;
+      char *buffer = (char*) calloc(nchars + 1, sizeof(char));
+      size_t nread = fread(buffer, sizeof(char), nchars, fp);
 
-      char *fileContent = new char[chars + 1];
-      fileContent[chars] = '\0';
+      buffer[nread] = '\0';
 
-      ::read(fileHandle, fileContent, chars);
+      fclose(fp);
 
-      ::close(fileHandle);
-
-      return fileContent;
+      return buffer;
     }
 
     int stripComments(std::string &line, const bool parsingC){

@@ -54,13 +54,13 @@ namespace occa {
       bool updateFortranVar(varInfo &var,
                             const std::string &fortranQualifier);
 
-      void updateFortranVar(varInfo &var,
-                            expNode &expPos,
-                            const int leafPos);
+      int updateFortranVar(varInfo &var,
+                           expNode &expPos,
+                           const int leafPos);
 
-      void updateFortranVar(varInfo &var,
-                            statement &s,
-                            strNode *nodePos);
+      strNode* updateFortranVar(varInfo &var,
+                                statement &s,
+                                strNode *nodePos);
 
       //---[ Qualifier Info ]-----------
       bool has(const std::string &qName) const;

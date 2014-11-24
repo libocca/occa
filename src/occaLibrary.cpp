@@ -70,30 +70,12 @@ namespace occa {
 
     void load(const std::string &filename){
       //---[ Load file ]------
-      struct stat fileInfo;
-
-      int fileHandle = ::open(filename.c_str(), O_RDWR);
-      const int status = fstat(fileHandle, &fileInfo);
-
-      const uintptr_t bytes = fileInfo.st_size;
-
-      if(status != 0)
-        printf("File [%s] gave a bad stat", filename.c_str());
-
-      char *buffer = (char*) malloc(bytes + 1);
-      buffer[bytes] = '\0';
-
-      std::ifstream fs(filename.c_str());
-      if(!fs) {
-        std::cerr << "Unable to read file " << filename;
-        throw 1;
-      }
-
-      fs.read(buffer, bytes);
+      std::string sBuffer = readFile(filename);
+      const char *buffer  = sBuffer.c_str();
 
       //---[ Read file ]------
-      uint32_t *buffer32 = (uint32_t*) buffer;
-      uint64_t *buffer64;
+      const uint32_t *buffer32 = (const uint32_t*) buffer;
+      const uint64_t *buffer64;
 
       const uint32_t headerCount = *(buffer32++);
 
@@ -102,7 +84,7 @@ namespace occa {
 
         const int mode_ = *(buffer32++);
 
-        buffer64 = (uint64_t*) buffer32;
+        buffer64 = (const uint64_t*) buffer32;
         const uint64_t flagsOffset = *(buffer64++);
         const uint64_t flagsBytes  = *(buffer64++);
 
@@ -112,7 +94,7 @@ namespace occa {
         const uint64_t kernelNameOffset = *(buffer64++);
         const uint64_t kernelNameBytes  = *(buffer64++);
 
-        buffer32 = (uint32_t*) buffer64;
+        buffer32 = (const uint32_t*) buffer64;
 
         infoID.kernelName = std::string(buffer + kernelNameOffset,
                                         kernelNameBytes);
@@ -144,8 +126,6 @@ namespace occa {
         headerMutex.unlock();
         //==============================
       }
-
-      free(buffer);
     }
 
     void save(const std::string &filename){

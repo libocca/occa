@@ -527,37 +527,12 @@ namespace occa {
                                                          cachedBinary,
                                                          info);
 
-    cl_int error;
-
-    int fileHandle = ::open(iCachedBinary.c_str(), O_RDWR);
-    if(fileHandle == 0){
-      printf("File [ %s ] does not exist.\n", iCachedBinary.c_str());
-      releaseFile(cachedBinary);
-      throw 1;
-    }
-
-    struct stat fileInfo;
-    const int status = fstat(fileHandle, &fileInfo);
-
-    if(status != 0){
-      printf( "File [ %s ] gave a bad fstat.\n" , iCachedBinary.c_str());
-      releaseFile(cachedBinary);
-      throw 1;
-    }
-
-    const uintptr_t cLength = fileInfo.st_size;
-
-    char *cFunction = new char[cLength + 1];
-    cFunction[cLength] = '\0';
-
-    ::read(fileHandle, cFunction, cLength);
-
-    ::close(fileHandle);
+    std::string cFunction = readFile(iCachedBinary);
 
     std::string catFlags = info.flags + dev->dHandle->compilerFlags;
 
     cl::buildKernelFromSource(data_,
-                              cFunction, cLength,
+                              cFunction.c_str(), cFunction.size(),
                               functionName,
                               catFlags,
                               cachedBinary, iCachedBinary);
@@ -565,8 +540,6 @@ namespace occa {
     cl::saveProgramBinary(data_, cachedBinary);
 
     releaseFile(cachedBinary);
-
-    delete [] cFunction;
 
     return this;
   }
@@ -580,35 +553,13 @@ namespace occa {
 
     cl_int binaryError, error;
 
-    int fileHandle = ::open(filename.c_str(), O_RDWR);
-    if(fileHandle == 0){
-      printf("File [ %s ] does not exist.\n", filename.c_str());
-      throw 1;
-    }
-
-    struct stat fileInfo;
-    const int status = fstat(fileHandle, &fileInfo);
-
-    if(status != 0){
-      printf( "File [ %s ] gave a bad fstat.\n" , filename.c_str());
-      throw 1;
-    }
-
-    const uintptr_t fileSize = fileInfo.st_size;
-
-    unsigned char *cFile = new unsigned char[fileSize + 1];
-    cFile[fileSize] = '\0';
-
-    ::read(fileHandle, cFile, fileSize);
-
-    ::close(fileHandle);
+    std::string cFile = readFile(filename);
 
     cl::buildKernelFromBinary(data_,
-                              cFile, fileSize,
+                              (const unsigned char*) cFile.c_str(),
+                              cFile.size(),
                               functionName,
                               dev->dHandle->compilerFlags);
-
-    delete [] cFile;
 
     return this;
   }

@@ -74,52 +74,30 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      int *qualPos;
+      while(true){
+        int newLeafPos = updateFortranVar(var, expRoot, leafPos);
 
-      const int leafRoot = leafPos;
-      int tmpCount = 0;
+        if(newLeafPos == leafPos)
+          break;
 
-      for(int pass = 0; pass < 2; ++pass){
-        while((leafPos < expRoot.leafCount) &&
-              (expRoot[leafPos].info & expType::qualifier)){
+        std::cout << "expRoot[leafPos]    = " << expRoot[leafPos] << '\n'
+                  << "expRoot[newLeafPos] = " << expRoot[newLeafPos] << '\n';
 
-          if(pass == 1)
-            qualPos[tmpCount] = leafPos;
+        if(var.baseType)
+          std::cout << "baseType->name = " << var.baseType->name << '\n';
 
-          ++leafPos;
-
-          if((leafPos < expRoot.leafCount) &&
-             ((expRoot[leafPos].value == ",") ||
-              (expRoot[leafPos].value == "::"))){
-
-            ++leafPos;
+        if(leafPos < expRoot.leafCount){
+          if(expRoot[newLeafPos].value == ","){
+            ++newLeafPos;
           }
-
-          ++tmpCount;
-        }
-
-        if(pass == 0){
-          if(tmpCount == 0)
+          else if(expRoot[newLeafPos].value == "::"){
+            leafPos = newLeafPos + 1;
             break;
-
-          qualPos  = new int[tmpCount];
-          tmpCount = 0;
-
-          leafPos = leafRoot;
+          }
         }
+
+        leafPos = newLeafPos;
       }
-
-      for(int i = 0; i < tmpCount; ++i){
-        const int pos = qualPos[i];
-        const std::string &value = expRoot[pos].value;
-
-        if( !updateFortranVar(var, value) ){
-          updateFortranVar(var, expRoot, pos);
-        }
-      }
-
-      if(tmpCount)
-        delete [] qualPos;
 
       return leafPos;
     }
@@ -153,48 +131,24 @@ namespace occa {
       if(nodePos == NULL)
         return NULL;
 
-      strNode **qualNodes;
+      while(true){
+        strNode *nNodePos = updateFortranVar(var, s, nodePos);
 
-      strNode *nodeRoot = nodePos;
-      int tmpCount = 0;
+        if(nNodePos == nodePos)
+          break;
 
-      for(int pass = 0; pass < 2; ++pass){
-        while(nodePos &&
-              (nodePos->type & qualifierType)){
-
-          if(pass == 1)
-            qualNodes[tmpCount] = nodePos;
-
-          nodePos = nodePos->right;
-
-          if(nodePos &&
-             ((nodePos->value == ",") ||
-              (nodePos->value == "::"))){
-
-            nodePos = nodePos->right;
+        if(nNodePos){
+          if(nNodePos->value == ","){
+            nNodePos = nNodePos->right;
           }
-
-          ++tmpCount;
+          else if(nNodePos->value == "::"){
+            nNodePos = nNodePos->right;
+            break;
+          }
         }
 
-        if(pass == 0){
-          qualNodes = new strNode*[tmpCount];
-          tmpCount  = 0;
-
-          nodePos = nodeRoot;
-        }
+        nodePos = nNodePos;
       }
-
-      for(int i = 0; i < tmpCount; ++i){
-        const std::string &value = qualNodes[i]->value;
-
-        if( !updateFortranVar(var, value) ){
-          updateFortranVar(var, s, qualNodes[i]);
-        }
-      }
-
-      if(tmpCount)
-        delete [] qualNodes;
 
       return nodePos;
     }
@@ -221,14 +175,21 @@ namespace occa {
       return false;
     }
 
-    void qualifierInfo::updateFortranVar(varInfo &var,
-                                         expNode &expPos,
-                                         const int leafPos){
+    int qualifierInfo::updateFortranVar(varInfo &var,
+                                        expNode &expPos,
+                                        const int leafPos){
+      if(updateFortranVar(var, expPos[leafPos]))
+        return (leafPos + 1);
 
       if(expPos[leafPos].info & expType::type){
         int nextLeafPos = leafPos;
+
         std::string typeName = varInfo::getFullFortranType(expPos, nextLeafPos);
         var.baseType = expPos.sInfo->hasTypeInScope(typeName);
+        std::cout << "typeName = " << typeName << '\n'
+        << "var.baseType = " << var.baseType << '\n';
+
+        return nextLeafPos;
       }
       else{
         const std::string &value = expPos[leafPos].value;
@@ -247,14 +208,23 @@ namespace occa {
               if(var.pointerCount == 0)
                 ++(var.pointerCount);
             }
+
+            return (leafPos + 2);
           }
+
+          return (leafPos + 1);
         }
       }
+
+      return leafPos;
     }
 
-    void qualifierInfo::updateFortranVar(varInfo &var,
-                                         statement &s,
-                                         strNode *nodePos){
+    strNode* qualifierInfo::updateFortranVar(varInfo &var,
+                                             statement &s,
+                                             strNode *nodePos){
+      if(updateFortranVar(var, nodePos->value))
+        return (nodePos->right);
+
       if(nodePos->type & specifierType){
         std::string typeName = varInfo::getFullFortranType(nodePos);
         var.baseType = s.hasTypeInScope(typeName);
@@ -266,19 +236,25 @@ namespace occa {
           nodePos = nodePos->right;
 
           if(nodePos && nodePos->down){
-            nodePos = nodePos->down;
+            strNode *downNode = nodePos->down;
 
-            if(upStringCheck(nodePos->value, "IN"))
+            if(upStringCheck(downNode->value, "IN"))
               add("const", 0);
-            if(upStringCheck(nodePos->value, "OUT") ||
-               upStringCheck(nodePos->value, "INOUT")){
+            if(upStringCheck(downNode->value, "OUT") ||
+               upStringCheck(downNode->value, "INOUT")){
 
               if(var.pointerCount == 0)
                 ++(var.pointerCount);
             }
+
+            return nodePos->right;
           }
+
+          return nodePos;
         }
       }
+
+      return nodePos;
     }
 
     //---[ Qualifier Info ]-------------
@@ -1048,8 +1024,6 @@ namespace occa {
 
       name = expRoot[leafPos++].value;
 
-      std::cout << "name = " << name << '\n';
-
       // Load Args
       if(expRoot.leafCount <= leafPos)
         return leafPos;
@@ -1104,6 +1078,9 @@ namespace occa {
         pointerCount   = varHasType->pointerCount;
         baseType       = varHasType->baseType;
       }
+
+      if( !(info & varType::functionDec) )
+        info |= varType::var;
 
       return leafPos;
     }
@@ -1323,8 +1300,6 @@ namespace occa {
       name = nodePos->value;
       nodePos = nodePos->right;
 
-      std::cout << "name = " << name << '\n';
-
       // Load Args
       if(nodePos == NULL)
         return NULL;
@@ -1380,6 +1355,9 @@ namespace occa {
         pointerCount   = varHasType->pointerCount;
         baseType       = varHasType->baseType;
       }
+
+      if( !(info & varType::functionDec) )
+        info |= varType::var;
 
       return nodePos;
     }
