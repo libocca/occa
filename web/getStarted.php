@@ -21,6 +21,8 @@
 <div class="entry2"><a href="#Windows-Example"      >3.2 Running addVectors</a></div>
 
 <div class="entry1"><a href="#Specialized-Options">4. Specialized Options</a></div>
+<div class="entry2"><a href="#Compiling-Options">4.1 Compiling Options</a></div>
+<div class="entry2"><a href="#Runtime-Options"  >4.2 Runtime Options</a></div>
 
 <?php absInclude("/sidebarEnd.php"); ?>
 
@@ -28,7 +30,7 @@
 
   <h2 id="Linux" class="ui dividing header"> Linux </h2>
   <div class="dsm5 indent1">
-    <h4 class="ui dividing header"> Downloading Source </h4>
+    <h4 id="Linux-Download" class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
       If you don't have git installed, install it with
 
@@ -44,7 +46,7 @@ git clone https://github.com/tcew/OCCA2</pre>
       on the terminal
     </div>
 
-    <h4 class="ui dividing header"> Installation </h4>
+    <h4 id="Linux-Installation" class="ui dividing header"> Installation </h4>
     <div class="dsm5 indent1">
       Install make
 
@@ -76,14 +78,14 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
       for more options
     </div>
 
-    <h4 class="ui dividing header"> Running addVectors </h4>
+    <h4 id="Linux-Example" class="ui dividing header"> Running addVectors </h4>
     <div class="dsm5 indent1">
     </div>
   </div>
 
   <h2 id="MacOSX" class="ui dividing header"> Mac OS X </h2>
   <div class="dsm5 indent1">
-    <h4 class="ui dividing header"> Downloading Source </h4>
+    <h4 id="MacOSX-Download" class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
       If you don't have git installed, you can download Git from their
       <a href="http://git-scm.com/download/mac" class="dsm5 link f_rw bold">site</a>
@@ -100,7 +102,7 @@ git clone https://github.com/tcew/OCCA2</pre>
       on the terminal
     </div>
 
-    <h4 class="ui dividing header"> Installation </h4>
+    <h4 id="MacOSX-Installation" class="ui dividing header"> Installation </h4>
     <div class="dsm5 indent1">
       You'll need some compiler tools which requires the developer tools in Xcode from the App Store
 
@@ -129,36 +131,36 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
       for more options
     </div>
 
-    <h4 class="ui dividing header"> Running addVectors </h4>
+    <h4 id="MacOSX-Example" class="ui dividing header"> Running addVectors </h4>
     <div class="dsm5 indent1">
     </div>
   </div>
 
   <h2 id="Windows" class="ui dividing header"> Windows </h2>
   <div class="dsm5 indent1">
-    <h4 class="ui dividing header"> Downloading Source </h4>
+    <h4 id="Windows-Download" class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
       ?
     </div>
 
-    <h4 class="ui dividing header"> Installation </h4>
+    <h4 id="Windows-Installation" class="ui dividing header"> Installation </h4>
     <div class="dsm5 indent1">
       ?
     </div>
 
-    <h4 class="ui dividing header"> Running addVectors </h4>
+    <h4 id="Windows-Example" class="ui dividing header"> Running addVectors </h4>
     <div class="dsm5 indent1">
       ?
     </div>
   </div>
 
-  <h2 class="ui dividing header"> Specialized Options </h2>
+  <h2 id="Specialized-Options" class="ui dividing header"> Specialized Options </h2>
   <div class="dsm5 indent1">
-    <h4 class="ui dividing header"> Compiling Options </h4>
+    <h4 id="Compiling-Options" class="ui dividing header"> Compiling Options </h4>
     <div class="dsm5 indent1">
     </div>
 
-    <h4 class="ui dividing header"> Run-time Options </h4>
+    <h4 id="Runtime-Options" class="ui dividing header"> Run-time Options </h4>
     <div class="dsm5 indent1">
     </div>
   </div>
