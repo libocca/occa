@@ -367,6 +367,14 @@ namespace occa {
         }
       }
 
+      if((varCount == 1)                  &&
+         (leafCount == 3)                 &&
+         (leaves[0]->value == "IMPLICIT") &&
+         (leaves[1]->value == "NONE")){
+
+        return;
+      }
+
       int leafPos  = 0;
 
       varInfo *firstVar = NULL;

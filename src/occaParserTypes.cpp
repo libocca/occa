@@ -74,47 +74,76 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      std::string *tmpQuals;
-      int tmpCount = 0;
+      int *qualPos;
 
       const int leafRoot = leafPos;
+      int tmpCount;
 
-      while((leafPos < expRoot.leafCount) &&
-            (expRoot.leaves[leafPos]->info & expType::qualifier)){
+      for(int pass = 0; pass < 2; ++pass){
+        while((leafPos < expRoot.leafCount) &&
+              (expRoot.leaves[leafPos]->info & expType::qualifier)){
 
-        ++leafPos;
-
-        if((leafPos < expRoot.leafCount) &&
-           ((expRoot.leaves[leafPos]->value == ",") ||
-            (expRoot.leaves[leafPos]->value == "::"))){
+          if(pass == 1)
+            qualPos[tmpCount] = leafPos;
 
           ++leafPos;
+
+          if((leafPos < expRoot.leafCount) &&
+             ((expRoot.leaves[leafPos]->value == ",") ||
+              (expRoot.leaves[leafPos]->value == "::"))){
+
+            ++leafPos;
+          }
+
+          ++tmpCount;
         }
 
-        ++tmpCount;
-      }
+        if(pass == 0){
+          qualPos  = new int[tmpCount];
+          tmpCount = 0;
 
-      if(tmpCount){
-        tmpQuals = new std::string[tmpCount];
-
-        for(int i = 0; i < tmpCount; ++i)
-          tmpQuals[i] = expRoot.leaves[leafRoot + 2*i]->value;
+          leafPos = leafRoot;
+        }
       }
 
       for(int i = 0; i < tmpCount; ++i){
-        if(tmpQuals[i] == "DEVICE"){
+        const int pos = qualPos[i];
+        const std::string &value = expRoot.leaves[pos]->value;
+
+        std::cout << "value = " << value << '\n';
+
+        if(value == "DEVICE"){
           add("occaFunction");
         }
-        else if(tmpQuals[i] == "POINTER"){
+        else if(value == "POINTER"){
           ++(var.pointerCount);
         }
-        else if(tmpQuals[i] == "VOLATILE"){
+        else if(value == "VOLATILE"){
           add("volatile");
         }
-        else if(tmpQuals[i] == "PARAMETER"){
+        else if(value == "PARAMETER"){
           add("const", 0);
         }
+        else if(value == "INTENT"){
+          std::cout << "HERE = \n";
+
+          expNode *leaf = expRoot.leaves[pos + 1]->leaves[0];
+
+          if(leaf && (leaf->leafCount)){
+            if(upStringCheck(leaf->value, "IN"))
+              add("const", 0);
+            if(upStringCheck(leaf->value, "OUT") ||
+               upStringCheck(leaf->value, "INOUT")){
+
+              if(var.pointerCount == 0)
+                ++(var.pointerCount);
+            }
+          }
+        }
       }
+
+      if(tmpCount)
+        delete [] qualPos;
 
       return leafPos;
     }
