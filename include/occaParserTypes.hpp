@@ -37,15 +37,30 @@ namespace occa {
 
       qualifierInfo clone();
 
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos);
-
       int loadFrom(expNode &expRoot,
                    int leafPos);
 
       int loadFromFortran(varInfo &var,
                           expNode &expRoot,
                           int leafPos);
+
+      strNode* loadFrom(statement &s,
+                        strNode *nodePos);
+
+      strNode* loadFromFortran(varInfo &var,
+                               statement &s,
+                               strNode *nodePos);
+
+      bool updateFortranVar(varInfo &var,
+                            const std::string &fortranQualifier);
+
+      void updateFortranVar(varInfo &var,
+                            expNode &expPos,
+                            const int leafPos);
+
+      void updateFortranVar(varInfo &var,
+                            statement &s,
+                            strNode *nodePos);
 
       //---[ Qualifier Info ]-----------
       bool has(const std::string &qName) const;
@@ -164,7 +179,7 @@ namespace occa {
 
       static int variablesInStatement(strNode *nodePos);
 
-      //---[ NEW ]------------
+      //---[ NEW ]----------------------
       int loadFrom(expNode &expRoot,
                    int leafPos,
                    varInfo *varHasType = NULL);
@@ -196,9 +211,13 @@ namespace occa {
       int loadTypeFromFortran(expNode &expRoot,
                               int leafPos,
                               varInfo *varHasType);
-      //   ===================
-      //======================
 
+      static std::string getFullFortranType(expNode &expRoot,
+                                            int &leafPos);
+      //   ===================
+      //================================
+
+      //---[ OLD ]----------------------
       strNode* loadFrom(statement &s,
                         strNode *nodePos,
                         varInfo *varHasType = NULL);
@@ -221,6 +240,19 @@ namespace occa {
 
       strNode* loadArgsFrom(statement &s,
                             strNode *nodePos);
+
+      //   ---[ Fortran ]-----
+      strNode* loadFromFortran(statement &s,
+                               strNode *nodePos,
+                               varInfo *varHasType = NULL);
+
+      strNode* loadTypeFromFortran(statement &s,
+                                   strNode *nodePos,
+                                   varInfo *varHasType);
+
+      static std::string getFullFortranType(strNode *&nodePos);
+      //   ===================
+      //================================
 
       //---[ Variable Info ]------------
       int leftQualifierCount() const;

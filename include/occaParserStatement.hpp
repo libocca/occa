@@ -141,8 +141,6 @@ namespace occa {
       void initLoadFromNode(strNode *nodeRoot);
       void initLoadFromFortranNode(strNode *nodeRoot);
 
-      std::string getFullFortranType(strNode *&nodePos);
-
       void initOrganization();
 
       void organizeLeaves();

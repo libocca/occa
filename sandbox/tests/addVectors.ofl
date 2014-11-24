@@ -1,4 +1,4 @@
-device real(4) function addTwoNumbers1(a, b)
+device, real(4) function addTwoNumbers1(a, b)
   implicit none
 
   real(4), intent(in) :: a, b
@@ -17,7 +17,7 @@ device subroutine addTwoNumbers2(ab, a, b)
 
 end subroutine addTwoNumbers
 
-kernel function addVectors(entries, a, b, ab)
+kernel subroutine addVectors(entries, a, b, ab)
   implicit none
 
   integer(4), intent(in)  :: entries
@@ -39,4 +39,4 @@ kernel function addVectors(entries, a, b, ab)
      end do
   end do
 
-end function addVectors
+end subroutine addVectors

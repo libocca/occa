@@ -194,6 +194,8 @@ namespace occa {
 
       else
         organize();
+
+      std::cout << "this = " << *this << '\n';
     }
 
     void expNode::organize(){
@@ -357,8 +359,11 @@ namespace occa {
       int varCount = 1;
 
       for(int i = 0; i < leafCount; ++i){
+        std::cout << "1. leaves[i]->value = " << leaves[i]->value << '\n';
         if(leaves[i]->value == "::"){
           for(; i < leafCount; ++i){
+            std::cout << "2. leaves[i]->value = " << leaves[i]->value << '\n';
+
             if(leaves[i]->value == ",")
               ++varCount;
           }
@@ -366,6 +371,8 @@ namespace occa {
           break;
         }
       }
+
+      std::cout << "varCount = " << varCount << '\n';
 
       if((varCount == 1)                  &&
          (leafCount == 3)                 &&
@@ -430,7 +437,7 @@ namespace occa {
       varInfo &var = addVarInfoNode(0);
       int leafPos  = var.loadFromFortran(*this, 1);
 
-      std::cout << "var = " << var << '\n';
+      std::cout << "1. var = " << var << '\n';
 
       if((sInfo->up != NULL)              &&
          (sInfo->up->scopeVarMap.find(var.name) ==
@@ -573,10 +580,8 @@ namespace occa {
         else if(nodePos->type & descriptorType){
           if(nodePos->type & qualifierType)
             leaf->info = expType::qualifier;
-          else{
+          else
             leaf->info  = expType::type;
-            leaf->value = getFullFortranType(nodePos);
-          }
         }
 
         else if(nodePos->type & operatorType){
@@ -600,62 +605,6 @@ namespace occa {
 
         nodePos = nodePos->right;
       }
-    }
-
-    std::string expNode::getFullFortranType(strNode *&nodePos){
-      if( !(nodePos->type & specifierType) )
-        return "";
-
-      const std::string &typeStr = nodePos->value;
-
-      strNode *nextNode = nodePos->right;
-
-      if(nextNode){
-        int bytes = -1;
-
-        nextNode = nodePos->right;
-
-        if(nextNode->value == "*"){
-          nextNode = nextNode->right;
-          bytes   = atoi(nextNode->value.c_str());
-          nodePos = nextNode;
-        }
-        else if((nextNode->value == "(") &&
-                (nextNode->down)){
-          bytes   = atoi(nextNode->down->value.c_str());
-          nodePos = nextNode;
-        }
-        else{
-          return typeStr;
-        }
-
-        // [-] Ignoring complex case
-        const bool isFloat = ((typeStr == "REAL")   ||
-                              (typeStr == "DOUBLE") ||
-                              (typeStr == "COMPLEX"));
-
-        switch(bytes){
-        case 1:
-          return "char";
-        case 2:
-          return "short";
-        case 4:
-          if(isFloat)
-            return "float";
-          else
-            return "int";
-        case 8:
-          if(isFloat)
-            return "double";
-          else
-            return "long long";
-        default:
-          std::cout << "Error loading " << typeStr << "(" << bytes << ")\n";
-          throw 1;
-        };
-      }
-
-      return typeStr;
     }
 
     void expNode::initOrganization(){
@@ -3052,7 +3001,9 @@ namespace occa {
 
     int statement::checkFortranDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr){
       varInfo var;
-      nodeRoot = var.loadFrom(*this, nodeRoot);
+      nodeRoot = var.loadFromFortran(*this, nodeRoot);
+
+      std::cout << "2. var = " << var << '\n';
 
       if( !(var.info & varType::functionDef) ){
         while(nodeRoot){
