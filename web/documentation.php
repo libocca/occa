@@ -29,7 +29,7 @@
   <h2 id="Host-API" class="ui dividing header"> Host API </h2>
 
   <div class="api buttons wrapper">
-    <a href="/documentation/hostAPI/CPP.php">
+    <a href="/documentation/hostAPI/CPP.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -37,7 +37,7 @@
         <div class="name"> C++ </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/C.php">
+    <a href="/documentation/hostAPI/C.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -45,7 +45,7 @@
         <div class="name"> C </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/CS.php">
+    <a href="/documentation/hostAPI/CS.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -53,7 +53,7 @@
         <div class="name"> C# </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Python.php">
+    <a href="/documentation/hostAPI/Python.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -61,7 +61,7 @@
         <div class="name"> Python </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Fortran.php">
+    <a href="/documentation/hostAPI/Fortran.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -69,7 +69,7 @@
         <div class="name"> Fortran </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Julia.php">
+    <a href="/documentation/hostAPI/Julia.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -77,7 +77,7 @@
         <div class="name"> Julia </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Matlab.php">
+    <a href="/documentation/hostAPI/Matlab.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -90,7 +90,7 @@
   <h2 id="Device-API" class="ui dividing header"> Device API </h2>
 
   <div class="api buttons wrapper">
-    <a href="/documentation/deviceAPI/OKL.php">
+    <a href="/documentation/deviceAPI/OKL.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
@@ -98,7 +98,7 @@
         <div class="name"> OKL </div>
       </div>
     </a>
-    <a href="/documentation/deviceAPI/OFL.php">
+    <a href="/documentation/deviceAPI/OFL.php" class="dsm5 link">
       <div class="ui segment">
         <div class="wrapper">
           <img src="/images/apiLogos/python.png"/>
