@@ -1,0 +1,26 @@
+|--------------+------------+------------+------------+--------------|
+| abap         | dot        | java       | objectivec | sjs          |
+| actionscript | eiffel     | javascript | ocaml      | smarty       |
+| ada          | ejs        | json       | pascal     | snippets     |
+| apache_conf  | elixir     | jsoniq     | perl       | soy_template |
+| applescript  | elm        | jsp        | pgsql      | space        |
+| asciidoc     | erlang     | jsx        | php        | sql          |
+| assembly_x86 | forth      | julia      | plain_text | stylus       |
+| autohotkey   | ftl        | latex      | powershell | svg          |
+| batchfile    | gcode      | less       | praat      | tcl          |
+| c9search     | gherkin    | liquid     | prolog     | tex          |
+| c_cpp        | gitignore  | lisp       | properties | text         |
+| cirru        | glsl       | livescript | protobuf   | textile      |
+| clojure      | golang     | logiql     | python     | toml         |
+| cobol        | groovy     | lsl        | r          | twig         |
+| coffee       | haml       | lua        | rdoc       | typescript   |
+| coldfusion   | handlebars | luapage    | rhtml      | vala         |
+| csharp       | haskell    | lucene     | ruby       | vbscript     |
+| css          | haxe       | makefile   | rust       | velocity     |
+| curly        | html       | markdown   | sass       | verilog      |
+| d            | html_ruby  | matlab     | scad       | vhdl         |
+| dart         | ini        | mel        | scala      | xml          |
+| diff         | io         | mushcode   | scheme     | xquery       |
+| django       | jack       | mysql      | scss       | yaml         |
+| dockerfile   | jade       | nix        | sh         |              |
+|--------------+------------+------------+------------+--------------|

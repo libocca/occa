@@ -6,7 +6,7 @@
 
 <div id="id_body" class="fixed body">
 
-  <?php addCodeFromFile("/src/addVectors.okl") ?>
+  <?php addCodeFromFile("/src/addVectors.okl", "c_cpp") ?>
 
 </div> <!--[ id_body ]-->
 

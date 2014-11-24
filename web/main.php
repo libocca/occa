@@ -25,8 +25,8 @@ function highlight($content){
   echo '<span class="f_rw bold highlight">' . $content . '</span>';
 }
 
-function addCodeFromFile($filename){
-  echo '<pre class="code block">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
+function addCodeFromFile($filename, $language = 'c_cpp'){
+  echo '<pre class="code block" language="' . $language . '">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
 }
 
 function addCopyright($startYear){

@@ -3,35 +3,68 @@
 
 <?php absInclude("/menu.php"); ?>
 
-<div id="id_body" class="getStarted">
+<div class="ui toc floating sidebar" style="overlay: true">
+  a
+</div>
+<div class="ui black huge launch right attached button" style="position: fixed; height: 64px; width: 60px; padding: 20px 0px 20px 10px;">
+	<i class="icon list layout" style="padding-top: 3px; vertical-align: top;"></i>
+	<span class="text f_os light" style="display: none;">Contents</span>
+</div>
+<!-- <div class="ui black huge launch right attached button" style="position: fixed; width: 60px;"> -->
+<!-- 	<i class="icon list layout"></i> -->
+<!-- 	<span class="text f_os light" style="display: none; ">Contents</span> -->
+<!-- </div> -->
 
+<div id="id_body" class="fixed body">
 
   <h2 class="ui dividing header"> Linux </h2>
   <div class="dsm5 indent1">
     <h4 class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
-      sudo apt-get install git
-      <br/>git clone https://github.com/tcew/OCCA2
-      <br/>This last command makes a directory OCCA2 and pulls the OCCA source into the new OCCA2 directory
-      <br/>Copy the path to the OCCA directory, you can see this by typing
-      <br/>pwd
-      <br/>on the terminal
+      If you don't have git installed, install it with
+
+      <pre class="code block udSpacing1" language="sh">
+sudo apt-get install git
+git clone https://github.com/tcew/OCCA2</pre>
+
+      This last command makes a directory OCCA2 and pulls the OCCA source into the new OCCA2 directory.
+      Copy the path to the OCCA directory and you can check your absolute path by typing
+
+      <pre class="code block udSpacing1" language="sh">pwd</pre>
+
+      on the terminal
     </div>
 
     <h4 class="ui dividing header"> Installation </h4>
     <div class="dsm5 indent1">
       Install make
-      <br/>sudo apt-get install make
-      <br/>Go to the OCCA2 directory
-      <br/>We're going to save the directory in a variable OCCA_DIR by using
-      <br/>export OCCA_DIR=/absolute/path/to/OCCA2 # For instance: export OCCA_DIR=/home/dsm5/gitRepos/OCCA2
-      <br/>You'll need this when using OCCA, so it's handy to type the line above in your shell init script (like ~/.bashrc or ~/.profile)
-      <br/>Now we'll compile with
-      <br/>make -j 8 # Compile in parallel with 8 threads, feel free to reduce the number
-      <br/>Although the OCCA API is ported to multiple languages, the back-end is mainly in C++.
+
+      <pre class="code block udSpacing1" language="sh">
+sudo apt-get install make</pre>
+
+      Go to the OCCA2 directory.
+      We're going to save the directory in a variable OCCA_DIR by using
+
+      <pre class="code block udSpacing1" language="sh">
+export OCCA_DIR=/absolute/path/to/OCCA2 # For instance: export OCCA_DIR=/home/dsm5/gitRepos/OCCA2</pre>
+
+      You'll need this when using OCCA, so it's handy to type the line above in your shell init script
+      (like <?php highlight('~/.bashrc') ?> or <?php highlight('~/.profile') ?>).
+
+      Now we'll compile with
+
+      <pre class="code block udSpacing1" language="sh">
+make -j 8 # Compile in parallel with 8 threads, feel free to reduce the number</pre>
+
+      Although the OCCA API is ported to multiple languages, the back-end is mainly in C++.
            To specify the C++ compiler for compiling OCCA, you can use
-      <br/>make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead of clang++
-      <br/>Check [Specialized Options] for more options
+
+      <pre class="code block udSpacing1" language="sh">
+make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead of clang++</pre>
+
+      Check
+      <a href="" class="dsm5 link f_rw bold">Specialized Options</a>
+      for more options
     </div>
 
     <h4 class="ui dividing header"> Running addVectors </h4>
@@ -43,30 +76,48 @@
   <div class="dsm5 indent1">
     <h4 class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
-      Download Git from their
+      If you don't have git installed, you can download Git from their
       <a href="http://git-scm.com/download/mac" class="dsm5 link f_rw bold">site</a>
-      <br/>Open the Terminal app
-      <br/>git clone https://github.com/tcew/OCCA2
-      <br/>This last command makes a directory OCCA2 and pulls the OCCA source into the new OCCA2 directory
-      <br/>Copy the path to the OCCA directory, you can see this by typing
-      <br/>pwd
-      <br/>on the terminal
+      <br/>Open the Terminal app to get the OCCA source code
+
+      <pre class="code block udSpacing1" language="sh">
+git clone https://github.com/tcew/OCCA2</pre>
+
+      This last command makes a directory OCCA2 and pulls the OCCA source into the new OCCA2 directory.
+      Copy the path to the OCCA directory and you can check your absolute path by typing
+
+      <pre class="code block udSpacing1" language="sh">pwd</pre>
+
+      on the terminal
     </div>
 
     <h4 class="ui dividing header"> Installation </h4>
     <div class="dsm5 indent1">
-      Install Xcode from the App Store
-      <br/>Install the developer tools in XCode (Add SS)
-      <br/>Go to the OCCA2 directory
-      <br/>We're going to save the directory in a variable OCCA_DIR by using
-      <br/>export OCCA_DIR=/absolute/path/to/OCCA2 # For instance: export OCCA_DIR=/Users/dsm5/gitRepos/OCCA2
-      <br/>You'll need this when using OCCA, so it's handy to type the line above in your shell init script (like ~/.bashrc or ~/.profile)
-      <br/>Now we'll compile with
-      <br/>make -j 8 # Compile in parallel with 8 threads, feel free to reduce the number
-      <br/>Although the OCCA API is ported to multiple languages, the back-end is mainly in C++.
+      You'll need some compiler tools which requires the developer tools in Xcode from the App Store
+
+      <br/>Go to the OCCA2 directory.
+      We're going to save the directory in a variable OCCA_DIR by using
+
+      <pre class="code block udSpacing1" language="sh">
+export OCCA_DIR=/absolute/path/to/OCCA2 # For instance: export OCCA_DIR=/home/dsm5/gitRepos/OCCA2</pre>
+
+      You'll need this when using OCCA, so it's handy to type the line above in your shell init script
+      (like <?php highlight('~/.bashrc') ?> or <?php highlight('~/.profile') ?>).
+
+      Now we'll compile with
+
+      <pre class="code block udSpacing1" language="sh">
+make -j 8 # Compile in parallel with 8 threads, feel free to reduce the number</pre>
+
+      Although the OCCA API is ported to multiple languages, the back-end is mainly in C++.
            To specify the C++ compiler for compiling OCCA, you can use
-      <br/>make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead of clang++
-      <br/>Check [Specialized Options] for more options
+
+      <pre class="code block udSpacing1" language="sh">
+make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead of clang++</pre>
+
+      Check
+      <a href="" class="dsm5 link f_rw bold">Specialized Options</a>
+      for more options
     </div>
 
     <h4 class="ui dividing header"> Running addVectors </h4>
