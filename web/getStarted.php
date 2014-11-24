@@ -140,17 +140,14 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
   <div class="dsm5 indent1">
     <h4 id="Windows-Download" class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
-      ?
     </div>
 
     <h4 id="Windows-Installation" class="ui dividing header"> Installation </h4>
     <div class="dsm5 indent1">
-      ?
     </div>
 
     <h4 id="Windows-Example" class="ui dividing header"> Running addVectors </h4>
     <div class="dsm5 indent1">
-      ?
     </div>
   </div>
 

@@ -30,7 +30,6 @@
 
     <h4 class="ui dividing header"> Vim </h4>
     <div class="dsm5 indent1">
-      ...
     </div>
   </div>
 
