@@ -92,7 +92,8 @@ namespace occa {
       sInfo->labelStatement(nodePos, this, parsingC);
 
       // Don't need to load stuff
-      if(sInfo->type & (macroStatementType  |
+      if(sInfo->type & (skipStatementType   |
+                        macroStatementType  |
                         gotoStatementType   |
                         blockStatementType)            ||
          (sInfo->type == keywordType["occaOuterFor0"]) ||
@@ -373,14 +374,6 @@ namespace occa {
       }
 
       std::cout << "varCount = " << varCount << '\n';
-
-      if((varCount == 1)                  &&
-         (leafCount == 3)                 &&
-         (leaves[0]->value == "IMPLICIT") &&
-         (leaves[1]->value == "NONE")){
-
-        return;
-      }
 
       int leafPos  = 0;
 
@@ -2592,6 +2585,11 @@ namespace occa {
         throw 1;
       }
 
+      if(st & skipStatementType){
+        delete newStatement;
+        return nodeRootEnd;
+      }
+
       addStatement(newStatement);
 
       if(st & simpleStatementType){
@@ -3000,6 +2998,19 @@ namespace occa {
     }
 
     int statement::checkFortranDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr){
+      if((nodeRoot        && (nodeRoot->value        == "IMPLICIT")) &&
+         (nodeRoot->right && (nodeRoot->right->value == "NONE"))){
+
+        while(nodeRoot){
+          if(nodeRoot->type & endStatement)
+            break;
+
+          nodeRoot = nodeRoot->right;
+        }
+
+        return skipStatementType;
+      }
+
       varInfo var;
       nodeRoot = var.loadFromFortran(*this, nodeRoot);
 

@@ -244,6 +244,7 @@ namespace occa {
     static const int occaStatementType      = (1 << 17);
 
     static const int macroStatementType     = (1 << 18);
+    static const int skipStatementType      = (1 << 19);
 
     //   ---[ OCCA Fors ]------
     static const int occaOuterForShift = 0;
