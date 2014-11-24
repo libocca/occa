@@ -6,8 +6,21 @@
 <?php absInclude("/sidebarStart.php"); ?>
 
 <div class="entry1"><a href="#Linux"  >1. Linux</a></div>
+<div class="entry2"><a href="#Linux-Download"     >1.1 Downloading Source</a></div>
+<div class="entry2"><a href="#Linux-Installation" >1.2 Installation</a></div>
+<div class="entry2"><a href="#Linux-Example"      >1.2 Running addVectors</a></div>
+
 <div class="entry1"><a href="#MacOSX" >2. Mac OS X</a></div>
+<div class="entry2"><a href="#MacOSX-Download"     >2.1 Downloading Source</a></div>
+<div class="entry2"><a href="#MacOSX-Installation" >2.2 Installation</a></div>
+<div class="entry2"><a href="#MacOSX-Example"      >2.2 Running addVectors</a></div>
+
 <div class="entry1"><a href="#Windows">3. Windows</a></div>
+<div class="entry2"><a href="#Windows-Download"     >3.1 Downloading Source</a></div>
+<div class="entry2"><a href="#Windows-Installation" >3.2 Installation</a></div>
+<div class="entry2"><a href="#Windows-Example"      >3.2 Running addVectors</a></div>
+
+<div class="entry1"><a href="#Specialized-Options">4. Specialized Options</a></div>
 
 <?php absInclude("/sidebarEnd.php"); ?>
 

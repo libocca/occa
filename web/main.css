@@ -1,9 +1,3 @@
-/*
-  Menu
-  30 px
-  Source
-*/
-
 @font-face {
     font-family:"notoSansRegular";
     src: url("/library/fonts/noto_sans_regular.ttf");
@@ -320,6 +314,9 @@ span.highlight {
     border: 1px;
     border-style : solid;
     border-color: rgba(81, 134, 174, 0.4);
+
+    overflow-y: auto;
+    max-height: calc(100% - 100px);
 }
 
 .sidebar.body .content.title {
@@ -357,6 +354,10 @@ span.highlight {
     text-decoration: none;
 
     color: rgba(20, 20, 20, 0.5);
+}
+
+.sidebar.body .entry2 a {
+    font-size  : 14px;
 }
 /*===[ Sidebar ]===*/
 

@@ -6,17 +6,6 @@ $(document).ready(function(){
       duration: 0
     });
 
-  // Add [Content] to sidebar
-  // $('.launch.button')
-  //   .mouseenter(function(){
-	// 	  $(this).stop().animate({width: '200px'}, 100,
-  //                            function(){$(this).find('.text').show();});
-	//   })
-  //   .mouseleave(function (event){
-	// 	  $(this).find('.text').hide();
-	// 	  $(this).stop().animate({width: '60px'}, 100);
-	//   });
-
   $('.toc.sidebar').sidebar()
     .sidebar({
       overlay: true
