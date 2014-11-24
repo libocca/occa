@@ -32,7 +32,8 @@ namespace occa {
         throw 1;
       }
 
-      loadLanguageTypes();
+      if(!parsingC)
+        loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot);
       // std::cout << (std::string) *globalScope;
@@ -3314,6 +3315,11 @@ namespace occa {
               cLeft = cRight;
             }
           }
+        }
+
+        if(!parsingC){
+          nodePos       = nodePos->push("\\n");
+          nodePos->type = endStatement;
         }
 
         lineNodePos = lineNodePos->right;
