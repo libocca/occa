@@ -509,7 +509,9 @@ div#id_body.aboutUs {
     margin-right: 30px;
 
     width : 180px;
-    height: 260px;
+    height: 250px;
+
+    border-radius: 5px;
 }
 
 .aboutUs .contributor.profile.segment {
@@ -545,7 +547,7 @@ div#id_body.aboutUs {
     font-family: 'openSansRegular';
     font-size  : 16px;
 
-    margin: 20px 0px 0px 0px;
+    margin: 10px 0px 0px 0px;
 }
 
 .aboutUs .profile .info .location {
@@ -553,7 +555,7 @@ div#id_body.aboutUs {
     font-size  : 14px;
     color      : rgb(150, 150, 150);
 
-    margin: 2px 0px 0px 0px;
+    margin: 3px 0px 0px 0px;
 }
 
 .aboutUs .profile .info .links {
@@ -562,7 +564,7 @@ div#id_body.aboutUs {
     width: 165px;
 
     margin: auto;
-    margin-top   : 15px;
+    margin-top   : 22px;
     margin-bottom: 15px;
 }
 
