@@ -75,7 +75,7 @@ namespace occa {
         return leafPos;
 
       std::string *tmpQuals;
-      int tmpCount;
+      int tmpCount = 0;
 
       const int leafRoot = leafPos;
 
@@ -913,6 +913,18 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
+      if((info & varType::functionType) &&
+         (expRoot.leaves[leafPos]->leafCount)){
+
+        expNode &leaf = *(expRoot.leaves[leafPos]);
+
+        argumentCount    = (leaf.leafCount + 1)/2;
+        argumentVarInfos = new varInfo[argumentCount];
+
+        for(int i = 0; i < argumentCount; ++i)
+          argumentVarInfos[i].name = leaf.leaves[2*i]->value;
+      }
+
       return leafPos;
     }
 
@@ -929,6 +941,7 @@ namespace occa {
           if(expRoot.leaves[leafPos]->value == "SUBROUTINE"){
             baseType = expRoot.sInfo->hasTypeInScope("void");
             info    |= varType::functionDec;
+            ++leafPos;
           }
           else{
             baseType = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
@@ -936,9 +949,11 @@ namespace occa {
             if(baseType)
               ++leafPos;
 
-            if(leafPos < expRoot.leafCount){
-              if(expRoot.leaves[leafPos]->value == "FUNCTION")
-                info    |= varType::functionDec;
+            if((leafPos < expRoot.leafCount) &&
+               (expRoot.leaves[leafPos]->value == "FUNCTION")){
+
+              info |= varType::functionDec;
+              ++leafPos;
             }
           }
         }
