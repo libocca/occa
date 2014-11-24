@@ -43,6 +43,10 @@ namespace occa {
       int loadFrom(expNode &expRoot,
                    int leafPos);
 
+      int loadFromFortran(varInfo &var,
+                          expNode &expRoot,
+                          int leafPos);
+
       //---[ Qualifier Info ]-----------
       bool has(const std::string &qName) const;
       const std::string& get(const int pos) const;
@@ -183,6 +187,16 @@ namespace occa {
 
       int loadArgsFrom(expNode &expRoot,
                        int leafPos);
+
+      //   ---[ Fortran ]-----
+      int loadFromFortran(expNode &expRoot,
+                          int leafPos,
+                          varInfo *varHasType = NULL);
+
+      int loadTypeFromFortran(expNode &expRoot,
+                              int leafPos,
+                              varInfo *varHasType);
+      //   ===================
       //======================
 
       strNode* loadFrom(statement &s,

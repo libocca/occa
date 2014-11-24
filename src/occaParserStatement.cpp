@@ -187,7 +187,7 @@ namespace occa {
       }
 
       else if(sInfo->type & functionStatementType)
-        splitFunctionStatement();
+        splitFortranFunctionStatement();
 
       else if(sInfo->type & structStatementType)
         splitStructStatement();
@@ -354,9 +354,19 @@ namespace occa {
     void expNode::splitFortranDeclareStatement(){
       info = expType::declaration;
 
-      std::cout << "HERE\n";
+      int varCount = 1;
 
-      int varCount = 1 + typeInfo::delimeterCount(*this, ",");
+      for(int i = 0; i < leafCount; ++i){
+        if(leaves[i]->value == "::"){
+          for(; i < leafCount; ++i){
+            if(leaves[i]->value == ",")
+              ++varCount;
+          }
+
+          break;
+        }
+      }
+
       int leafPos  = 0;
 
       varInfo *firstVar = NULL;
@@ -370,7 +380,7 @@ namespace occa {
         expNode &leaf = newExp[i];
         varInfo &var  = leaf.addVarInfoNode(0);
 
-        int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+        int nextLeafPos = var.loadFromFortran(*this, leafPos, firstVar);
 
         if(sInfo->up != NULL)
           sInfo->up->addVariable(&var, sInfo);
@@ -387,11 +397,6 @@ namespace occa {
 
         leafPos = sExpEnd;
 
-        // Don't put the [;]
-        if((sExpEnd == leafCount) &&
-           (leaves[sExpEnd - 1]->value == ";"))
-          --sExpEnd;
-
         if(sExpStart < sExpEnd){
           leaf.addNodes(0, 1, sExpEnd - sExpStart);
 
@@ -406,6 +411,27 @@ namespace occa {
       }
 
       expNode::swap(*this, newExp);
+    }
+
+    void expNode::splitFortranFunctionStatement(){
+      info = (expType::function | expType::declaration);
+
+      if(leafCount == 0)
+        return;
+
+      varInfo &var = addVarInfoNode(0);
+      int leafPos  = var.loadFromFortran(*this, 1);
+
+      std::cout << "var = " << var << '\n';
+
+      if((sInfo->up != NULL)              &&
+         (sInfo->up->scopeVarMap.find(var.name) ==
+          sInfo->up->scopeVarMap.end())){
+
+        sInfo->up->addVariable(&var);
+      }
+
+      removeNodes(1, leafPos);
     }
     //  ======================
 
@@ -574,20 +600,25 @@ namespace occa {
 
       const std::string &typeStr = nodePos->value;
 
-      nodePos = nodePos->right;
+      strNode *nextNode = nodePos->right;
 
-      if(nodePos){
+      if(nextNode){
         int bytes = -1;
 
-        if(nodePos->value == "*"){
-          nodePos = nodePos->right;
-          bytes   = atoi(nodePos->value.c_str());
-          nodePos = nodePos->right;
+        nextNode = nodePos->right;
+
+        if(nextNode->value == "*"){
+          nextNode = nextNode->right;
+          bytes   = atoi(nextNode->value.c_str());
+          nodePos = nextNode;
         }
-        else if((nodePos->value == "(") &&
-                (nodePos->down)){
-          bytes   = atoi(nodePos->down->value.c_str());
-          nodePos = nodePos->right;
+        else if((nextNode->value == "(") &&
+                (nextNode->down)){
+          bytes   = atoi(nextNode->down->value.c_str());
+          nodePos = nextNode;
+        }
+        else{
+          return typeStr;
         }
 
         // [-] Ignoring complex case
@@ -613,10 +644,10 @@ namespace occa {
         default:
           std::cout << "Error loading " << typeStr << "(" << bytes << ")\n";
           throw 1;
-        }
+        };
       }
 
-      return "";
+      return typeStr;
     }
 
     void expNode::initOrganization(){

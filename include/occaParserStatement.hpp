@@ -135,6 +135,7 @@ namespace occa {
 
       //  ---[ Fortran ]------
       void splitFortranDeclareStatement();
+      void splitFortranFunctionStatement();
       //  ====================
 
       void initLoadFromNode(strNode *nodeRoot);

@@ -68,6 +68,57 @@ namespace occa {
       return leafPos;
     }
 
+    int qualifierInfo::loadFromFortran(varInfo &var,
+                                       expNode &expRoot,
+                                       int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      std::string *tmpQuals;
+      int tmpCount;
+
+      const int leafRoot = leafPos;
+
+      while((leafPos < expRoot.leafCount) &&
+            (expRoot.leaves[leafPos]->info & expType::qualifier)){
+
+        ++leafPos;
+
+        if((leafPos < expRoot.leafCount) &&
+           ((expRoot.leaves[leafPos]->value == ",") ||
+            (expRoot.leaves[leafPos]->value == "::"))){
+
+          ++leafPos;
+        }
+
+        ++tmpCount;
+      }
+
+      if(tmpCount){
+        tmpQuals = new std::string[tmpCount];
+
+        for(int i = 0; i < tmpCount; ++i)
+          tmpQuals[i] = expRoot.leaves[leafRoot + 2*i]->value;
+      }
+
+      for(int i = 0; i < tmpCount; ++i){
+        if(tmpQuals[i] == "DEVICE"){
+          add("occaFunction");
+        }
+        else if(tmpQuals[i] == "POINTER"){
+          ++(var.pointerCount);
+        }
+        else if(tmpQuals[i] == "VOLATILE"){
+          add("volatile");
+        }
+        else if(tmpQuals[i] == "PARAMETER"){
+          add("const", 0);
+        }
+      }
+
+      return leafPos;
+    }
+
     strNode* qualifierInfo::loadFrom(statement &s,
                                       strNode *nodePos){
       strNode *nodeRoot = nodePos;
@@ -844,6 +895,63 @@ namespace occa {
 
       return (leafPos + 1);
     }
+
+    //   ---[ Fortran ]-------
+    int varInfo::loadFromFortran(expNode &expRoot,
+                                 int leafPos,
+                                 varInfo *varHasType){
+      // Load Type
+      leafPos = loadTypeFromFortran(expRoot, leafPos, varHasType);
+
+      // Load Name
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      name = expRoot.leaves[leafPos++]->value;
+
+      // Load Args
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      return leafPos;
+    }
+
+    int varInfo::loadTypeFromFortran(expNode &expRoot,
+                                     int leafPos,
+                                     varInfo *varHasType){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      if(varHasType == NULL){
+        leafPos = leftQualifiers.loadFromFortran(*this, expRoot, leafPos);
+
+        if(leafPos < expRoot.leafCount){
+          if(expRoot.leaves[leafPos]->value == "SUBROUTINE"){
+            baseType = expRoot.sInfo->hasTypeInScope("void");
+            info    |= varType::functionDec;
+          }
+          else{
+            baseType = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+
+            if(baseType)
+              ++leafPos;
+
+            if(leafPos < expRoot.leafCount){
+              if(expRoot.leaves[leafPos]->value == "FUNCTION")
+                info    |= varType::functionDec;
+            }
+          }
+        }
+      }
+      else{
+        leftQualifiers = varHasType->leftQualifiers.clone();
+        pointerCount   = varHasType->pointerCount;
+        baseType       = varHasType->baseType;
+      }
+
+      return leafPos;
+    }
+    //   =====================
     //========================
 
     strNode* varInfo::loadFrom(statement &s,

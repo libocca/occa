@@ -26,9 +26,10 @@ namespace occa {
 
     const std::string parserBase::parseSource(const char *cRoot){
       strNode *nodeRoot = splitAndPreprocessContent(cRoot);
+      // nodeRoot->print();
+      // throw 1;
 
-      if(parsingC)
-        loadLanguageTypes();
+      loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot, parsingC);
 
@@ -3751,6 +3752,16 @@ namespace occa {
       fortranKeywordType[">="] = binaryOperatorType;
 
       //---[ Types & Specifiers ]---------
+      fortranKeywordType["int"]    = specifierType;
+      fortranKeywordType["bool"]   = specifierType;
+      fortranKeywordType["char"]   = specifierType;
+      fortranKeywordType["long"]   = specifierType;
+      fortranKeywordType["short"]  = specifierType;
+      fortranKeywordType["float"]  = specifierType;
+      fortranKeywordType["double"] = specifierType;
+
+      fortranKeywordType["void"]   = specifierType;
+
       fortranKeywordType["INTEGER"]    = specifierType;
       fortranKeywordType["LOGICAL"]    = specifierType;
       fortranKeywordType["REAL"]       = specifierType;
@@ -3758,8 +3769,8 @@ namespace occa {
       fortranKeywordType["COMPLEX"]    = specifierType;
       fortranKeywordType["CHARACTER"]  = specifierType;
 
-      fortranKeywordType["FUNCTION"]   = specifierType;
-      fortranKeywordType["SUBROUTINE"] = specifierType;
+      fortranKeywordType["FUNCTION"]   = specialKeywordType;
+      fortranKeywordType["SUBROUTINE"] = specialKeywordType;
 
       fortranKeywordType["DOUBLE"] = qualifierType;
 
