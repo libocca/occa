@@ -352,6 +352,7 @@ span.highlight {
 .sidebar.body .entry1 a, .sidebar.body .entry2 a {
     font-family: "ralewayRegular";
     font-size  : 18px;
+    font-weight: 800;
 
     text-decoration: none;
 
