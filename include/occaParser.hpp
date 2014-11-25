@@ -92,7 +92,7 @@ namespace occa {
 
       void markKernelFunctions(statement &s);
 
-      void labelKernelsAsNativeOrNot(statement &s);
+      void labelNativeKernels();
 
       void setupCudaVariables(statement &s);
 

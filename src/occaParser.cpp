@@ -10,8 +10,6 @@ namespace occa {
     }
 
     const std::string parserBase::parseFile(const std::string &filename){
-      initMacros();
-
       if(getFileExtension(filename) == "ofl")
         parsingC = false;
 
@@ -39,7 +37,7 @@ namespace occa {
       }
 
       markKernelFunctions(*globalScope);
-      applyToAllStatements(*globalScope, &parserBase::labelKernelsAsNativeOrNot);
+      labelNativeKernels();
 
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
@@ -1152,7 +1150,7 @@ namespace occa {
 
     bool parserBase::statementHasOklFor(statement &s){
       if(s.type == forStatementType)
-        return (s.expRoot.leafCount == 4);
+        return (s.getForStatementCount() == 4);
 
       statementNode *statementPos = s.statementStart;
 
@@ -1207,25 +1205,34 @@ namespace occa {
       }
     }
 
-    void parserBase::labelKernelsAsNativeOrNot(statement &s){
-      if(!statementIsAKernel(s))
-        return;
+    void parserBase::labelNativeKernels(){
+      statementNode *statementPos = globalScope->statementStart;
 
-      bool hasOccaFor = statementHasOccaFor(s);
-      bool hasOklFor  = statementHasOklFor(s);
+      while(statementPos){
+        statement &s = *(statementPos->value);
 
-      if(hasOccaFor | hasOklFor){
-        varInfo nativeCheckVar;
+        if(statementIsAKernel(s) && // Kernel
+           (s.statementStart != NULL)){
 
-        if(hasOccaFor)
-          nativeCheckVar.name = obfuscate("native", "occa");
-        else
-          nativeCheckVar.name = obfuscate("native", "okl");
+          bool hasOccaFor = statementHasOccaFor(s);
+          bool hasOklFor  = statementHasOklFor(s);
 
-        varInfo *nativeCheckVar2 = s.hasVariableInScope(nativeCheckVar.name);
+          if(hasOccaFor | hasOklFor){
+            varInfo nativeCheckVar;
 
-        if(nativeCheckVar2 == NULL)
-          s.addVariable(nativeCheckVar);
+            if(hasOccaFor)
+              nativeCheckVar.name = obfuscate("native", "occa");
+            else
+              nativeCheckVar.name = obfuscate("native", "okl");
+
+            varInfo *nativeCheckVar2 = s.hasVariableInScope(nativeCheckVar.name);
+
+            if(nativeCheckVar2 == NULL)
+              s.addVariable(nativeCheckVar);
+          }
+        }
+
+        statementPos = statementPos->right;
       }
     }
 
