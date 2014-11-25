@@ -182,6 +182,9 @@ namespace occa {
       if(sInfo->type & declareStatementType)
         splitFortranDeclareStatement();
 
+      if(sInfo->type & updateStatementType)
+        splitFortranUpdateStatement();
+
       else if((sInfo->type & (ifStatementType  |
                               forStatementType |
                               whileStatementType)) &&
@@ -455,6 +458,45 @@ namespace occa {
             sInfo->up->addVariable(&var, sInfo);
         }
       }
+    }
+
+    void expNode::splitFortranUpdateStatement(){
+      if(leafCount == 0)
+        return;
+
+      organize(parsingFortran);
+
+      varInfo *funcExp = sInfo->getFunctionVar();
+
+      if((funcExp == NULL)            ||
+         ((*this)[0].value    != "=") ||
+         ((*this)[0][0].value != funcExp->name)){
+
+        addNode(expType::operator_, leafCount);
+        (*this)[leafCount - 1].value = ";";
+
+        return;
+      }
+
+      expNode *retValueLeaf = &((*this)[0][1]);
+
+      delete &((*this)[0][0]);
+      delete &((*this)[0]);
+      delete [] leaves;
+
+      info = expType::return_;
+
+      leaves    = new expNode*[2];
+      leafCount = 2;
+
+      leaves[0] = new expNode(*this);
+      leaves[1] = retValueLeaf;
+
+      (*this)[0].info  = expType::printValue;
+      (*this)[0].value = "return";
+
+      addNode(expType::operator_, leafCount);
+      (*this)[leafCount - 1].value = ";";
     }
 
     void expNode::splitFortranFunctionStatement(){
@@ -1801,15 +1843,6 @@ namespace occa {
           return leaf[0].getVarInfo(0).name;
         }
       }
-      else if(info & expType::variable){
-        if(leafCount){
-          const bool hasLQualifier = (leaves[0]->info & expType::type);
-
-          return leaves[hasLQualifier]->value;
-        }
-        else
-          return value;
-      }
 
       return "";
     }
@@ -2150,8 +2183,6 @@ namespace occa {
 
         for(int i = 0; i < leafCount; ++i)
           out << *(leaves[i]);
-
-        out << '\n';
 
         break;
       }
@@ -3571,6 +3602,19 @@ namespace occa {
     varInfo* statement::getFunctionVar(){
       if(type & functionStatementType){
         return &(expRoot.getVarInfo(0));
+      }
+      else if(type & updateStatementType){
+        statement *s = up;
+
+        while(s &&
+              !(s->type & functionStatementType)){
+          s = s->up;
+        }
+
+        if(s)
+          return s->getFunctionVar();
+
+        return NULL;
       }
 
       printf("Not added yet\n");

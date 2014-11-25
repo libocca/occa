@@ -134,6 +134,7 @@ namespace occa {
 
       //  ---[ Fortran ]------
       void splitFortranDeclareStatement();
+      void splitFortranUpdateStatement();
       void splitFortranFunctionStatement();
       //  ====================
 
