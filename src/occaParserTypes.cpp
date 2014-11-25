@@ -1114,13 +1114,15 @@ namespace occa {
 
             stackExpRoots = new expNode[1];
 
-            expNode::swap(stackExpRoots[0], expRoot[leafPos]);
+            setupFortranStackExp(stackExpRoots[0],
+                                 expRoot[leafPos][0]);
           }
         }
         else if((expPos->leafCount) &&
                 (expPos->value == ",")){
 
           stackPointerCount = 1;
+          int found = 0;
 
           for(int pass = 0; pass < 2; ++pass){
 
@@ -1135,8 +1137,9 @@ namespace occa {
                 ++stackPointerCount;
               }
               else {
-                expNode::swap(stackExpRoots[--stackPointerCount],
-                              *(expPos->leaves[1]));
+                ++found;
+                setupFortranStackExp(stackExpRoots[stackPointerCount - found],
+                                     *(expPos->leaves[1]));
               }
 
               expPos = expPos->leaves[0];
@@ -1156,9 +1159,11 @@ namespace occa {
               stackExpRoots = new expNode[stackPointerCount];
             }
             else{
-              expNode::swap(stackExpRoots[--stackPointerCount],
-                            *expPos);
+              setupFortranStackExp(stackExpRoots[0],
+                                   *expPos);
             }
+
+            expPos = &(expRoot[leafPos][0]);
           }
         }
 
@@ -1172,6 +1177,17 @@ namespace occa {
       }
 
       return leafPos;
+    }
+
+    void varInfo::setupFortranStackExp(expNode &stackExp,
+                                       expNode &valueExp){
+      stackExp.info  = expType::C;
+      stackExp.value = "[";
+
+      stackExp.leaves    = new expNode*[1];
+      stackExp.leafCount = 1;
+
+      stackExp.leaves[0] = &valueExp;
     }
     //   =====================
     //==================================

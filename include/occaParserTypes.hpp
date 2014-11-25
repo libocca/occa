@@ -217,6 +217,9 @@ namespace occa {
 
       int loadStackPointersFromFortran(expNode &expRoot,
                                        int leafPos);
+
+      void setupFortranStackExp(expNode &stackExp,
+                                expNode &valueExp);
       //   ===================
       //================================
 

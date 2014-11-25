@@ -24,7 +24,7 @@ kernel subroutine addVectors(entries, a, b, ab)
   real(4)   , intent(in)  :: a(:), b(:)
   real(4)   , intent(out) :: ab(:)
 
-  integer(4), shared    :: sharedVar(16)
+  integer(4), shared    :: sharedVar(16,30)
   integer(4), exclusive :: exclusiveVar
 
   integer :: group, item, N
