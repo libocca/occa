@@ -149,15 +149,8 @@ namespace occa {
 
     bool qualifierInfo::updateFortranVar(varInfo &var,
                                          const std::string &fortranQualifier){
-      if(fortranQualifier == "KERNEL"){
-        add("occaKernel");
-        return true;
-      }
-      if(fortranQualifier == "DEVICE"){
-        add("occaFunction");
-        return true;
-      }
-      else if(fortranQualifier == "POINTER"){
+      // Normal Fortran
+      if(fortranQualifier == "POINTER"){
         ++(var.pointerCount);
         return true;
       }
@@ -167,6 +160,23 @@ namespace occa {
       }
       else if(fortranQualifier == "PARAMETER"){
         add("const", 0);
+        return true;
+      }
+      // OFL Keywords
+      if(fortranQualifier == "KERNEL"){
+        add("occaKernel");
+        return true;
+      }
+      if(fortranQualifier == "DEVICE"){
+        add("occaFunction");
+        return true;
+      }
+      if(fortranQualifier == "SHARED"){
+        add("occaShared");
+        return true;
+      }
+      if(fortranQualifier == "EXCLUSIVE"){
+        add("exclusive");
         return true;
       }
 
@@ -196,8 +206,11 @@ namespace occa {
           if(leaf && (leaf->leafCount)){
             leaf = leaf->leaves[0];
 
-            if(upStringCheck(leaf->value, "IN"))
+            var.leftQualifiers.add("INTENT" + upString(leaf->value));
+
+            if(upStringCheck(leaf->value, "IN")){
               add("const", 0);
+            }
             if(upStringCheck(leaf->value, "OUT") ||
                upStringCheck(leaf->value, "INOUT")){
 
@@ -480,9 +493,9 @@ namespace occa {
             expNode::swap(nestedExps[i], leaf[sLeafPos]);
 
             if(!loadType)
-              nestedExps[i].splitDeclareStatement(false);
+              nestedExps[i].splitDeclareStatement(parsingFortran);
             else
-              nestedExps[i].splitStructStatement(false);
+              nestedExps[i].splitStructStatement(parsingFortran);
 
             leaf.leaves[sLeafPos] = &(nestedExps[i]);
           }
@@ -1089,6 +1102,8 @@ namespace occa {
       if((expRoot[leafPos].value == "(") &&
          (expRoot[leafPos].leafCount)){
 
+        expRoot[leafPos].organize(parsingFortran);
+
         expNode *expPos = &(expRoot[leafPos][0]);
 
         bool hasColon = false;
@@ -1105,8 +1120,6 @@ namespace occa {
 
             expNode::swap(stackExpRoots[0], expRoot[leafPos]);
           }
-
-          ++leafPos;
         }
         else if((expPos->leafCount) &&
                 (expPos->value == ",")){
@@ -1136,6 +1149,10 @@ namespace occa {
             if(hasColon){
               pointerCount      = stackPointerCount;
               stackPointerCount = 0;
+
+              for(int i = 0; i < pointerCount; ++i)
+                rightQualifiers.add("*");
+
               break;
             }
 
@@ -1144,15 +1161,13 @@ namespace occa {
             }
             else{
               expNode::swap(stackExpRoots[--stackPointerCount],
-                            *(expPos->leaves[0]));
+                            *expPos);
             }
           }
-
-          ++leafPos;
         }
-      }
 
-      std::cout << "pointerCount = " << pointerCount << '\n';
+        ++leafPos;
+      }
 
       return leafPos;
     }

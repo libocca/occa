@@ -96,6 +96,9 @@ namespace occa {
     extern bool cKeywordsAreInitialized;
     extern bool fortranKeywordsAreInitialized;
 
+    // By default, parsingC is true;
+    static const bool parsingFortran = false;
+
     //   ---[ Delimeters ]---------
     static const char whitespace[]     = " \t\r\n\v\f\0";
 

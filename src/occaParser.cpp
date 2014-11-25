@@ -615,12 +615,13 @@ namespace occa {
       strNode *nodeRoot;
 
       initKeywords(parsingC);
-      initMacros();
 
       nodeRoot = splitContent(cRoot, parsingC);
 
-      if(parsingC)
+      if(parsingC){
+        initMacros();
         nodeRoot = preprocessMacros(nodeRoot);
+      }
 
       nodeRoot = labelCode(nodeRoot, parsingC);
 
@@ -3076,8 +3077,7 @@ namespace occa {
           }
 
           if(status != insideCommentBlock){
-            if(parsingC)
-              status = stripComments(line);
+            status = stripComments(line, parsingC);
 
             strip(line);
 

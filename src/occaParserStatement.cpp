@@ -197,7 +197,7 @@ namespace occa {
         splitStructStatement();
 
       else
-        organize(false);
+        organize(parsingFortran);
 
       std::cout << "this = " << *this << '\n';
     }
@@ -391,9 +391,6 @@ namespace occa {
 
         int nextLeafPos = var.loadFromFortran(*this, leafPos, firstVar);
 
-        if(sInfo->up != NULL)
-          sInfo->up->addVariable(&var, sInfo);
-
         if(i == 0){
           leaf.leaves[0]->info |= expType::type;
           firstVar = &var;
@@ -420,6 +417,36 @@ namespace occa {
       }
 
       expNode::swap(*this, newExp);
+
+      //---[ Check INTENT ]---
+      const bool hasIn    = firstVar->hasQualifier("INTENTIN");
+      const bool hasOut   = firstVar->hasQualifier("INTENTOUT");
+      const bool hasInOut = firstVar->hasQualifier("INTENTINOUT");
+
+      if(hasIn || hasOut || hasInOut){
+        if(hasIn)
+          firstVar->removeQualifier("INTENTIN");
+        else if(hasOut)
+          firstVar->removeQualifier("INTENTOUT");
+        else if(hasInOut)
+          firstVar->removeQualifier("INTENTINOUT");
+
+        for(int i = 0; i < varCount; ++i){
+          varInfo &var = leaves[i]->getVarInfo(0);
+
+
+        }
+
+        sInfo->type = skipStatementType;
+      }
+      else{ // Add variables to scope
+        for(int i = 0; i < varCount; ++i){
+          varInfo &var = getVarInfo(i);
+
+          if(sInfo->up != NULL)
+            sInfo->up->addVariable(&var, sInfo);
+        }
+      }
     }
 
     void expNode::splitFortranFunctionStatement(){
@@ -3129,8 +3156,10 @@ namespace occa {
         while(nodePos &&
               (nodePos->value != endTag)){
 
-          nodePos = loadFromNode(nodePos, false);
+          nodePos = loadFromNode(nodePos, parsingFortran);
         }
+
+        nodePos = skipAfterStatement(nodePos);
       }
 
       std::cout << "this = " << *this << '\n';
