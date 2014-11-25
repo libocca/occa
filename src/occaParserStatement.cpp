@@ -136,8 +136,6 @@ namespace occa {
       if(lastNewNode == NULL)
         newNodeRoot->print();
 
-      newNodeRoot->print();
-
       if(parsingC)
         splitAndOrganizeNode(newNodeRoot);
       else
@@ -201,7 +199,7 @@ namespace occa {
       else
         organize(parsingFortran);
 
-      std::cout << "this = " << *this << '\n';
+      // std::cout << "this = " << *this << '\n';
     }
 
     void expNode::organize(const bool parsingC){
@@ -3175,8 +3173,6 @@ namespace occa {
 
         nodePos = skipAfterStatement(nodePos);
       }
-
-      std::cout << "this = " << *this << '\n';
 
       return nodePos;
     }
