@@ -1615,6 +1615,10 @@ namespace occa {
       leftQualifiers.remove(qName);
     }
 
+    void varInfo::removeRightQualifier(const std::string &qName){
+      rightQualifiers.remove(qName);
+    }
+
     const std::string& varInfo::getLeftQualifier(const int pos) const {
       return leftQualifiers.get(pos);
     }

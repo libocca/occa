@@ -271,6 +271,7 @@ namespace occa {
                              int pos = -1);
 
       void removeQualifier(const std::string &qName);
+      void removeRightQualifier(const std::string &qName);
 
       const std::string& getLeftQualifier(const int pos) const;
       const std::string& getRightQualifier(const int pos) const;
