@@ -125,6 +125,8 @@ namespace occa {
       statementNode* splitKernelStatement(statementNode *sn,
                                           kernelInfo &info);
 
+      statementNode* getOuterLoopsInStatement(statement &s);
+
       void loadKernelInfos();
 
       void stripOccaFromKernel(statement &s);

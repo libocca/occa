@@ -1763,7 +1763,6 @@ namespace occa {
 
     statementNode* parserBase::splitKernelStatement(statementNode *sn,
                                                     kernelInfo &info){
-      int kernelCount = 0;
 
       const int occaForType = keywordType["occaOuterFor0"];
 
@@ -1774,23 +1773,8 @@ namespace occa {
       statement& hostKernel = *(s.clone());
       stripOccaFromKernel(hostKernel);
 
-      // Count sub-kernels
-      while(snPos){
-        statement &s2 = *(snPos->value);
-
-        if( (s2.type != occaForType) &&
-            !(s2.type & macroStatementType) ){
-
-          std::cout << "Only outer-loops are supported at the kernel scope:\n"
-                    << s2 << '\n';
-          throw 1;
-        }
-
-        if(s2.type == occaForType)
-          ++kernelCount;
-
-        snPos = snPos->right;
-      }
+      statementNode *outerLoopRoot = getOuterLoopsInStatement(s);
+      int kernelCount = length(outerLoopRoot);
 
       std::stringstream ss;
 
@@ -1813,14 +1797,15 @@ namespace occa {
         info.baseName += '_';
       }
 
-      statementNode *newSNRoot, *newSNEnd;
-
       info.nestedKernels.clear();
 
-      scopeVarMapIterator it = globalScope->scopeVarMap.find(info.name);
-
       // Create empty kernels
-      for(int k = 0; k < kernelCount; ++k){
+      int kID = 0;
+      statementNode *outerLoopPos = outerLoopRoot;
+
+      statementNode *newSNRoot, *newSNEnd;
+
+      while(outerLoopPos){
         statement &s2 = *(new statement(s.depth,
                                         s.type, globalScope));
 
@@ -1831,7 +1816,7 @@ namespace occa {
 
         s.expRoot.cloneTo(s2.expRoot);
 
-        ss << k;
+        ss << kID;
 
         varInfo &kVar = *(s2.getFunctionVar());
         kVar.name    += ss.str();
@@ -1840,10 +1825,13 @@ namespace occa {
 
         globalScope->addVariable(&kVar, &s2);
 
-        if(k)
+        if(kID)
           newSNEnd = newSNEnd->push(new statementNode(info.nestedKernels.back()));
         else
           newSNRoot = newSNEnd = new statementNode(info.nestedKernels.back());
+
+        outerLoopPos = outerLoopPos->right;
+        ++kID;
       }
 
       // Squeeze new kernels after original kernel
@@ -1999,7 +1987,7 @@ namespace occa {
         globalScope->statementCount += (kernelCount - 1);
       }
 
-      // Add kernel guards
+      //---[ Add kernel guards ]--------
       {
         sUp.loadFromNode(labelCode( splitContent("#if OCCA_USING_OPENMP") ));
 
@@ -2037,6 +2025,33 @@ namespace occa {
       }
 
       return newSNEnd->right;
+    }
+
+    statementNode* parserBase::getOuterLoopsInStatement(statement &s){
+      statementNode *snPos = s.statementStart;
+
+      statementNode root;
+      statementNode *tail = &root;
+
+      const int occaForType = keywordType["occaOuterFor0"];
+
+      while(snPos){
+        statement &s2 = *(snPos->value);
+
+        if(s2.type == occaForType){
+          tail = tail->push(new statementNode(&s2));
+        }
+        else{
+          tail->right = getOuterLoopsInStatement(s2);
+
+          if(tail->right)
+            tail = lastNode(tail);
+        }
+
+        snPos = snPos->right;
+      }
+
+      return root.right;
     }
 
     void parserBase::loadKernelInfos(){
