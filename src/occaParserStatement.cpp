@@ -368,15 +368,12 @@ namespace occa {
 
       int varCount = 1;
 
-      for(int i = 0; i < leafCount; ++i){
-        if(leaves[i]->value == "::"){
-          for(; i < leafCount; ++i){
-            if(leaves[i]->value == ",")
-              ++varCount;
-          }
+      varInfo dummyVar;
+      int varStart = dummyVar.loadTypeFromFortran(*this, 0);
 
-          break;
-        }
+      for(int i = varStart; i < leafCount; ++i){
+        if(leaves[i]->value == ",")
+          ++varCount;
       }
 
       int leafPos  = 0;

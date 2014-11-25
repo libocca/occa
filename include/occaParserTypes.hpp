@@ -186,7 +186,7 @@ namespace occa {
 
       int loadTypeFrom(expNode &expRoot,
                        int leafPos,
-                       varInfo *varHasType);
+                       varInfo *varHasType = NULL);
 
       int loadNameFrom(expNode &expRoot,
                        int leafPos);
@@ -210,7 +210,7 @@ namespace occa {
 
       int loadTypeFromFortran(expNode &expRoot,
                               int leafPos,
-                              varInfo *varHasType);
+                              varInfo *varHasType = NULL);
 
       static std::string getFullFortranType(expNode &expRoot,
                                             int &leafPos);
