@@ -3856,7 +3856,9 @@ namespace occa {
       opPrecedence[opHolder(".EQV." , binaryOperatorType)] = 8;
       opPrecedence[opHolder(".NEQV.", binaryOperatorType)] = 8;
 
-      opPrecedence[opHolder("," , binaryOperatorType)]     = 9;
+      opPrecedence[opHolder("=" , binaryOperatorType)]     = 9;
+
+      opPrecedence[opHolder("," , binaryOperatorType)]     = 10;
 
       opLevelMap[0]["**"]     = binaryOperatorType;
       opLevelMap[0]["//"]     = binaryOperatorType;
@@ -3877,7 +3879,8 @@ namespace occa {
       opLevelMap[7][".OR."]   = binaryOperatorType;
       opLevelMap[8][".EQV."]  = binaryOperatorType;
       opLevelMap[8][".NEQV."] = binaryOperatorType;
-      opLevelMap[9][","]      = binaryOperatorType;
+      opLevelMap[9]["="]      = binaryOperatorType;
+      opLevelMap[10][","]     = binaryOperatorType;
 
       keywordType = fortranKeywordType;
     }
