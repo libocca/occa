@@ -136,6 +136,8 @@ namespace occa {
       if(lastNewNode == NULL)
         newNodeRoot->print();
 
+      newNodeRoot->print();
+
       if(parsingC)
         splitAndOrganizeNode(newNodeRoot);
       else
@@ -424,24 +426,32 @@ namespace occa {
       const bool hasInOut = firstVar->hasQualifier("INTENTINOUT");
 
       if(hasIn || hasOut || hasInOut){
-        if(hasIn)
-          firstVar->removeQualifier("INTENTIN");
-        else if(hasOut)
-          firstVar->removeQualifier("INTENTOUT");
-        else if(hasInOut)
-          firstVar->removeQualifier("INTENTINOUT");
-
         for(int i = 0; i < varCount; ++i){
           varInfo &var = leaves[i]->getVarInfo(0);
 
+          if(hasIn)
+            var.removeQualifier("INTENTIN");
+          else if(hasOut)
+            var.removeQualifier("INTENTOUT");
+          else if(hasInOut)
+            var.removeQualifier("INTENTINOUT");
 
+          varInfo *argVar = sInfo->hasVariableInScope(var.name);
+
+          if(argVar != NULL){
+            *(argVar) = var;
+          }
+          else{
+            std::cout << "Error, variable [" << var << "] is not a function argument.\n";
+            throw 1;
+          }
         }
 
         sInfo->type = skipStatementType;
       }
       else{ // Add variables to scope
         for(int i = 0; i < varCount; ++i){
-          varInfo &var = getVarInfo(i);
+          varInfo &var = leaves[i]->getVarInfo(0);
 
           if(sInfo->up != NULL)
             sInfo->up->addVariable(&var, sInfo);
@@ -463,6 +473,10 @@ namespace occa {
           sInfo->up->scopeVarMap.end())){
 
         sInfo->up->addVariable(&var);
+
+        // Add initial arguments (they get updated later)
+        for(int i = 0; i < var.argumentCount; ++i)
+          sInfo->addVariable( &(var.argumentVarInfos[i]) );
       }
 
       removeNodes(1, leafPos);
