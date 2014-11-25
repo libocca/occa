@@ -207,16 +207,10 @@ namespace occa {
             leaf = leaf->leaves[0];
 
             var.leftQualifiers.add("INTENT" + upString(leaf->value));
+            var.rightQualifiers.add("&", 0);
 
-            if(upStringCheck(leaf->value, "IN")){
+            if(upStringCheck(leaf->value, "IN"))
               add("const", 0);
-            }
-            if(upStringCheck(leaf->value, "OUT") ||
-               upStringCheck(leaf->value, "INOUT")){
-
-              if(var.pointerCount == 0)
-                ++(var.pointerCount);
-            }
 
             return (leafPos + 2);
           }
@@ -250,14 +244,11 @@ namespace occa {
           if(nodePos && nodePos->down){
             strNode *downNode = nodePos->down;
 
+            var.leftQualifiers.add("INTENT" + upString(downNode->value));
+            var.rightQualifiers.add("&", 0);
+
             if(upStringCheck(downNode->value, "IN"))
               add("const", 0);
-            if(upStringCheck(downNode->value, "OUT") ||
-               upStringCheck(downNode->value, "INOUT")){
-
-              if(var.pointerCount == 0)
-                ++(var.pointerCount);
-            }
 
             return nodePos->right;
           }
@@ -1084,8 +1075,9 @@ namespace occa {
         }
       }
       else{
-        leftQualifiers = varHasType->leftQualifiers.clone();
-        baseType       = varHasType->baseType;
+        leftQualifiers  = varHasType->leftQualifiers.clone();
+        rightQualifiers = varHasType->rightQualifiers.clone();
+        baseType        = varHasType->baseType;
       }
 
       if( !(info & varType::functionDec) )
@@ -1108,10 +1100,14 @@ namespace occa {
 
         bool hasColon = false;
 
+        // rightQualifiers are copied from [firstVar]
+        if(rightQualifiers.has("*"))
+          rightQualifiers.remove("*");
+
         if(expPos->value != ","){
           if(expPos->value == ":"){
             pointerCount = 1;
-            rightQualifiers.add("*");
+            rightQualifiers.add("*", 0);
           }
           else{
             stackPointerCount = 1;
@@ -1151,7 +1147,7 @@ namespace occa {
               stackPointerCount = 0;
 
               for(int i = 0; i < pointerCount; ++i)
-                rightQualifiers.add("*");
+                rightQualifiers.add("*", 0);
 
               break;
             }
@@ -1167,6 +1163,12 @@ namespace occa {
         }
 
         ++leafPos;
+      }
+
+      if(pointerCount &&
+         rightQualifiers.has("&")){
+
+        rightQualifiers.remove("&");
       }
 
       return leafPos;
@@ -1431,8 +1433,9 @@ namespace occa {
         }
       }
       else{
-        leftQualifiers = varHasType->leftQualifiers.clone();
-        baseType       = varHasType->baseType;
+        leftQualifiers  = varHasType->leftQualifiers.clone();
+        rightQualifiers = varHasType->rightQualifiers.clone();
+        baseType        = varHasType->baseType;
       }
 
       if( !(info & varType::functionDec) )
