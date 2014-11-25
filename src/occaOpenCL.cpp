@@ -1130,6 +1130,11 @@ namespace occa {
   }
 
   template <>
+  void device_t<OpenCL>::waitFor(tag tag_){
+    clWaitForEvents(1, &(tag_.clEvent));
+  }
+
+  template <>
   stream device_t<OpenCL>::genStream(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;

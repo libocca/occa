@@ -609,6 +609,10 @@ namespace occa {
     dHandle->finish();
   }
 
+  void device::waitFor(tag tag_){
+    dHandle->waitFor(tag_);
+  }
+
   stream device::genStream(){
     streams.push_back( dHandle->genStream() );
     return streams.back();

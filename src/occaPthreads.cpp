@@ -717,6 +717,11 @@ namespace occa {
   }
 
   template <>
+  void device_t<Pthreads>::waitFor(tag tag_){
+    finish(); // [-] Not done
+  }
+
+  template <>
   stream device_t<Pthreads>::genStream(){
     return NULL;
   }

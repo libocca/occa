@@ -674,6 +674,9 @@ namespace occa {
   void device_t<OpenMP>::finish(){}
 
   template <>
+  void device_t<OpenMP>::waitFor(tag tag_){}
+
+  template <>
   stream device_t<OpenMP>::genStream(){
     return NULL;
   }

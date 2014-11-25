@@ -225,6 +225,9 @@ namespace occa {
   void device_t<COI>::finish();
 
   template <>
+  void device_t<COI>::waitFor(tag tag_);
+
+  template <>
   stream device_t<COI>::genStream();
 
   template <>

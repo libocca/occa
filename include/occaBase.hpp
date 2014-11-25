@@ -979,6 +979,8 @@ namespace occa {
     virtual void flush()  = 0;
     virtual void finish() = 0;
 
+    virtual void waitFor(tag tag_) = 0;
+
     virtual stream genStream() = 0;
     virtual void freeStream(stream s) = 0;
     virtual stream wrapStream(void *handle_) = 0;
@@ -1064,6 +1066,8 @@ namespace occa {
 
     void flush();
     void finish();
+
+    void waitFor(tag tag_);
 
     stream genStream();
     void freeStream(stream s);
@@ -1165,6 +1169,8 @@ namespace occa {
 
     void flush();
     void finish();
+
+    void waitFor(tag tag_);
 
     stream genStream();
     stream getStream();

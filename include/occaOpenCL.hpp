@@ -251,6 +251,9 @@ namespace occa {
   void device_t<OpenCL>::finish();
 
   template <>
+  void device_t<OpenCL>::waitFor(tag tag_);
+
+  template <>
   stream device_t<OpenCL>::genStream();
 
   template <>

@@ -912,6 +912,11 @@ namespace occa {
   }
 
   template <>
+  void device_t<CUDA>::waitFor(tag tag_){
+    cuEventSynchronize(tag_.cuEvent);
+  }
+
+  template <>
   stream device_t<CUDA>::genStream(){
     OCCA_EXTRACT_DATA(CUDA, Device);
 

@@ -853,6 +853,11 @@ namespace occa {
   }
 
   template <>
+  void device_t<COI>::waitFor(tag tag_){
+    finish(); // [-] Not done
+  }
+
+  template <>
   stream device_t<COI>::genStream(){
     OCCA_EXTRACT_DATA(COI, Device);
 
