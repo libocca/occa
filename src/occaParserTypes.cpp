@@ -210,6 +210,9 @@ namespace occa {
 
           return (leafPos + 1);
         }
+        else if(value == "DIMENSION"){
+          var.loadStackPointersFromFortran(expPos, leafPos + 1);
+        }
       }
 
       return leafPos;
@@ -1024,18 +1027,23 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      if((info & varType::functionType) &&
-         (expRoot[leafPos].leafCount)){
-
+      if(expRoot[leafPos].leafCount){
         expNode &leaf = *(expRoot.leaves[leafPos]);
 
-        argumentCount    = (leaf.leafCount + 1)/2;
+        if(info & varType::functionType){
+          argumentCount = (leaf.leafCount + 1)/2;
 
-        if(argumentCount)
-          argumentVarInfos = new varInfo[argumentCount];
+          if(argumentCount)
+            argumentVarInfos = new varInfo[argumentCount];
 
-        for(int i = 0; i < argumentCount; ++i)
-          argumentVarInfos[i].name = leaf[2*i].value;
+          for(int i = 0; i < argumentCount; ++i)
+            argumentVarInfos[i].name = leaf[2*i].value;
+
+          ++leafPos;
+        }
+        else{
+          leafPos = loadStackPointersFromFortran(expRoot, leafPos);
+        }
       }
 
       return leafPos;
@@ -1064,12 +1072,87 @@ namespace occa {
       }
       else{
         leftQualifiers = varHasType->leftQualifiers.clone();
-        pointerCount   = varHasType->pointerCount;
         baseType       = varHasType->baseType;
       }
 
       if( !(info & varType::functionDec) )
         info |= varType::var;
+
+      return leafPos;
+    }
+
+    int varInfo::loadStackPointersFromFortran(expNode &expRoot,
+                                              int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      if((expRoot[leafPos].value == "(") &&
+         (expRoot[leafPos].leafCount)){
+
+        expNode *expPos = &(expRoot[leafPos][0]);
+
+        bool hasColon = false;
+
+        if(expPos->value != ","){
+          if(expPos->value == ":"){
+            pointerCount = 1;
+            rightQualifiers.add("*");
+          }
+          else{
+            stackPointerCount = 1;
+
+            stackExpRoots = new expNode[1];
+
+            expNode::swap(stackExpRoots[0], expRoot[leafPos]);
+          }
+
+          ++leafPos;
+        }
+        else if((expPos->leafCount) &&
+                (expPos->value == ",")){
+
+          stackPointerCount = 1;
+
+          for(int pass = 0; pass < 2; ++pass){
+
+            while((expPos->leafCount) &&
+                  (expPos->value == ",")){
+
+              if(!hasColon)
+                hasColon = ((expPos->leaves[0]->value == ":") ||
+                            (expPos->leaves[1]->value == ":"));
+
+              if(pass == 0) {
+                ++stackPointerCount;
+              }
+              else {
+                expNode::swap(stackExpRoots[--stackPointerCount],
+                              *(expPos->leaves[1]));
+              }
+
+              expPos = expPos->leaves[0];
+            }
+
+            if(hasColon){
+              pointerCount      = stackPointerCount;
+              stackPointerCount = 0;
+              break;
+            }
+
+            if(pass == 0){
+              stackExpRoots = new expNode[stackPointerCount];
+            }
+            else{
+              expNode::swap(stackExpRoots[--stackPointerCount],
+                            *(expPos->leaves[0]));
+            }
+          }
+
+          ++leafPos;
+        }
+      }
+
+      std::cout << "pointerCount = " << pointerCount << '\n';
 
       return leafPos;
     }
@@ -1334,7 +1417,6 @@ namespace occa {
       }
       else{
         leftQualifiers = varHasType->leftQualifiers.clone();
-        pointerCount   = varHasType->pointerCount;
         baseType       = varHasType->baseType;
       }
 

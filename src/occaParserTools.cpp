@@ -259,9 +259,10 @@ namespace occa {
     }
 
     char isAFortranWordDelimeter(const char *c){
-      if(charIsIn(c[0], fortranWordDelimeter)){
-        if(charIsIn2(c, fortranWordDelimeter2))
-          return 2;
+      if(charIsIn2(c, fortranWordDelimeter2)){
+        return 2;
+      }
+      else if(charIsIn(c[0], fortranWordDelimeter)){
 
         if(c[0] == '.'){
           const char *c2 = (c + 1);

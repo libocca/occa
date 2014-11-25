@@ -119,8 +119,7 @@ namespace occa {
       void splitAndOrganizeNode(strNode *nodeRoot);
       void splitAndOrganizeFortranNode(strNode *nodeRoot);
 
-      void organize();
-      void organizeFortran();
+      void organize(const bool parsingC = true);
 
       void splitDeclareStatement(const int flags = (expFlag::addVarToScope |
                                                     expFlag::addToParent));
@@ -144,6 +143,8 @@ namespace occa {
       void initOrganization();
 
       void organizeLeaves();
+      void organizeFortranLeaves();
+
       void organizeLeaves(const int level);
 
       int mergeRange(const int newLeafType,

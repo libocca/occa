@@ -214,6 +214,9 @@ namespace occa {
 
       static std::string getFullFortranType(expNode &expRoot,
                                             int &leafPos);
+
+      int loadStackPointersFromFortran(expNode &expRoot,
+                                       int leafPos);
       //   ===================
       //================================
 

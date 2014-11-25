@@ -3800,6 +3800,7 @@ namespace occa {
       fortranKeywordType["EXCLUSIVE"] = qualifierType;
 
       //---[ Constants ]------------------
+      fortranKeywordType[":"]       = presetValue;
       fortranKeywordType[".TRUE."]  = presetValue;
       fortranKeywordType[".FALSE."] = presetValue;
 

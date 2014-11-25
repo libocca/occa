@@ -197,16 +197,19 @@ namespace occa {
         splitStructStatement();
 
       else
-        organize();
+        organize(false);
 
       std::cout << "this = " << *this << '\n';
     }
 
-    void expNode::organize(){
+    void expNode::organize(const bool parsingC){
       if(leafCount == 0)
         return;
 
-      organizeLeaves();
+      if(parsingC)
+        organizeLeaves();
+      else
+        organizeFortranLeaves();
     }
 
     void expNode::splitDeclareStatement(const int flags){
@@ -409,7 +412,7 @@ namespace occa {
           for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
 
-          leaf.organizeLeaves();
+          leaf.organizeFortranLeaves();
         }
 
         if(leafPos < leafCount)
@@ -683,6 +686,25 @@ namespace occa {
       //---[ Level 16 ]-----
       organizeLeaves(16);
       //====================
+    }
+
+    void expNode::organizeFortranLeaves(){
+      if(info & (expType::varInfo |
+                 expType::typeInfo))
+        return;
+
+      // Organize leaves bottom -> up
+      for(int i = 0; i < leafCount; ++i){
+        if((leaves[i]->leafCount) &&
+           !(leaves[i]->info & (expType::varInfo |
+                                expType::typeInfo))){
+
+          leaves[i]->organizeFortranLeaves();
+        }
+      }
+
+      for(int i = 0; i < 10; ++i)
+        organizeLeaves(i);
     }
 
     void expNode::organizeLeaves(const int level){
