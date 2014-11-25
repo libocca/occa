@@ -2438,10 +2438,6 @@ namespace occa {
       else if(nodeRoot->type & specialKeywordType)
         return checkFortranSpecialStatementType(nodeRoot, expPtr);
 
-      // Statement: [;]
-      else if(nodeRoot->type & endStatement)
-        return checkFortranUpdateStatementType(nodeRoot, expPtr);
-
       else {
         while(nodeRoot &&
               !(nodeRoot->type & endStatement))

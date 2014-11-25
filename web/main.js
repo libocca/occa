@@ -1,10 +1,15 @@
 $(document).ready(function(){
 
+
   $('.ui.dropdown')
     .dropdown({
       on      : 'hover',
       duration: 0
     });
+
+  // Remove [active] on dropdown menus
+  $('.top.menu .right.menu .topMenu.item .menu a.item')
+    .off('click')
 
   $('.toc.sidebar').sidebar()
     .sidebar({

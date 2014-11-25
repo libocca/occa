@@ -11,10 +11,16 @@
         Downloads
       </a>
 
-      <a class="light topMenu black item <?php addSelected('getStarted') ?>"
-         href="/getStarted.php">
-        Get Started
-      </a>
+	    <div class="ui light topMenu black simple dropdown item <?php addSelected('getStarted') ?>">
+        <a class="topMenu" href="/getStarted.php">
+          Get Started
+        </a>
+        <div class="menu">
+          <a class="item" href="/getStarted.php#Linux"  > Linux    </a>
+          <a class="item" href="/getStarted.php#MacOSX" > Mac OS X </a>
+          <a class="item" href="/getStarted.php#Windows"> Windows  </a>
+        </div>
+      </div>
 
       <a class="light topMenu black item <?php addSelected('tutorials') ?>"
          href="/tutorials.php">
