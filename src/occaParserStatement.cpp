@@ -196,10 +196,8 @@ namespace occa {
       else if(sInfo->type & structStatementType)
         splitStructStatement();
 
-      else{
+      else
         organize(parsingFortran);
-        print();
-      }
 
       // std::cout << "this = " << *this << '\n';
     }
