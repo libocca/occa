@@ -94,13 +94,7 @@ namespace occa {
       expNode *up;
 
       int leafCount;
-      char leafInfo;
-
-      union {
-        expNode **leaves;
-        typeInfo **typeLeaves;
-        varLeaf_t *varLeaves;
-      };
+      expNode **leaves;
 
       expNode();
       expNode(statement &s);
@@ -305,8 +299,6 @@ namespace occa {
 
       varOriginMap_t &varOriginMap;
       varUsedMap_t   &varUsedMap;
-
-      strNode *nodeStart, *nodeEnd;
 
       int depth;
       statement *up;

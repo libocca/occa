@@ -13,7 +13,6 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leafInfo(leafType::exp),
       leaves(NULL) {}
 
     expNode::expNode(statement &s) :
@@ -25,7 +24,6 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leafInfo(leafType::exp),
       leaves(NULL) {}
 
     expNode::expNode(expNode &up_) :
@@ -37,7 +35,6 @@ namespace occa {
       up(&up_),
 
       leafCount(0),
-      leafInfo(leafType::exp),
       leaves(NULL) {}
 
     int expNode::getStatementType(){

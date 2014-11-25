@@ -48,7 +48,7 @@ namespace occa {
       // Broken
       addFunctionPrototypes();
       // Broken
-      applyToAllStatements(*globalScope, &parserBase::updateConstToConstant);
+      updateConstToConstant();
 
       addOccaFors();
 
@@ -946,123 +946,22 @@ namespace occa {
       if(s.getForStatementCount() <= 3)
         return;
 
-      if(4 < s.getForStatementCount()){
-        std::cout << "More than 4 statements for:\n  " << s.expRoot << '\n';
-        throw 1;
-      }
+      occaLoopInfo loopInfo(s);
 
-      s.type = keywordType["occaOuterFor0"];
+      std::string ioLoopVar, ioLoop, loopNest;
+      std::string iter, start;
+      std::string bound, iterCheck;
+      std::string opStride, opSign, iterOp;
 
-      statement &sKernel = *spKernel;
+      loopInfo.getLoopInfo(ioLoopVar, ioLoop, loopNest);
 
-      std::string arg4 = (std::string) *(s.expRoot.leaves[3]);
+      loopInfo.getLoopNode1Info(iter, start);
+      loopInfo.getLoopNode2Info(bound, iterCheck);
+      loopInfo.getLoopNode3Info(opStride, opSign, iterOp);
 
-      // If it has a fourth argument, make sure it's the correct one
-      if( ((arg4.find("inner") == std::string::npos) ||
-           ((arg4 != "inner0") &&
-            (arg4 != "inner1") &&
-            (arg4 != "inner2")))                     &&
-          ((arg4.find("outer") == std::string::npos) ||
-           ((arg4 != "outer0") &&
-            (arg4 != "outer1") &&
-            (arg4 != "outer2"))) ){
+      std::string setupExp = loopInfo.getSetupExpression();
 
-        std::cout << "Wrong 4th statement for:\n  " << s.expRoot << '\n';
-        throw 1;
-      }
-
-      // [-----][#]
-      std::string ioLoopVar = arg4.substr(0,5);
-      std::string ioLoop    = ioLoopVar;
-      std::string loopNest  = arg4.substr(5,1);
-
-      ioLoop[0] += ('A' - 'a');
-
-      //---[ Find operators ]-----------
-      std::string iter, start, bound, stride;
-      std::string iterCheck, iterOp;
-      std::string opSign, opStride;
-
-      expNode &node1 = *(s.expRoot.leaves[0]);
-      expNode &node2 = *(s.expRoot.leaves[1]);
-      expNode &node3 = *(s.expRoot.leaves[2]);
-
-      //---[ Node 1 ]---------
-      if((node1.info != expType::declaration) ||
-         (node1.getVariableCount() != 1)      ||
-         !node1.variableHasInit(0)){
-        std::cout << "Wrong 1st statement for:\n  " << s.expRoot << '\n';
-        throw 1;
-      }
-
-      varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
-
-      if( !iterVar.hasQualifier("occaConst") )
-        iterVar.addQualifier("occaConst");
-
-      iter  = iterVar.name;
-      start = *(node1.getVariableInitNode(0));
-
-      //---[ Node 2 ]---------
-      if((node2.leafCount != 1) ||
-         ((node2[0].value != "<=") &&
-          (node2[0].value != "<" ) &&
-          (node2[0].value != ">" ) &&
-          (node2[0].value != ">="))){
-
-        std::cout << "Wrong 2nd statement for:\n  " << s.expRoot << '\n';
-        throw 1;
-      }
-
-      if(node2[0][0].value == iter){
-        bound = (std::string) node2[0][1];
-      }
-      else if(node2[0][1].value == iter){
-        bound = (std::string) node2[0][0];
-      }
-      else {
-        std::cout << "Wrong 2nd statement for:\n  " << s.expRoot << '\n';
-        throw 1;
-      }
-
-      iterCheck = node2[0].value;
-
-      //---[ Node 3 ]---------
-      if((node3.leafCount != 1) ||
-         ((node3[0].value != "++") &&
-          (node3[0].value != "--") &&
-          (node3[0].value != "+=") &&
-          (node3[0].value != "-="))){
-        std::cout << "Wrong 3nd statement for:\n  " << s.expRoot << '\n';
-        throw 1;
-      }
-
-      iterOp = node3[0].value;
-
-      // [+]+, [+]=
-      // [-]-, [-]=
-      opSign = iterOp[0];
-
-      if((iterOp == "++") || (iterOp == "--"))
-        opStride = "1";
-      else{
-        if(node3[0][0].value == iter){
-          opStride = (std::string) node3[0][1];
-        }
-        else if(node3[0][1].value == iter){
-          opStride = (std::string) node3[0][0];
-        }
-        else {
-          std::cout << "Wrong 3rd statement for:\n  " << s.expRoot << '\n';
-          throw 1;
-        }
-      }
-
-      if(opSign[0] == '-')
-        stride  = "-(";
-      else
-        stride  = "(";
-
+      std::string stride = ((opSign[0] == '-') ? "-(" : "(");
       stride += opStride;
       stride += ")";
       //================================
@@ -1081,7 +980,8 @@ namespace occa {
       ss.str("");
 
       if(opStride != "1"){
-        node1.printOn(ss, "", expFlag::noSemicolon);
+        ss << setupExp;
+        // node1.printOn(ss, "", expFlag::noSemicolon);
 
         ss << ' '
            << opSign
@@ -1089,7 +989,8 @@ namespace occa {
            << " * (" << opStride << "));";
       }
       else{
-        node1.printOn(ss, "", expFlag::noSemicolon);
+        ss << setupExp;
+        // node1.printOn(ss, "", expFlag::noSemicolon);
 
         ss << ' '
            << opSign
@@ -1599,27 +1500,7 @@ namespace occa {
       }
     }
 
-    void parserBase::updateConstToConstant(statement &s){
-      return;
-
-      // Global scope only
-      if((s.depth != 0) ||
-         !(s.type & declareStatementType))
-        return;
-
-      strNode *nodePos = s.nodeStart;
-
-      while(nodePos){
-        if(nodePos->value == "occaConst")
-          nodePos->value = "occaConstant";
-
-        // [*] or [&]
-        if(nodePos->type & (unknownVariable |
-                            binaryOperatorType))
-          break;
-
-        nodePos = nodePos->right;
-      }
+    void parserBase::updateConstToConstant(){
     }
 
     strNode* parserBase::occaExclusiveStrNode(varInfo &var,
@@ -1878,49 +1759,6 @@ namespace occa {
     }
 
     void parserBase::modifyTextureVariables(){
-      return;
-
-      varUsedMapIterator it = varUsedMap.begin();
-
-      while(it != varUsedMap.end()){
-        varInfo *infoPtr = it->first;
-
-        if(infoPtr->hasQualifier("texture")){
-          statement &os = *(varOriginMap[infoPtr]);
-
-          strNode *osNodePos = os.nodeStart;
-
-          while(osNodePos){
-            if(osNodePos->value == infoPtr->name)
-              std::cout << "HERE!\n";
-
-            osNodePos = osNodePos->right;
-          }
-
-          // First node is just a placeholder
-          statementNode *sNodePos = (it->second).right;
-
-          while(sNodePos){
-            statement &s = *(sNodePos->value);
-            strNode *nodePos = s.nodeStart;
-
-            while(nodePos){
-              if((nodePos->type & unknownVariable) &&
-                 (nodePos->value == infoPtr->name)){
-                // [-] HERE
-                std::cout
-                  << "2. nodePos = " << *nodePos << '\n';
-              }
-
-              nodePos = nodePos->right;
-            }
-
-            sNodePos = sNodePos->right;
-          }
-        }
-
-        ++it;
-      }
     }
 
     statementNode* parserBase::splitKernelStatement(statementNode *sn,
@@ -2247,7 +2085,7 @@ namespace occa {
       if(currentS == NULL)
         return "";
 
-      return s.nodeStart->value;
+      return (std::string) s.expRoot;
     }
 
     void parserBase::incrementDepth(statement &s){
@@ -3893,5 +3731,199 @@ namespace occa {
 
       keywordType = fortranKeywordType;
     }
+
+    //---[ OCCA Loop Info ]-------------
+    occaLoopInfo::occaLoopInfo(statement &s,
+                               const std::string &tag){
+      lookForLoopFrom(s, tag);
+    }
+
+    void occaLoopInfo::lookForLoopFrom(statement &s,
+                                       const std::string &tag){
+      sInfo = &s;
+
+      while(sInfo){
+        if((sInfo->type & forStatementType) &&
+           (sInfo->getForStatementCount() > 3)){
+
+          if(4 < sInfo->getForStatementCount()){
+            std::cout << "More than 4 statements for:\n  " << sInfo->expRoot << '\n';
+            throw 1;
+          }
+
+          if(tag.size()){
+            std::string arg4 = (std::string) *(sInfo->getForStatement(3));
+
+            if(arg4 == tag)
+              break;
+          }
+          else
+            break;
+        }
+
+        sInfo = sInfo->up;
+      }
+
+      //---[ Overload iter vars ]---
+      setIterDefaultValues();
+
+      sInfo->type = keywordType["occaOuterFor0"];
+
+      expNode &node1   = *(sInfo->getForStatement(0));
+      expNode &node2   = *(sInfo->getForStatement(1));
+      expNode &node3   = *(sInfo->getForStatement(2));
+      std::string arg4 = (std::string) *(sInfo->getForStatement(3));
+
+      //---[ Node 1 Check ]---
+      if((node1.info != expType::declaration) ||
+         (node1.getVariableCount() != 1)      ||
+         !node1.variableHasInit(0)){
+
+        std::cout << "Wrong 1st statement for:\n  " << sInfo->expRoot << '\n';
+        throw 1;
+      }
+
+      varInfo &iterVar  = node1.getVariableInfoNode(0)->getVarInfo();
+      std::string &iter = iterVar.name;
+
+      if( !iterVar.hasQualifier("occaConst") )
+        iterVar.addQualifier("occaConst");
+
+
+      //---[ Node 2 Check ]---
+      if((node2.leafCount != 1) ||
+         ((node2[0].value != "<=") &&
+          (node2[0].value != "<" ) &&
+          (node2[0].value != ">" ) &&
+          (node2[0].value != ">="))){
+
+        std::cout << "Wrong 2nd statement for:\n  " << sInfo->expRoot << '\n';
+        throw 1;
+      }
+
+      if((node2[0][0].value != iter) &&
+         (node2[0][1].value != iter)){
+
+        std::cout << "Wrong 2nd statement for:\n  " << sInfo->expRoot << '\n';
+        throw 1;
+      }
+
+      //---[ Node 3 Check ]---
+      if((node3.leafCount != 1) ||
+         ((node3[0].value != "++") &&
+          (node3[0].value != "--") &&
+          (node3[0].value != "+=") &&
+          (node3[0].value != "-="))){
+
+        std::cout << "Wrong 3nd statement for:\n  " << sInfo->expRoot << '\n';
+        throw 1;
+      }
+
+      if((node3[0][0].value != iter) &&
+         (node3[0][1].value != iter)){
+
+        std::cout << "Wrong 3rd statement for:\n  " << sInfo->expRoot << '\n';
+        throw 1;
+      }
+
+      //---[ Node 4 Check ]---
+      // If it has a fourth argument, make sure it's the correct one
+      if( ((arg4.find("inner") == std::string::npos) ||
+           ((arg4 != "inner0") &&
+            (arg4 != "inner1") &&
+            (arg4 != "inner2")))                     &&
+          ((arg4.find("outer") == std::string::npos) ||
+           ((arg4 != "outer0") &&
+            (arg4 != "outer1") &&
+            (arg4 != "outer2"))) ){
+
+        std::cout << "Wrong 4th statement for:\n  " << sInfo->expRoot << '\n';
+        throw 1;
+      }
+    }
+
+    // [-] Missing
+    void occaLoopInfo::loadForLoopInfo(int &innerDims, int &outerDims,
+                                       std::string *innerIters,
+                                       std::string *outerIters){
+    }
+
+    void occaLoopInfo::getLoopInfo(std::string &ioLoopVar,
+                                   std::string &ioLoop,
+                                   std::string &loopNest){
+      std::string arg4 = (std::string) *(sInfo->getForStatement(3));
+
+      // [-----][#]
+      ioLoopVar = arg4.substr(0,5);
+      ioLoop    = ioLoopVar;
+      loopNest  = arg4.substr(5,1);
+
+      ioLoop[0] += ('A' - 'a');
+    }
+
+    void occaLoopInfo::getLoopNode1Info(std::string &iter,
+                                        std::string &start){
+      expNode &node1 = *(sInfo->getForStatement(0));
+
+      varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
+
+      iter  = iterVar.name;
+      start = *(node1.getVariableInitNode(0));
+    }
+
+    void occaLoopInfo::getLoopNode2Info(std::string &bound,
+                                        std::string &iterCheck){
+      expNode &node2 = *(sInfo->getForStatement(1));
+
+      iterCheck = node2[0].value;
+
+      if((iterCheck == "<=") || (iterCheck == "<"))
+        bound = (std::string) node2[0][1];
+      else
+        bound = (std::string) node2[0][0];
+    }
+
+    void occaLoopInfo::getLoopNode3Info(std::string &stride,
+                                        std::string &strideOpSign,
+                                        std::string &strideOp){
+      expNode &node3 = *(sInfo->getForStatement(2));
+
+      std::string iter, tmp;
+      getLoopNode1Info(iter, tmp);
+
+      strideOp = node3[0].value;
+
+      // [+]+, [+]=
+      // [-]-, [-]=
+      strideOpSign = strideOp[0];
+
+      if((strideOp == "++") || (strideOp == "--")){
+        stride = "1";
+      }
+      else{
+        if(node3[0][0].value == iter)
+          stride = (std::string) node3[0][1];
+        else
+          stride = (std::string) node3[0][0];
+      }
+    }
+
+    void occaLoopInfo::setIterDefaultValues(){
+      int innerDims, outerDims;
+      std::string innerIters[3], outerIters[3];
+
+      loadForLoopInfo(innerDims, outerDims,
+                      innerIters, outerIters);
+    }
+
+    std::string occaLoopInfo::getSetupExpression(){
+      expNode &node1 = *(sInfo->getForStatement(0));
+
+      std::stringstream ss;
+      node1.printOn(ss, "", expFlag::noSemicolon);
+
+      return ss.str();
+    }
+    //==================================
   };
 };

@@ -11,6 +11,8 @@
 
 namespace occa {
   namespace parserNamespace {
+    class occaLoopInfo;
+
     class parserBase {
     public:
       static const int version = 100;
@@ -106,7 +108,7 @@ namespace occa {
 
       void addParallelFors(statement &s);
 
-      void updateConstToConstant(statement &s);
+      void updateConstToConstant();
 
       strNode* occaExclusiveStrNode(varInfo &info,
                                     const int depth,
@@ -138,8 +140,8 @@ namespace occa {
       statementNode* findStatementWith(statement &s,
                                        findStatementWith_t func);
 
-      int getKernelOuterDim(statement &s);
-      int getKernelInnerDim(statement &s);
+      static int getKernelOuterDim(statement &s);
+      static int getKernelInnerDim(statement &s);
 
       int getOuterMostForDim(statement &s);
       int getInnerMostForDim(statement &s);
@@ -196,6 +198,41 @@ namespace occa {
 
     void initKeywords(const bool parsingC = true);
     void initFortranKeywords();
+
+    //---[ OCCA Loop Info ]-------------
+    class occaLoopInfo {
+    public:
+      statement *sInfo;
+
+      occaLoopInfo(statement &s,
+                   const std::string &tag = "");
+
+      void lookForLoopFrom(statement &s,
+                           const std::string &tag = "");
+
+      void loadForLoopInfo(int &innerDims, int &outerDims,
+                           std::string *innerIters,
+                           std::string *outerIters);
+
+      void getLoopInfo(std::string &ioLoopVar,
+                       std::string &ioLoop,
+                       std::string &loopNest);
+
+      void getLoopNode1Info(std::string &iter,
+                            std::string &start);
+
+      void getLoopNode2Info(std::string &bound,
+                            std::string &iterCheck);
+
+      void getLoopNode3Info(std::string &stride,
+                            std::string &strideOpSign,
+                            std::string &strideOp);
+
+      void setIterDefaultValues();
+
+      std::string getSetupExpression();
+    };
+    //==================================
     //==============================================
   };
 

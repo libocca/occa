@@ -14,11 +14,6 @@ namespace occa {
     class varLeaf_t;
 
     //---[ Qualifier Info Class ]-----------------
-    typedef union {
-      typeInfo *type;
-      varLeaf_t *varLeaf;
-    } typeOrVar;
-
     class qualifierInfo {
     public:
       int qualifierCount;
