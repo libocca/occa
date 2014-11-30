@@ -87,9 +87,7 @@
   </div>
 
   <div class="ui contributor profile segment">
-    <div class="image">
-      <img src="/images/aboutUs/nigel.png"/>
-    </div>
+    <div class="missing image"></div>
     <div class="info">
       <p align="center" class="name"> Nigel Nunn </p>
     </div>

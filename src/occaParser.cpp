@@ -1283,18 +1283,10 @@ namespace occa {
 
       const std::string &forName = (std::string) labelNode;
 
-      if((forName.find("outer") != std::string::npos) &&
-         ((forName == "outer0") ||
-          (forName == "outer1") ||
-          (forName == "outer2"))){
-
+      if(isAnOccaOuterTag(forName)){
         ret = ((1 + forName[5] - '0') << occaOuterForShift);
       }
-      else if((forName.find("inner") != std::string::npos) &&
-              ((forName == "inner0") ||
-               (forName == "inner1") ||
-               (forName == "inner2"))){
-
+      else if(isAnOccaInnerTag(forName)){
         ret = ((1 + forName[5] - '0') << occaInnerForShift);
       }
 
@@ -3843,15 +3835,7 @@ namespace occa {
 
       //---[ Node 4 Check ]---
       // If it has a fourth argument, make sure it's the correct one
-      if( ((arg4.find("inner") == std::string::npos) ||
-           ((arg4 != "inner0") &&
-            (arg4 != "inner1") &&
-            (arg4 != "inner2")))                     &&
-          ((arg4.find("outer") == std::string::npos) ||
-           ((arg4 != "outer0") &&
-            (arg4 != "outer1") &&
-            (arg4 != "outer2"))) ){
-
+      if( !isAnOccaTag(arg4) ){
         std::cout << "Wrong 4th statement for:\n  " << sInfo->expRoot << '\n';
         throw 1;
       }

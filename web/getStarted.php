@@ -74,7 +74,7 @@ make -j 8 # Compile in parallel with 8 threads, feel free to reduce the number</
 make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead of clang++</pre>
 
       Check
-      <a href="" class="dsm5 link f_rw bold">Specialized Options</a>
+      <a href="" class="link">Specialized Options</a>
       for more options
     </div>
 
@@ -88,7 +88,7 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
     <h4 id="MacOSX-Download" class="ui dividing header"> Downloading Source </h4>
     <div class="dsm5 indent1">
       If you don't have git installed, you can download Git from their
-      <a href="http://git-scm.com/download/mac" class="dsm5 link f_rw bold">site</a>
+      <a href="http://git-scm.com/download/mac" class="link">site</a>
       <br/>Open the Terminal app to get the OCCA source code
 
       <pre class="code block udSpacing1" language="sh">
@@ -127,7 +127,7 @@ make -j 8 # Compile in parallel with 8 threads, feel free to reduce the number</
 make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead of clang++</pre>
 
       Check
-      <a href="" class="dsm5 link f_rw bold">Specialized Options</a>
+      <a href="" class="link">Specialized Options</a>
       for more options
     </div>
 

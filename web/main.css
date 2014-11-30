@@ -204,10 +204,10 @@ div#id_bodyContents {
     padding-right: 20px;
 }
 
-a.dsm5.link {
+a.link {
     color: rgb(81, 134, 174);
 
-    text-decoration: none;
+    font-family: "ralewayBold";
 }
 
 .f_os {
@@ -238,10 +238,10 @@ h2.header, h3.header, h4.header {
     font-family: "openSansLight";
 }
 
-.dsm5.indent1 { margin-left: 20px; }
-.dsm5.indent2 { margin-left: 40px; }
-.dsm5.indent3 { margin-left: 60px; }
-.dsm5.indent4 { margin-left: 80px; }
+.indent1 { margin-left: 20px; }
+.indent2 { margin-left: 40px; }
+.indent3 { margin-left: 60px; }
+.indent4 { margin-left: 80px; }
 
 .dSpacing1 { margin-bottom: 10px !important; }
 .dSpacing2 { margin-bottom: 20px !important; }
@@ -259,7 +259,11 @@ h2.header, h3.header, h4.header {
 .udSpacing4 { margin-top: 40px !important; margin-bottom: 40px !important; }
 
 span.highlight {
-    color: rgb(239, 169, 104);
+    color: rgb(43, 179, 153);
+    /* color: rgb(236, 194, 106); */
+    /* color: rgb(239, 169, 104); */
+
+    font-family: "ralewayBold";
 }
 /*===[ Shared Stuff ]===*/
 
@@ -533,6 +537,11 @@ div#id_body.aboutUs {
     margin: auto;
 }
 
+.aboutUs .missing.image {
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+}
+
 .aboutUs .profile.segment .info {
     display: block;
 
@@ -708,7 +717,6 @@ pre.code.block {
     width: calc(100% - 22px);
 
     border-style : solid;
-    border-radius: 7px;
     border-width : 10px 10px 10px 10px;
 
     background-color: rgba(0, 0, 0, 0.01);

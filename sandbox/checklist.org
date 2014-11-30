@@ -1,0 +1,36 @@
+* C
+  [ ] Switch
+  [ ] Typdef
+* Fortran
+  [ ] For
+  [ ] While
+  [ ] If
+  [ ] If Else
+  [ ] Else
+  [ ] Type
+  [ ] N-Dimensional arrays
+  [ ] 1-Offset array access
+* OKL
+  [ ] Fix OpenCL/CUDA -> OCCA
+  [ ] Fix out-of-order loops
+  [ ] Split outer-fors in if's for's and while's
+  [ ] Auto-add barriers
+  [ ] (Host) Proper arg-loops
+  [ ] Varying inner-loop sizes
+  [ ] Make local-variable copies throughout outer loops
+  [ ] Add function prototypes
+  [ ] Global const -> occaConstant
+  [ ] Check iterators/out-of-outer-vars to be immutable
+  [ ] Warn non-shared and non-exclusive variables outside of inner loops
+  [ ] Documentation document
+* Website
+** Documentation
+   [ ] Add language icons
+   [ ] Quick introduction
+   [ ] Host API
+   [ ] Device API
+** Tutorials
+   [ ] addVector example
+** Get Started
+   [ ] Specialized options
+** Home Page

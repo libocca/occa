@@ -187,7 +187,7 @@ namespace occa {
                               whileStatementType)) &&
               (sInfo->type != elseStatementType)){
 
-        splitFlowStatement();
+        splitFortranFlowStatement();
       }
 
       else if(sInfo->type & functionStatementType)
@@ -437,7 +437,7 @@ namespace occa {
             *(argVar) = var;
           }
           else{
-            std::cout << "Error, variable [" << var << "] is not a function argument.\n";
+            std::cout << "Error: variable [" << var << "] is not a function argument.\n";
             throw 1;
           }
         }
@@ -491,6 +491,129 @@ namespace occa {
 
       addNode(expType::operator_, leafCount);
       (*this)[leafCount - 1].value = ";";
+    }
+
+    void expNode::splitFortranFlowStatement(){
+      info = expType::checkSInfo;
+
+      if(leafCount == 0)
+        return;
+
+      // [DO] iter=start,end[,stride][,loop]
+      if(sInfo->type & forStatementType){
+        // Infinite [DO]
+        if(leafCount == 1){
+          leaves[0]->value = "true";
+          leaves[0]->info  = presetValue;
+          leafCount = 1;
+
+          sInfo->type = whileStatementType;
+
+          return;
+        }
+
+        int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
+
+        if((statementCount < 2) || (4 < statementCount)){
+          std::cout << "Error: Wrong [DO] format [" << *this << "]\n";
+          throw 1;
+        }
+
+        int pos[5];
+
+        // Skip [DO]
+        pos[0] = 1;
+
+        for(int i = 0; i < statementCount; ++i){
+          pos[i + 1] = typeInfo::nextDelimeter(*this, pos[i], ",") + 1;
+
+          if(pos[i] == (pos[i + 1] + 1)){
+            std::cout << "Error: No expression given in [" << *this << "]\n";
+            throw 1;
+          }
+        }
+
+        const bool hasOccaTag = isAnOccaTag(leaves[pos[statementCount - 1]]);
+
+        expNode newExp(*sInfo);
+        newExp.info = info;
+        newExp.addNodes(expType::root, 0, 3 + hasOccaTag);
+
+        if(hasOccaTag){
+          expNode &leaf = newExp[3];
+          leaf.addNode(expType::presetValue, 0);
+          leaf[0].value = leaves[pos[statementCount - 1]];
+
+          // Get rid of the tag
+          --statementCount;
+        }
+
+        const std::string &iter = leaves[1]->value;
+        varInfo *var = sInfo->hasVariableInScope(iter);
+
+        if(var == NULL){
+          std::cout << "Error: Iterator [" << iter
+                    << "] is not defined before [" << *this << "]\n";
+          throw 1;
+        }
+
+        for(int i = 0; i < statementCount; ++i){
+          expNode &leaf = newExp[i];
+
+          leaf.addNodes(0, 0, (pos[i + 1] - pos[i]));
+
+          for(int j = 0; j < leaf.leafCount; ++j){
+            delete leaf.leaves[j];
+
+            leaf.leaves[j]     = expDown.leaves[pos[i] + j];
+            leaf.leaves[j]->up = &leaf;
+          }
+
+          if(!(sInfo->type & forStatementType) || (i != 0))
+            leaf.organize();
+          else
+            leaf.splitDeclareStatement();
+            // leaf.splitDeclareStatement(expFlag::addVarToScope);
+        }
+
+        // Missing stride
+        if(statementCount == 2){
+          delete newExp.leaves[2];
+
+          newExp.leaves[2] = createExpNodeFrom("++" + var);
+        }
+      }
+      // [DO WHILE]( EXPR )
+      else if(sInfo->type & whileStatementType){
+      }
+      // [IF]( EXPR )
+      else if(sInfo->type & ifStatementType){
+      }
+      // [ELSE IF]( EXPR )
+      else if(sInfo->type & elseIfStatementType){
+      }
+      // [ELSE]
+      else if(sInfo->type & elseStatementType){
+      }
+
+      print();
+      throw 1;
+
+      varInfo &var = addVarInfoNode(0);
+      int leafPos  = var.loadFromFortran(*this, 1);
+
+      if((sInfo->up != NULL)              &&
+         (sInfo->up->scopeVarMap.find(var.name) ==
+          sInfo->up->scopeVarMap.end())){
+
+        sInfo->up->addVariable(&var);
+
+        // Add initial arguments (they get updated later)
+        for(int i = 0; i < var.argumentCount; ++i)
+          sInfo->addVariable( &(var.argumentVarInfos[i]) );
+      }
+
+      removeNodes(1, leafPos);
     }
 
     void expNode::splitFortranFunctionStatement(){
@@ -4074,6 +4197,35 @@ namespace occa {
 
       return out;
     }
-    //==============================================
+    //============================================
+
+    bool isAnOccaTag(const std::string &tag){
+      return (isAnOccaInnerTag(tag) ||
+              isAnOccaOuterTag(tag));
+    }
+
+    bool isAnOccaInnerTag(const std::string &tag){
+      if( (tag.find("inner") == std::string::npos) ||
+          ((tag != "inner0") &&
+           (tag != "inner1") &&
+           (tag != "inner2")) ){
+
+        return false;
+      }
+
+      return true;
+    }
+
+    bool isAnOccaOuterTag(const std::string &tag){
+      if( (tag.find("outer") == std::string::npos) ||
+          ((tag != "outer0") &&
+           (tag != "outer1") &&
+           (tag != "outer2")) ){
+
+        return false;
+      }
+
+      return true;
+    }
   };
 };

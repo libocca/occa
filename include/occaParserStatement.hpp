@@ -129,6 +129,7 @@ namespace occa {
       //  ---[ Fortran ]------
       void splitFortranDeclareStatement();
       void splitFortranUpdateStatement();
+      void splitFortranFlowStatement();
       void splitFortranFunctionStatement();
       //  ====================
 
@@ -542,6 +543,11 @@ namespace occa {
     };
 
     std::ostream& operator << (std::ostream &out, statement &s);
+    //============================================
+
+    bool isAnOccaTag(const std::string &tag);
+    bool isAnOccaInnerTag(const std::string &tag);
+    bool isAnOccaOuterTag(const std::string &tag);
   };
 };
 

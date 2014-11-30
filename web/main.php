@@ -22,7 +22,7 @@ function addSelected($tag){
 }
 
 function highlight($content){
-  echo '<span class="f_rw bold highlight">' . $content . '</span>';
+  echo '<span class="highlight">' . $content . '</span>';
 }
 
 function addCodeFromFile($filename, $language = 'c_cpp'){
