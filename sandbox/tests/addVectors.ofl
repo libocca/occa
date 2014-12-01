@@ -35,7 +35,15 @@ kernel subroutine addVectors(entries, a, b, ab)
 
         if (N < entries) then
            ab(i) = a(i) + b(i)
+        else if (N < entries) then
+           N = 0
+        else
+           N = 1
         end if
+
+        do while (.TRUE.)
+           N = 2
+        end do
      end do
   end do
 

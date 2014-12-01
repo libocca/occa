@@ -138,8 +138,6 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      std::cout << "sInfo = " << *sInfo << '\n';
-
       // std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
 
       // Only the root needs to free
@@ -626,12 +624,10 @@ namespace occa {
         //   newExp.leaves[2] = createExpNodeFrom("++" + var);
         // }
       }
-      // [DO WHILE]( EXPR )
-      else if(sInfo->type & whileStatementType){
-      }
-      // [IF/ELSE IF]( EXPR )
-      else if((sInfo->type == ifStatementType) ||
-              (sInfo->type == elseIfStatementType)){
+      // [IF/ELSE IF/DO WHILE]( EXPR )
+      else if((sInfo->type == ifStatementType)     ||
+              (sInfo->type == elseIfStatementType) ||
+              (sInfo->type == whileStatementType)){
 
         if(leafCount == 0){
           std::cout << "No expression in if-statement: " << *this << '\n';
@@ -3022,7 +3018,6 @@ namespace occa {
       }
     }
 
-    // [-] Missing Fortran
     strNode* statement::loadWhileFromNode(const int st,
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd,
@@ -3149,7 +3144,6 @@ namespace occa {
       return nextNode;
     }
 
-    // [-] Missing Fortran
     strNode* statement::loadFunctionDefinitionFromNode(const int st,
                                                        strNode *nodeRoot,
                                                        strNode *nodeRootEnd,
@@ -3287,8 +3281,6 @@ namespace occa {
       std::string &nodeValue = nodeRoot->value;
 
       int st = 0;
-
-      std::cout << "nodeValue = " << nodeValue << '\n';
 
       if(nodeValue == "DO")
         st = forStatementType;

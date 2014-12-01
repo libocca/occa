@@ -3686,6 +3686,7 @@ namespace occa {
 
       //---[ Flow Control ]---------------
       fortranKeywordType["DO"]       = flowControlType;
+      fortranKeywordType["WHILE"]    = flowControlType;
       fortranKeywordType["DO WHILE"] = flowControlType;
 
       fortranKeywordType["IF"]       = flowControlType;
