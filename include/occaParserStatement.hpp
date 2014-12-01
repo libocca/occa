@@ -58,12 +58,17 @@ namespace occa {
       static const int addVarToScope  = (1 << 0);
       static const int addTypeToScope = (1 << 1);
       static const int addToParent    = (1 << 2);
-    }
+    };
 
     namespace leafType {
       static const char exp  = (1 << 0);
       static const char type = (1 << 1);
       static const char var  = (1 << 2);
+    };
+
+    namespace statementFlag {
+      static const int updateByNumber     = (1 << 0);
+      static const int updateByUnderscore = (1 << 1);
     };
 
     class varInfo;
@@ -456,6 +461,8 @@ namespace occa {
                                  strNode *nodeRootEnd,
                                  const bool parsingC = true);
 
+      bool isFortranEnd(strNode *nodePos);
+      strNode* getFortranEnd(strNode *nodePos);
       static strNode* getFortranEnd(strNode *nodePos,
                                     const std::string &value);
 
@@ -505,6 +512,9 @@ namespace occa {
       void printTypeDefsInStatement();
 
       //---[ Statement Info ]-----------
+      void createUniqueVariables(std::vector<std::string> &names,
+                                 const int flags = statementFlag::updateByNumber);
+
       void swapExpWith(statement &s);
 
       bool hasQualifier(const std::string &qualifier) const;

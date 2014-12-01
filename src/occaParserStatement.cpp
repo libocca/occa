@@ -512,6 +512,31 @@ namespace occa {
           return;
         }
 
+        // Fortran iterations are not modified
+        std::vector<std::string> names;
+
+        names.push_back("doStart");
+        names.push_back("doEnd");
+        names.push_back("doStride");
+
+        sInfo->createUniqueVariables(names);
+
+        varInfo &doStart  = *(new varInfo);
+        varInfo &doEnd    = *(new varInfo);
+        varInfo &doStride = *(new varInfo);
+
+        doStart.name  = names[0];
+        doEnd.name    = names[1];
+        doStride.name = names[2];
+
+        doStart.baseType  = sInfo->hasTypeInScope("int");
+        doEnd.baseType    = sInfo->hasTypeInScope("int");
+        doStride.baseType = sInfo->hasTypeInScope("int");
+
+        sInfo->addVariable(&doStart);
+        sInfo->addVariable(&doEnd);
+        sInfo->addVariable(&doStride);
+
         int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
 
         if((statementCount < 2) || (4 < statementCount)){
@@ -524,6 +549,7 @@ namespace occa {
         // Skip [DO]
         pos[0] = 1;
 
+        // Find [,] positions
         for(int i = 0; i < statementCount; ++i){
           pos[i + 1] = typeInfo::nextDelimeter(*this, pos[i], ",") + 1;
 
@@ -533,7 +559,10 @@ namespace occa {
           }
         }
 
-        const bool hasOccaTag = isAnOccaTag(leaves[pos[statementCount - 1]]);
+        // Check if last expressiong is an OCCA tag
+        std::string &lastLeafValue = leaves[pos[statementCount - 1]]->value;
+
+        const bool hasOccaTag = isAnOccaTag(lastLeafValue);
 
         expNode newExp(*sInfo);
         newExp.info = info;
@@ -542,12 +571,13 @@ namespace occa {
         if(hasOccaTag){
           expNode &leaf = newExp[3];
           leaf.addNode(expType::presetValue, 0);
-          leaf[0].value = leaves[pos[statementCount - 1]];
+          leaf[0].value = lastLeafValue;
 
           // Get rid of the tag
           --statementCount;
         }
 
+        // Get iter var name
         const std::string &iter = leaves[1]->value;
         varInfo *var = sInfo->hasVariableInScope(iter);
 
@@ -557,31 +587,42 @@ namespace occa {
           throw 1;
         }
 
-        for(int i = 0; i < statementCount; ++i){
-          expNode &leaf = newExp[i];
+        newExp.leaves[0] = sInfo->createExpNodeFrom(iter + "  = " + names[0]);
+        newExp.leaves[1] = sInfo->createExpNodeFrom(iter + " <= " + names[1]);
 
-          leaf.addNodes(0, 0, (pos[i + 1] - pos[i]));
+        if(statementCount == 3)
+          newExp.leaves[2] = sInfo->createExpNodeFrom(iter + " += " + names[2]);
+        else
+          newExp.leaves[2] = sInfo->createExpNodeFrom("++" + iter);
 
-          for(int j = 0; j < leaf.leafCount; ++j){
-            delete leaf.leaves[j];
+        expNode::swap(*this, newExp);
 
-            leaf.leaves[j]     = expDown.leaves[pos[i] + j];
-            leaf.leaves[j]->up = &leaf;
-          }
 
-          if(!(sInfo->type & forStatementType) || (i != 0))
-            leaf.organize();
-          else
-            leaf.splitDeclareStatement();
-            // leaf.splitDeclareStatement(expFlag::addVarToScope);
-        }
+        // for(int i = 0; i < statementCount; ++i){
+        //   expNode &leaf = newExp[i];
 
-        // Missing stride
-        if(statementCount == 2){
-          delete newExp.leaves[2];
+        //   leaf.addNodes(0, 0, (pos[i + 1] - pos[i]));
 
-          newExp.leaves[2] = createExpNodeFrom("++" + var);
-        }
+        //   for(int j = 0; j < leaf.leafCount; ++j){
+        //     delete leaf.leaves[j];
+
+        //     leaf.leaves[j]     = expDown.leaves[pos[i] + j];
+        //     leaf.leaves[j]->up = &leaf;
+        //   }
+
+        //   if(!(sInfo->type & forStatementType) || (i != 0))
+        //     leaf.organize();
+        //   else
+        //     leaf.splitDeclareStatement();
+        //     // leaf.splitDeclareStatement(expFlag::addVarToScope);
+        // }
+
+        // // Missing stride
+        // if(statementCount == 2){
+        //   delete newExp.leaves[2];
+
+        //   newExp.leaves[2] = createExpNodeFrom("++" + var);
+        // }
       }
       // [DO WHILE]( EXPR )
       else if(sInfo->type & whileStatementType){
@@ -595,25 +636,6 @@ namespace occa {
       // [ELSE]
       else if(sInfo->type & elseStatementType){
       }
-
-      print();
-      throw 1;
-
-      varInfo &var = addVarInfoNode(0);
-      int leafPos  = var.loadFromFortran(*this, 1);
-
-      if((sInfo->up != NULL)              &&
-         (sInfo->up->scopeVarMap.find(var.name) ==
-          sInfo->up->scopeVarMap.end())){
-
-        sInfo->up->addVariable(&var);
-
-        // Add initial arguments (they get updated later)
-        for(int i = 0; i < var.argumentCount; ++i)
-          sInfo->addVariable( &(var.argumentVarInfos[i]) );
-      }
-
-      removeNodes(1, leafPos);
     }
 
     void expNode::splitFortranFunctionStatement(){
@@ -2935,7 +2957,6 @@ namespace occa {
       return ret;
     }
 
-    // [-] Missing Fortran
     strNode* statement::loadSimpleFromNode(const int st,
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd,
@@ -2950,7 +2971,6 @@ namespace occa {
       return nextNode;
     }
 
-    // [-] Missing Fortran
     strNode* statement::loadOneStatementFromNode(const int st,
                                                  strNode *nodeRoot,
                                                  strNode *nodeRootEnd,
@@ -2960,23 +2980,33 @@ namespace occa {
       if(nodeRoot)
         nodeRoot->left = NULL;
 
-      if(nodeRootEnd){
-        if(nodeRootEnd->type == startBrace)
-          loadAllFromNode(nodeRootEnd->down);
-        else
-          return loadFromNode(nodeRootEnd);
+      if(parsingC){
+        if(nodeRootEnd){
+          if(nodeRootEnd->type == startBrace)
+            loadAllFromNode(nodeRootEnd->down);
+          else
+            return loadFromNode(nodeRootEnd);
+        }
+      }
+      else{
+        return loadFromNode(nodeRootEnd, parsingC);
       }
 
       return nextNode;
     }
 
-    // [-] Missing Fortran
     strNode* statement::loadForFromNode(const int st,
                                         strNode *nodeRoot,
                                         strNode *nodeRootEnd,
                                         const bool parsingC){
-
-      return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
+      if(parsingC){
+        return loadOneStatementFromNode(st,
+                                        nodeRoot, nodeRootEnd,
+                                        parsingC);
+      }
+      else {
+        return loadUntilFortranEnd(nodeRootEnd);
+      }
     }
 
     // [-] Missing Fortran
@@ -3234,22 +3264,35 @@ namespace occa {
 
       std::string &nodeValue = nodeRoot->value;
 
-      nodeRoot = getFortranEnd(nodeRoot, nodeValue);
+      int st = 0;
 
       if(nodeValue == "DO")
-        return forStatementType;
+        st = forStatementType;
       else if(nodeValue == "DO WHILE")
-        return whileStatementType;
+        st = whileStatementType;
       else if(nodeValue == "IF")
-        return ifStatementType;
+        st = ifStatementType;
       else if(nodeValue == "ELSE IF")
-        return elseIfStatementType;
+        st = elseIfStatementType;
       else if(nodeValue == "ELSE")
-        return elseStatementType;
+        st = elseStatementType;
       else if(nodeValue == "SWITCH")
-        return switchStatementType;
+        st = switchStatementType;
 
-      std::cout << "You found the [Waldo 2] error in:\n"
+      // [-] Missing one-line case
+      while(nodeRoot &&
+            nodeRoot->value != "\\n"){
+
+        nodeRoot = nodeRoot->right;
+      }
+
+      if(nodeRoot)
+        nodeRoot = nodeRoot->right;
+
+      if(st)
+        return st;
+
+      std::cout << "You found the [Waldo 3] error in:\n"
                 << prettyString(nodeRoot, "  ");
       throw 1;
 
@@ -3260,6 +3303,51 @@ namespace occa {
       nodeRoot = skipUntilStatementEnd(nodeRoot);
 
       return blankStatementType;
+    }
+
+    bool statement::isFortranEnd(strNode *nodePos){
+      return (nodePos == getFortranEnd(nodePos));
+    }
+
+    strNode* statement::getFortranEnd(strNode *nodePos){
+      if(type & functionDefinitionType){
+        const std::string &typeName = (getFunctionVar()->baseType->name);
+        const std::string endTag    = ((typeName == "void") ?
+                                       "ENDSUBROUTINE" : "ENDFUNCTION");
+
+        return skipNodeUntil(nodePos, endTag);
+      }
+      else if(type & (forStatementType |
+                      whileStatementType)){
+
+        return skipNodeUntil(nodePos, "ENDDO");
+      }
+      else if(type & ifStatementType){
+        if(type != elseStatementType){
+          int pos1, pos2, pos3;
+
+          strNode *node1 = skipNodeUntil(nodePos, "ENDIF"  , &pos1);
+          strNode *node2 = skipNodeUntil(nodePos, "ELSE IF", &pos2);
+          strNode *node3 = skipNodeUntil(nodePos, "ELSE"   , &pos3);
+
+          if(pos1 < pos2){
+            if(pos1 < pos3)
+              return node1;
+            else
+              return node3;
+          }
+          else{
+            if(pos2 < pos3)
+              return node2;
+            else
+              return node3;
+          }
+        }
+        else
+          return skipNodeUntil(nodePos, "ENDIF");
+      }
+
+      return nodePos;
     }
 
     strNode* statement::getFortranEnd(strNode *nodePos,
@@ -3304,19 +3392,10 @@ namespace occa {
     }
 
     strNode* statement::loadUntilFortranEnd(strNode *nodePos){
-      if(type & functionDefinitionType){
-        const std::string &typeName = (getFunctionVar()->baseType->name);
-        const std::string endTag    = ((typeName == "void") ?
-                                       "ENDSUBROUTINE" : "ENDFUNCTION");
+      while(!isFortranEnd(nodePos))
+        nodePos = loadFromNode(nodePos, parsingFortran);
 
-        while(nodePos &&
-              (nodePos->value != endTag)){
-
-          nodePos = loadFromNode(nodePos, parsingFortran);
-        }
-
-        nodePos = skipAfterStatement(nodePos);
-      }
+      nodePos = skipAfterStatement(nodePos);
 
       return nodePos;
     }
@@ -3602,6 +3681,38 @@ namespace occa {
     }
 
     //---[ Statement Info ]-----------
+    void statement::createUniqueVariables(std::vector<std::string> &names,
+                                          const int flags){
+      std::stringstream ss;
+
+      const int nameCount = names.size();
+      int iterCount = 0;
+
+      while(true){
+        if(flags & statementFlag::updateByNumber)
+          ss << iterCount++;
+        else
+          ss << "_";
+
+        const std::string &suffix = ss.str();
+
+        for(int i = 0; i < nameCount; ++i){
+          if(hasVariableInScope(names[i] + suffix))
+            break;
+
+          if((i + 1) == nameCount){
+            for(int j = 0; j < nameCount; ++j)
+              names[j] += suffix;
+
+            return;
+          }
+        }
+
+        if(flags & statementFlag::updateByNumber)
+          ss.str("");
+      }
+    }
+
     void statement::swapExpWith(statement &s){
       expNode::swap(expRoot, s.expRoot);
     }

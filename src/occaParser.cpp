@@ -3036,10 +3036,35 @@ namespace occa {
             if(delimeterChars){
               strNode *newNode;
 
-              if(!parsingC &&
-                 (cLeft[0] == '.')){
+              if(!parsingC){
+                // Translate Fortran keywords
+                std::string op(cLeft, delimeterChars);
+                std::string upOp = upString(op);
 
-                newNode = new strNode(upString(cLeft, delimeterChars));
+                if(upOp[0] == '.'){
+                  if     (upOp == ".TRUE.")  upOp = "true";
+                  else if(upOp == ".FALSE.") upOp = "false";
+
+                  else if(upOp == ".LT.")    upOp = "<";
+                  else if(upOp == ".GT.")    upOp = ">";
+                  else if(upOp == ".LE.")    upOp = "<=";
+                  else if(upOp == ".GE.")    upOp = ">=";
+                  else if(upOp == ".EQ.")    upOp = "==";
+
+                  else if(upOp == ".NOT.")   upOp = "!";
+                  else if(upOp == ".AND.")   upOp = "&";
+                  else if(upOp == ".OR.")    upOp = "|";
+                  else if(upOp == ".EQV.")   upOp = "==";
+                  else if(upOp == ".NEQV.")  upOp = "!=";
+
+                  newNode = new strNode(upOp);
+                }
+                else if(upOp == "/="){
+                  newNode = new strNode("!=");
+                }
+                else {
+                  newNode = new strNode(op);
+                }
               }
               else {
                 newNode = new strNode(std::string(cLeft, delimeterChars));
@@ -3655,8 +3680,6 @@ namespace occa {
 
       //---[ Constants ]------------------
       fortranKeywordType[":"]       = presetValue;
-      fortranKeywordType[".TRUE."]  = presetValue;
-      fortranKeywordType[".FALSE."] = presetValue;
 
       //---[ Flow Control ]---------------
       fortranKeywordType["DO"]       = flowControlType;
@@ -3698,17 +3721,13 @@ namespace occa {
       opPrecedence[opHolder("<=", binaryOperatorType)]     = 4;
       opPrecedence[opHolder(">=", binaryOperatorType)]     = 4;
       opPrecedence[opHolder(">" , binaryOperatorType)]     = 4;
-      opPrecedence[opHolder("==", binaryOperatorType)]     = 4;
-      opPrecedence[opHolder("/=", binaryOperatorType)]     = 4;
 
-      opPrecedence[opHolder(".NOT.", binaryOperatorType)]  = 5;
+      opPrecedence[opHolder("!", binaryOperatorType)]      = 5;
+      opPrecedence[opHolder("&", binaryOperatorType)]      = 6;
+      opPrecedence[opHolder("|", binaryOperatorType)]      = 7;
 
-      opPrecedence[opHolder(".AND.", binaryOperatorType)]  = 6;
-
-      opPrecedence[opHolder(".OR.", binaryOperatorType)]   = 7;
-
-      opPrecedence[opHolder(".EQV." , binaryOperatorType)] = 8;
-      opPrecedence[opHolder(".NEQV.", binaryOperatorType)] = 8;
+      opPrecedence[opHolder("==" , binaryOperatorType)]    = 8;
+      opPrecedence[opHolder("!=", binaryOperatorType)]     = 8;
 
       opPrecedence[opHolder("=" , binaryOperatorType)]     = 9;
 
