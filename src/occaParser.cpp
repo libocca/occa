@@ -3052,8 +3052,8 @@ namespace occa {
                   else if(upOp == ".EQ.")    upOp = "==";
 
                   else if(upOp == ".NOT.")   upOp = "!";
-                  else if(upOp == ".AND.")   upOp = "&";
-                  else if(upOp == ".OR.")    upOp = "|";
+                  else if(upOp == ".AND.")   upOp = "&&";
+                  else if(upOp == ".OR.")    upOp = "||";
                   else if(upOp == ".EQV.")   upOp = "==";
                   else if(upOp == ".NEQV.")  upOp = "!=";
 
@@ -3641,6 +3641,9 @@ namespace occa {
 
       fortranKeywordType["void"]   = specifierType;
 
+      fortranKeywordType["true"]  = presetValue;
+      fortranKeywordType["false"] = presetValue;
+
       fortranKeywordType["INTEGER"]    = specifierType;
       fortranKeywordType["LOGICAL"]    = specifierType;
       fortranKeywordType["REAL"]       = specifierType;
@@ -3723,8 +3726,8 @@ namespace occa {
       opPrecedence[opHolder(">" , binaryOperatorType)]     = 4;
 
       opPrecedence[opHolder("!", binaryOperatorType)]      = 5;
-      opPrecedence[opHolder("&", binaryOperatorType)]      = 6;
-      opPrecedence[opHolder("|", binaryOperatorType)]      = 7;
+      opPrecedence[opHolder("&&", binaryOperatorType)]     = 6;
+      opPrecedence[opHolder("||", binaryOperatorType)]     = 7;
 
       opPrecedence[opHolder("==" , binaryOperatorType)]    = 8;
       opPrecedence[opHolder("!=", binaryOperatorType)]     = 8;
@@ -3733,27 +3736,25 @@ namespace occa {
 
       opPrecedence[opHolder("," , binaryOperatorType)]     = 10;
 
-      opLevelMap[0]["**"]     = binaryOperatorType;
-      opLevelMap[0]["//"]     = binaryOperatorType;
-      opLevelMap[1]["+"]      = lUnitaryOperatorType;
-      opLevelMap[1]["-"]      = lUnitaryOperatorType;
-      opLevelMap[2]["*"]      = binaryOperatorType;
-      opLevelMap[2]["/"]      = binaryOperatorType;
-      opLevelMap[3]["+"]      = binaryOperatorType;
-      opLevelMap[3]["-"]      = binaryOperatorType;
-      opLevelMap[4]["<"]      = binaryOperatorType;
-      opLevelMap[4]["<="]     = binaryOperatorType;
-      opLevelMap[4][">="]     = binaryOperatorType;
-      opLevelMap[4][">"]      = binaryOperatorType;
-      opLevelMap[4]["=="]     = binaryOperatorType;
-      opLevelMap[4]["/="]     = binaryOperatorType;
-      opLevelMap[5][".NOT."]  = binaryOperatorType;
-      opLevelMap[6][".AND."]  = binaryOperatorType;
-      opLevelMap[7][".OR."]   = binaryOperatorType;
-      opLevelMap[8][".EQV."]  = binaryOperatorType;
-      opLevelMap[8][".NEQV."] = binaryOperatorType;
-      opLevelMap[9]["="]      = binaryOperatorType;
-      opLevelMap[10][","]     = binaryOperatorType;
+      opLevelMap[0]["**"]  = binaryOperatorType;
+      opLevelMap[0]["//"]  = binaryOperatorType;
+      opLevelMap[1]["+"]   = lUnitaryOperatorType;
+      opLevelMap[1]["-"]   = lUnitaryOperatorType;
+      opLevelMap[2]["*"]   = binaryOperatorType;
+      opLevelMap[2]["/"]   = binaryOperatorType;
+      opLevelMap[3]["+"]   = binaryOperatorType;
+      opLevelMap[3]["-"]   = binaryOperatorType;
+      opLevelMap[4]["<"]   = binaryOperatorType;
+      opLevelMap[4]["<="]  = binaryOperatorType;
+      opLevelMap[4][">="]  = binaryOperatorType;
+      opLevelMap[4][">"]   = binaryOperatorType;
+      opLevelMap[5]["!"]   = binaryOperatorType;
+      opLevelMap[6]["&&"]  = binaryOperatorType;
+      opLevelMap[7]["||"]  = binaryOperatorType;
+      opLevelMap[8]["=="]  = binaryOperatorType;
+      opLevelMap[8]["!="]  = binaryOperatorType;
+      opLevelMap[9]["="]   = binaryOperatorType;
+      opLevelMap[10][","]  = binaryOperatorType;
 
       keywordType = fortranKeywordType;
     }

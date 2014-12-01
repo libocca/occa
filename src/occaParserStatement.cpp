@@ -138,6 +138,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
+      std::cout << "sInfo = " << *sInfo << '\n';
+
       // std::cout << "[" << getBits(sInfo->type) << "] this = " << *this << '\n';
 
       // Only the root needs to free
@@ -627,14 +629,25 @@ namespace occa {
       // [DO WHILE]( EXPR )
       else if(sInfo->type & whileStatementType){
       }
-      // [IF]( EXPR )
-      else if(sInfo->type & ifStatementType){
-      }
-      // [ELSE IF]( EXPR )
-      else if(sInfo->type & elseIfStatementType){
+      // [IF/ELSE IF]( EXPR )
+      else if((sInfo->type == ifStatementType) ||
+              (sInfo->type == elseIfStatementType)){
+
+        if(leafCount == 0){
+          std::cout << "No expression in if-statement: " << *this << '\n';
+          throw 1;
+        }
+
+        leaves[0]       = leaves[1];
+        leaves[0]->info = expType::root;
+        leaves[0]->organize();
+
+        leafCount = 1;
       }
       // [ELSE]
       else if(sInfo->type & elseStatementType){
+        if(leafCount)
+          free();
       }
     }
 
@@ -3014,86 +3027,95 @@ namespace occa {
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd,
                                           const bool parsingC){
-      if(st == whileStatementType)
-        return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
-      else{
-        strNode *nextNode = loadOneStatementFromNode(st, nodeRootEnd, nodeRootEnd);
-        type = whileStatementType;
+      if(parsingC){
+        if(st == whileStatementType)
+          return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
+        else{
+          strNode *nextNode = loadOneStatementFromNode(st, nodeRootEnd, nodeRootEnd);
+          type = whileStatementType;
 
-        expRoot.loadFromNode(nextNode);
+          expRoot.loadFromNode(nextNode);
 
-        type = doWhileStatementType;
+          type = doWhileStatementType;
 
-        // Skip the [;] after [while()]
-        if(nextNode &&
-           (nextNode->value == ";")){
+          // Skip the [;] after [while()]
+          if(nextNode &&
+             (nextNode->value == ";")){
 
-          nextNode = nextNode->right;
+            nextNode = nextNode->right;
+          }
+
+          return nextNode;
         }
-
-        return nextNode;
+      }
+      else{
+        return loadUntilFortranEnd(nodeRootEnd);
       }
     }
 
-    // [-] Missing Fortran
     strNode* statement::loadIfFromNode(const int st_,
                                        strNode *nodeRoot,
                                        strNode *nodeRootEnd,
                                        const bool parsingC){
       statement *newStatement = statementEnd->value;
 
-      strNode *nextNode = newStatement->loadOneStatementFromNode(st_,
-                                                                 nodeRoot,
-                                                                 nodeRootEnd);
+      if(parsingC){
+        strNode *nextNode = newStatement->loadOneStatementFromNode(st_,
+                                                                   nodeRoot,
+                                                                   nodeRootEnd);
 
-      if(nextNode == NULL)
-        return NULL;
+        if(nextNode == NULL)
+          return NULL;
 
-      nodeRoot    = nextNode;
-      nodeRootEnd = nextNode;
+        nodeRoot    = nextNode;
+        nodeRootEnd = nextNode;
 
-      int st      = findStatementType(nodeRootEnd);
-      int stCheck = elseIfStatementType;
+        int st      = findStatementType(nodeRootEnd);
+        int stCheck = elseIfStatementType;
 
-      nodeRootEnd = nextNode;
+        nodeRootEnd = nextNode;
 
-      while(true){
-        if(st != stCheck){
-          if(stCheck == elseIfStatementType)
-            stCheck = elseStatementType;
-          else
+        while(true){
+          if(st != stCheck){
+            if(stCheck == elseIfStatementType)
+              stCheck = elseStatementType;
+            else
+              break;
+          }
+          else if(nextNode == NULL){
             break;
-        }
-        else if(nextNode == NULL){
-          break;
-        }
-        else{
-          newStatement = makeSubStatement();
-          newStatement->expRoot.loadFromNode(nodeRootEnd);
-
-          if(st & invalidStatementType){
-            std::cout << "Not a valid statement\n";
-            throw 1;
           }
+          else{
+            newStatement = makeSubStatement();
+            newStatement->expRoot.loadFromNode(nodeRootEnd);
 
-          addStatement(newStatement);
+            if(st & invalidStatementType){
+              std::cout << "Not a valid statement\n";
+              throw 1;
+            }
 
-          nextNode = newStatement->loadOneStatementFromNode(st,
-                                                            nodeRoot,
-                                                            nodeRootEnd);
+            addStatement(newStatement);
 
-          nodeRoot    = nextNode;
-          nodeRootEnd = nextNode;
+            nextNode = newStatement->loadOneStatementFromNode(st,
+                                                              nodeRoot,
+                                                              nodeRootEnd);
 
-          if(nodeRootEnd){
-            st = findStatementType(nodeRootEnd);
-
+            nodeRoot    = nextNode;
             nodeRootEnd = nextNode;
+
+            if(nodeRootEnd){
+              st = findStatementType(nodeRootEnd);
+
+              nodeRootEnd = nextNode;
+            }
           }
         }
-      }
 
-      return nextNode;
+        return nextNode;
+      }
+      else{
+        return newStatement->loadUntilFortranEnd(nodeRootEnd);
+      }
     }
 
     // [-] Missing
@@ -3266,6 +3288,8 @@ namespace occa {
 
       int st = 0;
 
+      std::cout << "nodeValue = " << nodeValue << '\n';
+
       if(nodeValue == "DO")
         st = forStatementType;
       else if(nodeValue == "DO WHILE")
@@ -3395,7 +3419,12 @@ namespace occa {
       while(!isFortranEnd(nodePos))
         nodePos = loadFromNode(nodePos, parsingFortran);
 
-      nodePos = skipAfterStatement(nodePos);
+      // Don't skip [ELSE IF] and [ELSE]
+      if(nodePos &&
+         (nodePos->value.substr(0,3) == "END")){
+
+        nodePos = skipAfterStatement(nodePos);
+      }
 
       return nodePos;
     }
