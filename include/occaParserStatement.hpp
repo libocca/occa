@@ -285,6 +285,8 @@ namespace occa {
                    const int flags = expFlag::none);
 
       std::string toString(const std::string &tab = "");
+      std::string toString(const int leafPos, const int printLeafCount);
+
       operator std::string ();
 
       friend std::ostream& operator << (std::ostream &out, expNode &n);

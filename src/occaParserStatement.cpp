@@ -512,31 +512,6 @@ namespace occa {
           return;
         }
 
-        // Fortran iterations are not modified
-        std::vector<std::string> names;
-
-        names.push_back("doStart");
-        names.push_back("doEnd");
-        names.push_back("doStride");
-
-        sInfo->createUniqueVariables(names);
-
-        varInfo &doStart  = *(new varInfo);
-        varInfo &doEnd    = *(new varInfo);
-        varInfo &doStride = *(new varInfo);
-
-        doStart.name  = names[0];
-        doEnd.name    = names[1];
-        doStride.name = names[2];
-
-        doStart.baseType  = sInfo->hasTypeInScope("int");
-        doEnd.baseType    = sInfo->hasTypeInScope("int");
-        doStride.baseType = sInfo->hasTypeInScope("int");
-
-        sInfo->addVariable(&doStart);
-        sInfo->addVariable(&doEnd);
-        sInfo->addVariable(&doStride);
-
         int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
 
         if((statementCount < 2) || (4 < statementCount)){
@@ -546,8 +521,8 @@ namespace occa {
 
         int pos[5];
 
-        // Skip [DO]
-        pos[0] = 1;
+        // Skip [DO], [iter], and [=]
+        pos[0] = 3;
 
         // Find [,] positions
         for(int i = 0; i < statementCount; ++i){
@@ -587,11 +562,39 @@ namespace occa {
           throw 1;
         }
 
-        newExp.leaves[0] = sInfo->createExpNodeFrom(iter + "  = " + names[0]);
-        newExp.leaves[1] = sInfo->createExpNodeFrom(iter + " <= " + names[1]);
+        // Fortran iterations are not modified
+        std::vector<std::string> doNames;
+
+        doNames.push_back("doStart");
+        doNames.push_back("doEnd");
+        doNames.push_back("doStride");
+
+        sInfo->createUniqueVariables(doNames);
+
+        const std::string exp0 = toString(pos[0], (pos[1] - pos[0] - 1));
+        const std::string exp1 = toString(pos[1], (pos[2] - pos[1] - 1));
+
+        std::cout << "exp0 = " << exp0 << '\n';
+        std::cout << "exp1 = " << exp1 << '\n';
+
+        const std::string decl0 = "const int " + doNames[0] + " = " + exp0;
+        const std::string decl1 = "const int " + doNames[1] + " = " + exp1;
+
+        sInfo->up->pushLeftFromSource(sInfo->getStatementNode(), decl0);
+        sInfo->up->pushLeftFromSource(sInfo->getStatementNode(), decl1);
+
+        if(statementCount == 3){
+          const std::string exp2  = toString(pos[2], (pos[3] - pos[2] - 1));
+          const std::string decl2 = "const int " + doNames[2] + " = " + exp2;
+
+          sInfo->up->pushLeftFromSource(sInfo->getStatementNode(), decl2);
+        }
+
+        newExp.leaves[0] = sInfo->createExpNodeFrom(iter + "  = " + doNames[0]);
+        newExp.leaves[1] = sInfo->createExpNodeFrom(iter + " <= " + doNames[1]);
 
         if(statementCount == 3)
-          newExp.leaves[2] = sInfo->createExpNodeFrom(iter + " += " + names[2]);
+          newExp.leaves[2] = sInfo->createExpNodeFrom(iter + " += " + doNames[2]);
         else
           newExp.leaves[2] = sInfo->createExpNodeFrom("++" + iter);
 
@@ -2416,6 +2419,39 @@ namespace occa {
       };
     }
 
+    std::string expNode::toString(const int leafPos,
+                                  const int printLeafCount){
+      if(leafCount <= leafPos)
+        return "";
+
+      const int trueInfo = info;
+      info = expType::root;
+
+      int trueLeafCount = leafCount;
+
+      leafCount = ((leafPos + printLeafCount <= leafCount) ?
+                   (printLeafCount) :
+                   (leafCount - leafPos));
+
+      expNode **trueLeaves = leaves;
+      leaves = new expNode*[leafCount];
+
+
+      for(int i = 0; i < leafCount; ++i)
+        leaves[i] = trueLeaves[leafPos + i];
+
+      std::string ret = (std::string) *this;
+
+      delete [] leaves;
+
+      info = trueInfo;
+
+      leaves    = trueLeaves;
+      leafCount = trueLeafCount;
+
+      return ret;
+    }
+
     std::string expNode::toString(const std::string &tab){
       std::stringstream ss;
 
@@ -2821,6 +2857,8 @@ namespace occa {
       statement *newStatement = makeSubStatement();
       strNode * nodeRootEnd   = nodeRoot;
 
+      addStatement(newStatement);
+
       newStatement->expRoot.loadFromNode(nodeRootEnd, parsingC);
       const int st = newStatement->type;
 
@@ -2835,8 +2873,6 @@ namespace occa {
         delete newStatement;
         return nodeRootEnd;
       }
-
-      addStatement(newStatement);
 
       if(st & simpleStatementType){
         nodeRootEnd = newStatement->loadSimpleFromNode(st,

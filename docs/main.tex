@@ -28,28 +28,32 @@
 \placeTitlePage
 
 The inability to predict lasting languages and architectures led us to develop \occa, a library focused on host-device interaction.
-\occa can be natively used with C, C++, C\#, Fortran, Python, Julia and MATLAB.
+\occa is made up of a portable API, natively available in C, C\tf{++}, C\tf{\#}, Fortran, Python, Julia and MATLAB, and the device kernel language.
 The unified kernel language in \occa is based on macro expansions exposing parallelism and expanding to OpenMP, OpenCL, CUDA, Pthreads and COI.
 
-Rather than coding in the \occa macro-based language, we introduce two native languages: \okl and \ofl.
-The \occa Kernel Language (\okl) is based on C and extends the language by exposing parallel loops and labeling them.
-The \occa Fortran Language (\ofl) is the Fortran equivalent of \okl.
+However, rather than coding in the \occa intermediate representation, we introduce two native languages: \okl and \ofl.
+The \occa Kernel Language (\okl) is based on C and extends the language by exposing parallel loops by labeling them.
+The \occa Fortran Language (\ofl) is the Fortran language equivalent of \okl.
 Simple examples of both, \okl and \ofl, can be seen in \refLst{addVectors} and \refLst{ofl_addVectors}.
 
-The memory hierarchy seen in the GPU
-With parsing tools available from developing \okl and \ofl, we added features
-\okl and \ofl include features such as:
+\okl/\ofl are loaded and compiled at run-time, allowing for the target language to be chosen at run-time.
+Additional features include:
 \begin{itemize}
-\item Supporting the shared-memory model for GPU-architectures
-\item Supporting multiple outer-loops per kernel
-\item Automatic detection on work-group/work-item (block/thread) sizes
+\item Embedded C+\okl and Fortran+\ofl
+\item Support for the shared-memory model for GPU-architectures
+\item Support for multiple outer-loops per kernel (auto-kernel generation and launching)
+\item Automatic detection of work-group/work-item (block/thread) sizes
 \item Auto-translates basic OpenCL/CUDA kernels to \okl/\ofl
 \item Auto-barrier insertion between inner-loops
 \end{itemize}
 
+In my talk, I will be discussing current features that attempt to ease programmers into parallel programming without sacrificing peak efficiency.
+To showcase the preservation of computational efficiency, I will show results for high-order finite difference and high-order discontinuous Galerkin method implementations for reverse time migration.
+\newpage
+
 \setCode{OKL,none,\scriptsize}
 \vspace{4mm}
-\begin{lstlisting}[caption={Adding two vectors using \occa Kernel Language (\okl)},label={lst:addVectors}]
+\begin{lstlisting}[caption={Adding two vectors using the \occa Kernel Language (\okl)},label={lst:addVectors}]
 kernel void addVectors(int entries, const float *a, const float *b, float *ab){
   for(int group = 0; group < entries; group += 16; outer0){
     for(int item = 0; item < 16; ++item; inner0){
@@ -64,7 +68,7 @@ kernel void addVectors(int entries, const float *a, const float *b, float *ab){
 
 \setCode{OFL,none,\scriptsize}
 \vspace{4mm}
-\begin{lstlisting}[caption={Adding two vectors using \occa Fortran Language (\ofl)},label={lst:ofl_addVectors}]
+\begin{lstlisting}[caption={Adding two vectors using the \occa Fortran Language (\ofl)},label={lst:ofl_addVectors}]
 kernel subroutine addVectors(entries, a, b, ab)
   implicit none
 
