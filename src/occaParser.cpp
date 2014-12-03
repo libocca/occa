@@ -45,7 +45,7 @@ namespace occa {
       // Broken
       // fixOccaForOrder();
 
-      // addOccaBarriers();
+      addOccaBarriers();
 
       addFunctionPrototypes();
       updateConstToConstant();
