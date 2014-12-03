@@ -36,4 +36,4 @@
 </div> <!--[ id_body ]-->
 
 
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/footer.php'); ?>
+<?php addFooter() ?>

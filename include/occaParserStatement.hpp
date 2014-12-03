@@ -135,6 +135,7 @@ namespace occa {
       void splitFortranDeclareStatement();
       void splitFortranUpdateStatement();
       void splitFortranFlowStatement();
+      void splitFortranForStatement();
       void splitFortranFunctionStatement();
       //  ====================
 
@@ -476,7 +477,6 @@ namespace occa {
 
       static strNode* skipAfterStatement(strNode *nodePos);
       static strNode* skipUntilStatementEnd(strNode *nodePos);
-
       //================================
 
       statementNode* getStatementNode();
@@ -484,11 +484,20 @@ namespace occa {
       statement& pushNewStatementLeft(const int type_ = 0);
       statement& pushNewStatementRight(const int type_ = 0);
 
+      void addStatementFromSource(const std::string &source);
+
       void pushLeftFromSource(statementNode *target,
                               const std::string &source);
 
       void pushRightFromSource(statementNode *target,
                                const std::string &source);
+
+      //---[ Misc ]---------------------
+      void setStatementIdMap(statementIdMap_t &idMap);
+
+      void setStatementIdMap(statementIdMap_t &idMap,
+                             int &startId);
+      //================================
 
       void checkIfVariableIsDefined(varInfo &var,
                                     statement *origin);

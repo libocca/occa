@@ -76,8 +76,8 @@ namespace occa {
   typedef kernelInfoMap_t::iterator                          kernelInfoIterator;
   typedef kernelInfoMap_t::const_iterator                    cKernelInfoIterator;
 
-  typedef std::map<parserNamespace::statement*,int> loopSection_t;
-  typedef loopSection_t::iterator                   loopSectionIterator;
+  typedef std::map<parserNamespace::statement*,int> statementIdMap_t;
+  typedef statementIdMap_t::iterator                statementIdMapIterator;
 
   typedef void (parserNamespace::parserBase::*applyToAllStatements_t)(parserNamespace::statement &s);
 

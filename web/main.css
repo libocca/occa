@@ -1,9 +1,4 @@
 @font-face {
-    font-family:"notoSansRegular";
-    src: url("/library/fonts/noto_sans_regular.ttf");
-}
-
-@font-face {
     font-family:"openSansLight";
     src: url("/library/fonts/openSans/light.ttf");
 }
@@ -33,6 +28,10 @@
     src: url("/library/fonts/raleway/bold.ttf");
 }
 
+@font-face {
+    font-family:"cutive";
+    src: url("/library/fonts/cutive/regular.ttf");
+}
 
 /*---[ Start of cleanStickyFooter ]---*/
 html, body {
@@ -265,6 +264,10 @@ span.highlight {
 
     font-family: "ralewayBold";
 }
+
+a.noDecor {
+    text-decoration: none;
+}
 /*===[ Shared Stuff ]===*/
 
 /*---[ Sidebar ]---*/
@@ -413,6 +416,25 @@ span.highlight {
     font-size  : 16px;
 }
 
+/*  ---[ Shared API ]---*/
+.api.accordion .title {
+    margin : 2px 0px 0px 0px;
+    padding: 5px 5px 5px 15px;
+
+    background-color: rgba(255, 255, 255, 0);
+
+    font-family: "cutive";
+}
+
+.api.accordion .active.title {
+    background-color: rgba(255, 255, 255, 0);
+}
+
+.api.accordion .content {
+    padding: 20px 5px 20px 15px;
+}
+/*  ===[ Shared API ]===*/
+
 /*  ---[ Host API ]---*/
 .hostAPI.menu {
     margin-top: 0px;
@@ -429,9 +451,8 @@ span.highlight {
     width     : 110px;
     text-align: center;
 
-    color      : rgb(245, 245, 245);
-    font-family: "ralewayLight";
-    font-weight: 100;
+    color      : rgb(220, 220, 220);
+    font-family: "openSansLight";
 }
 
 .hostAPI.menu .wrapper .item:before {
@@ -470,9 +491,8 @@ span.highlight {
     width     : 110px;
     text-align: center;
 
-    color      : rgb(245, 245, 245);
-    font-family: "ralewayLight";
-    font-weight: 100;
+    color      : rgb(220, 220, 220);
+    font-family: "openSansLight";
 }
 
 .deviceAPI.menu .wrapper .item:before {

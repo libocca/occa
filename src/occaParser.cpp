@@ -2297,7 +2297,7 @@ namespace occa {
 
     int parserBase::findLoopSections(statement &s,
                                      statementNode *path,
-                                     loopSection_t &loopSection,
+                                     statementIdMap_t &loopSection,
                                      int section){
       if(s.statementCount == 0)
         return section;
@@ -2341,7 +2341,7 @@ namespace occa {
     }
 
     bool parserBase::varInTwoSegments(varInfo &var,
-                                      loopSection_t &loopSection){
+                                      statementIdMap_t &loopSection){
       // Don't count shared memory
       if(var.hasQualifier("occaPointer")  ||
          var.hasQualifier("occaVariable") ||
@@ -2369,7 +2369,7 @@ namespace occa {
     }
 
     varInfoNode* parserBase::findVarsMovingToTop(statement &s,
-                                                 loopSection_t &loopSection){
+                                                 statementIdMap_t &loopSection){
       // Statement defines have doubles (to know how many variables
       //                                 were defined)
       //    so ... ignore duplicates
@@ -2635,7 +2635,7 @@ namespace occa {
 
       checkPathForConditionals(sPath);
 
-      loopSection_t loopSection;
+      statementIdMap_t loopSection;
       findLoopSections(s, sPath, loopSection);
 
       // Get private and shared vars

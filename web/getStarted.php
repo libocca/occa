@@ -164,4 +164,4 @@ make -j 8 CXX="clang++" # Where g++ or icpc, for example, could be used instead 
 
 </div> <!--[ id_body ]-->
 
-<?php include($_SERVER['DOCUMENT_ROOT'] . '/footer.php'); ?>
+<?php addFooter() ?>

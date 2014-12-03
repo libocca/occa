@@ -3,9 +3,20 @@ $(document).ready(function(){
 
   $('.ui.dropdown')
     .dropdown({
-      on      : 'hover',
-      duration: 0
+      on       : 'hover',
+      duration : 0
     });
+
+  // $('.ui.api.accordion').accordion({
+	//   collapsible : true,
+  // 	active      : false,
+  // });
+
+  $('.ui.api.accordion').accordion({
+    collapsible : true,
+    active      : false,
+    exclusive   : false
+  });
 
   // Remove [active] on dropdown menus
   $('.top.menu .right.menu .topMenu.item .menu a.item')

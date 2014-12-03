@@ -1,0 +1,22 @@
+kernel subroutine addVectors(entries, a, b, ab)
+  implicit none
+
+  integer(4), intent(in)  :: entries
+  real(4)   , intent(in)  :: a(:), b(:)
+  real(4)   , intent(out) :: ab(:)
+
+  integer(4), shared    :: sharedVar(16,30)
+  integer(4), exclusive :: exclusiveVar
+
+  integer :: group, item, N
+
+  do group = 1, entries, 16, outer0
+     do item = 1, 16, inner0
+        N = (item + (16 * (group - 1)))
+
+        if (N < entries) then
+           ab[i - 1] = a[i - 1] + b[i- 1]
+     end do
+  end do
+
+end subroutine addVectors

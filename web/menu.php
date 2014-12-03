@@ -32,8 +32,25 @@
           Documentation
         </a>
         <div class="menu">
-          <a class="item" href="/documentation.php#Host-API">Host API</a>
-          <a class="item" href="/documentation.php#Device-API">Device API</a>
+          <div class="ui dropdown item">
+            <a class="noDecor" href="/documentation.php#Host-API">Host API <i class="dropdown icon"></i></a>
+            <div class="menu">
+              <a class="item" href="/documentation/hostAPI/C.php"      > C       </a>
+              <a class="item" href="/documentation/hostAPI/CPP.php"    > C++     </a>
+              <a class="item" href="/documentation/hostAPI/CS.php"     > C#      </a>
+              <a class="item" href="/documentation/hostAPI/Fortran.php"> Fortran </a>
+              <a class="item" href="/documentation/hostAPI/Julia.php"  > Julia   </a>
+              <a class="item" href="/documentation/hostAPI/Python.php" > Python  </a>
+              <a class="item" href="/documentation/hostAPI/Matlab.php" > MATLAB  </a>
+            </div>
+          </div>
+          <div class="ui dropdown item">
+            <a class="noDecor" href="/documentation.php#Device-API">Device API <i class="dropdown icon"></i></a>
+            <div class="menu">
+              <a class="item" href="/documentation/deviceAPI/OKL.php"> OKL </a>
+              <a class="item" href="/documentation/deviceAPI/OFL.php"> OFL </a>
+            </div>
+          </div>
         </div>
       </div>
 
