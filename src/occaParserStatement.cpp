@@ -4407,7 +4407,7 @@ namespace occa {
           if(ret.back() != '\n')
             ret += tab + "\n}\n\n";
           else
-            ret += tab + "\n}\n";
+            ret += tab + "}\n\n";
 
           return ret;
         }
