@@ -802,36 +802,6 @@ namespace occa {
         else if(nodePos->type & startSection){
           leaf->info  = expType::C;
 
-          // [-] Temporary solution
-          // leafPos++ makes (0 -> 1)
-          if((1 < leafPos) &&
-             (leaves[leafPos - 2]->info & (expType::variable |
-                                           expType::unknown))){
-
-            if(sInfo->type & updateStatementType){
-              leaf->value = "[";
-            }
-            // Don't update new variable
-            else if(sInfo->type & declareStatementType){
-              int expStart;
-
-              for(expStart = (leafPos - 1); 0 <= expStart; --expStart){
-                if(leaves[expStart]->value == ","){
-                  --expStart; // (expStart = -1) if it doesn't break
-                  break;
-                }
-              }
-
-              for(++expStart; expStart < (leafPos - 1); ++expStart){
-                if(leaves[expStart]->value == "=")
-                  break;
-              }
-
-              if(expStart != (leafPos - 1))
-                leaf->value = "[";
-            }
-          }
-
           if(nodePos->down)
             leaf->initLoadFromNode(nodePos->down);
         }
@@ -951,6 +921,8 @@ namespace occa {
           leaves[i]->organizeFortranLeaves();
         }
       }
+
+      mergeFortranArrays();
 
       for(int i = 0; i < 11; ++i)
         organizeLeaves(i);
@@ -1439,6 +1411,76 @@ namespace occa {
       return ((leaves[pos]->value == "*") ||
               (leaves[pos]->value == "&") ||
               (leaves[pos]->value == "["));
+    }
+
+    void expNode::mergeFortranArrays(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        expNode &leaf = *(leaves[leafPos]);
+
+        if((leaf.value == "(")                            && // Is ()
+           (leaf.leafCount)                               && //   and has stuff
+           (0 < leafPos)                                  && //   and follows
+           (leaves[leafPos - 1]->info & (expType::variable | //   something
+                                         expType::unknown))){
+
+          expNode *pLeaf = &(leaf[0]);
+          int entries = 1;
+
+          while(pLeaf &&
+                (pLeaf->value == ",") &&
+                (pLeaf->leafCount)){
+
+            ++entries;
+            pLeaf = pLeaf->leaves[0];
+          }
+
+          if(entries == 1) {
+            leaf.value = "[";
+          }
+          else {
+            expNode newExp(*sInfo);
+            newExp.info = info;
+            newExp.addNodes(expType::root, 0, entries);
+
+            pLeaf = &(leaf[0]);
+
+            while(pLeaf &&
+                  (pLeaf->value == ",") &&
+                  (pLeaf->leafCount)){
+
+              delete (newExp.leaves[--entries]);
+
+              newExp.leaves[entries] = pLeaf->leaves[1];
+
+              pLeaf = pLeaf->leaves[0];
+            }
+
+            if(entries)
+              newExp.leaves[--entries] = pLeaf;
+
+            entries = newExp.leafCount;
+
+            addNodes(expType::C, leafPos, (entries - 1));
+
+            for(int i = 0; i < entries; ++i){
+              expNode &sLeaf = *(leaves[leafPos + i]);
+
+              sLeaf.value     = "[";
+              sLeaf.leaves    = new expNode*[1];
+              sLeaf.leafCount = 1;
+
+              sLeaf.leaves[0]     = &(newExp[i]);
+              sLeaf.leaves[0]->up = &sLeaf;
+            }
+
+            leafPos += (entries - 1);
+          }
+        }
+
+        ++leafPos;
+      }
     }
     //================================
 

@@ -209,6 +209,8 @@ namespace occa {
       bool typeEndsWithStar() const;
 
       bool hasAnArrayQualifier(const int pos = 0) const;
+
+      void mergeFortranArrays();
       //================================
 
       static void swap(expNode &a, expNode &b);
