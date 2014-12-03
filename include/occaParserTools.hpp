@@ -25,6 +25,10 @@ namespace occa {
     bool upStringCheck(const std::string &a,
                        const std::string &b);
 
+    inline char back(std::string &s){
+      return s[s.size() - 1];
+    }
+
     bool isWhitespace(const char c);
     void skipWhitespace(const char *&c);
     void skipToWhitespace(const char *&c);
