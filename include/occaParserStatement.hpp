@@ -493,6 +493,9 @@ namespace occa {
                                const std::string &source);
 
       //---[ Misc ]---------------------
+      bool hasBarrier();
+      bool hasStatementWithBarrier();
+
       void setStatementIdMap(statementIdMap_t &idMap);
 
       void setStatementIdMap(statementIdMap_t &idMap,

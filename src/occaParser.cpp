@@ -43,7 +43,9 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
 
       // Broken?
-      // fixOccaForOrder(); // + auto-adds barriers
+      // fixOccaForOrder();
+
+      addOccaBarriers();
 
       // Broken
       addFunctionPrototypes();
@@ -1299,6 +1301,74 @@ namespace occa {
       return !(nest & notAnOccaFor);
     }
 
+    void parserBase::addOccaBarriers(){
+      statementNode *statementPos = globalScope->statementStart;
+
+      while(statementPos){
+        statement *s = statementPos->value;
+
+        if(statementIsAKernel(*s)      && // Kernel
+           (s->statementStart != NULL)){  //   not empty
+
+          addOccaBarriersToStatement(*s);
+        }
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    void parserBase::addOccaBarriersToStatement(statement &s){
+      statementNode *statementPos = s.statementStart;
+
+      statementNode *lastLoop = NULL;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        int occaType = statementOccaForNest(s2);
+
+        if((occaType == notAnOccaFor) ||
+           !(occaType & occaInnerForMask)){
+
+          addOccaBarriersToStatement(s2);
+        }
+        else if(lastLoop == NULL){
+          lastLoop = statementPos;
+        }
+        else{
+          statementNode *firstLoop = lastLoop;
+          statementNode *snPos     = firstLoop->right;
+          lastLoop = statementPos;
+
+          while(snPos != lastLoop){
+            statement &s3 = *(snPos->value);
+
+            if(s3.hasStatementWithBarrier())
+              break;
+
+            snPos = snPos->right;
+          }
+
+          if(snPos == lastLoop){
+            std::cout << "Warning: Placing a local barrier between:\n"
+                      << "---[ A ]--------------------------------\n"
+                      << *(firstLoop->value)
+                      << "---[ B ]--------------------------------\n"
+                      << *(lastLoop->value)
+                      << "========================================\n";
+
+            s.pushLeftFromSource(lastLoop, "occaBarrier(occaLocalMemFence)");
+          }
+        }
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    bool parserBase::statementHasBarrier(statement &s){
+      return s.hasBarrier();
+    }
+
     void parserBase::fixOccaForStatementOrder(statement &origin,
                                               statementNode *sn){
       int innerLoopCount = -1;
@@ -1354,34 +1424,6 @@ namespace occa {
                         << origin << '\n';
 
               throw 1;
-            }
-
-            if(!statementHasBarrier( *(sn->left->value) )){
-              std::cout << "Warning: Placing a local barrier between:\n"
-                        << "---[ A ]--------------------------------\n"
-                        << *(sn->left->value)
-                        << "---[ B ]--------------------------------\n"
-                        << *(sn->value)
-                        << "========================================\n";
-
-              s.loadFromNode(labelCode( splitContent("occaBarrier(occaLocalMemFence);\0") ));
-
-              statement *newS2     = s.statementEnd->value;
-              statementNode *newSN = new statementNode(newS2);
-
-              s.statementEnd        = s.statementEnd->left;
-              s.statementEnd->right = NULL;
-
-              newSN->right     = s.statementStart;
-              s.statementStart = newSN;
-
-              if(sn->left)
-                sn->left->right = newSN;
-
-              newSN->left  = sn->left;
-              newSN->right = sn;
-
-              sn->left = newSN;
             }
           }
         }
@@ -2103,22 +2145,6 @@ namespace occa {
       --s.depth;
     }
 
-    bool parserBase::statementHasBarrier(statement &s){
-      if(s.expRoot.leafCount == 0)
-        return false;
-
-      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
-
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        if(flatRoot[i].value == "occaBarrier")
-          return true;
-      }
-
-      expNode::freeFlatHandle(flatRoot);
-
-      return false;
-    }
-
     statementNode* parserBase::findStatementWith(statement &s,
                                                  findStatementWith_t func){
       statementNode *ret     = new statementNode(&s);
@@ -2488,15 +2514,17 @@ namespace occa {
       while(sn &&
             (sn->value->hasDescriptorVariable("occaShared") ||
              sn->value->hasDescriptorVariable("exclusive")  ||
-             statementHasBarrier( *(sn->value) )))
+             sn->value->hasBarrier()))
         sn = sn->right;
 
       while(sn){
         sn = addInnerForsBetweenBarriers(s, sn, innerDim);
 
         while(sn &&
-              statementHasBarrier( *(sn->value) ))
+              sn->value->hasBarrier()){
+
           sn = sn->right;
+        }
       }
     }
 
@@ -2517,7 +2545,7 @@ namespace occa {
       bool stoppedAtFor = false;
 
       while(includeEnd){
-        if(statementHasBarrier( *(includeEnd->value) ))
+        if(includeEnd->value->hasBarrier())
           break;
 
         // [-] Re-add if we want to split between for-loops

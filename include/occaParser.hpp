@@ -103,6 +103,11 @@ namespace occa {
       int statementOccaForNest(statement &s);
       bool statementIsAnOccaFor(statement &s);
 
+      void addOccaBarriers();
+      void addOccaBarriersToStatement(statement &s);
+
+      bool statementHasBarrier(statement &s);
+
       void fixOccaForStatementOrder(statement &origin, statementNode *sn);
       void fixOccaForOrder();
 
@@ -136,8 +141,6 @@ namespace occa {
       void incrementDepth(statement &s);
 
       void decrementDepth(statement &s);
-
-      bool statementHasBarrier(statement &s);
 
       statementNode* findStatementWith(statement &s,
                                        findStatementWith_t func);

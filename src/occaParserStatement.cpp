@@ -3624,6 +3624,40 @@ namespace occa {
     }
 
     //---[ Misc ]---------------------
+    bool statement::hasBarrier(){
+      if(expRoot.leafCount == 0)
+        return false;
+
+      expNode &flatRoot = *(expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(flatRoot[i].value == "occaBarrier")
+          return true;
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      return false;
+    }
+
+    bool statement::hasStatementWithBarrier(){
+      if(hasBarrier())
+        return true;
+
+      statementNode *statementPos = statementStart;
+
+      while(statementPos){
+        statement &s = *(statementPos->value);
+
+        if(s.hasBarrier())
+          return true;
+
+        statementPos = statementPos->right;
+      }
+
+      return false;
+    }
+
     void statement::setStatementIdMap(statementIdMap_t &idMap){
       int startId = 0;
       setStatementIdMap(idMap, startId);
