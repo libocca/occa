@@ -48,7 +48,6 @@ namespace occa {
       // addOccaBarriers();
 
       addFunctionPrototypes();
-      // Broken
       updateConstToConstant();
 
       addOccaFors();
@@ -1498,6 +1497,20 @@ namespace occa {
     }
 
     void parserBase::updateConstToConstant(){
+      statementNode *snPos = globalScope->statementStart;
+
+      while(snPos){
+        statement &s = *(snPos->value);
+
+        if((s.type & declareStatementType) &&
+           (s.hasQualifier("occaConst"))){
+
+          s.removeQualifier("occaConst");
+          s.addQualifier("occaConstant");
+        }
+
+        snPos = snPos->right;
+      }
     }
 
     strNode* parserBase::occaExclusiveStrNode(varInfo &var,
