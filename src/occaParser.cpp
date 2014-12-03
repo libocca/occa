@@ -42,12 +42,11 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
 
-      // Broken?
+      // Broken
       // fixOccaForOrder();
 
-      addOccaBarriers();
+      // addOccaBarriers();
 
-      // Broken
       addFunctionPrototypes();
       // Broken
       updateConstToConstant();
@@ -1194,16 +1193,15 @@ namespace occa {
     }
 
     void parserBase::addFunctionPrototypes(){
-#if 0
       std::map<std::string,bool> prototypes;
 
       statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
-        statement *s2 = statementPos->value;
+        statement &s = *(statementPos->value);
 
-        if(s2->type & functionPrototypeType)
-          prototypes[s2->getFunctionName()] = true;
+        if(s.type & functionPrototypeType)
+          prototypes[s.getFunctionName()] = true;
 
         statementPos = statementPos->right;
       }
@@ -1211,65 +1209,30 @@ namespace occa {
       statementPos = globalScope->statementStart;
 
       while(statementPos){
-        statement *s2 = statementPos->value;
+        statement &s = *(statementPos->value);
 
-        if(s2->type & functionStatementType){
-          if(s2->hasQualifier("occaKernel")){
+        if(s.type & functionStatementType){
+          if(s.hasQualifier("occaKernel")){
             statementPos = statementPos->right;
             continue;
           }
 
-          if(!s2->hasQualifier("occaFunction"))
-            s2->addQualifier("occaFunction");
+          if(!s.hasQualifier("occaFunction"))
+            s.addQualifier("occaFunction");
 
-          if( !(s2->type & functionDefinitionType) ){
+          if( !(s.type & functionDefinitionType) ){
             statementPos = statementPos->right;
             continue;
           }
 
-          if(prototypes.find( s2->getFunctionName() ) == prototypes.end()){
-            statement *newS2 = s2->clone();
-            statementNode *newNode = new statementNode(newS2);
-
-            newS2->type = functionPrototypeType;
-
-            newS2->statementCount = 0;
-
-            // [-] Delete definition (needs proper free)
-            delete newS2->statementStart;
-            newS2->statementStart = NULL;
-            newS2->statementEnd   = NULL;
-
-            strNode *end = newS2->nodeEnd;
-            end = end->push(";");
-
-            end->up        = newS2->nodeEnd->up;
-            end->type      = keywordType[";"];
-            end->depth     = newS2->nodeEnd->depth;
-            end->sideDepth = newS2->nodeEnd->sideDepth;
-
-            newS2->nodeEnd = end;
-
-            statementNode *left = statementPos->left;
-
-            if(globalScope->statementStart == statementPos)
-              globalScope->statementStart = newNode;
-
-            if(left)
-              left->right = newNode;
-
-            newNode->left = left;
-
-            newNode->right     = statementPos;
-            statementPos->left = newNode;
-
-            ++(globalScope->statementCount);
+          if(prototypes.find( s.getFunctionName() ) == prototypes.end()){
+            globalScope->pushLeftFromSource(statementPos,
+                                            (std::string) *(s.getFunctionVar()));
           }
         }
 
         statementPos = statementPos->right;
       }
-#endif
     }
 
     int parserBase::statementOccaForNest(statement &s){

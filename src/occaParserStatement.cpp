@@ -4404,7 +4404,10 @@ namespace occa {
             statementPos = statementPos->right;
           }
 
-          ret += tab + "}\n\n";
+          if(ret.back() != '\n')
+            ret += tab + "\n}\n\n";
+          else
+            ret += tab + "\n}\n";
 
           return ret;
         }
@@ -4422,8 +4425,12 @@ namespace occa {
           statementPos = statementPos->right;
         }
 
-        if(0 <= depth)
-          ret += tab + "}\n";
+        if(0 <= depth){
+          if(ret.back() != '\n')
+            ret += tab + "}\n";
+          else
+            ret += tab + "}";
+        }
 
         return ret;
       }

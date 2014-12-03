@@ -84,6 +84,10 @@ gotoTest:
 const tFloat hat_t0 = 1.3523661426929/freq; /* Testing 3 */
 const tFloat &hat_t1 = hat_t0;
 
+occaFunction tFloat dummyFunction(tFloat t){
+  return 0;
+}
+
 occaFunction tFloat hatWavelet(tFloat t);
 occaFunction tFloat hatWavelet(tFloat t){
   const tFloat pift  = PI*freq*(t - hat_t0);
