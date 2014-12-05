@@ -5,103 +5,99 @@
 
 <?php absInclude("/sidebarStart.php"); ?>
 
-<div class="entry1"><a href="#Introduction">1. Introduction</a></div>
+<div class="entry1"><a href="#API">1. API Reference </a></div>
+<div class="entry2"><a href="/documentation/API/C.php"      >1.2 C       </a></div>
+<div class="entry2"><a href="/documentation/API/CPP.php"    >1.1 C++     </a></div>
+<div class="entry2"><a href="/documentation/API/CS.php"     >1.3 C#      </a></div>
+<div class="entry2"><a href="/documentation/API/Fortran.php">1.5 Fortran </a></div>
+<div class="entry2"><a href="/documentation/API/Julia.php"  >1.6 Julia   </a></div>
+<div class="entry2"><a href="/documentation/API/Python.php" >1.4 Python  </a></div>
+<div class="entry2"><a href="/documentation/API/Matlab.php" >1.7 Matlab  </a></div>
 
-<div class="entry1"><a href="#Host-API">2. Host-API    </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/C.php"      >2.2 C       </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/CPP.php"    >2.1 C++     </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/CS.php"     >2.3 C#      </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/Fortran.php">2.5 Fortran </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/Julia.php"  >2.6 Julia   </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/Python.php" >2.4 Python  </a></div>
-<div class="entry2"><a href="/documentation/hostAPI/Matlab.php" >2.7 Matlab  </a></div>
-
-<div class="entry1"><a href="#Device-API">3. Device-API  </a></div>
-<div class="entry2"><a href="/documentation/deviceAPI/OKL.php">3.1 OKL </a></div>
-<div class="entry2"><a href="/documentation/deviceAPI/OFL.php">3.2 OFL </a></div>
+<div class="entry1"><a href="#Kernel-Languages">2. Kernel Languages </a></div>
+<div class="entry2"><a href="/documentation/kernelLanguages/OKL.php">2.1 OKL </a></div>
+<div class="entry2"><a href="/documentation/kernelLanguages/OFL.php">2.2 OFL </a></div>
 
 <?php absInclude("/sidebarEnd.php"); ?>
 
 <div id="id_body" class="documentation fixed body">
 
-  <h2 id="Introduction" class="ui dividing header"> Quick Introduction </h2>
-
-  <h2 id="Host-API" class="ui dividing header"> Host API </h2>
+  <h2 id="API" class="ui dividing header"> API Reference </h2>
 
   <div class="api buttons wrapper">
-    <a href="/documentation/hostAPI/C.php" class="link">
+    <a href="/documentation/API/C.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/cLogo.png" style="height:90px; width:90px; margin: 5px;"/>
+          <img class="apiLogo" src="/images/apiLogos/cLogo.png"></img>
         </div>
         <div class="name"> C </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/CPP.php" class="link">
+    <a href="/documentation/API/CPP.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/cppLogo.png" style="height:90px; width:90px; margin: 5px;"/>
+          <img class="apiLogo" src="/images/apiLogos/cppLogo.png"></img>
         </div>
         <div class="name"> C++ </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/CS.php" class="link">
+    <a href="/documentation/API/CS.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/csLogo.png" style="height:90px; width:90px; margin: 5px;"/>
+          <img class="apiLogo" src="/images/apiLogos/csLogo.png"></img>
         </div>
         <div class="name"> C# </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Fortran.php" class="link">
+    <a href="/documentation/API/Fortran.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/f90Logo.png" style="height:90px; width:90px; margin: 5px;"/>
+          <img class="apiLogo" src="/images/apiLogos/f90Logo.png"></img>
         </div>
         <div class="name"> Fortran </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Julia.php" class="link">
+    <a href="/documentation/API/Julia.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/julia.png"/>
+          <img class="apiLogo" src="/images/apiLogos/julia.png"></img>
         </div>
         <div class="name"> Julia </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Python.php" class="link">
+    <a href="/documentation/API/Python.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/python.png"/>
+          <img class="apiLogo" src="/images/apiLogos/python.png"></img>
         </div>
         <div class="name"> Python </div>
       </div>
     </a>
-    <a href="/documentation/hostAPI/Matlab.php" class="link">
+    <a href="/documentation/API/Matlab.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/apiLogos/matlab.png"/>
+          <img class="apiLogo" src="/images/apiLogos/matlab.png"></img>
         </div>
         <div class="name"> MATLAB </div>
       </div>
     </a>
   </div>
 
-  <h2 id="Device-API" class="ui dividing header"> Device API </h2>
+  <h2 id="Kernel-Languages" class="ui dividing header"> Kernel Languages </h2>
 
   <div class="api buttons wrapper">
-    <a href="/documentation/deviceAPI/OKL.php" class="link">
+    <a href="/documentation/kernelLanguages/OKL.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/general/mu.png"/>
+          <img class="apiLogo" src="/images/apiLogos/oklLogo.png"></img>
         </div>
         <div class="name"> OKL </div>
       </div>
     </a>
-    <a href="/documentation/deviceAPI/OFL.php" class="link">
+    <a href="/documentation/kernelLanguages/OFL.php" class="link">
       <div class="ui segment">
         <div class="wrapper">
-          <img src="/images/general/mu.png"/>
+          <img class="apiLogo" src="/images/apiLogos/oflLogo.png"></img>
         </div>
         <div class="name"> OFL </div>
       </div>

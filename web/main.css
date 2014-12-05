@@ -1,36 +1,46 @@
 @font-face {
-    font-family:"openSansLight";
+    font-family: "openSansLight";
     src: url("/library/fonts/openSans/light.ttf");
 }
 
 @font-face {
-    font-family:"openSansRegular";
+    font-family: "openSansRegular";
     src: url("/library/fonts/openSans/regular.ttf");
 }
 
 @font-face {
-    font-family:"openSansBold";
+    font-family: "openSansBold";
     src: url("/library/fonts/openSans/bold.ttf");
 }
 
 @font-face {
-    font-family:"ralewayLight";
+    font-family: "ralewayLight";
     src: url("/library/fonts/raleway/light.ttf");
 }
 
 @font-face {
-    font-family:"ralewayRegular";
+    font-family: "ralewayRegular";
     src: url("/library/fonts/raleway/regular.ttf");
 }
 
 @font-face {
-    font-family:"ralewayBold";
+    font-family: "ralewayBold";
     src: url("/library/fonts/raleway/bold.ttf");
 }
 
 @font-face {
-    font-family:"cutive";
+    font-family: "cutive";
     src: url("/library/fonts/cutive/regular.ttf");
+}
+
+@font-face {
+    font-family: "bigJohn";
+    src: url("/library/fonts/bigJohn/bigJohn.otf");
+}
+
+@font-face {
+    font-family: "slimJoe";
+    src: url("/library/fonts/bigJohn/slimJoe.otf");
 }
 
 /*---[ Start of cleanStickyFooter ]---*/
@@ -402,9 +412,13 @@ a.noDecor {
 }
 
 .api.buttons.wrapper a .segment .wrapper img {
-    height: 100px;
-    width : 100px;
+    height: 90px;
+    width : 90px;
+
+    margin: 5px 5px 0px 5px;
 }
+
+
 
 .api.buttons.wrapper a .segment .name {
     display: inline-block;
@@ -435,19 +449,19 @@ a.noDecor {
 }
 /*  ===[ Shared API ]===*/
 
-/*  ---[ Host API ]---*/
-.hostAPI.menu {
+/*  ---[ API ]---*/
+.API.menu {
     margin-top: 0px;
 }
 
-.hostAPI.menu .wrapper {
+.API.menu .wrapper {
     min-width: 830px;
     max-width: 1024px;
 
     margin: auto;
 }
 
-.hostAPI.menu .wrapper .item {
+.API.menu .wrapper .item {
     width     : 110px;
     text-align: center;
 
@@ -455,7 +469,7 @@ a.noDecor {
     font-family: "openSansLight";
 }
 
-.hostAPI.menu .wrapper .item:before {
+.API.menu .wrapper .item:before {
     width : 1px;
     height: 23px;
 
@@ -463,31 +477,31 @@ a.noDecor {
     margin-bottom: 10px;
 }
 
-.hostAPI.menu .wrapper a.item:hover {
+.API.menu .wrapper a.item:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.hostAPI.menu .wrapper a.selected.item {
+.API.menu .wrapper a.selected.item {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.hostAPI.menu .wrapper a.selected.item:hover {
+.API.menu .wrapper a.selected.item:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
-/*  ===[ Host API ]===*/
-/*  ---[ Device API ]---*/
-.deviceAPI.menu {
+/*  ===[ API ]===*/
+/*  ---[ Kernel Languages ]---*/
+.kernelLanguages.menu {
     margin-top: 0px;
 }
 
-.deviceAPI.menu .wrapper {
+.kernelLanguages.menu .wrapper {
     min-width: 830px;
     max-width: 1024px;
 
     margin: auto;
 }
 
-.deviceAPI.menu .wrapper .item {
+.kernelLanguages.menu .wrapper .item {
     width     : 110px;
     text-align: center;
 
@@ -495,7 +509,7 @@ a.noDecor {
     font-family: "openSansLight";
 }
 
-.deviceAPI.menu .wrapper .item:before {
+.kernelLanguages.menu .wrapper .item:before {
     width : 1px;
     height: 23px;
 
@@ -503,15 +517,15 @@ a.noDecor {
     margin-bottom: 10px;
 }
 
-.deviceAPI.menu .wrapper a.item:hover {
+.kernelLanguages.menu .wrapper a.item:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-.deviceAPI.menu .wrapper a.selected.item {
+.kernelLanguages.menu .wrapper a.selected.item {
     background-color: rgba(255, 255, 255, 0.2);
 }
 
-.deviceAPI.menu .wrapper a.selected.item:hover {
+.kernelLanguages.menu .wrapper a.selected.item:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
 /*  ===[ Device API ]===*/

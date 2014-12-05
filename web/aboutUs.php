@@ -18,7 +18,7 @@
 
   <div class="ui profile segment">
     <a class="ui rounded image" href="http://davidmedinawiki.wordpress.com/">
-      <img src="/images/aboutUs/david.jpg"/>
+      <img src="/images/aboutUs/david.jpg"></img>
     </a>
     <div class="info">
       <p align="center" class="name"> David S Medina </p>
@@ -42,7 +42,7 @@
 
   <div class="ui profile segment">
     <a class="ui rounded image" href="http://tcew.github.io/">
-      <img src="/images/aboutUs/warburton.jpg"/>
+      <img src="/images/aboutUs/warburton.jpg"></img>
     </a>
     <div class="info">
       <p align="center" class="name"> Tim Warburton </p>
@@ -68,7 +68,7 @@
 
   <div class="ui contributor profile segment">
     <a class="ui rounded image" href="http://lucaswilcox.com/">
-      <img src="/images/aboutUs/lucas.jpg"/>
+      <img src="/images/aboutUs/lucas.jpg"></img>
     </a>
     <div class="info">
       <p align="center" class="name"> Lucas Wilcox </p>
@@ -78,7 +78,7 @@
 
   <div class="ui contributor profile segment">
     <a class="ui rounded image" href="http://www.fdy.tu-darmstadt.de/forschung_16/entwicklungcfdcode/entwicklungcfdcode.en.jsp">
-      <img src="/images/aboutUs/florian.png"/>
+      <img src="/images/aboutUs/florian.png"></img>
     </a>
     <div class="info">
       <p align="center" class="name"> Florian Kummer </p>
@@ -101,7 +101,7 @@
       <div class="column">
 	      <div class="ui segment">
 		      <a href="https://cesar.mcs.anl.gov/">
-		        <img class="image" src="/images/places/anl.png"/>
+		        <img class="image" src="/images/places/anl.png"></img>
 		      </a>
 	      </div>
       </div> <!--[ column ]-->
@@ -109,7 +109,7 @@
       <div class="column">
 	      <div class="ui segment">
 		      <a href="https://wci.llnl.gov/">
-		        <img class="image" src="/images/places/llnl.png"/>
+		        <img class="image" src="/images/places/llnl.png"></img>
 		      </a>
         </div>
       </div> <!--[ column ]-->
@@ -124,7 +124,7 @@
       <div class="column">
 	      <div class="ui segment">
 		      <a href="https://cesar.mcs.anl.gov/">
-		        <img class="image" src="/images/places/anl.png"/>
+		        <img class="image" src="/images/places/anl.png"></img>
 		      </a>
 	      </div>
       </div> <!--[ column ]-->
@@ -132,7 +132,7 @@
       <div class="column">
 	      <div class="ui segment">
 		      <a href="http://shell.com">
-		        <img class="image" src="/images/places/shell.png"/>
+		        <img class="image" src="/images/places/shell.png"></img>
 		      </a>
         </div>
       </div> <!--[ column ]-->
@@ -140,7 +140,7 @@
       <div class="column">
 	      <div class="ui segment">
 		      <a href = "https://earthsystemcog.org/projects/espc-numa/">
-		        <img class="image" src="/images/places/onr.png"/>
+		        <img class="image" src="/images/places/onr.png"></img>
 		      </a>
         </div>
       </div> <!--[ column ]-->

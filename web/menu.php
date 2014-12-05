@@ -1,8 +1,8 @@
 <div class="ui top menu" id="id_topMenu">
   <div class="top wrapper">
     <a class="item" id="id_logo_div" href="/index.php">
-      <img id="id_top_logo"    class="top logo"    src="/images/logo/blueOccaLogo.png"/>
-      <img id="id_bottom_logo" class="bottom logo" src="/images/logo/blackOccaLogo.png"/>
+      <img id="id_top_logo"    class="top logo"    src="/images/logo/blueOccaLogo.png"></img>
+      <img id="id_bottom_logo" class="bottom logo" src="/images/logo/blackOccaLogo.png"></img>
     </a>
 
     <div class="right menu">
@@ -33,22 +33,22 @@
         </a>
         <div class="menu">
           <div class="ui dropdown item">
-            <a class="noDecor" href="/documentation.php#Host-API">Host API <i class="dropdown icon"></i></a>
+            <a class="noDecor" href="/documentation.php#API"> API Reference <i class="dropdown icon"></i></a>
             <div class="menu">
-              <a class="item" href="/documentation/hostAPI/C.php"      > C       </a>
-              <a class="item" href="/documentation/hostAPI/CPP.php"    > C++     </a>
-              <a class="item" href="/documentation/hostAPI/CS.php"     > C#      </a>
-              <a class="item" href="/documentation/hostAPI/Fortran.php"> Fortran </a>
-              <a class="item" href="/documentation/hostAPI/Julia.php"  > Julia   </a>
-              <a class="item" href="/documentation/hostAPI/Python.php" > Python  </a>
-              <a class="item" href="/documentation/hostAPI/Matlab.php" > MATLAB  </a>
+              <a class="item" href="/documentation/API/C.php"      > C       </a>
+              <a class="item" href="/documentation/API/CPP.php"    > C++     </a>
+              <a class="item" href="/documentation/API/CS.php"     > C#      </a>
+              <a class="item" href="/documentation/API/Fortran.php"> Fortran </a>
+              <a class="item" href="/documentation/API/Julia.php"  > Julia   </a>
+              <a class="item" href="/documentation/API/Python.php" > Python  </a>
+              <a class="item" href="/documentation/API/Matlab.php" > MATLAB  </a>
             </div>
           </div>
           <div class="ui dropdown item">
-            <a class="noDecor" href="/documentation.php#Device-API">Device API <i class="dropdown icon"></i></a>
+            <a class="noDecor" href="/documentation.php#kernelLanguages"> Kernel Languages <i class="dropdown icon"></i></a>
             <div class="menu">
-              <a class="item" href="/documentation/deviceAPI/OKL.php"> OKL </a>
-              <a class="item" href="/documentation/deviceAPI/OFL.php"> OFL </a>
+              <a class="item" href="/documentation/kernelLanguages/OKL.php"> OKL </a>
+              <a class="item" href="/documentation/kernelLanguages/OFL.php"> OFL </a>
             </div>
           </div>
         </div>
