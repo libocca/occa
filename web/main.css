@@ -55,6 +55,18 @@ body {
     padding: 0px;
 }
 
+body.pushable {
+    background: none !important;
+}
+
+body.pushable div.pusher, body.pushable div.pusher.dimmed {
+    background: none;
+}
+
+.pushable > .pusher:after {
+    background-color: transparent;
+}
+
 div#id_bodyWrapper {
     width     : 100%;
     min-height: 100% !important;
@@ -133,7 +145,7 @@ div#id_footer {
     margin-right:10px;
 }
 
-.top.menu .right.menu .topMenu.item, .top.menu .right.menu .topMenu.item .topMenu {
+.top.menu .right.menu .topMenu.item, .top.menu .right.menu .topMenu.item .topMenu, .topMenuDropdownItem {
     font-family: 'openSansLight';
     font-size  : 18px;
     color      : rgb(108, 108, 108);
@@ -154,6 +166,11 @@ div#id_footer {
     padding-right: 22px;
 }
 
+.topMenuDropdownItem {
+    height: 52px;
+    padding-top: 19px;
+}
+
 .top.menu .right.menu .topMenu.dropdown.item {
     height: 60px;
 
@@ -162,12 +179,6 @@ div#id_footer {
 
     padding-left : 0px;
     padding-right: 0px;
-}
-
-.top.menu .right.menu .selected.topMenu.item {
-    box-shadow: none;
-
-    background-color: rgba(132, 175, 213, 0.1);
 }
 
 /*---[ Line between items]---*/
@@ -179,14 +190,20 @@ div#id_footer {
     margin-bottom:15px;
 }
 
-.top.menu .right.menu .topMenu.item:hover {
-    background-color: rgba(132, 175, 213, 0.05);
-    color           : rgba(0, 0, 0, 0.4);
+.top.menu .right.menu .selected.topMenu.item, div.ui.selected.topMenu a.topMenuDropdownItem {
+    box-shadow: none;
+    background: #FBFCFE;
+    color     : #6992B5;
 }
 
-.top.menu .right.menu .selected.topMenu.item:hover {
-    background-color: rgba(132, 175, 213, 0.1);
-    color           : rgb(108, 108, 108);
+.top.menu .right.menu .topMenu.item:hover, div.ui.topMenu a.topMenuDropdownItem:hover{
+    background: #FCFCFE;
+    color     : #6992B5;
+}
+
+.top.menu .right.menu .selected.topMenu.item:hover, div.ui.selected.topMenu .topMenuDropdownItem:hover{
+    background: #FCFCFE;
+    color     : #6992B5;
 }
 
 body {
@@ -283,8 +300,6 @@ h2.header, h3.header, h4.header {
 
 span.highlight {
     color: rgb(43, 179, 153);
-    /* color: rgb(236, 194, 106); */
-    /* color: rgb(239, 169, 104); */
 
     font-family: "ralewayBold";
 }
@@ -295,48 +310,9 @@ a.noDecor {
 /*===[ Shared Stuff ]===*/
 
 /*---[ Sidebar ]---*/
-.ui.toc.sidebar {
-  width: 250px !important;
-  margin-left: -250px !important;
-
-  duration: 100;
-
-  overflow: visible;
-}
-
-.ui.active.toc.sidebar {
-  margin-left: 0px !important;
-}
-
-.ui.active.right.toc.sidebar {
-  margin-left: -250px !important;
-}
-
-.ui.toc.sidebar .button {
-    background-color: rgba(131, 172, 219, 0.8);
-
-    position: absolute;
-
-    left: 250px;
-    top : 100px;
-
-    height: 64px;
-    width: 60px;
-
-    padding: 20px 0px 20px 10px;
-}
-
-.ui.toc.sidebar .button .icon {
-    padding-top: 3px;
-
-    vertical-align: top;
-}
-
-.sidebar.body {
-    width: calc(100% - 40px);
-
-    position: absolute;
-    top : 80px;
+.ui.sidebar.body {
+    position: fixed;
+    top : 60px;
     left: -2px;
     background-color: rgba(230, 240, 247, 0.9);
 
@@ -346,7 +322,8 @@ a.noDecor {
     border-style : solid;
     border-color: rgba(81, 134, 174, 0.4);
 
-    overflow-y: auto;
+    width: 260px;
+    overflow: visible !important;
     max-height: calc(100% - 100px);
 }
 
@@ -389,6 +366,47 @@ a.noDecor {
 
 .sidebar.body .entry2 a {
     font-size  : 14px;
+}
+
+.ui.sidebarItem.button {
+    width: 50px;
+
+    white-space: nowrap;
+    overflow: hidden;
+
+    transition:
+    0.3s width ease,
+    0.3s transform ease;
+
+    position: fixed;
+    left: 258px;
+
+    z-index: 10;
+
+    border-top-left-radius   : 0px;
+    border-bottom-left-radius: 0px;
+
+    background-color: rgba(81, 134, 174, 0.8);
+
+    visibility: visible;
+}
+
+.ui.sidebarItem.button:hover {
+    width: 185px;
+    background-color: rgba(81, 134, 174, 0.8)
+}
+
+.ui.sidebarItem.button i {
+    margin-left: -15px;
+}
+
+.ui.sidebarItem.button .text {
+    opacity: 0;
+    transition: 0.3s opacity 0.1s;
+}
+
+.ui.sidebarItem.button:hover .text {
+    opacity: 1;
 }
 /*===[ Sidebar ]===*/
 
@@ -630,7 +648,7 @@ div#id_body.aboutUs {
 .aboutUs .profile .info .links a {
     text-decoration: none;
 
-    color: rgb(20, 20, 20);
+    color: rgb(50, 50, 50);
 }
 
 .aboutUs .profile .info .links a .icon {

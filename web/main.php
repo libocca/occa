@@ -1,5 +1,6 @@
 <?php
-function addHeader($pageTitle){
+
+function _addHeader($pageTitle){
   ob_start();
 
   include($_SERVER['DOCUMENT_ROOT'] . '/header.php');
@@ -8,6 +9,54 @@ function addHeader($pageTitle){
   ob_end_clean();
 
   echo str_replace('<!--TITLE-->', $pageTitle, $headerContents);
+}
+
+function addHeader($pageTitle){
+  _addHeader($pageTitle);
+  startBody();
+  startBodyWrapper();
+}
+
+function addSidebarHeader($pageTitle){
+  _addHeader($pageTitle);
+}
+
+function startBody(){
+  echo ('<body class="pushable">');
+}
+
+function startBodyWrapper(){
+  echo ('<div class="pusher" id="id_bodyWrapper">' .
+        '  <div id="id_bodyWrapper2">');
+}
+
+function endBody(){
+  echo ('</body>');
+}
+
+function endBodyWrapper(){
+  echo ('  </div>' .
+        '</div>');
+}
+
+function startSidebar(){
+  startBody();
+
+  echo ('<div class="ui left sidebar body">' .
+        '  <div class="content title"><a href="#">Content</a></div>' .
+        '    <div class="ui black huge right sidebarItem button">' .
+        '      <i class="icon list layout"></i>' .
+        '      <span class="text f_os light">Contents</span>' .
+        '    </div>');
+
+  startBodyWrapper();
+}
+
+function endSideBar(){
+  endBodyWrapper();
+
+  echo ('  </div>' .
+        '</div>');
 }
 
 function addFooter(){

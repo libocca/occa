@@ -33,7 +33,3 @@
 
       <script type="text/javascript" src="/main.js"></script>
   </head>
-
-  <body>
-    <div id="id_bodyWrapper">
-      <div id="id_bodyWrapper2">

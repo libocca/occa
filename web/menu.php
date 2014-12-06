@@ -12,7 +12,7 @@
       </a>
 
 	    <div class="ui light topMenu black simple dropdown item <?php addSelected('getStarted') ?>">
-        <a class="topMenu" href="/getStarted.php">
+        <a class="topMenuDropdownItem" href="/getStarted.php">
           Get Started
         </a>
         <div class="menu">
@@ -28,7 +28,7 @@
       </a>
 
 	    <div class="ui light topMenu black simple dropdown item <?php addSelected('documentation') ?>">
-        <a class="topMenu" href="/documentation.php">
+        <a class="topMenuDropdownItem" href="/documentation.php">
           Documentation
         </a>
         <div class="menu">

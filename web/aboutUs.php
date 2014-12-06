@@ -25,10 +25,10 @@
       <p align="center" class="location"> Rice University </p>
       <div class="links">
         <a href="http://www.linkedin.com/pub/david-medina/50/3/17a" tooltip="LinkedIn" class="f_os light tooltip">
-          <i class="large linkedin sign link icon"></i>
+          <i class="large linkedin square sign link icon"></i>
         </a>
         <a href="https://github.com/dmed256" tooltip="Github" class="f_os light tooltip">
-          <i class="large github alternate link icon"></i>
+          <i class="large github square link icon"></i>
         </a>
         <a href="http://lnkd.in/bNPCtVe" tooltip="CV" class="f_os light tooltip">
           <i class="large text file outline link icon"></i>
@@ -49,10 +49,10 @@
       <p align="center" class="location"> Rice University </p>
       <div class="links">
         <a href="http://www.linkedin.com/pub/tim-warburton/1/878/705/" tooltip="LinkedIn" class="f_os light tooltip">
-          <i class="large linkedin sign link icon"></i>
+          <i class="large linkedin square sign link icon"></i>
         </a>
         <a href="https://github.com/tcew" tooltip="Github" class="f_os light tooltip">
-          <i class="large github alternate link icon"></i>
+          <i class="large github square link icon"></i>
         </a>
         <a href="http://www.caam.rice.edu/~timwar/warburtoncv14.pdf" tooltip="CV" class="f_os light tooltip">
           <i class="large text file outline link icon"></i>
@@ -73,10 +73,10 @@
       <p align="center" class="location"> Naval Postgraduate School </p>
       <div class="links">
         <!-- <a href="http://www.linkedin.com/pub/tim-warburton/1/878/705/" tooltip="LinkedIn" class="f_os light tooltip"> -->
-        <!--   <i class="large linkedin sign link icon"></i> -->
+        <!--   <i class="large linkedin square sign link icon"></i> -->
         <!-- </a> -->
         <!-- <a href="https://github.com/tcew" tooltip="Github" class="f_os light tooltip"> -->
-        <!--   <i class="large github alternate link icon"></i> -->
+        <!--   <i class="large github square link icon"></i> -->
         <!-- </a> -->
         <!-- <a href="http://www.caam.rice.edu/~timwar/warburtoncv14.pdf" tooltip="CV" class="f_os light tooltip"> -->
         <!--   <i class="large text file outline link icon"></i> -->
@@ -110,7 +110,7 @@
   <h2 id="Collaborations" class="ui dividing header"> Collaborations </h2>
 
   <div class="ui collaborator celled grid">
-    <div class="row">
+    <div class="two column row">
 
       <div class="column">
 	      <div class="ui segment">
@@ -133,7 +133,7 @@
   <h2 id="Support" class="ui dividing header"> Support Received </h2>
 
   <div class="ui support celled grid">
-    <div class="row">
+    <div class="three column row">
 
       <div class="column">
 	      <div class="ui segment">
