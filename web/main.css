@@ -47,6 +47,7 @@
 html, body {
     height: 100%;
     font-family: "ralewayRegular";
+    font-size: 16px;
 }
 
 body {
@@ -102,6 +103,11 @@ div#id_footer {
 #id_logo_div {
     padding: 0px;
 }
+
+#id_logo_div:before {
+    background: none;
+}
+
 #id_logo_div:hover {
     position: relative;
     height  :60px;
@@ -111,7 +117,7 @@ div#id_footer {
 #id_logo_div .logo {
     position :absolute;
     left     : 0px;
-    height   : 32px !important;
+    height   : 60px !important;
 
     padding: 14px;
 
@@ -217,6 +223,14 @@ a.link {
     color: rgb(81, 134, 174);
 
     font-family: "ralewayBold";
+}
+
+a img {
+    border: none;
+}
+
+.f_14 {
+    font-size: 14px;
 }
 
 .f_os {
@@ -431,21 +445,23 @@ a.noDecor {
 }
 
 /*  ---[ Shared API ]---*/
-.api.accordion .title {
-    margin : 2px 0px 0px 0px;
-    padding: 5px 5px 5px 15px;
+div.ui.api.accordion div.title {
+    padding: 7px 0px 7px 15px;
 
     background-color: rgba(255, 255, 255, 0);
 
     font-family: "cutive";
 }
 
-.api.accordion .active.title {
-    background-color: rgba(255, 255, 255, 0);
+div.ui.api.accordion div.active.title {
+    background-color: #F9FAFE;
 }
 
 .api.accordion .content {
     padding: 20px 5px 20px 15px;
+
+    border: 0px solid #6992B5;
+    border-top-width: 2px;
 }
 /*  ===[ Shared API ]===*/
 
@@ -740,7 +756,7 @@ div#id_body.aboutUs {
     font-size  : 13px;
 }
 
-/*---[ Custom ACE theme ]---*/
+/*---[ Highlight ]---*/
 pre.code.block {
     margin: auto;
 
@@ -750,35 +766,13 @@ pre.code.block {
      */
     width: calc(100% - 22px);
 
+    font-size: 14px;
+
     border-style : solid;
-    border-width : 10px 10px 10px 10px;
+    border-width : 0px 0px 0px 10px;
 
     background-color: rgba(0, 0, 0, 0.01);
     border-color    : rgba(0, 0, 0, 0.01);
 
     box-shadow: 0 0 0 1px rgba(0,0,0,.2)
-}
-
-.ace_hidden-cursors {
-    opacity:0
-}
-
-.ace-chrome .ace_storage.ace_type {
-    color: rgb(132, 175, 213) !important;
-}
-
-.ace-chrome .ace_storage.ace_modifier {
-    color: rgb(52, 180, 170) !important;
-}
-
-.ace-chrome .ace_comment {
-    color: rgb(213, 24, 22) !important;
-}
-
-.ace-chrome .ace_keyword.ace_control {
-    color: rgb(174, 100, 174) !important;
-}
-
-.ace-chrome .ace_constant.ace_numeric {
-    color: black !important;
 }

@@ -3,22 +3,22 @@
 
 <?php absInclude("/menu.php"); ?>
 
-<?php absInclude("/sidebarStart.php"); ?>
+<!-- <?php absInclude("/sidebarStart.php"); ?> -->
 
-<div class="entry1"><a href="#API">1. API Reference </a></div>
-<div class="entry2"><a href="/documentation/API/C.php"      >1.2 C       </a></div>
-<div class="entry2"><a href="/documentation/API/CPP.php"    >1.1 C++     </a></div>
-<div class="entry2"><a href="/documentation/API/CS.php"     >1.3 C#      </a></div>
-<div class="entry2"><a href="/documentation/API/Fortran.php">1.5 Fortran </a></div>
-<div class="entry2"><a href="/documentation/API/Julia.php"  >1.6 Julia   </a></div>
-<div class="entry2"><a href="/documentation/API/Python.php" >1.4 Python  </a></div>
-<div class="entry2"><a href="/documentation/API/Matlab.php" >1.7 Matlab  </a></div>
+<!-- <div class="entry1"><a href="#API">1. API Reference </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/C.php"      >1.2 C       </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/CPP.php"    >1.1 C++     </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/CS.php"     >1.3 C#      </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/Fortran.php">1.5 Fortran </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/Julia.php"  >1.6 Julia   </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/Python.php" >1.4 Python  </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/API/Matlab.php" >1.7 Matlab  </a></div> -->
 
-<div class="entry1"><a href="#Kernel-Languages">2. Kernel Languages </a></div>
-<div class="entry2"><a href="/documentation/kernelLanguages/OKL.php">2.1 OKL </a></div>
-<div class="entry2"><a href="/documentation/kernelLanguages/OFL.php">2.2 OFL </a></div>
+<!-- <div class="entry1"><a href="#Kernel-Languages">2. Kernel Languages </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/kernelLanguages/OKL.php">2.1 OKL </a></div> -->
+<!-- <div class="entry2"><a href="/documentation/kernelLanguages/OFL.php">2.2 OFL </a></div> -->
 
-<?php absInclude("/sidebarEnd.php"); ?>
+<!-- <?php absInclude("/sidebarEnd.php"); ?> -->
 
 <div id="id_body" class="documentation fixed body">
 

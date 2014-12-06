@@ -41,7 +41,7 @@ function addCodeFromFile($filename, $language = 'c_cpp'){
 
 function startFunctionAPI($title){
   echo
-    '<div class="ui fluid api accordion">';
+    '<div class="ui fluid styled api accordion">';
 
   addFunctionTitleAPI($title);
 }
@@ -55,7 +55,7 @@ function nextFunctionAPI($title){
 
 function addFunctionTitleAPI($title){
   echo
-    '  <div class="title"><i class="dropdown icon"></i>' .
+    '  <div class="title">' .
     $title .
     '  </div>' .
     '  <div class="content">';

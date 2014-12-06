@@ -33,7 +33,7 @@
         </a>
         <div class="menu">
           <div class="ui dropdown item">
-            <a class="noDecor" href="/documentation.php#API"> API Reference <i class="dropdown icon"></i></a>
+            <a class="noDecor f_14" href="/documentation.php#API"> API Reference <i class="dropdown icon"></i></a>
             <div class="menu">
               <a class="item" href="/documentation/API/C.php"      > C       </a>
               <a class="item" href="/documentation/API/CPP.php"    > C++     </a>
@@ -45,7 +45,7 @@
             </div>
           </div>
           <div class="ui dropdown item">
-            <a class="noDecor" href="/documentation.php#kernelLanguages"> Kernel Languages <i class="dropdown icon"></i></a>
+            <a class="noDecor f_14" href="/documentation.php#kernelLanguages"> Kernel Languages <i class="dropdown icon"></i></a>
             <div class="menu">
               <a class="item" href="/documentation/kernelLanguages/OKL.php"> OKL </a>
               <a class="item" href="/documentation/kernelLanguages/OFL.php"> OFL </a>

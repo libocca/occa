@@ -4,7 +4,9 @@
     <!-- Site Properities -->
     <title><!--TITLE--></title>
 
-    <link rel="stylesheet" type="text/css" href="/library/css/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/library/semantic/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/library/highlight/styles/tomorrow.css">
+    <!-- <link rel="stylesheet" type="text/css" href="/library/highlight/styles/default.css"> -->
 
     <link type="text/css" rel="stylesheet" href="/main.css">
 
@@ -23,11 +25,13 @@
 
       <script type="text/javascript" src="/library/js/jquery.address.js"></script>
       <script type="text/javascript" src="/library/js/jquery.min.js"></script>
-      <script type="text/javascript" src="/library/js/semantic.min.js"></script>
+
+      <script type="text/javascript" src="/library/semantic/semantic.min.js"></script>
+
+      <script type="text/javascript" src="/library/highlight/highlight.pack.js"></script>
+      <script type="text/javascript"> hljs.initHighlightingOnLoad(); </script>
 
       <script type="text/javascript" src="/main.js"></script>
-
-      <script src="/library/js/aceMin/ace.js" type="text/javascript" charset="utf-8"></script>
   </head>
 
   <body>

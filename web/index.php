@@ -9,7 +9,7 @@
 <div style="height: 250px; width: 1060px; margin: auto; color: black; margin: 20px auto 20px auto; position: relative; clear: both;">
   <div style="height: 250px; width: 250px; float: left; display: block;">
     <div style="margin: auto; width: 80px; color: #6992B5;"><i class="huge download icon"></i></div>
-    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 5px 0 15px 0;">
+    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 10px 0 20px 0;">
       Downloads
     </p>
     <div style="margin: 10px; color: #6C6C6C;">
@@ -21,7 +21,7 @@
 
   <div style="height: 250px; width: 250px; float: left; display: block;">
     <div style="margin: auto; width: 80px; color: #6992B5;"><i class="huge map marker icon"></i></div>
-    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 5px 0 15px 0">
+    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 10px 0 20px 0">
       Getting Started
     </p>
     <div style="margin: 10px; color: #6C6C6C;">
@@ -33,7 +33,7 @@
 
   <div style="height: 250px; width: 250px; float: left; display: block;">
     <div style="margin: auto; width: 80px; color: #6992B5;"><i class="huge map icon"></i></div>
-    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 5px 0 15px 0">
+    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 10px 0 20px 0">
       Tutorials
     </p>
     <div style="margin: 10px; color: #6C6C6C;">
@@ -45,7 +45,7 @@
 
   <div style="height: 250px; width: 250px; float: left; display: block;">
     <div style="margin: auto; width: 80px; color: #6992B5;"><i class="huge settings icon"></i></div>
-    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 5px 0 15px 0">
+    <p style="text-align: center; color: #6C6C6C; font-size: 18px; font-family: openSansBold; margin: 10px 0 20px 0">
       Documentation
     </p>
     <div style="margin: 10px; color: #6C6C6C;">

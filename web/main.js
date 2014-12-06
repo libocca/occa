@@ -1,17 +1,5 @@
 $(document).ready(function(){
 
-
-  $('.ui.dropdown')
-    .dropdown({
-      on       : 'hover',
-      duration : 0
-    });
-
-  // $('.ui.api.accordion').accordion({
-	//   collapsible : true,
-  // 	active      : false,
-  // });
-
   $('.ui.api.accordion').accordion({
     collapsible : true,
     active      : false,
@@ -28,23 +16,9 @@ $(document).ready(function(){
     })
     .sidebar('attach events','.ui.launch.button');
 
-  $('pre.code.block').each(function(){
-    var editor = ace.edit(this);
-    editor.setTheme('ace/theme/chrome');
-
-    var language = $(this).attr('language');
-
-    if(language[0] != '/')
-      editor.getSession().setMode('ace/mode/' + language);
-    else
-      editor.getSession().setMode(language);
-
-    editor.setReadOnly(true);
-    editor.renderer.setShowGutter(false);
-    editor.setHighlightActiveLine(false);
-    editor.setDisplayIndentGuides(false);
-    editor.setShowPrintMargin(false);
-    editor.setOptions({maxLines: Infinity});
+  //---[ Highlight ]---
+  $('pre.code.block').each(function(i, block) {
+    hljs.highlightBlock(block);
   });
 
 });

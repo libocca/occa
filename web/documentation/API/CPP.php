@@ -4,14 +4,14 @@
 <?php absInclude("/menu.php"); ?>
 <?php absInclude("/documentation/API/menu.php") ?>
 
-<?php absInclude("/sidebarStart.php"); ?>
+<!-- <?php absInclude("/sidebarStart.php"); ?> -->
 
-<div class="entry1"><a href="#Device"          >1. Device          </a></div>
-<div class="entry1"><a href="#Memory"          >2. Memory          </a></div>
-<div class="entry1"><a href="#Kernel"          >3. Kernel          </a></div>
-<div class="entry1"><a href="#Helper Functions">4. Helper Functions</a></div>
+<!-- <div class="entry1"><a href="#Device"          >1. Device          </a></div> -->
+<!-- <div class="entry1"><a href="#Memory"          >2. Memory          </a></div> -->
+<!-- <div class="entry1"><a href="#Kernel"          >3. Kernel          </a></div> -->
+<!-- <div class="entry1"><a href="#Helper Functions">4. Helper Functions</a></div> -->
 
-<?php absInclude("/sidebarEnd.php"); ?>
+<!-- <?php absInclude("/sidebarEnd.php"); ?> -->
 
 <div id="id_body" class="fixed body">
 

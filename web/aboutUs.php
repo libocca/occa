@@ -3,14 +3,14 @@
 
 <?php absInclude("/menu.php"); ?>
 
-<?php absInclude("/sidebarStart.php"); ?>
+<!-- <?php absInclude("/sidebarStart.php"); ?> -->
 
-<div class="entry1"><a href="#Team"         >1. Team         </a></div>
-<div class="entry1"><a href="#Contributors" >2. Contributors </a></div>
-<div class="entry1"><a href="#Collaborators">3. Collaborators</a></div>
-<div class="entry1"><a href="#Support"      >4. Support      </a></div>
+<!-- <div class="entry1"><a href="#Team"         >1. Team         </a></div> -->
+<!-- <div class="entry1"><a href="#Contributors" >2. Contributors </a></div> -->
+<!-- <div class="entry1"><a href="#Collaborators">3. Collaborators</a></div> -->
+<!-- <div class="entry1"><a href="#Support"      >4. Support      </a></div> -->
 
-<?php absInclude("/sidebarEnd.php"); ?>
+<!-- <?php absInclude("/sidebarEnd.php"); ?> -->
 
 <div id="id_body" class="aboutUs fixed body">
 
