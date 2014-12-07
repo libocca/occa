@@ -47,19 +47,22 @@ function startSidebar(){
         '    <div class="ui black huge right sidebarItem button">' .
         '      <i class="icon list layout"></i>' .
         '      <span class="text f_os light">Contents</span>' .
-        '    </div>');
+        '    </div>' .
+        '    <div class="wrapper">');
+}
+
+function endSideBar(){
+  echo ('    </div>' .
+        '  </div>' .
+        '</div>');
 
   startBodyWrapper();
 }
 
-function endSideBar(){
-  endBodyWrapper();
-
-  echo ('  </div>' .
-        '</div>');
-}
-
 function addFooter(){
+  endBodyWrapper();
+  endBody();
+
   include($_SERVER['DOCUMENT_ROOT'] . '/footer.php');
 }
 

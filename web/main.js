@@ -20,7 +20,7 @@ $(document).ready(function(){
 
   // Remove [active] on dropdown menus
   $('.top.menu .right.menu .topMenu.item .menu a.item')
-    .off('click')
+    .off('click');
 
   //---[ Highlight ]---
   $('pre.code.block').each(function(i, block) {

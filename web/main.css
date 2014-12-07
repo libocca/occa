@@ -327,6 +327,11 @@ a.noDecor {
     max-height: calc(100% - 100px);
 }
 
+.ui.sidebar.body .wrapper {
+    max-height: calc(100% - 50px);
+    overflow: auto !important;
+}
+
 .sidebar.body .content.title {
     margin-top   : 10px;
     margin-bottom: 10px;
