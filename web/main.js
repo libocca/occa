@@ -1,11 +1,5 @@
 $(document).ready(function(){
 
-  $('.sidebarItem.button')
-    .on('touchstart click', function(event) {
-      $('.sidebar').sidebar('show');
-      event.preventDefault();
-    });
-
   $('.sidebar').sidebar()
     .sidebar({
       overlay: true

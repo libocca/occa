@@ -65,6 +65,7 @@ body.pushable div.pusher, body.pushable div.pusher.dimmed {
 
 .pushable > .pusher:after {
     background-color: transparent;
+    content: none;
 }
 
 div#id_bodyWrapper {
