@@ -1,7 +1,7 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/main.php'); ?>
 <?php addSidebarHeader('OCCA: Get Started') ?>
 
-<?php startSidebar(); ?>
+<?php startSidebar(550); ?>
 
 <div class="entry1"><a href="#Linux"  >1. Linux</a></div>
 <div class="entry2"><a href="#Linux-Download"     >1.1 Downloading Source</a></div>

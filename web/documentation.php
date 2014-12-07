@@ -1,7 +1,7 @@
 <?php include($_SERVER['DOCUMENT_ROOT'] . '/main.php'); ?>
 <?php addSidebarHeader('OCCA: Documentation') ?>
 
-<?php startSidebar(); ?>
+<?php startSidebar(420); ?>
 
 <div class="entry1"><a href="#API">1. API Reference </a></div>
 <div class="entry2"><a href="/documentation/API/C.php"      >1.2 C       </a></div>

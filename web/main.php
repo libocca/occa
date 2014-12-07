@@ -39,10 +39,18 @@ function endBodyWrapper(){
         '</div>');
 }
 
-function startSidebar(){
+function startSidebar($sidebarHeight = 0){
   startBody();
 
-  echo ('<div class="ui left sidebar body">' .
+  $style = '';
+
+  if(0 < $sidebarHeight){
+    $style = ('style="height: ' .
+              strval($sidebarHeight) .
+              'px !important"');
+  }
+
+  echo ('<div class="ui left sidebar body" ' . $style . '>' .
         '  <div class="content title"><a href="#">Content</a></div>' .
         '    <div class="ui black huge right sidebarItem button">' .
         '      <i class="icon list layout"></i>' .
