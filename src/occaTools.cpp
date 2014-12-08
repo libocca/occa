@@ -266,7 +266,7 @@ namespace occa {
 
     fclose(fp);
 
-    std::string contents(buffer, nread);
+    std::string contents(buffer, nread + 1);
 
     free(buffer);
 
