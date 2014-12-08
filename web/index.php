@@ -56,12 +56,12 @@
   </div>
 </div>
 
-<div style="height: 200px; width: 100%; background-color: black; position: relative; clear: both">
-  <div style="height: 200px; width: 1060px; margin: auto; position: relative; overflow: hidden;">
-    <div style="height: 180px; background-color: blue; color: black; margin: 10px 10px 10px 10px;">
-      Timeline
-    </div>
-  </div>
-</div>
+<!-- <div style="height: 200px; width: 100%; background-color: black; position: relative; clear: both"> -->
+<!--   <div style="height: 200px; width: 1060px; margin: auto; position: relative; overflow: hidden;"> -->
+<!--     <div style="height: 180px; background-color: blue; color: black; margin: 10px 10px 10px 10px;"> -->
+<!--       Timeline -->
+<!--     </div> -->
+<!--   </div> -->
+<!-- </div> -->
 
 <?php addFooter(); ?>

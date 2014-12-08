@@ -480,13 +480,6 @@ div.ui.api.accordion div.title {
 div.ui.api.accordion div.active.title {
     background-color: #F9FAFE;
 }
-
-.api.accordion .content {
-    padding: 20px 5px 20px 15px;
-
-    border: 0px solid #6992B5;
-    border-top-width: 2px;
-}
 /*  ===[ Shared API ]===*/
 
 /*  ---[ API ]---*/
@@ -796,7 +789,77 @@ pre.code.block {
     border-width : 0px 0px 0px 10px;
 
     background-color: rgba(0, 0, 0, 0.01);
-    border-color    : rgba(0, 0, 0, 0.01);
+    border-color    : transparent;
 
     box-shadow: 0 0 0 1px rgba(0,0,0,.2)
+}
+
+pre.api.code.block {
+    margin: none;
+
+    font-size: 14px;
+
+    background-color: transparent;
+    border-color    : transparent;
+
+    border-width : 0px;
+    margin-left  : 0px;
+    padding-left : 0px;
+
+    box-shadow: none;
+}
+
+.ui.api.accordion {
+    border-radius: 10px;
+}
+
+div.api.title:first-child {
+    border-top-left-radius : 10px;
+    border-top-right-radius: 10px;
+}
+
+div.api.content:last-child {
+    border-bottom-left-radius : 10px;
+    border-bottom-right-radius: 10px;
+}
+
+.ui.api.accordion div.api.title.active {
+    border: 2px solid #6992B5;
+    border-top: none;
+}
+
+.ui.api.accordion div.api.title.active:first-child {
+    border       : 2px solid #6992B5;
+    border-bottom: 2px solid rgb(81, 134, 174);
+}
+
+.api.title + .api.content {
+    border: 0px solid #6992B5;
+}
+
+.api.title.active + .api.content {
+    border: 2px solid #6992B5;
+    border-top: none;
+}
+
+.ui.celled.api.table tbody tr td {
+    padding: 0px 10px 0px 10px;
+    word-break: break-all;
+}
+
+.ui.celled.api.table {
+    border: 2px solid #6992B5;
+}
+
+.ui.celled.api.table thead tr th {
+    border-bottom: 2px solid #6992B5;
+    background-color: #F8F9FD;
+}
+
+.ui.celled.api.table tbody tr.b td {
+    border-bottom: 1px solid #6992B5;
+}
+
+.ui.celled.api.table tbody tr.t td {
+    border-top: 1px solid #6992B5;
 }

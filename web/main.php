@@ -126,10 +126,10 @@ function nextFunctionAPI($title){
 
 function addFunctionTitleAPI($title){
   echo
-    '  <div class="title">' .
-    $title .
+    '  <div class="api title active">' .
+    '    <pre class="cpp api code block">' . $title . '</pre>' .
     '  </div>' .
-    '  <div class="content">';
+    '  <div class="api content active">';
 }
 
 function endFunctionAPI(){

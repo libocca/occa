@@ -36,7 +36,31 @@
     <h4 id="Device-Constructors" class="ui dividing header"> Constructors / Destructors </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("setup"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Functions:</div>
+
+      <pre class="cpp code block">void setup(occa::mode mode,
+           const int arg1 = 0, const int arg2 = 0);
+void setup(const std::string &mode,
+           const int arg1 = 0, const int arg2 = 0);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">occa::mode mode</pre></td><td>TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest</td>
+            <tr class="b"><td><pre class="cpp api code block">str::string mode</pre></td><td>Test</td>
+            <tr class="b t"><td><pre class="cpp api code block">const int arg1</pre></td><td>Test</td>
+            <tr class="t"><td><pre class="cpp api code block">const int arg2</pre></td><td>Test</td>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        The <?php highlight('setup') ?> function is used to instantiate the device class.
+      </div>
+
       <?php nextFunctionAPI("free"); ?>
       Content
       <?php endFunctionAPI(); ?>
