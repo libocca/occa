@@ -20,6 +20,8 @@
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
 
+#include "occaParserTools.hpp"
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <unistd.h>
 #else
@@ -111,11 +113,13 @@ namespace occa {
   }
 
   inline mode strToMode(const std::string &str){
-    if(str.find("Pthreads") != std::string::npos) return Pthreads;
-    if(str.find("OpenMP")   != std::string::npos) return OpenMP;
-    if(str.find("OpenCL")   != std::string::npos) return OpenCL;
-    if(str.find("CUDA")     != std::string::npos) return CUDA;
-    if(str.find("COI")      != std::string::npos) return COI;
+    const std::string upStr = parserNamespace::upString(str);
+
+    if(upStr == "PTHREADS") return Pthreads;
+    if(upStr == "OPENMP")   return OpenMP;
+    if(upStr == "OPENCL")   return OpenCL;
+    if(upStr == "CUDA")     return CUDA;
+    if(upStr == "COI")      return COI;
 
     OCCA_CHECK(false);
 

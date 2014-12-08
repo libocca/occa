@@ -48,21 +48,64 @@ void setup(const std::string &mode,
         <table class="ui celled api table">
           <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><pre class="cpp api code block">occa::mode mode</pre></td><td>TestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTestTest</td>
-            <tr class="b"><td><pre class="cpp api code block">str::string mode</pre></td><td>Test</td>
-            <tr class="b t"><td><pre class="cpp api code block">const int arg1</pre></td><td>Test</td>
-            <tr class="t"><td><pre class="cpp api code block">const int arg2</pre></td><td>Test</td>
+            <tr><td><pre class="cpp api code block">occa::mode mode</pre></td><td>
+                Enumeration to set the device's <?php highlight('OCCA') ?> mode </br>
+                Should be chosen from <code>{OpenMP, OpenCL, CUDA, Pthreads, COI}</code>
+              </td>
+            <tr class="b"><td><pre class="cpp api code block">str::string mode</pre></td><td>
+                String setting the device's <?php highlight('OCCA') ?> mode </br>
+                Should be chosen from <code>{"OpenMP", "OpenCL", "CUDA", "Pthreads", "COI"}</code> </br>
+                The input is <?php highlight('case-insensitive') ?>
+              </td>
+            <tr class="b t"><td><pre class="cpp api code block">const int arg1</pre></td><td>
+                <table class="ui inner table">
+                  <thead>
+                    <tr><td style="width: 150px;"> OCCA Mode </td><td > Meaning </td>
+                  </thead>
+                  <tbody>
+                    <tr><td> OpenMP   </td><td> Nothing      </td>
+                    <tr><td> OpenCL   </td><td> Platform     </td>
+                    <tr><td> CUDA     </td><td> Device       </td>
+                    <tr><td> Pthreads </td><td> Thread count </td>
+                    <tr><td> COI      </td><td> Device       </td>
+                  </tbody>
+                </table>
+              </td>
+            <tr class="t"><td><pre class="cpp api code block">const int arg2</pre></td><td>
+                <table class="ui inner table">
+                  <thead>
+                    <tr><td style="width: 150px;"> OCCA Mode </td><td > Meaning </td>
+                  </thead>
+                  <tbody>
+                    <tr><td> OpenMP   </td><td> Nothing     </td>
+                    <tr><td> OpenCL   </td><td> Device      </td>
+                    <tr><td> CUDA     </td><td> Nothing     </td>
+                    <tr><td> Pthreads </td><td> Pinned core for first thread </td>
+                    <tr><td> COI      </td><td> Nothing     </td>
+                  </tbody>
+                </table>
+              </td>
+              </td>
           </tbody>
         </table>
       </div>
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        The <?php highlight('setup') ?> function is used to instantiate the device class.
+        Sets the device based on the mode and arguments.
       </div>
 
       <?php nextFunctionAPI("free"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+
+      <pre class="cpp code block">void free();</pre>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Frees the device and associated objects </br>
+        <?php warning('Warning: Does not free memory and kernels allocated from this device') ?>
+      </div>
+
       <?php endFunctionAPI(); ?>
     </div>
   </div>

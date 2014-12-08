@@ -106,6 +106,10 @@ function highlight($content){
   echo '<span class="highlight">' . $content . '</span>';
 }
 
+function warning($content){
+  echo '<span class="warning">' . $content . '</span>';
+}
+
 function addCodeFromFile($filename, $language = 'c_cpp'){
   echo '<pre class="code block" language="' . $language . '">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
 }

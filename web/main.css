@@ -305,6 +305,13 @@ span.highlight {
     font-family: "ralewayBold";
 }
 
+span.warning {
+    color: #FAA16D;
+
+    font-family: "ralewayBold";
+    text-decoration: underline;
+}
+
 a.noDecor {
     text-decoration: none;
 }
@@ -469,17 +476,6 @@ a.noDecor {
 }
 
 /*  ---[ Shared API ]---*/
-div.ui.api.accordion div.title {
-    padding: 7px 0px 7px 15px;
-
-    background-color: rgba(255, 255, 255, 0);
-
-    font-family: "cutive";
-}
-
-div.ui.api.accordion div.active.title {
-    background-color: #F9FAFE;
-}
 /*  ===[ Shared API ]===*/
 
 /*  ---[ API ]---*/
@@ -809,6 +805,18 @@ pre.api.code.block {
     box-shadow: none;
 }
 
+div.ui.api.accordion div.title {
+    padding: 7px 0px 7px 15px;
+
+    background-color: rgba(255, 255, 255, 0);
+
+    font-family: "cutive";
+}
+
+div.ui.api.accordion div.active.title {
+    background-color: #F9FAFE;
+}
+
 .ui.api.accordion {
     border-radius: 10px;
 }
@@ -842,24 +850,59 @@ div.api.content:last-child {
     border-top: none;
 }
 
-.ui.celled.api.table tbody tr td {
+.api.title + .api.content + .api.title.active {
+    border-top: 2px solid #6992B5;
+}
+
+.api.title.active + .api.content + .api.title.active {
+    border-top: none;
+}
+
+.ui.celled.api.table > tbody > tr > td {
     padding: 0px 10px 0px 10px;
     word-break: break-all;
 }
 
 .ui.celled.api.table {
-    border: 2px solid #6992B5;
+    border-radius: 10px;
+    border: 2px solid #6EA47B;
 }
 
-.ui.celled.api.table thead tr th {
-    border-bottom: 2px solid #6992B5;
-    background-color: #F8F9FD;
+.ui.celled.api.table > thead > tr > th {
+    border-bottom: 2px solid #6EA47B;
+    background-color: #EDFDFA;
 }
 
-.ui.celled.api.table tbody tr.b td {
-    border-bottom: 1px solid #6992B5;
+.ui.celled.api.table > thead > tr > th:first-child {
+    border-top-left-radius: 10px;
 }
 
-.ui.celled.api.table tbody tr.t td {
-    border-top: 1px solid #6992B5;
+.ui.celled.api.table > thead > tr > th:last-child {
+    border-top-right-radius: 10px;
+}
+
+.ui.celled.api.table > tbody > tr.b > td {
+    border-bottom: 1px solid #6EA47B;
+}
+
+.ui.celled.api.table > tbody > tr.t > td {
+    border-top: 1px solid #6EA47B;
+}
+
+.api.table .ui.inner.table {
+    margin-top   : 10px;
+    margin-bottom: 10px;
+}
+
+.api.table .ui.inner.table > thead {
+    background-color: #FCFCFC;
+}
+
+.api.table .ui.inner.table > thead > tr > td{
+    border-bottom: 1px solid #D4D4D5;
+}
+
+.api.table .ui.inner.table tr > td {
+    padding-top   : 0px;
+    padding-bottom: 0px;
 }
