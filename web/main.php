@@ -39,20 +39,31 @@ function endBodyWrapper(){
         '</div>');
 }
 
-function startSidebar($sidebarHeight = 0){
+function startSidebar($sidebarHeight = 0, $sidebarWidth = 0){
   startBody();
 
   $style = '';
+  $bStyle = '';
 
   if(0 < $sidebarHeight){
     $style = ('style="height: ' .
               strval($sidebarHeight) .
-              'px !important"');
+              'px !important;');
+
+    if(0 < $sidebarWidth){
+      $style .= ('width: ' .
+                 strval($sidebarWidth) .
+                 'px !important;');
+
+      $bStyle = 'style="left: ' . strval($sidebarWidth - 2) . 'px"';
+    }
+
+    $style .= '"';
   }
 
   echo ('<div class="ui left overlay sidebar body" ' . $style . '>' .
         '  <div class="content title"><a href="#">Content</a></div>' .
-        '    <div class="ui black huge right sidebarItem button">' .
+        '    <div class="ui black huge right sidebarItem button" ' .$bStyle . '>' .
         '      <i class="icon list layout"></i>' .
         '      <span class="text f_os light">Contents</span>' .
         '    </div>' .
