@@ -1,6 +1,6 @@
 <div class="ui top menu" id="id_topMenu">
   <div class="top wrapper">
-    <a class="item" id="id_logo_div" href="/index.php">
+    <a class="item" id="id_logo_div" href="/">
       <img id="id_top_logo"    class="top logo"    src="/images/logo/blueOccaLogo.png"></img>
       <img id="id_bottom_logo" class="bottom logo" src="/images/logo/blackOccaLogo.png"></img>
     </a>
