@@ -115,7 +115,7 @@
   <h2 id="Contributors" class="ui dividing header"> Contributors </h2>
 
   <div class="ui contributor profile segment">
-    <a class="ui rounded image" href="http://www.fdy.tu-darmstadt.de/forschung_16/entwicklungcfdcode/entwicklungcfdcode.en.jsp">
+    <a class="ui rounded image" href="http://www.fdy.tu-darmstadt.de/fdy/mitarbeiter_20/mitarbeiterdetails_16067.en.jsp">
       <img src="/images/aboutUs/florian.png"></img>
     </a>
     <div class="info">
