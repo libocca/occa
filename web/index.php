@@ -32,6 +32,9 @@
 
 <a href="/documentation/kernelLanguages/OFL.php"
    style="width: 52px; height: 51px; background-color: transparent; position: absolute; left: 293px; top: 320px;"></a>
+
+<a href=""
+   style="width: 230px; height: 62px; border-radius: 4px; background-color: transparent; position: absolute; left: 310px; top: 445px;"></a>
 </div>
 
 <div style="width: 100%; background-color: #EAF5F9; padding: 20px 0 20px 0;">
