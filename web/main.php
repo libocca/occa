@@ -50,7 +50,7 @@ function startSidebar($sidebarHeight = 0){
               'px !important"');
   }
 
-  echo ('<div class="ui left sidebar body" ' . $style . '>' .
+  echo ('<div class="ui left overlay sidebar body" ' . $style . '>' .
         '  <div class="content title"><a href="#">Content</a></div>' .
         '    <div class="ui black huge right sidebarItem button">' .
         '      <i class="icon list layout"></i>' .
