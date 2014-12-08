@@ -39,8 +39,8 @@
               <a class="item" href="/documentation/API/CPP.php"    > C++     </a>
               <a class="item" href="/documentation/API/CS.php"     > C#      </a>
               <a class="item" href="/documentation/API/Fortran.php"> Fortran </a>
-              <a class="item" href="/documentation/API/Julia.php"  > Julia   </a>
               <a class="item" href="/documentation/API/Python.php" > Python  </a>
+              <a class="item" href="/documentation/API/Julia.php"  > Julia   </a>
               <a class="item" href="/documentation/API/Matlab.php" > MATLAB  </a>
             </div>
           </div>
