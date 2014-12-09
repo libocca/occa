@@ -30,7 +30,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/cLogo.png"></img>
         </div>
-        <div class="name"> <?php ready('r'); ?> C <?php emptyReady(); ?> </div>
+        <div class="name"> C </div>
       </div>
     </a>
     <a href="/documentation/API/CPP.php" class="link">
@@ -38,7 +38,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/cppLogo.png"></img>
         </div>
-        <div class="name"> <?php ready('y'); ?> C++ <?php emptyReady(); ?> </div>
+        <div class="name"> C++ </div>
       </div>
     </a>
     <a href="/documentation/API/CS.php" class="link">
@@ -46,7 +46,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/csLogo.png"></img>
         </div>
-        <div class="name"> <?php ready('r') ?> C# <?php emptyReady(); ?> </div>
+        <div class="name"> C# </div>
       </div>
     </a>
     <a href="/documentation/API/Fortran.php" class="link">
@@ -54,7 +54,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/f90Logo.png"></img>
         </div>
-        <div class="name" style="overflow: hidden;"> <?php ready('r') ?> Fortran <?php emptyReady(); ?> </div>
+        <div class="name" style="overflow: hidden;"> Fortran </div>
       </div>
     </a>
     <a href="/documentation/API/Python.php" class="link">
@@ -62,7 +62,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/python.png"></img>
         </div>
-        <div class="name"> <?php ready('r') ?> Python <?php emptyReady(); ?> </div>
+        <div class="name"> Python </div>
       </div>
     </a>
     <a href="/documentation/API/Julia.php" class="link">
@@ -70,7 +70,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/julia.png"></img>
         </div>
-        <div class="name"> <?php ready('r') ?> Julia <?php emptyReady(); ?> </div>
+        <div class="name"> Julia </div>
       </div>
     </a>
     <a href="/documentation/API/Matlab.php" class="link">
@@ -78,7 +78,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/matlab.png"></img>
         </div>
-        <div class="name"> <?php ready('r') ?> MATLAB <?php emptyReady(); ?> </div>
+        <div class="name"> MATLAB </div>
       </div>
     </a>
   </div>
@@ -91,7 +91,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/oklLogo.png"></img>
         </div>
-        <div class="name"> <?php ready('r') ?> OKL <?php emptyReady(); ?> </div>
+        <div class="name"> OKL </div>
       </div>
     </a>
     <a href="/documentation/kernelLanguages/OFL.php" class="link">
@@ -99,7 +99,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/oflLogo.png"></img>
         </div>
-        <div class="name"> <?php ready('r') ?> OFL <?php emptyReady(); ?> </div>
+        <div class="name"> OFL </div>
       </div>
     </a>
   </div>

@@ -36,20 +36,20 @@
             <a class="noDecor f_14" href="/documentation.php#API"> API Reference <i class="dropdown icon"></i></a>
             <div class="menu">
 
-              <a class="item" href="/documentation/API/C.php"      > <?php ready('r'); ?> C       </a>
-              <a class="item" href="/documentation/API/CPP.php"    > <?php ready('y'); ?> C++     </a>
-              <a class="item" href="/documentation/API/CS.php"     > <?php ready('r'); ?> C#      </a>
-              <a class="item" href="/documentation/API/Fortran.php"> <?php ready('r'); ?> Fortran </a>
-              <a class="item" href="/documentation/API/Python.php" > <?php ready('r'); ?> Python  </a>
-              <a class="item" href="/documentation/API/Julia.php"  > <?php ready('r'); ?> Julia   </a>
-              <a class="item" href="/documentation/API/Matlab.php" > <?php ready('r'); ?> MATLAB  </a>
+              <a class="item" href="/documentation/API/C.php"      > C       </a>
+              <a class="item" href="/documentation/API/CPP.php"    > C++     </a>
+              <a class="item" href="/documentation/API/CS.php"     > C#      </a>
+              <a class="item" href="/documentation/API/Fortran.php"> Fortran </a>
+              <a class="item" href="/documentation/API/Python.php" > Python  </a>
+              <a class="item" href="/documentation/API/Julia.php"  > Julia   </a>
+              <a class="item" href="/documentation/API/Matlab.php" > MATLAB  </a>
             </div>
           </div>
           <div class="ui dropdown item">
             <a class="noDecor f_14" href="/documentation.php#kernelLanguages"> Kernel Languages <i class="dropdown icon"></i></a>
             <div class="menu">
-              <a class="item" href="/documentation/kernelLanguages/OKL.php"> <?php ready('r'); ?> OKL </a>
-              <a class="item" href="/documentation/kernelLanguages/OFL.php"> <?php ready('r'); ?> OFL </a>
+              <a class="item" href="/documentation/kernelLanguages/OKL.php"> OKL </a>
+              <a class="item" href="/documentation/kernelLanguages/OFL.php"> OFL </a>
             </div>
           </div>
         </div>
