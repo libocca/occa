@@ -51,48 +51,47 @@ void setup(const std::string &mode,
             <tr><td><pre class="cpp api code block">occa::mode mode</pre></td><td>
                 Enumeration to set the device's <?php highlight('OCCA') ?> mode </br>
                 Should be chosen from <code>{OpenMP, OpenCL, CUDA, Pthreads, COI}</code>
-              </td>
+              </td></tr>
             <tr class="b"><td><pre class="cpp api code block">str::string mode</pre></td><td>
                 String setting the device's <?php highlight('OCCA') ?> mode </br>
                 Should be chosen from <code>{"OpenMP", "OpenCL", "CUDA", "Pthreads", "COI"}</code> </br>
                 The input is <?php highlight('case-insensitive') ?>
-              </td>
+              </td></tr>
             <tr class="b t"><td><pre class="cpp api code block">const int arg1</pre></td><td>
                 <table class="ui inner table">
                   <thead>
-                    <tr><td style="width: 150px;"> OCCA Mode </td><td > Meaning </td>
+                    <tr><td style="width: 150px;"> OCCA Mode </td><td> Meaning </td></tr>
                   </thead>
                   <tbody>
-                    <tr><td> OpenMP   </td><td> Nothing      </td>
-                    <tr><td> OpenCL   </td><td> Platform     </td>
-                    <tr><td> CUDA     </td><td> Device       </td>
-                    <tr><td> Pthreads </td><td> Thread count </td>
-                    <tr><td> COI      </td><td> Device       </td>
+                    <tr><td> OpenMP   </td><td> Nothing      </td></tr>
+                    <tr><td> OpenCL   </td><td> Platform     </td></tr>
+                    <tr><td> CUDA     </td><td> Device       </td></tr>
+                    <tr><td> Pthreads </td><td> Thread count </td></tr>
+                    <tr><td> COI      </td><td> Device       </td></tr>
                   </tbody>
                 </table>
-              </td>
+              </td></tr>
             <tr class="t"><td><pre class="cpp api code block">const int arg2</pre></td><td>
                 <table class="ui inner table">
                   <thead>
-                    <tr><td style="width: 150px;"> OCCA Mode </td><td > Meaning </td>
+                    <tr><td style="width: 150px;"> OCCA Mode </td><td > Meaning </td></tr>
                   </thead>
                   <tbody>
-                    <tr><td> OpenMP   </td><td> Nothing     </td>
-                    <tr><td> OpenCL   </td><td> Device      </td>
-                    <tr><td> CUDA     </td><td> Nothing     </td>
-                    <tr><td> Pthreads </td><td> Pinned core for first thread </td>
-                    <tr><td> COI      </td><td> Nothing     </td>
+                    <tr><td> OpenMP   </td><td> Nothing                      </td></tr>
+                    <tr><td> OpenCL   </td><td> Device                       </td></tr>
+                    <tr><td> CUDA     </td><td> Nothing                      </td></tr>
+                    <tr><td> Pthreads </td><td> Pinned core for first thread </td></tr>
+                    <tr><td> COI      </td><td> Nothing                      </td></tr>
                   </tbody>
                 </table>
-              </td>
-              </td>
+              </td></tr>
           </tbody>
         </table>
       </div>
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        Sets the device based on the mode and arguments.
+        Sets the device based on the mode and arguments
       </div>
 
       <?php nextFunctionAPI("free"); ?>
@@ -114,11 +113,66 @@ void setup(const std::string &mode,
     <h4 id="Device-CompilerSettings" class="ui dividing header"> Compiler Settings </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("setCompiler"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">void setCompiler(const std::string &compiler);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 280px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">const std::string &compiler</pre></td><td>
+                Sets the compiler used by the device to build kernels
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Sets the compiler used by the device to build kernels
+      </div>
+
       <?php nextFunctionAPI("setCompilerEnvScript"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">void setCompilerEnvScript(const std::string &compilerEnvScript_);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 360px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">const std::string &compilerEnvScript_</pre></td><td>
+                The command in <code>compilerEnvScript_</code> is run prior to compiling kernels
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Set a script to run prior to compiling kernels
+      </div>
       <?php nextFunctionAPI("setCompilerFlags"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">void setCompilerFlags(const std::string &compilerFlags);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 320px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">const std::string &compilerFlags</pre></td><td>
+                Flags used when compiling a kernel
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Set the flags the device uses when compiling kernels
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -127,9 +181,69 @@ void setup(const std::string &mode,
     <h4 id="Device-MemoryFunctions" class="ui dividing header"> Memory Functions </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("malloc"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">occa::memory malloc(const uintptr_t bytes,
+                    void *source = NULL);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 220px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr class="b"><td><pre class="cpp api code block">const uintptr_t bytes</pre></td><td>
+                Allocates continuous memory of size <code>bytes</code> on the device and returns the <code>occa::memory</code> object associated with it.
+              </td></tr>
+            <tr class="t"><td><pre class="cpp api code block">void *source</pre></td><td>
+                If set, the device initializes the allocated memory from <code>source</code>
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Allocates memory on the device
+      </div>
       <?php nextFunctionAPI("talloc"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">occa::memory talloc(const int dim,
+                    const occa::dim &dims,
+                    void *source,
+                    occa::formatType type,
+                    const int permissions = readWrite);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 240px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr class="b"><td><pre class="cpp api code block">const int dim</pre></td><td>
+                <code>dim</code> can be 1 or 2, the dimension of the texture
+              </td></tr>
+            <tr class="t b"><td><pre class="cpp api code block">const occa::dim &dims</pre></td><td>
+                <code>dims.x, dims.y</code> hold the array size in the first and second dimensions respectively</br>
+                <code>dims.y</code> is ignored on 1D textures (if <code>dim</code> is 1)
+              </td></tr>
+            <tr class="t b"><td><pre class="cpp api code block">void *source</pre></td><td>
+                Allocating texture memory requires initialization during allocation, where the initial values are loaded from <code>source</code>
+              </td></tr>
+            <tr class="t b"><td><pre class="cpp api code block">occa::formatType type</pre></td><td>
+                Data layout for the texture</br>
+                For more information on <code>type</code>, refer to the <a href="" class="link"><code>occa::formatType</code></a> definition
+              </td></tr>
+            <tr class="t"><td><pre class="cpp api code block">const int permissions</pre></td><td>
+                Defaults the permissions for the texture with read-write permissions </br>
+                Should be chosen from <code>{occa::readOnly, occa::readWrite}</code>
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Allocates texture memory on the device if available, otherwise it defaults to <code>occa::malloc</code> </br>
+        For devices without texture memory, 2D texture objects maintain the dimensions of the texture, allowing you to use the continuous array from the defaulting <code>occa::malloc</code> as a 2D array
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -138,11 +252,82 @@ void setup(const std::string &mode,
     <h4 id="Device-KernelFunctions" class="ui dividing header"> Kernel Functions </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("buildKernelFromSource"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">occa::kernel buildKernelFromSource(const std::string &filename,
+                                   const std::string &functionName,
+                                   const kernelInfo &info_ = defaultKernelInfo);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 310px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr class="b"><td><pre class="cpp api code block">const std::string &filename</pre></td><td>
+                File containing the kernel source
+              </td></tr>
+            <tr class="t b"><td><pre class="cpp api code block">const std::string &functionName</pre></td><td>
+                Function that will be loaded
+              </td></tr>
+            <tr class="t"><td><pre class="cpp api code block">const kernelInfo &info_</pre></td><td>
+                Compile-time macros and includes can be set through <code>info_</code></br>
+                For more information on <code>info_</code>, refer to the <a href="" class="link"><code>occa::kernelInfo</code></a> definition
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Compile kernel from source </br>
+        <span class="highlight">Note: Kernel compilation caches the binary in <code>$OCCA_CACHE_DIR</code>, which defaults to <code>~/._occa/</code></span>
+      </div>
       <?php nextFunctionAPI("buildKernelFromBinary"); ?>
-      Content
-      <?php nextFunctionAPI("buildKernelFromLoopy"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">occa::kernel buildKernelFromBinary(const std::string &filename,
+                                   const std::string &functionName);</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr class="b"><td><pre class="cpp api code block">const std::string &filename</pre></td><td>
+                File containing the kernel source
+              </td></tr>
+            <tr class="t"><td><pre class="cpp api code block">const std::string &functionName</pre></td><td>
+                Function that will be loaded
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        Loads the kernel <code>functionName</code> from the binary file <code>filename</code>
+      </div>
+      <!-- <?php nextFunctionAPI("buildKernelFromLoopy"); ?> -->
+      <!-- <div class="dSpacing1 f_rw bold">Function:</div> -->
+      <!-- <pre class="cpp code block">;</pre> -->
+
+      <!-- <div class="uSpacing3 f_rw bold"></div> -->
+      <!-- <div class="dsm5 indent1"> -->
+      <!--   <table class="ui celled api table"> -->
+      <!--     <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead> -->
+      <!--     <tbody> -->
+      <!--       <tr><td><pre class="cpp api code block">ARG1</pre></td><td> -->
+      <!--           Description -->
+      <!--         </td></tr> -->
+      <!--       <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td> -->
+      <!--           Description -->
+      <!--         </td></tr> -->
+      <!--     </tbody> -->
+      <!--   </table> -->
+      <!-- </div> -->
+
+      <!-- <div class="uSpacing3 f_rw bold">Description:</div> -->
+      <!-- <div class="dsm5 indent1"> -->
+      <!--   SET DESCRIPTION -->
+      <!-- </div> -->
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -151,27 +336,216 @@ void setup(const std::string &mode,
     <h4 id="Device-Streams" class="ui dividing header"> Streams </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("genStream"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("getStream"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("setStream"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
 
       <?php startFunctionAPI("tagStream"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("waitFor"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("timeBetween"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("free(stream)"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
 
       <?php startFunctionAPI("flush"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("finish"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -180,19 +554,145 @@ void setup(const std::string &mode,
     <h4 id="Device-Interoperability" class="ui dividing header"> Interoperability </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("cl::wrapDevice"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("cuda::wrapDevice"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("coi::wrapDevice"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
 
       <?php startFunctionAPI("wrapStream"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("wrapMemory"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("wrapTexture"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -202,7 +702,28 @@ void setup(const std::string &mode,
     <h4 id="Memory-Constructors" class="ui dividing header"> Constructors / Destructors </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("free"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -211,13 +732,97 @@ void setup(const std::string &mode,
     <h4 id="Memory-Copies" class="ui dividing header"> Memory Copying </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("copyFrom"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("copyTo"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("asyncCopyFrom"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("asyncCopyTo"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -226,9 +831,51 @@ void setup(const std::string &mode,
     <h4 id="Memory-Interoperability" class="ui dividing header"> Interoperability </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("getMemoryHandle"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("getTextureHandle"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -237,11 +884,74 @@ void setup(const std::string &mode,
     <h4 id="Memory-Others" class="ui dividing header"> Others </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("mode"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("bytes"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("swap"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -251,7 +961,28 @@ void setup(const std::string &mode,
     <h4 id="Kernel-Constructors" class="ui dividing header"> Constructors / Destructors </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("free"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -260,9 +991,51 @@ void setup(const std::string &mode,
     <h4 id="Kernel-Others" class="ui dividing header"> Others </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("mode"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("timeTaken"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>
@@ -272,9 +1045,51 @@ void setup(const std::string &mode,
     <h4 id="HelperFunctions-Memory" class="ui dividing header"> Memory Functions </h4>
     <div class="dsm5 indent1">
       <?php startFunctionAPI("memcpy"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php nextFunctionAPI("asyncMemcpy"); ?>
-      Content
+      <div class="dSpacing1 f_rw bold">Function:</div>
+      <pre class="cpp code block">;</pre>
+
+      <div class="uSpacing3 f_rw bold"></div>
+      <div class="dsm5 indent1">
+        <table class="ui celled api table">
+          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <tbody>
+            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
+                Description
+              </td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="uSpacing3 f_rw bold">Description:</div>
+      <div class="dsm5 indent1">
+        SET DESCRIPTION
+      </div>
       <?php endFunctionAPI(); ?>
     </div>
   </div>

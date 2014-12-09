@@ -864,7 +864,7 @@ div.api.content:last-child {
 
 .ui.celled.api.table > tbody > tr > td {
     padding: 0px 10px 0px 10px;
-    word-break: break-all;
+    word-break: normal;
 }
 
 .ui.celled.api.table {
