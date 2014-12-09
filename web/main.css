@@ -830,6 +830,11 @@ div.api.title:first-child {
     border-top-right-radius: 10px;
 }
 
+div.api.title:nth-last-child(2) {
+    border-bottom-left-radius : 10px;
+    border-bottom-right-radius: 10px;
+}
+
 div.api.content:last-child {
     border-bottom-left-radius : 10px;
     border-bottom-right-radius: 10px;
@@ -891,6 +896,11 @@ div.api.content:last-child {
 
 .ui.celled.api.table > tbody > tr.t > td {
     border-top: 1px solid #6EA47B;
+}
+
+/* Not done titles for API */
+.ui.api.accordion div.api.title.notDone {
+    background-color: #EDC3BF;
 }
 
 .api.table .ui.inner.table {

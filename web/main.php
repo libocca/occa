@@ -126,28 +126,28 @@ function addCodeFromFile($filename, $language = 'c_cpp'){
   echo '<pre class="code block" language="' . $language . '">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
 }
 
-function startFunctionAPI($title){
+function startFunctionAPI($title, $isDone = 'done'){
   echo
     '<div class="ui fluid styled api accordion">';
 
-  addFunctionTitleAPI($title);
+  addFunctionTitleAPI($title, $isDone);
 }
 
-function nextFunctionAPI($title){
+function nextFunctionAPI($title, $isDone = 'done'){
   echo
     '  </div>';
 
-  addFunctionTitleAPI($title);
+  addFunctionTitleAPI($title, $isDone);
 }
 
-function addFunctionTitleAPI($title){
+function addFunctionTitleAPI($title, $isDone = 'done'){
   echo
-    '  <div class="api title">' .
+    '  <div class="api title ' . $isDone . '">' .
     '    <pre class="cpp api code block">' . $title . '</pre>' .
     '  </div>' .
     '  <div class="api content">';
   /* echo */
-  /*   '  <div class="api title active">' . */
+  /*   '  <div class="api title active ' . $isDone . '">' . */
   /*   '    <pre class="cpp api code block">' . $title . '</pre>' . */
   /*   '  </div>' . */
   /*   '  <div class="api content active">'; */
