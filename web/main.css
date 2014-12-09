@@ -431,9 +431,6 @@ a.noDecor {
 
 /*---[ Documentation ]---*/
 .api.buttons.wrapper {
-    /*---[ Center Content ]---*/
-    /* display: table; */
-    /* margin: 0 auto; */
 }
 
 .api.buttons.wrapper a {
@@ -442,6 +439,7 @@ a.noDecor {
 
 .api.buttons.wrapper a .segment {
     display: inline-block;
+    vertical-align: top;
 
     height: 155px;
     width : 120px;
@@ -476,6 +474,12 @@ a.noDecor {
 }
 
 /*  ---[ Shared API ]---*/
+.c.ready.g { color: #6EA47B; }
+.c.ready.y { color: #D9D375; }
+.c.ready.r { color: #EF665C; }
+.bc.ready.g { border-color: #6EA47B; }
+.bc.ready.y { border-color: #EDA160; }
+.bc.ready.r { border-color: #EF665C; }
 /*  ===[ Shared API ]===*/
 
 /*  ---[ API ]---*/

@@ -110,6 +110,18 @@ function warning($content){
   echo '<span class="warning">' . $content . '</span>';
 }
 
+function ready($color){
+  switch($color){
+  case 'g': echo '<i class="c ready g check square icon"></i>'; break;
+  case 'y': echo '<i class="c ready y check square icon"></i>'; break;
+  case 'r': echo '<i class="c ready r check square icon"></i>'; break;
+  }
+}
+
+function emptyReady(){
+  echo '<div style="width: 20px; height: 1px; display: inline-block"></div>';
+}
+
 function addCodeFromFile($filename, $language = 'c_cpp'){
   echo '<pre class="code block" language="' . $language . '">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
 }
