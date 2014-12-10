@@ -141,16 +141,16 @@ function nextFunctionAPI($title, $isDone = 'done'){
 }
 
 function addFunctionTitleAPI($title, $isDone = 'done'){
-  echo
-    '  <div class="api title ' . $isDone . '">' .
-    '    <pre class="cpp api code block">' . $title . '</pre>' .
-    '  </div>' .
-    '  <div class="api content">';
   /* echo */
-  /*   '  <div class="api title active ' . $isDone . '">' . */
+  /*   '  <div class="api title ' . $isDone . '">' . */
   /*   '    <pre class="cpp api code block">' . $title . '</pre>' . */
   /*   '  </div>' . */
-  /*   '  <div class="api content active">'; */
+  /*   '  <div class="api content">'; */
+  echo
+    '  <div class="api title active ' . $isDone . '">' .
+    '    <pre class="cpp api code block">' . $title . '</pre>' .
+    '  </div>' .
+    '  <div class="api content active">';
 }
 
 function endFunctionAPI(){

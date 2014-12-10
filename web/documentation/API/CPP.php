@@ -335,66 +335,33 @@ void setup(const std::string &mode,
   <div class="dsm5 indent1 dSpacing3">
     <h4 id="Device-Streams" class="ui dividing header"> Streams </h4>
     <div class="dsm5 indent1">
-      <?php startFunctionAPI("genStream", "notDone"); ?>
+      <?php startFunctionAPI("createStream", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>
-      <pre class="cpp code block">;</pre>
-
-      <div class="uSpacing3 f_rw bold"></div>
-      <div class="dsm5 indent1">
-        <table class="ui celled api table">
-          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-          </tbody>
-        </table>
-      </div>
+      <pre class="cpp code block">occa::stream createStream();</pre>
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        SET DESCRIPTION
+        Returns a newly created stream for the device
       </div>
       <?php nextFunctionAPI("getStream", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>
-      <pre class="cpp code block">;</pre>
-
-      <div class="uSpacing3 f_rw bold"></div>
-      <div class="dsm5 indent1">
-        <table class="ui celled api table">
-          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-          </tbody>
-        </table>
-      </div>
+      <pre class="cpp code block">occa::stream getStream();</pre>
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        SET DESCRIPTION
+        Returns the current stream the device is using
       </div>
       <?php nextFunctionAPI("setStream", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>
-      <pre class="cpp code block">;</pre>
+      <pre class="cpp code block">void setStream(occa::stream s);</pre>
 
       <div class="uSpacing3 f_rw bold"></div>
       <div class="dsm5 indent1">
         <table class="ui celled api table">
           <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
+            <tr><td><pre class="cpp api code block">occa::stream s</pre></td><td>
+                Sets the device's current stream to <code>s</code>
               </td></tr>
           </tbody>
         </table>
@@ -402,47 +369,31 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        SET DESCRIPTION
+        Sets the device's current stream
       </div>
       <?php endFunctionAPI(); ?>
 
       <?php startFunctionAPI("tagStream", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>
-      <pre class="cpp code block">;</pre>
-
-      <div class="uSpacing3 f_rw bold"></div>
-      <div class="dsm5 indent1">
-        <table class="ui celled api table">
-          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
-          <tbody>
-            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-          </tbody>
-        </table>
-      </div>
+      <pre class="cpp code block">tag occa::tagStream()</pre>
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        SET DESCRIPTION
+        Set a tag on the device's current stream and return it</br>
+        Can be used with <code>device::waitOn(occa::tag tag_)</code> to sync with the device up until tag <code>tag_</code></br>
+        Can also be used to time between tags with <code>device::timeBetween(occa::tag start, occa::tag end)</code>
       </div>
       <?php nextFunctionAPI("waitFor", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>
-      <pre class="cpp code block">;</pre>
+      <pre class="cpp code block">void waitFor(occa::tag tag_);</pre>
 
       <div class="uSpacing3 f_rw bold"></div>
       <div class="dsm5 indent1">
         <table class="ui celled api table">
           <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
-              </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
+            <tr><td><pre class="cpp api code block">occa::tag tag_</pre></td><td>
+                A tag on the device's current stream which <code>waitFor()</code> will wait on
               </td></tr>
           </tbody>
         </table>
@@ -450,22 +401,22 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        SET DESCRIPTION
+        Waits until the device has processed work until tag <code>tag_</code>
       </div>
       <?php nextFunctionAPI("timeBetween", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>
-      <pre class="cpp code block">;</pre>
-
+      <pre class="cpp code block">double timeBetween(const occa::tag &startTag,
+                   const occa::tag &endTag);</pre>
       <div class="uSpacing3 f_rw bold"></div>
       <div class="dsm5 indent1">
         <table class="ui celled api table">
           <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
+            <tr><td><pre class="cpp api code block">const occa::tag &startTag</pre></td><td>
+                Used for the start time
               </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">ARG1</pre></td><td>
-                Description
+            <tr class="b"><td><pre class="cpp api code block">const occa::tag &endTag</pre></td><td>
+                Used for the end time
               </td></tr>
           </tbody>
         </table>
@@ -473,7 +424,8 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        SET DESCRIPTION
+        Returns the time taken between tags <code>startTag</code> and <code>endTag</code> respectively</br>
+
       </div>
       <?php nextFunctionAPI("free(stream)", "notDone"); ?>
       <div class="dSpacing1 f_rw bold">Function:</div>

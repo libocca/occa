@@ -239,7 +239,7 @@ namespace occa {
   void device_t<Pthreads>::waitFor(tag tag_);
 
   template <>
-  stream device_t<Pthreads>::genStream();
+  stream device_t<Pthreads>::createStream();
 
   template <>
   void device_t<Pthreads>::freeStream(stream s);

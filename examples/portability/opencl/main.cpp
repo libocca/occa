@@ -19,7 +19,7 @@ int main(int argc, char **argv){
   cl_command_queue clStream = clCreateCommandQueue(clContext,
                                                    clDeviceID,
                                                    CL_QUEUE_PROFILING_ENABLE, &error);
-  OCCA_CL_CHECK("Device: genStream", error);
+  OCCA_CL_CHECK("Device: createStream", error);
 
   cl_mem cl_a = clCreateBuffer(clContext,
                                CL_MEM_READ_WRITE,

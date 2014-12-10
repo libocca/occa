@@ -47,6 +47,7 @@ namespace occa {
 
   //---[ Typedefs ]-------------------
   typedef void* stream;
+  typedef stream pStream; // hehe
 
   static const int CPU     = (1 << 0);
   static const int GPU     = (1 << 1);
@@ -985,7 +986,7 @@ namespace occa {
 
     virtual void waitFor(tag tag_) = 0;
 
-    virtual stream genStream() = 0;
+    virtual stream createStream() = 0;
     virtual void freeStream(stream s) = 0;
     virtual stream wrapStream(void *handle_) = 0;
 
@@ -1073,7 +1074,7 @@ namespace occa {
 
     void waitFor(tag tag_);
 
-    stream genStream();
+    stream createStream();
     void freeStream(stream s);
     stream wrapStream(void *handle_);
 
@@ -1176,7 +1177,7 @@ namespace occa {
 
     void waitFor(tag tag_);
 
-    stream genStream();
+    stream createStream();
     stream getStream();
     void setStream(stream s);
     stream wrapStream(void *handle_);

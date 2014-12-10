@@ -835,6 +835,11 @@ div.api.title:nth-last-child(2) {
     border-bottom-right-radius: 10px;
 }
 
+div.api.active.title:nth-last-child(2) {
+    border-bottom-left-radius : 0px;
+    border-bottom-right-radius: 0px;
+}
+
 div.api.content:last-child {
     border-bottom-left-radius : 10px;
     border-bottom-right-radius: 10px;

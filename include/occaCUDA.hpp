@@ -211,7 +211,7 @@ namespace occa {
   void device_t<CUDA>::waitFor(tag tag_);
 
   template <>
-  stream device_t<CUDA>::genStream();
+  stream device_t<CUDA>::createStream();
 
   template <>
   void device_t<CUDA>::freeStream(stream s);

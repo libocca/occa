@@ -1,5 +1,6 @@
 ifndef OCCA_DIR
-	OCCA_DIR = ../../
+ERROR:
+	@echo "Error, environment variable [OCCA_DIR] is not set"
 endif
 
 include ${OCCA_DIR}/scripts/makefile
@@ -10,7 +11,7 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
-executables = main 
+executables = main
 
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)

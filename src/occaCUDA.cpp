@@ -36,7 +36,7 @@ namespace occa {
       dev.modelID_ = library::deviceModelID(dev.getIdentifier());
       dev.id_      = library::genDeviceID();
 
-      dev.currentStream = dev.genStream();
+      dev.currentStream = dev.createStream();
 
       return dev;
     }
@@ -917,12 +917,12 @@ namespace occa {
   }
 
   template <>
-  stream device_t<CUDA>::genStream(){
+  stream device_t<CUDA>::createStream(){
     OCCA_EXTRACT_DATA(CUDA, Device);
 
     CUstream *retStream = new CUstream;
 
-    OCCA_CUDA_CHECK("Device: genStream",
+    OCCA_CUDA_CHECK("Device: createStream",
                     cuStreamCreate(retStream, CU_STREAM_DEFAULT));
 
     return retStream;

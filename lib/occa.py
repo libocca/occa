@@ -85,7 +85,7 @@ class device:
                                                          c_size_t(cByteCount),
                                                          cSource)))
 
-    def genStream(self):
+    def createStream(self):
         return self.lib.occaGenStream(self.cDevice)
 
     def getStream(self):
