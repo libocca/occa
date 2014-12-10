@@ -20,6 +20,8 @@
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
 
+#include "occaParserTools.hpp"
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <unistd.h>
 #else
@@ -45,6 +47,7 @@ namespace occa {
 
   //---[ Typedefs ]-------------------
   typedef void* stream;
+  typedef stream pStream; // hehe
 
   static const int CPU     = (1 << 0);
   static const int GPU     = (1 << 1);
@@ -111,11 +114,13 @@ namespace occa {
   }
 
   inline mode strToMode(const std::string &str){
-    if(str.find("Pthreads") != std::string::npos) return Pthreads;
-    if(str.find("OpenMP")   != std::string::npos) return OpenMP;
-    if(str.find("OpenCL")   != std::string::npos) return OpenCL;
-    if(str.find("CUDA")     != std::string::npos) return CUDA;
-    if(str.find("COI")      != std::string::npos) return COI;
+    const std::string upStr = parserNamespace::upString(str);
+
+    if(upStr == "PTHREADS") return Pthreads;
+    if(upStr == "OPENMP")   return OpenMP;
+    if(upStr == "OPENCL")   return OpenCL;
+    if(upStr == "CUDA")     return CUDA;
+    if(upStr == "COI")      return COI;
 
     OCCA_CHECK(false);
 
@@ -981,7 +986,7 @@ namespace occa {
 
     virtual void waitFor(tag tag_) = 0;
 
-    virtual stream genStream() = 0;
+    virtual stream createStream() = 0;
     virtual void freeStream(stream s) = 0;
     virtual stream wrapStream(void *handle_) = 0;
 
@@ -1069,7 +1074,7 @@ namespace occa {
 
     void waitFor(tag tag_);
 
-    stream genStream();
+    stream createStream();
     void freeStream(stream s);
     stream wrapStream(void *handle_);
 
@@ -1172,7 +1177,7 @@ namespace occa {
 
     void waitFor(tag tag_);
 
-    stream genStream();
+    stream createStream();
     stream getStream();
     void setStream(stream s);
     stream wrapStream(void *handle_);

@@ -549,7 +549,7 @@ namespace occa {
     modelID_ = library::deviceModelID(getIdentifier());
     id_      = library::genDeviceID();
 
-    currentStream = genStream();
+    currentStream = createStream();
   }
 
   deviceIdentifier device::getIdentifier() const {
@@ -613,8 +613,8 @@ namespace occa {
     dHandle->waitFor(tag_);
   }
 
-  stream device::genStream(){
-    streams.push_back( dHandle->genStream() );
+  stream device::createStream(){
+    streams.push_back( dHandle->createStream() );
     return streams.back();
   }
 

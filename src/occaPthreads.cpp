@@ -722,7 +722,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<Pthreads>::genStream(){
+  stream device_t<Pthreads>::createStream(){
     return NULL;
   }
 

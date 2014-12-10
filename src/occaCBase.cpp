@@ -270,7 +270,7 @@ extern "C" {
   occaStream LIBOCCA_CALLINGCONV occaDeviceGenStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
-    return (occaStream) device_.genStream();
+    return (occaStream) device_.createStream();
   }
 
   occaStream LIBOCCA_CALLINGCONV occaDeviceGetStream(occaDevice device){

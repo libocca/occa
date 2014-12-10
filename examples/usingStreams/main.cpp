@@ -28,7 +28,7 @@ int main(int argc, char **argv){
   device.setup(mode, platformID, deviceID);
 
   streamA = device.getStream();
-  streamB = device.genStream();
+  streamB = device.createStream();
 
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));

@@ -88,10 +88,34 @@
     </div>
   </div>
 
+  <div class="ui profile segment">
+    <a class="ui rounded image" href="http://scholar.google.com/citations?user=JFap1psAAAAJ&hl=en">
+      <img src="/images/aboutUs/amik.jpg"></img>
+    </a>
+    <div class="info">
+      <p align="center" class="name"> Amik St-Cyr </p>
+      <p align="center" class="location"> Royal Dutch Shell </p>
+      <div class="links">
+        <!-- <a href="http://www.linkedin.com/pub/tim-warburton/1/878/705/" tooltip="LinkedIn" class="f_os light tooltip"> -->
+        <!--   <i class="large linkedin square sign link icon"></i> -->
+        <!-- </a> -->
+        <!-- <a href="https://github.com/tcew" tooltip="Github" class="f_os light tooltip"> -->
+        <!--   <i class="large github square link icon"></i> -->
+        <!-- </a> -->
+        <!-- <a href="http://www.caam.rice.edu/~timwar/warburtoncv14.pdf" tooltip="CV" class="f_os light tooltip"> -->
+        <!--   <i class="large text file outline link icon"></i> -->
+        <!-- </a> -->
+        <!-- <a href="mailto:spam.warburton@gmail.com" tooltip="Email" class="f_os light tooltip"> -->
+        <!--   <i class="large mail outline link icon"></i> -->
+        <!-- </a> -->
+      </div>
+    </div>
+  </div>
+
   <h2 id="Contributors" class="ui dividing header"> Contributors </h2>
 
   <div class="ui contributor profile segment">
-    <a class="ui rounded image" href="http://www.fdy.tu-darmstadt.de/forschung_16/entwicklungcfdcode/entwicklungcfdcode.en.jsp">
+    <a class="ui rounded image" href="http://www.fdy.tu-darmstadt.de/fdy/mitarbeiter_20/mitarbeiterdetails_16067.en.jsp">
       <img src="/images/aboutUs/florian.png"></img>
     </a>
     <div class="info">

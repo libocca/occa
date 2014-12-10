@@ -1,5 +1,6 @@
 ifndef OCCA_DIR
-	OCCA_DIR = ../../
+ERROR:
+	@echo "Error, environment variable [OCCA_DIR] is not set"
 endif
 
 include ${OCCA_DIR}/scripts/makefile

@@ -39,20 +39,31 @@ function endBodyWrapper(){
         '</div>');
 }
 
-function startSidebar($sidebarHeight = 0){
+function startSidebar($sidebarHeight = 0, $sidebarWidth = 0){
   startBody();
 
   $style = '';
+  $bStyle = '';
 
   if(0 < $sidebarHeight){
     $style = ('style="height: ' .
               strval($sidebarHeight) .
-              'px !important"');
+              'px !important;');
+
+    if(0 < $sidebarWidth){
+      $style .= ('width: ' .
+                 strval($sidebarWidth) .
+                 'px !important;');
+
+      $bStyle = 'style="left: ' . strval($sidebarWidth - 2) . 'px"';
+    }
+
+    $style .= '"';
   }
 
   echo ('<div class="ui left overlay sidebar body" ' . $style . '>' .
         '  <div class="content title"><a href="#">Content</a></div>' .
-        '    <div class="ui black huge right sidebarItem button">' .
+        '    <div class="ui black huge right sidebarItem button" ' .$bStyle . '>' .
         '      <i class="icon list layout"></i>' .
         '      <span class="text f_os light">Contents</span>' .
         '    </div>' .
@@ -95,30 +106,51 @@ function highlight($content){
   echo '<span class="highlight">' . $content . '</span>';
 }
 
+function warning($content){
+  echo '<span class="warning">' . $content . '</span>';
+}
+
+function ready($color){
+  switch($color){
+  case 'g': echo '<i class="c ready g check square icon"></i>'; break;
+  case 'y': echo '<i class="c ready y check square icon"></i>'; break;
+  case 'r': echo '<i class="c ready r check square icon"></i>'; break;
+  }
+}
+
+function emptyReady(){
+  echo '<div style="width: 20px; height: 1px; display: inline-block"></div>';
+}
+
 function addCodeFromFile($filename, $language = 'c_cpp'){
   echo '<pre class="code block" language="' . $language . '">' . file_get_contents($_SERVER['DOCUMENT_ROOT'] . $filename) . '</pre>';
 }
 
-function startFunctionAPI($title){
+function startFunctionAPI($title, $isDone = 'done'){
   echo
     '<div class="ui fluid styled api accordion">';
 
-  addFunctionTitleAPI($title);
+  addFunctionTitleAPI($title, $isDone);
 }
 
-function nextFunctionAPI($title){
+function nextFunctionAPI($title, $isDone = 'done'){
   echo
     '  </div>';
 
-  addFunctionTitleAPI($title);
+  addFunctionTitleAPI($title, $isDone);
 }
 
-function addFunctionTitleAPI($title){
+function addFunctionTitleAPI($title, $isDone = 'done'){
+  /* echo */
+  /*   '  <div class="api title ' . $isDone . '">' . */
+  /*   '    <pre class="cpp api code block">' . $title . '</pre>' . */
+  /*   '  </div>' . */
+  /*   '  <div class="api content">'; */
   echo
-    '  <div class="title">' .
-    $title .
+    '  <div class="api title active ' . $isDone . '">' .
+    '    <pre class="cpp api code block">' . $title . '</pre>' .
     '  </div>' .
-    '  <div class="content">';
+    '  <div class="api content active">';
 }
 
 function endFunctionAPI(){

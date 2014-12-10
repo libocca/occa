@@ -376,7 +376,7 @@ namespace occa {
       dev.modelID_ = library::deviceModelID(dev.getIdentifier());
       dev.id_      = library::genDeviceID();
 
-      dev.currentStream = dev.genStream();
+      dev.currentStream = dev.createStream();
 
       return dev;
     }
@@ -1135,14 +1135,14 @@ namespace occa {
   }
 
   template <>
-  stream device_t<OpenCL>::genStream(){
+  stream device_t<OpenCL>::createStream(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
     cl_command_queue *retStream = new cl_command_queue;
 
     *retStream = clCreateCommandQueue(data_.context, data_.deviceID, CL_QUEUE_PROFILING_ENABLE, &error);
-    OCCA_CL_CHECK("Device: genStream", error);
+    OCCA_CL_CHECK("Device: createStream", error);
 
     return retStream;
   }

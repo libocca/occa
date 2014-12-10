@@ -158,7 +158,7 @@ function malloc(d::device, entriesAndType)
     return memory(cMemory, cTypes)
 end
 
-function genStream(d::device)
+function createStream(d::device)
     cStream = ccall((:occaGenStream, @libocca()),
                     Ptr{Void},
                     (Ptr{Void},),

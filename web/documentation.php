@@ -7,9 +7,9 @@
 <div class="entry2"><a href="/documentation/API/C.php"      >1.2 C       </a></div>
 <div class="entry2"><a href="/documentation/API/CPP.php"    >1.1 C++     </a></div>
 <div class="entry2"><a href="/documentation/API/CS.php"     >1.3 C#      </a></div>
-<div class="entry2"><a href="/documentation/API/Fortran.php">1.5 Fortran </a></div>
+<div class="entry2"><a href="/documentation/API/Fortran.php">1.4 Fortran </a></div>
+<div class="entry2"><a href="/documentation/API/Python.php" >1.5 Python  </a></div>
 <div class="entry2"><a href="/documentation/API/Julia.php"  >1.6 Julia   </a></div>
-<div class="entry2"><a href="/documentation/API/Python.php" >1.4 Python  </a></div>
 <div class="entry2"><a href="/documentation/API/Matlab.php" >1.7 Matlab  </a></div>
 
 <div class="entry1"><a href="#Kernel-Languages">2. Kernel Languages </a></div>
@@ -54,15 +54,7 @@
         <div class="wrapper">
           <img class="apiLogo" src="/images/apiLogos/f90Logo.png"></img>
         </div>
-        <div class="name"> Fortran </div>
-      </div>
-    </a>
-    <a href="/documentation/API/Julia.php" class="link">
-      <div class="ui segment">
-        <div class="wrapper">
-          <img class="apiLogo" src="/images/apiLogos/julia.png"></img>
-        </div>
-        <div class="name"> Julia </div>
+        <div class="name" style="overflow: hidden;"> Fortran </div>
       </div>
     </a>
     <a href="/documentation/API/Python.php" class="link">
@@ -71,6 +63,14 @@
           <img class="apiLogo" src="/images/apiLogos/python.png"></img>
         </div>
         <div class="name"> Python </div>
+      </div>
+    </a>
+    <a href="/documentation/API/Julia.php" class="link">
+      <div class="ui segment">
+        <div class="wrapper">
+          <img class="apiLogo" src="/images/apiLogos/julia.png"></img>
+        </div>
+        <div class="name"> Julia </div>
       </div>
     </a>
     <a href="/documentation/API/Matlab.php" class="link">

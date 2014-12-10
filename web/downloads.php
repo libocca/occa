@@ -14,7 +14,7 @@
     <br/>The code is under the MIT license
     (
     <a href="https://github.com/tcew/OCCA2/blob/master/LICENSE" class="link">License</a> and the
-    <a href="https://tldrlegal.com/license/mit-license" class="link">TL;DR Legal Explanation</a>
+    <a href="http://www.tldrlegal.com/l/mit" class="link">TL;DR Legal Explanation</a>
     )
   </p>
 

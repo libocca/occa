@@ -117,7 +117,7 @@ namespace occa {
       dev.modelID_ = library::deviceModelID(dev.getIdentifier());
       dev.id_      = library::genDeviceID();
 
-      dev.currentStream = dev.genStream();
+      dev.currentStream = dev.createStream();
 
       return dev;
     }
@@ -858,7 +858,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<COI>::genStream(){
+  stream device_t<COI>::createStream(){
     OCCA_EXTRACT_DATA(COI, Device);
 
     coiStream *retStream = new coiStream;
