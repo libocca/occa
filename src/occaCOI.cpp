@@ -704,14 +704,6 @@ namespace occa {
   }
 
   template <>
-  device_t<COI>::device_t(int platform, int device) {
-    data            = NULL;
-    memoryAllocated = 0;
-
-    getEnvironmentVariables();
-  }
-
-  template <>
   device_t<COI>::device_t(const device_t<COI> &d){
     data            = d.data;
     memoryAllocated = d.memoryAllocated;
@@ -730,19 +722,26 @@ namespace occa {
   }
 
   template <>
-  void device_t<COI>::setup(const int device, const int memoryAllocated){
+  void device_t<COI>::setup(argInfoMap &aim){
     data = new COIDeviceData_t;
 
     OCCA_EXTRACT_DATA(COI, Device);
+
+    if(!aim.has("deviceID")){
+      std::cout << "[CUDA] device not given [deviceID]\n";
+      throw 1;
+    }
+
+    const int deviceID = aim.iGet("deviceID");
 
     uint32_t deviceCount;
     OCCA_COI_CHECK("Device: Get Count",
                    COIEngineGetCount(COI_ISA_MIC, &deviceCount));
 
-    OCCA_CHECK(device < deviceCount);
+    OCCA_CHECK(deviceID < deviceCount);
 
     OCCA_COI_CHECK("Device: Get Handle",
-                   COIEngineGetHandle(COI_ISA_MIC, device, &data_.deviceID) );
+                   COIEngineGetHandle(COI_ISA_MIC, deviceID, &data_.deviceID) );
 
     coi::initDevice(data_);
   }

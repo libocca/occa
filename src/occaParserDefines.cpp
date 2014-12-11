@@ -1,7 +1,7 @@
 #include "occaParserDefines.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     keywordTypeMap_t keywordType;
     keywordTypeMap_t cKeywordType, fortranKeywordType;
 

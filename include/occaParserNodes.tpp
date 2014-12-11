@@ -1,5 +1,5 @@
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Node ]-----------------------------------
     template <class TM>
     node<TM>::node() :

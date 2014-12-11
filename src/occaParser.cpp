@@ -1,7 +1,7 @@
 #include "occaParser.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     parserBase::parserBase(){
       parsingC = true;
 

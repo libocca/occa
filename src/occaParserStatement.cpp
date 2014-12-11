@@ -2,7 +2,7 @@
 #include "occaParser.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Exp Node ]-------------------------------
     expNode::expNode() :
       sInfo(NULL),
@@ -142,7 +142,7 @@ namespace occa {
 
       // Only the root needs to free
       if(up == NULL)
-        occa::parserNamespace::free(newNodeRoot);
+        occa::parserNS::free(newNodeRoot);
     }
 
     void expNode::splitAndOrganizeNode(strNode *nodeRoot){
@@ -3051,8 +3051,8 @@ namespace occa {
     }
 
     expNode* statement::createExpNodeFrom(const std::string &source){
-      strNode *nodeRoot = parserNamespace::splitContent(source);
-      nodeRoot          = parserNamespace::labelCode(nodeRoot);
+      strNode *nodeRoot = parserNS::splitContent(source);
+      nodeRoot          = parserNS::labelCode(nodeRoot);
 
       expNode *ret = createExpNodeFrom(nodeRoot);
 

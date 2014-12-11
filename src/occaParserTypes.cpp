@@ -2,7 +2,7 @@
 #include "occaParser.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Qualifier Info Class ]-----------------
     qualifierInfo::qualifierInfo() :
       qualifierCount(0),

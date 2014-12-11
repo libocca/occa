@@ -757,14 +757,6 @@ namespace occa {
   }
 
   template <>
-  device_t<CUDA>::device_t(int platform, int device){
-    data = NULL;
-    memoryAllocated = 0;
-
-    getEnvironmentVariables();
-  }
-
-  template <>
   device_t<CUDA>::device_t(const device_t<CUDA> &d){
     data            = d.data;
     memoryAllocated = d.memoryAllocated;
@@ -785,15 +777,22 @@ namespace occa {
   }
 
   template <>
-  void device_t<CUDA>::setup(const int device, const int unusedArg){
+  void device_t<CUDA>::setup(argInfoMap &aim){
     cuda::init();
 
     data = new CUDADeviceData_t;
 
     OCCA_EXTRACT_DATA(CUDA, Device);
 
+    if(!aim.has("deviceID")){
+      std::cout << "[CUDA] device not given [deviceID]\n";
+      throw 1;
+    }
+
+    const int deviceID = aim.iGet("deviceID");
+
     OCCA_CUDA_CHECK("Device: Creating Device",
-                    cuDeviceGet(&data_.device, device));
+                    cuDeviceGet(&data_.device, deviceID));
 
     OCCA_CUDA_CHECK("Device: Creating Context",
                     cuCtxCreate(&data_.context, CU_CTX_SCHED_AUTO, data_.device));

@@ -532,14 +532,6 @@ namespace occa {
   }
 
   template <>
-  device_t<Pthreads>::device_t(int platform, int device){
-    data            = NULL;
-    memoryAllocated = 0;
-
-    getEnvironmentVariables();
-  }
-
-  template <>
   device_t<Pthreads>::device_t(const device_t<Pthreads> &d){
     data            = d.data;
     memoryAllocated = d.memoryAllocated;
@@ -560,7 +552,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo){
+  void device_t<Pthreads>::setup(argInfoMap &aim){
     data = new PthreadsDeviceData_t;
 
     OCCA_EXTRACT_DATA(Pthreads, Device);
@@ -573,8 +565,70 @@ namespace occa {
 #  warning "Core finding not implemented for this OS"
 #endif
 
-    data_.pThreadCount = (threadCount ? threadCount : 1);
-    data_.pinningInfo  = pinningInfo;
+    std::vector<int> pinnedCores;
+
+    if(!aim.has("threadCount"))
+      data_.pThreadCount = 1;
+    else
+      data_.pThreadCount = aim.iGet("threadCount");
+
+    if(!aim.has("pinningInfo") ||
+       (aim.get("pinningInfo") == "compact")){
+
+      data_.pinningInfo = occa::compact;
+    }
+    else{
+      data_.pinningInfo = occa::scatter;
+    }
+
+    if(aim.has("pinnedCores")){
+      aim.iGets("pinnedCores", pinnedCores);
+
+      if(pinnedCores.size() != data_.pThreadCount){
+        std::cout << "[Pthreads]: Mismatch between thread count and pinned cores\n"
+                  << "            Defaulting to ["
+                  << ((data_.pinningInfo == occa::compact) ?
+                      "compact" : "scatter")
+                  << "] scheduling\n"
+                  << "  Thread Count: " << data_.pThreadCount << '\n'
+                  << "  Pinned Cores: [";
+
+        if(pinnedCores.size()){
+          std::cout << pinnedCores[0];
+
+          for(int i = 1; i < pinnedCores.size(); ++i)
+            std::cout << ", " << pinnedCores[i];
+        }
+
+        std::cout << "]\n";
+
+        pinnedCores.clear();
+      }
+      else{
+        for(int i = 0; i < pinnedCores.size(); ++i)
+          if(pinnedCores[i] < 0){
+            const int newPC = (((pinnedCores[i] % data_.coreCount)
+                                + pinnedCores[i]) % data_.coreCount);
+
+            std::cout << "Trying to pin thread on core ["
+                      << pinnedCores[i] << "], changing it to ["
+                      << newPC << "]\n";
+
+            pinnedCores[i] = newPC;
+          }
+          else if(data_.coreCount <= pinnedCores[i]){
+            const int newPC = (pinnedCores[i] % data_.coreCount);
+
+            std::cout << "Trying to pin thread on core ["
+                      << pinnedCores[i] << "], changing it to ["
+                      << newPC << "]\n";
+
+            pinnedCores[i] = newPC;
+          }
+
+        data_.pinningInfo = occa::manual;
+      }
+    }
 
     int error = pthread_mutex_init(&(data_.pendingJobsMutex), NULL);
     OCCA_CHECK(error == 0);
@@ -589,10 +643,12 @@ namespace occa {
       args->count = data_.pThreadCount;
 
       // [-] Need to know number of sockets
-      if(pinningInfo & occa::compact)
+      if(data_.pinningInfo & occa::compact)
         args->pinnedCore = p % data_.coreCount;
-      else
+      else if(data_.pinningInfo & occa::scatter)
         args->pinnedCore = p % data_.coreCount;
+      else // manual
+        args->pinnedCore = pinnedCores[p];
 
       args->pendingJobs = &(data_.pendingJobs);
 

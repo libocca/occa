@@ -6,7 +6,7 @@
 #include "occaParserStatement.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     class expNode;
     class typeInfo;
     class varInfo;
@@ -310,7 +310,7 @@ namespace occa {
       baseName(""),
       nestedKernels(0) {}
 
-    inline parsedKernelInfo(parserNamespace::kernelInfo &kInfo) :
+    inline parsedKernelInfo(parserNS::kernelInfo &kInfo) :
       baseName(kInfo.baseName),
       nestedKernels(kInfo.nestedKernels.size()) {}
   };

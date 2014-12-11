@@ -1,7 +1,7 @@
 #include "occaParserNodes.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Str Node ]-------------------------------
     strNode::strNode() :
       left(NULL),

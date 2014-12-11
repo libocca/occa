@@ -523,14 +523,6 @@ namespace occa {
   }
 
   template <>
-  device_t<OpenMP>::device_t(int platform, int device){
-    data            = NULL;
-    memoryAllocated = 0;
-
-    getEnvironmentVariables();
-  }
-
-  template <>
   device_t<OpenMP>::device_t(const device_t<OpenMP> &d){
     data            = d.data;
     memoryAllocated = d.memoryAllocated;
@@ -551,7 +543,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenMP>::setup(const int unusedArg1, const int unusedArg2){}
+  void device_t<OpenMP>::setup(argInfoMap &aim){}
 
   template <>
   deviceIdentifier device_t<OpenMP>::getIdentifier() const {

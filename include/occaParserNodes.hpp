@@ -5,7 +5,7 @@
 #include "occaParserTools.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Node ]-----------------------------------
     template <class TM>
     class node {

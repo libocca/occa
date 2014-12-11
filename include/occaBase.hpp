@@ -114,7 +114,7 @@ namespace occa {
   }
 
   inline mode strToMode(const std::string &str){
-    const std::string upStr = parserNamespace::upString(str);
+    const std::string upStr = upString(str);
 
     if(upStr == "PTHREADS") return Pthreads;
     if(upStr == "OPENMP")   return OpenMP;
@@ -277,6 +277,90 @@ namespace occa {
       return ((*this != info) && !(*this < info));
     }
   };
+
+  class argInfo {
+  public:
+    std::string info, value;
+
+    argInfo();
+
+    argInfo(const argInfo &ai);
+    argInfo& operator = (const argInfo &ai);
+
+    argInfo(const std::string &info_);
+    argInfo(const std::string &info_,
+            const std::string &value_);
+
+    template <class TM>
+    argInfo operator = (const TM &value_) const;
+  };
+
+  static const argInfo platformID("platform");
+  static const argInfo deviceID("device");
+
+  static const argInfo schedule("schedule");
+  static const argInfo chunk("chunk");
+
+  static const argInfo threadCount("threadCount");
+  static const argInfo pinningInfo("pinningInfo");
+  static const argInfo pinnedCores("pinnedCores");
+
+  class argInfoMap {
+  public:
+    std::map<std::string, std::string> iMap;
+
+    inline bool has(const std::string info){
+      return (iMap.find(info) != iMap.end());
+    }
+
+    template <class TM>
+    inline void set(const std::string &info, const TM &value){
+      iMap[info] = toString(value);
+    }
+
+    inline std::string get(const std::string &info){
+      std::map<std::string,std::string>::iterator it = iMap.find(info);
+
+      if(it != iMap.end())
+        return it->second;
+
+      return "";
+    }
+
+    inline int iGet(const std::string &info){
+      std::map<std::string,std::string>::iterator it = iMap.find(info);
+
+      if(it != iMap.end())
+        return atoi((it->second).c_str());
+
+      return 0;
+    }
+
+    inline void iGets(const std::string &info, std::vector<int> &entries){
+      std::map<std::string,std::string>::iterator it = iMap.find(info);
+
+      if(it == iMap.end())
+        return;
+
+      const char *c = (it->second).c_str();
+
+      while(*c != '\0'){
+        skipWhitespace(c);
+
+        if(isANumber(c)){
+          entries.push_back(atoi(c));
+          skipNumber(c);
+        }
+        else
+          ++c;
+      }
+    }
+  };
+
+  template <>
+  inline void argInfoMap::set(const std::string &info, const std::string &value){
+    iMap[info] = value;
+  }
 
   class dim {
   public:
@@ -967,7 +1051,7 @@ namespace occa {
   public:
     virtual inline ~device_v(){}
 
-    virtual void setup(const int arg1, const int arg2) = 0;
+    virtual void setup(argInfoMap &aim) = 0;
 
     virtual deviceIdentifier getIdentifier() const = 0;
 
@@ -1053,7 +1137,7 @@ namespace occa {
     device_t(const device_t<mode> &k);
     device_t<mode>& operator = (const device_t<mode> &k);
 
-    void setup(const int arg1, const int arg2);
+    void setup(argInfoMap &aim);
 
     deviceIdentifier getIdentifier() const;
 
@@ -1151,10 +1235,32 @@ namespace occa {
     device(const device &d);
     device& operator = (const device &d);
 
+    void setupHandle(occa::mode m);
+    void setupHandle(const std::string &m);
+
+    void setup(argInfoMap &aim);
+
     void setup(occa::mode m,
                const int arg1 = 0, const int arg2 = 0);
+    void setup(occa::mode m,
+               const std::string &infos);
+    void setup(occa::mode m,
+               const argInfo &arg1);
+    void setup(occa::mode m,
+               const argInfo &arg1, const argInfo &arg2);
+    void setup(occa::mode m,
+               const argInfo &arg1, const argInfo &arg2, const argInfo &arg3);
+
     void setup(const std::string &m,
                const int arg1 = 0, const int arg2 = 0);
+    void setup(const std::string &m,
+               const std::string &infos);
+    void setup(const std::string &m,
+               const argInfo &arg1);
+    void setup(const std::string &m,
+               const argInfo &arg1, const argInfo &arg2);
+    void setup(const std::string &m,
+               const argInfo &arg1, const argInfo &arg2, const argInfo &arg3);
 
     deviceIdentifier getIdentifier() const;
 

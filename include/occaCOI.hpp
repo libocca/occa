@@ -183,13 +183,10 @@ namespace occa {
   device_t<COI>::device_t(const device_t<COI> &k);
 
   template <>
-  device_t<COI>::device_t(const int platform, const int device);
-
-  template <>
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &k);
 
   template <>
-  void device_t<COI>::setup(const int platform, const int device);
+  void device_t<COI>::setup(argInfoMap &aim);
 
   template <>
   deviceIdentifier device_t<COI>::getIdentifier() const;

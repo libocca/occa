@@ -1008,14 +1008,6 @@ namespace occa {
   }
 
   template <>
-  device_t<OpenCL>::device_t(int platform, int device){
-    data            = NULL;
-    memoryAllocated = 0;
-
-    getEnvironmentVariables();
-  }
-
-  template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
     data            = d.data;
     memoryAllocated = d.memoryAllocated;
@@ -1034,17 +1026,26 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenCL>::setup(const int platform, const int device){
+  void device_t<OpenCL>::setup(argInfoMap &aim){
     data = new OpenCLDeviceData_t;
 
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
-    data_.platform = platform;
-    data_.device   = device;
+    if(!aim.has("platformID")){
+      std::cout << "[OpenCL] device not given [platformID]\n";
+      throw 1;
+    }
+    if(!aim.has("deviceID")){
+      std::cout << "[OpenCL] device not given [deviceID]\n";
+      throw 1;
+    }
 
-    data_.platformID = cl::platformID(platform);
-    data_.deviceID   = cl::deviceID(platform, device);
+    data_.platform = aim.iGet("platformID");
+    data_.device   = aim.iGet("deviceID");
+
+    data_.platformID = cl::platformID(data_.platform);
+    data_.deviceID   = cl::deviceID(data_.platform, data_.device);
 
     data_.context = clCreateContext(NULL, 1, &data_.deviceID, NULL, NULL, &error);
     OCCA_CL_CHECK("Device: Creating Context", error);
