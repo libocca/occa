@@ -1240,12 +1240,10 @@ namespace occa {
     void setupHandle(occa::mode m);
     void setupHandle(const std::string &m);
 
-    void setup(argInfoMap &aim);
+    void setup(const std::string &infos);
 
     void setup(occa::mode m,
-               const int arg1 = 0, const int arg2 = 0);
-    void setup(occa::mode m,
-               const std::string &infos);
+               const int arg1, const int arg2);
     void setup(occa::mode m,
                const argInfo &arg1);
     void setup(occa::mode m,
@@ -1254,9 +1252,7 @@ namespace occa {
                const argInfo &arg1, const argInfo &arg2, const argInfo &arg3);
 
     void setup(const std::string &m,
-               const int arg1 = 0, const int arg2 = 0);
-    void setup(const std::string &m,
-               const std::string &infos);
+               const int arg1, const int arg2);
     void setup(const std::string &m,
                const argInfo &arg1);
     void setup(const std::string &m,

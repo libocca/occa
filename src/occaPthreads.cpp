@@ -572,13 +572,13 @@ namespace occa {
     else
       data_.pThreadCount = aim.iGet("threadCount");
 
-    if(!aim.has("pinningInfo") ||
-       (aim.get("pinningInfo") == "compact")){
+    if(!aim.has("schedule") ||
+       (aim.get("schedule") == "compact")){
 
-      data_.pinningInfo = occa::compact;
+      data_.schedule = occa::compact;
     }
     else{
-      data_.pinningInfo = occa::scatter;
+      data_.schedule = occa::scatter;
     }
 
     if(aim.has("pinnedCores")){
@@ -587,7 +587,7 @@ namespace occa {
       if(pinnedCores.size() != data_.pThreadCount){
         std::cout << "[Pthreads]: Mismatch between thread count and pinned cores\n"
                   << "            Defaulting to ["
-                  << ((data_.pinningInfo == occa::compact) ?
+                  << ((data_.schedule == occa::compact) ?
                       "compact" : "scatter")
                   << "] scheduling\n"
                   << "  Thread Count: " << data_.pThreadCount << '\n'
@@ -626,7 +626,7 @@ namespace occa {
             pinnedCores[i] = newPC;
           }
 
-        data_.pinningInfo = occa::manual;
+        data_.schedule = occa::manual;
       }
     }
 
@@ -643,9 +643,9 @@ namespace occa {
       args->count = data_.pThreadCount;
 
       // [-] Need to know number of sockets
-      if(data_.pinningInfo & occa::compact)
+      if(data_.schedule & occa::compact)
         args->pinnedCore = p % data_.coreCount;
-      else if(data_.pinningInfo & occa::scatter)
+      else if(data_.schedule & occa::scatter)
         args->pinnedCore = p % data_.coreCount;
       else // manual
         args->pinnedCore = pinnedCores[p];

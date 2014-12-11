@@ -27,7 +27,7 @@ namespace occa {
     int coreCount;
 
     int pThreadCount;
-    int pinningInfo;
+    int schedule;
 
     pthread_t tid[OCCA_MAX_ARGS];
 

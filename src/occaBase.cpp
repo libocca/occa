@@ -575,7 +575,14 @@ namespace occa {
     setupHandle( strToMode(m) );
   }
 
-  void device::setup(argInfoMap &aim){
+  void device::setup(const std::string &infos){
+    argInfoMap aim;
+
+    // [-] Load aim from infos
+    occa::mode m = occa::OpenMP;
+
+    setupHandle(m);
+
     dHandle->setup(aim);
 
     modelID_ = library::deviceModelID(getIdentifier());
@@ -610,16 +617,12 @@ namespace occa {
     }
     }
 
-    setup(aim);
-  }
+    dHandle->setup(aim);
 
-  void device::setup(occa::mode m,
-                     const std::string &infos){
-    setupHandle(m);
+    modelID_ = library::deviceModelID(getIdentifier());
+    id_      = library::genDeviceID();
 
-    argInfoMap aim;
-
-    setup(aim);
+    currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -630,7 +633,12 @@ namespace occa {
 
     aim.set(arg1.info, arg1.value);
 
-    setup(aim);
+    dHandle->setup(aim);
+
+    modelID_ = library::deviceModelID(getIdentifier());
+    id_      = library::genDeviceID();
+
+    currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -642,7 +650,12 @@ namespace occa {
     aim.set(arg1.info, arg1.value);
     aim.set(arg2.info, arg2.value);
 
-    setup(aim);
+    dHandle->setup(aim);
+
+    modelID_ = library::deviceModelID(getIdentifier());
+    id_      = library::genDeviceID();
+
+    currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -655,18 +668,18 @@ namespace occa {
     aim.set(arg2.info, arg2.value);
     aim.set(arg3.info, arg3.value);
 
-    setup(aim);
+    dHandle->setup(aim);
+
+    modelID_ = library::deviceModelID(getIdentifier());
+    id_      = library::genDeviceID();
+
+    currentStream = createStream();
   }
 
 
   void device::setup(const std::string &m,
                      const int arg1, const int arg2){
     setup(strToMode(m), arg1, arg2);
-  }
-
-  void device::setup(const std::string &m,
-                     const std::string &infos){
-    setup(strToMode(m), infos);
   }
 
   void device::setup(const std::string &m,
