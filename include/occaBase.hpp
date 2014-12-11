@@ -311,7 +311,81 @@ namespace occa {
   public:
     std::map<std::string, std::string> iMap;
 
-    inline bool has(const std::string info){
+    inline argInfoMap(){}
+
+    inline argInfoMap(const std::string &infos){
+      parserNS::strNode *n;
+
+      n = parserNS::splitContent(infos);
+      n = parserNS::labelCode(n);
+
+      while(n){
+        std::string &info = n->value;
+        std::string value;
+
+        n = n->right;
+
+        if((info != "mode")        &&
+           (info != "platformID")  &&
+           (info != "deviceID")    &&
+           (info != "schedule")    &&
+           (info != "chunk")       &&
+           (info != "threadCount") &&
+           (info != "pinningInfo") &&
+           (info != "pinnedCores")){
+
+          std::cout << "Flag [" << info << "] is not available, skipping it\n";
+
+          while(n && (n->value != ","))
+            n = n->right;
+
+          if(n)
+            n = n->right;
+
+          continue;
+        }
+
+        if(n == NULL)
+          break;
+
+        if(n->value == "=")
+          n = n->right;
+
+        while(n && (n->value != ",")){
+          std::string &v = n->value;
+
+          occa::strip(v);
+
+          if(v.size()){
+            if(segmentPair(v[0]) == 0){
+              value += v;
+              value += ' ';
+            }
+            else if(n->down){
+              std::string dv = n->down->toString();
+              occa::strip(dv);
+
+              value += dv;
+              value += ' ';
+            }
+          }
+
+          n = n->right;
+        }
+
+        if(n)
+          n = n->right;
+
+        occa::strip(value);
+
+        iMap[info] = value;
+
+        info  = "";
+        value = "";
+      }
+    }
+
+    inline bool has(const std::string &info){
       return (iMap.find(info) != iMap.end());
     }
 

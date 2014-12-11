@@ -95,6 +95,8 @@ namespace occa {
       bool freeRight();
 
       void print(const std::string &tab = "");
+
+      std::string toString(const char spacing = ' ');
     };
 
     std::ostream& operator << (std::ostream &out, const strNode &n);

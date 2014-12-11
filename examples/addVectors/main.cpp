@@ -25,7 +25,8 @@ int main(int argc, char **argv){
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  device.setup(mode, platformID, deviceID);
+  device.setup("mode = OpenMP, pinnedCores = [1, 4, 2, 6]");
+  // device.setup(mode, platformID, deviceID);
 
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));

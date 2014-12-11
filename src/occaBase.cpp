@@ -576,10 +576,15 @@ namespace occa {
   }
 
   void device::setup(const std::string &infos){
-    argInfoMap aim;
+    argInfoMap aim(infos);
+
+    if(!aim.has("mode")){
+      std::cout << "OCCA mode not given\n";
+      throw 1;
+    }
 
     // [-] Load aim from infos
-    occa::mode m = occa::OpenMP;
+    occa::mode m = strToMode(aim.get("mode"));
 
     setupHandle(m);
 

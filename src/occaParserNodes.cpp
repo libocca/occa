@@ -374,6 +374,25 @@ namespace occa {
       }
     }
 
+    std::string strNode::toString(const char spacing){
+      const strNode *n = this;
+
+      std::string ret;
+
+      if(n){
+        ret += n->value;
+        n = n->right;
+      }
+
+      while(n){
+        ret += spacing;
+        ret += n->value;
+        n = n->right;
+      }
+
+      return ret;
+    }
+
     std::ostream& operator << (std::ostream &out, const strNode &n){
       out << n.value;
       return out;
