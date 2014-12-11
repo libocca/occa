@@ -304,7 +304,6 @@ namespace occa {
   static const argInfo chunk("chunk");
 
   static const argInfo threadCount("threadCount");
-  static const argInfo pinningInfo("pinningInfo");
   static const argInfo pinnedCores("pinnedCores");
 
   class argInfoMap {
@@ -331,7 +330,7 @@ namespace occa {
            (info != "schedule")    &&
            (info != "chunk")       &&
            (info != "threadCount") &&
-           (info != "pinningInfo") &&
+           (info != "schedule")    &&
            (info != "pinnedCores")){
 
           std::cout << "Flag [" << info << "] is not available, skipping it\n";

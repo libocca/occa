@@ -17,16 +17,15 @@ int main(int argc, char **argv){
 
   // occa::availableDevices<occa::OpenCL>();
 
-  std::string mode = "OpenMP";
-  int platformID = 0;
-  int deviceID   = 0;
-
   occa::device device;
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  device.setup("mode = OpenMP, pinnedCores = [1, 4, 2, 6]");
-  // device.setup(mode, platformID, deviceID);
+  device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
+  // device.setup("mode = OpenCL  , platformID = 0, deviceID = 0");
+  // device.setup("mode = CUDA    , deviceID = 0");
+  // device.setup("mode = Pthreads, threadCount = 1, schedule = compact");
+  // device.setup("mode = COI     , deviceID = 0");
 
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
