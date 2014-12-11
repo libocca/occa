@@ -109,11 +109,6 @@ namespace occa {
                    const std::string &value_) :
     info(info_),
     value(value_) {}
-
-  template <class TM>
-  argInfo argInfo::operator = (const TM &value_) const {
-    return argInfo(info, toString(value));
-  }
   //==========================
   //==================================
 

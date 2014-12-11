@@ -292,11 +292,13 @@ namespace occa {
             const std::string &value_);
 
     template <class TM>
-    argInfo operator = (const TM &value_) const;
+    argInfo operator = (const TM &value_) const {
+      return argInfo(info, toString(value));
+    }
   };
 
-  static const argInfo platformID("platform");
-  static const argInfo deviceID("device");
+  static const argInfo platformID("platformID");
+  static const argInfo deviceID("deviceID");
 
   static const argInfo schedule("schedule");
   static const argInfo chunk("chunk");
