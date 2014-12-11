@@ -22,10 +22,35 @@ int main(int argc, char **argv){
   occa::memory o_a, o_b, o_ab;
 
   device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
-  // device.setup("mode = OpenCL  , platformID = 0, deviceID = 0");
-  // device.setup("mode = CUDA    , deviceID = 0");
-  // device.setup("mode = Pthreads, threadCount = 1, schedule = compact");
-  // device.setup("mode = COI     , deviceID = 0");
+
+  //---[ Device setup with string flags ]-------------------
+  //    device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
+  //    device.setup("mode = OpenCL  , platformID = 0, deviceID = 0");
+  //    device.setup("mode = CUDA    , deviceID = 0");
+  //    device.setup("mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]");
+  //    device.setup("mode = COI     , deviceID = 0");
+  //========================================================
+
+  //---[ Device setup with Python-like arguments ]----------
+  //    device.setup("OpenMP",
+  //                 occa::schedule = "compact",
+  //                 occa::chunk    = 10);
+  //
+  //    device.setup("OpenCL",
+  //                 occa::platformID = 0,
+  //                 occa::deviceID   = 0);
+  //
+  //    device.setup("CUDA",
+  //                 occa::deviceID = 0);
+  //
+  //    device.setup("Pthreads",
+  //                 occa::threadCount = 4,
+  //                 occa::schedule    = "compact",
+  //                 occa::pinnedCores = "[0, 0, 1, 1]");
+  //
+  //    device.setup("COI",
+  //                 occa::deviceID = 0);
+  //========================================================
 
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
