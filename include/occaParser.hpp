@@ -10,7 +10,7 @@
 #include "occaTools.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     class occaLoopInfo;
 
     class parserBase {
@@ -242,7 +242,7 @@ namespace occa {
   };
 
   // Just to ignore the namespace
-  class parser : public parserNamespace::parserBase {};
+  class parser : public parserNS::parserBase {};
 };
 
 #endif

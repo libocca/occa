@@ -84,6 +84,32 @@ namespace occa {
   const occa::formatType floatFormat(floatFormatIndex  , 1);
   const occa::formatType floatx2Format(floatFormatIndex, 2);
   const occa::formatType floatx4Format(floatFormatIndex, 4);
+
+  //---[ Device :: Arg Info ]-
+  argInfo::argInfo() :
+    info(""),
+    value("") {}
+
+  argInfo::argInfo(const argInfo &ai) :
+    info(ai.info),
+    value(ai.value) {}
+
+  argInfo& argInfo::operator = (const argInfo &ai){
+    info  = ai.info;
+    value = ai.value;
+
+    return *this;
+  }
+
+  argInfo::argInfo(const std::string &info_) :
+    info(info_),
+    value("") {}
+
+  argInfo::argInfo(const std::string &info_,
+                   const std::string &value_) :
+    info(info_),
+    value(value_) {}
+  //==========================
   //==================================
 
   //---[ Kernel ]---------------------
@@ -497,8 +523,7 @@ namespace occa {
     return *this;
   }
 
-  void device::setup(occa::mode m,
-                     const int arg1, const int arg2){
+  void device::setupHandle(occa::mode m){
     mode_   = m;
     strMode = modeToStr(m);
 
@@ -544,7 +569,14 @@ namespace occa {
     }
 
     dHandle->dev = this;
-    dHandle->setup(arg1, arg2);
+  }
+
+  void device::setupHandle(const std::string &m){
+    setupHandle( strToMode(m) );
+  }
+
+  void device::setup(argInfoMap &aim){
+    dHandle->setup(aim);
 
     modelID_ = library::deviceModelID(getIdentifier());
     id_      = library::genDeviceID();
@@ -552,13 +584,108 @@ namespace occa {
     currentStream = createStream();
   }
 
-  deviceIdentifier device::getIdentifier() const {
-    return dHandle->getIdentifier();
+  void device::setup(occa::mode m,
+                     const int arg1, const int arg2){
+    setupHandle(m);
+
+    argInfoMap aim;
+
+    switch(m){
+    case Pthreads:{
+      aim.set("threadCount", arg1);
+      aim.set("pinningInfo", arg2);
+    }
+    case OpenMP:{
+      // Do Nothing, maybe add thread order next, dynamic static, etc
+    }
+    case OpenCL:{
+      aim.set("platform", arg1);
+      aim.set("device"  , arg2);
+    }
+    case CUDA:{
+      aim.set("device", arg1);
+    }
+    case COI:{
+      aim.set("device", arg1);
+    }
+    }
+
+    setup(aim);
   }
+
+  void device::setup(occa::mode m,
+                     const std::string &infos){
+    setupHandle(m);
+
+    argInfoMap aim;
+
+    setup(aim);
+  }
+
+  void device::setup(occa::mode m,
+                     const argInfo &arg1){
+    setupHandle(m);
+
+    argInfoMap aim;
+
+    aim.set(arg1.info, arg1.value);
+
+    setup(aim);
+  }
+
+  void device::setup(occa::mode m,
+                     const argInfo &arg1, const argInfo &arg2){
+    setupHandle(m);
+
+    argInfoMap aim;
+
+    aim.set(arg1.info, arg1.value);
+    aim.set(arg2.info, arg2.value);
+
+    setup(aim);
+  }
+
+  void device::setup(occa::mode m,
+                     const argInfo &arg1, const argInfo &arg2, const argInfo &arg3){
+    setupHandle(m);
+
+    argInfoMap aim;
+
+    aim.set(arg1.info, arg1.value);
+    aim.set(arg2.info, arg2.value);
+    aim.set(arg3.info, arg3.value);
+
+    setup(aim);
+  }
+
 
   void device::setup(const std::string &m,
                      const int arg1, const int arg2){
     setup(strToMode(m), arg1, arg2);
+  }
+
+  void device::setup(const std::string &m,
+                     const std::string &infos){
+    setup(strToMode(m), infos);
+  }
+
+  void device::setup(const std::string &m,
+                     const argInfo &arg1){
+    setup(strToMode(m), arg1);
+  }
+
+  void device::setup(const std::string &m,
+                     const argInfo &arg1, const argInfo &arg2){
+    setup(strToMode(m), arg1, arg2);
+  }
+
+  void device::setup(const std::string &m,
+                     const argInfo &arg1, const argInfo &arg2, const argInfo &arg3){
+    setup(strToMode(m), arg1, arg2, arg3);
+  }
+
+  deviceIdentifier device::getIdentifier() const {
+    return dHandle->getIdentifier();
   }
 
   void device::setCompiler(const std::string &compiler_){

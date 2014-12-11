@@ -8,7 +8,7 @@
 #include "occaParserTypes.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     class statement;
 
     //---[ Exp Node ]-------------------------------

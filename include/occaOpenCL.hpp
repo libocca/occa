@@ -209,13 +209,10 @@ namespace occa {
   device_t<OpenCL>::device_t(const device_t<OpenCL> &k);
 
   template <>
-  device_t<OpenCL>::device_t(const int platform, const int device);
-
-  template <>
   device_t<OpenCL>& device_t<OpenCL>::operator = (const device_t<OpenCL> &k);
 
   template <>
-  void device_t<OpenCL>::setup(const int platform, const int device);
+  void device_t<OpenCL>::setup(argInfoMap &aim);
 
   template <>
   deviceIdentifier device_t<OpenCL>::getIdentifier() const;

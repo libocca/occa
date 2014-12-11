@@ -2,9 +2,10 @@
 #define OCCA_PARSER_MACRO_HEADER
 
 #include "occaParserDefines.hpp"
+#include "occaParserTools.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Op(erator) Holder ]----------------------
     class opHolder {
     public:
@@ -31,9 +32,6 @@ namespace occa {
 
 
     //---[ Type Holder ]----------------------------
-    bool isAnInt(const char *c);
-    bool isAFloat(const char *c);
-
     int toInt(const char *c);
     bool toBool(const char *c);
     char toChar(const char *c);

@@ -4,78 +4,83 @@
 #include "occaParserDefines.hpp"
 
 namespace occa {
-  namespace parserNamespace {
-    //---[ Helper Functions ]-----------------------
-    std::string obfuscate(const std::string s1);
-    std::string obfuscate(const std::string s1, const std::string s2);
+  //---[ Helper Functions ]-----------------------
+  std::string obfuscate(const std::string s1);
+  std::string obfuscate(const std::string s1, const std::string s2);
 
-    bool stringsAreEqual(const char *cStart, const size_t chars,
-                         const char *c2);
+  bool stringsAreEqual(const char *cStart, const size_t chars,
+                       const char *c2);
 
-    bool charIsIn(const char c, const char *delimeters);
-    bool charIsIn2(const char *c, const char *delimeters);
-    bool charIsIn3(const char *c, const char *delimeters);
+  bool charIsIn(const char c, const char *delimeters);
+  bool charIsIn2(const char *c, const char *delimeters);
+  bool charIsIn3(const char *c, const char *delimeters);
 
-    char upChar(const char c);
-    char downChar(const char c);
+  char upChar(const char c);
+  char downChar(const char c);
 
-    std::string upString(const char *c, const int chars);
-    std::string upString(const std::string &s);
+  std::string upString(const char *c, const int chars);
+  std::string upString(const std::string &s);
 
-    bool upStringCheck(const std::string &a,
-                       const std::string &b);
+  bool upStringCheck(const std::string &a,
+                     const std::string &b);
 
-    inline char back(std::string &s){
-      return s[s.size() - 1];
-    }
+  template <class TM>
+  inline std::string toString(const TM &t){
+    std::stringstream ss;
+    ss << t;
+    return ss.str();
+  }
 
-    bool isWhitespace(const char c);
-    void skipWhitespace(const char *&c);
-    void skipToWhitespace(const char *&c);
+  inline char back(std::string &s){
+    return s[s.size() - 1];
+  }
 
-    bool isAString(const char *c);
-    bool isAnInt(const char *c);
-    bool isAFloat(const char *c);
-    bool isANumber(const char *c);
+  bool isWhitespace(const char c);
+  void skipWhitespace(const char *&c);
+  void skipToWhitespace(const char *&c);
 
-    void skipInt(const char *&c);
+  bool isAString(const char *c);
+  bool isAnInt(const char *c);
+  bool isAFloat(const char *c);
+  bool isANumber(const char *c);
 
-    void skipNumber(const char *&c, const bool parsingC = true);
-    void skipFortranNumber(const char *&c);
+  void skipInt(const char *&c);
 
-    void skipString(const char *&c);
+  void skipNumber(const char *&c, const bool parsingC = true);
+  void skipFortranNumber(const char *&c);
 
-    char isAWordDelimeter(const char *c, const bool parsingC = true);
-    char isAFortranWordDelimeter(const char *c);
+  void skipString(const char *&c);
 
-    int skipWord(const char *&c, const bool parsingC = true);
+  char isAWordDelimeter(const char *c, const bool parsingC = true);
+  char isAFortranWordDelimeter(const char *c);
 
-    const char* readLine(const char *c, const bool parsingC = true);
-    const char* readFortranLine(const char *c);
+  int skipWord(const char *&c, const bool parsingC = true);
 
-    std::string compressWhitespace(const std::string &str);
+  const char* readLine(const char *c, const bool parsingC = true);
+  const char* readFortranLine(const char *c);
 
-    std::string strip(const char *c, const size_t chars);
-    void strip(std::string &str);
+  std::string compressWhitespace(const std::string &str);
 
-    char* cReadFile(const std::string &filename);
+  std::string strip(const char *c, const size_t chars);
+  void strip(std::string &str);
 
-    int stripComments(std::string &line, const bool parsingC = true);
-    int stripFortranComments(std::string &line);
+  char* cReadFile(const std::string &filename);
 
-    char segmentPair(const char c);
-    void skipPair(const char *&c);
+  int stripComments(std::string &line, const bool parsingC = true);
+  int stripFortranComments(std::string &line);
 
-    template <class TM>
-    inline void swapValues(TM &a, TM &b){
-      TM tmp = a;
-      a      = b;
-      b      = tmp;
-    }
-    //==============================================
+  char segmentPair(const char c);
+  void skipPair(const char *&c);
 
-    std::string getBits(const int value);
-  };
+  template <class TM>
+  inline void swapValues(TM &a, TM &b){
+    TM tmp = a;
+    a      = b;
+    b      = tmp;
+  }
+  //==============================================
+
+  std::string getBits(const int value);
 };
 
 #endif

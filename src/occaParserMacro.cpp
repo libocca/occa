@@ -1,7 +1,7 @@
 #include "occaParserMacro.hpp"
 
 namespace occa {
-  namespace parserNamespace {
+  namespace parserNS {
     //---[ Op(erator) Holder ]----------------------
     opHolder::opHolder(const std::string &op_, const int type_) :
       op(op_),
@@ -92,9 +92,9 @@ namespace occa {
 
     typeHolder::typeHolder(const std::string strValue, int type_){
       if(type_ == noType){
-        if( parserNamespace::isAnInt(strValue.c_str()) )
+        if( occa::isAnInt(strValue.c_str()) )
           type = longType;
-        else if( parserNamespace::isAFloat(strValue.c_str()) )
+        else if( occa::isAFloat(strValue.c_str()) )
           type = doubleType;
         else if((strValue == "false") || (strValue == "true"))
           type = boolType;

@@ -77,6 +77,7 @@ namespace occa {
 
   static const int compact = (1 << 10);
   static const int scatter = (1 << 11);
+  static const int manual  = (1 << 12);
   //==================================
 
 
@@ -194,13 +195,10 @@ namespace occa {
   device_t<Pthreads>::device_t(const device_t<Pthreads> &k);
 
   template <>
-  device_t<Pthreads>::device_t(const int threadCount, const int pinningInfo);
-
-  template <>
   device_t<Pthreads>& device_t<Pthreads>::operator = (const device_t<Pthreads> &k);
 
   template <>
-  void device_t<Pthreads>::setup(const int threadCount, const int pinningInfo);
+  void device_t<Pthreads>::setup(argInfoMap &aim);
 
   template <>
   deviceIdentifier device_t<Pthreads>::getIdentifier() const;
