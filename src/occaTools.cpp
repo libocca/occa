@@ -259,14 +259,12 @@ namespace occa {
 
     const size_t nchars = statbuf.st_size;
 
-    char *buffer = (char*) calloc(nchars + 1, sizeof(char));
+    char *buffer = (char*) calloc(nchars, sizeof(char));
     size_t nread = fread(buffer, sizeof(char), nchars, fp);
-
-    buffer[nread] = '\0';
 
     fclose(fp);
 
-    std::string contents(buffer, nread + 1);
+    std::string contents(buffer, nread);
 
     free(buffer);
 
