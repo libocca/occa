@@ -865,7 +865,7 @@ namespace occa {
 
     for(int i = 0; i < deviceCount; ++i){
       device d;
-      d.setup("CUDA", i);
+      d.setup("CUDA", i, 0);
 
       dList.push_back(d);
     }
