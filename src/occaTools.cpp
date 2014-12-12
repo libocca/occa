@@ -53,14 +53,24 @@ namespace occa {
     return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
 
 #elif OCCA_OS == OSX_OS
-
+#  ifdef __clang__
     uint64_t ct;
     ct = mach_absolute_time();
 
     const Nanoseconds ct2 = AbsoluteToNanoseconds(*(AbsoluteTime *) &ct);
 
     return ((double) 1.0e-9) * ((double) ( *((uint64_t*) &ct2) ));
+#  else
+    clock_serv_t cclock;
+    host_get_clock_service(mach_host_self(), CALENDAR_CLOCK, &cclock);
 
+    mach_timespec_t ct;
+    clock_get_time(cclock, &ct);
+
+    mach_port_deallocate(mach_task_self(), cclock);
+
+    return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
+#  endif
 #elif OCCA_OS == WINDOWS_OS
     LARGE_INTEGER timestamp, timerfreq;
 

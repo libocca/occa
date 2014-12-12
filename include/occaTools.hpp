@@ -17,8 +17,13 @@
 #  include <sys/time.h>
 #  include <unistd.h>
 #elif OCCA_OS == OSX_OS
-#  include <CoreServices/CoreServices.h>
-#  include <mach/mach_time.h>
+#  ifdef __clang__
+#    include <CoreServices/CoreServices.h>
+#    include <mach/mach_time.h>
+#  else
+#    include <mach/clock.h>
+#    include <mach/mach.h>
+#  endif
 #else
 #  undef UNICODE
 #  include <windows.h>

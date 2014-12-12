@@ -31,7 +31,7 @@ inline std::string saveFileToVariable(std::string filename,
                     << "#define OCCA_USING_CUDA     0" << std::endl
                     << "#define OCCA_USING_COI      0" << std::endl;
 
-    std::string fileContents = occaDeviceDefines.str() + readFile(filename);
+  std::string fileContents = occaDeviceDefines.str() + readFile(filename);
   chars = fileContents.size();
 
   std::stringstream headerSS;
