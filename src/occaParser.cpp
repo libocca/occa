@@ -59,6 +59,9 @@ namespace occa {
 
       addArgQualifiers();
 
+      // std::cout << (std::string) *globalScope << '\n';
+      // throw 1;
+
       loadKernelInfos();
 
       return (std::string) *globalScope;
@@ -4070,6 +4073,14 @@ namespace occa {
           stride = (std::string) node3[0][1];
         else
           stride = (std::string) node3[0][0];
+      }
+
+      if((!parsingC) &&
+         (stride.find("doStride") == 0)){
+        // [doStride][#]
+        std::string suffix = stride.substr(8);
+
+        stride = "(doStrideSign" + suffix + "*" + stride + ")";
       }
     }
 
