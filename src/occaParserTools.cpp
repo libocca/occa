@@ -293,8 +293,8 @@ namespace occa {
 
   bool isAnAssOperator(const std::string &s,
                        const bool parcingC){ // hehe
-    const char *c      = s.c_str();
     const size_t chars = s.size();
+    const char *c      = s.c_str();
 
     if((chars < 1) ||
        (3 < chars) ||          // Not in range

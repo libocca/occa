@@ -110,10 +110,13 @@ occaKernel void fd2d(tFloat *u1,
   const int bDimY = 16 + bDimX;
 
   const int lDimX = 16 + bDimY;
-  const int lDimY = 16 + lDimX;
+  int lDimY = lDimX;
 
-  for(int by = 0; by < bDimY; by += lDimY; outer0){
-    for(int bx = 0; bx < bDimX; bx += lDimX; outer1){
+  for(int i = 0; i < lDimX; ++i)
+    lDimY += 1;
+
+  for(int by = 0; by < bDimY; by += 16; outer0){
+    for(int bx = 0; bx < bDimX; bx += 16; outer1){
       shared tFloat Lu[bDimY + 2*sr][bDimX + 2*sr];
       exclusive tFloat r_u2 = 2, r_u3 = 3, r_u4[3], *r_u5, *r_u6[3];
 

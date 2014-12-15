@@ -1119,17 +1119,15 @@ namespace occa {
 
     // Add used vars to varUsedMap
     void expNode::labelUsedVariables(){
-      expNode &flatRoot = *(makeFlatHandle());
-
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        expNode &n = flatRoot[i];
+      for(int i = 0; i < leafCount; ++i){
+        expNode &n = *(leaves[i]);
 
         if(n.hasVariable()){
           std::string varName = n.getMyVariableName();
           varInfo &var        = *(sInfo->hasVariableInScope(varName));
 
-          if((n.up != NULL) &&
-             isAnAssOperator(n.up->value)){
+          if(((i + 1) < leafCount) &&
+             isAnAssOperator(leaves[i + 1]->value)){
 
             sInfo->addVariableToUpdateMap(var);
           }
@@ -1138,8 +1136,6 @@ namespace occa {
           }
         }
       }
-
-      freeFlatHandle(flatRoot);
     }
 
     // class(...), class{1,2,3}
@@ -3806,7 +3802,8 @@ namespace occa {
 
           if((nVar != &var) || // Checking our variable update
              (n.up == NULL) || // Update needs an assignment operator
-             !isAnAssOperator(n.up->value)){
+             !isAnAssOperator(n.up->value) ||
+             (n.up->leaves[0]->getMyVariableName() != var.name)){
 
             continue;
           }

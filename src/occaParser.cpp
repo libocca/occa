@@ -2116,6 +2116,16 @@ namespace occa {
                                       sVec,
                                       depMap);
 
+          idDepMapIterator it = depMap.begin();
+
+          while(it != depMap.end()){
+            std::cout
+              << "sVec[it] = " << *(sVec[it->first]);
+            ++it;
+          }
+
+          std::cout << '\n';
+
           ++loopPos;
           occaLoopPos = occaLoopPos->right;
         }
