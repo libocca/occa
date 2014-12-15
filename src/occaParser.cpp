@@ -2134,7 +2134,7 @@ namespace occa {
       }
 
       std::cout
-        << "sk = " << sk << '\n';
+        << "sKernel = " << sKernel << '\n';
       throw 1;
     }
 
