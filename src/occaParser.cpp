@@ -1000,17 +1000,8 @@ namespace occa {
 
       varInfo &iterVar = *(s.hasVariableInScope(iter));
 
-      std::cout
-        << "varUpdateMap[" << iterVar << "].size() = " << length(&(varUpdateMap[&iterVar])) << '\n'
-        << "varUsedMap[" << iterVar << "].size() = " << length(&(varUsedMap[&iterVar])) << '\n'
-        << "s = " << s << " (" << &s << ")\n";
-
       s.removeFromUpdateMapFor(iterVar);
       s.removeFromUsedMapFor(iterVar);
-
-      std::cout
-        << "varUpdateMap[" << iterVar << "].size() = " << length(&(varUpdateMap[&iterVar])) << '\n'
-        << "varUsedMap[" << iterVar << "].size() = " << length(&(varUsedMap[&iterVar])) << '\n';
 
       s.scopeVarMap.erase(iter);
 

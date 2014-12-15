@@ -565,9 +565,6 @@ namespace occa {
 
       const bool hasOccaTag = isAnOccaTag(lastLeafValue);
 
-      if(hasOccaTag)
-        std::cout << "* this = " << sInfo << '\n';
-
       expNode newExp(*sInfo);
       newExp.info = info;
       newExp.addNodes(expType::root, 0, 3 + hasOccaTag);
@@ -636,6 +633,10 @@ namespace occa {
         newExp.leaves[1] = sInfo->createExpNodeFrom(iter + " <= " + doEnd);
         newExp.leaves[2] = sInfo->createExpNodeFrom("++" + iter);
       }
+
+      newExp[0].labelUsedVariables();
+      newExp[1].labelUsedVariables();
+      newExp[2].labelUsedVariables();
 
       varInfo &vDoStart = *(sInfo->hasVariableInScope(doStart));
       varInfo &vDoEnd   = *(sInfo->hasVariableInScope(doEnd));
@@ -2080,7 +2081,8 @@ namespace occa {
 
       return "";
     }
-    //  ---[ Node-based ]-----
+
+    //  ---[ Node-based ]----------
     std::string expNode::getMyVariableName(){
       if(info & expType::variable){
         if(leafCount == 0)
@@ -2094,7 +2096,41 @@ namespace occa {
 
       return "";
     }
-    //  ======================
+    //  ===========================
+
+    //  ---[ Statement-based ]-----
+    void expNode::switchBaseStatement(statement &s1, statement &s2){
+      expNode &flatRoot = *(makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.hasVariable()){
+          std::string varName = n.getMyVariableName();
+          varInfo &var        = *(s1.hasVariableInScope(varName));
+
+          statementNode *sn1 = &(s1.varUpdateMap[&var]);
+          statementNode *sn2 = &(s1.varUsedMap[&var]);
+
+          while(sn1){
+            if(sn1->value == &s1)
+              sn1->value = &s2;
+
+            sn1 = sn1->right;
+          }
+
+          while(sn2){
+            if(sn2->value == &s1)
+              sn2->value = &s2;
+
+            sn2 = sn2->right;
+          }
+        }
+      }
+
+      freeFlatHandle(flatRoot);
+    }
+    //  ===========================
     //================================
 
     void expNode::freeLeaf(const int leafPos){
@@ -3085,6 +3121,8 @@ namespace occa {
 
       expNode &ret = *(sn->value->expRoot.clone(*this));
 
+      ret.switchBaseStatement(*(sn->value), *this);
+
       delete sn->value;
       delete sn;
 
@@ -3878,17 +3916,6 @@ namespace occa {
         return;
 
       statementNode *sn = &(it->second);
-
-      while(sn){
-        std::cout << "sn = " << getBits(sn->value->type) << '\n';
-
-        if(sn->value == this)
-          std::cout << "DELETE!";
-
-        sn = sn->right;
-      }
-
-      sn = &(it->second);
 
       while(sn->value == this){
         if(sn->right != NULL){

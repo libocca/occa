@@ -280,9 +280,13 @@ namespace occa {
 
       std::string getVariableName(const int pos = 0) const;
 
-      //  ---[ Node-based ]---
+      //  ---[ Node-based ]--------
       std::string getMyVariableName();
-      //  ====================
+      //  =========================
+
+      //  ---[ Statement-based ]---
+      void switchBaseStatement(statement &s1, statement &s2);
+      //  =========================
       //================================
 
       void freeLeaf(const int leafPos);
