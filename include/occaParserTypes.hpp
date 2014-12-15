@@ -291,33 +291,45 @@ namespace occa {
 
 
     //---[ Var Dependency Graph ]-----------------
-    class sDep {
+    class sDep_t {
     public:
       int sID;
       varInfoVector_t deps;
 
-      sDep();
+      sDep_t();
 
-      sDep(const sDep &sd);
-      sDep& operator = (const sDep &sd);
+      sDep_t(const sDep_t &sd);
+      sDep_t& operator = (const sDep_t &sd);
+
+      void add(varInfo &var);
+      void uniqueAdd(varInfo &var);
+
+      bool has(varInfo &var);
     };
 
     class varDepGraph {
     public:
       int sInit;
-      std::vector<sDep> sUpdates;
+      std::vector<sDep_t> sUpdates;
 
       varDepGraph();
+
+      varDepGraph(varInfo &var,
+                  statement &s);
+
+      varDepGraph(varInfo &var,
+                  statement &s,
+                  statementIdMap_t &sMap);
 
       varDepGraph(const varDepGraph &vdg);
       varDepGraph& operator = (const varDepGraph &vdg);
 
-      void setupFrom(varInfo &var,
-                     statement &s);
+      void setup(varInfo &var,
+                 statement &s);
 
-      void setupFrom(varInfo &var,
-                     statement &s,
-                     statementIdMap_t &sMap);
+      void setup(varInfo &var,
+                 statement &s,
+                 statementIdMap_t &sMap);
     };
     //============================================
 

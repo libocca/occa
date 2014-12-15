@@ -3781,20 +3781,102 @@ namespace occa {
       }
     }
 
-    void statement::setVariableDeps(varInfoVector_t &vec){
+    void statement::setVariableDeps(varInfo &var,
+                                    sDep_t &sDep){
       expNode &flatRoot = *(expRoot.makeFlatHandle());
 
-      if(type & updateStatementType){
-
-      }
-
       for(int i = 0; i < flatRoot.leafCount; ++i){
-        if(flatRoot[i].info & (expType::variable |
-                               expType::function)){
+        expNode &n = flatRoot[i];
+
+        if(n.info & (expType::variable |
+                     expType::function)){
+
+          // a[0] -> "" { a, "" {[ {0}} } }
+          if(n.value.size() == 0)
+            continue;
+
+          varInfo *nVar = hasVariableInScope(n.value);
+
+          if((nVar != &var) || // Not updating our variable
+             (n.up == NULL) || // Doesn't have an assigmnet operator
+             !isAnAssOperator(n.up->value)){
+
+            continue;
+          }
+
+          // Get right-side of assignment operator
+          expNode &exp = *(n.up->leaves[1]);
+
+          addVariableDeps(exp, sDep);
         }
       }
 
       expNode::freeFlatHandle(flatRoot);
+    }
+
+    void statement::addVariableDeps(expNode &exp,
+                                    sDep_t &sDep){
+      expNode &flatRoot = *(exp.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.info & (expType::variable |
+                     expType::function)){
+
+          // a[0] -> "" { a, "" {[ {0}} } }
+          if(n.value.size() == 0)
+            continue;
+
+          varInfo &var = *(hasVariableInScope(n.value));
+
+          sDep.uniqueAdd(var);
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
+
+    void statement::removeFromUpdateMapFor(varInfo &var){
+      removeFromMapFor(var, varUpdateMap);
+    }
+
+    void statement::removeFromUsedMapFor(varInfo &var){
+      removeFromMapFor(var, varUsedMap);
+    }
+
+    void statement::removeFromMapFor(varInfo &var,
+                                     varUsedMap_t &usedMap){
+      varUsedMapIterator it = usedMap.find(&var);
+
+      if(it == usedMap.end())
+        return;
+
+      statementNode *sn = &(it->second);
+
+      while(sn->value == this){
+        if(sn->right != NULL){
+          statementNode *snRight = sn->right;
+
+          sn->value = snRight->value;
+          sn->right = snRight->right;
+
+          delete snRight;
+        }
+        else{
+          sn->value = NULL;
+          return;
+        }
+      }
+
+      sn = sn->right;
+
+      while(sn){
+        if(sn->value == this)
+          popAndGoRight(sn);
+        else
+          sn = sn->right;
+      }
     }
     //================================
 
@@ -3875,6 +3957,8 @@ namespace occa {
     }
 
     void statement::addStatement(statement *newStatement){
+      newStatement->up = this;
+
       if(statementStart != NULL){
         ++statementCount;
         statementEnd = statementEnd->push(newStatement);
@@ -3912,12 +3996,6 @@ namespace occa {
         return newStatement;
 
       statementNode *nodePos = statementStart;
-
-      // [-] Broken
-      // for(int i = 0; i < statementCount; ++i){
-      //   newStatement->addStatement( nodePos->value->clone() );
-      //   nodePos = nodePos->right;
-      // }
 
       while(nodePos){
         newStatement->addStatement( nodePos->value->clone() );
@@ -4072,6 +4150,64 @@ namespace occa {
       }
       else if(type & forStatementType){
       }
+    }
+
+
+    int statement::occaForInfo(){
+      if(type != occaForType)
+        return notAnOccaFor;
+
+      std::string forLoop = expRoot.value;
+      const int chars     = forLoop.size();
+
+      const int nest = (1 + forLoop[chars - 1] - '0');
+
+      if(forLoop.find("Inner") != std::string::npos)
+        return (nest << occaInnerForShift);
+
+      return (nest << occaOuterForShift);
+    }
+
+    int statement::occaForNest(const int forInfo){
+      if(forInfo & occaInnerForMask)
+        return ((forInfo >> occaInnerForShift) - 1);
+
+      return ((forInfo >> occaOuterForShift) - 1);
+    }
+
+    bool statement::isOccaOuterFor(const int forInfo){
+      return ((forInfo & occaOuterForMask) != 0);
+    }
+
+    bool statement::isOccaInnerFor(const int forInfo){
+      return ((forInfo & occaInnerForMask) != 0);
+    }
+
+    void statement::getStatementDependencies(expNode &exp,
+                                             statementIdMap_t &idMap){
+      expNode &flatRoot = *(exp.makeFlatHandle());
+
+      std::cout << "exp = " << exp << '\n';
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.info & (expType::variable |
+                     expType::function)){
+
+          // a[0] -> "" { a, "" {[ {0}} } }
+          if(n.value.size() == 0)
+            continue;
+
+          varInfo &var = *(hasVariableInScope(n.value));
+
+          varDepGraph(var, *this, idMap);
+
+          std::cout << "var = " << var << '\n';
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     varInfo& statement::getDeclarationVarInfo(const int pos){
@@ -4493,7 +4629,7 @@ namespace occa {
       statementNode *statementPos = statementStart;
 
       // OCCA For's
-      if(type == (occaStatementType | forStatementType)){
+      if(type == occaForType){
         std::string ret = tab + expRoot.toString() + "{\n";
 
         while(statementPos){

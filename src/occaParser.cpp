@@ -7,6 +7,9 @@ namespace occa {
 
       macrosAreInitialized = false;
       globalScope = new statement(*this);
+
+      warnForMissingBarriers     = true;
+      warnForBarrierConditionals = true;
     }
 
     const std::string parserBase::parseFile(const std::string &filename){
@@ -817,12 +820,12 @@ namespace occa {
       return sUp;
     }
     statement* parserBase::getStatementOuterMostLoop(statement &s){
-      statement *ret = ((s.type == keywordType["occaOuterFor0"]) ? &s : NULL);
+      statement *ret = ((s.type == occaForType) ? &s : NULL);
 
       statement *sUp = &s;
 
       while(sUp){
-        if(sUp->type == keywordType["occaOuterFor0"])
+        if(sUp->type == occaForType)
           ret = sUp;
 
         sUp = sUp->up;
@@ -997,6 +1000,11 @@ namespace occa {
            << " occa" << ioLoop << "Id" << loopNest << ";";
       }
 
+      varInfo &iterVar = *(s.hasVariableInScope(iter));
+
+      s.removeFromUpdateMapFor(iterVar);
+      s.removeFromUsedMapFor(iterVar);
+
       s.scopeVarMap.erase(iter);
 
       s.pushLeftFromSource(s.statementStart, ss.str());
@@ -1009,7 +1017,7 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaOuterFor(statement &s){
-      if(s.type == keywordType["occaOuterFor0"]){
+      if(s.type == occaForType){
         std::string &forName = s.expRoot.value;
 
         if((forName.find("occaOuterFor") != std::string::npos) &&
@@ -1034,7 +1042,7 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaFor(statement &s){
-      if(s.type == keywordType["occaOuterFor0"])
+      if(s.type == occaForType)
         return true;
 
       statementNode *statementPos = s.statementStart;
@@ -1142,7 +1150,7 @@ namespace occa {
           !(s.type & forStatementType)       &&
           !(s.type & functionStatementType)) ||
          // OCCA for's don't have arguments
-         (s.type == keywordType["occaOuterFor0"]))
+         (s.type == occaForType))
         return;
 
       if(getStatementKernel(s) == NULL)
@@ -1311,7 +1319,9 @@ namespace occa {
             snPos = snPos->right;
           }
 
-          if(snPos == lastLoop){
+          if((snPos == lastLoop) &&
+             warnForMissingBarriers){
+
             std::cout << "Warning: Placing a local barrier between:\n"
                       << "---[ A ]--------------------------------\n"
                       << *(firstLoop->value)
@@ -1773,9 +1783,6 @@ namespace occa {
 
     statementNode* parserBase::splitKernelStatement(statementNode *sn,
                                                     kernelInfo &info){
-
-      const int occaForType = keywordType["occaOuterFor0"];
-
       statement &s         = *(sn->value);
       statement &sUp       = *(s.up);
       statementNode *snPos = s.statementStart;
@@ -1970,7 +1977,7 @@ namespace occa {
           statement &s3 = *(info.nestedKernels[kernelCount]);
 
           // Stopping at the last node
-          if( !(s2.type == keywordType["occaOuterFor0"]) )
+          if( !(s2.type == occaForType) )
             snPos = NULL;
 
           s3.statementStart = snPosStart;
@@ -2041,17 +2048,86 @@ namespace occa {
     void parserBase::splitKernelStatement2(statement &sKernel){
       statement &sk = *(sKernel.clone());
 
-      const int occaForType = keywordType["occaOuterFor0"];
+      statementIdMap_t idMap;
+      statementVector_t sVec;
+
+      sk.setStatementIdMap(idMap);
+      sk.setStatementVector(idMap, sVec);
 
       statementNode *occaLoopRoot = getOccaLoopsInStatement(sk);
       statementNode *occaLoopPos  = occaLoopRoot;
 
+      // Loop outer-most for-loops
       while(occaLoopPos){
-        statement &s2 = *(occaLoopPos->value);
+        statement &sOuter = *(occaLoopPos->value);
 
-        s2.type = blockStatementType;
+        varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
 
-        occaLoopPos = occaLoopPos->right;
+        if(loopIter == NULL){
+          occaLoopPos = occaLoopPos->right;
+          continue;
+        }
+
+        qualifierInfo &loopBounds = loopIter->leftQualifiers;
+        int loopPos = 0;
+
+        const int outerDim = getOuterMostForDim(sOuter) + 1;
+        const int innerDim = getInnerMostForDim(sOuter) + 1;
+
+        bool firstOuter = true;
+        bool firstInner = true;
+
+        // Get rid of the parallelFor
+        statementNode *sn = sOuter.getStatementNode();
+        sn->left->pop();
+
+        // Loop through all the loops inside new kernel
+        while(occaLoopPos){
+          statement &s2 = *(occaLoopPos->value);
+
+          const int forInfo = s2.occaForInfo();
+          const int nest    = s2.occaForNest(forInfo);
+
+          // Only goes through first outer and inner sets
+          if(s2.isOccaInnerFor(forInfo) &&
+             (nest == (innerDim - 1))){
+
+            if(firstInner == false)
+              break;
+
+            firstInner = false;
+          }
+          else if(s2.isOccaOuterFor(forInfo) &&
+                  (nest == (outerDim - 1))){
+
+            if(firstOuter == false)
+              break;
+
+            firstOuter = false;
+          }
+
+          s2.type = blockStatementType;
+
+          expNode *loopExp = s2.createExpNodeFrom(loopBounds[loopPos]);
+
+          s2.getStatementDependencies(*loopExp,
+                                      idMap);
+
+          ++loopPos;
+          occaLoopPos = occaLoopPos->right;
+        }
+
+        // Go to next outer-loop
+        while(occaLoopPos){
+          statement &s2 = *(occaLoopPos->value);
+
+          const int forInfo = s2.occaForInfo();
+
+          if(s2.isOccaOuterFor(forInfo))
+            break;
+
+          occaLoopPos = occaLoopPos->right;
+        }
       }
 
       std::cout
@@ -2069,8 +2145,6 @@ namespace occa {
 
       statementNode root;
       statementNode *tail = &root;
-
-      const int occaForType = keywordType["occaOuterFor0"];
 
       while(snPos){
         statement &s2 = *(snPos->value);
@@ -2131,7 +2205,7 @@ namespace occa {
       statement *currentS = &s;
 
       while(currentS){
-        if(currentS->type == (forStatementType | occaStatementType))
+        if(currentS->type == occaForType)
           break;
 
         currentS = currentS->up;
@@ -2302,9 +2376,12 @@ namespace occa {
     }
 
     void parserBase::checkPathForConditionals(statementNode *path){
-      if((path == NULL) ||
-         (path->value == NULL))
+      if((warnForBarrierConditionals == false) ||
+         (path == NULL)                        ||
+         (path->value == NULL)){
+
         return;
+      }
 
       if(path->value->type & ifStatementType){
         std::cout << '\n'
@@ -2706,8 +2783,6 @@ namespace occa {
         std::cout << "OCCA Outer for-loop count could not be calculated\n";
         throw 1;
       }
-
-      const int occaForType = keywordType["occaOuterFor0"];
 
       statement *sPos = &s;
 
@@ -3453,13 +3528,13 @@ namespace occa {
       cKeywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
       cKeywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
 
-      cKeywordType["occaInnerFor0"] = (forStatementType | occaStatementType);
-      cKeywordType["occaInnerFor1"] = (forStatementType | occaStatementType);
-      cKeywordType["occaInnerFor2"] = (forStatementType | occaStatementType);
+      cKeywordType["occaInnerFor0"] = occaForType;
+      cKeywordType["occaInnerFor1"] = occaForType;
+      cKeywordType["occaInnerFor2"] = occaForType;
 
-      cKeywordType["occaOuterFor0"] = (forStatementType | occaStatementType);
-      cKeywordType["occaOuterFor1"] = (forStatementType | occaStatementType);
-      cKeywordType["occaOuterFor2"] = (forStatementType | occaStatementType);
+      cKeywordType["occaOuterFor0"] = occaForType;
+      cKeywordType["occaOuterFor1"] = occaForType;
+      cKeywordType["occaOuterFor2"] = occaForType;
 
       cKeywordType["occaInnerId0"] = (presetValue | occaKeywordType);
       cKeywordType["occaInnerId1"] = (presetValue | occaKeywordType);
@@ -3829,7 +3904,7 @@ namespace occa {
       //---[ Overload iter vars ]---
       setIterDefaultValues();
 
-      sInfo->type = keywordType["occaOuterFor0"];
+      sInfo->type = occaForType;
 
       expNode &node1   = *(sInfo->getForStatement(0));
       expNode &node2   = *(sInfo->getForStatement(1));

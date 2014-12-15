@@ -243,6 +243,8 @@ namespace occa {
     static const int structStatementType    = (1 << 16);
 
     static const int occaStatementType      = (1 << 17);
+    static const int occaForType            = (occaStatementType |
+                                               forStatementType);
 
     static const int macroStatementType     = (1 << 18);
     static const int skipStatementType      = (1 << 19);

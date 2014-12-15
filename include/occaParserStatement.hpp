@@ -10,6 +10,7 @@
 namespace occa {
   namespace parserNS {
     class statement;
+    class sDep_t;
 
     //---[ Exp Node ]-------------------------------
     namespace expType {
@@ -514,7 +515,16 @@ namespace occa {
       void setStatementVector(statementIdMap_t &idMap,
                               statementVector_t &vec);
 
-      void setVariableDeps(varInfoVector_t &vec);
+      void setVariableDeps(varInfo &var,
+                           sDep_t &sDep);
+
+      void addVariableDeps(expNode &exp,
+                           sDep_t &sDep);
+
+      void removeFromUpdateMapFor(varInfo &var);
+      void removeFromUsedMapFor(varInfo &var);
+      void removeFromMapFor(varInfo &var,
+                            varUsedMap_t &usedMap);
       //================================
 
       void checkIfVariableIsDefined(varInfo &var,
@@ -557,6 +567,15 @@ namespace occa {
       bool hasQualifier(const std::string &qualifier) const;
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void removeQualifier(const std::string &qualifier);
+
+      int occaForInfo();
+
+      static int occaForNest(const int forInfo);
+      static bool isOccaOuterFor(const int forInfo);
+      static bool isOccaInnerFor(const int forInfo);
+
+      void getStatementDependencies(expNode &exp,
+                                    statementIdMap_t &idMap);
 
       varInfo& getDeclarationVarInfo(const int pos);
       const varInfo& cGetDeclarationVarInfo(const int pos) const ;

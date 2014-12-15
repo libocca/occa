@@ -106,6 +106,12 @@ occaKernel void fd2d(tFloat *u1,
                      texture tFloat tex2[][],
                      texture tFloat **tex3,
                      const tFloat currentTime){
+  const int bDimX = 16;
+  const int bDimY = 16;
+
+  const int lDimX = 16;
+  const int lDimY = 16;
+
   for(int by = 0; by < bDimY; ++by; outer0){
     for(int bx = 0; bx < bDimX; ++bx; outer1){
       shared tFloat Lu[bDimY + 2*sr][bDimX + 2*sr];

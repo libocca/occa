@@ -31,12 +31,17 @@ namespace occa {
 
       statement *globalScope;
 
+      //---[ Warnings ]-----------------
+      bool warnForMissingBarriers;
+      bool warnForBarrierConditionals;
+      //================================
+
       parserBase();
 
       const std::string parseFile(const std::string &filename);
       const std::string parseSource(const char *cRoot);
 
-      //---[ Macro Parser Functions ]-------
+      //---[ Macro Parser Functions ]---
       std::string getMacroName(const char *&c);
 
       bool evaluateMacroStatement(const char *&c);
@@ -134,7 +139,7 @@ namespace occa {
 
       statementNode* getOuterLoopsInStatement(statement &s);
       statementNode* getOccaLoopsInStatement(statement &s,
-                                             const bool nestedLoops = true);
+                                             const bool getNestedLoops = true);
 
       void loadKernelInfos();
 

@@ -1756,20 +1756,53 @@ namespace occa {
 
 
     //---[ Var Dependency Graph ]-----------------
-    sDep::sDep(){}
+    sDep_t::sDep_t(){}
 
-    sDep::sDep(const sDep &sd){
+    sDep_t::sDep_t(const sDep_t &sd){
       *this = sd;
     }
 
-    sDep& sDep::operator = (const sDep &sd){
+    sDep_t& sDep_t::operator = (const sDep_t &sd){
       sID  = sd.sID;
       deps = sd.deps;
 
       return *this;
     }
 
+    void sDep_t::add(varInfo &var){
+      deps.push_back(&var);
+    }
+
+    void sDep_t::uniqueAdd(varInfo &var){
+      if(has(var))
+        return;
+
+      deps.push_back(&var);
+    }
+
+    bool sDep_t::has(varInfo &var){
+      const int depCount = deps.size();
+
+      for(int i = 0; i < depCount; ++i){
+        if(deps[i] == &var)
+          return true;
+      }
+
+      return false;
+    }
+
     varDepGraph::varDepGraph(){}
+
+    varDepGraph::varDepGraph(varInfo &var,
+                             statement &s){
+      setup(var, s);
+    }
+
+    varDepGraph::varDepGraph(varInfo &var,
+                             statement &s,
+                             statementIdMap_t &sMap){
+      setup(var, s, sMap);
+    }
 
     varDepGraph::varDepGraph(const varDepGraph &vdg){
       *this = vdg;
@@ -1782,36 +1815,43 @@ namespace occa {
       return *this;
     }
 
-    void varDepGraph::setupFrom(varInfo &var,
-                                statement &s){
+    void varDepGraph::setup(varInfo &var,
+                            statement &s){
       statement *globalScope = s.getGlobalScope();
 
       statementIdMap_t sMap;
 
       globalScope->setStatementIdMap(sMap);
 
-      setupFrom(var, s, sMap);
+      setup(var, s, sMap);
     }
 
-    void varDepGraph::setupFrom(varInfo &var,
-                                statement &s,
-                                statementIdMap_t &sMap){
-      sInit = sMap[ s.varUpdateMap[&var].value ];
+    void varDepGraph::setup(varInfo &var,
+                            statement &s,
+                            statementIdMap_t &sMap){
+      statementNode *sn = &(s.varUpdateMap[&var]);
+
+      sInit = sMap[sn->value];
 
       const int sID = sMap[&s];
 
-      statementNode *sn = (s.varUsedMap[&var]).right;
+      sn = sn->right;
+
+      std::cout << "sInit = " << sInit << '\n';
 
       while(sn){
         statement &s2  = *(sn->value);
         const int sID2 = sMap[&s2];
 
+        s2.expRoot.print();
+        std::cout << "s2 = " << s2 << '\n';
+
         if(sID2 < sID){
-          sUpdates.push_back(sDep());
-          sDep &sd = sUpdates.back();
+          sUpdates.push_back(sDep_t());
+          sDep_t &sd = sUpdates.back();
 
           sd.sID = sID2;
-          s2.setVariableDeps(sd.deps);
+          s2.setVariableDeps(var, sd);
         }
         else
           break;
