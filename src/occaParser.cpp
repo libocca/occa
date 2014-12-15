@@ -34,11 +34,6 @@ namespace occa {
 
       globalScope->loadAllFromNode(nodeRoot, parsingC);
 
-      if(!parsingC){
-        std::cout << (std::string) *globalScope;
-        throw 1;
-      }
-
       markKernelFunctions(*globalScope);
       labelNativeKernels();
 
@@ -949,7 +944,7 @@ namespace occa {
       if(s.getForStatementCount() <= 3)
         return;
 
-      occaLoopInfo loopInfo(s);
+      occaLoopInfo loopInfo(s, parsingC);
 
       std::string ioLoopVar, ioLoop, loopNest;
       std::string iter, start;
@@ -3886,7 +3881,10 @@ namespace occa {
 
     //---[ OCCA Loop Info ]-------------
     occaLoopInfo::occaLoopInfo(statement &s,
+                               const bool parsingC_,
                                const std::string &tag){
+      parsingC = parsingC_;
+
       lookForLoopFrom(s, tag);
     }
 
@@ -3927,20 +3925,39 @@ namespace occa {
       std::string arg4 = (std::string) *(sInfo->getForStatement(3));
 
       //---[ Node 1 Check ]---
-      if((node1.info != expType::declaration) ||
-         (node1.getVariableCount() != 1)      ||
-         !node1.variableHasInit(0)){
+      if((parsingC  &&
+          ((node1.info != expType::declaration) ||
+           (node1.getVariableCount() != 1)      ||
+           !node1.variableHasInit(0)))
+         ||
+         (!parsingC &&
+          ((node1.leafCount == 0) ||
+           (node1[0].value != "=")))){
 
         std::cout << "Wrong 1st statement for:\n  " << sInfo->expRoot << '\n';
         throw 1;
       }
 
-      varInfo &iterVar  = node1.getVariableInfoNode(0)->getVarInfo();
+      varInfo *pIterVar;
+
+      if(parsingC){
+        pIterVar = &(node1.getVariableInfoNode(0)->getVarInfo());
+      }
+      else{
+        pIterVar = s.hasVariableInScope(node1[0][0]);
+
+        if(pIterVar == NULL){
+          std::cout << "Iterator [" << node1[0][0] << "] was not declared.\n";
+          throw 1;
+        }
+      }
+
+      varInfo &iterVar = *(pIterVar);
+
       std::string &iter = iterVar.name;
 
       if( !iterVar.hasQualifier("occaConst") )
         iterVar.addQualifier("occaConst");
-
 
       //---[ Node 2 Check ]---
       if((node2.leafCount != 1) ||
@@ -3953,11 +3970,13 @@ namespace occa {
         throw 1;
       }
 
-      if((node2[0][0].value != iter) &&
-         (node2[0][1].value != iter)){
+      if(parsingC){
+        if((node2[0][0].value != iter) &&
+           (node2[0][1].value != iter)){
 
-        std::cout << "Wrong 2nd statement for:\n  " << sInfo->expRoot << '\n';
-        throw 1;
+          std::cout << "Wrong 2nd statement for:\n  " << sInfo->expRoot << '\n';
+          throw 1;
+        }
       }
 
       //---[ Node 3 Check ]---
@@ -4007,12 +4026,18 @@ namespace occa {
 
     void occaLoopInfo::getLoopNode1Info(std::string &iter,
                                         std::string &start){
-      expNode &node1 = *(sInfo->getForStatement(0));
+      if(parsingC){
+        expNode &node1 = *(sInfo->getForStatement(0));
 
-      varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
+        varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
-      iter  = iterVar.name;
-      start = *(node1.getVariableInitNode(0));
+        iter  = iterVar.name;
+        start = *(node1.getVariableInitNode(0));
+      }
+      else{
+        iter  = "";
+        start = "";
+      }
     }
 
     void occaLoopInfo::getLoopNode2Info(std::string &bound,

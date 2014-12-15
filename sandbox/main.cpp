@@ -10,10 +10,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/test.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/openclTest.cpp");
@@ -50,10 +50,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   std::string parsedContent = parser.parseFile("tests/addVectors.ofl");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    std::string parsedContent = parser.parseFile("tests/addVectors.ofl");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/PCGpart1.cl");

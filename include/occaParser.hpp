@@ -217,8 +217,10 @@ namespace occa {
     class occaLoopInfo {
     public:
       statement *sInfo;
+      bool parsingC;
 
       occaLoopInfo(statement &s,
+                   const bool parsingC_,
                    const std::string &tag = "");
 
       void lookForLoopFrom(statement &s,
