@@ -1882,8 +1882,6 @@ namespace occa {
     void varDepGraph::addFullDependencyMap(idDepMap_t &depMap,
                                            statementIdMap_t &idMap,
                                            statementVector_t &sVec){
-      addDependencyMap(depMap);
-
       const int updates = sUpdates.size();
 
       if(updates == 0)
@@ -1891,9 +1889,14 @@ namespace occa {
 
       for(int i = 0; i < updates; ++i){
         sDep_t &sDep = sUpdates[i];
-        statement &s = *(sVec[sDep.sID]);
+
+        if(depMap.find(sDep.sID) != depMap.end())
+          continue;
+
+        depMap[sDep.sID] = true;
 
         const int varCount = sDep.size();
+        statement &s = *(sVec[sDep.sID]);
 
         for(int v = 0; v < varCount; ++v){
           varDepGraph vdg(sDep[v], s, idMap);

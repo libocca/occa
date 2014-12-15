@@ -576,8 +576,10 @@ namespace occa {
       static bool isOccaOuterFor(const int forInfo);
       static bool isOccaInnerFor(const int forInfo);
 
-      void getStatementDependencies(expNode &exp,
-                                    statementIdMap_t &idMap);
+      void addStatementDependencies(expNode &exp,
+                                    statementIdMap_t &idMap,
+                                    statementVector_t sVec,
+                                    idDepMap_t &depMap);
 
       varInfo& getDeclarationVarInfo(const int pos);
       const varInfo& cGetDeclarationVarInfo(const int pos) const ;

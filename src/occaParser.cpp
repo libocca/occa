@@ -2050,6 +2050,7 @@ namespace occa {
 
       statementIdMap_t idMap;
       statementVector_t sVec;
+      idDepMap_t depMap;
 
       sKernel.setStatementIdMap(idMap);
       sKernel.setStatementVector(idMap, sVec);
@@ -2110,8 +2111,10 @@ namespace occa {
 
           expNode *loopExp = s2.createExpNodeFrom(loopBounds[loopPos]);
 
-          s2.getStatementDependencies(*loopExp,
-                                      idMap);
+          s2.addStatementDependencies(*loopExp,
+                                      idMap,
+                                      sVec,
+                                      depMap);
 
           ++loopPos;
           occaLoopPos = occaLoopPos->right;
