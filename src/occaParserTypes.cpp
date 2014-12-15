@@ -1849,6 +1849,9 @@ namespace occa {
           sUpdates.push_back(sDep_t());
           sDep_t &sd = sUpdates.back();
 
+          std::cout << "var = " << var << '\n';
+          std::cout << "s2 = " << s2 << '\n';
+
           sd.sID = sID2;
           s2.setVariableDeps(var, sd);
         }

@@ -2070,6 +2070,9 @@ namespace occa {
         const int outerDim = getOuterMostForDim(sOuter) + 1;
         const int innerDim = getInnerMostForDim(sOuter) + 1;
 
+        std::cout << "outerDim = " << outerDim << '\n'
+                  << "innerDim = " << innerDim << '\n';
+
         bool firstOuter = true;
         bool firstInner = true;
 
@@ -2105,6 +2108,7 @@ namespace occa {
           s2.type = blockStatementType;
 
           expNode *loopExp = s2.createExpNodeFrom(loopBounds[loopPos]);
+          std::cout << "loopExp = " << *loopExp << '\n';
 
           s2.addStatementDependencies(*loopExp,
                                       idMap,
@@ -3924,35 +3928,28 @@ namespace occa {
       expNode &node3   = *(sInfo->getForStatement(2));
       std::string arg4 = (std::string) *(sInfo->getForStatement(3));
 
+      // Fortran-loading is easier
+      if(!parsingC){
+        //---[ Node 4 Check ]---
+        // If it has a fourth argument, make sure it's the correct one
+        if( !isAnOccaTag(arg4) ){
+          std::cout << "Wrong 4th statement for:\n  " << sInfo->expRoot << '\n';
+          throw 1;
+        }
+
+        return;
+      }
+
       //---[ Node 1 Check ]---
-      if((parsingC  &&
-          ((node1.info != expType::declaration) ||
-           (node1.getVariableCount() != 1)      ||
-           !node1.variableHasInit(0)))
-         ||
-         (!parsingC &&
-          ((node1.leafCount == 0) ||
-           (node1[0].value != "=")))){
+      if((node1.info != expType::declaration) ||
+         (node1.getVariableCount() != 1)      ||
+         !node1.variableHasInit(0)){
 
         std::cout << "Wrong 1st statement for:\n  " << sInfo->expRoot << '\n';
         throw 1;
       }
 
-      varInfo *pIterVar;
-
-      if(parsingC){
-        pIterVar = &(node1.getVariableInfoNode(0)->getVarInfo());
-      }
-      else{
-        pIterVar = s.hasVariableInScope(node1[0][0]);
-
-        if(pIterVar == NULL){
-          std::cout << "Iterator [" << node1[0][0] << "] was not declared.\n";
-          throw 1;
-        }
-      }
-
-      varInfo &iterVar = *(pIterVar);
+      varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
       std::string &iter = iterVar.name;
 
@@ -4026,17 +4023,17 @@ namespace occa {
 
     void occaLoopInfo::getLoopNode1Info(std::string &iter,
                                         std::string &start){
-      if(parsingC){
-        expNode &node1 = *(sInfo->getForStatement(0));
+      expNode &node1 = *(sInfo->getForStatement(0));
 
+      if(parsingC){
         varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
         iter  = iterVar.name;
         start = *(node1.getVariableInitNode(0));
       }
       else{
-        iter  = "";
-        start = "";
+        iter  = node1[0][0].value;
+        start = node1[0][1].value;
       }
     }
 
