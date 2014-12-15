@@ -634,6 +634,20 @@ namespace occa {
         newExp.leaves[2] = sInfo->createExpNodeFrom("++" + iter);
       }
 
+      varInfo &vDoStart = *(sInfo->hasVariableInScope(doStart));
+      varInfo &vDoEnd   = *(sInfo->hasVariableInScope(doEnd));
+
+      sInfo->addVariableToUsedMap(vDoStart);
+      sInfo->addVariableToUsedMap(vDoEnd);
+
+      if(statementCount == 3){
+        varInfo &vDoStride     = *(sInfo->hasVariableInScope(doStride));
+        varInfo &vDoStrideSign = *(sInfo->hasVariableInScope(doStrideSign));
+
+        sInfo->addVariableToUsedMap(vDoStride);
+        sInfo->addVariableToUsedMap(vDoStrideSign);
+      }
+
       expNode::swap(*this, newExp);
     }
 

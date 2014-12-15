@@ -1902,10 +1902,12 @@ namespace occa {
         const int varCount = sDep.size();
         statement &s = *(sVec[sDep.sID]);
 
-        for(int v = 0; v < varCount; ++v){
-          varDepGraph vdg(sDep[v], s, idMap);
+        std::cout << "s = " << s << '\n';
 
-          vdg.addFullDependencyMap(depMap, idMap, sVec);
+        for(int v = 0; v < varCount; ++v){
+          // varDepGraph vdg(sDep[v], s, idMap);
+
+          // vdg.addFullDependencyMap(depMap, idMap, sVec);
         }
       }
     }
