@@ -299,9 +299,11 @@ h2.header, h3.header, h4.header {
 .udSpacing3 { margin-top: 30px !important; margin-bottom: 30px !important; }
 .udSpacing4 { margin-top: 40px !important; margin-bottom: 40px !important; }
 
-span.highlight {
-    color: rgb(43, 179, 153);
+.highlight {
+    color: #2BB399;
+}
 
+span.highlight {
     font-family: "ralewayBold";
 }
 
@@ -807,6 +809,13 @@ pre.api.code.block {
     padding-left : 0px;
 
     box-shadow: none;
+}
+
+pre.api.inline.code.block {
+    display: inline-block;
+
+    margin: 0px;
+    padding: 0px;
 }
 
 div.ui.api.accordion div.title {

@@ -91,10 +91,10 @@ namespace occa {
         printf("--------------------------------------------\n");
 
         if(down == NULL){
-          std::cout << tab << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
+          std::cout << tab << "[" << (std::string) *nodePos << "]\n";
         }
         else{
-          std::cout << tab << "  " << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
+          std::cout << tab << "  " << "[" << (std::string) *nodePos << "]\n";
           down->print(tab + "  ");
         }
 
@@ -112,10 +112,10 @@ namespace occa {
         printf("--------------------------------------------\n");
 
         if(down == NULL){
-          std::cout << tab << "[" << *(nodePos->value) << "] (" << getBits(nodePos->type) << ")\n";
+          std::cout << tab << "[" << (std::string) *(nodePos->value) << "]\n";
         }
         else{
-          std::cout << tab << "  " << "[" << *(nodePos->value) << "] (" << getBits(nodePos->type) << ")\n";
+          std::cout << tab << "  " << "[" << (std::string) *(nodePos->value) << "]\n";
           down->print(tab + "  ");
         }
 

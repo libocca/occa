@@ -565,6 +565,9 @@ namespace occa {
 
       const bool hasOccaTag = isAnOccaTag(lastLeafValue);
 
+      if(hasOccaTag)
+        std::cout << "* this = " << sInfo << '\n';
+
       expNode newExp(*sInfo);
       newExp.info = info;
       newExp.addNodes(expType::root, 0, 3 + hasOccaTag);
@@ -3976,23 +3979,12 @@ namespace occa {
     void statement::addVariableToMap(varInfo &var,
                                      varUsedMap_t &usedMap,
                                      statement *origin){
-      statementNode *sn = &(usedMap[&var]);
+      statementNode &sn = usedMap[&var];
 
-      if(sn->value == origin)
-        return;
-
-      if(sn->value){
-        while(sn->right){
-          sn = sn->right;
-
-          if(sn->value == origin)
-            return;
-        }
-
-        sn->push(origin);
-      }
+      if(sn.value)
+        lastNode(&sn)->push(origin);
       else
-        sn->value = origin;
+        sn.value = origin;
     }
 
     void statement::addStatement(statement *newStatement){

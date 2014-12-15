@@ -102,8 +102,13 @@ function addSelected($tag){
   }
 }
 
-function highlight($content){
-  echo '<span class="highlight">' . $content . '</span>';
+function highlight($content, $color = '#2BB399', $tag = 'span'){
+  if($color[0] != '#'){
+    $tag   = $color;
+    $color = '#2BB399';
+  }
+
+  echo '<' . $tag . ' class="highlight" style="color: ' . $color . '">' . $content . '</' . $tag . '>';
 }
 
 function warning($content){

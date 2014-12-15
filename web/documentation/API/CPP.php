@@ -38,52 +38,43 @@
       <?php startFunctionAPI("setup"); ?>
       <div class="dSpacing1 f_rw bold">Functions:</div>
 
-      <pre class="cpp code block">void setup(occa::mode mode,
-           const int arg1 = 0, const int arg2 = 0);
+      <pre class="cpp code block">void setup(const std::string &infos);
 void setup(const std::string &mode,
-           const int arg1 = 0, const int arg2 = 0);</pre>
+           const argInfo &arg1, const argInfo &arg2 = none, const argInfo &arg2 = none);</pre>
 
       <div class="uSpacing3 f_rw bold"></div>
       <div class="dsm5 indent1">
         <table class="ui celled api table">
-          <thead><tr><th style="width: 200px;">Argument</th><th>Description</th></tr></thead>
+          <thead><tr><th style="width: 250px;">Argument</th><th>Description</th></tr></thead>
           <tbody>
-            <tr><td><pre class="cpp api code block">occa::mode mode</pre></td><td>
-                Enumeration to set the device's <?php highlight('OCCA') ?> mode </br>
-                Should be chosen from <code>{OpenMP, OpenCL, CUDA, Pthreads, COI}</code>
-              </td></tr>
-            <tr class="b"><td><pre class="cpp api code block">str::string mode</pre></td><td>
-                String setting the device's <?php highlight('OCCA') ?> mode </br>
-                Should be chosen from <code>{"OpenMP", "OpenCL", "CUDA", "Pthreads", "COI"}</code> </br>
-                The input is <?php highlight('case-insensitive') ?>
-              </td></tr>
-            <tr class="b t"><td><pre class="cpp api code block">const int arg1</pre></td><td>
-                <table class="ui inner table">
+            <tr class="b"><td><pre class="cpp api code block">const str::string &infos</pre></td><td>
+                Input should be in the form
+                <br><div style="width:500px; margin: auto"><code class="highlight">"flag1 = value [, flag2 = [value1, value2, ...]*]"</code></div>
+                Where flags can be chosen from
+                <table class="ui striped inner table">
                   <thead>
-                    <tr><td style="width: 150px;"> OCCA Mode </td><td> Meaning </td></tr>
+                    <tr><td style="width: 120px;"> Flags </td><td style="width: 70px;"> Modes </td><td> Meaning </td></tr>
                   </thead>
                   <tbody>
-                    <tr><td> OpenMP   </td><td> Nothing      </td></tr>
-                    <tr><td> OpenCL   </td><td> Platform     </td></tr>
-                    <tr><td> CUDA     </td><td> Device       </td></tr>
-                    <tr><td> Pthreads </td><td> Thread count </td></tr>
-                    <tr><td> COI      </td><td> Device       </td></tr>
+                    <tr><td> platformID  </td><td> &nbsp;OpenCL          </td><td> Chosen Platform (e.g. 0, 1)  </td></tr>
+                    <tr><td> deviceID    </td><td> &nbsp;OpenCL &nbsp;&nbsp;&nbsp;CUDA &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;COI </td><td> Chosen Device (e.g. 0, 1) </td></tr>
+                    <tr><td> schedule    </td><td> OpenMP Pthreads </td><td> Thread scheduling (<?php highlight('"dynamic"', "code"); ?> or <?php highlight('"static"', "code"); ?>) </td></tr>
+                    <tr><td> chunk       </td><td> OpenMP Pthreads </td><td> Distribution of work by the input (e.g. 8, 16) </td></tr>
+                    <tr><td> threadCount </td><td> OpenMP Pthreads </td><td> Threads launched</td></tr>
+                    <tr><td> pinnedCores </td><td> Pthreads        </td><td> Cores threads should be pinned at <br> (e.g. <?php highlight('"[0, 0, 1, 1]"', "code"); ?>)</td></tr>
                   </tbody>
                 </table>
+                Inputs are <?php highlight('case-insensitive'); ?> <br>
+                Integer inputs <?php highlight('do not use quotes'); ?> <br>
+                <?php highlight('Correct  &nbsp;: "deviceID = 1"', "code"); ?> <br>
+                <?php highlight('Incorrect: "deviceID = "1""', '#BE514A', "code"); ?>
               </td></tr>
-            <tr class="t"><td><pre class="cpp api code block">const int arg2</pre></td><td>
-                <table class="ui inner table">
-                  <thead>
-                    <tr><td style="width: 150px;"> OCCA Mode </td><td > Meaning </td></tr>
-                  </thead>
-                  <tbody>
-                    <tr><td> OpenMP   </td><td> Nothing                      </td></tr>
-                    <tr><td> OpenCL   </td><td> Device                       </td></tr>
-                    <tr><td> CUDA     </td><td> Nothing                      </td></tr>
-                    <tr><td> Pthreads </td><td> Pinned core for first thread </td></tr>
-                    <tr><td> COI      </td><td> Nothing                      </td></tr>
-                  </tbody>
-                </table>
+            <tr class="b t"><td><pre class="cpp api code block">const argInfo arg1</pre></td><td>
+                Same as <pre class="cpp api inline code block">const str::string &infos</pre>
+              </td></tr>
+            <tr class="b t"><td><pre class="cpp api code block">const argInfo arg2</pre></td><td>
+              </td></tr>
+            <tr class="t"><td><pre class="cpp api code block">const argInfo arg3</pre></td><td>
               </td></tr>
           </tbody>
         </table>
@@ -101,7 +92,7 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        Frees the device and associated objects </br>
+        Frees the device and associated objects <br>
         <?php warning('Warning: Does not free memory and kernels allocated from this device') ?>
       </div>
 
@@ -221,18 +212,18 @@ void setup(const std::string &mode,
                 <code>dim</code> can be 1 or 2, the dimension of the texture
               </td></tr>
             <tr class="t b"><td><pre class="cpp api code block">const occa::dim &dims</pre></td><td>
-                <code>dims.x, dims.y</code> hold the array size in the first and second dimensions respectively</br>
+                <code>dims.x, dims.y</code> hold the array size in the first and second dimensions respectively<br>
                 <code>dims.y</code> is ignored on 1D textures (if <code>dim</code> is 1)
               </td></tr>
             <tr class="t b"><td><pre class="cpp api code block">void *source</pre></td><td>
                 Allocating texture memory requires initialization during allocation, where the initial values are loaded from <code>source</code>
               </td></tr>
             <tr class="t b"><td><pre class="cpp api code block">occa::formatType type</pre></td><td>
-                Data layout for the texture</br>
+                Data layout for the texture<br>
                 For more information on <code>type</code>, refer to the <a href="" class="link"><code>occa::formatType</code></a> definition
               </td></tr>
             <tr class="t"><td><pre class="cpp api code block">const int permissions</pre></td><td>
-                Defaults the permissions for the texture with read-write permissions </br>
+                Defaults the permissions for the texture with read-write permissions <br>
                 Should be chosen from <code>{occa::readOnly, occa::readWrite}</code>
               </td></tr>
           </tbody>
@@ -241,7 +232,7 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        Allocates texture memory on the device if available, otherwise it defaults to <code>occa::malloc</code> </br>
+        Allocates texture memory on the device if available, otherwise it defaults to <code>occa::malloc</code> <br>
         For devices without texture memory, 2D texture objects maintain the dimensions of the texture, allowing you to use the continuous array from the defaulting <code>occa::malloc</code> as a 2D array
       </div>
       <?php endFunctionAPI(); ?>
@@ -269,7 +260,7 @@ void setup(const std::string &mode,
                 Function that will be loaded
               </td></tr>
             <tr class="t"><td><pre class="cpp api code block">const kernelInfo &info_</pre></td><td>
-                Compile-time macros and includes can be set through <code>info_</code></br>
+                Compile-time macros and includes can be set through <code>info_</code><br>
                 For more information on <code>info_</code>, refer to the <a href="" class="link"><code>occa::kernelInfo</code></a> definition
               </td></tr>
           </tbody>
@@ -278,7 +269,7 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        Compile kernel from source </br>
+        Compile kernel from source <br>
         <span class="highlight">Note: Kernel compilation caches the binary in <code>$OCCA_CACHE_DIR</code>, which defaults to <code>~/._occa/</code></span>
       </div>
       <?php nextFunctionAPI("buildKernelFromBinary"); ?>
@@ -379,8 +370,8 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        Set a tag on the device's current stream and return it</br>
-        Can be used with <code>device::waitOn(occa::tag tag_)</code> to sync with the device up until tag <code>tag_</code></br>
+        Set a tag on the device's current stream and return it<br>
+        Can be used with <code>device::waitOn(occa::tag tag_)</code> to sync with the device up until tag <code>tag_</code><br>
         Can also be used to time between tags with <code>device::timeBetween(occa::tag start, occa::tag end)</code>
       </div>
       <?php nextFunctionAPI("waitFor", "notDone"); ?>
@@ -424,7 +415,7 @@ void setup(const std::string &mode,
 
       <div class="uSpacing3 f_rw bold">Description:</div>
       <div class="dsm5 indent1">
-        Returns the time taken between tags <code>startTag</code> and <code>endTag</code> respectively</br>
+        Returns the time taken between tags <code>startTag</code> and <code>endTag</code> respectively<br>
 
       </div>
       <?php nextFunctionAPI("free(stream)", "notDone"); ?>

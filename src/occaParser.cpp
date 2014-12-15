@@ -1003,7 +1003,7 @@ namespace occa {
       std::cout
         << "varUpdateMap[" << iterVar << "].size() = " << length(&(varUpdateMap[&iterVar])) << '\n'
         << "varUsedMap[" << iterVar << "].size() = " << length(&(varUsedMap[&iterVar])) << '\n'
-        << "s = " << s << '\n';
+        << "s = " << s << " (" << &s << ")\n";
 
       s.removeFromUpdateMapFor(iterVar);
       s.removeFromUsedMapFor(iterVar);
