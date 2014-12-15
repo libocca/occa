@@ -130,7 +130,11 @@ namespace occa {
       statementNode* splitKernelStatement(statementNode *sn,
                                           kernelInfo &info);
 
+      void splitKernelStatement2(statement &sKernel);
+
       statementNode* getOuterLoopsInStatement(statement &s);
+      statementNode* getOccaLoopsInStatement(statement &s,
+                                             const bool nestedLoops = true);
 
       void loadKernelInfos();
 

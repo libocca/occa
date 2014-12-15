@@ -1780,6 +1780,7 @@ namespace occa {
       statement &sUp       = *(s.up);
       statementNode *snPos = s.statementStart;
 
+      // [-] Not done yet
       statement& hostKernel = *(s.clone());
       stripOccaFromKernel(hostKernel);
 
@@ -2037,7 +2038,33 @@ namespace occa {
       return newSNEnd->right;
     }
 
+    void parserBase::splitKernelStatement2(statement &sKernel){
+      statement &sk = *(sKernel.clone());
+
+      const int occaForType = keywordType["occaOuterFor0"];
+
+      statementNode *occaLoopRoot = getOccaLoopsInStatement(sk);
+      statementNode *occaLoopPos  = occaLoopRoot;
+
+      while(occaLoopPos){
+        statement &s2 = *(occaLoopPos->value);
+
+        s2.type = blockStatementType;
+
+        occaLoopPos = occaLoopPos->right;
+      }
+
+      std::cout
+        << "sk = " << sk << '\n';
+      throw 1;
+    }
+
     statementNode* parserBase::getOuterLoopsInStatement(statement &s){
+      return getOccaLoopsInStatement(s, false);
+    }
+
+    statementNode* parserBase::getOccaLoopsInStatement(statement &s,
+                                                       const bool getNestedLoops){
       statementNode *snPos = s.statementStart;
 
       statementNode root;
@@ -2048,11 +2075,13 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if(s2.type == occaForType){
+        if(s2.type == occaForType)
           tail = tail->push(new statementNode(&s2));
-        }
-        else{
-          tail->right = getOuterLoopsInStatement(s2);
+
+        if(getNestedLoops ||
+           (s2.type != occaForType)){
+
+          tail->right = getOccaLoopsInStatement(s2, getNestedLoops);
 
           if(tail->right)
             tail = lastNode(tail);
@@ -2081,6 +2110,7 @@ namespace occa {
           kernelInfoMap[info.name] = &info;
           //============================
 
+          splitKernelStatement2(s);
           snPos = splitKernelStatement(snPos, info);
         }
         else

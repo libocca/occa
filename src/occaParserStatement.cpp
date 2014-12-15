@@ -4584,7 +4584,7 @@ namespace occa {
 
         if(0 <= depth){
           if(back(ret) != '\n')
-            ret += tab + "}\n";
+            ret += "\n" + tab + "}\n";
           else
             ret += tab + "}";
         }

@@ -192,6 +192,9 @@ namespace occa {
       if(right != NULL)
         right->left = left;
 
+      if(up && (up->down == this))
+        up->down = right;
+
       return this;
     }
 
@@ -399,31 +402,17 @@ namespace occa {
     }
 
     void popAndGoRight(strNode *&node){
-      strNode *left  = node->left;
       strNode *right = node->right;
 
-      if(left != NULL)
-        left->right = right;
-
-      if(right != NULL)
-        right->left = left;
-
-      delete node;
+      delete node->pop();
 
       node = right;
     }
 
     void popAndGoLeft(strNode *&node){
-      strNode *left  = node->left;
-      strNode *right = node->right;
+      strNode *left = node->left;
 
-      if(left != NULL)
-        left->right = right;
-
-      if(right != NULL)
-        right->left = left;
-
-      delete node;
+      delete node->pop();
 
       node = left;
     }

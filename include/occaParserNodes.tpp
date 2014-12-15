@@ -45,6 +45,9 @@ namespace occa {
       if(right != NULL)
         right->left = left;
 
+      if(up && (up->down == this))
+        up->down = right;
+
       return this;
     }
 
@@ -124,32 +127,18 @@ namespace occa {
 
     template <class TM>
     void popAndGoRight(node<TM> *&n){
-      node<TM> *left  = n->left;
       node<TM> *right = n->right;
 
-      if(left != NULL)
-        left->right = right;
-
-      if(right != NULL)
-        right->left = left;
-
-      delete n;
+      delete n->pop();
 
       n = right;
     }
 
     template <class TM>
     void popAndGoLeft(node<TM> *&n){
-      node<TM> *left  = n->left;
-      node<TM> *right = n->right;
+      node<TM> *left = n->left;
 
-      if(left != NULL)
-        left->right = right;
-
-      if(right != NULL)
-        right->left = left;
-
-      delete n;
+      delete n->pop();
 
       n = left;
     }

@@ -1813,6 +1813,8 @@ namespace occa {
           sd.sID = sID2;
           s2.setVariableDeps(sd.deps);
         }
+        else
+          break;
 
         sn = sn->right;
       }
