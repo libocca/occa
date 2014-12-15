@@ -1839,7 +1839,7 @@ namespace occa {
                             statementIdMap_t &idMap){
       statementNode *sn = &(s.varUpdateMap[&var]);
 
-      // std::cout << "length(sn) = " << length(sn) << '\n';
+      std::cout << "length(sn) = " << length(sn) << '\n';
 
       const int sID = idMap[&s];
 
@@ -1907,9 +1907,9 @@ namespace occa {
         std::cout << "s = " << s << '\n';
 
         for(int v = 0; v < varCount; ++v){
-          // varDepGraph vdg(sDep[v], s, idMap);
+          varDepGraph vdg(sDep[v], s, idMap);
 
-          // vdg.addFullDependencyMap(depMap, idMap, sVec);
+          vdg.addFullDependencyMap(depMap, idMap, sVec);
         }
       }
     }

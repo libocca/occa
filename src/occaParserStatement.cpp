@@ -3876,6 +3876,17 @@ namespace occa {
 
       statementNode *sn = &(it->second);
 
+      while(sn){
+        std::cout << "sn = " << getBits(sn->value->type) << '\n';
+
+        if(sn->value == this)
+          std::cout << "DELETE!";
+
+        sn = sn->right;
+      }
+
+      sn = &(it->second);
+
       while(sn->value == this){
         if(sn->right != NULL){
           statementNode *snRight = sn->right;
@@ -3948,34 +3959,40 @@ namespace occa {
 
     void statement::addVariableToUpdateMap(varInfo &var,
                                            statement *origin_){
+
       statement *origin = (origin_ == NULL ? this : origin_);
 
-      statementNode &sn = varUpdateMap[&var];
-
-      if(sn.value){
-        statementNode *lastSN = lastNode(&sn);
-
-        if(lastSN->value != origin)
-          lastSN->push(origin);
-      }
-      else
-        sn.value = origin;
+      addVariableToMap(var, varUpdateMap, origin);
     }
 
     void statement::addVariableToUsedMap(varInfo &var,
                                          statement *origin_){
+
       statement *origin = (origin_ == NULL ? this : origin_);
 
-      statementNode &sn = varUsedMap[&var];
+      addVariableToMap(var, varUsedMap, origin);
+    }
 
-      if(sn.value){
-        statementNode *lastSN = lastNode(&sn);
+    void statement::addVariableToMap(varInfo &var,
+                                     varUsedMap_t &usedMap,
+                                     statement *origin){
+      statementNode *sn = &(usedMap[&var]);
 
-        if(lastSN->value != origin)
-          lastSN->push(origin);
+      if(sn->value == origin)
+        return;
+
+      if(sn->value){
+        while(sn->right){
+          sn = sn->right;
+
+          if(sn->value == origin)
+            return;
+        }
+
+        sn->push(origin);
       }
       else
-        sn.value = origin;
+        sn->value = origin;
     }
 
     void statement::addStatement(statement *newStatement){

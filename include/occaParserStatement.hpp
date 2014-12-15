@@ -548,6 +548,10 @@ namespace occa {
       void addVariableToUsedMap(varInfo &var,
                                 statement *origin_ = NULL);
 
+      void addVariableToMap(varInfo &var,
+                            varUsedMap_t &usedMap,
+                            statement *origin);
+
       void addStatement(statement *newStatement);
 
       statement* clone();
