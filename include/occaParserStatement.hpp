@@ -243,6 +243,8 @@ namespace occa {
       typeInfo& addTypeInfoNode();
       typeInfo& addTypeInfoNode(const int pos);
 
+      bool hasVariable();
+
       varInfo& getVarInfo();
       const varInfo& cGetVarInfo() const;
 
@@ -507,13 +509,13 @@ namespace occa {
       void setStatementIdMap(statementIdMap_t &idMap);
 
       void setStatementIdMap(statementIdMap_t &idMap,
-                             int &startId);
+                             int &startID);
 
       void setStatementVector(statementVector_t &vec,
                               const bool init = true);
 
-      void setStatementVector(statementIdMap_t &idMap,
-                              statementVector_t &vec);
+      static void setStatementVector(statementIdMap_t &idMap,
+                                     statementVector_t &vec);
 
       void setVariableDeps(varInfo &var,
                            sDep_t &sDep);

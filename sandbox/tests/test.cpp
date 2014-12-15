@@ -107,10 +107,10 @@ occaKernel void fd2d(tFloat *u1,
                      texture tFloat **tex3,
                      const tFloat currentTime){
   const int bDimX = 16;
-  const int bDimY = 16;
+  const int bDimY = 16 + bDimX;
 
-  const int lDimX = 16;
-  const int lDimY = 16;
+  const int lDimX = 16 + bDimY;
+  const int lDimY = 16 + lDimX;
 
   for(int by = 0; by < bDimY; ++by; outer0){
     for(int bx = 0; bx < bDimX; ++bx; outer1){

@@ -301,6 +301,10 @@ namespace occa {
       sDep_t(const sDep_t &sd);
       sDep_t& operator = (const sDep_t &sd);
 
+      varInfo& operator [] (const int pos);
+
+      int size();
+
       void add(varInfo &var);
       void uniqueAdd(varInfo &var);
 
@@ -309,7 +313,6 @@ namespace occa {
 
     class varDepGraph {
     public:
-      int sInit;
       std::vector<sDep_t> sUpdates;
 
       varDepGraph();
@@ -319,17 +322,27 @@ namespace occa {
 
       varDepGraph(varInfo &var,
                   statement &s,
-                  statementIdMap_t &sMap);
+                  statementIdMap_t &idMap);
 
       varDepGraph(const varDepGraph &vdg);
       varDepGraph& operator = (const varDepGraph &vdg);
+
+      void free();
 
       void setup(varInfo &var,
                  statement &s);
 
       void setup(varInfo &var,
                  statement &s,
-                 statementIdMap_t &sMap);
+                 statementIdMap_t &idMap);
+
+      void addDependencyMap(idDepMap_t &depMap);
+
+      void addFullDependencyMap(idDepMap_t &depMap,
+                                statementIdMap_t &idMap);
+      void addFullDependencyMap(idDepMap_t &depMap,
+                                statementIdMap_t &idMap,
+                                statementVector_t &sVec);
     };
     //============================================
 

@@ -77,6 +77,9 @@ namespace occa {
   typedef std::vector<parserNS::statement*> statementVector_t;
   typedef std::vector<parserNS::varInfo*>   varInfoVector_t;
 
+  typedef std::map<int,bool>   idDepMap_t;
+  typedef idDepMap_t::iterator idDepMapIterator;
+
   typedef void (parserNS::parserBase::*applyToAllStatements_t)(parserNS::statement &s);
 
   typedef void (parserNS::parserBase::*applyToStatementsDefiningVar_t)(parserNS::varInfo &info,

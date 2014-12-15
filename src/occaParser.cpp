@@ -2051,10 +2051,10 @@ namespace occa {
       statementIdMap_t idMap;
       statementVector_t sVec;
 
-      sk.setStatementIdMap(idMap);
-      sk.setStatementVector(idMap, sVec);
+      sKernel.setStatementIdMap(idMap);
+      sKernel.setStatementVector(idMap, sVec);
 
-      statementNode *occaLoopRoot = getOccaLoopsInStatement(sk);
+      statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel);
       statementNode *occaLoopPos  = occaLoopRoot;
 
       // Loop outer-most for-loops

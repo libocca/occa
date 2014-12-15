@@ -1756,7 +1756,8 @@ namespace occa {
 
 
     //---[ Var Dependency Graph ]-----------------
-    sDep_t::sDep_t(){}
+    sDep_t::sDep_t() :
+      sID(-1) {}
 
     sDep_t::sDep_t(const sDep_t &sd){
       *this = sd;
@@ -1767,6 +1768,14 @@ namespace occa {
       deps = sd.deps;
 
       return *this;
+    }
+
+    varInfo& sDep_t::operator [] (const int pos){
+      return *(deps[pos]);
+    }
+
+    int sDep_t::size(){
+      return deps.size();
     }
 
     void sDep_t::add(varInfo &var){
@@ -1800,8 +1809,8 @@ namespace occa {
 
     varDepGraph::varDepGraph(varInfo &var,
                              statement &s,
-                             statementIdMap_t &sMap){
-      setup(var, s, sMap);
+                             statementIdMap_t &idMap){
+      setup(var, s, idMap);
     }
 
     varDepGraph::varDepGraph(const varDepGraph &vdg){
@@ -1809,7 +1818,6 @@ namespace occa {
     }
 
     varDepGraph& varDepGraph::operator = (const varDepGraph &vdg){
-      sInit    = vdg.sInit;
       sUpdates = vdg.sUpdates;
 
       return *this;
@@ -1819,32 +1827,23 @@ namespace occa {
                             statement &s){
       statement *globalScope = s.getGlobalScope();
 
-      statementIdMap_t sMap;
+      statementIdMap_t idMap;
 
-      globalScope->setStatementIdMap(sMap);
+      globalScope->setStatementIdMap(idMap);
 
-      setup(var, s, sMap);
+      setup(var, s, idMap);
     }
 
     void varDepGraph::setup(varInfo &var,
                             statement &s,
-                            statementIdMap_t &sMap){
+                            statementIdMap_t &idMap){
       statementNode *sn = &(s.varUpdateMap[&var]);
 
-      sInit = sMap[sn->value];
-
-      const int sID = sMap[&s];
-
-      sn = sn->right;
-
-      std::cout << "sInit = " << sInit << '\n';
+      const int sID = idMap[&s];
 
       while(sn){
         statement &s2  = *(sn->value);
-        const int sID2 = sMap[&s2];
-
-        s2.expRoot.print();
-        std::cout << "s2 = " << s2 << '\n';
+        const int sID2 = idMap[&s2];
 
         if(sID2 < sID){
           sUpdates.push_back(sDep_t());
@@ -1857,6 +1856,50 @@ namespace occa {
           break;
 
         sn = sn->right;
+      }
+    }
+
+    void varDepGraph::addDependencyMap(idDepMap_t &depMap){
+      const int updates = sUpdates.size();
+
+      if(updates == 0)
+        return;
+
+      for(int i = 0; i < updates; ++i){
+        if(0 <= sUpdates[i].sID)
+          depMap[sUpdates[i].sID] = true;
+      }
+    }
+
+    void varDepGraph::addFullDependencyMap(idDepMap_t &depMap,
+                                           statementIdMap_t &idMap){
+      statementVector_t sVec;
+      statement::setStatementVector(idMap, sVec);
+
+      addFullDependencyMap(depMap, idMap, sVec);
+    }
+
+    void varDepGraph::addFullDependencyMap(idDepMap_t &depMap,
+                                           statementIdMap_t &idMap,
+                                           statementVector_t &sVec){
+      addDependencyMap(depMap);
+
+      const int updates = sUpdates.size();
+
+      if(updates == 0)
+        return;
+
+      for(int i = 0; i < updates; ++i){
+        sDep_t &sDep = sUpdates[i];
+        statement &s = *(sVec[sDep.sID]);
+
+        const int varCount = sDep.size();
+
+        for(int v = 0; v < varCount; ++v){
+          varDepGraph vdg(sDep[v], s, idMap);
+
+          vdg.addFullDependencyMap(depMap, idMap, sVec);
+        }
       }
     }
     //============================================

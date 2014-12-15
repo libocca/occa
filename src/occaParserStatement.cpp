@@ -1124,14 +1124,9 @@ namespace occa {
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &n = flatRoot[i];
 
-        if(n.info & (expType::variable |
-                     expType::function)){
-
-          // a[0] -> "" { a, "" {[ {0}} } }
-          if(n.value.size() == 0)
-            continue;
-
-          varInfo &var = *(sInfo->hasVariableInScope(n.value));
+        if(n.hasVariable()){
+          std::string varName = n.getMyVariableName();
+          varInfo &var        = *(sInfo->hasVariableInScope(varName));
 
           if((n.up != NULL) &&
              isAnAssOperator(n.up->value)){
@@ -1783,6 +1778,21 @@ namespace occa {
     typeInfo& expNode::addTypeInfoNode(const int pos){
       addNode(expType::typeInfo, pos);
       return leaves[pos]->addTypeInfoNode();
+    }
+
+    bool expNode::hasVariable(){
+      if(info & (expType::variable |
+                 expType::varInfo  |
+                 expType::function)){
+
+        if( (info & expType::varInfo) ||
+            (value.size() != 0) ){
+
+          return true;
+        }
+      }
+
+      return false;
     }
 
     varInfo& expNode::getVarInfo(){
@@ -3727,20 +3737,20 @@ namespace occa {
     }
 
     void statement::setStatementIdMap(statementIdMap_t &idMap){
-      int startId = 0;
-      setStatementIdMap(idMap, startId);
+      int startID = 0;
+      setStatementIdMap(idMap, startID);
     }
 
     void statement::setStatementIdMap(statementIdMap_t &idMap,
-                                      int &startId){
+                                      int &startID){
 
       statementNode *nodePos = statementStart;
 
       while(nodePos){
         statement &s = *(nodePos->value);
-        idMap[&s] = startId++;
+        idMap[&s] = startID++;
 
-        s.setStatementIdMap(idMap, startId);
+        s.setStatementIdMap(idMap, startID);
 
         nodePos = nodePos->right;
       }
@@ -3770,35 +3780,32 @@ namespace occa {
 
       statementIdMapIterator it = idMap.begin();
 
-      const int statementCount = idMap.size();
+      const int statementCount_ = idMap.size();
 
       vec.clear();
-      vec.resize(statementCount);
+      vec.resize(statementCount_);
 
-      for(int i = 0; i < statementCount; ++i){
+      for(int i = 0; i < statementCount_; ++i){
         vec[ it->second ] = (it->first);
+
         ++it;
       }
     }
 
     void statement::setVariableDeps(varInfo &var,
                                     sDep_t &sDep){
+
       expNode &flatRoot = *(expRoot.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &n = flatRoot[i];
 
-        if(n.info & (expType::variable |
-                     expType::function)){
+        if(n.hasVariable()){
+          std::string nVarName = n.getMyVariableName();
+          varInfo *nVar        = hasVariableInScope(nVarName);
 
-          // a[0] -> "" { a, "" {[ {0}} } }
-          if(n.value.size() == 0)
-            continue;
-
-          varInfo *nVar = hasVariableInScope(n.value);
-
-          if((nVar != &var) || // Not updating our variable
-             (n.up == NULL) || // Doesn't have an assigmnet operator
+          if((nVar != &var) || // Checking our variable update
+             (n.up == NULL) || // Update needs an assignment operator
              !isAnAssOperator(n.up->value)){
 
             continue;
@@ -3816,18 +3823,22 @@ namespace occa {
 
     void statement::addVariableDeps(expNode &exp,
                                     sDep_t &sDep){
+      if(exp.leafCount == 0){
+        if(exp.hasVariable()){
+          varInfo &var = *(hasVariableInScope(exp.value));
+
+          sDep.uniqueAdd(var);
+        }
+
+        return;
+      }
+
       expNode &flatRoot = *(exp.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &n = flatRoot[i];
 
-        if(n.info & (expType::variable |
-                     expType::function)){
-
-          // a[0] -> "" { a, "" {[ {0}} } }
-          if(n.value.size() == 0)
-            continue;
-
+        if(n.hasVariable()){
           varInfo &var = *(hasVariableInScope(n.value));
 
           sDep.uniqueAdd(var);
@@ -4187,23 +4198,16 @@ namespace occa {
                                              statementIdMap_t &idMap){
       expNode &flatRoot = *(exp.makeFlatHandle());
 
-      std::cout << "exp = " << exp << '\n';
+      idDepMap_t depMap;
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &n = flatRoot[i];
 
-        if(n.info & (expType::variable |
-                     expType::function)){
-
-          // a[0] -> "" { a, "" {[ {0}} } }
-          if(n.value.size() == 0)
-            continue;
-
+        if(n.hasVariable()){
           varInfo &var = *(hasVariableInScope(n.value));
 
-          varDepGraph(var, *this, idMap);
-
-          std::cout << "var = " << var << '\n';
+          varDepGraph vdg(var, *this, idMap);
+          vdg.addFullDependencyMap(depMap, idMap);
         }
       }
 
