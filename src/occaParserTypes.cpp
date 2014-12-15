@@ -1839,6 +1839,8 @@ namespace occa {
                             statementIdMap_t &idMap){
       statementNode *sn = &(s.varUpdateMap[&var]);
 
+      // std::cout << "length(sn) = " << length(sn) << '\n';
+
       const int sID = idMap[&s];
 
       while(sn){

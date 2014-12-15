@@ -1009,6 +1009,8 @@ namespace occa {
       s.expRoot.info  = expType::occaFor;
       s.expRoot.value = occaForName;
       s.expRoot.free();
+
+      s.type = occaForType;
     }
 
     bool parserBase::statementHasOccaOuterFor(statement &s){
@@ -2070,9 +2072,6 @@ namespace occa {
         const int outerDim = getOuterMostForDim(sOuter) + 1;
         const int innerDim = getInnerMostForDim(sOuter) + 1;
 
-        std::cout << "outerDim = " << outerDim << '\n'
-                  << "innerDim = " << innerDim << '\n';
-
         bool firstOuter = true;
         bool firstInner = true;
 
@@ -2384,9 +2383,9 @@ namespace occa {
         return outerDim;
       }
 
-      std::cout << "Error, " << tag << "-most loop doesn't contain obfuscate(\"Outer\"):\n"
+      std::cout << "Error, outer-most loop doesn't contain obfuscate(\"" << tag << "\"):\n"
                 << s.expRoot << '\n';
-      return -1;
+      throw 1;
     }
 
     void parserBase::checkPathForConditionals(statementNode *path){
