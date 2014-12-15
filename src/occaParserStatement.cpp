@@ -845,7 +845,7 @@ namespace occa {
       //====================
     }
 
-    void expNode::organizeLeaves(){
+    void expNode::organizeLeaves(const bool inRoot){
       if(info & (expType::varInfo |
                  expType::typeInfo))
         return;
@@ -856,12 +856,13 @@ namespace occa {
            !(leaves[i]->info & (expType::varInfo |
                                 expType::typeInfo))){
 
-          leaves[i]->organizeLeaves();
+          leaves[i]->organizeLeaves(false);
         }
       }
 
       // Add used vars to varUsedMap
-      labelUsedVariables();
+      if(inRoot)
+        labelUsedVariables();
 
       //---[ Level 1 ]------
       // class(...), class{1,2,3}
@@ -1118,28 +1119,28 @@ namespace occa {
 
     // Add used vars to varUsedMap
     void expNode::labelUsedVariables(){
-      if(info & (expType::varInfo |
-                 expType::typeInfo))
-        return;
-
-      // Organize leaves bottom -> up
-      for(int i = 0; i < leafCount; ++i){
-        if((leaves[i]->leafCount) &&
-           !(leaves[i]->info & (expType::varInfo |
-                                expType::typeInfo))){
-
-          leaves[i]->labelUsedVariables();
-        }
-      }
-
       expNode &flatRoot = *(makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
-        if(flatRoot[i].info & (expType::variable |
-                               expType::function)){
-          varInfo &var = *(sInfo->hasVariableInScope(flatRoot[i].value));
+        expNode &n = flatRoot[i];
 
-          sInfo->varUsedMap[&var].push(sInfo);
+        if(n.info & (expType::variable |
+                     expType::function)){
+
+          // a[0] -> "" { a, "" {[ {0}} } }
+          if(n.value.size() == 0)
+            continue;
+
+          varInfo &var = *(sInfo->hasVariableInScope(n.value));
+
+          if((n.up != NULL) &&
+             isAnAssOperator(n.up->value)){
+
+            sInfo->addVariableToUpdateMap(var);
+          }
+          else{
+            sInfo->addVariableToUsedMap(var);
+          }
         }
       }
 
@@ -2056,6 +2057,21 @@ namespace occa {
 
       return "";
     }
+    //  ---[ Node-based ]-----
+    std::string expNode::getMyVariableName(){
+      if(info & expType::variable){
+        if(leafCount == 0)
+          return value;
+        else
+          return leaves[0]->value; // a[0] -> {a, [ {0}}
+      }
+      else if(info & expType::varInfo){
+        return getVarInfo().name;
+      }
+
+      return "";
+    }
+    //  ======================
     //================================
 
     void expNode::freeLeaf(const int leafPos){
@@ -3009,6 +3025,8 @@ namespace occa {
                                                       nodeRootEnd,
                                                       parsingC);
 
+      // std::cout << "s = " << *newStatement << '\n';
+
       return nodeRootEnd;
     }
 
@@ -3829,6 +3847,22 @@ namespace occa {
       statement *origin = (origin_ == NULL ? this : origin_);
 
       statementNode &sn = varUpdateMap[&var];
+
+      if(sn.value){
+        statementNode *lastSN = lastNode(&sn);
+
+        if(lastSN->value != origin)
+          lastSN->push(origin);
+      }
+      else
+        sn.value = origin;
+    }
+
+    void statement::addVariableToUsedMap(varInfo &var,
+                                         statement *origin_){
+      statement *origin = (origin_ == NULL ? this : origin_);
+
+      statementNode &sn = varUsedMap[&var];
 
       if(sn.value){
         statementNode *lastSN = lastNode(&sn);

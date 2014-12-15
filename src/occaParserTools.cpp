@@ -291,6 +291,45 @@ namespace occa {
     return 0;
   }
 
+  bool isAnAssOperator(const std::string &s,
+                       const bool parcingC){ // hehe
+    const char *c      = s.c_str();
+    const size_t chars = s.size();
+
+    if((chars < 1) ||
+       (3 < chars) ||          // Not in range
+       (c[chars - 1] != '=')){ // Not an assignment operator
+
+      return false;
+    }
+
+    if(chars == 1) {      // =
+      return true;
+    }
+    else if(chars == 2) { // +=, -=, *=, /=, %=, &=, ^=, |=
+      if((c[0] == '+') ||
+         (c[0] == '-') ||
+         (c[0] == '*') ||
+         (c[0] == '/') ||
+         (c[0] == '%') ||
+         (c[0] == '&') ||
+         (c[0] == '^') ||
+         (c[0] == '|')){
+
+        return true;
+      }
+    }
+    else {                // <<=, >>=
+      if(((c[0] == '<') && (c[1] == '<')) ||
+         ((c[0] == '>') && (c[1] == '>'))){
+
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   const char* readLine(const char *c, const bool parsingC){
     if(!parsingC)
       return readFortranLine(c);

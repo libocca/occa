@@ -56,6 +56,8 @@ namespace occa {
 
   int skipWord(const char *&c, const bool parsingC = true);
 
+  bool isAnAssOperator(const std::string &s, const bool parcingC = true); // hehe
+
   const char* readLine(const char *c, const bool parsingC = true);
   const char* readFortranLine(const char *c);
 

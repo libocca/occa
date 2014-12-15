@@ -144,7 +144,7 @@ namespace occa {
 
       void initOrganization();
 
-      void organizeLeaves();
+      void organizeLeaves(const bool inRoot = true);
       void organizeFortranLeaves();
 
       void organizeLeaves(const int level);
@@ -276,6 +276,10 @@ namespace occa {
       expNode* getVariableInitNode(const int pos) const;
 
       std::string getVariableName(const int pos = 0) const;
+
+      //  ---[ Node-based ]---
+      std::string getMyVariableName();
+      //  ====================
       //================================
 
       void freeLeaf(const int leafPos);
@@ -528,6 +532,9 @@ namespace occa {
 
       void addVariableToUpdateMap(varInfo &var,
                                   statement *origin_ = NULL);
+
+      void addVariableToUsedMap(varInfo &var,
+                                statement *origin_ = NULL);
 
       void addStatement(statement *newStatement);
 
