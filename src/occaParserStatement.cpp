@@ -2538,7 +2538,7 @@ namespace occa {
 
       up(NULL),
 
-      varOriginMap(pb.varOriginMap),
+      varUpdateMap(pb.varUpdateMap),
       varUsedMap(pb.varUsedMap),
 
       expRoot(*this),
@@ -2548,14 +2548,14 @@ namespace occa {
       statementEnd(NULL) {}
 
     statement::statement(const int depth_,
-                         varOriginMap_t &varOriginMap_,
+                         varUsedMap_t &varUpdateMap_,
                          varUsedMap_t &varUsedMap_) :
       depth(depth_),
       type(blockStatementType),
 
       up(NULL),
 
-      varOriginMap(varOriginMap_),
+      varUpdateMap(varUpdateMap_),
       varUsedMap(varUsedMap_),
 
       expRoot(*this),
@@ -2572,7 +2572,7 @@ namespace occa {
 
       up(up_),
 
-      varOriginMap(up_->varOriginMap),
+      varUpdateMap(up_->varUpdateMap),
       varUsedMap(up_->varUsedMap),
 
       expRoot(*this),
@@ -3555,6 +3555,14 @@ namespace occa {
     }
     //==================================
 
+    statement* statement::getGlobalScope(){
+      statement *globalScope = this;
+
+      while(globalScope->up)
+        globalScope = globalScope->up;
+
+      return globalScope;
+    }
 
     statementNode* statement::getStatementNode(){
       if(up != NULL){
@@ -3719,13 +3727,64 @@ namespace occa {
         nodePos = nodePos->right;
       }
     }
+
+    void statement::setStatementVector(statementVector_t &vec,
+                                       const bool init){
+
+      statementNode *nodePos = statementStart;
+
+      if(init)
+        vec.clear();
+
+      while(nodePos){
+        statement &s = *(nodePos->value);
+
+        vec.push_back(&s);
+
+        s.setStatementVector(vec, false);
+
+        nodePos = nodePos->right;
+      }
+    }
+
+    void statement::setStatementVector(statementIdMap_t &idMap,
+                                       statementVector_t &vec){
+
+      statementIdMapIterator it = idMap.begin();
+
+      const int statementCount = idMap.size();
+
+      vec.clear();
+      vec.resize(statementCount);
+
+      for(int i = 0; i < statementCount; ++i){
+        vec[ it->second ] = (it->first);
+        ++it;
+      }
+    }
+
+    void statement::setVariableDeps(varInfoVector_t &vec){
+      expNode &flatRoot = *(expRoot.makeFlatHandle());
+
+      if(type & updateStatementType){
+
+      }
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(flatRoot[i].info & (expType::variable |
+                               expType::function)){
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
     //================================
 
     void statement::checkIfVariableIsDefined(varInfo &var,
                                              statement *origin){
       scopeVarMapIterator it = scopeVarMap.find(var.name);
 
-      if(it != scopeVarMap.end()      &&
+      if(it != scopeVarMap.end()     &&
          !var.hasQualifier("extern") &&
          !((var.info & varType::functionDef))){
 
@@ -3735,6 +3794,15 @@ namespace occa {
                   << *this;
         throw 1;
       }
+    }
+
+    statement* statement::getVarOriginStatement(varInfo &var){
+      varUsedMapIterator it = varUpdateMap.find(&var);
+
+      if(it == varUpdateMap.end())
+        return NULL;
+
+      return (it->second).value;
     }
 
     varInfo& statement::addVariable(varInfo &var,
@@ -3753,10 +3821,23 @@ namespace occa {
 
       scopeVarMap[var->name] = var;
 
-      if(origin == NULL)
-        varOriginMap[var] = this;
+      addVariableToUpdateMap(*var, origin);
+    }
+
+    void statement::addVariableToUpdateMap(varInfo &var,
+                                           statement *origin_){
+      statement *origin = (origin_ == NULL ? this : origin_);
+
+      statementNode &sn = varUpdateMap[&var];
+
+      if(sn.value){
+        statementNode *lastSN = lastNode(&sn);
+
+        if(lastSN->value != origin)
+          lastSN->push(origin);
+      }
       else
-        varOriginMap[var] = origin;
+        sn.value = origin;
     }
 
     void statement::addStatement(statement *newStatement){
@@ -3780,7 +3861,7 @@ namespace occa {
       }
       else {
         newStatement = new statement(depth,
-                                     varOriginMap,
+                                     varUpdateMap,
                                      varUsedMap);
       }
 

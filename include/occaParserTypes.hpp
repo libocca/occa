@@ -287,7 +287,39 @@ namespace occa {
 
       friend std::ostream& operator << (std::ostream &out, const varInfo &var);
     };
-    //==============================================
+    //============================================
+
+
+    //---[ Var Dependency Graph ]-----------------
+    class sDep {
+    public:
+      int sID;
+      varInfoVector_t deps;
+
+      sDep();
+
+      sDep(const sDep &sd);
+      sDep& operator = (const sDep &sd);
+    };
+
+    class varDepGraph {
+    public:
+      int sInit;
+      std::vector<sDep> sUpdates;
+
+      varDepGraph();
+
+      varDepGraph(const varDepGraph &vdg);
+      varDepGraph& operator = (const varDepGraph &vdg);
+
+      void setupFrom(varInfo &var,
+                     statement &s);
+
+      void setupFrom(varInfo &var,
+                     statement &s,
+                     statementIdMap_t &sMap);
+    };
+    //============================================
 
 
     //---[ Kernel Info ]--------------------------

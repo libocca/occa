@@ -308,8 +308,8 @@ namespace occa {
       scopeTypeMap_t scopeTypeMap;
       scopeVarMap_t scopeVarMap;
 
-      varOriginMap_t &varOriginMap;
-      varUsedMap_t   &varUsedMap;
+      varUsedMap_t &varUpdateMap;
+      varUsedMap_t &varUsedMap;
 
       int depth;
       statement *up;
@@ -324,7 +324,7 @@ namespace occa {
       statement(parserBase &pb);
 
       statement(const int depth_,
-                varOriginMap_t &varOriginMap_,
+                varUsedMap_t &varUpdateMap_,
                 varUsedMap_t &varUsedMap_);
 
       statement(const int depth_, statement *up_);
@@ -481,6 +481,7 @@ namespace occa {
       static strNode* skipUntilStatementEnd(strNode *nodePos);
       //================================
 
+      statement* getGlobalScope();
       statementNode* getStatementNode();
 
       statement& pushNewStatementLeft(const int type_ = 0);
@@ -502,10 +503,20 @@ namespace occa {
 
       void setStatementIdMap(statementIdMap_t &idMap,
                              int &startId);
+
+      void setStatementVector(statementVector_t &vec,
+                              const bool init = true);
+
+      void setStatementVector(statementIdMap_t &idMap,
+                              statementVector_t &vec);
+
+      void setVariableDeps(varInfoVector_t &vec);
       //================================
 
       void checkIfVariableIsDefined(varInfo &var,
                                     statement *origin);
+
+      statement* getVarOriginStatement(varInfo &var);
 
       // Add from stack memory
       varInfo& addVariable(varInfo &var,
@@ -514,6 +525,9 @@ namespace occa {
       // Add from pre-allocated memory
       void addVariable(varInfo *var,
                        statement *origin = NULL);
+
+      void addVariableToUpdateMap(varInfo &var,
+                                  statement *origin_ = NULL);
 
       void addStatement(statement *newStatement);
 

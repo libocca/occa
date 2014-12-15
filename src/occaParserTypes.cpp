@@ -1753,5 +1753,70 @@ namespace occa {
       return out;
     }
     //============================================
+
+
+    //---[ Var Dependency Graph ]-----------------
+    sDep::sDep(){}
+
+    sDep::sDep(const sDep &sd){
+      *this = sd;
+    }
+
+    sDep& sDep::operator = (const sDep &sd){
+      sID  = sd.sID;
+      deps = sd.deps;
+
+      return *this;
+    }
+
+    varDepGraph::varDepGraph(){}
+
+    varDepGraph::varDepGraph(const varDepGraph &vdg){
+      *this = vdg;
+    }
+
+    varDepGraph& varDepGraph::operator = (const varDepGraph &vdg){
+      sInit    = vdg.sInit;
+      sUpdates = vdg.sUpdates;
+
+      return *this;
+    }
+
+    void varDepGraph::setupFrom(varInfo &var,
+                                statement &s){
+      statement *globalScope = s.getGlobalScope();
+
+      statementIdMap_t sMap;
+
+      globalScope->setStatementIdMap(sMap);
+
+      setupFrom(var, s, sMap);
+    }
+
+    void varDepGraph::setupFrom(varInfo &var,
+                                statement &s,
+                                statementIdMap_t &sMap){
+      sInit = sMap[ s.varUpdateMap[&var].value ];
+
+      const int sID = sMap[&s];
+
+      statementNode *sn = (s.varUsedMap[&var]).right;
+
+      while(sn){
+        statement &s2  = *(sn->value);
+        const int sID2 = sMap[&s2];
+
+        if(sID2 < sID){
+          sUpdates.push_back(sDep());
+          sDep &sd = sUpdates.back();
+
+          sd.sID = sID2;
+          s2.setVariableDeps(sd.deps);
+        }
+
+        sn = sn->right;
+      }
+    }
+    //============================================
   };
 };

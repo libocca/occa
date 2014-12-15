@@ -63,11 +63,6 @@ namespace occa {
   typedef scopeVarMap_t::iterator                  scopeVarMapIterator;
   typedef scopeVarMap_t::const_iterator            cScopeVarMapIterator;
 
-  typedef std::map<parserNS::varInfo*,
-                   parserNS::statement*> varOriginMap_t;
-  typedef varOriginMap_t::iterator       varOriginMapIterator;
-  typedef varOriginMap_t::const_iterator cVarOriginMapIterator;
-
   typedef std::map<parserNS::varInfo*, statementNode> varUsedMap_t;
   typedef varUsedMap_t::iterator                      varUsedMapIterator;
   typedef varUsedMap_t::const_iterator                cVarUsedMapIterator;
@@ -78,6 +73,9 @@ namespace occa {
 
   typedef std::map<parserNS::statement*,int> statementIdMap_t;
   typedef statementIdMap_t::iterator         statementIdMapIterator;
+
+  typedef std::vector<parserNS::statement*> statementVector_t;
+  typedef std::vector<parserNS::varInfo*>   varInfoVector_t;
 
   typedef void (parserNS::parserBase::*applyToAllStatements_t)(parserNS::statement &s);
 

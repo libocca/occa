@@ -116,6 +116,9 @@ occaKernel void fd2d(tFloat *u1,
           const int tx = bx * lDimX + lx;
           const int ty = by * lDimY + ly;
 
+          int y1, y2;
+          y1 = y2 = 0;
+
           const int id = ty*w + tx;
 
           float data = tex1[0][0];

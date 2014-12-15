@@ -6,7 +6,8 @@ namespace occa {
       left(NULL),
       right(NULL),
       up(NULL),
-      down(NULL) {}
+      down(NULL),
+      value() {}
 
     template <class TM>
     node<TM>::node(const TM &t) :

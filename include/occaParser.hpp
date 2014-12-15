@@ -24,7 +24,7 @@ namespace occa {
 
       bool macrosAreInitialized;
 
-      varOriginMap_t varOriginMap;
+      varUsedMap_t varUpdateMap;
       varUsedMap_t varUsedMap;     // Statements are placed backwards
 
       kernelInfoMap_t kernelInfoMap;

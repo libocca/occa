@@ -1933,7 +1933,7 @@ namespace occa {
             statement &newS = *(newSN->value);
 
             varInfo &outerVar = *(newS.hasVariableInScope("outer"));
-            statement &outerS = *(varOriginMap[&outerVar]);
+            statement &outerS = *(varUpdateMap[&outerVar].value);
 
             typeInfo &type = *(new typeInfo);
             type.name = "occa::dim";
@@ -2356,7 +2356,7 @@ namespace occa {
       if(it == varUsedMap.end())
         return false;
 
-      const int segment = loopSection[varOriginMap[&var]];
+      const int segment = loopSection[varUpdateMap[&var].value];
 
       statementNode *pos = (it->second).right;
 
@@ -2447,8 +2447,8 @@ namespace occa {
         for(int i = 0; i < argPos; ++i){
           varInfo &argVar = origin.getDeclarationVarInfo(i);
 
-          s.expRoot.leaves[i]   = origin.expRoot.leaves[i];
-          varOriginMap[&argVar] = &s;
+          s.expRoot.leaves[i]         = origin.expRoot.leaves[i];
+          varUpdateMap[&argVar].value = &s;
         }
       }
 
@@ -2463,8 +2463,8 @@ namespace occa {
         for(int i = 0; i < newLeafCount; ++i){
           varInfo &argVar = origin.getDeclarationVarInfo(argPos + 1 + i);
 
-          s.expRoot.leaves[i]   = origin.expRoot.leaves[argPos + 1 + i];
-          varOriginMap[&argVar] = &s;
+          s.expRoot.leaves[i]         = origin.expRoot.leaves[argPos + 1 + i];
+          varUpdateMap[&argVar].value = &s;
         }
       }
 
@@ -2650,7 +2650,7 @@ namespace occa {
       statementNode *newStatementPos   = NULL;
 
       while(varPos){
-        statement &origin = *(varOriginMap[varPos->value]);
+        statement &origin = *(varUpdateMap[varPos->value].value);
 
         // Ignore kernel arguments
         if(origin.type & functionStatementType){
