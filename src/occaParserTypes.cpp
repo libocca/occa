@@ -1839,20 +1839,22 @@ namespace occa {
                             statementIdMap_t &idMap){
       statementNode *sn = &(s.varUpdateMap[&var]);
 
-      std::cout << "length(sn) = " << length(sn) << '\n';
-
       const int sID = idMap[&s];
 
       while(sn){
         statement &s2  = *(sn->value);
         const int sID2 = idMap[&s2];
 
+        // Functions no need to search for dependencies here
+        //   since it's the function declaration
+        if(s2.type & functionStatementType){
+          sn = sn->right;
+          continue;
+        }
+
         if(sID2 < sID){
           sUpdates.push_back(sDep_t());
           sDep_t &sd = sUpdates.back();
-
-          std::cout << "var = " << var << '\n';
-          std::cout << "s2 = " << s2 << '\n';
 
           sd.sID = sID2;
           s2.setVariableDeps(var, sd);
@@ -1903,8 +1905,6 @@ namespace occa {
 
         const int varCount = sDep.size();
         statement &s = *(sVec[sDep.sID]);
-
-        std::cout << "s = " << s << '\n';
 
         for(int v = 0; v < varCount; ++v){
           varDepGraph vdg(sDep[v], s, idMap);

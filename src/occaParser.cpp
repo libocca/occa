@@ -2110,7 +2110,6 @@ namespace occa {
           s2.type = blockStatementType;
 
           expNode *loopExp = s2.createExpNodeFrom(loopBounds[loopPos]);
-          std::cout << "loopExp = " << *loopExp << '\n';
 
           s2.addStatementDependencies(*loopExp,
                                       idMap,
@@ -2134,7 +2133,7 @@ namespace occa {
         }
       }
 
-#if 0 // Print dependencies
+#if 1 // Print dependencies
           idDepMapIterator it = depMap.begin();
 
           while(it != depMap.end()){
@@ -2146,8 +2145,8 @@ namespace occa {
           std::cout << '\n';
 #endif
 
-      std::cout
-        << "sKernel = " << sKernel << '\n';
+      std::cout << "sKernel = " << sKernel << '\n';
+
       throw 1;
     }
 

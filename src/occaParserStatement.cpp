@@ -4245,6 +4245,9 @@ namespace occa {
                                              statementIdMap_t &idMap,
                                              statementVector_t sVec,
                                              idDepMap_t &depMap){
+      if(type & functionStatementType)
+        return;
+
       expNode &flatRoot = *(exp.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
