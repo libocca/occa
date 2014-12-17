@@ -50,7 +50,6 @@ namespace occa {
 
       addOccaFors();
 
-      applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
       // Broken
       modifyTextureVariables();
@@ -1458,54 +1457,6 @@ namespace occa {
       }
     }
 
-    void parserBase::addParallelFors(statement &s){
-      if( !statementIsAKernel(s) )
-        return;
-
-      statementNode *snPos = s.statementStart;
-
-      while(snPos){
-        statement &s2 = *(snPos->value);
-
-        const int nest = statementOccaForNest(s2);
-
-        if(nest & (notAnOccaFor | occaInnerForMask)){
-
-          snPos = snPos->right;
-          continue;
-        }
-
-        const char outerDim = '0' + (nest - 1);
-
-        statement *parallelStatement = new statement(s.depth + 1,
-                                                     occaStatementType, &s);
-
-        statementNode *parallelSN = new statementNode(parallelStatement);
-
-        parallelStatement->type = macroStatementType;
-
-        parallelStatement->expRoot.value = "occaParallelFor";
-        parallelStatement->expRoot.value += outerDim;
-        parallelStatement->expRoot.value += '\n';
-        parallelStatement->expRoot.info   = expType::occaFor;
-
-        if(s.statementStart == snPos)
-          s.statementStart = parallelSN;
-
-        statementNode *leftSN = snPos->left;
-
-        parallelSN->right = snPos;
-        parallelSN->left  = leftSN;
-
-        snPos->left = parallelSN->right;
-
-        if(leftSN)
-          leftSN->right = parallelSN;
-
-        snPos = snPos->right;
-      }
-    }
-
     void parserBase::updateConstToConstant(){
       statementNode *snPos = globalScope->statementStart;
 
@@ -2163,17 +2114,30 @@ namespace occa {
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
 
-        const int outerDim = getOuterMostForDim(sOuter) + 1;
-        const int innerDim = getInnerMostForDim(sOuter) + 1;
+        const int outerDim = getOuterMostForDim(sOuter);
+        const int innerDim = getInnerMostForDim(sOuter);
 
         // Break after each outer-most outer-loop (between kernels)
         // Break after each outer-most inner-loop (One work-group size (for now))
         bool firstOuter = true;
         bool firstInner = true;
 
-        // Get rid of the parallelFor
-        statementNode *sn = sOuter.getStatementNode();
-        sn->left->pop();
+        // // Get rid of the parallelFor
+        // statementNode *sn = sOuter.getStatementNode();
+        // sn->left->pop();
+
+
+        // Add kernel body
+        statement &ks = *(info.nestedKernels[kID]);
+        ks.addStatement(occaLoopPos->value);
+
+        ss << "occaParallelFor" << outerDim;
+
+        // Add the parallel-for loops
+        ks.pushSourceLeftOf(ks.statementStart,
+                            ss.str());
+
+        ss.str("");
 
         // Loop through all the loops inside new kernel
         while(occaLoopPos){
@@ -2184,7 +2148,7 @@ namespace occa {
 
           // Only goes through first outer and inner sets
           if(s2.isOccaInnerFor(forInfo) &&
-             (nest == (innerDim - 1))){
+             (nest == innerDim)){
 
             if(firstInner == false)
               break;
@@ -2192,7 +2156,7 @@ namespace occa {
             firstInner = false;
           }
           else if(s2.isOccaOuterFor(forInfo) &&
-                  (nest == (outerDim - 1))){
+                  (nest == outerDim)){
 
             if(firstOuter == false)
               break;
@@ -2217,22 +2181,21 @@ namespace occa {
           occaLoopPos = occaLoopPos->right;
         }
 
-        // Add kernel body
+#if 0
+        idDepMapIterator depIt = depMap.begin();
 
-#if 1 // Print dependencies
-          idDepMapIterator it = depMap.begin();
+        statement &ks = *(info.nestedKernels[kID]);
 
-          while(it != depMap.end()){
-            statement &s = *(sVec[it->first]);
+        while(depIt != depMap.end()){
+          statement &depS  = *(sVec[depIt->first]);
+          statement &depS2 = *(depS.clone());
 
-            zeroOccaIdsFrom(s);
+          zeroOccaIdsFrom(depS2);
 
-            std::cout
-              << "sVec[it] = " << s;
-            ++it;
-          }
+          ks.addStatement(&depS2);
 
-          std::cout << '\n';
+          ++depIt;
+        }
 #endif
 
         // Go to next outer-loop
@@ -2246,6 +2209,8 @@ namespace occa {
 
           occaLoopPos = occaLoopPos->right;
         }
+
+        ++kID;
       }
 
       //---[ Add kernel guards ]--------

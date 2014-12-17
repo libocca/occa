@@ -1569,7 +1569,10 @@ namespace occa {
           statement &sUp = *(newExp.sInfo->up);
 
           if(isVarInfo && !inForStatement){
-            sUp.addVariable(newExp.getVarInfo(), newExp.sInfo);
+            varInfo &var = newExp.getVarInfo();
+
+            if(!sUp.hasVariableInLocalScope(var.name))
+              sUp.addVariable(var, newExp.sInfo);
           }
           else if(isFuncInfo){
             // Get function variable
