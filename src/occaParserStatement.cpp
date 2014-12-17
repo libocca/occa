@@ -4197,6 +4197,30 @@ namespace occa {
       }
     }
 
+    void statement::createUniqueSequentialVariables(std::string &varName,
+                                                    const int varCount){
+      std::stringstream ss;
+
+      // Find unique baseName
+      while(true){
+        int v;
+
+        for(v = 0; v < varCount; ++v){
+          ss << v;
+
+          if(hasVariableInLocalScope(varName + ss.str()))
+            break;
+
+          ss.str("");
+        }
+
+        if(v == varCount)
+          break;
+
+        varName += '_';
+      }
+    }
+
     void statement::swapExpWith(statement &s){
       expNode::swap(expRoot, s.expRoot);
     }

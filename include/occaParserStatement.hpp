@@ -575,6 +575,9 @@ namespace occa {
       void createUniqueVariables(std::vector<std::string> &names,
                                  const int flags = statementFlag::updateByNumber);
 
+      void createUniqueSequentialVariables(std::string &varName,
+                                           const int varCount);
+
       void swapExpWith(statement &s);
 
       bool hasQualifier(const std::string &qualifier) const;

@@ -1795,28 +1795,12 @@ namespace occa {
       statementNode *outerLoopRoot = getOuterLoopsInStatement(s);
       int kernelCount = length(outerLoopRoot);
 
-      std::stringstream ss;
-
-      // Find unique baseName
-      while(true){
-        int k;
-
-        for(k = 0; k < kernelCount; ++k){
-          ss << k;
-
-          if(globalScope->hasVariableInScope(info.baseName + ss.str()))
-            break;
-
-          ss.str("");
-        }
-
-        if(k == kernelCount)
-          break;
-
-        info.baseName += '_';
-      }
+      globalScope->createUniqueSequentialVariables(info.baseName,
+                                                   kernelCount);
 
       info.nestedKernels.clear();
+
+      std::stringstream ss;
 
       // Create empty kernels
       int kID = 0;
@@ -2046,7 +2030,9 @@ namespace occa {
       return newSNEnd->right;
     }
 
-    void parserBase::splitKernelStatement2(statement &sKernel){
+    void parserBase::splitKernelStatement2(statement &sKernel,
+                                           kernelInfo &info){
+
       statement &sKernel2 = *(sKernel.clone());
 
       statementIdMap_t idMap;
@@ -2061,6 +2047,13 @@ namespace occa {
 
       statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel2);
       statementNode *occaLoopPos  = occaLoopRoot;
+
+      const int kernelCount = kernelCountInOccaLoops(occaLoopRoot);
+
+      globalScope->createUniqueSequentialVariables(info.baseName,
+                                                   kernelCount);
+
+      info.nestedKernels.clear();
 
       // Loop outer-most for-loops
       while(occaLoopPos){
@@ -2112,8 +2105,6 @@ namespace occa {
 
             firstOuter = false;
           }
-
-          s2.type = blockStatementType;
 
           statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
 
@@ -2206,6 +2197,61 @@ namespace occa {
       return root.right;
     }
 
+    int parserBase::kernelCountInOccaLoops(statementNode *occaLoops){
+      int kernelCount = 0;
+
+      while(occaLoops){
+        ++kernelCount;
+
+        statement &sOuter = *(occaLoops->value);
+
+        varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
+
+        if(loopIter == NULL){
+          occaLoops = occaLoops->right;
+          continue;
+        }
+
+        const int outerDim = getOuterMostForDim(sOuter) + 1;
+
+        // Break after each outer-most outer-loop (between kernels)
+        bool firstOuter = true;
+
+        // Loop through all the loops inside new kernel
+        while(occaLoops){
+          statement &s2 = *(occaLoops->value);
+
+          const int forInfo = s2.occaForInfo();
+          const int nest    = s2.occaForNest(forInfo);
+
+          if(s2.isOccaOuterFor(forInfo) &&
+             (nest == (outerDim - 1))){
+
+            if(firstOuter == false)
+              break;
+
+            firstOuter = false;
+          }
+
+          occaLoops = occaLoops->right;
+        }
+
+        // Go to next outer-loop
+        while(occaLoops){
+          statement &s2 = *(occaLoops->value);
+
+          const int forInfo = s2.occaForInfo();
+
+          if(s2.isOccaOuterFor(forInfo))
+            break;
+
+          occaLoops = occaLoops->right;
+        }
+      }
+
+      return kernelCount;
+    }
+
     void parserBase::zeroOccaIdsFrom(statement &s){
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
@@ -2237,7 +2283,7 @@ namespace occa {
           kernelInfoMap[info.name] = &info;
           //============================
 
-          splitKernelStatement2(s);
+          splitKernelStatement2(s, info);
           snPos = splitKernelStatement(snPos, info);
         }
         else

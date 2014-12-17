@@ -1900,6 +1900,8 @@ namespace occa {
       addFullDependencyMap(depMap, idMap, sVec);
     }
 
+    // [-] Missing nested loop checks
+    //    Example: Dependent variable is inside a flow statement
     void varDepGraph::addFullDependencyMap(idDepMap_t &depMap,
                                            statementIdMap_t &idMap,
                                            statementVector_t &sVec){
