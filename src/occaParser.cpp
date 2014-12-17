@@ -4127,7 +4127,7 @@ namespace occa {
         // [doStart][#]
         std::string suffix = start.substr(7);
 
-        bound = "doEnd" + suffix;
+        bound = "(doEnd" + suffix + " + 1)";
       }
     }
 

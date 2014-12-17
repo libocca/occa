@@ -443,6 +443,7 @@ namespace occa {
       struct {
         uintptr_t x, y, z;
       };
+
       uintptr_t data[3];
     };
 
@@ -459,6 +460,8 @@ namespace occa {
     inline dim operator - (const dim &d);
     inline dim operator * (const dim &d);
     inline dim operator / (const dim &d);
+
+    inline bool hasNegativeEntries();
 
     inline uintptr_t& operator [] (int i);
   };
@@ -1658,6 +1661,12 @@ namespace occa {
     return dim(x / d.x,
                y / d.y,
                z / d.z);
+  }
+
+  inline bool dim::hasNegativeEntries(){
+    return ((x & (1 << (sizeof(uintptr_t) - 1))) ||
+            (y & (1 << (sizeof(uintptr_t) - 1))) ||
+            (z & (1 << (sizeof(uintptr_t) - 1))));
   }
 
   inline uintptr_t& dim::operator [] (int i){
