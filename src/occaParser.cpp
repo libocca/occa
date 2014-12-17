@@ -2194,7 +2194,7 @@ namespace occa {
         while(depIt != depMap.end()){
           statement &depS  = *(sVec[depIt->first]);
 
-          if(depS.depth <= ksOuter.depth){
+          if(depIt->first < idMap[&sOuter]){
             statement &depS2 = *(depS.clone());
 
             zeroOccaIdsFrom(depS2);
@@ -2205,6 +2205,7 @@ namespace occa {
           ++depIt;
         }
 
+        // Move dependencies to the front
         if(ksnOuter->right){
           statementNode *oldFirst = ks.statementStart;
           statementNode *oldEnd   = ksnOuter;
