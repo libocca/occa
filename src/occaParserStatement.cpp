@@ -1538,8 +1538,7 @@ namespace occa {
     }
 
     void expNode::cloneTo(expNode &newExp){
-      const bool sChanged = ((newExp.sInfo != NULL) &&
-                             (newExp.sInfo != sInfo));
+      const bool sChanged = (newExp.sInfo != sInfo);
 
       newExp.info = info;
 
@@ -1562,7 +1561,7 @@ namespace occa {
           statement &sUp = *(newExp.sInfo->up);
 
           if(isVarInfo){
-            sUp.addVariable(newExp.getVarInfo(), sInfo);
+            sUp.addVariable(newExp.getVarInfo(), newExp.sInfo);
           }
           else if(isFuncInfo){
             // Get function variable
