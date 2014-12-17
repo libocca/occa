@@ -1543,34 +1543,50 @@ namespace occa {
 
       newExp.info = info;
 
-      if(info & (expType::varInfo | expType::typeInfo)){
-        if(info & expType::varInfo){
+      const bool isVarInfo  = (info & expType::varInfo);
+      const bool isTypeInfo = (info & expType::typeInfo);
+      const bool isFuncDef  = (info == (expType::function |
+                                        expType::declaration));
+
+      if(isVarInfo | isTypeInfo | isFuncDef){
+        if(isVarInfo){
           varInfo &var = newExp.addVarInfoNode();
           var = getVarInfo().clone();
-
-          if(sChanged          &&
-             newExp.sInfo->up &&
-             !newExp.sInfo->up->hasVariableInLocalScope(var.name)){
-
-            if(info == (expType::function |
-                        expType::declaration)){
-              newExp.sInfo->up->addVariable(&var);
-
-              for(int i = 0; i < var.argumentCount; ++i){
-                varInfo &argVar = *(new varInfo());
-                argVar = var.getArgument(i).clone();
-
-                newExp.sInfo->addVariable(&argVar);
-                var.setArgument(i, argVar);
-              }
-            }
-            else
-              newExp.sInfo->up->addVariable(&var, sInfo);
-          }
         }
-        else if(info & expType::typeInfo){
+        else if(isTypeInfo){
           typeInfo &type = newExp.addTypeInfoNode();
           type = getTypeInfo().clone();
+        }
+
+        // To add a variable, make sure sInfo->up exists
+        if(sChanged && newExp.sInfo->up){
+          statement &sUp = *(newExp.sInfo->up);
+
+          if(isVarInfo){
+            sUp.addVariable(newExp.getVarInfo(), sInfo);
+          }
+          else if(isFuncDef){
+            // Get function variable
+            varInfo &var = getVariableNode(0)->getVarInfo();
+
+            // Make sure we haven't initialized it
+            //   from the original or an extern
+            if(!sUp.hasVariableInLocalScope(var.name))
+              sUp.addVariable(&var);
+
+            for(int i = 0; i < var.argumentCount; ++i){
+              varInfo &argVar = *(new varInfo());
+              argVar = var.getArgument(i).clone();
+
+              newExp.sInfo->addVariable(&argVar);
+              var.setArgument(i, argVar);
+            }
+          }
+
+          // Function define just needs to add arguments
+          //   which is done above
+          if(isFuncDef)
+            return;
         }
       }
       else {
@@ -3800,6 +3816,7 @@ namespace occa {
 
     void statement::setStatementIdMap(statementIdMap_t &idMap){
       int startID = 0;
+
       setStatementIdMap(idMap, startID);
     }
 

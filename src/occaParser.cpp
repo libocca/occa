@@ -52,8 +52,6 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::addParallelFors);
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
-
-      applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
       // Broken
       modifyTextureVariables();
 
@@ -63,6 +61,8 @@ namespace occa {
       // throw 1;
 
       loadKernelInfos();
+
+      applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
 
       return (std::string) *globalScope;
     }
