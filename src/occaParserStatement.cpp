@@ -3716,6 +3716,18 @@ namespace occa {
       return *newS;
     }
 
+    statement& statement::createStatementFromSource(const std::string &source){
+      statementNode sn;
+
+      pushRightFromSource(&sn, source);
+
+      statement &ret = *(sn.right->value);
+
+      delete sn.right;
+
+      return ret;
+    }
+
     void statement::addStatementFromSource(const std::string &source){
       loadFromNode(labelCode( splitContent(source) ));
     }

@@ -2050,7 +2050,7 @@ namespace occa {
       statement &sKernel2 = *(sKernel.clone());
 
       statementIdMap_t idMap;
-      statementVector_t sVec, sVec2;
+      statementVector_t sVec;
       idDepMap_t depMap;
 
       sKernel2.setStatementIdMap(idMap);
@@ -2073,9 +2073,14 @@ namespace occa {
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
 
+        std::vector<statement*> loopS;
+        std::vector<int> loopSID;
+
         const int outerDim = getOuterMostForDim(sOuter) + 1;
         const int innerDim = getInnerMostForDim(sOuter) + 1;
 
+        // Break after each outer-most outer-loop (between kernels)
+        // Break after each outer-most inner-loop (One work-group size (for now))
         bool firstOuter = true;
         bool firstInner = true;
 
@@ -2110,9 +2115,12 @@ namespace occa {
 
           s2.type = blockStatementType;
 
-          expNode *loopExp = s2.createExpNodeFrom(loopBounds[loopPos]);
+          statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
 
-          s2.addStatementDependencies(*loopExp,
+          loopS.push_back(&ls);
+          loopSID.push_back(idMap[&s2]);
+
+          s2.addStatementDependencies(ls.expRoot,
                                       idMap,
                                       sVec,
                                       depMap);

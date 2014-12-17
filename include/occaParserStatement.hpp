@@ -500,6 +500,8 @@ namespace occa {
       statement& pushNewStatementLeft(const int type_ = 0);
       statement& pushNewStatementRight(const int type_ = 0);
 
+      statement& createStatementFromSource(const std::string &source);
+
       void addStatementFromSource(const std::string &source);
 
       void pushLeftFromSource(statementNode *target,
