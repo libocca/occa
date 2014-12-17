@@ -2030,8 +2030,8 @@ namespace occa {
       return newSNEnd->right;
     }
 
-    void parserBase::splitKernelStatement2(statement &sKernel,
-                                           kernelInfo &info){
+    statementNode* parserBase::splitKernelStatement2(statement &sKernel,
+                                                     kernelInfo &info){
       statementNode *snKernel = sKernel.getStatementNode();
 
       statementIdMap_t idMap;
@@ -2258,11 +2258,12 @@ namespace occa {
           std::cout << '\n';
 #endif
 
-      std::cout << "sKernel  = " << sKernel << '\n';
       std::cout
         << "globalScope = " << *globalScope << '\n';
 
       throw 1;
+
+      return newSNEnd->right;
     }
 
     statementNode* parserBase::getOuterLoopsInStatement(statement &s){
