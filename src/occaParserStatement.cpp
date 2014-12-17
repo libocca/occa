@@ -4424,6 +4424,23 @@ namespace occa {
       return NULL;
     }
 
+    void statement::setFunctionVar(varInfo &var){
+      if(type & functionStatementType){
+        expRoot.setVarInfo(0, var);
+      }
+      else if(type & updateStatementType){
+        statement *s = up;
+
+        while(s &&
+              !(s->type & functionStatementType)){
+          s = s->up;
+        }
+
+        if(s)
+          s->setFunctionVar(var);
+      }
+    }
+
     std::string statement::getFunctionName(){
       if(type & functionStatementType){
         return getFunctionVar()->name;

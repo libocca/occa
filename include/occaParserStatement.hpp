@@ -606,6 +606,7 @@ namespace occa {
       int getDeclarationVarCount() const;
 
       varInfo* getFunctionVar();
+      void setFunctionVar(varInfo &var);
       std::string getFunctionName();
       void setFunctionName(const std::string &newName);
       bool functionHasQualifier(const std::string &qName);
