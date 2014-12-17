@@ -284,6 +284,7 @@ namespace occa {
       void removeStackPointers();
 
       varInfo& getArgument(const int pos);
+      void setArgument(const int pos, varInfo &var);
       void addArgument(const int pos, varInfo &arg);
       //================================
 

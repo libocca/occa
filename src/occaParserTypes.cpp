@@ -1670,6 +1670,10 @@ namespace occa {
       return *(argumentVarInfos[pos]);
     }
 
+    void varInfo::setArgument(const int pos, varInfo &var){
+      argumentVarInfos[pos] = &var;
+    }
+
     void varInfo::addArgument(const int pos, varInfo &arg){
       varInfo **newArgumentVarInfos = new varInfo*[argumentCount + 1];
 

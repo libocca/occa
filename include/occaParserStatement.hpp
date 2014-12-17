@@ -220,7 +220,7 @@ namespace occa {
       expNode* clone(statement &s);
       expNode* clone(expNode *original);
 
-      void cloneTo(expNode &newRoot);
+      void cloneTo(expNode &newExp);
 
       expNode* lastLeaf();
 

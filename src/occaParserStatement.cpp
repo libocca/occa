@@ -1530,65 +1530,81 @@ namespace occa {
     }
 
     expNode* expNode::clone(expNode *original){
-      expNode &newLeaf = *(new expNode(*sInfo));
+      expNode &newLeaf = *(new expNode(*this));
 
       original->cloneTo(newLeaf);
 
       return &newLeaf;
     }
 
-    void expNode::cloneTo(expNode &newRoot){
-      const bool sChanged = (newRoot.sInfo != sInfo);
+    void expNode::cloneTo(expNode &newExp){
+      const bool sChanged = ((newExp.sInfo != NULL) &&
+                             (newExp.sInfo != sInfo));
 
-      newRoot.info = info;
+      newExp.info = info;
 
       if(info & (expType::varInfo | expType::typeInfo)){
         if(info & expType::varInfo){
-          varInfo &var = newRoot.addVarInfoNode();
+          varInfo &var = newExp.addVarInfoNode();
           var = getVarInfo().clone();
 
           if(sChanged          &&
-             newRoot.sInfo->up &&
-             !newRoot.sInfo->up->hasVariableInLocalScope(var.name)){
+             newExp.sInfo->up &&
+             !newExp.sInfo->up->hasVariableInLocalScope(var.name)){
 
             if(info == (expType::function |
-                        expType::declaration))
-              newRoot.sInfo->up->addVariable(&var);
+                        expType::declaration)){
+              newExp.sInfo->up->addVariable(&var);
+
+              for(int i = 0; i < var.argumentCount; ++i){
+                varInfo &argVar = *(new varInfo());
+                argVar = var.getArgument(i).clone();
+
+                newExp.sInfo->addVariable(&argVar);
+                var.setArgument(i, argVar);
+              }
+            }
             else
-              newRoot.sInfo->up->addVariable(&var, sInfo);
+              newExp.sInfo->up->addVariable(&var, sInfo);
           }
         }
         else if(info & expType::typeInfo){
-          typeInfo &type = newRoot.addTypeInfoNode();
+          typeInfo &type = newExp.addTypeInfoNode();
           type = getTypeInfo().clone();
         }
       }
       else {
-        newRoot.value     = value;
-        newRoot.leafCount = leafCount;
+        newExp.value     = value;
+        newExp.leafCount = leafCount;
 
         if(sChanged && hasVariable()){
           std::string varName = getMyVariableName();
-          varInfo *pVar       = newRoot.sInfo->hasVariableInScope(varName);
+          varInfo *pVar       = newExp.sInfo->hasVariableInScope(varName);
+
+          std::cout
+            << "varName = " << varName << '\n'
+            << "pVar = " << pVar << '\n';
 
           if(pVar == NULL)
             pVar = sInfo->hasVariableInScope(varName);
 
-          if((newRoot.up == NULL) ||
+          if((newExp.up == NULL) ||
              !isAnAssOperator(up->value)){
 
-            newRoot.sInfo->addVariableToUsedMap(*pVar);
+            newExp.sInfo->addVariableToUsedMap(*pVar);
           }
           else{
-            newRoot.sInfo->addVariableToUpdateMap(*pVar);
+            std::cout << "pVar = " << *pVar << '\n';
+
+            newExp.sInfo->addVariableToUpdateMap(*pVar);
           }
         }
 
         if(leafCount){
-          newRoot.leaves = new expNode*[leafCount];
+          newExp.leaves = new expNode*[leafCount];
 
           for(int i = 0; i < leafCount; ++i)
-            newRoot.leaves[i] = newRoot.clone(leaves[i]);
+            newExp.leaves[i] = newExp.clone(leaves[i]);
         }
       }
     }
