@@ -1682,20 +1682,25 @@ namespace occa {
     }
 
     expNode* expNode::makeFlatHandle(){
+      expNode *flatNode;
+
+      if(sInfo != NULL)
+        flatNode = new expNode(*sInfo);
+      else
+        flatNode = new expNode(*this);
+
       if(leafCount == 0)
-        return NULL;
+        return flatNode;
 
-      expNode &flatNode = *(new expNode(*sInfo));
-
-      flatNode.info   = expType::printLeaves;
-      flatNode.leaves = new expNode*[nestedLeafCount()];
+      flatNode->info   = expType::printLeaves;
+      flatNode->leaves = new expNode*[nestedLeafCount()];
 
       int offset = 0;
-      makeFlatHandle(offset, flatNode.leaves);
+      makeFlatHandle(offset, flatNode->leaves);
 
-      flatNode.leafCount = offset;
+      flatNode->leafCount = offset;
 
-      return &flatNode;
+      return flatNode;
     }
 
     void expNode::makeFlatHandle(int &offset,
@@ -1755,7 +1760,9 @@ namespace occa {
     }
 
     void expNode::freeFlatHandle(expNode &flatRoot){
-      delete [] flatRoot.leaves;
+      if(flatRoot.leafCount)
+        delete [] flatRoot.leaves;
+
       delete &flatRoot;
     }
 
@@ -3774,8 +3781,12 @@ namespace occa {
 
       statementEnd = statementEnd->left;
 
-      if(statementEnd)
-        statementEnd->right = NULL;
+      if(statementEnd != target){
+        if(statementEnd)
+          statementEnd->right = NULL;
+        else
+          statementEnd = target;
+      }
 
       if(statementStart == target)
         statementStart = newSN;
@@ -3795,13 +3806,16 @@ namespace occa {
 
       statementNode *newSN = statementEnd;
 
-      statementEnd = statementEnd->left;
-
-      if(statementEnd)
-        statementEnd->right = NULL;
-
       if(statementEnd == target)
         statementEnd = newSN;
+      else{
+        statementEnd = statementEnd->left;
+
+        if(statementEnd)
+          statementEnd->right = NULL;
+        else
+          statementEnd = newSN;
+      }
 
       if(target->right)
         target->right->left = newSN;
@@ -3814,9 +3828,6 @@ namespace occa {
 
     //---[ Misc ]---------------------
     bool statement::hasBarrier(){
-      if(expRoot.leafCount == 0)
-        return false;
-
       expNode &flatRoot = *(expRoot.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
@@ -4089,7 +4100,7 @@ namespace occa {
       }
       else{
         statementCount = 1;
-        statementStart = new node<statement*>(newStatement);
+        statementStart = new statementNode(newStatement);
         statementEnd   = statementStart;
       }
     }
@@ -4340,6 +4351,13 @@ namespace occa {
       return ((forInfo & occaInnerForMask) != 0);
     }
 
+    void statement::addStatementDependencies(statementIdMap_t &idMap,
+                                             statementVector_t sVec,
+                                             idDepMap_t &depMap){
+
+      addStatementDependencies(expRoot, idMap, sVec, depMap);
+    }
+
     void statement::addStatementDependencies(expNode &exp,
                                              statementIdMap_t &idMap,
                                              statementVector_t sVec,
@@ -4353,7 +4371,7 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if(n.hasVariable()){
-          varInfo &var = *(hasVariableInScope(n.value));
+          varInfo &var = *(hasVariableInScope(n.getMyVariableName()));
 
           varDepGraph vdg(var, *this, idMap);
           vdg.addFullDependencyMap(depMap, idMap, sVec);
@@ -4361,6 +4379,20 @@ namespace occa {
       }
 
       expNode::freeFlatHandle(flatRoot);
+    }
+
+    void statement::addNestedDependencies(statementIdMap_t &idMap,
+                                          statementVector_t sVec,
+                                          idDepMap_t &depMap){
+
+      statementNode *sn = statementStart;
+
+      while(sn){
+        sn->value->addStatementDependencies(idMap, sVec, depMap);
+        sn->value->addNestedDependencies(idMap, sVec, depMap);
+
+        sn = sn->right;
+      }
     }
 
     varInfo& statement::getDeclarationVarInfo(const int pos){

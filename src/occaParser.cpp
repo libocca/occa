@@ -2109,7 +2109,7 @@ namespace occa {
           continue;
         }
 
-        idDepMap_t depMap;
+        idDepMap_t minDepMap, depMap;
 
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
@@ -2122,14 +2122,12 @@ namespace occa {
         bool firstOuter = true;
         bool firstInner = true;
 
-        // // Get rid of the parallelFor
-        // statementNode *sn = sOuter.getStatementNode();
-        // sn->left->pop();
-
-
-        // Add kernel body
+        //---[ Add kernel body ]----------
         statement &ks = *(info.nestedKernels[kID]);
-        ks.addStatement(occaLoopPos->value);
+        ks.addStatement(occaLoopPos->value->clone());
+
+        statementNode *ksnOuter = ks.statementStart;
+        statement &ksOuter      = *(ksnOuter->value);
 
         ss << "occaParallelFor" << outerDim;
 
@@ -2167,36 +2165,62 @@ namespace occa {
           statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
 
           s2.addStatementDependencies(ls.expRoot,
-                                      idMap,
-                                      sVec,
-                                      depMap);
+                                      idMap, sVec, minDepMap);
 
-          // Replace occa-fors with loop statements
-          const int sID = idMap[&s2];
+          // Set statements in the hostKernel
+          // // Replace occa-fors with loop statements
+          // const int sID = idMap[&s2];
 
-          depMap[sID] = true;
-          sVec[sID]   = &ls;
+          // depMap[sID] = true;
+          // sVec[sID]   = &ls;
+
+          // Add minDepMap and continue with dependencies
+          idDepMapIterator minDepIt = minDepMap.begin();
+
+          while(minDepIt != minDepMap.end()){
+            depMap[minDepIt->first] = true;
+
+            ++minDepIt;
+          }
 
           ++loopPos;
           occaLoopPos = occaLoopPos->right;
         }
 
-#if 0
-        idDepMapIterator depIt = depMap.begin();
+        ksOuter.addNestedDependencies(idMap, sVec, depMap);
 
-        statement &ks = *(info.nestedKernels[kID]);
+        idDepMapIterator depIt = depMap.begin();
 
         while(depIt != depMap.end()){
           statement &depS  = *(sVec[depIt->first]);
-          statement &depS2 = *(depS.clone());
 
-          zeroOccaIdsFrom(depS2);
+          if(depS.depth <= ksOuter.depth){
+            statement &depS2 = *(depS.clone());
 
-          ks.addStatement(&depS2);
+            zeroOccaIdsFrom(depS2);
+
+            ks.addStatement(&depS2);
+          }
 
           ++depIt;
         }
-#endif
+
+        if(ksnOuter->right){
+          statementNode *oldFirst = ks.statementStart;
+          statementNode *oldEnd   = ksnOuter;
+
+          statementNode *firstExtra = ksnOuter->right;
+          statementNode *lastExtra  = ks.statementEnd;
+
+          ks.statementStart       = firstExtra;
+          ks.statementStart->left = NULL;
+
+          ks.statementEnd        = oldEnd;
+          ks.statementEnd->right = NULL;
+
+          lastExtra->right = oldFirst;
+          oldFirst->left   = lastExtra;
+        }
 
         // Go to next outer-loop
         while(occaLoopPos){
@@ -3089,9 +3113,6 @@ namespace occa {
     }
 
     void parserBase::setupOccaVariables(statement &s){
-      if(s.expRoot.leafCount == 0)
-        return;
-
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
