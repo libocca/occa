@@ -141,6 +141,8 @@ namespace occa {
       statementNode* getOccaLoopsInStatement(statement &s,
                                              const bool getNestedLoops = true);
 
+      void zeroOccaIdsFrom(statement &s);
+
       void loadKernelInfos();
 
       void stripOccaFromKernel(statement &s);
@@ -195,6 +197,16 @@ namespace occa {
 
       void setupOccaVariables(statement &s);
     };
+
+    bool isAnOccaID(const std::string &s);
+    bool isAnOccaInnerID(const std::string &s);
+    bool isAnOccaOuterID(const std::string &s);
+    bool isAnOccaGlobalID(const std::string &s);
+
+    bool isAnOccaDim(const std::string &s);
+    bool isAnOccaInnerDim(const std::string &s);
+    bool isAnOccaOuterDim(const std::string &s);
+    bool isAnOccaGlobalDim(const std::string &s);
 
     strNode* splitContent(const std::string &str, const bool parsingC = true);
     strNode* splitContent(const char *cRoot, const bool parsingC = true);

@@ -2156,8 +2156,12 @@ namespace occa {
           idDepMapIterator it = depMap.begin();
 
           while(it != depMap.end()){
+            statement &s = *(sVec[it->first]);
+
+            zeroOccaIdsFrom(s);
+
             std::cout
-              << "sVec[it] = " << *(sVec[it->first]);
+              << "sVec[it] = " << s;
             ++it;
           }
 
@@ -2199,6 +2203,20 @@ namespace occa {
       }
 
       return root.right;
+    }
+
+    void parserBase::zeroOccaIdsFrom(statement &s){
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if((flatRoot[i].info & expType::presetValue) &&
+           isAnOccaID(flatRoot[i].value)){
+
+          flatRoot[i].value = "0";
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     void parserBase::loadKernelInfos(){
@@ -2973,29 +2991,12 @@ namespace occa {
         std::string &value = flatRoot[i].value;
         std::string occaValue;
 
-        const bool isInnerId = ((value == "occaInnerId0") ||
-                                (value == "occaInnerId1") ||
-                                (value == "occaInnerId2"));
-
-        const bool isOuterId = ((value == "occaOuterId0") ||
-                                (value == "occaOuterId1") ||
-                                (value == "occaOuterId2"));
-
-        const bool isGlobalId = ((value == "occaGlobalId0") ||
-                                 (value == "occaGlobalId1") ||
-                                 (value == "occaGlobalId2"));
-
-        const bool isInnerDim = ((value == "occaInnerDim0") ||
-                                 (value == "occaInnerDim1") ||
-                                 (value == "occaInnerDim2"));
-
-        const bool isOuterDim = ((value == "occaOuterDim0") ||
-                                 (value == "occaOuterDim1") ||
-                                 (value == "occaOuterDim2"));
-
-        const bool isGlobalDim = ((value == "occaGlobalDim0") ||
-                                  (value == "occaGlobalDim1") ||
-                                  (value == "occaGlobalDim2"));
+        const bool isInnerId   = isAnOccaInnerID(value);
+        const bool isOuterId   = isAnOccaOuterID(value);
+        const bool isGlobalId  = isAnOccaGlobalID(value);
+        const bool isInnerDim  = isAnOccaInnerDim(value);
+        const bool isOuterDim  = isAnOccaOuterDim(value);
+        const bool isGlobalDim = isAnOccaGlobalDim(value);
 
         const bool isId  = (isInnerId  || isOuterId  || isGlobalId);
         const bool isDim = (isInnerDim || isOuterDim || isGlobalDim);
@@ -3043,6 +3044,55 @@ namespace occa {
 
       expNode::freeFlatHandle(flatRoot);
     }
+
+    bool isAnOccaID(const std::string &s){
+      return (isAnOccaInnerID(s) ||
+              isAnOccaOuterID(s) ||
+              isAnOccaGlobalID(s));
+    }
+
+    bool isAnOccaDim(const std::string &s){
+      return (isAnOccaInnerDim(s) ||
+              isAnOccaOuterDim(s) ||
+              isAnOccaGlobalDim(s));
+    }
+
+    bool isAnOccaInnerID(const std::string &s){
+      return ((s == "occaInnerId0") ||
+              (s == "occaInnerId1") ||
+              (s == "occaInnerId2"));
+    }
+
+    bool isAnOccaOuterID(const std::string &s){
+      return ((s == "occaOuterId0") ||
+              (s == "occaOuterId1") ||
+              (s == "occaOuterId2"));
+    }
+
+    bool isAnOccaGlobalID(const std::string &s){
+      return ((s == "occaGlobalId0") ||
+              (s == "occaGlobalId1") ||
+              (s == "occaGlobalId2"));
+    }
+
+    bool isAnOccaInnerDim(const std::string &s){
+      return ((s == "occaInnerDim0") ||
+              (s == "occaInnerDim1") ||
+              (s == "occaInnerDim2"));
+    }
+
+    bool isAnOccaOuterDim(const std::string &s){
+      return ((s == "occaOuterDim0") ||
+              (s == "occaOuterDim1") ||
+              (s == "occaOuterDim2"));
+    }
+
+    bool isAnOccaGlobalDim(const std::string &s){
+      return ((s == "occaGlobalDim0") ||
+              (s == "occaGlobalDim1") ||
+              (s == "occaGlobalDim2"));
+    }
+
     //==============================================
 
     strNode* splitContent(const std::string &str, const bool parsingC){
