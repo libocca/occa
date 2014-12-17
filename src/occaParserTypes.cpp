@@ -1861,7 +1861,8 @@ namespace occa {
 
         if((idMap.find(&s2) == idMap.end()) || // Skip if statement is not in the map
            (s2.type & functionStatementType)){ // Functions don't have dependencies
-          sn = sn->right;
+
+          sn = sn->left;
           continue;
         }
 
