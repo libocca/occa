@@ -1005,7 +1005,7 @@ namespace occa {
 
       s.scopeVarMap.erase(iter);
 
-      s.pushLeftFromSource(s.statementStart, ss.str());
+      s.pushSourceLeftOf(s.statementStart, ss.str());
 
       std::string occaForName = "occa" + ioLoop + "For" + loopNest;
 
@@ -1233,8 +1233,8 @@ namespace occa {
           }
 
           if(prototypes.find( s.getFunctionName() ) == prototypes.end()){
-            globalScope->pushLeftFromSource(statementPos,
-                                            (std::string) *(s.getFunctionVar()));
+            globalScope->pushSourceLeftOf(statementPos,
+                                          (std::string) *(s.getFunctionVar()));
           }
         }
 
@@ -1329,7 +1329,7 @@ namespace occa {
                       << *(lastLoop->value)
                       << "========================================\n";
 
-            s.pushLeftFromSource(lastLoop, "occaBarrier(occaLocalMemFence)");
+            s.pushSourceLeftOf(lastLoop, "occaBarrier(occaLocalMemFence)");
           }
         }
 
@@ -2032,6 +2032,8 @@ namespace occa {
 
     void parserBase::splitKernelStatement2(statement &sKernel,
                                            kernelInfo &info){
+      statementNode *snKernel = sKernel.getStatementNode();
+
       statementIdMap_t idMap;
       statementVector_t sVec;
       idDepMap_t depMap;
@@ -2100,11 +2102,15 @@ namespace occa {
       }
 
       // Squeeze new kernels after original kernel
-      statementNode *sn = sKernel.getStatementNode();
-      sn->right       = newSNRoot;
-      newSNRoot->left = sn;
+      newSNRoot->left = snKernel;
+      newSNEnd->right = snKernel->right;
 
-      if(sKernel.up->statementEnd == sn)
+      if(newSNEnd->right)
+        newSNEnd->right->left = newSNEnd;
+
+      snKernel->right = newSNRoot;
+
+      if(sKernel.up->statementEnd == snKernel)
         sKernel.up->statementEnd = newSNEnd;
 
       statementNode *snPosStart = sKernel.statementStart;
@@ -2230,6 +2236,11 @@ namespace occa {
         depMap[sID] = true;
         sVec[sID]   = loopS[i];
       }
+
+
+      //---[ Add kernel guards ]--------
+      sKernel.up->pushSourceLeftOf(snKernel , "#if OCCA_USING_OPENMP");
+      sKernel.up->pushSourceRightOf(snKernel, "#endif");
 
 #if 1 // Print dependencies
           idDepMapIterator it = depMap.begin();
@@ -2771,8 +2782,8 @@ namespace occa {
 
         ss << var.name << " = " << *(origin.expRoot.getVariableInitNode(0)) << ";";
 
-        origin.up->pushRightFromSource(origin.getStatementNode(),
-                                       ss.str());
+        origin.up->pushSourceRightOf(origin.getStatementNode(),
+                                     ss.str());
       }
 
       return;

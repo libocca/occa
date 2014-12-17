@@ -507,11 +507,11 @@ namespace occa {
 
       void addStatementFromSource(const std::string &source);
 
-      void pushLeftFromSource(statementNode *target,
-                              const std::string &source);
+      void pushSourceLeftOf(statementNode *target,
+                            const std::string &source);
 
-      void pushRightFromSource(statementNode *target,
-                               const std::string &source);
+      void pushSourceRightOf(statementNode *target,
+                             const std::string &source);
 
       //---[ Misc ]---------------------
       bool hasBarrier();

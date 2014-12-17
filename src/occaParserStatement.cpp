@@ -3750,7 +3750,7 @@ namespace occa {
     statement& statement::createStatementFromSource(const std::string &source){
       statementNode sn;
 
-      pushRightFromSource(&sn, source);
+      pushSourceRightOf(&sn, source);
 
       statement &ret = *(sn.right->value);
 
@@ -3763,8 +3763,8 @@ namespace occa {
       loadFromNode(labelCode( splitContent(source) ));
     }
 
-    void statement::pushLeftFromSource(statementNode *target,
-                                       const std::string &source){
+    void statement::pushSourceLeftOf(statementNode *target,
+                                     const std::string &source){
       addStatementFromSource(source);
 
       statementNode *newSN = statementEnd;
@@ -3786,8 +3786,8 @@ namespace occa {
       target->left = newSN;
     }
 
-    void statement::pushRightFromSource(statementNode *target,
-                                        const std::string &source){
+    void statement::pushSourceRightOf(statementNode *target,
+                                      const std::string &source){
       addStatementFromSource(source);
 
       statementNode *newSN = statementEnd;
