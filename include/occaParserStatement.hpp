@@ -593,6 +593,8 @@ namespace occa {
       void addVariableDeps(expNode &exp,
                            sDep_t &sDep);
 
+      bool setsVariableValue(varInfo &var);
+
       void addStatementDependencies(statementIdMap_t &idMap,
                                     statementVector_t sVec,
                                     idDepMap_t &depMap);

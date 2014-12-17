@@ -4351,6 +4351,36 @@ namespace occa {
       expNode::freeFlatHandle(flatRoot);
     }
 
+    bool statement::setsVariableValue(varInfo &var){
+      expNode &flatRoot = *(expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.hasVariable()){
+          std::string nVarName = n.getMyVariableName();
+          varInfo *nVar        = hasVariableInScope(nVarName);
+
+          // [-] Missing up-checks
+          if((nVar != &var) || // Checking our variable update
+             (n.up == NULL) || // Update needs an assignment operator
+             (n.up->value != "=") ||
+             (n.up->leaves[0]->getMyVariableName() != var.name)){
+
+            continue;
+          }
+
+          expNode::freeFlatHandle(flatRoot);
+
+          return true;
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      return false;
+    }
+
     void statement::addStatementDependencies(statementIdMap_t &idMap,
                                              statementVector_t sVec,
                                              idDepMap_t &depMap){

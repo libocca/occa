@@ -1869,12 +1869,14 @@ namespace occa {
         const int sID2 = idMap[&s2];
 
         if((sID2 < sID) && !has(sID2)){
-
           sUpdates.push_back(sDep_t());
           sDep_t &sd = sUpdates.back();
 
           sd.sID = sID2;
           s2.setVariableDeps(var, sd);
+
+          if(s2.setsVariableValue(var))
+            return;
         }
         else
           break;
