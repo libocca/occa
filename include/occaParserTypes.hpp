@@ -324,10 +324,10 @@ namespace occa {
       varDepGraph();
 
       varDepGraph(varInfo &var,
-                  statement &s);
+                  statement &sBound);
 
       varDepGraph(varInfo &var,
-                  statement &s,
+                  statement &sBound,
                   statementIdMap_t &idMap);
 
       varDepGraph(const varDepGraph &vdg);
@@ -336,11 +336,16 @@ namespace occa {
       void free();
 
       void setup(varInfo &var,
-                 statement &s);
+                 statement &sBound);
 
       void setup(varInfo &var,
-                 statement &s,
+                 statement &sBound,
                  statementIdMap_t &idMap);
+
+      bool checkStatementForDependency(varInfo &var,
+                                       statement &s,
+                                       const int sBoundID,
+                                       statementIdMap_t &idMap);
 
       bool has(const int sID);
 

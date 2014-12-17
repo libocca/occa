@@ -1817,14 +1817,14 @@ namespace occa {
     varDepGraph::varDepGraph(){}
 
     varDepGraph::varDepGraph(varInfo &var,
-                             statement &s){
-      setup(var, s);
+                             statement &sBound){
+      setup(var, sBound);
     }
 
     varDepGraph::varDepGraph(varInfo &var,
-                             statement &s,
+                             statement &sBound,
                              statementIdMap_t &idMap){
-      setup(var, s, idMap);
+      setup(var, sBound, idMap);
     }
 
     varDepGraph::varDepGraph(const varDepGraph &vdg){
@@ -1838,43 +1838,34 @@ namespace occa {
     }
 
     void varDepGraph::setup(varInfo &var,
-                            statement &s){
-      statement *globalScope = s.getGlobalScope();
+                            statement &sBound){
+      statement *globalScope = sBound.getGlobalScope();
 
       statementIdMap_t idMap;
 
       globalScope->setStatementIdMap(idMap);
 
-      setup(var, s, idMap);
+      setup(var, sBound, idMap);
     }
 
     void varDepGraph::setup(varInfo &var,
-                            statement &s,
+                            statement &sBound,
                             statementIdMap_t &idMap){
-      statementNode *sn = lastNode( &(s.varUpdateMap[&var]) );
+      statementNode *originSN = &(sBound.varUpdateMap[&var]);
+      statementNode *sn       = lastNode(originSN);
 
+      const int sID = idMap[&sBound];
 
-      const int sID = idMap[&s];
+      // Always add the origin statement
+      checkStatementForDependency(var,
+                                  *(originSN->value),
+                                  sID,
+                                  idMap);
 
       while(sn){
         statement &s2 = *(sn->value);
 
-        if((idMap.find(&s2) == idMap.end()) || // Skip if statement is not in the map
-           (s2.type & functionStatementType)){ // Functions don't have dependencies
-
-          sn = sn->left;
-          continue;
-        }
-
-        const int sID2 = idMap[&s2];
-
-        if((sID2 < sID) && !has(sID2)){
-          sUpdates.push_back(sDep_t());
-          sDep_t &sd = sUpdates.back();
-
-          sd.sID = sID2;
-          s2.setVariableDeps(var, sd);
-
+        if(checkStatementForDependency(var, s2, sID, idMap)){
           if(s2.setsVariableValue(var))
             return;
         }
@@ -1883,6 +1874,34 @@ namespace occa {
 
         sn = sn->left;
       }
+    }
+
+    bool varDepGraph::checkStatementForDependency(varInfo &var,
+                                                  statement &s,
+                                                  const int sBoundID,
+                                                  statementIdMap_t &idMap){
+      const bool keepGoing = true;  // Just here for readability
+      const bool stop      = false;
+
+      if((idMap.find(&s) == idMap.end()) ||  // Skip if statement is not in the map
+         (s.type & functionStatementType)){ // Functions don't have dependencies
+
+        return keepGoing;
+      }
+
+      const int sID2 = idMap[&s];
+
+      if((sID2 < sBoundID) && !has(sID2)){
+        sUpdates.push_back(sDep_t());
+        sDep_t &sd = sUpdates.back();
+
+        sd.sID = sID2;
+        s.setVariableDeps(var, sd);
+
+        return keepGoing;
+      }
+
+      return stop;
     }
 
     bool varDepGraph::has(const int sID){
