@@ -54,6 +54,7 @@ kernel subroutine addVectors(entries, a, b, ab)
         if (N < entries) then
            ab(i) = a(i) + b(i)
         end if
+     end do
   end do
 
   do group = 1, entries, 16, outer0
@@ -64,5 +65,6 @@ kernel subroutine addVectors(entries, a, b, ab)
            ab(i) = a(i) + b(i)
         end if
      end do
+  end do
 
 end subroutine addVectors
