@@ -2048,6 +2048,7 @@ namespace occa {
 
     void parserBase::splitKernelStatement2(statement &sKernel){
       statement &sKernel2 = *(sKernel.clone());
+      // #define sKernel2 sKernel
 
       statementIdMap_t idMap;
       statementVector_t sVec, sVec2;

@@ -1857,14 +1857,14 @@ namespace occa {
 
       while(sn){
         statement &s2  = *(sn->value);
-        const int sID2 = idMap[&s2];
 
-        // Functions no need to search for dependencies here
-        //   since it's the function declaration
-        if(s2.type & functionStatementType){
+        if((idMap.find(&s2) == idMap.end()) || // Skip if statement is not in the map
+           (s2.type & functionStatementType)){ // Functions don't have dependencies
           sn = sn->right;
           continue;
         }
+
+        const int sID2 = idMap[&s2];
 
         if(sID2 < sID){
           sUpdates.push_back(sDep_t());

@@ -1545,10 +1545,9 @@ namespace occa {
 
       const bool isVarInfo  = (info & expType::varInfo);
       const bool isTypeInfo = (info & expType::typeInfo);
-      const bool isFuncDef  = (info == (expType::function |
-                                        expType::declaration));
+      const bool isFuncInfo = (info & expType::function);
 
-      if(isVarInfo | isTypeInfo | isFuncDef){
+      if(isVarInfo | isTypeInfo | isFuncInfo){
         if(isVarInfo){
           varInfo &var = newExp.addVarInfoNode();
           var = getVarInfo().clone();
@@ -1565,9 +1564,9 @@ namespace occa {
           if(isVarInfo){
             sUp.addVariable(newExp.getVarInfo(), sInfo);
           }
-          else if(isFuncDef){
+          else if(isFuncInfo){
             // Get function variable
-            varInfo &var = getVariableNode(0)->getVarInfo();
+            varInfo &var = leaves[0]->getVarInfo();
 
             // Make sure we haven't initialized it
             //   from the original or an extern
@@ -1582,11 +1581,6 @@ namespace occa {
               var.setArgument(i, argVar);
             }
           }
-
-          // Function define just needs to add arguments
-          //   which is done above
-          if(isFuncDef)
-            return;
         }
       }
       else {
@@ -4076,9 +4070,6 @@ namespace occa {
 
       newStatement->statementStart = NULL;
       newStatement->statementEnd   = NULL;
-
-      if(statementCount == 0)
-        return newStatement;
 
       statementNode *sn = statementStart;
 
