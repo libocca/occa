@@ -1597,7 +1597,7 @@ namespace occa {
             else{
               if(!argVar.hasRightQualifier("occaVariable"))
                 argVar.addRightQualifier("occaVariable");
-              if(!argVar.hasRightQualifier("&"))
+              if(argVar.hasRightQualifier("&"))
                 argVar.removeRightQualifier("&");
             }
           }
