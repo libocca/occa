@@ -1559,6 +1559,10 @@ namespace occa {
           typeInfo &type = newExp.addTypeInfoNode();
           type = getTypeInfo().clone();
         }
+        else if(isFuncInfo){
+          newExp.addVarInfoNode(0);
+          newExp.setVarInfo(0, leaves[0]->getVarInfo());
+        }
 
         // To add a variable, make sure sInfo->up exists
         if(sChanged && newExp.sInfo->up){
@@ -1852,6 +1856,17 @@ namespace occa {
       const varInfo *&varLeaf   = varLeaves[0];
 
       return *varLeaf;
+    }
+
+    void expNode::setVarInfo(varInfo &var){
+      leaves[0] = (expNode*) &var;
+    }
+
+    void expNode::setVarInfo(const int pos, varInfo &var){
+      varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
+      varInfo *&varLeaf   = varLeaves[0];
+
+      varLeaf = &var;
     }
 
     typeInfo& expNode::getTypeInfo(){

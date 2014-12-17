@@ -2032,9 +2032,6 @@ namespace occa {
 
     void parserBase::splitKernelStatement2(statement &sKernel,
                                            kernelInfo &info){
-
-      statement &sKernel2 = *(sKernel.clone());
-
       statementIdMap_t idMap;
       statementVector_t sVec;
       idDepMap_t depMap;
@@ -2042,20 +2039,59 @@ namespace occa {
       std::vector<statement*> loopS;
       std::vector<int> loopSID;
 
-      sKernel2.setStatementIdMap(idMap);
-      sKernel2.setStatementVector(idMap, sVec);
+      std::stringstream ss;
 
-      statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel2);
+      sKernel.setStatementIdMap(idMap);
+      sKernel.setStatementVector(idMap, sVec);
+
+      statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel);
       statementNode *occaLoopPos  = occaLoopRoot;
 
-      const int kernelCount = kernelCountInOccaLoops(occaLoopRoot);
+      statementNode *outerLoopRoot = getOuterLoopsInStatement(sKernel);
+      statementNode *outerLoopPos  = outerLoopRoot;
+
+      const int kernelCount = length(outerLoopRoot);
 
       globalScope->createUniqueSequentialVariables(info.baseName,
                                                    kernelCount);
 
       info.nestedKernels.clear();
 
-      // Loop outer-most for-loops
+      // Create empty kernels
+      int kID = 0;
+
+      statementNode *newSNRoot, *newSNEnd;
+
+      varInfo &kernelVar           = *(sKernel.getFunctionVar());
+      const std::string kernelName = kernelVar.name;
+
+      while(outerLoopPos){
+        statement &ks = *(new statement(sKernel.depth,
+                                        sKernel.type, globalScope));
+
+        info.nestedKernels.push_back(&ks);
+
+        // Update first to push a new variable when cloning
+        ss << kernelName << kID;
+
+        kernelVar.name = ss.str();
+
+        ss.str("");
+
+        sKernel.expRoot.cloneTo(ks.expRoot);
+
+        if(kID)
+          newSNEnd = newSNEnd->push(new statementNode(info.nestedKernels.back()));
+        else
+          newSNRoot = newSNEnd = new statementNode(info.nestedKernels.back());
+
+        outerLoopPos = outerLoopPos->right;
+        ++kID;
+      }
+
+      kernelVar.name = kernelName;
+
+      // Loop through outer-loops to find statement dependencies
       while(occaLoopPos){
         statement &sOuter = *(occaLoopPos->value);
 
@@ -2160,7 +2196,6 @@ namespace occa {
 #endif
 
       std::cout << "sKernel  = " << sKernel << '\n';
-      std::cout << "sKernel2 = " << sKernel2 << '\n';
 
       throw 1;
     }

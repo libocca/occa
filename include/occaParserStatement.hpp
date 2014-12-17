@@ -252,6 +252,9 @@ namespace occa {
       varInfo& getVarInfo(const int pos);
       const varInfo& cGetVarInfo(const int pos) const;
 
+      void setVarInfo(varInfo &var);
+      void setVarInfo(const int pos, varInfo &var);
+
       typeInfo& getTypeInfo();
       const typeInfo& cGetTypeInfo() const;
 
