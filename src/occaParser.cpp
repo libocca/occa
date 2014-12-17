@@ -2036,10 +2036,6 @@ namespace occa {
 
       statementIdMap_t idMap;
       statementVector_t sVec;
-      idDepMap_t depMap;
-
-      std::vector<statement*> loopS;
-      std::vector<int> loopSID;
 
       std::stringstream ss;
 
@@ -2052,7 +2048,7 @@ namespace occa {
       statementNode *outerLoopRoot = getOuterLoopsInStatement(sKernel);
       statementNode *outerLoopPos  = outerLoopRoot;
 
-      int kernelCount = length(outerLoopRoot);
+      const int kernelCount = length(outerLoopRoot);
 
       globalScope->createUniqueSequentialVariables(info.baseName,
                                                    kernelCount);
@@ -2116,7 +2112,6 @@ namespace occa {
       statementNode *snPosStart = sKernel.statementStart;
       statementNode *snPos      = snPosStart;
 
-      kernelCount = 0;
       int snCount = 0;
 
       // occaKernelInfoArg doesn't count
@@ -2149,7 +2144,10 @@ namespace occa {
         sKernel.addFunctionArg(1, arg);
       }
 
+      kID = 0;
+
       // Loop through outer-loops to find statement dependencies
+      //   and create the kernel
       while(occaLoopPos){
         statement &sOuter = *(occaLoopPos->value);
 
@@ -2159,6 +2157,8 @@ namespace occa {
           occaLoopPos = occaLoopPos->right;
           continue;
         }
+
+        idDepMap_t depMap;
 
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
@@ -2202,45 +2202,22 @@ namespace occa {
 
           statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
 
-          loopS.push_back(&ls);
-          loopSID.push_back(idMap[&s2]);
-
           s2.addStatementDependencies(ls.expRoot,
                                       idMap,
                                       sVec,
                                       depMap);
 
+          // Replace occa-fors with loop statements
+          const int sID = idMap[&s2];
+
+          depMap[sID] = true;
+          sVec[sID]   = &ls;
+
           ++loopPos;
           occaLoopPos = occaLoopPos->right;
         }
 
-        // Go to next outer-loop
-        while(occaLoopPos){
-          statement &s2 = *(occaLoopPos->value);
-
-          const int forInfo = s2.occaForInfo();
-
-          if(s2.isOccaOuterFor(forInfo))
-            break;
-
-          occaLoopPos = occaLoopPos->right;
-        }
-      }
-
-      // Replace occa-fors with loop statements
-      const int loopCount = loopS.size();
-
-      for(int i = 0; i < loopCount; ++i){
-        const int sID = loopSID[i];
-
-        depMap[sID] = true;
-        sVec[sID]   = loopS[i];
-      }
-
-
-      //---[ Add kernel guards ]--------
-      sKernel.up->pushSourceLeftOf(snKernel , "#if OCCA_USING_OPENMP");
-      sKernel.up->pushSourceRightOf(snKernel, "#endif");
+        // Add kernel body
 
 #if 1 // Print dependencies
           idDepMapIterator it = depMap.begin();
@@ -2257,6 +2234,23 @@ namespace occa {
 
           std::cout << '\n';
 #endif
+
+        // Go to next outer-loop
+        while(occaLoopPos){
+          statement &s2 = *(occaLoopPos->value);
+
+          const int forInfo = s2.occaForInfo();
+
+          if(s2.isOccaOuterFor(forInfo))
+            break;
+
+          occaLoopPos = occaLoopPos->right;
+        }
+      }
+
+      //---[ Add kernel guards ]--------
+      sKernel.up->pushSourceLeftOf(snKernel , "#if OCCA_USING_OPENMP");
+      sKernel.up->pushSourceRightOf(snKernel, "#endif");
 
       std::cout
         << "globalScope = " << *globalScope << '\n';
