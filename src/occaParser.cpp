@@ -2066,7 +2066,7 @@ namespace occa {
 
       while(outerLoopPos){
         statement &ks  = *(outerLoopPos->value);
-        statement &ks2 = *(new statement(ks.depth,
+        statement &ks2 = *(new statement(ks.depth - 1,
                                          varUpdateMap,
                                          varUsedMap));
 
