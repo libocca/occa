@@ -528,12 +528,6 @@ namespace occa {
       static void setStatementVector(statementIdMap_t &idMap,
                                      statementVector_t &vec);
 
-      void setVariableDeps(varInfo &var,
-                           sDep_t &sDep);
-
-      void addVariableDeps(expNode &exp,
-                           sDep_t &sDep);
-
       void removeFromUpdateMapFor(varInfo &var);
       void removeFromUsedMapFor(varInfo &var);
       void removeFromMapFor(varInfo &var,
@@ -592,6 +586,12 @@ namespace occa {
       static int occaForNest(const int forInfo);
       static bool isOccaOuterFor(const int forInfo);
       static bool isOccaInnerFor(const int forInfo);
+
+      void setVariableDeps(varInfo &var,
+                           sDep_t &sDep);
+
+      void addVariableDeps(expNode &exp,
+                           sDep_t &sDep);
 
       void addStatementDependencies(statementIdMap_t &idMap,
                                     statementVector_t sVec,

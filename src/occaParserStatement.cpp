@@ -3915,68 +3915,6 @@ namespace occa {
       }
     }
 
-    void statement::setVariableDeps(varInfo &var,
-                                    sDep_t &sDep){
-
-      expNode &flatRoot = *(expRoot.makeFlatHandle());
-
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        expNode &n = flatRoot[i];
-
-        if(n.hasVariable()){
-          std::string nVarName = n.getMyVariableName();
-          varInfo *nVar        = hasVariableInScope(nVarName);
-
-          // [-] Missing up-checks
-          //    Example: var->x = 3
-          //              =
-          //        ->        3
-          //      var  x
-          if((nVar != &var) || // Checking our variable update
-             (n.up == NULL) || // Update needs an assignment operator
-             !isAnUpdateOperator(n.up->value) ||
-             (n.up->leaves[0]->getMyVariableName() != var.name)){
-
-            continue;
-          }
-
-          // Get right-side of assignment operator
-          expNode &exp = *(n.up->leaves[1]);
-
-          addVariableDeps(exp, sDep);
-        }
-      }
-
-      expNode::freeFlatHandle(flatRoot);
-    }
-
-    void statement::addVariableDeps(expNode &exp,
-                                    sDep_t &sDep){
-      if(exp.leafCount == 0){
-        if(exp.hasVariable()){
-          varInfo &var = *(hasVariableInScope(exp.value));
-
-          sDep.uniqueAdd(var);
-        }
-
-        return;
-      }
-
-      expNode &flatRoot = *(exp.makeFlatHandle());
-
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        expNode &n = flatRoot[i];
-
-        if(n.hasVariable()){
-          varInfo &var = *(hasVariableInScope(n.value));
-
-          sDep.uniqueAdd(var);
-        }
-      }
-
-      expNode::freeFlatHandle(flatRoot);
-    }
-
     void statement::removeFromUpdateMapFor(varInfo &var){
       removeFromMapFor(var, varUpdateMap);
     }
@@ -4349,6 +4287,68 @@ namespace occa {
 
     bool statement::isOccaInnerFor(const int forInfo){
       return ((forInfo & occaInnerForMask) != 0);
+    }
+
+    void statement::setVariableDeps(varInfo &var,
+                                    sDep_t &sDep){
+
+      expNode &flatRoot = *(expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.hasVariable()){
+          std::string nVarName = n.getMyVariableName();
+          varInfo *nVar        = hasVariableInScope(nVarName);
+
+          // [-] Missing up-checks
+          //    Example: var->x = 3
+          //              =
+          //        ->        3
+          //      var  x
+          if((nVar != &var) || // Checking our variable update
+             (n.up == NULL) || // Update needs an assignment operator
+             !isAnUpdateOperator(n.up->value) ||
+             (n.up->leaves[0]->getMyVariableName() != var.name)){
+
+            continue;
+          }
+
+          // Get right-side of assignment operator
+          expNode &exp = *(n.up->leaves[1]);
+
+          addVariableDeps(exp, sDep);
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
+
+    void statement::addVariableDeps(expNode &exp,
+                                    sDep_t &sDep){
+      if(exp.leafCount == 0){
+        if(exp.hasVariable()){
+          varInfo &var = *(hasVariableInScope(exp.value));
+
+          sDep.uniqueAdd(var);
+        }
+
+        return;
+      }
+
+      expNode &flatRoot = *(exp.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.hasVariable()){
+          varInfo &var = *(hasVariableInScope(n.value));
+
+          sDep.uniqueAdd(var);
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     void statement::addStatementDependencies(statementIdMap_t &idMap,

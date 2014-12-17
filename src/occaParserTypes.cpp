@@ -1851,7 +1851,8 @@ namespace occa {
     void varDepGraph::setup(varInfo &var,
                             statement &s,
                             statementIdMap_t &idMap){
-      statementNode *sn = &(s.varUpdateMap[&var]);
+      statementNode *sn = lastNode( &(s.varUpdateMap[&var]) );
+
 
       const int sID = idMap[&s];
 
@@ -1866,9 +1867,7 @@ namespace occa {
 
         const int sID2 = idMap[&s2];
 
-        if((sID2 < sID) &&
-           !has(sID2)){
-          std::cout << "sDep = " << s2 << '\n';
+        if((sID2 < sID) && !has(sID2)){
 
           sUpdates.push_back(sDep_t());
           sDep_t &sd = sUpdates.back();
@@ -1879,7 +1878,7 @@ namespace occa {
         else
           break;
 
-        sn = sn->right;
+        sn = sn->left;
       }
     }
 

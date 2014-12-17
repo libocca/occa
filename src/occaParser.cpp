@@ -2179,12 +2179,8 @@ namespace occa {
           occaLoopPos = occaLoopPos->right;
         }
 
-        std::cout << "====================================\n";
-
         // Get kernel dependencies
         sOuter.addNestedDependencies(idMap, sVec, depMap);
-
-        std::cout << "<><><><><><><><><><><><><><><><><><>\n";
 
         idDepMapIterator depIt = depMap.begin();
 
