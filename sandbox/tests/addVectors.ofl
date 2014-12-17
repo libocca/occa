@@ -63,6 +63,6 @@ kernel subroutine addVectors(entries, a, b, ab)
         if (N < entries) then
            ab(i) = a(i) + b(i)
         end if
-  end do
+     end do
 
 end subroutine addVectors

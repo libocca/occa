@@ -2168,6 +2168,7 @@ namespace occa {
           std::cout << '\n';
 #endif
 
+      std::cout << "sKernel  = " << sKernel << '\n';
       std::cout << "sKernel2 = " << sKernel2 << '\n';
 
       throw 1;
@@ -4113,10 +4114,21 @@ namespace occa {
 
       iterCheck = node2[0].value;
 
-      if((iterCheck == "<=") || (iterCheck == "<"))
-        bound = (std::string) node2[0][1];
-      else
-        bound = (std::string) node2[0][0];
+      if(parsingC){
+        if((iterCheck == "<=") || (iterCheck == "<"))
+          bound = (std::string) node2[0][1];
+        else
+          bound = (std::string) node2[0][0];
+      }
+      else{
+        std::string iter, start;
+        getLoopNode1Info(iter, start);
+
+        // [doStart][#]
+        std::string suffix = start.substr(7);
+
+        bound = "doEnd" + suffix;
+      }
     }
 
     void occaLoopInfo::getLoopNode3Info(std::string &stride,
@@ -4141,14 +4153,6 @@ namespace occa {
           stride = (std::string) node3[0][1];
         else
           stride = (std::string) node3[0][0];
-      }
-
-      if((!parsingC) &&
-         (stride.find("doStride") == 0)){
-        // [doStride][#]
-        std::string suffix = stride.substr(8);
-
-        stride = "(doStrideSign" + suffix + "*" + stride + ")";
       }
     }
 

@@ -1866,7 +1866,7 @@ namespace occa {
 
         const int sID2 = idMap[&s2];
 
-        if(sID2 < sID){
+        if(sID2 <= sID){
           sUpdates.push_back(sDep_t());
           sDep_t &sd = sUpdates.back();
 
