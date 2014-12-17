@@ -1538,13 +1538,17 @@ namespace occa {
     }
 
     void expNode::cloneTo(expNode &newExp){
-      const bool sChanged = (newExp.sInfo != sInfo);
+      const bool sChanged = ((newExp.sInfo != NULL) &&
+                             (newExp.sInfo != sInfo));
 
       newExp.info = info;
 
       const bool isVarInfo  = (info & expType::varInfo);
       const bool isTypeInfo = (info & expType::typeInfo);
       const bool isFuncInfo = (info & expType::function);
+
+      const bool inForStatement = ((newExp.sInfo != NULL) &&
+                                   (newExp.sInfo->type & forStatementType));
 
       if(isVarInfo | isTypeInfo | isFuncInfo){
         if(isVarInfo){
@@ -1560,7 +1564,7 @@ namespace occa {
         if(sChanged && newExp.sInfo->up){
           statement &sUp = *(newExp.sInfo->up);
 
-          if(isVarInfo){
+          if(isVarInfo && !inForStatement){
             sUp.addVariable(newExp.getVarInfo(), newExp.sInfo);
           }
           else if(isFuncInfo){
@@ -1571,6 +1575,14 @@ namespace occa {
             //   from the original or an extern
             if(!sUp.hasVariableInLocalScope(var.name))
               sUp.addVariable(&var);
+          }
+        }
+
+        // Add local-variables
+        if(sChanged){
+          if(isFuncInfo){
+            // Get function variable
+            varInfo &var = leaves[0]->getVarInfo();
 
             for(int i = 0; i < var.argumentCount; ++i){
               varInfo &argVar = *(new varInfo());
@@ -1579,6 +1591,10 @@ namespace occa {
               newExp.sInfo->addVariable(&argVar);
               var.setArgument(i, argVar);
             }
+          }
+
+          if(inForStatement){
+            newExp.sInfo->addVariable(newExp.getVarInfo());
           }
         }
       }

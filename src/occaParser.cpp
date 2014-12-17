@@ -2053,6 +2053,9 @@ namespace occa {
       statementVector_t sVec;
       idDepMap_t depMap;
 
+      std::vector<statement*> loopS;
+      std::vector<int> loopSID;
+
       sKernel2.setStatementIdMap(idMap);
       sKernel2.setStatementVector(idMap, sVec);
 
@@ -2072,9 +2075,6 @@ namespace occa {
 
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
-
-        std::vector<statement*> loopS;
-        std::vector<int> loopSID;
 
         const int outerDim = getOuterMostForDim(sOuter) + 1;
         const int innerDim = getInnerMostForDim(sOuter) + 1;
@@ -2140,6 +2140,16 @@ namespace occa {
 
           occaLoopPos = occaLoopPos->right;
         }
+      }
+
+      // Replace occa-fors with loop statements
+      const int loopCount = loopS.size();
+
+      for(int i = 0; i < loopCount; ++i){
+        const int sID = loopSID[i];
+
+        depMap[sID] = true;
+        sVec[sID]   = loopS[i];
       }
 
 #if 1 // Print dependencies
