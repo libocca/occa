@@ -1146,7 +1146,7 @@ namespace occa {
           varInfo &var        = *(sInfo->hasVariableInScope(varName));
 
           if(((i + 1) < leafCount) &&
-             isAnAssOperator(leaves[i + 1]->value)){
+             isAnUpdateOperator(leaves[i + 1]->value)){
 
             sInfo->addVariableToUpdateMap(var);
           }
@@ -1597,21 +1597,15 @@ namespace occa {
           std::string varName = getMyVariableName();
           varInfo *pVar       = newExp.sInfo->hasVariableInScope(varName);
 
-          std::cout
-            << "varName = " << varName << '\n'
-            << "pVar = " << pVar << '\n';
-
           if(pVar == NULL)
             pVar = sInfo->hasVariableInScope(varName);
 
           if((newExp.up == NULL) ||
-             !isAnAssOperator(up->value)){
+             !isAnUpdateOperator(up->value)){
 
             newExp.sInfo->addVariableToUsedMap(*pVar);
           }
           else{
-            std::cout << "pVar = " << *pVar << '\n';
-
             newExp.sInfo->addVariableToUpdateMap(*pVar);
           }
         }
@@ -3883,9 +3877,14 @@ namespace occa {
           std::string nVarName = n.getMyVariableName();
           varInfo *nVar        = hasVariableInScope(nVarName);
 
+          // [-] Missing up-checks
+          //    Example: var->x = 3
+          //              =
+          //        ->        3
+          //      var  x
           if((nVar != &var) || // Checking our variable update
              (n.up == NULL) || // Update needs an assignment operator
-             !isAnAssOperator(n.up->value) ||
+             !isAnUpdateOperator(n.up->value) ||
              (n.up->leaves[0]->getMyVariableName() != var.name)){
 
             continue;

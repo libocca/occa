@@ -291,8 +291,16 @@ namespace occa {
     return 0;
   }
 
+  bool isAnUpdateOperator(const std::string &s,
+                          const bool parsingC){
+    if(isAnAssOperator(s, parsingC))
+      return true;
+
+    return (s == "++" || s == "--");
+  }
+
   bool isAnAssOperator(const std::string &s,
-                       const bool parcingC){ // hehe
+                       const bool parsingC){ // hehe
     const size_t chars = s.size();
     const char *c      = s.c_str();
 
