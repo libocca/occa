@@ -1856,7 +1856,7 @@ namespace occa {
       const int sID = idMap[&s];
 
       while(sn){
-        statement &s2  = *(sn->value);
+        statement &s2 = *(sn->value);
 
         if((idMap.find(&s2) == idMap.end()) || // Skip if statement is not in the map
            (s2.type & functionStatementType)){ // Functions don't have dependencies
@@ -1866,7 +1866,10 @@ namespace occa {
 
         const int sID2 = idMap[&s2];
 
-        if(sID2 < sID){
+        if((sID2 < sID) &&
+           !has(sID2)){
+          std::cout << "sDep = " << s2 << '\n';
+
           sUpdates.push_back(sDep_t());
           sDep_t &sd = sUpdates.back();
 
@@ -1878,6 +1881,17 @@ namespace occa {
 
         sn = sn->right;
       }
+    }
+
+    bool varDepGraph::has(const int sID){
+      const int updates = sUpdates.size();
+
+      for(int i = 0; i < updates; ++i){
+        if(sUpdates[i].sID == sID)
+          return true;
+      }
+
+      return false;
     }
 
     void varDepGraph::addDependencyMap(idDepMap_t &depMap){

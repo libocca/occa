@@ -1987,6 +1987,7 @@ namespace occa {
 
       statementIdMap_t idMap;
       statementVector_t sVec;
+      idDepMap_t hostDepMap;
 
       std::stringstream ss;
 
@@ -2109,7 +2110,7 @@ namespace occa {
           continue;
         }
 
-        idDepMap_t minDepMap, depMap;
+        idDepMap_t depMap;
 
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
@@ -2164,8 +2165,8 @@ namespace occa {
 
           statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
 
-          s2.addStatementDependencies(ls.expRoot,
-                                      idMap, sVec, minDepMap);
+          ls.addStatementDependencies(s2,
+                                      idMap, sVec, hostDepMap);
 
           // Set statements in the hostKernel
           // // Replace occa-fors with loop statements
@@ -2174,20 +2175,16 @@ namespace occa {
           // depMap[sID] = true;
           // sVec[sID]   = &ls;
 
-          // Add minDepMap and continue with dependencies
-          idDepMapIterator minDepIt = minDepMap.begin();
-
-          while(minDepIt != minDepMap.end()){
-            depMap[minDepIt->first] = true;
-
-            ++minDepIt;
-          }
-
           ++loopPos;
           occaLoopPos = occaLoopPos->right;
         }
 
-        ksOuter.addNestedDependencies(idMap, sVec, depMap);
+        std::cout << "====================================\n";
+
+        // Get kernel dependencies
+        sOuter.addNestedDependencies(idMap, sVec, depMap);
+
+        std::cout << "<><><><><><><><><><><><><><><><><><>\n";
 
         idDepMapIterator depIt = depMap.begin();
 
@@ -2236,6 +2233,14 @@ namespace occa {
         }
 
         ++kID;
+      }
+
+      idDepMapIterator depIt = hostDepMap.begin();
+
+      while(depIt != hostDepMap.end()){
+        statement &depS = *(sVec[depIt->first]);
+
+        ++depIt;
       }
 
       //---[ Add kernel guards ]--------

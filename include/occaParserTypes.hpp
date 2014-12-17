@@ -342,6 +342,8 @@ namespace occa {
                  statement &s,
                  statementIdMap_t &idMap);
 
+      bool has(const int sID);
+
       void addDependencyMap(idDepMap_t &depMap);
 
       void addFullDependencyMap(idDepMap_t &depMap,

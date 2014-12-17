@@ -4355,17 +4355,17 @@ namespace occa {
                                              statementVector_t sVec,
                                              idDepMap_t &depMap){
 
-      addStatementDependencies(expRoot, idMap, sVec, depMap);
+      addStatementDependencies(*this, idMap, sVec, depMap);
     }
 
-    void statement::addStatementDependencies(expNode &exp,
+    void statement::addStatementDependencies(statement &fromS,
                                              statementIdMap_t &idMap,
                                              statementVector_t sVec,
                                              idDepMap_t &depMap){
       if(type & functionStatementType)
         return;
 
-      expNode &flatRoot = *(exp.makeFlatHandle());
+      expNode &flatRoot = *(expRoot.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &n = flatRoot[i];
@@ -4373,7 +4373,7 @@ namespace occa {
         if(n.hasVariable()){
           varInfo &var = *(hasVariableInScope(n.getMyVariableName()));
 
-          varDepGraph vdg(var, *this, idMap);
+          varDepGraph vdg(var, fromS, idMap);
           vdg.addFullDependencyMap(depMap, idMap, sVec);
         }
       }

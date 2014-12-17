@@ -597,7 +597,7 @@ namespace occa {
                                     statementVector_t sVec,
                                     idDepMap_t &depMap);
 
-      void addStatementDependencies(expNode &exp,
+      void addStatementDependencies(statement &fromS,
                                     statementIdMap_t &idMap,
                                     statementVector_t sVec,
                                     idDepMap_t &depMap);
