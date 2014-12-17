@@ -125,7 +125,10 @@
   </div>
 
   <div class="ui contributor profile segment">
-    <div class="missing image"></div>
+    <!-- <div class="missing image"></div> -->
+    <a class="ui rounded image">
+      <img src="/images/aboutUs/nigel.jpg"></img>
+    </a>
     <div class="info">
       <p align="center" class="name"> Nigel Nunn </p>
     </div>
