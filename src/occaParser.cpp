@@ -1652,7 +1652,8 @@ namespace occa {
           }
 
           if(s.getFunctionArgName(0) != "occaKernelInfoArg"){
-            varInfo arg0;
+            varInfo &arg0 = *(new varInfo());
+
             arg0.name = "occaKernelInfoArg";
 
             s.addFunctionArg(0, arg0);
@@ -1677,7 +1678,7 @@ namespace occa {
       const int argc = s.getDeclarationVarCount();
 
       //---[ Setup update statement ]---
-      expNode &newRoot = *(s.expRoot.clone(s));
+      expNode &newRoot = *(s.expRoot.clone());
       varInfo &newVar0 = newRoot.getVariableInfoNode(0)->getVarInfo();
 
       newVar0.leftQualifiers.clear();
@@ -2046,16 +2047,16 @@ namespace occa {
     }
 
     void parserBase::splitKernelStatement2(statement &sKernel){
-      statement &sk = *(sKernel.clone());
+      statement &sKernel2 = *(sKernel.clone());
 
       statementIdMap_t idMap;
-      statementVector_t sVec;
+      statementVector_t sVec, sVec2;
       idDepMap_t depMap;
 
-      sKernel.setStatementIdMap(idMap);
-      sKernel.setStatementVector(idMap, sVec);
+      sKernel2.setStatementIdMap(idMap);
+      sKernel2.setStatementVector(idMap, sVec);
 
-      statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel);
+      statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel2);
       statementNode *occaLoopPos  = occaLoopRoot;
 
       // Loop outer-most for-loops
@@ -2145,7 +2146,7 @@ namespace occa {
           std::cout << '\n';
 #endif
 
-      std::cout << "sKernel = " << sKernel << '\n';
+      std::cout << "sKernel2 = " << sKernel2 << '\n';
 
       throw 1;
     }

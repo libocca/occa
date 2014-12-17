@@ -433,7 +433,7 @@ namespace occa {
       }
 
       if(typedefVar){
-        c.typedefVar = new varInfo;
+        c.typedefVar  = new varInfo;
         *c.typedefVar = typedefVar->clone();
       }
 
@@ -769,10 +769,10 @@ namespace occa {
       }
 
       if(argumentCount){
-        v.argumentVarInfos = new varInfo[argumentCount];
+        v.argumentVarInfos = new varInfo*[argumentCount];
 
         for(int i = 0; i < argumentCount; ++i)
-          v.argumentVarInfos[i] = argumentVarInfos[i].clone();
+          v.argumentVarInfos[i] = new varInfo(argumentVarInfos[i]->clone());
       }
 
       if(functionNestCount){
@@ -1003,10 +1003,11 @@ namespace occa {
         int sLeafPos  = 0;
 
         argumentCount    = 1 + typeInfo::delimeterCount(leaf, ",");
-        argumentVarInfos = new varInfo[argumentCount];
+        argumentVarInfos = new varInfo*[argumentCount];
 
         for(int i = 0; i < argumentCount; ++i){
-          sLeafPos = argumentVarInfos[i].loadFrom(leaf, sLeafPos);
+          argumentVarInfos[i] = new varInfo();
+          sLeafPos = argumentVarInfos[i]->loadFrom(leaf, sLeafPos);
           sLeafPos = typeInfo::nextDelimeter(leaf, sLeafPos, ",") + 1;
         }
       }
@@ -1038,12 +1039,14 @@ namespace occa {
           argumentCount = (leaf.leafCount + 1)/2;
 
           if(argumentCount)
-            argumentVarInfos = new varInfo[argumentCount];
+            argumentVarInfos = new varInfo*[argumentCount];
 
-          for(int i = 0; i < argumentCount; ++i)
-            argumentVarInfos[i].name = leaf[2*i].value;
+          for(int i = 0; i < argumentCount; ++i){
+            argumentVarInfos[i] = new varInfo();
+            argumentVarInfos[i]->name = leaf[2*i].value;
+          }
 
-          ++leafPos;
+          leafPos = expRoot.leafCount;
         }
         else{
           leafPos = loadStackPointersFromFortran(expRoot, leafPos);
@@ -1382,10 +1385,12 @@ namespace occa {
         nodePos = nodePos->down;
 
         argumentCount    = variablesInStatement(nodePos);
-        argumentVarInfos = new varInfo[argumentCount];
+        argumentVarInfos = new varInfo*[argumentCount];
 
-        for(int i = 0; i < argumentCount; ++i)
-          nodePos = argumentVarInfos[i].loadFrom(s, nodePos);
+        for(int i = 0; i < argumentCount; ++i){
+          argumentVarInfos[i] = new varInfo();
+          nodePos = argumentVarInfos[i]->loadFrom(s, nodePos);
+        }
       }
 
       return nextNode;
@@ -1417,10 +1422,11 @@ namespace occa {
         argumentCount = variablesInStatement(downNode);
 
         if(argumentCount)
-          argumentVarInfos = new varInfo[argumentCount];
+          argumentVarInfos = new varInfo*[argumentCount];
 
         for(int i = 0; i < argumentCount; ++i){
-          argumentVarInfos[i].name = downNode->value;
+          argumentVarInfos[i] = new varInfo();
+          argumentVarInfos[i]->name = downNode->value;
 
           if((i + 1) < argumentCount)
             downNode = downNode->right->right;
@@ -1660,13 +1666,17 @@ namespace occa {
       }
     }
 
+    varInfo& varInfo::getArgument(const int pos){
+      return *(argumentVarInfos[pos]);
+    }
+
     void varInfo::addArgument(const int pos, varInfo &arg){
-      varInfo *newArgumentVarInfos = new varInfo[argumentCount + 1];
+      varInfo **newArgumentVarInfos = new varInfo*[argumentCount + 1];
 
       for(int i = 0; i < pos; ++i)
         newArgumentVarInfos[i] = argumentVarInfos[i];
 
-      newArgumentVarInfos[pos] = arg;
+      newArgumentVarInfos[pos] = &arg;
 
       for(int i = pos; i < argumentCount; ++i)
         newArgumentVarInfos[i + 1] = argumentVarInfos[i];
@@ -1730,11 +1740,11 @@ namespace occa {
         ret += '(';
 
         if(argumentCount){
-          ret += argumentVarInfos[0].toString();
+          ret += argumentVarInfos[0]->toString();
 
           for(int i = 1; i < argumentCount; ++i){
             ret += ", ";
-            ret += argumentVarInfos[i].toString();
+            ret += argumentVarInfos[i]->toString();
           }
         }
 

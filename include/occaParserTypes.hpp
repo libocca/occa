@@ -28,6 +28,10 @@ namespace occa {
         return qualifiers[pos];
       }
 
+      inline int size(){
+        return qualifierCount;
+      }
+
       void free();
 
       qualifierInfo clone();
@@ -160,7 +164,7 @@ namespace occa {
       expNode *stackExpRoots;
 
       int argumentCount;
-      varInfo *argumentVarInfos;
+      varInfo **argumentVarInfos;
 
       int functionNestCount;
       varInfo *functionNests;
@@ -279,6 +283,7 @@ namespace occa {
 
       void removeStackPointers();
 
+      varInfo& getArgument(const int pos);
       void addArgument(const int pos, varInfo &arg);
       //================================
 

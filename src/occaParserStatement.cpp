@@ -672,7 +672,8 @@ namespace occa {
 
         // Add initial arguments (they get updated later)
         for(int i = 0; i < var.argumentCount; ++i)
-          sInfo->addVariable( &(var.argumentVarInfos[i]) );
+          sInfo->addVariable( &(var.getArgument(i)) );
+
       }
 
       removeNodes(1, leafPos);
@@ -1512,8 +1513,32 @@ namespace occa {
         b.leaves[i]->up = &b;
     }
 
+    expNode* expNode::clone(){
+      expNode &newRoot = *(new expNode(*sInfo));
+
+      cloneTo(newRoot);
+
+      return &newRoot;
+    }
+
     expNode* expNode::clone(statement &s){
       expNode &newRoot = *(new expNode(s));
+
+      cloneTo(newRoot);
+
+      return &newRoot;
+    }
+
+    expNode* expNode::clone(expNode *original){
+      expNode &newLeaf = *(new expNode(*sInfo));
+
+      original->cloneTo(newLeaf);
+
+      return &newLeaf;
+    }
+
+    void expNode::cloneTo(expNode &newRoot){
+      const bool sChanged = (newRoot.sInfo != sInfo);
 
       newRoot.info = info;
 
@@ -1521,69 +1546,17 @@ namespace occa {
         if(info & expType::varInfo){
           varInfo &var = newRoot.addVarInfoNode();
           var = getVarInfo().clone();
-        }
-        if(info & expType::typeInfo){
-          typeInfo &type = newRoot.addTypeInfoNode();
-          type = getTypeInfo().clone();
-        }
-      }
-      else {
-        newRoot.value     = value;
-        newRoot.leafCount = leafCount;
 
-        if(leafCount){
-          newRoot.leaves = new expNode*[leafCount];
+          if(sChanged          &&
+             newRoot.sInfo->up &&
+             !newRoot.sInfo->up->hasVariableInLocalScope(var.name)){
 
-          for(int i = 0; i < leafCount; ++i){
-            newRoot.leaves[i]     = clone(leaves[i]);
-            newRoot.leaves[i]->up = &newRoot;
+            if(info == (expType::function |
+                        expType::declaration))
+              newRoot.sInfo->up->addVariable(&var);
+            else
+              newRoot.sInfo->up->addVariable(&var, sInfo);
           }
-        }
-      }
-
-      return &newRoot;
-    }
-
-    expNode* expNode::clone(expNode *original){
-      expNode &newLeaf = *(new expNode(*this));
-      expNode &o = *original;
-
-      newLeaf.info = o.info;
-
-      if(o.info & (expType::varInfo | expType::typeInfo)){
-        if(o.info & expType::varInfo){
-          varInfo &var = newLeaf.addVarInfoNode();
-          var = o.getVarInfo().clone();
-        }
-        else if(o.info & expType::typeInfo){
-          typeInfo &type = newLeaf.addTypeInfoNode();
-          type = o.getTypeInfo().clone();
-        }
-      }
-      else {
-        newLeaf.value     = o.value;
-        newLeaf.leafCount = o.leafCount;
-
-        if(o.leafCount){
-          newLeaf.leaves = new expNode*[o.leafCount];
-
-          for(int i = 0; i < o.leafCount; ++i){
-            newLeaf.leaves[i]     = o.clone(o.leaves[i]);
-            newLeaf.leaves[i]->up = &newLeaf;
-          }
-        }
-      }
-
-      return &newLeaf;
-    }
-
-    void expNode::cloneTo(expNode &newRoot){
-      newRoot.info  = info;
-
-      if(info & (expType::varInfo | expType::typeInfo)){
-        if(info & expType::varInfo){
-          varInfo &var = newRoot.addVarInfoNode();
-          var = getVarInfo().clone();
         }
         else if(info & expType::typeInfo){
           typeInfo &type = newRoot.addTypeInfoNode();
@@ -1594,13 +1567,28 @@ namespace occa {
         newRoot.value     = value;
         newRoot.leafCount = leafCount;
 
+        if(sChanged && hasVariable()){
+          std::string varName = getMyVariableName();
+          varInfo *pVar       = newRoot.sInfo->hasVariableInScope(varName);
+
+          if(pVar == NULL)
+            pVar = sInfo->hasVariableInScope(varName);
+
+          if((newRoot.up == NULL) ||
+             !isAnAssOperator(up->value)){
+
+            newRoot.sInfo->addVariableToUsedMap(*pVar);
+          }
+          else{
+            newRoot.sInfo->addVariableToUpdateMap(*pVar);
+          }
+        }
+
         if(leafCount){
           newRoot.leaves = new expNode*[leafCount];
 
-          for(int i = 0; i < leafCount; ++i){
-            newRoot.leaves[i]     = clone(leaves[i]);
-            newRoot.leaves[i]->up = &newRoot;
-          }
+          for(int i = 0; i < leafCount; ++i)
+            newRoot.leaves[i] = newRoot.clone(leaves[i]);
         }
       }
     }
@@ -1770,7 +1758,7 @@ namespace occa {
       varInfo **varLeaves = (varInfo**) leaves;
       varInfo *&varLeaf   = varLeaves[0];
 
-      varLeaf = new varInfo;
+      varLeaf = new varInfo();
       return *varLeaf;
     }
 
@@ -1785,7 +1773,7 @@ namespace occa {
       typeInfo **typeLeaves = (typeInfo**) leaves;
       typeInfo *&typeLeaf   = typeLeaves[0];
 
-      typeLeaf = new typeInfo;
+      typeLeaf = new typeInfo();
       return *typeLeaf;
     }
 
@@ -1874,7 +1862,7 @@ namespace occa {
 
           leafCount = 2;
 
-          expNode *varNode = leaves[1]->leaves[0]->clone(*sInfo);
+          expNode *varNode = (*this)[1][0].clone(*sInfo);
 
           leaves[1]->free();
           leaves[1] = varNode;
@@ -2967,6 +2955,15 @@ namespace occa {
       return NULL;
     }
 
+    varInfo* statement::hasVariableInLocalScope(const std::string &varName) const {
+      cScopeVarMapIterator it = scopeVarMap.find(varName);
+
+      if(it != scopeVarMap.end())
+        return it->second;
+
+      return NULL;
+    }
+
     bool statement::hasDescriptorVariable(const std::string descriptor) const {
       return hasQualifier(descriptor);
     }
@@ -3120,8 +3117,6 @@ namespace occa {
       --(statementCount);
 
       expNode &ret = *(sn->value->expRoot.clone(*this));
-
-      ret.switchBaseStatement(*(sn->value), *this);
 
       delete sn->value;
       delete sn;
@@ -4028,10 +4023,14 @@ namespace occa {
       }
     }
 
-    statement* statement::clone(){
+    statement* statement::clone(statement *up_){
       statement *newStatement;
 
-      if(up){
+      if(up_){
+        newStatement = new statement(up_->depth + 1,
+                                     type, up_);
+      }
+      else if(up){
         newStatement = new statement(depth,
                                      type, up);
       }
@@ -4043,27 +4042,42 @@ namespace occa {
 
       expRoot.cloneTo(newStatement->expRoot);
 
-      newStatement->scopeVarMap = scopeVarMap;
-
-      newStatement->statementCount = statementCount;
-
       newStatement->statementStart = NULL;
       newStatement->statementEnd   = NULL;
 
       if(statementCount == 0)
         return newStatement;
 
-      statementNode *nodePos = statementStart;
+      statementNode *sn = statementStart;
 
-      while(nodePos){
-        newStatement->addStatement( nodePos->value->clone() );
-        nodePos = nodePos->right;
+      while(sn){
+        newStatement->addStatement( sn->value->clone(newStatement) );
+        sn = sn->right;
+      }
+
+      // Add ninja-variables (nin-nin)
+      scopeVarMapIterator it = scopeVarMap.begin();
+
+      while(it != scopeVarMap.end()){
+        varInfo &var = *(it->second);
+
+        if(!newStatement->hasVariableInLocalScope(var.name))
+          newStatement->addVariable(var);
+
+        ++it;
       }
 
       return newStatement;
     }
 
-    void statement::printVariablesInStatement(){
+    void statement::printVariablesInScope(){
+      if(up)
+        up->printVariablesInScope();
+
+      printVariablesInLocalScope();
+    }
+
+    void statement::printVariablesInLocalScope(){
       scopeVarMapIterator it = scopeVarMap.begin();
 
       while(it != scopeVarMap.end()){
@@ -4071,13 +4085,6 @@ namespace occa {
 
         ++it;
       }
-    }
-
-    void statement::printVariablesInScope(){
-      if(up)
-        up->printVariablesInScope();
-
-      printVariablesInStatement();
     }
 
     void statement::printTypesInScope(){
@@ -4376,7 +4383,7 @@ namespace occa {
 
     std::string statement::getFunctionArgName(const int pos){
       if(type & functionDefinitionType){
-        return getFunctionVar()->argumentVarInfos[pos].name;
+        return getFunctionVar()->getArgument(pos).name;
       }
 
       return "";
@@ -4384,7 +4391,7 @@ namespace occa {
 
     varInfo* statement::getFunctionArgVar(const int pos){
       if(type & functionDefinitionType){
-        return &(getFunctionVar()->argumentVarInfos[pos]);
+        return &(getFunctionVar()->getArgument(pos));
       }
 
       return NULL;

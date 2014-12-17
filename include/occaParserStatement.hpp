@@ -216,6 +216,7 @@ namespace occa {
 
       static void swap(expNode &a, expNode &b);
 
+      expNode* clone();
       expNode* clone(statement &s);
       expNode* clone(expNode *original);
 
@@ -393,6 +394,7 @@ namespace occa {
       typeInfo* hasTypeInScope(const std::string &typeName) const;
 
       varInfo* hasVariableInScope(const std::string &varName) const;
+      varInfo* hasVariableInLocalScope(const std::string &varName) const;
 
       bool hasDescriptorVariable(const std::string descriptor) const;
       bool hasDescriptorVariableInScope(const std::string descriptor) const;
@@ -558,11 +560,10 @@ namespace occa {
 
       void addStatement(statement *newStatement);
 
-      statement* clone();
-
-      void printVariablesInStatement();
+      statement* clone(statement *up_ = NULL);
 
       void printVariablesInScope();
+      void printVariablesInLocalScope();
 
       void printTypesInScope();
       void printTypesInStatement();
