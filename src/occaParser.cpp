@@ -1989,6 +1989,9 @@ namespace occa {
       statementVector_t sVec;
       idDepMap_t hostDepMap;
 
+      statementVector_t loopStatements;
+      intVector_t loopStatementIDs, loopOffsets;
+
       std::stringstream ss;
 
       sKernel.setStatementIdMap(idMap);
@@ -2105,6 +2108,8 @@ namespace occa {
 
         varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
 
+        loopOffsets.push_back(loopStatements.size());
+
         if(loopIter == NULL){
           occaLoopPos = occaLoopPos->right;
           continue;
@@ -2167,6 +2172,9 @@ namespace occa {
 
           ls.addStatementDependencies(s2,
                                       idMap, sVec, hostDepMap);
+
+          loopStatements.push_back(&ls);
+          loopStatementIDs.push_back(idMap[&s2]);
 
           // Set statements in the hostKernel
           // // Replace occa-fors with loop statements
@@ -2231,13 +2239,54 @@ namespace occa {
         ++kID;
       }
 
+      // Build host kernel
+      int loopPos = 0;
+      kID = 0;
+
+      loopOffsets.push_back(loopStatements.size());
+
       idDepMapIterator depIt = hostDepMap.begin();
 
+      statement *blockStatement = NULL;
+      statementNode newStatementStart;
+      statementNode *newSNPos = &newStatementStart;
+
       while(depIt != hostDepMap.end()){
-        statement &depS = *(sVec[depIt->first]);
+        const int sID = (depIt->first);
+
+        statement &depS = *(sVec[sID]);
+
+        if(loopStatementIDs[loopPos] < sID){
+          statement &ls = *(loopStatements[loopPos]);
+
+          if(loopPos == loopOffsets[kID]){
+            blockStatement = new statement(ls.depth - 1,
+                                           blockStatementType,
+                                           &sKernel);
+
+            newSNPos = newSNPos->push(blockStatement);
+
+            ++kID;
+          }
+
+          blockStatement->addStatement(&ls);
+
+          if(loopPos == (loopOffsets[kID] - 1))
+            blockStatement = NULL;
+
+          ++loopPos;
+        }
+
+        if(blockStatement)
+          blockStatement->addStatement(&depS);
+        else
+          newSNPos = newSNPos->push(&depS);
 
         ++depIt;
       }
+
+      sKernel.statementStart = newStatementStart.right;
+      sKernel.statementEnd   = lastNode(sKernel.statementStart);
 
       //---[ Add kernel guards ]--------
       sKernel.up->pushSourceLeftOf(snKernel , "#if OCCA_USING_OPENMP");

@@ -4030,7 +4030,8 @@ namespace occa {
     }
 
     void statement::addStatement(statement *newStatement){
-      newStatement->up = this;
+      newStatement->up    = this;
+      newStatement->depth = (depth + 1);
 
       if(statementStart != NULL){
         ++statementCount;
@@ -4954,7 +4955,7 @@ namespace occa {
           if(back(ret) != '\n')
             ret += "\n" + tab + "}\n";
           else
-            ret += tab + "}";
+            ret += tab + "}\n";
         }
 
         return ret;
