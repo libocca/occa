@@ -38,6 +38,7 @@
 (add-hook 'okl-mode-hook 'add-okl-keywords)
 
 (add-to-list 'auto-mode-alist '("\\.okl\\'" . okl-mode))
+(add-to-list 'auto-mode-alist '("\\.ofl\\'" . f90-mode))
 
 ;;---[ OCCA Mode ]------------
 
