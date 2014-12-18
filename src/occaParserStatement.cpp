@@ -3779,6 +3779,10 @@ namespace occa {
       loadFromNode(labelCode( splitContent(source) ));
     }
 
+    void statement::addStatementsFromSource(const std::string &source){
+      loadAllFromNode(labelCode( splitContent(source) ));
+    }
+
     void statement::pushSourceLeftOf(statementNode *target,
                                      const std::string &source){
       addStatementFromSource(source);

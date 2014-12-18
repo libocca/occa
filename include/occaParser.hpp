@@ -132,11 +132,8 @@ namespace occa {
 
       void modifyTextureVariables();
 
-      statementNode* splitKernelStatement(statementNode *sn,
+      statementNode* splitKernelStatement(statementNode *snKernel,
                                           kernelInfo &info);
-
-      statementNode* splitKernelStatement2(statement &sKernel,
-                                           kernelInfo &info);
 
       statementNode* getOuterLoopsInStatement(statement &s);
       statementNode* getOccaLoopsInStatement(statement &s,

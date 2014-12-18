@@ -506,6 +506,7 @@ namespace occa {
       statement& createStatementFromSource(const std::string &source);
 
       void addStatementFromSource(const std::string &source);
+      void addStatementsFromSource(const std::string &source);
 
       void pushSourceLeftOf(statementNode *target,
                             const std::string &source);
