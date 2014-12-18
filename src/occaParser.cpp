@@ -2196,11 +2196,11 @@ namespace occa {
           statement &depS  = *(sVec[depIt->first]);
 
           if(depIt->first < idMap[&sOuter]){
-            // statement &depS2 = *(depS.clone());
+            statement &depS2 = *(depS.clone());
 
-            // zeroOccaIdsFrom(depS2);
+            zeroOccaIdsFrom(depS2);
 
-            // ks.addStatement(&depS2);
+            ks.addStatement(&depS2);
           }
 
           ++depIt;
