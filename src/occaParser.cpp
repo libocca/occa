@@ -932,8 +932,11 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if( !(s.type & forStatementType) )
+      if( !(s.type & forStatementType) ||
+          (s.getForStatementCount() <= 3) ){
+
         return;
+      }
 
       statement *spKernel = getStatementKernel(s);
 
@@ -941,9 +944,6 @@ namespace occa {
         return;
 
       if(statementKernelUsesNativeOCCA(s))
-        return;
-
-      if(s.getForStatementCount() <= 3)
         return;
 
       occaLoopInfo loopInfo(s, parsingC);
@@ -2196,11 +2196,11 @@ namespace occa {
           statement &depS  = *(sVec[depIt->first]);
 
           if(depIt->first < idMap[&sOuter]){
-            statement &depS2 = *(depS.clone());
+            // statement &depS2 = *(depS.clone());
 
-            zeroOccaIdsFrom(depS2);
+            // zeroOccaIdsFrom(depS2);
 
-            ks.addStatement(&depS2);
+            // ks.addStatement(&depS2);
           }
 
           ++depIt;

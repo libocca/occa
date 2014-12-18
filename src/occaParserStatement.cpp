@@ -1545,7 +1545,10 @@ namespace occa {
 
       const bool isVarInfo  = (info & expType::varInfo);
       const bool isTypeInfo = (info & expType::typeInfo);
-      const bool isFuncInfo = (info & expType::function);
+      const bool isFuncInfo = ((info == (expType::function |
+                                         expType::declaration)) ||
+                               (info == (expType::function |
+                                         expType::prototype)));
 
       const bool inForStatement = ((newExp.sInfo != NULL) &&
                                    (newExp.sInfo->type & forStatementType));
@@ -2140,6 +2143,9 @@ namespace occa {
       }
       else if(info & expType::varInfo){
         return getVarInfo().name;
+      }
+      else if(info & expType::function){
+        return value;
       }
 
       return "";
@@ -3779,14 +3785,8 @@ namespace occa {
 
       statementNode *newSN = statementEnd;
 
-      statementEnd = statementEnd->left;
-
-      if(statementEnd != target){
-        if(statementEnd)
-          statementEnd->right = NULL;
-        else
-          statementEnd = target;
-      }
+      statementEnd        = statementEnd->left;
+      statementEnd->right = NULL;
 
       if(statementStart == target)
         statementStart = newSN;
@@ -3804,18 +3804,13 @@ namespace occa {
                                       const std::string &source){
       addStatementFromSource(source);
 
+      if(target == statementEnd->left)
+        return;
+
       statementNode *newSN = statementEnd;
 
-      if(statementEnd == target)
-        statementEnd = newSN;
-      else{
-        statementEnd = statementEnd->left;
-
-        if(statementEnd)
-          statementEnd->right = NULL;
-        else
-          statementEnd = newSN;
-      }
+      statementEnd        = statementEnd->left;
+      statementEnd->right = NULL;
 
       if(target->right)
         target->right->left = newSN;
@@ -4402,7 +4397,7 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if(n.hasVariable()){
-          varInfo &var = *(hasVariableInScope(n.getMyVariableName()));
+          varInfo &var = *(fromS.hasVariableInScope(n.getMyVariableName()));
 
           varDepGraph vdg(var, fromS, idMap);
           vdg.addFullDependencyMap(depMap, idMap, sVec);
