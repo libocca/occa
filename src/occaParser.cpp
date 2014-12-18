@@ -2007,68 +2007,6 @@ namespace occa {
       statementNode newStatementStart;
       statementNode *newSNPos = &newStatementStart;
 
-#if 0
-      while(depIt != hostDepMap.end()){
-        const int sID = (depIt->first);
-
-        statement &depS = *(sVec[sID]);
-
-        if(loopStatementIDs[loopPos] < sID){
-          statement &ls = *(loopStatements[loopPos]);
-
-          if(loopPos == loopOffsets[kID]){
-            blockStatement = new statement(ls.depth - 1,
-                                           blockStatementType,
-                                           &sKernel);
-
-            newSNPos = newSNPos->push(blockStatement);
-
-            const int outerDim = outerDims[kID];
-            const int innerDim = innerDims[kID];
-            const int dims     = ((outerDim < innerDim) ? innerDim : outerDim);
-
-            ss << "const int dims = " << dims << ";\n"
-               << "int outer, inner;\n";
-
-            blockStatement->addStatementsFromSource(ss.str());
-
-            varInfo &outerVar    = *(blockStatement->hasVariableInScope("outer"));
-            statement &outerVarS = *(varUpdateMap[&outerVar].value);
-
-            typeInfo &type = *(new typeInfo);
-            type.name = "occa::dim";
-
-            outerVarS.getDeclarationVarInfo(0).baseType = &type;
-
-            ss.str("");
-
-            ++kID;
-          }
-
-          blockStatement->addStatement(&ls);
-
-          if(loopPos == (loopOffsets[kID] - 1)){
-            ss << "nestedKernels[" << (kID - 1) << "].setWorkingDims(dims, inner, outer);\n"
-               << "  nestedKernels[" << (kID - 1) << "](" << argsStr << ");\n";
-
-            blockStatement->addStatementsFromSource(ss.str());
-
-            ss.str("");
-
-            blockStatement = NULL;
-          }
-
-          ++loopPos;
-        }
-
-        if(blockStatement)
-          blockStatement->addStatement(&depS);
-        else
-          newSNPos = newSNPos->push(&depS);
-
-        ++depIt;
-      }
-#else
       for(int loopPos = 0; loopPos < loopCount; ++loopPos){
         const int loopID = loopStatementIDs[loopPos];
         statement &ls    = *(loopStatements[loopPos]);
@@ -2120,9 +2058,6 @@ namespace occa {
 
         blockStatement->addStatement(&ls);
 
-        std::cout << "loopPos = " << loopPos << '\n'
-                  << "loopOffsets[kID] = " << loopOffsets[kID] << '\n';
-
         if(loopPos == (loopOffsets[kID] - 1)){
           ss << "nestedKernels[" << (kID - 1) << "].setWorkingDims(dims, inner, outer);\n"
              << "  nestedKernels[" << (kID - 1) << "](" << argsStr << ");\n";
@@ -2134,7 +2069,6 @@ namespace occa {
           blockStatement = NULL;
         }
       }
-#endif
 
       sKernel.statementStart = newStatementStart.right;
       sKernel.statementEnd   = lastNode(sKernel.statementStart);
