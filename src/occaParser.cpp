@@ -1996,10 +1996,10 @@ namespace occa {
       }
 
       // Build host kernel
-      int loopPos = 0;
+      const int loopCount = loopStatements.size();
       kID = 0;
 
-      loopOffsets.push_back(loopStatements.size());
+      loopOffsets.push_back(loopCount);
 
       idDepMapIterator depIt = hostDepMap.begin();
 
@@ -2007,6 +2007,7 @@ namespace occa {
       statementNode newStatementStart;
       statementNode *newSNPos = &newStatementStart;
 
+#if 0
       while(depIt != hostDepMap.end()){
         const int sID = (depIt->first);
 
@@ -2067,6 +2068,73 @@ namespace occa {
 
         ++depIt;
       }
+#else
+      for(int loopPos = 0; loopPos < loopCount; ++loopPos){
+        const int loopID = loopStatementIDs[loopPos];
+        statement &ls    = *(loopStatements[loopPos]);
+
+        while(depIt != hostDepMap.end()){
+          const int sID = (depIt->first);
+
+          if(loopID < sID)
+            break;
+
+          statement &depS = *(sVec[sID]);
+
+          if(blockStatement)
+            blockStatement->addStatement(&depS);
+          else
+            newSNPos = newSNPos->push(&depS);
+
+          ++depIt;
+        }
+
+        if(loopPos == loopOffsets[kID]){
+          blockStatement = new statement(ls.depth - 1,
+                                         blockStatementType,
+                                         &sKernel);
+
+          newSNPos = newSNPos->push(blockStatement);
+
+          const int outerDim = outerDims[kID];
+          const int innerDim = innerDims[kID];
+          const int dims     = ((outerDim < innerDim) ? innerDim : outerDim);
+
+          ss << "const int dims = " << dims << ";\n"
+             << "int outer, inner;\n";
+
+          blockStatement->addStatementsFromSource(ss.str());
+
+          varInfo &outerVar    = *(blockStatement->hasVariableInScope("outer"));
+          statement &outerVarS = *(varUpdateMap[&outerVar].value);
+
+          typeInfo &type = *(new typeInfo);
+          type.name = "occa::dim";
+
+          outerVarS.getDeclarationVarInfo(0).baseType = &type;
+
+          ss.str("");
+
+          ++kID;
+        }
+
+        blockStatement->addStatement(&ls);
+
+        std::cout << "loopPos = " << loopPos << '\n'
+                  << "loopOffsets[kID] = " << loopOffsets[kID] << '\n';
+
+        if(loopPos == (loopOffsets[kID] - 1)){
+          ss << "nestedKernels[" << (kID - 1) << "].setWorkingDims(dims, inner, outer);\n"
+             << "  nestedKernels[" << (kID - 1) << "](" << argsStr << ");\n";
+
+          blockStatement->addStatementsFromSource(ss.str());
+
+          ss.str("");
+
+          blockStatement = NULL;
+        }
+      }
+#endif
 
       sKernel.statementStart = newStatementStart.right;
       sKernel.statementEnd   = lastNode(sKernel.statementStart);
