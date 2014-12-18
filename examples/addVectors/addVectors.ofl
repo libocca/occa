@@ -15,7 +15,8 @@ kernel subroutine addVectors(entries, a, b, ab)
         N = (item + (16 * (group - 1)))
 
         if (N < entries) then
-           ab[i - 1] = a[i - 1] + b[i- 1]
+           ab(N) = a(N) + b(N)
+        end if
      end do
   end do
 

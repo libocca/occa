@@ -12,9 +12,10 @@ namespace occa {
       warnForBarrierConditionals = true;
     }
 
-    const std::string parserBase::parseFile(const std::string &filename){
-      if(getFileExtension(filename) == "ofl")
-        parsingC = false;
+    const std::string parserBase::parseFile(const std::string &filename,
+                                            const bool parsingC_){
+
+      parsingC = parsingC_;
 
       const char *cRoot = cReadFile(filename);
 
@@ -55,9 +56,6 @@ namespace occa {
       modifyTextureVariables();
 
       addArgQualifiers();
-
-      // std::cout << (std::string) *globalScope << '\n';
-      // throw 1;
 
       loadKernelInfos();
 
@@ -560,12 +558,8 @@ namespace occa {
 
           currentState = loadMacro(line, currentState);
 
-          if(currentState & keepMacro){
+          if(currentState & keepMacro)
             currentState &= ~keepMacro;
-
-            if( !(currentState & ignoring) )
-              nodePos->type = macroKeywordType;
-          }
           // Let's keep all the macros for now
           // else
           //   ignoreLine = true;
@@ -598,8 +592,10 @@ namespace occa {
 
           popAndGoRight(nodePos);
         }
-        else
-          nodePos = nodePos->right;
+        else{
+          nodePos->type = macroKeywordType;
+          nodePos       = nodePos->right;
+        }
       }
 
       return nodeRoot;
@@ -616,10 +612,9 @@ namespace occa {
 
       nodeRoot = splitContent(cRoot, parsingC);
 
-      if(parsingC){
-        initMacros();
-        nodeRoot = preprocessMacros(nodeRoot);
-      }
+      initMacros(parsingC);
+
+      nodeRoot = preprocessMacros(nodeRoot);
 
       nodeRoot = labelCode(nodeRoot, parsingC);
 
@@ -627,7 +622,10 @@ namespace occa {
     }
     //====================================
 
-    void parserBase::initMacros(){
+    void parserBase::initMacros(const bool parsingC){
+      if(!parsingC)
+        initFortranMacros();
+
       if(macrosAreInitialized)
         return;
 
@@ -763,6 +761,13 @@ namespace occa {
 
       globalScope->addTypedef("void");
       globalScope->addTypedef("__builtin_va_list");
+    }
+
+    void parserBase::initFortranMacros(){
+      if(macrosAreInitialized)
+        return;
+
+      macrosAreInitialized = true;
     }
 
     void parserBase::applyToAllStatements(statement &s,
@@ -2025,6 +2030,14 @@ namespace occa {
                << "int outer, inner;\n";
 
             blockStatement->addStatementsFromSource(ss.str());
+
+            varInfo &outerVar    = *(blockStatement->hasVariableInScope("outer"));
+            statement &outerVarS = *(varUpdateMap[&outerVar].value);
+
+            typeInfo &type = *(new typeInfo);
+            type.name = "occa::dim";
+
+            outerVarS.getDeclarationVarInfo(0).baseType = &type;
 
             ss.str("");
 
@@ -3765,6 +3778,8 @@ namespace occa {
       fortranKeywordType["=="] = binaryOperatorType;
       fortranKeywordType["/="] = binaryOperatorType;
       fortranKeywordType[">="] = binaryOperatorType;
+
+      fortranKeywordType["#"]  = macroKeywordType;
 
       //---[ Types & Specifiers ]---------
       fortranKeywordType["int"]    = specifierType;

@@ -2624,7 +2624,6 @@ namespace occa {
       expNode **trueLeaves = leaves;
       leaves = new expNode*[leafCount];
 
-
       for(int i = 0; i < leafCount; ++i)
         leaves[i] = trueLeaves[leafPos + i];
 
@@ -2795,7 +2794,11 @@ namespace occa {
 
     int statement::findFortranStatementType(strNode *&nodeRoot,
                                             expNode *expPtr){
-      if(nodeRoot->type == 0)
+
+      if(nodeRoot->type == macroKeywordType)
+        return checkMacroStatementType(nodeRoot, expPtr);
+
+      else if(nodeRoot->type == 0)
         return 0;
 
       else if(nodeHasDescriptor(nodeRoot))
@@ -2836,7 +2839,7 @@ namespace occa {
 
       nodeRoot = nodeRoot->right;
 
-      return keywordType["occaOuterFor0"];
+      return occaForType;
     }
 
     int statement::checkStructStatementType(strNode *&nodeRoot, expNode *expPtr){
@@ -3147,7 +3150,7 @@ namespace occa {
                                                       nodeRootEnd,
                                                       parsingC);
 
-      // std::cout << "s = " << *newStatement << '\n';
+      // std::cout << "[" << getBits(newStatement->type) << "] s = " << *(newStatement) << '\n';
 
       return nodeRootEnd;
     }
@@ -4963,7 +4966,7 @@ namespace occa {
         return expRoot.toString(tab) + "\n";
       }
       else if(type & macroStatementType){
-        return expRoot.toString(tab);
+        return tab + expRoot.value + "\n";
       }
 
       return expRoot.toString(tab);

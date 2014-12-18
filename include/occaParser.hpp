@@ -38,7 +38,9 @@ namespace occa {
 
       parserBase();
 
-      const std::string parseFile(const std::string &filename);
+      const std::string parseFile(const std::string &filename,
+                                  const bool parsingC_ = true);
+
       const std::string parseSource(const char *cRoot);
 
       //---[ Macro Parser Functions ]---
@@ -59,7 +61,9 @@ namespace occa {
       strNode* splitAndPreprocessFortranContent(const char *cRoot);
       //====================================
 
-      void initMacros();
+      void initMacros(const bool parsingC = true);
+      void initFortranMacros();
+
       void loadLanguageTypes();
 
       void applyToAllStatements(statement &s,

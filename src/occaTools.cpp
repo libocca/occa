@@ -187,6 +187,8 @@ namespace occa {
 
     parser fileParser;
 
+    const bool parsingC = (getFileExtension(filename) != "ofl");
+
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
 
@@ -196,7 +198,8 @@ namespace occa {
     fs.clear();
 
     fs.open(iCachedBinary.c_str());
-    fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
+    fs << info.occaKeywords << fileParser.parseFile(pCachedBinary,
+                                                    parsingC);
 
     fs.close();
 
@@ -371,6 +374,7 @@ namespace occa {
     std::string ext = getFileExtension(filename);
 
     return ((ext == "okl") ||
+            (ext == "ofl") ||
             (ext == "cl") ||
             (ext == "cu"));
   }

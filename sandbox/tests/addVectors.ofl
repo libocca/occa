@@ -1,3 +1,8 @@
+#undef OCCA_USING_OPENMP
+#define OCCA_USING_OPENMP 1
+#undef OCCA_USING_CPU
+#define OCCA_USING_CPU 1
+
 device, real(4) function addTwoNumbers1(a, b)
   implicit none
 

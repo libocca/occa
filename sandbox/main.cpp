@@ -51,7 +51,8 @@ int main(int argc, char **argv){
   // }
 
   {
-    std::string parsedContent = parser.parseFile("tests/addVectors.ofl");
+    std::string parsedContent = parser.parseFile("tests/addVectors.ofl",
+                                                 parserNS::parsingFortran);
     std::cout << parsedContent << '\n';
   }
 

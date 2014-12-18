@@ -262,7 +262,6 @@ namespace occa {
       return 2;
     }
     else if(charIsIn(c[0], parserNS::fortranWordDelimeter)){
-
       if(c[0] == '.'){
         const char *c2 = (c + 1);
 

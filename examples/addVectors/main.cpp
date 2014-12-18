@@ -56,7 +56,7 @@ int main(int argc, char **argv){
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  addVectors = device.buildKernelFromSource("addVectors.okl",
+  addVectors = device.buildKernelFromSource("addVectors.ofl",
                                             "addVectors");
 
   //---[ Don't need to set these up when using OKL ]--------
