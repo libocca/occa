@@ -611,14 +611,14 @@ namespace occa {
       // Do Nothing, maybe add thread order next, dynamic static, etc
     }
     case OpenCL:{
-      aim.set("platform", arg1);
-      aim.set("device"  , arg2);
+      aim.set("platformID", arg1);
+      aim.set("deviceID"  , arg2);
     }
     case CUDA:{
-      aim.set("device", arg1);
+      aim.set("deviceID", arg1);
     }
     case COI:{
-      aim.set("device", arg1);
+      aim.set("deviceID", arg1);
     }
     }
 
