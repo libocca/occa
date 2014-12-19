@@ -1449,6 +1449,11 @@ namespace occa {
 
           if(entries == 1) {
             leaf.value = "[";
+            leaf.addNode(expType::operator_  , -1);
+            leaf.addNode(expType::presetValue, -1);
+
+            leaf[leaf.leafCount - 2].value = "-";
+            leaf[leaf.leafCount - 1].value = "1";
           }
           else {
             expNode newExp(*sInfo);
@@ -1801,7 +1806,10 @@ namespace occa {
 
     void expNode::addNode(const int info_,
                           const int pos){
-      addNodes(info_, pos, 1);
+      if(0 <= pos)
+        addNodes(info_, pos, 1);
+      else
+        addNodes(info_, leafCount, 1);
     }
 
     varInfo& expNode::addVarInfoNode(){
