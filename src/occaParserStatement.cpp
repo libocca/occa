@@ -1487,9 +1487,17 @@ namespace occa {
               sLeaf.leaves    = new expNode*[1];
               sLeaf.leafCount = 1;
 
-              sLeaf.leaves[0]     = &(newExp[i]);
+              sLeaf.leaves[0]     = &(newExp[entries - i - 1]);
               sLeaf.leaves[0]->up = &sLeaf;
+
+              sLeaf.addNode(expType::operator_  , -1);
+              sLeaf.addNode(expType::presetValue, -1);
+
+              sLeaf[sLeaf.leafCount - 2].value = "-";
+              sLeaf[sLeaf.leafCount - 1].value = "1";
             }
+
+            delete [] newExp.leaves;
 
             leafPos += (entries - 1);
           }
