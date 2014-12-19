@@ -1140,8 +1140,7 @@ namespace occa {
                 ++stackPointerCount;
               }
               else {
-                ++found;
-                setupFortranStackExp(stackExpRoots[stackPointerCount - found],
+                setupFortranStackExp(stackExpRoots[found++],
                                      *(expPos->leaves[1]));
               }
 
@@ -1162,7 +1161,7 @@ namespace occa {
               stackExpRoots = new expNode[stackPointerCount];
             }
             else{
-              setupFortranStackExp(stackExpRoots[0],
+              setupFortranStackExp(stackExpRoots[found],
                                    *expPos);
             }
 
