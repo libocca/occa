@@ -147,6 +147,14 @@ namespace occa {
 
       void zeroOccaIdsFrom(statement &s);
 
+      statementNode* createNestedKernelsFromLoops(statementNode *snKernel,
+                                                  kernelInfo &info,
+                                                  statementNode *outerLoopRoot);
+
+      std::string getNestedKernelArgsFromLoops(statement &sKernel);
+
+      void setupHostKernelArgsFromLoops(statement &sKernel);
+
       void loadKernelInfos();
 
       void stripOccaFromKernel(statement &s);

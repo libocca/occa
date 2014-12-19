@@ -986,7 +986,6 @@ namespace occa {
 
       if(opStride != "1"){
         ss << setupExp;
-        // node1.printOn(ss, "", expFlag::noSemicolon);
 
         ss << ' '
            << opSign
@@ -995,7 +994,6 @@ namespace occa {
       }
       else{
         ss << setupExp;
-        // node1.printOn(ss, "", expFlag::noSemicolon);
 
         ss << ' '
            << opSign
@@ -1740,8 +1738,9 @@ namespace occa {
 
     statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
                                                     kernelInfo &info){
-
       statement &sKernel = *(snKernel->value);
+
+      const bool usesOKL = statementKernelUsesNativeOKL(sKernel);
 
       statementIdMap_t idMap;
       statementVector_t sVec;
@@ -1769,97 +1768,17 @@ namespace occa {
       info.nestedKernels.clear();
 
       // Create empty kernels
-      int kID = 0;
+      statementNode *newSNEnd = createNestedKernelsFromLoops(snKernel,
+                                                             info,
+                                                             outerLoopRoot);
 
-      statementNode *newSNRoot, *newSNEnd;
-
-      const std::string kernelName = sKernel.getFunctionVar()->name;
-
-      while(outerLoopPos){
-        statement &ks  = *(outerLoopPos->value);
-        statement &ks2 = *(new statement(ks.depth - 1,
-                                         varUpdateMap,
-                                         varUsedMap));
-
-        ks2.type = sKernel.type;
-
-        info.nestedKernels.push_back(&ks2);
-
-        sKernel.expRoot.cloneTo(ks2.expRoot);
-
-        varInfo &kernelVar = *(new varInfo( ks2.getFunctionVar()->clone() ));
-        ks2.setFunctionVar(kernelVar);
-
-        ss << kernelName << kID;
-
-        kernelVar.name = ss.str();
-
-        ss.str("");
-
-        // Set ks2.up and add the kernel variable
-        ks2.up = sKernel.up;
-        ks2.up->addVariable(&kernelVar);
-
-        if(kID)
-          newSNEnd = newSNEnd->push(new statementNode(&ks2));
-        else
-          newSNRoot = newSNEnd = new statementNode(&ks2);
-
-        ++kID;
-        outerLoopPos = outerLoopPos->right;
-      }
-
-      // Squeeze new kernels after original kernel
-      if(sKernel.up->statementEnd == snKernel)
-        sKernel.up->statementEnd = newSNEnd;
-
-      newSNRoot->left = snKernel;
-      newSNEnd->right = snKernel->right;
-
-      if(newSNEnd->right)
-        newSNEnd->right->left = newSNEnd;
-
-      snKernel->right = newSNRoot;
-
-      if(sKernel.up->statementEnd == snKernel)
-        sKernel.up->statementEnd = newSNEnd;
-
-      statementNode *snPosStart = sKernel.statementStart;
-      statementNode *snPos      = snPosStart;
-
-      int snCount = 0;
-
-      // Append arguments (occaKernelInfoArg doesn't count)
-      const int argc = (sKernel.getFunctionArgCount() - 1);
-      std::string argsStr;
-
-      if(argc){
-        ss << sKernel.getFunctionArgName(1);
-
-        for(int i = 1; i < argc; ++i)
-          ss << ", " << sKernel.getFunctionArgName(i + 1);
-
-        argsStr = ss.str();
-
-        ss.str("");
-      }
-      else
-        argsStr = "";
+      // Get argument string
+      std::string argsStr = getNestedKernelArgsFromLoops(sKernel);
 
       // Add nestedKernels argument
-      {
-        varInfo &arg = *(new varInfo());
-        arg.loadFrom(sKernel, labelCode( splitContent("int *nestedKernels") ));
+      setupHostKernelArgsFromLoops(sKernel);
 
-        typeInfo &type = *(new typeInfo);
-        type.name = "occa::kernel";
-
-        arg.baseType = &type;
-
-        sKernel.addFunctionArg(1, arg);
-      }
-
-      kID = 0;
+      int kID = 0;
 
       // Loop through outer-loops to find statement dependencies
       //   and create the kernel
@@ -1871,11 +1790,16 @@ namespace occa {
         loopOffsets.push_back(loopStatements.size());
 
         if(loopIter == NULL){
-          occaLoopPos = occaLoopPos->right;
+          while(occaLoopPos->value != outerLoopPos->value)
+            occaLoopPos = occaLoopPos->right;
+
+          outerLoopPos = outerLoopPos->right;
+
+          if(outerLoopPos == NULL)
+            occaLoopPos = NULL;
+
           continue;
         }
-
-        idDepMap_t depMap;
 
         qualifierInfo &loopBounds = loopIter->leftQualifiers;
         int loopPos = 0;
@@ -1893,18 +1817,9 @@ namespace occa {
 
         //---[ Add kernel body ]----------
         statement &ks = *(info.nestedKernels[kID]);
-        ks.addStatement(occaLoopPos->value->clone());
 
-        statementNode *ksnOuter = ks.statementStart;
-        statement &ksOuter      = *(ksnOuter->value);
-
-        ss << "occaParallelFor" << outerDim;
-
-        // Add the parallel-for loops
-        ks.pushSourceLeftOf(ks.statementStart,
-                            ss.str());
-
-        ss.str("");
+        // Kernel's outer-most outer-loop
+        statementNode *ksnOuter = ks.statementEnd;
 
         // Loop through all the loops inside new kernel
         while(occaLoopPos){
@@ -1942,6 +1857,8 @@ namespace occa {
           ++loopPos;
           occaLoopPos = occaLoopPos->right;
         }
+
+        idDepMap_t depMap;
 
         // Get kernel dependencies
         sOuter.addNestedDependencies(idMap, sVec, depMap);
@@ -1995,17 +1912,27 @@ namespace occa {
         ++kID;
       }
 
+      loopOffsets.push_back(loopStatements.size());
+
       // Build host kernel
       const int loopCount = loopStatements.size();
       kID = 0;
-
-      loopOffsets.push_back(loopCount);
 
       idDepMapIterator depIt = hostDepMap.begin();
 
       statement *blockStatement = NULL;
       statementNode newStatementStart;
       statementNode *newSNPos = &newStatementStart;
+
+      if(loopCount == 0){
+        ss << "  nestedKernels[0](" << argsStr << ");\n";
+
+        statement &body = sKernel.createStatementFromSource(ss.str());
+
+        newStatementStart.push(&body);
+
+        ss.str("");
+      }
 
       for(int loopPos = 0; loopPos < loopCount; ++loopPos){
         const int loopID = loopStatementIDs[loopPos];
@@ -2179,6 +2106,122 @@ namespace occa {
       }
 
       expNode::freeFlatHandle(flatRoot);
+    }
+
+    statementNode* parserBase::createNestedKernelsFromLoops(statementNode *snKernel,
+                                                            kernelInfo &info,
+                                                            statementNode *outerLoopRoot){
+      statement &sKernel = *(snKernel->value);
+
+      statementNode *newSNRoot, *newSNEnd;
+      std::stringstream ss;
+
+      statementNode *outerLoopPos = outerLoopRoot;
+
+      const std::string kernelName = sKernel.getFunctionVar()->name;
+      int kID = 0;
+
+      while(outerLoopPos){
+        // Create nested kernels
+        statement &ks  = *(outerLoopPos->value);
+        statement &ks2 = *(new statement(ks.depth - 1,
+                                         varUpdateMap,
+                                         varUsedMap));
+
+        // [occaOuterFor][#]
+        const int outerDim = atoi(ks.expRoot.value.c_str() + 12);
+
+        ks2.type = sKernel.type;
+
+        info.nestedKernels.push_back(&ks2);
+
+        sKernel.expRoot.cloneTo(ks2.expRoot);
+
+        varInfo &kernelVar = *(new varInfo( ks2.getFunctionVar()->clone() ));
+        ks2.setFunctionVar(kernelVar);
+
+        ss << kernelName << kID;
+
+        kernelVar.name = ss.str();
+
+        ss.str("");
+
+        // Add kernel body
+        ks2.addStatement(ks.clone());
+
+        ss << "occaParallelFor" << outerDim;
+
+        // Add the parallel-for loops
+        ks2.pushSourceLeftOf(ks2.statementStart,
+                             ss.str());
+
+        ss.str("");
+
+        // Set ks2.up and add the kernel variable
+        ks2.up = sKernel.up;
+        ks2.up->addVariable(&kernelVar);
+
+        if(kID)
+          newSNEnd = newSNEnd->push(new statementNode(&ks2));
+        else
+          newSNRoot = newSNEnd = new statementNode(&ks2);
+
+        ++kID;
+        outerLoopPos = outerLoopPos->right;
+      }
+
+      // Squeeze new kernels after original kernel
+      if(sKernel.up->statementEnd == snKernel)
+        sKernel.up->statementEnd = newSNEnd;
+
+      newSNRoot->left = snKernel;
+      newSNEnd->right = snKernel->right;
+
+      if(newSNEnd->right)
+        newSNEnd->right->left = newSNEnd;
+
+      snKernel->right = newSNRoot;
+
+      if(sKernel.up->statementEnd == snKernel)
+        sKernel.up->statementEnd = newSNEnd;
+
+      return newSNEnd;
+    }
+
+    std::string parserBase::getNestedKernelArgsFromLoops(statement &sKernel){
+      // Append arguments (occaKernelInfoArg doesn't count)
+      const int argc = (sKernel.getFunctionArgCount() - 1);
+
+      std::stringstream ss;
+      std::string argsStr;
+
+      if(argc){
+        ss << sKernel.getFunctionArgName(1);
+
+        for(int i = 1; i < argc; ++i)
+          ss << ", " << sKernel.getFunctionArgName(i + 1);
+
+        argsStr = ss.str();
+
+        ss.str("");
+      }
+      else
+        argsStr = "";
+
+      return argsStr;
+    }
+
+    void parserBase::setupHostKernelArgsFromLoops(statement &sKernel){
+      // Add nestedKernels argument
+      varInfo &arg = *(new varInfo());
+      arg.loadFrom(sKernel, labelCode( splitContent("int *nestedKernels") ));
+
+      typeInfo &type = *(new typeInfo);
+      type.name = "occa::kernel";
+
+      arg.baseType = &type;
+
+      sKernel.addFunctionArg(1, arg);
     }
 
     void parserBase::loadKernelInfos(){

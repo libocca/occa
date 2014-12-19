@@ -64,13 +64,13 @@ int main(int argc, char **argv){
   // addVectors = device.buildKernelFromSource("addVectors.ofl",
   //                                           "addVectors");
 
-  //---[ Don't need to set these up when using OKL ]--------
+  //---[ Don't need to set these up when using OKL/OFL ]----
   // int dims = 1;
   // int itemsPerGroup(16);
   // int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
-  //========================================================
 
   // addVectors.setWorkingDims(dims, itemsPerGroup, groups);
+  //========================================================
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);

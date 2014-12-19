@@ -52,7 +52,7 @@ int main(int argc, char **argv){
 
   {
     std::string parsedContent = parser.parseFile("tests/addVectors.ofl",
-                                                 parserNS::parsingFortran);
+                                                 occa::parserNS::parsingFortran);
     std::cout << parsedContent << '\n';
   }
 

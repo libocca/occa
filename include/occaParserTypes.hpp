@@ -367,6 +367,10 @@ namespace occa {
       std::string baseName;
 
       std::vector<statement*> nestedKernels;
+
+      inline kernelInfo() :
+        name(),
+        baseName() {}
     };
     //==============================================
   };
