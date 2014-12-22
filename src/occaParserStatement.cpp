@@ -538,7 +538,8 @@ namespace occa {
 
           mergeFunctionCalls();
 
-          addNode(expType::operator_, ";");
+          if(leaves[leafCount - 1]->value != ";")
+            addNode(expType::operator_, ";");
         }
         else{
           std::cout << "Function [" << (leaves[0]->value) << "] is not defined in ["
@@ -557,7 +558,8 @@ namespace occa {
          ((*this)[0].value    != "=") ||
          ((*this)[0][0].value != funcExp->name)){
 
-        addNode(expType::operator_, ";");
+        if(leaves[leafCount - 1]->value != ";")
+          addNode(expType::operator_, ";");
 
         return;
       }
@@ -3790,7 +3792,8 @@ namespace occa {
 
       // [-] Missing one-line case
       while(nodeRoot &&
-            nodeRoot->value != "\\n"){
+            (nodeRoot->value != "\\n") &&
+            (nodeRoot->value != ";")){
 
         nodeRoot = nodeRoot->right;
       }
@@ -3969,8 +3972,8 @@ namespace occa {
       while(nodePos){
         nodePos = nodePos->right;
 
-        if(nodePos &&
-           nodePos->value == "\\n"){
+        if((nodePos->value == "\\n") ||
+           (nodePos->value == ";")){
 
           break;
         }
