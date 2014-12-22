@@ -217,6 +217,8 @@ namespace occa {
       bool hasAnArrayQualifier(const int pos = 0) const;
 
       void mergeFortranArrays();
+
+      void translateFortranPow();
       //================================
 
       static void swap(expNode &a, expNode &b);

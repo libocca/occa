@@ -1037,6 +1037,8 @@ namespace occa {
 
       for(int i = 0; i < 11; ++i)
         organizeLeaves(i);
+
+      translateFortranPow();
     }
 
     void expNode::organizeLeaves(const int level){
@@ -1665,6 +1667,37 @@ namespace occa {
 
         ++leafPos;
       }
+    }
+
+    void expNode::translateFortranPow(){
+      expNode &flatRoot = *(makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if((n.info == expType::LR) &&
+           (n.value == "**")){
+
+          expNode &x = n[0];
+          expNode &y = n[1];
+
+          n.value     = "occaPow";
+          n.info      = expType::function;
+          n.leafCount = 0;
+
+          n.addNode(expType::C, "(");
+
+          expNode &sLeaf1 = n[0];
+          sLeaf1.addNode(expType::LR, ",");
+
+          expNode &sLeaf2 = sLeaf1[0];
+
+          sLeaf2.addNode(x);
+          sLeaf2.addNode(y);
+        }
+      }
+
+      freeFlatHandle(flatRoot);
     }
     //================================
 
