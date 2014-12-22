@@ -26,6 +26,7 @@ device subroutine mxm(A, n1, B, n2, C, n3)
   real A(n1,n2), B(n2,n3), C(n1,n3)
 
   integer i, j, k
+  integer n1, n2, n3
 
   do i = 1, n1*n3
      C(i,1) = 0
@@ -79,6 +80,8 @@ kernel subroutine addVectors(entries, a, b, ab, a2, b2, ab2)
         else
            N = 1
         end if
+
+        if (N < entries) ab(i) = a(i) + b(i, 1)
 
         do while (.TRUE.)
            N = 2

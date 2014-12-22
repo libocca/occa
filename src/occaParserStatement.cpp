@@ -3539,7 +3539,22 @@ namespace occa {
         return nextNode;
       }
       else{
-        return newStatement->loadUntilFortranEnd(nodeRootEnd);
+        if(nodeRoot->value != "IF")
+          return newStatement->loadUntilFortranEnd(nodeRootEnd);
+
+        strNode *nodePos = nodeRoot;
+
+        while(nodePos != nodeRootEnd){
+          if(nodePos->value == "THEN")
+            return newStatement->loadUntilFortranEnd(nodeRootEnd);
+
+          nodePos = nodePos->right;
+        }
+
+        // [IF][(...)][load this]
+        newStatement->loadFromNode(nodeRoot->right->right, parsingFortran);
+
+        return nodeRootEnd;
       }
     }
 
