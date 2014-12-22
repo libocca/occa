@@ -3849,6 +3849,7 @@ namespace occa {
 
       fortranKeywordType["FUNCTION"]   = specialKeywordType;
       fortranKeywordType["SUBROUTINE"] = specialKeywordType;
+      fortranKeywordType["CALL"]       = specialKeywordType;
 
       fortranKeywordType["DOUBLE"] = qualifierType;
 

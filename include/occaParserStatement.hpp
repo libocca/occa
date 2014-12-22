@@ -504,6 +504,8 @@ namespace occa {
 
       static strNode* skipAfterStatement(strNode *nodePos);
       static strNode* skipUntilStatementEnd(strNode *nodePos);
+
+      static strNode* skipUntilFortranStatementEnd(strNode *nodePos);
       //================================
 
       statement* getGlobalScope();

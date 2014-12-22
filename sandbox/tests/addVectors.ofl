@@ -42,6 +42,8 @@ kernel subroutine addVectors(entries, a, b, ab)
      do item = 1, 16, inner0
         N = (item + (16 * (group - 1)))
 
+        call addTwoNumbers(ab(1), a(1), b(1))
+
         sharedVar(1,2)
         array1D(1)
         array2D(1,2)

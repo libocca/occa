@@ -3601,13 +3601,13 @@ namespace occa {
     //  ---[ Fortran ]--------
     // [+] Missing
     int statement::checkFortranStructStatementType(strNode *&nodeRoot, expNode *expPtr){
-      nodeRoot = skipUntilStatementEnd(nodeRoot);
+      nodeRoot = skipUntilFortranStatementEnd(nodeRoot);
 
       return structStatementType;
     }
 
     int statement::checkFortranUpdateStatementType(strNode *&nodeRoot, expNode *expPtr){
-      nodeRoot = skipUntilStatementEnd(nodeRoot);
+      nodeRoot = skipUntilFortranStatementEnd(nodeRoot);
 
       return updateStatementType;
     }
@@ -3616,7 +3616,7 @@ namespace occa {
       if((nodeRoot        && (nodeRoot->value        == "IMPLICIT")) &&
          (nodeRoot->right && (nodeRoot->right->value == "NONE"))){
 
-        nodeRoot = skipUntilStatementEnd(nodeRoot);
+        nodeRoot = skipUntilFortranStatementEnd(nodeRoot);
 
         return skipStatementType;
       }
@@ -3625,7 +3625,7 @@ namespace occa {
       nodeRoot = var.loadFromFortran(*this, nodeRoot);
 
       if( !(var.info & varType::functionDef) ){
-        nodeRoot = skipUntilStatementEnd(nodeRoot);
+        nodeRoot = skipUntilFortranStatementEnd(nodeRoot);
       }
 
       if(var.info & varType::var)
@@ -3676,7 +3676,7 @@ namespace occa {
     }
 
     int statement::checkFortranSpecialStatementType(strNode *&nodeRoot, expNode *expPtr){
-      nodeRoot = skipUntilStatementEnd(nodeRoot);
+      nodeRoot = skipUntilFortranStatementEnd(nodeRoot);
 
       return blankStatementType;
     }
@@ -3799,6 +3799,15 @@ namespace occa {
       return nodePos;
     }
 
+    strNode* statement::skipAfterStatement(strNode *nodePos){
+      nodePos = skipUntilStatementEnd(nodePos);
+
+      if(nodePos)
+        nodePos = nodePos->right;
+
+      return nodePos;
+    }
+
     strNode* statement::skipUntilStatementEnd(strNode *nodePos){
       while(nodePos){
         if(nodePos->type & endStatement)
@@ -3810,11 +3819,16 @@ namespace occa {
       return nodePos;
     }
 
-    strNode* statement::skipAfterStatement(strNode *nodePos){
-      nodePos = skipUntilStatementEnd(nodePos);
-
-      if(nodePos)
+    strNode* statement::skipUntilFortranStatementEnd(strNode *nodePos){
+      while(nodePos){
         nodePos = nodePos->right;
+
+        if(nodePos &&
+           nodePos->value == "\\n"){
+
+          break;
+        }
+      }
 
       return nodePos;
     }
