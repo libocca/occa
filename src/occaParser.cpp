@@ -613,8 +613,6 @@ namespace occa {
       initKeywords(parsingC);
 
       nodeRoot = splitContent(cRoot, parsingC);
-      nodeRoot->print();
-      throw 1;
 
       initMacros(parsingC);
 
