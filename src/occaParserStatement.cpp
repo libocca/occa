@@ -428,8 +428,18 @@ namespace occa {
         for(int i = 0; i < varCount; ++i){
           varInfo &var = leaves[i]->getVarInfo(0);
 
+          // Update here, also update in [Add variables to scope]
+          //   for older Fortran codes without [INTENT]
           // Hide stack info in arguments
           var.stackPointersUsed = 0;
+
+          // Make sure it registers as a pointer
+          if((var.pointerCount      == 0) &&
+             (var.stackPointerCount != 0)){
+
+            var.pointerCount = 1;
+            var.rightQualifiers.add("*", 0);
+          }
 
           if(hasIn)
             var.removeQualifier("INTENTIN");
@@ -453,6 +463,7 @@ namespace occa {
       }
       else{ // Add variables to scope
         for(int i = 0; i < varCount; ++i){
+
           varInfo &var = leaves[i]->getVarInfo(0);
           varInfo *pVar = sInfo->hasVariableInScope(var.name);
 
@@ -462,7 +473,23 @@ namespace occa {
 
             if(s &&
                (s->info & functionDefinitionType)){
-              std::cout << "s = " << *s << '\n';
+
+              // Hide stack info in arguments
+              var.stackPointersUsed = 0;
+
+              // Make sure it registers as a pointer
+              if((var.pointerCount      == 0) &&
+                 (var.stackPointerCount != 0)){
+
+                var.pointerCount = 1;
+                var.rightQualifiers.add("*", 0);
+              }
+
+              *(pVar) = var;
+            }
+            // Will give error message
+            else if(sInfo->up != NULL){
+              sInfo->up->addVariable(&var, sInfo);
             }
           }
           else{

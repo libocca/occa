@@ -22,12 +22,14 @@ device subroutine addTwoNumbers2(ab, a, b)
 
 end subroutine addTwoNumbers2
 
-kernel subroutine addVectors(entries, a, b, ab)
+kernel subroutine addVectors(entries, a, b, ab, a2, b2, ab2)
   implicit none
 
   integer(4), intent(in)  :: entries
   real(4)   , intent(in)  :: a(entries), b(entries, entries)
   real(4)   , intent(out) :: ab(entries)
+
+  real(4) a2(entries), b2(entries, entries), ab2(entries)
 
   integer(4), dimension(4)      :: array1D
   integer(4), dimension(4,8)    :: array2D
