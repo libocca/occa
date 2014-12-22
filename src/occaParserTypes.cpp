@@ -1104,83 +1104,88 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      if((expRoot[leafPos].value == "(") &&
-         (expRoot[leafPos].leafCount)){
+      if((expRoot[leafPos].value != "(") ||
+         (expRoot[leafPos].leafCount == 0)){
 
-        expRoot[leafPos].organize(parsingFortran);
+        if(expRoot[leafPos].value == "(")
+          return (leafPos + 1);
 
-        expNode *expPos = &(expRoot[leafPos][0]);
+        return leafPos;
+      }
 
-        bool hasColon = false;
+      expRoot[leafPos].organize(parsingFortran);
 
-        // rightQualifiers are copied from [firstVar]
-        if(rightQualifiers.has("*"))
-          rightQualifiers.remove("*");
+      expNode *expPos = &(expRoot[leafPos][0]);
 
-        if(expPos->value != ","){
-          if(expPos->value == ":"){
-            pointerCount = 1;
-            rightQualifiers.add("*", 0);
-          }
-          else{
-            stackPointerCount = 1;
+      bool hasColon = false;
 
-            stackExpRoots = new expNode[1];
+      // rightQualifiers are copied from [firstVar]
+      if(rightQualifiers.has("*"))
+        rightQualifiers.remove("*");
 
-            setupFortranStackExp(stackExpRoots[0],
-                                 expRoot[leafPos][0]);
-          }
+      if(expPos->value != ","){
+        if(expPos->value == ":"){
+          pointerCount = 1;
+          rightQualifiers.add("*", 0);
         }
-        else if((expPos->leafCount) &&
+        else{
+          stackPointerCount = 1;
+
+          stackExpRoots = new expNode[1];
+
+          setupFortranStackExp(stackExpRoots[0],
+                               expRoot[leafPos][0]);
+        }
+      }
+      else if((expPos->leafCount) &&
+              (expPos->value == ",")){
+
+        stackPointerCount = 1;
+        int found = 0;
+
+        for(int pass = 0; pass < 2; ++pass){
+
+          while((expPos->leafCount) &&
                 (expPos->value == ",")){
 
-          stackPointerCount = 1;
-          int found = 0;
+            if(!hasColon)
+              hasColon = ((expPos->leaves[0]->value == ":") ||
+                          (expPos->leaves[1]->value == ":"));
 
-          for(int pass = 0; pass < 2; ++pass){
-
-            while((expPos->leafCount) &&
-                  (expPos->value == ",")){
-
-              if(!hasColon)
-                hasColon = ((expPos->leaves[0]->value == ":") ||
-                            (expPos->leaves[1]->value == ":"));
-
-              if(pass == 0) {
-                ++stackPointerCount;
-              }
-              else {
-                setupFortranStackExp(stackExpRoots[found++],
-                                     *(expPos->leaves[1]));
-              }
-
-              expPos = expPos->leaves[0];
+            if(pass == 0) {
+              ++stackPointerCount;
+            }
+            else {
+              setupFortranStackExp(stackExpRoots[found++],
+                                   *(expPos->leaves[1]));
             }
 
-            if(hasColon){
-              pointerCount      = stackPointerCount;
-              stackPointerCount = 0;
-
-              for(int i = 0; i < pointerCount; ++i)
-                rightQualifiers.add("*", 0);
-
-              break;
-            }
-
-            if(pass == 0){
-              stackExpRoots = new expNode[stackPointerCount];
-            }
-            else{
-              setupFortranStackExp(stackExpRoots[found],
-                                   *expPos);
-            }
-
-            expPos = &(expRoot[leafPos][0]);
+            expPos = expPos->leaves[0];
           }
-        }
 
-        ++leafPos;
+          if(hasColon){
+            pointerCount      = stackPointerCount;
+            stackPointerCount = 0;
+
+            for(int i = 0; i < pointerCount; ++i)
+              rightQualifiers.add("*", 0);
+
+            break;
+          }
+
+          if(pass == 0){
+            stackExpRoots = new expNode[stackPointerCount];
+          }
+          else{
+            setupFortranStackExp(stackExpRoots[found],
+                                 *expPos);
+          }
+
+          expPos = &(expRoot[leafPos][0]);
+        }
       }
+
+      ++leafPos;
 
       if(pointerCount &&
          rightQualifiers.has("&")){
@@ -1756,13 +1761,14 @@ namespace occa {
             ret += (std::string) stackExpRoots[i];
         }
         else{
-          ret += '[';
-
+          ret += "[(";
           ret += (std::string) stackSizeExpNode(0);
+          ret += ')';
 
           for(int i = 1; i < stackPointerCount; ++i){
-            ret += '*';
+            ret += "*(";
             ret += (std::string) stackSizeExpNode(i);
+            ret += ")";
           }
 
           ret += ']';
