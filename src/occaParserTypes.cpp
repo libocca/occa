@@ -218,6 +218,7 @@ namespace occa {
           return (leafPos + 1);
         }
         else if(value == "DIMENSION"){
+          var.leftQualifiers.add("DIMENSION");
           return var.loadStackPointersFromFortran(expPos, leafPos + 1);
         }
       }

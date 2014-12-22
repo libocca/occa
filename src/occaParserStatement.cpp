@@ -138,7 +138,7 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
@@ -421,7 +421,20 @@ namespace occa {
 
       expNode::swap(*this, newExp);
 
-      //---[ Check INTENT ]---
+      //---[ Check DIMENSION ]----------
+      if(firstVar->hasQualifier("DIMENSION")){
+        for(int i = 1; i < varCount; ++i){
+          varInfo &var = leaves[i]->getVarInfo(0);
+
+          var.stackPointerCount = firstVar->stackPointerCount;
+          var.stackPointersUsed = firstVar->stackPointersUsed;
+          var.stackExpRoots     = firstVar->stackExpRoots;
+        }
+
+        firstVar->removeQualifier("DIMENSION");
+      }
+
+      //---[ Check INTENT ]-------------
       const bool hasIn    = firstVar->hasQualifier("INTENTIN");
       const bool hasOut   = firstVar->hasQualifier("INTENTOUT");
       const bool hasInOut = firstVar->hasQualifier("INTENTINOUT");
