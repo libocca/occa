@@ -581,8 +581,7 @@ namespace occa {
       (*this)[0].info  = expType::printValue;
       (*this)[0].value = "return";
 
-      addNode(expType::operator_, leafCount);
-      (*this)[leafCount - 1].value = ";";
+      addNode(expType::operator_, ";");
     }
 
     void expNode::splitFortranFlowStatement(){
