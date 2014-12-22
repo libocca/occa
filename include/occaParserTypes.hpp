@@ -74,10 +74,10 @@ namespace occa {
       void clear();
       //================================
 
-      std::string toString() const;
-      operator std::string () const;
+      std::string toString();
+      operator std::string ();
 
-      friend std::ostream& operator << (std::ostream &out, const qualifierInfo &type);
+      friend std::ostream& operator << (std::ostream &out, qualifierInfo &type);
     };
     //============================================
 
@@ -131,10 +131,10 @@ namespace occa {
                         int pos = -1);
       //================================
 
-      std::string toString(const std::string &tab = "") const;
-      operator std::string () const;
+      std::string toString(const std::string &tab = "");
+      operator std::string ();
 
-      friend std::ostream& operator << (std::ostream &out, const typeInfo &type);
+      friend std::ostream& operator << (std::ostream &out, typeInfo &type);
     };
     //============================================
 
@@ -160,7 +160,13 @@ namespace occa {
 
       std::string name;
 
-      int pointerCount, stackPointerCount;
+      int pointerCount;
+
+      // stackPointersUsed:
+      //   0: Only used for keeping sizes
+      //   1: Merge array to a 1D array
+      //   X: Same as stackPointerCount (default)
+      int stackPointerCount, stackPointersUsed;
       expNode *stackExpRoots;
 
       int argumentCount;
@@ -281,6 +287,7 @@ namespace occa {
       const std::string& getLastLeftQualifier() const;
       const std::string& getLastRightQualifier() const;
 
+      expNode& stackSizeExpNode(const int pos);
       void removeStackPointers();
 
       varInfo& getArgument(const int pos);
@@ -288,10 +295,11 @@ namespace occa {
       void addArgument(const int pos, varInfo &arg);
       //================================
 
-      std::string toString(const bool printType = true) const;
-      operator std::string () const;
+      std::string toString(const bool printType = true);
 
-      friend std::ostream& operator << (std::ostream &out, const varInfo &var);
+      operator std::string ();
+
+      friend std::ostream& operator << (std::ostream &out, varInfo &var);
     };
     //============================================
 

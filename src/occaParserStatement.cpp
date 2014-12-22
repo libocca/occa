@@ -368,6 +368,7 @@ namespace occa {
       varInfo dummyVar;
       int varStart = dummyVar.loadTypeFromFortran(*this, 0);
 
+      // [+] Needs to be updated on C++
       for(int i = varStart; i < leafCount; ++i){
         if(leaves[i]->value == ",")
           ++varCount;
@@ -387,6 +388,9 @@ namespace occa {
         varInfo &var  = leaf.addVarInfoNode(0);
 
         int nextLeafPos = var.loadFromFortran(*this, leafPos, firstVar);
+
+        if(var.stackPointerCount)
+          var.stackPointersUsed = 1;
 
         if(i == 0){
           leaf.leaves[0]->info |= expType::type;
@@ -1245,7 +1249,7 @@ namespace occa {
           sNewLeaf->leaves    = new expNode*[brackets];
 
           if(inserting){
-            newLeaf->addNode(expType::qualifier, newLeaf->leafCount);
+            newLeaf->addNode(expType::qualifier);
             newLeaf->leaves[newLeaf->leafCount - 1] = sNewLeaf;
           }
           else{
@@ -1449,13 +1453,25 @@ namespace occa {
 
           if(entries == 1) {
             leaf.value = "[";
-            leaf.addNode(expType::operator_  , -1);
-            leaf.addNode(expType::presetValue, -1);
 
-            leaf[leaf.leafCount - 2].value = "-";
-            leaf[leaf.leafCount - 1].value = "1";
+            if(leaf.leafCount){
+              expNode &sLeaf = leaf[0];
+
+              leaf.leafCount = 0;
+
+              leaf.addNode(expType::LR, "-");
+
+              leaf[0].addNode( sLeaf );
+              leaf[0].addNode(expType::presetValue, "1");
+            }
           }
           else {
+            expNode &varLeaf = *(leaves[leafPos - 1]);
+            varInfo *pVar = sInfo->hasVariableInScope(varLeaf.value);
+
+            const bool mergeEntries = ((pVar != NULL) &&
+                                       (pVar->stackPointersUsed == 1));
+
             expNode newExp(*sInfo);
             newExp.info = info;
             newExp.addNodes(expType::root, 0, entries);
@@ -1478,23 +1494,80 @@ namespace occa {
 
             entries = newExp.leafCount;
 
-            addNodes(expType::C, leafPos, (entries - 1));
+            if(!mergeEntries){
+              addNodes(expType::C, leafPos, (entries - 1));
 
-            for(int i = 0; i < entries; ++i){
-              expNode &sLeaf = *(leaves[leafPos + i]);
+              for(int i = 0; i < entries; ++i){
+                expNode &sLeaf = *(leaves[leafPos + i]);
 
-              sLeaf.value     = "[";
-              sLeaf.leaves    = new expNode*[1];
-              sLeaf.leafCount = 1;
+                sLeaf.value     = "[";
+                sLeaf.leafCount = 0;
 
-              sLeaf.leaves[0]     = &(newExp[entries - i - 1]);
-              sLeaf.leaves[0]->up = &sLeaf;
+                sLeaf.addNode(expType::LR, "-");
 
-              sLeaf.addNode(expType::operator_  , -1);
-              sLeaf.addNode(expType::presetValue, -1);
+                sLeaf[0].addNode( newExp[entries - i - 1] );
+                sLeaf[0].addNode(expType::presetValue, "1");
+              }
+            }
+            else{
+              expNode *cpLeaf = &leaf;
+              varInfo &var    = *pVar;
 
-              sLeaf[sLeaf.leafCount - 2].value = "-";
-              sLeaf[sLeaf.leafCount - 1].value = "1";
+              if(entries != var.stackPointerCount){
+                // Revert [var] back to original dimensions
+                var.stackPointersUsed = var.stackPointerCount;
+
+                // [+] Print [var] Fortran-style
+                std::cout << "Incorrect dimensions on variable ["
+                          << var << "], in statement ["
+                          << *(leaf.up) << "]\n";
+
+                throw 1;
+              }
+
+              leaf.value = "[";
+
+              if(leaf.leafCount){
+                delete [] leaf.leaves;
+                leaf.leafCount = 0;
+              }
+
+              for(int i = 0; i < (entries - 1); ++i){
+                expNode &cLeaf = *cpLeaf;
+
+                cLeaf.addNode(expType::LR, "+");
+
+                expNode &plusLeaf = cLeaf[0];
+
+                plusLeaf.addNodes(expType::C, 0, 2);
+
+                plusLeaf[0].value = "(";
+                plusLeaf[1].value = "(";
+
+                plusLeaf[0].addNode(expType::C, "(");
+
+                expNode &offLeaf = plusLeaf[0][0];
+
+                offLeaf.addNode(expType::LR, "-");
+                offLeaf[0].addNode( newExp[i] );
+                offLeaf[0].addNode(expType::presetValue, "1");
+
+                plusLeaf[1].addNode(expType::LR, "*");
+
+                expNode &nextLeaf = plusLeaf[1][0];
+
+                nextLeaf.addNode(var.stackSizeExpNode(entries - i - 1));
+                nextLeaf.addNode(expType::C , "(");
+
+                cpLeaf = &(nextLeaf[1]);
+              }
+
+              cpLeaf->addNode(expType::LR, "-");
+
+              expNode &lcpLeaf = (*cpLeaf)[-1];
+
+              lcpLeaf.addNode( newExp[entries - 1] );
+              lcpLeaf.addNode(expType::presetValue, "1");
             }
 
             delete [] newExp.leaves;
@@ -1783,22 +1856,59 @@ namespace occa {
     }
 
     void expNode::addNodes(const int info_,
-                           const int pos,
+                           const int pos_,
                            const int count){
+
+      const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+      reserveAndShift(pos, count);
+
+      for(int i = pos; i < (pos + count); ++i){
+        leaves[i] = new expNode(*this);
+
+        leaves[i]->info      = info_;
+        leaves[i]->leafCount = 0;
+        leaves[i]->leaves    = NULL;
+      }
+    }
+
+    void expNode::addNode(const int info_,
+                          const int pos){
+      addNodes(info_, pos, 1);
+    }
+
+    void expNode::addNode(const int info_,
+                          const std::string &value_,
+                          const int pos){
+
+      addNodes(info_, pos, 1);
+
+      if(0 <= pos)
+        leaves[pos]->value = value_;
+      else
+        leaves[leafCount - 1]->value = value_;
+    }
+
+    void expNode::addNode(expNode &node_,
+                          const int pos_){
+
+      const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+      reserveAndShift(pos, 1);
+
+      leaves[pos] = &node_;
+
+      node_.up = this;
+    }
+
+    void expNode::reserveAndShift(const int pos,
+                                  const int count){
 
       expNode **newLeaves = new expNode*[leafCount + count];
 
       //---[ Add Leaves ]-----
       for(int i = 0; i < pos; ++i)
         newLeaves[i] = leaves[i];
-
-      for(int i = pos; i < (pos + count); ++i){
-        newLeaves[i] = new expNode(*this);
-
-        newLeaves[i]->info      = info_;
-        newLeaves[i]->leafCount = 0;
-        newLeaves[i]->leaves    = NULL;
-      }
 
       for(int i = pos; i < leafCount; ++i)
         newLeaves[i + count] = leaves[i];
@@ -1810,14 +1920,6 @@ namespace occa {
       leaves = newLeaves;
 
       leafCount += count;
-    }
-
-    void expNode::addNode(const int info_,
-                          const int pos){
-      if(0 <= pos)
-        addNodes(info_, pos, 1);
-      else
-        addNodes(info_, leafCount, 1);
     }
 
     varInfo& expNode::addVarInfoNode(){
@@ -1984,6 +2086,7 @@ namespace occa {
 
     void expNode::addQualifier(const std::string &qualifier,
                                const int pos){
+      // ---[ OLD ]---
       if(info & expType::variable){
         if(leafCount){
           expNode &lqNode = *(leaves[0]);
@@ -2006,6 +2109,7 @@ namespace occa {
 
     void expNode::addPostQualifier(const std::string &qualifier,
                                    const int pos){
+      // ---[ OLD ]---
       if(info & expType::variable){
         if(leafCount){
           expNode &lqNode = *(leaves[0]);
@@ -2016,7 +2120,7 @@ namespace occa {
           }
 
           if( !(lqNode.lastLeaf()->info & expType::qualifier) )
-            lqNode.addNode(expType::qualifier, lqNode.leafCount);
+            lqNode.addNode(expType::qualifier);
 
           expNode &qNode = *(lqNode.lastLeaf());
 
@@ -4250,17 +4354,18 @@ namespace occa {
         varInfo &var = expRoot.getVarInfo(0);
         var.addQualifier(qualifier, pos);
       }
-      else if(type & forStatementType){
-        if(expRoot.leafCount){
-          expNode &node1    = *(expRoot.leaves[0]);
-          expNode &qualNode = *(node1.leaves[0]);
+      // ---[ OLD ]---
+      // else if(type & forStatementType){
+      //   if(expRoot.leafCount){
+      //     expNode &node1    = *(expRoot.leaves[0]);
+      //     expNode &qualNode = *(node1.leaves[0]);
 
-          if( !(qualNode.leaves[0]->info & expType::qualifier) )
-            qualNode.addNode(expType::qualifier, 0);
+      //     if( !(qualNode.leaves[0]->info & expType::qualifier) )
+      //       qualNode.addNode(expType::qualifier, 0);
 
-          qualNode.leaves[0]->value = qualifier;
-        }
-      }
+      //     qualNode.leaves[0]->value = qualifier;
+      //   }
+      // }
     }
 
     void statement::removeQualifier(const std::string &qualifier){

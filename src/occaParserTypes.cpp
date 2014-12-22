@@ -337,7 +337,7 @@ namespace occa {
     }
     //==================================
 
-    std::string qualifierInfo::toString() const {
+    std::string qualifierInfo::toString(){
       std::string ret;
 
       for(int i = 0; i < qualifierCount; ++i){
@@ -356,11 +356,11 @@ namespace occa {
       return ret;
     }
 
-    qualifierInfo::operator std::string () const {
+    qualifierInfo::operator std::string () {
       return toString();
     }
 
-    std::ostream& operator << (std::ostream &out, const qualifierInfo &q){
+    std::ostream& operator << (std::ostream &out, qualifierInfo &q){
       out << q.toString();
 
       return out;
@@ -640,7 +640,7 @@ namespace occa {
     }
     //==================================
 
-    std::string typeInfo::toString(const std::string &tab) const {
+    std::string typeInfo::toString(const std::string &tab){
       std::string ret;
 
       if(typedefing){
@@ -679,11 +679,11 @@ namespace occa {
       return ret;
     }
 
-    typeInfo::operator std::string () const {
+    typeInfo::operator std::string (){
       return toString();
     }
 
-    std::ostream& operator << (std::ostream &out, const typeInfo &type){
+    std::ostream& operator << (std::ostream &out, typeInfo &type){
       out << type.toString();
 
       return out;
@@ -703,7 +703,9 @@ namespace occa {
       name(""),
 
       pointerCount(0),
+
       stackPointerCount(0),
+      stackPointersUsed(0),
       stackExpRoots(NULL),
 
       argumentCount(0),
@@ -723,7 +725,9 @@ namespace occa {
       name(var.name),
 
       pointerCount(var.pointerCount),
+
       stackPointerCount(var.stackPointerCount),
+      stackPointersUsed(var.stackPointersUsed),
       stackExpRoots(var.stackExpRoots),
 
       argumentCount(var.argumentCount),
@@ -742,9 +746,11 @@ namespace occa {
 
       name = var.name;
 
-      pointerCount      = var.pointerCount;
-      stackPointerCount = var.stackPointerCount;
-      stackExpRoots     = var.stackExpRoots;
+      pointerCount = var.pointerCount;
+
+      stackPointerCount  = var.stackPointerCount;
+      stackPointersUsed  = var.stackPointersUsed;
+      stackExpRoots      = var.stackExpRoots;
 
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
@@ -760,6 +766,8 @@ namespace occa {
 
       v.leftQualifiers  = leftQualifiers.clone();
       v.rightQualifiers = rightQualifiers.clone();
+
+      v.stackPointersUsed = stackPointersUsed;
 
       if(stackPointerCount){
         v.stackExpRoots = new expNode[stackPointerCount];
@@ -985,6 +993,8 @@ namespace occa {
           expNode::swap(stackExpRoots[i], expRoot[leafPos + i]);
       }
 
+      stackPointersUsed = stackPointerCount;
+
       return (leafPos + stackPointerCount);
     }
 
@@ -1178,6 +1188,8 @@ namespace occa {
         rightQualifiers.remove("&");
       }
 
+      stackPointersUsed = stackPointerCount;
+
       return leafPos;
     }
 
@@ -1364,6 +1376,8 @@ namespace occa {
           nodePos = nodePos->right;
         }
       }
+
+      stackPointersUsed = stackPointerCount;
 
       return nodePos;
     }
@@ -1656,9 +1670,14 @@ namespace occa {
       return rightQualifiers.get(rightQualifiers.qualifierCount - 1);
     }
 
+    expNode& varInfo::stackSizeExpNode(const int pos){
+      return stackExpRoots[pos][0];
+    }
+
     void varInfo::removeStackPointers(){
       if(stackPointerCount){
         stackPointerCount = 0;
+        stackPointersUsed = 0;
 
         delete [] stackExpRoots;
         stackExpRoots = NULL;
@@ -1692,7 +1711,7 @@ namespace occa {
     }
     //================================
 
-    std::string varInfo::toString(const bool printType) const {
+    std::string varInfo::toString(const bool printType){
       std::string ret;
 
       bool addSpaceBeforeName = false;
@@ -1731,8 +1750,24 @@ namespace occa {
 
       ret += name;
 
-      for(int i = 0; i < stackPointerCount; ++i)
-        ret += (std::string) stackExpRoots[i];
+      if(stackPointerCount && stackPointersUsed){
+        if(stackPointersUsed == stackPointerCount){
+          for(int i = 0; i < stackPointerCount; ++i)
+            ret += (std::string) stackExpRoots[i];
+        }
+        else{
+          ret += '[';
+
+          ret += (std::string) stackSizeExpNode(0);
+
+          for(int i = 1; i < stackPointerCount; ++i){
+            ret += '*';
+            ret += (std::string) stackSizeExpNode(i);
+          }
+
+          ret += ']';
+        }
+      }
 
       for(int i = (functionNestCount - 1); 0 <= i; --i){
         ret += functionNests[i].toString();
@@ -1757,11 +1792,11 @@ namespace occa {
       return ret;
     }
 
-    varInfo::operator std::string () const {
+    varInfo::operator std::string () {
       return toString();
     }
 
-    std::ostream& operator << (std::ostream &out, const varInfo &var){
+    std::ostream& operator << (std::ostream &out, varInfo &var){
       out << var.toString();
       return out;
     }

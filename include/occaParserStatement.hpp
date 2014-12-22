@@ -17,6 +17,8 @@ namespace occa {
       static const int root            = (1 << 0);
 
       static const int LCR             = (7 << 1);
+      static const int LR              = (5 << 1);
+
       static const int L               = (1 << 1);
       static const int C               = (1 << 2);
       static const int R               = (1 << 3);
@@ -107,7 +109,10 @@ namespace occa {
       expNode(expNode &up_);
 
       inline expNode& operator [] (const int i){
-        return *leaves[i];
+        if(0 <= i)
+          return *leaves[i];
+        else
+          return *leaves[leafCount + i];
       }
 
       //---[ Find Statement ]-----------
@@ -235,8 +240,13 @@ namespace occa {
 
       static void freeFlatHandle(expNode &flatRoot);
 
-      void addNode(const int info_, const int pos = 0);
-      void addNodes(const int info_, const int pos, const int count = 1);
+      void addNode(const int info_ = 0, const int pos = -1);
+      void addNode(const int info_, const std::string &value_, const int pos = -1);
+      void addNodes(const int info_, const int pos_, const int count = 1);
+
+      void addNode(expNode &node_, const int pos_ = -1);
+
+      void reserveAndShift(const int pos, const int count = 1);
 
       varInfo& addVarInfoNode();
       varInfo& addVarInfoNode(const int pos);
@@ -294,7 +304,6 @@ namespace occa {
       //================================
 
       void freeLeaf(const int leafPos);
-
       void free();
 
       void print(const std::string &tab = "");
