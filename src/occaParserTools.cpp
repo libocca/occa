@@ -221,14 +221,16 @@ namespace occa {
       c += 2;
   }
 
-  void skipString(const char *&c){
+  void skipString(const char *&c, const bool parsingC){
     if(!isAString(c))
       return;
+
+    const char nl = (parsingC ? '\\' : '&');
 
     const char match = *(c++);
 
     while(*c != '\0'){
-      if(*c == '\\')
+      if(*c == nl)
         ++c;
       else if(*c == match){
         ++c;
@@ -345,7 +347,7 @@ namespace occa {
     bool breakNextLine = true;
 
     while(*c != '\0'){
-      skipString(c);
+      skipString(c, parsingC);
 
       if(*c == '\0')
         break;
@@ -404,7 +406,7 @@ namespace occa {
     }
 
     while(*c != '\0'){
-      skipString(c);
+      skipString(c, parserNS::parsingFortran);
 
       if(*c == '\0')
         break;
@@ -455,9 +457,13 @@ namespace occa {
     return ret;
   }
 
-  std::string strip(const char *c, const size_t chars){
+  std::string strip(const char *c,
+                    const size_t chars,
+                    const bool parsingC){
     if(chars == 0)
       return "";
+
+    const char nl = (parsingC ? '\\' : '&');
 
     const char *cLeft  = c;
     const char *cRight = c + (chars - 1);
@@ -473,7 +479,7 @@ namespace occa {
     const char *cMid = cLeft;
 
     while(cMid < cRight){
-      if((cMid[0] == '\\') && isWhitespace(cMid[1])){
+      if((cMid[0] == nl) && isWhitespace(cMid[1])){
         ret += strip(cLeft, cMid - cLeft);
         ret += ' ';
 
@@ -494,7 +500,8 @@ namespace occa {
     return compressWhitespace(ret);
   }
 
-  void strip(std::string &str){
+  void strip(std::string &str,
+             const bool parsingC){
     str = strip(str.c_str(), str.size());
   }
 
@@ -535,7 +542,7 @@ namespace occa {
     int status = parserNS::readingCode;
 
     while(*cRight != '\0'){
-      skipString(cRight);
+      skipString(cRight, parsingC);
 
       if((*cRight == '\0') || (*cRight == '\n'))
         break;
@@ -576,7 +583,7 @@ namespace occa {
     int status = parserNS::readingCode;
 
     while(*cRight != '\0'){
-      skipString(cRight);
+      skipString(cRight, parserNS::parsingFortran);
 
       if((*cRight == '\0') || (*cRight == '\n'))
         break;

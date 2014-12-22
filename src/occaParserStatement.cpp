@@ -138,7 +138,7 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
@@ -367,6 +367,8 @@ namespace occa {
 
       varInfo dummyVar;
       int varStart = dummyVar.loadTypeFromFortran(*this, 0);
+
+      leafCount = typeInfo::nextDelimeter(*this, 0, "\\n");
 
       // [+] Needs to be updated on C++
       for(int i = varStart; i < leafCount; ++i){
@@ -3767,6 +3769,11 @@ namespace occa {
         nodeRoot = nextNode;
 
         return updateStatementType;
+      }
+      else if((nodeRoot->value == "FUNCTION") ||
+              (nodeRoot->value == "SUBROUTINE")){
+
+        return checkFortranDescriptorStatementType(nodeRoot, expPtr);
       }
 
       nodeRoot = nextNode;

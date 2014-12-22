@@ -49,7 +49,7 @@ namespace occa {
   void skipNumber(const char *&c, const bool parsingC = true);
   void skipFortranNumber(const char *&c);
 
-  void skipString(const char *&c);
+  void skipString(const char *&c, const bool parsingC = true);
 
   char isAWordDelimeter(const char *c, const bool parsingC = true);
   char isAFortranWordDelimeter(const char *c);
@@ -64,8 +64,8 @@ namespace occa {
 
   std::string compressWhitespace(const std::string &str);
 
-  std::string strip(const char *c, const size_t chars);
-  void strip(std::string &str);
+  std::string strip(const char *c, const size_t chars, const bool parsingC = true);
+  void strip(std::string &str, const bool parsingC = true);
 
   char* cReadFile(const std::string &filename);
 

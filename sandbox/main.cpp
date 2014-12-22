@@ -50,8 +50,14 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/addVectors.ofl",
+  //                                                occa::parserNS::parsingFortran);
+  //   std::cout << parsedContent << '\n';
+  // }
+
   {
-    std::string parsedContent = parser.parseFile("tests/addVectors.ofl",
+    std::string parsedContent = parser.parseFile("tests/fakeNuma.ofl",
                                                  occa::parserNS::parsingFortran);
     std::cout << parsedContent << '\n';
   }

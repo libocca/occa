@@ -296,7 +296,7 @@ namespace occa {
         const char *cStart = c;
 
         if(isAString(c)){
-          skipString(c);
+          skipString(c, parsingC);
 
           info.parts[partPos] += std::string(cStart, (c - cStart));
           continue;
@@ -454,7 +454,7 @@ namespace occa {
         const char *cStart = c;
 
         if(isAString(c)){
-          skipString(c);
+          skipString(c, parsingC);
 
           newLine += std::string(cStart, (c - cStart));
           continue;
@@ -613,6 +613,8 @@ namespace occa {
       initKeywords(parsingC);
 
       nodeRoot = splitContent(cRoot, parsingC);
+      nodeRoot->print();
+      throw 1;
 
       initMacros(parsingC);
 
@@ -3057,7 +3059,7 @@ namespace occa {
       while(*c != '\0'){
         const char *cEnd = readLine(c, parsingC);
 
-        std::string line = strip(c, cEnd - c);
+        std::string line = strip(c, cEnd - c, parsingC);
 
         if(line.size()){
           if(!parsingC &&
@@ -3069,7 +3071,7 @@ namespace occa {
           if(status != insideCommentBlock){
             status = stripComments(line, parsingC);
 
-            strip(line);
+            strip(line, parsingC);
 
             if(line.size()){
               nodePos->originalLine = lineCount;
@@ -3079,7 +3081,7 @@ namespace occa {
           else{
             status = stripComments(line, parsingC);
 
-            strip(line);
+            strip(line, parsingC);
 
             if((status == finishedCommentBlock) && line.size()){
               nodePos->originalLine = lineCount;
@@ -3133,7 +3135,7 @@ namespace occa {
           }
 
           if(loadString){
-            skipString(cRight);
+            skipString(cRight, parsingC);
 
             if(!firstSectionNode){
               nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
