@@ -428,6 +428,9 @@ namespace occa {
         for(int i = 0; i < varCount; ++i){
           varInfo &var = leaves[i]->getVarInfo(0);
 
+          // Hide stack info in arguments
+          var.stackPointersUsed = 0;
+
           if(hasIn)
             var.removeQualifier("INTENTIN");
           else if(hasOut)
@@ -677,7 +680,6 @@ namespace occa {
         // Add initial arguments (they get updated later)
         for(int i = 0; i < var.argumentCount; ++i)
           sInfo->addVariable( &(var.getArgument(i)) );
-
       }
 
       removeNodes(1, leafPos);
@@ -1470,7 +1472,7 @@ namespace occa {
             varInfo *pVar = sInfo->hasVariableInScope(varLeaf.value);
 
             const bool mergeEntries = ((pVar != NULL) &&
-                                       (pVar->stackPointersUsed == 1));
+                                       (pVar->stackPointersUsed <= 1));
 
             expNode newExp(*sInfo);
             newExp.info = info;
