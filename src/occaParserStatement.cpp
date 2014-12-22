@@ -1646,8 +1646,10 @@ namespace occa {
 
                 expNode &nextLeaf = plusLeaf[1][0];
 
-                nextLeaf.addNode(var.stackSizeExpNode(entries - i - 1));
                 nextLeaf.addNode(expType::C , "(");
+                nextLeaf.addNode(expType::C , "(");
+
+                nextLeaf[0].addNode(var.stackSizeExpNode(entries - i - 1));
 
                 cpLeaf = &(nextLeaf[1]);
               }
