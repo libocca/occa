@@ -4596,7 +4596,7 @@ namespace occa {
           //      var  x
           if((nVar != &var) || // Checking our variable update
              (n.up == NULL) || // Update needs an assignment operator
-             !isAnUpdateOperator(n.up->value) ||
+             !isAnAssOperator(n.up->value) ||
              (n.up->leaves[0]->getMyVariableName() != var.name)){
 
             continue;
@@ -4689,10 +4689,13 @@ namespace occa {
         expNode &n = flatRoot[i];
 
         if(n.hasVariable()){
-          varInfo &var = *(fromS.hasVariableInScope(n.getMyVariableName()));
+          std::string varName = n.getMyVariableName();
+          varInfo *pVar = fromS.hasVariableInScope(varName);
 
-          varDepGraph vdg(var, fromS, idMap);
-          vdg.addFullDependencyMap(depMap, idMap, sVec);
+          if(pVar){
+            varDepGraph vdg(*pVar, fromS, idMap);
+            vdg.addFullDependencyMap(depMap, idMap, sVec);
+          }
         }
       }
 
