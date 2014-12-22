@@ -11,7 +11,7 @@ namespace occa {
 
       value(""),
 
-      type(emptyType),
+      info(emptyInfo),
       depth(0),
 
       sideDepth(0) {}
@@ -24,7 +24,7 @@ namespace occa {
 
       value(value_),
 
-      type(emptyType),
+      info(emptyInfo),
       depth(0),
 
       sideDepth(0) {}
@@ -37,7 +37,7 @@ namespace occa {
 
       value(n.value),
 
-      type(n.type),
+      info(n.info),
       depth(n.depth),
 
       sideDepth(n.sideDepth) {}
@@ -50,7 +50,7 @@ namespace occa {
 
       value = n.value;
 
-      type  = n.type;
+      info  = n.info;
       depth = n.depth;
 
       sideDepth = n.sideDepth;
@@ -170,7 +170,7 @@ namespace occa {
       strNode *newNode = new strNode();
 
       newNode->value = value;
-      newNode->type  = type;
+      newNode->info  = info;
 
       newNode->up    = up;
       newNode->depth = depth;
@@ -216,7 +216,7 @@ namespace occa {
     strNode* strNode::push(const std::string &value_){
       strNode *newNode = new strNode(value_);
 
-      newNode->type      = type;
+      newNode->info      = info;
       newNode->depth     = depth;
       newNode->sideDepth = sideDepth;
 
@@ -232,21 +232,21 @@ namespace occa {
     strNode* strNode::pushDown(const std::string &value_){
       strNode *newNode = new strNode(value_);
 
-      newNode->type  = type;
+      newNode->info  = info;
       newNode->depth = depth + 1;
 
       return pushDown(newNode);
     };
 
     node<strNode*> strNode::getStrNodesWith(const std::string &name_,
-                                            const int type_){
+                                            const int info_){
       node<strNode*> nRootNode;
       node<strNode*> *nNodePos = nRootNode.push(new strNode());
 
       strNode *nodePos = this;
 
       while(nodePos){
-        if((nodePos->type & everythingType) &&
+        if((nodePos->info & everythingType) &&
            (nodePos->value == name_)){
 
           nNodePos->value = nodePos;
@@ -254,7 +254,7 @@ namespace occa {
         }
 
         if(down){
-          node<strNode*> downRootNode = down->getStrNodesWith(name_, type_);
+          node<strNode*> downRootNode = down->getStrNodesWith(name_, info_);
 
           if(downRootNode.value != NULL){
             node<strNode*> *lastDownNode = (node<strNode*>*) downRootNode.value;
@@ -353,23 +353,23 @@ namespace occa {
       strNode *nodePos = this;
 
       while(nodePos){
-        if( !(nodePos->type & startSection) ){
-          std::cout << tab << "[" << *nodePos << "] (" << getBits(nodePos->type) << ")\n";
+        if( !(nodePos->info & startSection) ){
+          std::cout << tab << "[" << *nodePos << "] (" << getBits(nodePos->info) << ")\n";
         }
         else{
           const char startChar = nodePos->value[0];
           const char endChar   = segmentPair(startChar);
 
-          const int startCharType = nodePos->type;
-          const int endCharType   = ((startCharType & ~startSection) | endSection);
+          const int startCharInfo = nodePos->info;
+          const int endCharInfo   = ((startCharInfo & ~startSection) | endSection);
 
           printf("--------------------------------------------\n");
-          std::cout << tab << "  " << "[" << startChar << "] (" << getBits(startCharType) << ")\n";
+          std::cout << tab << "  " << "[" << startChar << "] (" << getBits(startCharInfo) << ")\n";
 
           if(nodePos->down)
             nodePos->down->print(tab + "  ");
 
-          std::cout << tab << "  " << "[" << endChar << "] (" << getBits(endCharType) << ")\n";
+          std::cout << tab << "  " << "[" << endChar << "] (" << getBits(endCharInfo) << ")\n";
           printf("--------------------------------------------\n");
         }
 

@@ -92,7 +92,7 @@ namespace occa {
 
       // Check if a variable snuck in
       while(labelNodePos){
-        if(labelNodePos->type & unknownVariable)
+        if(labelNodePos->info & unknownVariable)
           return false;
 
         labelNodePos = labelNodePos->right;
@@ -104,7 +104,7 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
-      if(labelNodeRoot->type & presetValue)
+      if(labelNodeRoot->info & presetValue)
         return typeHolder(*labelNodeRoot);
 
       strNode *labelNodePos = labelNodeRoot;
@@ -112,7 +112,7 @@ namespace occa {
       while(labelNodePos){
         if(labelNodePos->down){
           labelNodePos->value = evaluateLabelNode(labelNodePos->down);
-          labelNodePos->type  = presetValue;
+          labelNodePos->info  = presetValue;
         }
 
         if(labelNodePos->right == NULL)
@@ -134,27 +134,27 @@ namespace occa {
         minOpType     = -1;
 
         while(labelNodePos){
-          if(labelNodePos->type & operatorType){
-            int opType = (labelNodePos->type & operatorType);
+          if(labelNodePos->info & operatorType){
+            int opType = (labelNodePos->info & operatorType);
 
             opType &= ~qualifierType;
 
             if(opType & unitaryOperatorType){
               if((opType & binaryOperatorType) && // + and - operators
                  (labelNodePos->left)          &&
-                 (labelNodePos->left->type & presetValue)){
+                 (labelNodePos->left->info & presetValue)){
 
                 opType = binaryOperatorType;
               }
               else if((opType & rUnitaryOperatorType) &&
                       (labelNodePos->left)            &&
-                      (labelNodePos->left->type & presetValue)){
+                      (labelNodePos->left->info & presetValue)){
 
                 opType = rUnitaryOperatorType;
               }
               else if((opType & lUnitaryOperatorType) &&
                       (labelNodePos->right)           &&
-                      (labelNodePos->right->type & presetValue)){
+                      (labelNodePos->right->info & presetValue)){
 
                 opType = lUnitaryOperatorType;
               }
@@ -190,7 +190,7 @@ namespace occa {
               std::string a  = minOpNode->right->value;
 
               minOpNode->value = applyOperator(op, a);
-              minOpNode->type  = presetValue;
+              minOpNode->info  = presetValue;
 
               minOpNode->right->pop();
             }
@@ -207,7 +207,7 @@ namespace occa {
             std::string b  = minOpNode->right->right->value;
 
             minOpNode->value = applyOperator(a, op, b);
-            minOpNode->type  = presetValue;
+            minOpNode->info  = presetValue;
 
             minOpNode->right->pop();
             minOpNode->right->pop();
@@ -221,7 +221,7 @@ namespace occa {
             std::string c  = minOpNode->right->right->right->right->value;
 
             minOpNode->value = applyOperator(a, op, b, c);
-            minOpNode->type  = presetValue;
+            minOpNode->info  = presetValue;
 
             minOpNode->right->pop();
             minOpNode->right->pop();
@@ -595,7 +595,7 @@ namespace occa {
           popAndGoRight(nodePos);
         }
         else{
-          nodePos->type = macroKeywordType;
+          nodePos->info = macroKeywordType;
           nodePos       = nodePos->right;
         }
       }
@@ -800,7 +800,7 @@ namespace occa {
     }
 
     bool parserBase::statementIsAKernel(statement &s){
-      if(s.type & functionStatementType){
+      if(s.info & functionStatementType){
         if(s.hasQualifier("occaKernel"))
           return true;
       }
@@ -824,12 +824,12 @@ namespace occa {
       return sUp;
     }
     statement* parserBase::getStatementOuterMostLoop(statement &s){
-      statement *ret = ((s.type == occaForType) ? &s : NULL);
+      statement *ret = ((s.info == occaForType) ? &s : NULL);
 
       statement *sUp = &s;
 
       while(sUp){
-        if(sUp->type == occaForType)
+        if(sUp->info == occaForType)
           ret = sUp;
 
         sUp = sUp->up;
@@ -919,7 +919,7 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if( !(s.type & forStatementType) ||
+      if( !(s.info & forStatementType) ||
           (s.getForStatementCount() <= 3) ){
 
         return;
@@ -997,11 +997,11 @@ namespace occa {
       s.expRoot.value = occaForName;
       s.expRoot.free();
 
-      s.type = occaForType;
+      s.info = occaForType;
     }
 
     bool parserBase::statementHasOccaOuterFor(statement &s){
-      if(s.type == occaForType){
+      if(s.info == occaForType){
         std::string &forName = s.expRoot.value;
 
         if((forName.find("occaOuterFor") != std::string::npos) &&
@@ -1026,7 +1026,7 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaFor(statement &s){
-      if(s.type == occaForType)
+      if(s.info == occaForType)
         return true;
 
       statementNode *statementPos = s.statementStart;
@@ -1042,7 +1042,7 @@ namespace occa {
     }
 
     bool parserBase::statementHasOklFor(statement &s){
-      if(s.type == forStatementType)
+      if(s.info == forStatementType)
         return (s.getForStatementCount() == 4);
 
       statementNode *statementPos = s.statementStart;
@@ -1082,7 +1082,7 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if( !(s2.type & functionStatementType) ||
+        if( !(s2.info & functionStatementType) ||
             statementIsAKernel(s2) ){
 
           snPos = snPos->right;
@@ -1130,11 +1130,11 @@ namespace occa {
     }
 
     void parserBase::setupCudaVariables(statement &s){
-      if((!(s.type & simpleStatementType)    &&
-          !(s.type & forStatementType)       &&
-          !(s.type & functionStatementType)) ||
+      if((!(s.info & simpleStatementType)    &&
+          !(s.info & forStatementType)       &&
+          !(s.info & functionStatementType)) ||
          // OCCA for's don't have arguments
-         (s.type == occaForType))
+         (s.info == occaForType))
         return;
 
       if(getStatementKernel(s) == NULL)
@@ -1191,7 +1191,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if(s.type & functionPrototypeType)
+        if(s.info & functionPrototypeType)
           prototypes[s.getFunctionName()] = true;
 
         statementPos = statementPos->right;
@@ -1202,7 +1202,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if(s.type & functionStatementType){
+        if(s.info & functionStatementType){
           if(s.hasQualifier("occaKernel")){
             statementPos = statementPos->right;
             continue;
@@ -1211,7 +1211,7 @@ namespace occa {
           if(!s.hasQualifier("occaFunction"))
             s.addQualifier("occaFunction");
 
-          if( !(s.type & functionDefinitionType) ){
+          if( !(s.info & functionDefinitionType) ){
             statementPos = statementPos->right;
             continue;
           }
@@ -1227,7 +1227,7 @@ namespace occa {
     }
 
     int parserBase::statementOccaForNest(statement &s){
-      if((s.type != forStatementType) ||
+      if((s.info != forStatementType) ||
          (s.getForStatementCount() != 4)){
 
         return notAnOccaFor;
@@ -1448,7 +1448,7 @@ namespace occa {
       while(snPos){
         statement &s = *(snPos->value);
 
-        if((s.type & declareStatementType) &&
+        if((s.info & declareStatementType) &&
            (s.hasQualifier("occaConst"))){
 
           s.removeQualifier("occaConst");
@@ -1469,35 +1469,35 @@ namespace occa {
       else
         nodeRoot = new strNode("occaPrivate");
 
-      nodeRoot->type      = presetValue;
+      nodeRoot->info      = presetValue;
       nodeRoot->depth     = depth;
       nodeRoot->sideDepth = sideDepth;
 
       strNode *nodePos = nodeRoot->pushDown("(");
 
-      nodePos->type  = keywordType["("];
+      nodePos->info  = keywordType["("];
       nodePos->depth = depth + 1;
 
       var.removeQualifier("exclusive");
 
       for(int i = 0; i < var.leftQualifiers.qualifierCount; ++i){
         nodePos       = nodePos->push(var.leftQualifiers.qualifiers[i]);
-        nodePos->type = qualifierType;
+        nodePos->info = qualifierType;
       }
 
       nodePos       = nodePos->push(var.baseType->name);
-      nodePos->type = specifierType;
+      nodePos->info = specifierType;
 
       for(int i = 0; i < var.rightQualifiers.qualifierCount; ++i){
         nodePos       = nodePos->push(var.rightQualifiers.qualifiers[i]);
-        nodePos->type = keywordType[var.rightQualifiers.qualifiers[i]];
+        nodePos->info = keywordType[var.rightQualifiers.qualifiers[i]];
       }
 
       nodePos       = nodePos->push(",");
-      nodePos->type = keywordType[","];
+      nodePos->info = keywordType[","];
 
       nodePos       = nodePos->push(var.name);
-      nodePos->type = unknownVariable;
+      nodePos->info = unknownVariable;
 
       if(var.stackPointerCount){
         if(1 < var.stackPointerCount){
@@ -1506,17 +1506,17 @@ namespace occa {
         }
 
         nodePos       = nodePos->push(",");
-        nodePos->type = keywordType[","];
+        nodePos->info = keywordType[","];
 
         nodePos       = nodePos->push((std::string) var.stackExpRoots[0]);
-        nodePos->type = presetValue;
+        nodePos->info = presetValue;
       }
 
       nodePos       = nodePos->push(")");
-      nodePos->type = keywordType[")"];
+      nodePos->info = keywordType[")"];
 
       nodePos       = nodePos->push(";");
-      nodePos->type = keywordType[";"];
+      nodePos->info = keywordType[";"];
 
       return nodeRoot;
     }
@@ -1527,7 +1527,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if((s.type & functionDefinitionType) &&
+        if((s.info & functionDefinitionType) &&
            (s.functionHasQualifier("occaKernel"))){
 
           const int argc = s.getFunctionArgCount();
@@ -1561,7 +1561,7 @@ namespace occa {
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
-      if( !(s.type & declareStatementType)   ||
+      if( !(s.info & declareStatementType)   ||
           (getStatementKernel(s) == NULL)    ||
           (statementKernelUsesNativeOCCA(s)) ||
           (!s.hasQualifier("exclusive")) ){
@@ -1963,11 +1963,11 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if(s2.type == occaForType)
+        if(s2.info == occaForType)
           tail = tail->push(new statementNode(&s2));
 
         if(getNestedLoops ||
-           (s2.type != occaForType)){
+           (s2.info != occaForType)){
 
           tail->right = getOccaLoopsInStatement(s2, getNestedLoops);
 
@@ -2073,7 +2073,7 @@ namespace occa {
         // [occaOuterFor][#]
         const int outerDim = atoi(ks.expRoot.value.c_str() + 12);
 
-        ks2.type = sKernel.type;
+        ks2.info = sKernel.info;
 
         info.nestedKernels.push_back(&ks2);
 
@@ -2203,7 +2203,7 @@ namespace occa {
       statement *currentS = &s;
 
       while(currentS){
-        if(currentS->type == occaForType)
+        if(currentS->info == occaForType)
           break;
 
         currentS = currentS->up;
@@ -2381,7 +2381,7 @@ namespace occa {
         return;
       }
 
-      if(path->value->type & ifStatementType){
+      if(path->value->info & ifStatementType){
         std::cout << '\n'
                   << "+---------+--------------------------------------------------+\n"
                   << "|         | Barriers inside conditional statements will only |\n"
@@ -2480,7 +2480,7 @@ namespace occa {
       // Statement defines have doubles (to know how many variables
       //                                 were defined)
       //    so ... ignore duplicates
-      const bool ignoringVariables = (s.type & simpleStatementType);
+      const bool ignoringVariables = (s.info & simpleStatementType);
 
       scopeVarMapIterator it = s.scopeVarMap.begin();
       varInfoNode *root = NULL;
@@ -2630,7 +2630,7 @@ namespace occa {
           break;
 
         // [-] Re-add if we want to split between for-loops
-        if(includeEnd->value->type & forStatementType){
+        if(includeEnd->value->info & forStatementType){
           stoppedAtFor = true;
           break;
         }
@@ -2645,7 +2645,7 @@ namespace occa {
         statementNode *forNode  = includeEnd;
 
         while(forStart->left &&
-              forStart->left->value->type & macroStatementType)
+              forStart->left->value->info & macroStatementType)
           forStart = forStart->left;
 
         includeEnd = forStart;
@@ -2758,7 +2758,7 @@ namespace occa {
         statement &origin = *(varUpdateMap[varPos->value].value);
 
         // Ignore kernel arguments
-        if(origin.type & functionStatementType){
+        if(origin.info & functionStatementType){
           varPos = varPos->left;
           continue;
         }
@@ -2826,7 +2826,7 @@ namespace occa {
       while(sPos->statementCount == 1){
         statement *sDown = sPos->statementStart->value;
 
-        if(sDown->type == blockStatementType){
+        if(sDown->info == blockStatementType){
           sPos->scopeVarMap.insert(sDown->scopeVarMap.begin(),
                                    sDown->scopeVarMap.end());
 
@@ -2863,7 +2863,7 @@ namespace occa {
 
         sn = sn->right;
 
-        if((s2.type & declareStatementType) &&
+        if((s2.info & declareStatementType) &&
            (s2.hasDescriptorVariable("occaShared") ||
             s2.hasDescriptorVariable("exclusive"))){
 
@@ -3143,7 +3143,7 @@ namespace occa {
               firstSectionNode = false;
             }
 
-            nodePos->type  = presetValue;
+            nodePos->info  = presetValue;
             nodePos->depth = depth;
 
             cLeft = cRight;
@@ -3161,7 +3161,7 @@ namespace occa {
               firstSectionNode = false;
             }
 
-            nodePos->type  = presetValue;
+            nodePos->info  = presetValue;
             nodePos->depth = depth;
 
             cLeft = cRight;
@@ -3206,10 +3206,10 @@ namespace occa {
                 newNode = new strNode(std::string(cLeft, delimeterChars));
               }
 
-              newNode->type  = keywordType[newNode->value];
+              newNode->info  = keywordType[newNode->value];
               newNode->depth = depth;
 
-              if(newNode->type & startSection){
+              if(newNode->info & startSection){
                 if(!firstSectionNode)
                   nodePos = nodePos->push(newNode);
                 else
@@ -3219,7 +3219,7 @@ namespace occa {
 
                 firstSectionNode = true;
               }
-              else if(newNode->type & endSection){
+              else if(newNode->info & endSection){
                 if(!firstSectionNode)
                   nodePos = nodePos->up;
 
@@ -3229,7 +3229,7 @@ namespace occa {
 
                 firstSectionNode = false;
               }
-              else if(newNode->type & macroKeywordType){
+              else if(newNode->info & macroKeywordType){
                 newNode->value = line;
 
                 if(!firstSectionNode)
@@ -3279,15 +3279,15 @@ namespace occa {
               }
 
               if(it == keywordType.end())
-                nodePos->type = unknownVariable;
+                nodePos->info = unknownVariable;
               else{
-                nodePos->type = it->second;
+                nodePos->info = it->second;
 
                 if(parsingC){
                   if(checkWithLeft(nodePos, "else", "if")){
                     mergeNodeWithLeft(nodePos);
                   }
-                  else if((nodePos->type & specialKeywordType) &&
+                  else if((nodePos->info & specialKeywordType) &&
                           (nodePos->value == "__attribute__")){
 
                     skipWhitespace(cRight);
@@ -3333,7 +3333,7 @@ namespace occa {
 
         if(!parsingC){
           nodePos       = nodePos->push("\\n");
-          nodePos->type = endStatement;
+          nodePos->info = endStatement;
         }
 
         lineNodePos = lineNodePos->right;
@@ -3913,7 +3913,7 @@ namespace occa {
       sInfo = &s;
 
       while(sInfo){
-        if((sInfo->type & forStatementType) &&
+        if((sInfo->info & forStatementType) &&
            (sInfo->getForStatementCount() > 3)){
 
           if(4 < sInfo->getForStatementCount()){
@@ -3937,7 +3937,7 @@ namespace occa {
       //---[ Overload iter vars ]---
       setIterDefaultValues();
 
-      sInfo->type = occaForType;
+      sInfo->info = occaForType;
 
       expNode &node1   = *(sInfo->getForStatement(0));
       expNode &node2   = *(sInfo->getForStatement(1));

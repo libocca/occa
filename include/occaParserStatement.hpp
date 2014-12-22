@@ -338,7 +338,7 @@ namespace occa {
       int depth;
       statement *up;
 
-      int type;
+      int info;
 
       expNode expRoot;
 

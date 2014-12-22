@@ -231,7 +231,7 @@ namespace occa {
       if(updateFortranVar(var, nodePos->value))
         return (nodePos->right);
 
-      if(nodePos->type & specifierType){
+      if(nodePos->info & specifierType){
         std::string typeName = varInfo::getFullFortranType(nodePos);
         var.baseType = s.hasTypeInScope(typeName);
       }
@@ -589,7 +589,7 @@ namespace occa {
       }
 
       if(nodePos                           &&
-         (nodePos->type & unknownVariable) &&
+         (nodePos->info & unknownVariable) &&
          (!s.hasTypeInScope(nodePos->value))){
 
         qualifiers.free();
@@ -597,7 +597,7 @@ namespace occa {
       }
 
       if(nodePos &&
-         (nodePos->type == startBrace)){
+         (nodePos->info == startBrace)){
 
         qualifiers.free();
         return true;
@@ -1269,10 +1269,10 @@ namespace occa {
         return varType::functionPointer;
 
       if(nextNode &&
-         (nextNode->type == startParentheses)){
+         (nextNode->info == startParentheses)){
 
         if((nextNode->right)       &&
-           (nextNode->right->type == startBrace)){
+           (nextNode->right->info == startBrace)){
 
           return varType::functionDef;
         }
@@ -1289,7 +1289,7 @@ namespace occa {
       int nestCount = 0;
 
       while(nodePos &&
-            (nodePos->type == startParentheses)){
+            (nodePos->info == startParentheses)){
 
         nodePos = nodePos->down;
 
@@ -1314,7 +1314,7 @@ namespace occa {
       int nestPos = 0;
 
       while(nodePos &&
-            (nodePos->type == startParentheses)){
+            (nodePos->info == startParentheses)){
 
         nodePos = nodePos->down;
 
@@ -1325,7 +1325,7 @@ namespace occa {
 
           if(nodePos        &&
              nodePos->right &&
-             (nodePos->right->type == startParentheses)){
+             (nodePos->right->info == startParentheses)){
 
             functionNests[nestPos].info = varType::function;
             functionNests[nestPos].loadArgsFrom(s, nodePos->right);
@@ -1336,7 +1336,7 @@ namespace occa {
       }
 
       if(nodePos &&
-         (nodePos->type & unknownVariable)){
+         (nodePos->info & unknownVariable)){
 
         name    = nodePos->value;
         nodePos = nodePos->right;
@@ -1480,7 +1480,7 @@ namespace occa {
     }
 
     std::string varInfo::getFullFortranType(strNode *&nodePos){
-      if( !(nodePos->type & specifierType) )
+      if( !(nodePos->info & specifierType) )
         return "";
 
       strNode *nodeRoot = nodePos;
@@ -1918,7 +1918,7 @@ namespace occa {
       const bool stop      = false;
 
       if((idMap.find(&s) == idMap.end()) ||  // Skip if statement is not in the map
-         (s.type & functionStatementType)){ // Functions don't have dependencies
+         (s.info & functionStatementType)){ // Functions don't have dependencies
 
         return keepGoing;
       }

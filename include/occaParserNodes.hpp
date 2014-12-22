@@ -55,7 +55,7 @@ namespace occa {
       strNode *left, *right, *down, *up;
 
       std::string value;
-      int type, depth, sideDepth;
+      int info, depth, sideDepth;
 
       int originalLine;
 
