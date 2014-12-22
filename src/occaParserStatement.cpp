@@ -465,6 +465,32 @@ namespace occa {
       if(leafCount == 0)
         return;
 
+      // Function call
+      if(leaves[0]->value == "CALL"){
+        // Only [CALL]
+        if(leafCount == 1){
+          sInfo->type = skipStatementType;
+          return;
+        }
+
+        if(sInfo->hasVariableInScope(leaves[1]->value)){
+          removeNode(0);
+
+          leaves[0]->info = expType::function;
+
+          mergeFunctionCalls();
+
+          addNode(expType::operator_, ";");
+        }
+        else{
+          std::cout << "Function [" << (leaves[0]->value) << "] is not defined in ["
+                    << toString() << "].\n";
+          throw 1;
+        }
+
+        return;
+      }
+
       organize(parsingFortran);
 
       varInfo *funcExp = sInfo->getFunctionVar();
@@ -473,8 +499,7 @@ namespace occa {
          ((*this)[0].value    != "=") ||
          ((*this)[0][0].value != funcExp->name)){
 
-        addNode(expType::operator_, leafCount);
-        (*this)[leafCount - 1].value = ";";
+        addNode(expType::operator_, ";");
 
         return;
       }
@@ -3676,7 +3701,15 @@ namespace occa {
     }
 
     int statement::checkFortranSpecialStatementType(strNode *&nodeRoot, expNode *expPtr){
-      nodeRoot = skipUntilFortranStatementEnd(nodeRoot);
+      strNode *nextNode = skipUntilFortranStatementEnd(nodeRoot);
+
+      if(nodeRoot->value == "CALL"){
+        nodeRoot = nextNode;
+
+        return updateStatementType;
+      }
+
+      nodeRoot = nextNode;
 
       return blankStatementType;
     }

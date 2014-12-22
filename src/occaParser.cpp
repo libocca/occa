@@ -34,6 +34,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(nodeRoot, parsingC);
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       markKernelFunctions(*globalScope);
       labelNativeKernels();
@@ -916,26 +918,6 @@ namespace occa {
       }
     }
 
-    bool parserBase::nodeHasUnknownVariable(strNode *n){
-      return false;
-#if 0
-      while(n){
-        if(n->type & unknownVariable)
-          return true;
-
-        const int downCount = n->down.size();
-
-        for(int i = 0; i < downCount; ++i)
-          if(nodeHasUnknownVariable(n->down[i]))
-            return true;
-
-        n = n->right;
-      }
-
-      return false;
-#endif
-    }
-
     void parserBase::setupOccaFors(statement &s){
       if( !(s.type & forStatementType) ||
           (s.getForStatementCount() <= 3) ){
@@ -1537,46 +1519,6 @@ namespace occa {
       nodePos->type = keywordType[";"];
 
       return nodeRoot;
-    }
-
-    void parserBase::addKernelInfo(varInfo &info, statement &s){
-#if 0
-      if( !(s.type & functionStatementType) ){
-        node<strNode*> nNodeRoot = s.nodeStart->getStrNodesWith(info.name);
-
-        node<strNode*> *nNodePos = nNodeRoot.right;
-
-        while(nNodePos){
-          strNode *nodePos = nNodePos->value;
-
-          // If we're calling function, not using a function pointer
-          if(nodePos->down.size()){
-            nodePos = nodePos->down[0];
-
-            if((nodePos->type == startParentheses) &&
-               (nodePos->value != "occaKernelInfo")){
-              strNode *kia = nodePos->push("occaKernelInfo");
-
-              kia->up        = nodePos->up;
-              kia->type      = keywordType["occaKernelInfo"];
-              kia->depth     = nodePos->depth;
-              kia->sideDepth = nodePos->sideDepth;
-
-              if(kia->right->type != endParentheses){
-                strNode *comma = kia->push(",");
-
-                comma->up        = kia->up;
-                comma->type      = keywordType[","];
-                comma->depth     = kia->depth;
-                comma->sideDepth = kia->sideDepth;
-              }
-            }
-          }
-
-          nNodePos = nNodePos->right;
-        }
-      }
-#endif
     }
 
     void parserBase::addArgQualifiers(){
@@ -3119,7 +3061,7 @@ namespace occa {
 
         if(line.size()){
           if(!parsingC &&
-             (line[0] == 'c')){
+             (*c == 'c')){
             c = cEnd;
             continue;
           }

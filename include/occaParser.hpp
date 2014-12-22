@@ -90,8 +90,6 @@ namespace occa {
                              const std::string &loopNest,
                              const std::string &loopIters = "");
 
-      bool nodeHasUnknownVariable(strNode *n);
-
       void setupOccaFors(statement &s);
 
       bool statementHasOccaOuterFor(statement &s);
@@ -127,8 +125,6 @@ namespace occa {
       strNode* occaExclusiveStrNode(varInfo &info,
                                     const int depth,
                                     const int sideDepth);
-
-      void addKernelInfo(varInfo &info, statement &s);
 
       void addArgQualifiers();
 
