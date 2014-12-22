@@ -486,6 +486,8 @@ namespace occa {
               }
 
               *(pVar) = var;
+
+              sInfo->info = skipStatementType;
             }
             // Will give error message
             else if(sInfo->up != NULL){
@@ -610,6 +612,8 @@ namespace occa {
 
         return;
       }
+
+      leafCount = typeInfo::nextDelimeter(*this, 0, "\\n");
 
       int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
 
