@@ -606,19 +606,24 @@ namespace occa {
     case Pthreads:{
       aim.set("threadCount", arg1);
       aim.set("pinningInfo", arg2);
+      break;
     }
     case OpenMP:{
       // Do Nothing, maybe add thread order next, dynamic static, etc
+      break;
     }
     case OpenCL:{
       aim.set("platformID", arg1);
       aim.set("deviceID"  , arg2);
+      break;
     }
     case CUDA:{
       aim.set("deviceID", arg1);
+      break;
     }
     case COI:{
       aim.set("deviceID", arg1);
+      break;
     }
     }
 
