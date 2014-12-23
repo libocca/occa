@@ -338,9 +338,9 @@ namespace occa {
       varUsedMap_t &varUsedMap;
 
       int depth;
-      statement *up;
-
       int info;
+
+      statement *up;
 
       expNode expRoot;
 

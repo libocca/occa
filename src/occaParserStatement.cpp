@@ -345,8 +345,6 @@ namespace occa {
 
       typeInfo &type = newExp.addTypeInfoNode(0);
 
-      int leafPos = type.loadFrom(*this, 0);
-
       if(flags & expFlag::addTypeToScope){
         if(flags & expFlag::addToParent){
           if(sInfo->up != NULL)
@@ -2904,13 +2902,13 @@ namespace occa {
 
     //---[ Statement Functions ]--------------------
     statement::statement(parserBase &pb) :
+      varUpdateMap(pb.varUpdateMap),
+      varUsedMap(pb.varUsedMap),
+
       depth(-1),
       info(blockStatementType),
 
       up(NULL),
-
-      varUpdateMap(pb.varUpdateMap),
-      varUsedMap(pb.varUsedMap),
 
       expRoot(*this),
 
@@ -2921,13 +2919,13 @@ namespace occa {
     statement::statement(const int depth_,
                          varUsedMap_t &varUpdateMap_,
                          varUsedMap_t &varUsedMap_) :
+      varUpdateMap(varUpdateMap_),
+      varUsedMap(varUsedMap_),
+
       depth(depth_),
       info(blockStatementType),
 
       up(NULL),
-
-      varUpdateMap(varUpdateMap_),
-      varUsedMap(varUsedMap_),
 
       expRoot(*this),
 
@@ -2938,13 +2936,13 @@ namespace occa {
     statement::statement(const int depth_,
                          const int info_,
                          statement *up_) :
+      varUpdateMap(up_->varUpdateMap),
+      varUsedMap(up_->varUsedMap),
+
       depth(depth_),
       info(info_),
 
       up(up_),
-
-      varUpdateMap(up_->varUpdateMap),
-      varUsedMap(up_->varUsedMap),
 
       expRoot(*this),
 

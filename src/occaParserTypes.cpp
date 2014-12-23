@@ -1489,7 +1489,6 @@ namespace occa {
       if( !(nodePos->info & specifierType) )
         return "";
 
-      strNode *nodeRoot = nodePos;
       strNode *nextNode = nodePos->right;
 
       std::string typeNode = nodePos->value;

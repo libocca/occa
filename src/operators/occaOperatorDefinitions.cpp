@@ -8,7 +8,7 @@
   }
 
   void kernelDatabase::operator() (const kernelArg &arg0){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     
@@ -25,7 +25,7 @@
   }
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -43,7 +43,7 @@
   }
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -66,7 +66,7 @@
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -91,7 +91,7 @@
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -117,7 +117,7 @@
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -148,7 +148,7 @@
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -181,7 +181,7 @@
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -215,7 +215,7 @@
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -254,7 +254,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -295,7 +295,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -337,7 +337,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -384,7 +384,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -433,7 +433,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -483,7 +483,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -538,7 +538,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -595,7 +595,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -653,7 +653,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -716,7 +716,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -781,7 +781,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -847,7 +847,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -918,7 +918,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -991,7 +991,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1065,7 +1065,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1144,7 +1144,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1225,7 +1225,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1307,7 +1307,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1394,7 +1394,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1483,7 +1483,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1573,7 +1573,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1668,7 +1668,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1765,7 +1765,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1863,7 +1863,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -1966,7 +1966,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2071,7 +2071,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2177,7 +2177,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2288,7 +2288,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2401,7 +2401,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2515,7 +2515,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2634,7 +2634,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2755,7 +2755,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -2877,7 +2877,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3004,7 +3004,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3133,7 +3133,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3263,7 +3263,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3398,7 +3398,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3535,7 +3535,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3673,7 +3673,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3816,7 +3816,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;
@@ -3944,7 +3944,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     else if(arg1.dev) launchDevice = arg1.dev;

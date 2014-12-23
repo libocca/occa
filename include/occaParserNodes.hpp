@@ -10,7 +10,7 @@ namespace occa {
     template <class TM>
     class node {
     public:
-      node *left, *right, *down, *up;
+      node *left, *right, *up, *down;
       TM value;
 
       node();
@@ -52,7 +52,7 @@ namespace occa {
     //---[ Str Node ]-------------------------------
     class strNode {
     public:
-      strNode *left, *right, *down, *up;
+      strNode *left, *right, *up, *down;
 
       std::string value;
       int info, depth, sideDepth;

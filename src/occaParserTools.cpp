@@ -342,7 +342,6 @@ namespace occa {
     if(!parsingC)
       return readFortranLine(c);
 
-    const char *c0 = c;
     bool breakNextLine = true;
 
     while(*c != '\0'){
@@ -390,7 +389,6 @@ namespace occa {
   }
 
   const char* readFortranLine(const char *c){
-    const char *c0 = c;
     bool breakNextLine = true;
 
     // Starting with [c] means line is a comment
@@ -435,7 +433,6 @@ namespace occa {
   }
 
   std::string compressWhitespace(const std::string &str){
-    const size_t chars = str.size();
     std::string ret = str;
 
     const char *c = str.c_str();

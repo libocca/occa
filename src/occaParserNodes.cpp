@@ -63,11 +63,9 @@ namespace occa {
         return;
 
       strNode *l1 = (left  == n) ? this : left;
-      strNode *c1  = this;
       strNode *r1 = (right == n) ? this : right;
 
       strNode *l2 = (n->left  == this) ? n : n->left;
-      strNode *c2 = right;
       strNode *r2 = (n->right == this) ? n : n->right;
 
       n->left  = l1;
@@ -259,7 +257,6 @@ namespace occa {
           if(downRootNode.value != NULL){
             node<strNode*> *lastDownNode = (node<strNode*>*) downRootNode.value;
 
-            node<strNode*> *nnpRight = nNodePos;
             nNodePos = nNodePos->left;
 
             nNodePos->right       = downRootNode.right;

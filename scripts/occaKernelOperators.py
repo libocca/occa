@@ -83,7 +83,7 @@ def operatorDefinition(mode, N):
   }
 
   void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    occa::device *launchDevice;
+    occa::device *launchDevice = NULL;
 
     if(arg0.dev) launchDevice = arg0.dev;
     """ + '    '.join([('else if(arg' + str(n + 1) + '.dev) launchDevice = arg' + str(n + 1) + '.dev;\n') for n in xrange(N - 1)]) + """

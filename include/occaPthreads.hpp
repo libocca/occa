@@ -307,7 +307,7 @@ namespace occa {
     CPU_ZERO(&cpuHandle);
     CPU_SET(data.pinnedCore, &cpuHandle);
 #else
-#  warning "Affinity not guaranteed in this OS"
+    fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
 #endif
 
     while(true){

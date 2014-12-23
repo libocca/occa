@@ -299,8 +299,6 @@ namespace occa {
   std::string getCachePath(){
     char *c_cachePath = getenv("OCCA_CACHE_DIR");
 
-    bool hasDir = false;
-
     std::string occaCachePath;
 
     if(c_cachePath != NULL)

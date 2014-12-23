@@ -121,8 +121,6 @@ namespace occa {
         labelNodePos = labelNodePos->right;
       }
 
-      strNode *labelNodeEnd = labelNodePos;
-
       strNode *minOpNode;
       int minPrecedence, minOpType;
 
@@ -699,7 +697,7 @@ namespace occa {
     }
 
     void parserBase::loadLanguageTypes(){
-      int parts[6]            = {1, 2, 3, 4, 8, 16};
+      // int parts[6]            = {1, 2, 3, 4, 8, 16};
       std::string suffix[6]   = {"", "2", "3", "4", "8", "16"};
       std::string baseType[7] = {"int"  ,
                                  "bool" ,
@@ -1681,8 +1679,6 @@ namespace occa {
     statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
                                                     kernelInfo &info){
       statement &sKernel = *(snKernel->value);
-
-      const bool usesOKL = statementKernelUsesNativeOKL(sKernel);
 
       statementIdMap_t idMap;
       statementVector_t sVec;
@@ -2751,9 +2747,6 @@ namespace occa {
       varInfoNode *varRoot = findVarsMovingToTop(s, loopSection);
       varInfoNode *varPos  = lastNode(varRoot);
 
-      statementNode *newStatementStart = NULL;
-      statementNode *newStatementPos   = NULL;
-
       while(varPos){
         statement &origin = *(varUpdateMap[varPos->value].value);
 
@@ -3149,7 +3142,6 @@ namespace occa {
             cLeft = cRight;
           }
           else if(loadNumber){
-            const int delimeterChars = isAWordDelimeter(cLeft);
 
             skipNumber(cRight, parsingC);
 
@@ -3846,6 +3838,9 @@ namespace occa {
         "ATANH", "EXP" , "LOG2" ,
         "LOG10"
       };
+
+      for(int i = 0; i < 16; ++i)
+        fortranKeywordType[ mathFunctions[i] ] = presetValue;
 
       //---[ Operator Precedence ]--------
       opPrecedence[opHolder("**", binaryOperatorType)]     = 0;
