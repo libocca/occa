@@ -61,7 +61,7 @@ namespace occa {
 
       loadKernelInfos();
 
-      // applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
+      applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
 
       return (std::string) *globalScope;
     }
