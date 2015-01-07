@@ -2087,7 +2087,9 @@ namespace occa {
         // Add kernel body
         ks2.addStatement(ks.clone());
 
-        ss << "occaParallelFor" << outerDim;
+        // [--] Hard-code the OpenMP pragma without collapsing for now
+        ss << "occaParallelFor0";
+        // ss << "occaParallelFor" << outerDim;
 
         // Add the parallel-for loops
         ks2.pushSourceLeftOf(ks2.statementStart,
