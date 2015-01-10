@@ -804,16 +804,15 @@ namespace occa {
                                        const kernelInfo &info_,
                                        const bool useParser){
 
-    const std::string cachedBinary = getContentCachedName(content, dHandle->getInfoSalt(info_));
+    kernelInfo info = info_;
+
+    dHandle->addOccaHeadersToInfo(info);
+
+    const std::string cachedBinary = getContentCachedName(content, dHandle->getInfoSalt(info));
+
     std::string prefix, cacheName;
 
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
-
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
-
-      return buildKernelFromBinary(cachedBinary, functionName);
-    }
 
     std::string h_cacheName = prefix + "h_" + cacheName;
 
@@ -822,7 +821,15 @@ namespace occa {
     else
       h_cacheName += ".occa";
 
+    if(!haveFile(h_cacheName)){
+      waitForFile(h_cacheName);
+      waitForFile(cachedBinary);
+
+      return buildKernelFromBinary(cachedBinary, functionName);
+    }
+
     writeToFile(h_cacheName, content);
+    releaseFile(h_cacheName);
 
     return buildKernelFromSource(h_cacheName, functionName, info_);
   }
@@ -847,6 +854,8 @@ namespace occa {
 
       kernelInfo info = info_;
 
+      dHandle->addOccaHeadersToInfo(info);
+
       std::string cachedBinary = k->getCachedBinaryName(filename, info);
 
       parsedKernelInfo kInfo = parseFileForFunction(filename,
@@ -862,7 +871,7 @@ namespace occa {
         k->buildFromBinary(cachedBinary, functionName);
       }
       else
-        k->buildFromSource(filename, functionName, info_);
+        k->buildFromSource(filename, functionName);
 
       k->nestedKernelCount = kInfo.nestedKernels;
 
@@ -878,8 +887,7 @@ namespace occa {
         sKer.strMode = strMode;
 
         sKer.kHandle = dHandle->buildKernelFromSource(filename,
-                                                      kInfo.baseName + ss.str(),
-                                                      info_);
+                                                      kInfo.baseName + ss.str());
 
         ss.str("");
       }

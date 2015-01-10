@@ -226,18 +226,26 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
+
+    dev->dHandle->addOccaHeadersToInfo(info);
+
     std::string cachedBinary = getCachedBinaryName(filename, info);
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-      return buildFromBinary(cachedBinary, functionName);
-    }
+      releaseFile(cachedBinary);
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -737,17 +745,18 @@ namespace occa {
   }
 
   template <>
+  void device_t<COI>::addOccaHeadersToInfo(kernelInfo &info_){
+    info_.addDefine("OCCA_USING_CPU", 1);
+    info_.addDefine("OCCA_USING_COI", 1);
+
+    info_.addOCCAKeywords(occaCOIDefines);
+  }
+
+  template <>
   std::string device_t<COI>::getInfoSalt(const kernelInfo &info_){
     OCCA_EXTRACT_DATA(COI, Device);
 
     std::stringstream salt;
-
-    kernelInfo info = info_;
-
-    info.addDefine("OCCA_USING_CPU", 1);
-    info.addDefine("OCCA_USING_COI", 1);
-
-    info.addOCCAKeywords(occaCOIDefines);
 
     salt << "COI"
          << info.salt()
@@ -953,6 +962,7 @@ namespace occa {
     kData_.chiefID = data_.chiefID;
 
     k->buildFromBinary(filename, functionName);
+
     return k;
   }
 
@@ -964,7 +974,11 @@ namespace occa {
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
-    std::string cachedBinary = getCachedName(filename, getInfoSalt(info_));
+    kernelInfo info = info_;
+
+    addOccaHeadersToInfo(info);
+
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info));
     std::string libPath, soname;
 
     getFilePrefixAndName(cachedBinary, libPath, soname);

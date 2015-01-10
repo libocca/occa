@@ -493,18 +493,26 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
+
+    dev->dHandle->addOccaHeadersToInfo(info);
+
     std::string cachedBinary = getCachedBinaryName(filename, info);
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
 
     struct stat buffer;
     const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-      return buildFromBinary(cachedBinary, functionName);
-    }
+      releaseFile(cachedBinary);
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -1038,21 +1046,22 @@ namespace occa {
   }
 
   template <>
+  void device_t<OpenCL>::addOccaHeadersToInfo(kernelInfo &info_){
+    info_.addDefine("OCCA_USING_GPU"   , 1);
+    info_.addDefine("OCCA_USING_OPENCL", 1);
+
+    info_.addOCCAKeywords(occaOpenCLDefines);
+  }
+
+  template <>
   std::string device_t<OpenCL>::getInfoSalt(const kernelInfo &info_){
     OCCA_EXTRACT_DATA(OpenCL, Device);
-
-    kernelInfo info = info_;
-
-    info.addDefine("OCCA_USING_GPU"   , 1);
-    info.addDefine("OCCA_USING_OPENCL", 1);
-
-    info.addOCCAKeywords(occaOpenCLDefines);
 
     std::stringstream salt;
 
     salt << "OpenCL"
          << data_.platform << '-' << data_.device
-         << info.salt()
+         << info_.salt()
          << parser::version
          << compilerEnvScript
          << compiler
@@ -1231,6 +1240,7 @@ namespace occa {
     kData_.context    = data_.context;
 
     k->buildFromSource(filename, functionName, info_);
+
     return k;
   }
 
@@ -1267,7 +1277,11 @@ namespace occa {
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
-    std::string cachedBinary = getCachedName(filename, getInfoSalt(info_));
+    kernelInfo info = info_;
+
+    addOccaHeadersToInfo(info);
+
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info));
 
     std::string prefix, name;
     getFilePrefixAndName(cachedBinary, prefix, name);

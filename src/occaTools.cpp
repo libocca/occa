@@ -138,6 +138,7 @@ namespace occa {
 
   bool haveFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int mkdirStatus = mkdir(lockDir.c_str(), 0755);
 

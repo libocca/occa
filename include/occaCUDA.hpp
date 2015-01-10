@@ -172,6 +172,9 @@ namespace occa {
   void device_t<CUDA>::setup(argInfoMap &aim);
 
   template <>
+  void device_t<CUDA>::addOccaHeadersToInfo(kernelInfo &info_);
+
+  template <>
   std::string device_t<CUDA>::getInfoSalt(const kernelInfo &info_);
 
   template <>

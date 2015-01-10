@@ -189,6 +189,9 @@ namespace occa {
   void device_t<COI>::setup(argInfoMap &aim);
 
   template <>
+  void device_t<COI>::addOccaHeadersToInfo(kernelInfo &info_);
+
+  template <>
   std::string device_t<COI>::getInfoSalt(const kernelInfo &info_);
 
   template <>
