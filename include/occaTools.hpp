@@ -70,18 +70,28 @@ namespace occa {
                                         const std::string &functionName,
                                         const kernelInfo &info);
 
-  std::string fnv(const std::string &filename);
+  std::string fnv(const std::string &saltedString);
 
   bool fileExists(const std::string &filename);
+
   std::string readFile(const std::string &filename);
+
+  void writeToFile(const std::string &filename,
+                   const std::string &content);
 
   std::string getOCCADir();
   std::string getCachePath();
 
   bool fileNeedsParser(const std::string &filename);
 
+  std::string getCacheHash(const std::string &content,
+                           const std::string &salt);
+
   std::string getCachedName(const std::string &filename,
                             const std::string &salt);
+
+  std::string getContentCachedName(const std::string &content,
+                                   const std::string &salt);
 
   std::string createIntermediateSource(const std::string &filename,
                                        const std::string &cachedBinary,

@@ -480,22 +480,8 @@ namespace occa {
                                                     kernelInfo &info_){
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
-    info_.addDefine("OCCA_USING_GPU"   , 1);
-    info_.addDefine("OCCA_USING_OPENCL", 1);
-
-    info_.addOCCAKeywords(occaOpenCLDefines);
-
-    std::stringstream salt;
-
-    salt << "OpenCL"
-         << data_.platform << '-' << data_.device
-         << info_.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    return getCachedName(filename, salt.str());
+    return getCachedName(filename,
+                         dev->dHandle->getInfoSalt(info_));
   }
 
   template <>
@@ -1052,6 +1038,30 @@ namespace occa {
   }
 
   template <>
+  std::string device_t<OpenCL>::getInfoSalt(const kernelInfo &info_){
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    kernelInfo info = info_;
+
+    info.addDefine("OCCA_USING_GPU"   , 1);
+    info.addDefine("OCCA_USING_OPENCL", 1);
+
+    info.addOCCAKeywords(occaOpenCLDefines);
+
+    std::stringstream salt;
+
+    salt << "OpenCL"
+         << data_.platform << '-' << data_.device
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags;
+
+    return salt.str();
+  }
+
+  template <>
   deviceIdentifier device_t<OpenCL>::getIdentifier() const {
     deviceIdentifier dID;
 
@@ -1257,22 +1267,7 @@ namespace occa {
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_GPU"   , 1);
-    info.addDefine("OCCA_USING_OPENCL", 1);
-
-    info.addOCCAKeywords(occaOpenCLDefines);
-
-    std::stringstream salt;
-    salt << "OpenCL"
-         << data_.platform << '-' << data_.device
-         << info.salt()
-         << parser::version
-         << compilerEnvScript
-         << compiler
-         << compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info_));
 
     std::string prefix, name;
     getFilePrefixAndName(cachedBinary, prefix, name);

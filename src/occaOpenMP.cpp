@@ -70,25 +70,9 @@ namespace occa {
   template <>
   std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
                                                     kernelInfo &info_){
-    info_.addDefine("OCCA_USING_CPU"   , 1);
-    info_.addDefine("OCCA_USING_OPENMP", 1);
 
-#if OCCA_OPENMP_ENABLED
-    info_.addIncludeDefine("omp.h");
-#endif
-
-    info_.addOCCAKeywords(occaOpenMPDefines);
-
-    std::stringstream salt;
-
-    salt << "OpenMP"
-         << info_.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename,
+                                             dev->dHandle->getInfoSalt(info_));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'
@@ -546,6 +530,31 @@ namespace occa {
   void device_t<OpenMP>::setup(argInfoMap &aim){}
 
   template <>
+  std::string device_t<OpenMP>::getInfoSalt(const kernelInfo &info_){
+    std::stringstream salt;
+
+    kernelInfo info = info_;
+
+    info.addDefine("OCCA_USING_CPU"   , 1);
+    info.addDefine("OCCA_USING_OPENMP", 1);
+
+#if OCCA_OPENMP_ENABLED
+    info.addIncludeDefine("omp.h");
+#endif
+
+    info.addOCCAKeywords(occaOpenMPDefines);
+
+    salt << "OpenMP"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags;
+
+    return salt.str();
+  }
+
+  template <>
   deviceIdentifier device_t<OpenMP>::getIdentifier() const {
     deviceIdentifier dID;
 
@@ -736,25 +745,7 @@ namespace occa {
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU"   , 1);
-    info.addDefine("OCCA_USING_OPENMP", 1);
-
-#if OCCA_OPENMP_ENABLED
-    info.addIncludeDefine("omp.h");
-#endif
-
-    info.addOCCAKeywords(occaOpenMPDefines);
-
-    std::stringstream salt;
-    salt << "OpenMP"
-         << info.salt()
-         << parser::version
-         << compilerEnvScript
-         << compiler
-         << compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info_));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'

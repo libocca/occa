@@ -11,6 +11,7 @@ namespace occa {
   namespace coi {
     void initDevice(COIDeviceData_t &data){
       std::stringstream salt;
+
       salt << "COI"
            << occaCOIMain;
 
@@ -205,20 +206,9 @@ namespace occa {
   template <>
   std::string kernel_t<COI>::getCachedBinaryName(const std::string &filename,
                                                  kernelInfo &info_){
-    info_.addDefine("OCCA_USING_CPU", 1);
-    info_.addDefine("OCCA_USING_COI", 1);
 
-    info_.addOCCAKeywords(occaCOIDefines);
-
-    std::stringstream salt;
-    salt << "COI"
-         << info_.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename,
+                                             dev->dHandle->getInfoSalt(info_));
 
     std::string libPath, soname;
 
@@ -747,6 +737,29 @@ namespace occa {
   }
 
   template <>
+  std::string device_t<COI>::getInfoSalt(const kernelInfo &info_){
+    OCCA_EXTRACT_DATA(COI, Device);
+
+    std::stringstream salt;
+
+    kernelInfo info = info_;
+
+    info.addDefine("OCCA_USING_CPU", 1);
+    info.addDefine("OCCA_USING_COI", 1);
+
+    info.addOCCAKeywords(occaCOIDefines);
+
+    salt << "COI"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags;
+
+    return salt.str();
+  }
+
+  template <>
   deviceIdentifier device_t<COI>::getIdentifier() const {
     deviceIdentifier dID;
 
@@ -951,22 +964,7 @@ namespace occa {
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU", 1);
-    info.addDefine("OCCA_USING_COI", 1);
-
-    info.addOCCAKeywords(occaCOIDefines);
-
-    std::stringstream salt;
-
-    salt << "COI"
-         << info.salt()
-         << parser::version
-         << compilerEnvScript
-         << compiler
-         << compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info_));
     std::string libPath, soname;
 
     getFilePrefixAndName(cachedBinary, libPath, soname);

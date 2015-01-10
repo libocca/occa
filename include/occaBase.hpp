@@ -1131,6 +1131,7 @@ namespace occa {
 
     virtual void setup(argInfoMap &aim) = 0;
 
+    virtual std::string getInfoSalt(const kernelInfo &info = defaultKernelInfo) = 0;
     virtual deviceIdentifier getIdentifier() const = 0;
 
     virtual void getEnvironmentVariables() = 0;
@@ -1217,6 +1218,7 @@ namespace occa {
 
     void setup(argInfoMap &aim);
 
+    std::string getInfoSalt(const kernelInfo &info = defaultKernelInfo);
     deviceIdentifier getIdentifier() const;
 
     void getEnvironmentVariables();
@@ -1366,6 +1368,15 @@ namespace occa {
     double timeBetween(const tag &startTag, const tag &endTag);
 
     void free(stream s);
+
+    kernel buildKernelFromString(const std::string &content,
+                                 const std::string &functionName,
+                                 const bool useParser = true);
+
+    kernel buildKernelFromString(const std::string &content,
+                                 const std::string &functionName,
+                                 const kernelInfo &info_ = defaultKernelInfo,
+                                 const bool useParser    = true);
 
     kernel buildKernelFromSource(const std::string &filename,
                                  const std::string &functionName,

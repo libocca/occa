@@ -141,21 +141,7 @@ namespace occa {
                                                   kernelInfo &info_){
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 
-    info_.addDefine("OCCA_USING_GPU" , 1);
-    info_.addDefine("OCCA_USING_CUDA", 1);
-
-    info_.addOCCAKeywords(occaCUDADefines);
-
-    std::stringstream salt;
-
-    salt << "CUDA"
-         << info_.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    return getCachedName(filename, salt.str());
+    return getCachedName(filename, dev->dHandle->getInfoSalt(info_));
   }
 
   template <>
@@ -799,6 +785,29 @@ namespace occa {
   }
 
   template <>
+  std::string device_t<CUDA>::getInfoSalt(const kernelInfo &info_){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
+    std::stringstream salt;
+
+    kernelInfo info = info_;
+
+    info.addDefine("OCCA_USING_GPU" , 1);
+    info.addDefine("OCCA_USING_CUDA", 1);
+
+    info.addOCCAKeywords(occaCUDADefines);
+
+    salt << "CUDA"
+         << info.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags;
+
+    return salt.str();
+  }
+
+  template <>
   deviceIdentifier device_t<CUDA>::getIdentifier() const {
     deviceIdentifier dID;
 
@@ -1006,21 +1015,8 @@ namespace occa {
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
-    kernelInfo info = info_;
-    info.addDefine("OCCA_USING_GPU" , 1);
-    info.addDefine("OCCA_USING_CUDA", 1);
-
-    info.addOCCAKeywords(occaCUDADefines);
-
-    std::stringstream salt;
-    salt << "CUDA"
-         << info.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename,
+                                             getInfoSalt(info_));
     std::string contents     = readFile(cachedBinary);
     //==================================
 

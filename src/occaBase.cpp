@@ -792,9 +792,45 @@ namespace occa {
     dHandle->freeStream(s);
   }
 
+  kernel device::buildKernelFromString(const std::string &content,
+                                       const std::string &functionName,
+                                       const bool useParser){
+
+    return buildKernelFromString(content, functionName, defaultKernelInfo, useParser);
+  }
+
+  kernel device::buildKernelFromString(const std::string &content,
+                                       const std::string &functionName,
+                                       const kernelInfo &info_,
+                                       const bool useParser){
+
+    const std::string cachedBinary = getContentCachedName(content, dHandle->getInfoSalt(info_));
+    std::string prefix, cacheName;
+
+    getFilePrefixAndName(cachedBinary, prefix, cacheName);
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      return buildKernelFromBinary(cachedBinary, functionName);
+    }
+
+    std::string h_cacheName = prefix + "h_" + cacheName;
+
+    if(useParser)
+      h_cacheName += ".okl";
+    else
+      h_cacheName += ".occa";
+
+    writeToFile(h_cacheName, content);
+
+    return buildKernelFromSource(h_cacheName, functionName, info_);
+  }
+
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
+
     const bool usingParser = fileNeedsParser(filename);
 
     kernel ker;

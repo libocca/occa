@@ -148,6 +148,9 @@ namespace occa {
   void device_t<OpenMP>::setup(argInfoMap &aim);
 
   template <>
+  std::string device_t<OpenMP>::getInfoSalt(const kernelInfo &info_);
+
+  template <>
   deviceIdentifier device_t<OpenMP>::getIdentifier() const;
 
   template <>
