@@ -854,7 +854,7 @@ namespace occa {
 
       kernelInfo info = info_;
 
-      dHandle->addOccaHeadersToInfo(info);
+      k->dev->dHandle->addOccaHeadersToInfo(info);
 
       std::string cachedBinary = k->getCachedBinaryName(filename, info);
 
@@ -871,7 +871,7 @@ namespace occa {
         k->buildFromBinary(cachedBinary, functionName);
       }
       else
-        k->buildFromSource(filename, functionName);
+        k->buildFromSource(filename, functionName, info_);
 
       k->nestedKernelCount = kInfo.nestedKernels;
 
@@ -887,7 +887,8 @@ namespace occa {
         sKer.strMode = strMode;
 
         sKer.kHandle = dHandle->buildKernelFromSource(filename,
-                                                      kInfo.baseName + ss.str());
+                                                      kInfo.baseName + ss.str(),
+                                                      info_);
 
         ss.str("");
       }
