@@ -38,8 +38,11 @@ public:
        << "                                  const " << inType  << " *custom_reduction_in ,\n"
        << "                                        " << outType << " *custom_reduction_out){\n"
        << "  for(int group = 0; group < entries; group += 128; outer0){\n"
-       << "    for(int item = 0; item < 128; ++item; inner0){\n"
-       << "      const int n = item + (group * 128);\n"
+       << "    for(int item = group; item < (group + 128); ++item; inner0){\n"
+       // << "  for(int group = 0; group < entries; group += 128; outer0){\n"
+       // << "    for(int item = 0; item < 128; ++item; inner0){\n"
+       // << "      const int n = item + (group * 128);\n"
+       << "      const int n = item;\n"
        << '\n'
        << "      if(n < entries){\n"
        << "        const " << inType  << ' ' << inName  << " = custom_reduction_in[item];\n"

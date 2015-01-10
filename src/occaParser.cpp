@@ -1876,6 +1876,8 @@ namespace occa {
         const int loopID = loopStatementIDs[loopPos];
         statement &ls    = *(loopStatements[loopPos]);
 
+        zeroOccaIdsFrom(ls);
+
         while(depIt != hostDepMap.end()){
           const int sID = (depIt->first);
 
@@ -1883,6 +1885,8 @@ namespace occa {
             break;
 
           statement &depS = *(sVec[sID]);
+
+          zeroOccaIdsFrom(depS);
 
           if(blockStatement)
             blockStatement->addStatement(&depS);
