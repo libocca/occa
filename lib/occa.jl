@@ -8,52 +8,55 @@ end
 #---[ Types ]-----------------
 type device
     cDevice::Ptr{Void}
-
-    function device(mode::String, arg1::Number = 0, arg2::Number = 0)
-        convert(Int32, arg1)
-        convert(Int32, arg2)
-
-        cDevice = ccall((:occaGetDevice, @libocca()),
-                        Ptr{Void},
-                        (Ptr{Uint8}, Int32, Int32,),
-                        bytestring(mode), arg1, arg2)
-
-        new(cDevice)
-    end
 end
+
+function device(mode::String, arg1::Number = 0, arg2::Number = 0)
+    convert(Int32, arg1)
+    convert(Int32, arg2)
+
+    cDevice = ccall((:occaGetDevice, @libocca()),
+                    Ptr{Void},
+                    (Ptr{Uint8}, Int32, Int32,),
+                    bytestring(mode), arg1, arg2);
+   return device(cDevice);
+end
+
 
 type stream
     cStream::Ptr{Void}
 
-    function stream(ptr::Ptr{Void})
-        new(ptr)
-    end
+end
+
+function stream(ptr::Ptr{Void})
+    return stream(cStream);
 end
 
 type kernel
     cKernel::Ptr{Void}
-
-    function kernel(cKernel)
-        new(cKernel)
-    end
 end
+function kernel(cKernel)
+    return kernel(cKernel);
+end
+
 
 type kernelInfo
     cKernelInfo::Ptr{Void}
-
-    function kernelInfo(ptr::Ptr{Void})
-        new(ptr)
-    end
 end
+
+function kernelInfo(ptr::Ptr{Void})
+    return kernlInfo(cKernelInfo);
+end
+
 
 type memory
     cMemory::Ptr{Void}
     cTypes
-
-    function memory(cMemory, cTypes)
-        new(cMemory, cTypes)
-    end
 end
+
+function memory(cMemory, cTypes)
+    return memory(cMemory,cTypes);
+end
+
 
 #---[ Device ]----------------
 function finalizer(d::device)
