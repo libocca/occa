@@ -963,7 +963,7 @@ namespace occa {
 
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
-    const std::string defsFile = prefix + "loopy1_" + cacheName + ".defines";
+    const std::string defsFile = prefix + "loopy1_" + cacheName + ".defs";
     const std::string clFile = prefix + "loopy2_" + cacheName + ".cl";
 
     writeToFile(clFile, info_.header);
@@ -977,7 +977,7 @@ namespace occa {
 
     command << "floopy --lang=" << loopyLang
             << " --target=cl:0,0 "
-            << " --occa-defines=" << defsFile
+            << " --occa-defines=" << defsFile << ' '
             << filename << ' ' << clFile;
 
     const std::string &sCommand = command.str();

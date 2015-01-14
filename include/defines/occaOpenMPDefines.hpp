@@ -13,35 +13,79 @@
 #define OCCA_MAX_THREADS 512
 #define OCCA_MEM_ALIGN   64
 
-typedef struct { char x,y;                                               } char2;
-typedef struct { char x,y,z;                                             } char3;
-typedef struct { char x,y,z,w;                                           } char4;
-typedef struct { char x,y,z,w,s4,s5,s6,s7;                               } char8;
-typedef struct { char x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } char16;
+#if 0
+template <class TM>
+class type2  { public: char x,y;                                               };
+class type3  { public: char x,y,z;                                             };
+class type4  { public: char x,y,z,w;                                           };
+class type8  { public: char x,y,z,w,s4,s5,s6,s7;                               };
+class type16 { public: char x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; };
 
-typedef struct { short x,y;                                               } short2;
-typedef struct { short x,y,z;                                             } short3;
-typedef struct { short x,y,z,w;                                           } short4;
-typedef struct { short x,y,z,w,s4,s5,s6,s7;                               } short8;
-typedef struct { short x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } short16;
+template <class TM>
+type2<TM>& operator = (const type2<TM> &t){
+  x = t.x; y = t.y;
+  return *this;
+}
 
-typedef struct { int x,y;                                               } int2;
-typedef struct { int x,y,z;                                             } int3;
-typedef struct { int x,y,z,w;                                           } int4;
-typedef struct { int x,y,z,w,s4,s5,s6,s7;                               } int8;
-typedef struct { int x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } int16;
+template <class TM>
+type3<TM>& operator = (const type3<TM> &t){
+  x = t.x; y = t.y; z = t.z;
+  return *this;
+}
 
-typedef struct { float x,y;                                               } float2;
-typedef struct { float x,y,z;                                             } float3;
-typedef struct { float x,y,z,w;                                           } float4;
-typedef struct { float x,y,z,w,s4,s5,s6,s7;                               } float8;
-typedef struct { float x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } float16;
+template <class TM>
+type4<TM>& operator = (const type4<TM> &t){
+  x = t.x; y = t.y; z = t.z; w = t.w;
+  return *this;
+}
 
-typedef struct { double x,y;                                               } double2;
-typedef struct { double x,y,z;                                             } double3;
-typedef struct { double x,y,z,w;                                           } double4;
-typedef struct { double x,y,z,w,s4,s5,s6,s7;                               } double8;
-typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } double16;
+template <class TM>
+type8<TM>& operator = (const type8<TM> &t){
+  x  = t.x;  y  = t.y;  z  = t.z;  w  = t.w;
+  s4 = t.s4; s5 = t.s5; s6 = t.s6; s7 = t.s7;
+  return *this;
+}
+
+template <class TM>
+type16<TM>& operator = (const type16<TM> &t){
+  x   = t.x;   y  = t.y;  z   = t.z;   w   = t.w;
+  s4  = t.s4;  s5 = t.s5; s6  = t.s6;  s7  = t.s7;
+  s8  = t.s8;  s9 = t.s9; s10 = t.s10; s11 = t.s11;
+  s12 = t.s12; s13 = t.s13; s14 = t.s14; s15 = t.s15;
+  return *this;
+}
+
+
+typedef type2<char> char2;
+typedef type3<char> char3;
+typedef type4<char> char4;
+typedef type8<char> char8;
+typedef type16<char> char16;
+
+typedef type2<short> short2;
+typedef type3<short> short3;
+typedef type4<short> short4;
+typedef type8<short> short8;
+typedef type16<short> short16;
+
+typedef type2<int> int2;
+typedef type3<int> int3;
+typedef type4<int> int4;
+typedef type8<int> int8;
+typedef type16<int> char16;
+
+typedef type2<float> float2;
+typedef type3<float> float3;
+typedef type4<float> float4;
+typedef type8<float> float8;
+typedef type16<float> float16;
+
+typedef type2<double> double2;
+typedef type3<double> double3;
+typedef type4<double> double4;
+typedef type8<double> double8;
+typedef type16<double> double16;
+#endif
 //================================================
 
 
