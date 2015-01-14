@@ -213,14 +213,16 @@ extern "C" {
   occaKernel LIBOCCA_CALLINGCONV occaBuildKernelFromLoopy(occaDevice device,
                                                            const char *filename,
                                                            const char *functionName,
-                                                           const char *pythonCode){
+                                                           occaKernelInfo info){
     occa::device &device_  = *((occa::device*) device);
 
     occa::kernel *kernel = new occa::kernel();
 
+    occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
     *kernel = device_.buildKernelFromLoopy(filename,
                                            functionName,
-                                           pythonCode,
+                                           info_,
                                            occa::useLoopy);
 
     return (occaKernel) kernel;
@@ -229,14 +231,16 @@ extern "C" {
   occaKernel LIBOCCA_CALLINGCONV occaBuildKernelFromFloopy(occaDevice device,
                                                            const char *filename,
                                                            const char *functionName,
-                                                           const char *pythonCode){
+                                                           occaKernelInfo info){
     occa::device &device_  = *((occa::device*) device);
 
     occa::kernel *kernel = new occa::kernel();
 
+    occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
     *kernel = device_.buildKernelFromLoopy(filename,
                                            functionName,
-                                           pythonCode,
+                                           info_,
                                            occa::useFloopy);
 
     return (occaKernel) kernel;

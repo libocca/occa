@@ -1396,12 +1396,12 @@ namespace occa {
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
-                                int loopyOrFloopy);
+                                const int loopyOrFloopy);
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
-                                const std::string &pythonCode = "",
-                                int loopyOrFloopy = occa::useLoopy);
+                                const kernelInfo &info_ = defaultKernelInfo,
+                                const int loopyOrFloopy = occa::useLoopy);
 
     kernel& operator [] (kernelDatabase &kdb);
 

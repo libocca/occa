@@ -158,12 +158,12 @@ extern "C" {
   LIBOCCA_API occaKernel LIBOCCA_CALLINGCONV occaBuildKernelFromLoopy(occaDevice device,
                                                                       const char *filename,
                                                                       const char *functionName,
-                                                                      const char *pythonCode);
+                                                                      occaKernelInfo info);
 
   LIBOCCA_API occaKernel LIBOCCA_CALLINGCONV occaBuildKernelFromFloopy(occaDevice device,
                                                                        const char *filename,
                                                                        const char *functionName,
-                                                                       const char *pythonCode);
+                                                                       occaKernelInfo info);
 
   LIBOCCA_API occaMemory LIBOCCA_CALLINGCONV occaDeviceMalloc(occaDevice device,
                                                               uintptr_t bytes,

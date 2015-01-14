@@ -936,14 +936,19 @@ namespace occa {
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
                                       const int useLoopyOrFloopy){
-    return buildKernelFromLoopy(filename, functionName, "", useLoopyOrFloopy);
+
+    return buildKernelFromLoopy(filename,
+                                functionName,
+                                defaultKernelInfo,
+                                useLoopyOrFloopy);
   }
 
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
-                                      const std::string &pythonCode,
+                                      const kernelInfo &info_,
                                       const int useLoopyOrFloopy){
-    std::string cachedBinary = getCachedName(filename, pythonCode);
+
+    std::string cachedBinary = getCachedName(filename, dHandle->getInfoSalt(info_));
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -958,28 +963,29 @@ namespace occa {
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
     const std::string loopyFile1 = prefix + "loopy1_" + cacheName + ".loopy";
-    const std::string loopyFile2 = prefix + "loopy2_" + cacheName + ".cl";
+    const std::string loopyFile2 = prefix + "loopy2_" + cacheName + ".defines";
+    const std::string loopyFile3 = prefix + "loopy3_" + cacheName + ".cl";
 
-    std::string loopyLang   = "loopy";
-    std::string loopyHeader = pythonCode;
+    writeToFile(loopyFile2, info_.header);
 
-    if(useLoopyOrFloopy == occa::useFloopy){
-      loopyHeader = "!$loopy begin transform\n" + loopyHeader + "\n!$loopy end transform\n";
+    std::string loopyLang = "loopy";
 
+    if(useLoopyOrFloopy == occa::useFloopy)
       loopyLang = "floopy";
-    }
 
     std::ofstream fs;
     fs.open(loopyFile1.c_str());
 
-    fs << loopyHeader << "\n\n" << readFile(filename);
+    fs << readFile(filename);
 
     fs.close();
 
     std::stringstream command;
 
-    command << "floopy --lang=" << loopyLang << " --target=cl:0,0 "
-            << loopyFile1 << " " << loopyFile2;
+    command << "floopy --lang=" << loopyLang
+            << " --target=cl:0,0 "
+            << " --occa-defines=" << loopyFile2
+            << loopyFile1 << " " << loopyFile3;
 
     const std::string &sCommand = command.str();
 
