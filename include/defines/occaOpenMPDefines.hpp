@@ -127,10 +127,10 @@ public:
     s12(s12_),  s13(s13_),  s14(s14_),  s15(s15_) {}
 
   inline type16<TM> operator - () const {
-    return type8<TM>(-x  , -y  , -w  , -z  ,
-                     -s4 , -s5 , -s6 , -s7 ,
-                     -s8 , -s9 , -s10, -s11,
-                     -s12, -s13, -s14, -s15);
+    return type16<TM>(-x  , -y  , -w  , -z  ,
+                      -s4 , -s5 , -s6 , -s7 ,
+                      -s8 , -s9 , -s10, -s11,
+                      -s12, -s13, -s14, -s15);
   }
 
   template <class TM2> type16<TM>& operator  = (const type16<TM2> &t);
