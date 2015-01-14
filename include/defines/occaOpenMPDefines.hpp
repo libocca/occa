@@ -21,6 +21,10 @@ public:
   inline type2(TM x_ = 0, TM y_ = 0) :
     x(x_), y(y_) {}
 
+  inline type2<TM> operator - () const {
+    return type2<TM>(-x, -y);
+  }
+
   template <class TM2> type2<TM>& operator  = (const type2<TM2> &t);
   template <class TM2> type2<TM>& operator += (const type2<TM2> &t);
   template <class TM2> type2<TM>& operator -= (const type2<TM2> &t);
@@ -63,6 +67,10 @@ public:
   inline type4(TM x_ = 0, TM y_ = 0, TM z_ = 0, TM w_ = 0) :
     x(x_), y(y_), z(z_), w(w_) {}
 
+  inline type3<TM> operator - () const {
+    return type3<TM>(-x, -y, -w);
+  }
+
   template <class TM2> type4<TM>& operator  = (const type4<TM2> &t);
   template <class TM2> type4<TM>& operator += (const type4<TM2> &t);
   template <class TM2> type4<TM>& operator -= (const type4<TM2> &t);
@@ -85,6 +93,11 @@ public:
                TM s4_ = 0, TM s5_ = 0, TM s6_ = 0, TM s7_ = 0) :
     x(x_)  , y(y_)    , z(z_)  , w(w_),
     s4(s4_),  s5(s5_),  s6(s6_), s7(s7_) {}
+
+  inline type8<TM> operator - () const {
+    return type8<TM>(-x , -y , -w , -z,
+                     -s4, -s5, -s6, -s7);
+  }
 
   template <class TM2> type8<TM>& operator  = (const type8<TM2> &t);
   template <class TM2> type8<TM>& operator += (const type8<TM2> &t);
@@ -112,6 +125,13 @@ public:
     s4(s4_)  ,  s5(s5_)  ,  s6(s6_)  ,  s7(s7_)  ,
     s8(s8_)  ,  s9(s9_)  ,  s10(s10_),  s11(s11_),
     s12(s12_),  s13(s13_),  s14(s14_),  s15(s15_) {}
+
+  inline type16<TM> operator - () const {
+    return type8<TM>(-x  , -y  , -w  , -z  ,
+                     -s4 , -s5 , -s6 , -s7 ,
+                     -s8 , -s9 , -s10, -s11,
+                     -s12, -s13, -s14, -s15);
+  }
 
   template <class TM2> type16<TM>& operator  = (const type16<TM2> &t);
   template <class TM2> type16<TM>& operator += (const type16<TM2> &t);
