@@ -1943,10 +1943,13 @@ namespace occa {
       sKernel.statementEnd   = lastNode(sKernel.statementStart);
 
       //---[ Add kernel guards ]--------
-      sKernel.up->pushSourceLeftOf(snKernel , "#if OCCA_USING_OPENMP");
-      sKernel.up->pushSourceRightOf(snKernel, "#endif");
+      statementNode *ret = newSNEnd->right;
 
-      return newSNEnd->right;
+      sKernel.up->pushSourceLeftOf(snKernel , "#ifdef OCCA_LAUNCH_KERNEL");
+      sKernel.up->pushSourceRightOf(snKernel, "#else");
+      sKernel.up->pushSourceRightOf(newSNEnd, "#endif");
+
+      return ret;
     }
 
     statementNode* parserBase::getOuterLoopsInStatement(statement &s){

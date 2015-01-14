@@ -1534,6 +1534,11 @@ namespace occa {
       header += '\n';
     }
 
+    inline void removeDefine(const std::string &macro){
+      if(!isAnOccaDefine(macro))
+        header += "#undef " + macro + '\n';
+    }
+
     template <class TM>
     inline void addDefine(const std::string &macro, const TM &value){
       std::stringstream ss;
