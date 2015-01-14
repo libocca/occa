@@ -13,7 +13,6 @@
 #define OCCA_MAX_THREADS 512
 #define OCCA_MEM_ALIGN   64
 
-#if 0
 template <class TM>
 class type2  { public: char x,y;                                               };
 class type3  { public: char x,y,z;                                             };
@@ -21,6 +20,7 @@ class type4  { public: char x,y,z,w;                                           }
 class type8  { public: char x,y,z,w,s4,s5,s6,s7;                               };
 class type16 { public: char x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; };
 
+#if 0
 template <class TM>
 type2<TM>& operator = (const type2<TM> &t){
   x = t.x; y = t.y;
@@ -48,13 +48,47 @@ type8<TM>& operator = (const type8<TM> &t){
 
 template <class TM>
 type16<TM>& operator = (const type16<TM> &t){
-  x   = t.x;   y  = t.y;  z   = t.z;   w   = t.w;
-  s4  = t.s4;  s5 = t.s5; s6  = t.s6;  s7  = t.s7;
-  s8  = t.s8;  s9 = t.s9; s10 = t.s10; s11 = t.s11;
+  x   = t.x;   y  = t.y;    z   = t.z;   w   = t.w;
+  s4  = t.s4;  s5 = t.s5;   s6  = t.s6;  s7  = t.s7;
+  s8  = t.s8;  s9 = t.s9;   s10 = t.s10; s11 = t.s11;
   s12 = t.s12; s13 = t.s13; s14 = t.s14; s15 = t.s15;
   return *this;
 }
 
+template <class TM>
+type2<TM>& operator + (const type2<TM> &t){
+  x = t.x; y = t.y;
+  return *this;
+}
+
+template <class TM>
+type3<TM>& operator + (const type3<TM> &t){
+  x = t.x; y = t.y; z = t.z;
+  return *this;
+}
+
+template <class TM>
+type4<TM>& operator + (const type4<TM> &t){
+  x = t.x; y = t.y; z = t.z; w = t.w;
+  return *this;
+}
+
+template <class TM>
+type8<TM>& operator + (const type8<TM> &t){
+  x  = t.x;  y  = t.y;  z  = t.z;  w  = t.w;
+  s4 = t.s4; s5 = t.s5; s6 = t.s6; s7 = t.s7;
+  return *this;
+}
+
+template <class TM>
+type16<TM>& operator + (const type16<TM> &t){
+  x   = t.x;   y  = t.y;    z   = t.z;   w   = t.w;
+  s4  = t.s4;  s5 = t.s5;   s6  = t.s6;  s7  = t.s7;
+  s8  = t.s8;  s9 = t.s9;   s10 = t.s10; s11 = t.s11;
+  s12 = t.s12; s13 = t.s13; s14 = t.s14; s15 = t.s15;
+  return *this;
+}
+#endif
 
 typedef type2<char> char2;
 typedef type3<char> char3;
@@ -85,7 +119,6 @@ typedef type3<double> double3;
 typedef type4<double> double4;
 typedef type8<double> double8;
 typedef type16<double> double16;
-#endif
 //================================================
 
 
