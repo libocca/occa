@@ -966,7 +966,7 @@ namespace occa {
     const std::string defsFile = prefix + "loopy1_" + cacheName + ".defs";
     const std::string clFile = prefix + "loopy2_" + cacheName + ".cl";
 
-    writeToFile(clFile, info_.header);
+    writeToFile(defsFile, info_.header);
 
     std::string loopyLang = "loopy";
 
