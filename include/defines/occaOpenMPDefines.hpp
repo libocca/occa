@@ -13,13 +13,35 @@
 #define OCCA_MAX_THREADS 512
 #define OCCA_MEM_ALIGN   64
 
-typedef struct float2_t { float  x,y;     } float2;
-typedef struct float3_t { float  x,y,z;   } float3;
-typedef struct float4_t { float  x,y,z,w; } float4;
+typedef struct { char x,y;                                               } char2;
+typedef struct { char x,y,z;                                             } char3;
+typedef struct { char x,y,z,w;                                           } char4;
+typedef struct { char x,y,z,w,s4,s5,s6,s7;                               } char8;
+typedef struct { char x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } char16;
 
-typedef struct double2_t { double  x,y;     } double2;
-typedef struct double3_t { double  x,y,z;   } double3;
-typedef struct double4_t { double  x,y,z,w; } double4;
+typedef struct { short x,y;                                               } short2;
+typedef struct { short x,y,z;                                             } short3;
+typedef struct { short x,y,z,w;                                           } short4;
+typedef struct { short x,y,z,w,s4,s5,s6,s7;                               } short8;
+typedef struct { short x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } short16;
+
+typedef struct { int x,y;                                               } int2;
+typedef struct { int x,y,z;                                             } int3;
+typedef struct { int x,y,z,w;                                           } int4;
+typedef struct { int x,y,z,w,s4,s5,s6,s7;                               } int8;
+typedef struct { int x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } int16;
+
+typedef struct { float x,y;                                               } float2;
+typedef struct { float x,y,z;                                             } float3;
+typedef struct { float x,y,z,w;                                           } float4;
+typedef struct { float x,y,z,w,s4,s5,s6,s7;                               } float8;
+typedef struct { float x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } float16;
+
+typedef struct { double x,y;                                               } double2;
+typedef struct { double x,y,z;                                             } double3;
+typedef struct { double x,y,z,w;                                           } double4;
+typedef struct { double x,y,z,w,s4,s5,s6,s7;                               } double8;
+typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } double16;
 //================================================
 
 

@@ -77,20 +77,9 @@ namespace occa {
   template <>
   std::string kernel_t<Pthreads>::getCachedBinaryName(const std::string &filename,
                                                       kernelInfo &info_){
-    info_.addDefine("OCCA_USING_CPU"     , 1);
-    info_.addDefine("OCCA_USING_PTHREADS", 1);
 
-    info_.addOCCAKeywords(occaPthreadsDefines);
-
-    std::stringstream salt;
-    salt << "Pthreads"
-         << info_.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename,
+                                             dev->dHandle->getInfoSalt(info_));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'
@@ -107,18 +96,26 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
+
+    dev->dHandle->addOccaHeadersToInfo(info);
+
     std::string cachedBinary = getCachedBinaryName(filename, info);
+
+    if(!haveFile(cachedBinary)){
+      waitForFile(cachedBinary);
+
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-      return buildFromBinary(cachedBinary, functionName);
-    }
+      releaseFile(cachedBinary);
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -663,6 +660,28 @@ namespace occa {
   }
 
   template <>
+  void device_t<Pthreads>::addOccaHeadersToInfo(kernelInfo &info_){
+    info_.addDefine("OCCA_USING_CPU"     , 1);
+    info_.addDefine("OCCA_USING_PTHREADS", 1);
+
+    info_.addOCCAKeywords(occaPthreadsDefines);
+  }
+
+  template <>
+  std::string device_t<Pthreads>::getInfoSalt(const kernelInfo &info_){
+    std::stringstream salt;
+
+    salt << "Pthreads"
+         << info_.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags;
+
+    return salt.str();
+  }
+
+  template <>
   deviceIdentifier device_t<Pthreads>::getIdentifier() const {
     deviceIdentifier dID;
 
@@ -810,7 +829,9 @@ namespace occa {
                                                       const kernelInfo &info_){
     kernel_v *k = new kernel_t<Pthreads>;
     k->dev = dev;
+
     k->buildFromSource(filename, functionName, info_);
+
     return k;
   }
 
@@ -832,20 +853,10 @@ namespace occa {
     tmpK.free();
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU"     , 1);
-    info.addDefine("OCCA_USING_PTHREADS", 1);
 
-    info.addOCCAKeywords(occaPthreadsDefines);
+    addOccaHeadersToInfo(info);
 
-    std::stringstream salt;
-    salt << "Pthreads"
-         << info.salt()
-         << parser::version
-         << compilerEnvScript
-         << compiler
-         << compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'

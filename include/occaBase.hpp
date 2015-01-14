@@ -1131,6 +1131,8 @@ namespace occa {
 
     virtual void setup(argInfoMap &aim) = 0;
 
+    virtual void addOccaHeadersToInfo(kernelInfo &info) = 0;
+    virtual std::string getInfoSalt(const kernelInfo &info) = 0;
     virtual deviceIdentifier getIdentifier() const = 0;
 
     virtual void getEnvironmentVariables() = 0;
@@ -1217,6 +1219,8 @@ namespace occa {
 
     void setup(argInfoMap &aim);
 
+    void addOccaHeadersToInfo(kernelInfo &info);
+    std::string getInfoSalt(const kernelInfo &info);
     deviceIdentifier getIdentifier() const;
 
     void getEnvironmentVariables();
@@ -1367,6 +1371,15 @@ namespace occa {
 
     void free(stream s);
 
+    kernel buildKernelFromString(const std::string &content,
+                                 const std::string &functionName,
+                                 const bool useParser);
+
+    kernel buildKernelFromString(const std::string &content,
+                                 const std::string &functionName,
+                                 const kernelInfo &info_ = defaultKernelInfo,
+                                 const bool useParser    = true);
+
     kernel buildKernelFromSource(const std::string &filename,
                                  const std::string &functionName,
                                  const kernelInfo &info_ = defaultKernelInfo);
@@ -1383,12 +1396,12 @@ namespace occa {
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
-                                int loopyOrFloopy);
+                                const int loopyOrFloopy);
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
-                                const std::string &pythonCode = "",
-                                int loopyOrFloopy = occa::useLoopy);
+                                const kernelInfo &info_ = defaultKernelInfo,
+                                const int loopyOrFloopy = occa::useLoopy);
 
     kernel& operator [] (kernelDatabase &kdb);
 

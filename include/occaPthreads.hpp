@@ -201,6 +201,12 @@ namespace occa {
   void device_t<Pthreads>::setup(argInfoMap &aim);
 
   template <>
+  void device_t<Pthreads>::addOccaHeadersToInfo(kernelInfo &info_);
+
+  template <>
+  std::string device_t<Pthreads>::getInfoSalt(const kernelInfo &info_);
+
+  template <>
   deviceIdentifier device_t<Pthreads>::getIdentifier() const;
 
   template <>

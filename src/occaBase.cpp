@@ -792,9 +792,52 @@ namespace occa {
     dHandle->freeStream(s);
   }
 
+  kernel device::buildKernelFromString(const std::string &content,
+                                       const std::string &functionName,
+                                       const bool useParser){
+
+    return buildKernelFromString(content, functionName, defaultKernelInfo, useParser);
+  }
+
+  kernel device::buildKernelFromString(const std::string &content,
+                                       const std::string &functionName,
+                                       const kernelInfo &info_,
+                                       const bool useParser){
+
+    kernelInfo info = info_;
+
+    dHandle->addOccaHeadersToInfo(info);
+
+    const std::string cachedBinary = getContentCachedName(content, dHandle->getInfoSalt(info));
+
+    std::string prefix, cacheName;
+
+    getFilePrefixAndName(cachedBinary, prefix, cacheName);
+
+    std::string h_cacheName = prefix + "h_" + cacheName;
+
+    if(useParser)
+      h_cacheName += ".okl";
+    else
+      h_cacheName += ".occa";
+
+    if(!haveFile(h_cacheName)){
+      waitForFile(h_cacheName);
+      waitForFile(cachedBinary);
+
+      return buildKernelFromBinary(cachedBinary, functionName);
+    }
+
+    writeToFile(h_cacheName, content);
+    releaseFile(h_cacheName);
+
+    return buildKernelFromSource(h_cacheName, functionName, info_);
+  }
+
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
+
     const bool usingParser = fileNeedsParser(filename);
 
     kernel ker;
@@ -810,6 +853,8 @@ namespace occa {
       k->dev->dHandle = new device_t<OpenMP>();
 
       kernelInfo info = info_;
+
+      k->dev->dHandle->addOccaHeadersToInfo(info);
 
       std::string cachedBinary = k->getCachedBinaryName(filename, info);
 
@@ -891,14 +936,19 @@ namespace occa {
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
                                       const int useLoopyOrFloopy){
-    return buildKernelFromLoopy(filename, functionName, "", useLoopyOrFloopy);
+
+    return buildKernelFromLoopy(filename,
+                                functionName,
+                                defaultKernelInfo,
+                                useLoopyOrFloopy);
   }
 
   kernel device::buildKernelFromLoopy(const std::string &filename,
                                       const std::string &functionName,
-                                      const std::string &pythonCode,
+                                      const kernelInfo &info_,
                                       const int useLoopyOrFloopy){
-    std::string cachedBinary = getCachedName(filename, pythonCode);
+
+    std::string cachedBinary = getCachedName(filename, dHandle->getInfoSalt(info_));
 
     struct stat buffer;
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -912,29 +962,22 @@ namespace occa {
 
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
-    const std::string loopyFile1 = prefix + "loopy1_" + cacheName + ".loopy";
-    const std::string loopyFile2 = prefix + "loopy2_" + cacheName + ".cl";
+    const std::string defsFile = prefix + "loopy1_" + cacheName + ".defines";
+    const std::string clFile = prefix + "loopy2_" + cacheName + ".cl";
 
-    std::string loopyLang   = "loopy";
-    std::string loopyHeader = pythonCode;
+    writeToFile(clFile, info_.header);
 
-    if(useLoopyOrFloopy == occa::useFloopy){
-      loopyHeader = "!$loopy begin transform\n" + loopyHeader + "\n!$loopy end transform\n";
+    std::string loopyLang = "loopy";
 
+    if(useLoopyOrFloopy == occa::useFloopy)
       loopyLang = "floopy";
-    }
-
-    std::ofstream fs;
-    fs.open(loopyFile1.c_str());
-
-    fs << loopyHeader << "\n\n" << readFile(filename);
-
-    fs.close();
 
     std::stringstream command;
 
-    command << "floopy --lang=" << loopyLang << " --target=cl:0,0 "
-            << loopyFile1 << " " << loopyFile2;
+    command << "floopy --lang=" << loopyLang
+            << " --target=cl:0,0 "
+            << " --occa-defines=" << defsFile
+            << filename << ' ' << clFile;
 
     const std::string &sCommand = command.str();
 
@@ -942,7 +985,7 @@ namespace occa {
 
     system(sCommand.c_str());
 
-    return buildKernelFromSource(loopyFile2, functionName);
+    return buildKernelFromSource(clFile, functionName);
   }
 
   memory device::wrapMemory(void *handle_,

@@ -138,6 +138,7 @@ namespace occa {
 
   bool haveFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int mkdirStatus = mkdir(lockDir.c_str(), 0755);
 
@@ -284,6 +285,21 @@ namespace occa {
     return contents;
   }
 
+  void writeToFile(const std::string &filename,
+                   const std::string &content){
+
+    FILE *fp = fopen(filename.c_str(), "w");
+
+    if(!fp){
+      printf("Failed to open: %s\n", filename.c_str());
+      throw 1;
+    }
+
+    fputs(content.c_str(), fp);
+
+    fclose(fp);
+  }
+
   std::string getOCCADir(){
     char *c_occaPath = getenv("OCCA_DIR");
 
@@ -377,17 +393,23 @@ namespace occa {
             (ext == "cu"));
   }
 
+  std::string getCacheHash(const std::string &content,
+                           const std::string &salt){
+
+    // Only taking the first 16 characters
+    return fnv(content + salt).substr(0, 16);
+  }
+
   std::string getCachedName(const std::string &filename,
                             const std::string &salt){
 
-    std::string occaCachePath = getCachePath();
-    //================================
+    return getCachePath() + getCacheHash(readFile(filename), salt);
+  }
 
-    const std::string fileContents = readFile(filename);
-    const std::string contentsSHA  = fnv(fileContents + salt);
+  std::string getContentCachedName(const std::string &content,
+                                   const std::string &salt){
 
-    // Only taking the first 16 characters
-    return occaCachePath + contentsSHA.substr(0, 16);
+    return getCachePath() + getCacheHash(content, salt);
   }
 
   std::string createIntermediateSource(const std::string &filename,

@@ -70,25 +70,9 @@ namespace occa {
   template <>
   std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
                                                     kernelInfo &info_){
-    info_.addDefine("OCCA_USING_CPU"   , 1);
-    info_.addDefine("OCCA_USING_OPENMP", 1);
 
-#if OCCA_OPENMP_ENABLED
-    info_.addIncludeDefine("omp.h");
-#endif
-
-    info_.addOCCAKeywords(occaOpenMPDefines);
-
-    std::stringstream salt;
-
-    salt << "OpenMP"
-         << info_.salt()
-         << parser::version
-         << dev->dHandle->compilerEnvScript
-         << dev->dHandle->compiler
-         << dev->dHandle->compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename,
+                                             dev->dHandle->getInfoSalt(info_));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'
@@ -105,10 +89,26 @@ namespace occa {
     functionName = functionName_;
 
     kernelInfo info = info_;
+
+    dev->dHandle->addOccaHeadersToInfo(info);
+
     std::string cachedBinary = getCachedBinaryName(filename, info);
 
     if(!haveFile(cachedBinary)){
       waitForFile(cachedBinary);
+
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+
+      return buildFromBinary(cachedBinary, functionName);
+    }
+
+    struct stat buffer;
+    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+
+    if(fileExists){
+      releaseFile(cachedBinary);
+
+      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -546,6 +546,32 @@ namespace occa {
   void device_t<OpenMP>::setup(argInfoMap &aim){}
 
   template <>
+  void device_t<OpenMP>::addOccaHeadersToInfo(kernelInfo &info_){
+    info_.addDefine("OCCA_USING_CPU"   , 1);
+    info_.addDefine("OCCA_USING_OPENMP", 1);
+
+#if OCCA_OPENMP_ENABLED
+    info_.addIncludeDefine("omp.h");
+#endif
+
+    info_.addOCCAKeywords(occaOpenMPDefines);
+  }
+
+  template <>
+  std::string device_t<OpenMP>::getInfoSalt(const kernelInfo &info_){
+    std::stringstream salt;
+
+    salt << "OpenMP"
+         << info_.salt()
+         << parser::version
+         << compilerEnvScript
+         << compiler
+         << compilerFlags;
+
+    return salt.str();
+  }
+
+  template <>
   deviceIdentifier device_t<OpenMP>::getIdentifier() const {
     deviceIdentifier dID;
 
@@ -700,21 +726,9 @@ namespace occa {
                                                     const std::string &functionName,
                                                     const kernelInfo &info_){
     kernel_v *k = new kernel_t<OpenMP>;
-
     k->dev = dev;
 
-    kernelInfo info = info_;
-    std::string cachedBinary = k->getCachedBinaryName(filename, info);
-
-    struct stat buffer;
-    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-      k->buildFromBinary(cachedBinary, functionName);
-    }
-    else
-      k->buildFromSource(filename, functionName, info_);
+    k->buildFromSource(filename, functionName, info_);
 
     return k;
   }
@@ -737,24 +751,10 @@ namespace occa {
     tmpK.free();
 
     kernelInfo info = info_;
-    info.addDefine("OCCA_USING_CPU"   , 1);
-    info.addDefine("OCCA_USING_OPENMP", 1);
 
-#if OCCA_OPENMP_ENABLED
-    info.addIncludeDefine("omp.h");
-#endif
+    addOccaHeadersToInfo(info);
 
-    info.addOCCAKeywords(occaOpenMPDefines);
-
-    std::stringstream salt;
-    salt << "OpenMP"
-         << info.salt()
-         << parser::version
-         << compilerEnvScript
-         << compiler
-         << compilerFlags;
-
-    std::string cachedBinary = getCachedName(filename, salt.str());
+    std::string cachedBinary = getCachedName(filename, getInfoSalt(info));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'

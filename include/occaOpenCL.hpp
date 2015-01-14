@@ -215,6 +215,12 @@ namespace occa {
   void device_t<OpenCL>::setup(argInfoMap &aim);
 
   template <>
+  void device_t<OpenCL>::addOccaHeadersToInfo(kernelInfo &info_);
+
+  template <>
+  std::string device_t<OpenCL>::getInfoSalt(const kernelInfo &info_);
+
+  template <>
   deviceIdentifier device_t<OpenCL>::getIdentifier() const;
 
   template <>

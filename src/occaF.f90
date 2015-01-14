@@ -978,46 +978,46 @@ contains
     call occaBuildKernelFromBinary_fc(kernel, device, filename, functionName)
   end function occaBuildKernelFromBinary_func
 
-  type(occaKernel) function occaBuildKernelFromLoopy_func(device, filename, functionName, pythonCode) result(kernel)
+  type(occaKernel) function occaBuildKernelFromLoopy_func(device, filename, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: filename
     character(len=*),     intent(in)  :: functionName
-    character(len=*),     intent(in)  :: pythonCode
+    type(occaKernelInfo), intent(in)  :: info
 
     interface
-      subroutine occaBuildKernelFromLoopy_fc(kernel, device, filename, functionName, pythonCode)
+      subroutine occaBuildKernelFromLoopy_fc(kernel, device, filename, functionName, info)
         use occaFTypes_m
         implicit none
         type(occaKernel),     intent(out) :: kernel
         type(occaDevice),     intent(in)  :: device
         character(len=*),     intent(in)  :: filename
         character(len=*),     intent(in)  :: functionName
-        character(len=*),     intent(in)  :: pythonCode
+        type(occaKernelInfo), intent(in)  :: info
       end subroutine occaBuildKernelFromLoopy_fc
     end interface
 
-    call occaBuildKernelFromLoopy_fc(kernel, device, filename, functionName, pythonCode)
+    call occaBuildKernelFromLoopy_fc(kernel, device, filename, functionName, info)
   end function occaBuildKernelFromLoopy_func
 
-  type(occaKernel) function occaBuildKernelFromFloopy_func(device, filename, functionName, pythonCode) result(kernel)
+  type(occaKernel) function occaBuildKernelFromFloopy_func(device, filename, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: filename
     character(len=*),     intent(in)  :: functionName
-    character(len=*),     intent(in)  :: pythonCode
+    type(occaKernelInfo), intent(in)  :: info
 
     interface
-      subroutine occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, pythonCode)
+      subroutine occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, info)
         use occaFTypes_m
         implicit none
         type(occaKernel),     intent(out) :: kernel
         type(occaDevice),     intent(in)  :: device
         character(len=*),     intent(in)  :: filename
         character(len=*),     intent(in)  :: functionName
-        character(len=*),     intent(in)  :: pythonCode
+        type(occaKernelInfo), intent(in)  :: info
       end subroutine occaBuildKernelFromFloopy_fc
     end interface
 
-    call occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, pythonCode)
+    call occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, info)
   end function occaBuildKernelFromFloopy_func
 
 
