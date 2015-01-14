@@ -854,14 +854,15 @@ namespace occa {
 
       kernelInfo info = info_;
 
-      k->dev->dHandle->addOccaHeadersToInfo(info);
-
-      std::string cachedBinary = k->getCachedBinaryName(filename, info);
+      const std::string cachedBinary  = k->getCachedBinaryName(filename, info);
+      const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
 
       parsedKernelInfo kInfo = parseFileForFunction(filename,
                                                     cachedBinary,
                                                     functionName,
                                                     info);
+
+      info.addDefine("OCCA_LAUNCH_KERNEL", 1);
 
       struct stat buffer;
       bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
@@ -871,7 +872,7 @@ namespace occa {
         k->buildFromBinary(cachedBinary, functionName);
       }
       else
-        k->buildFromSource(filename, functionName, info_);
+        k->buildFromSource(iCachedBinary, functionName, info);
 
       k->nestedKernelCount = kInfo.nestedKernels;
 
@@ -886,7 +887,7 @@ namespace occa {
         sKer.mode_   = mode_;
         sKer.strMode = strMode;
 
-        sKer.kHandle = dHandle->buildKernelFromSource(filename,
+        sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
                                                       kInfo.baseName + ss.str(),
                                                       info_);
 
