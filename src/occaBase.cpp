@@ -962,30 +962,22 @@ namespace occa {
 
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
-    const std::string loopyFile1 = prefix + "loopy1_" + cacheName + ".loopy";
-    const std::string loopyFile2 = prefix + "loopy2_" + cacheName + ".defines";
-    const std::string loopyFile3 = prefix + "loopy3_" + cacheName + ".cl";
+    const std::string defsFile = prefix + "loopy1_" + cacheName + ".defines";
+    const std::string clFile = prefix + "loopy2_" + cacheName + ".cl";
 
-    writeToFile(loopyFile2, info_.header);
+    writeToFile(clFile, info_.header);
 
     std::string loopyLang = "loopy";
 
     if(useLoopyOrFloopy == occa::useFloopy)
       loopyLang = "floopy";
 
-    std::ofstream fs;
-    fs.open(loopyFile1.c_str());
-
-    fs << readFile(filename);
-
-    fs.close();
-
     std::stringstream command;
 
     command << "floopy --lang=" << loopyLang
             << " --target=cl:0,0 "
-            << " --occa-defines=" << loopyFile2
-            << loopyFile1 << " " << loopyFile3;
+            << " --occa-defines=" << defsFile
+            << filename << ' ' << clFile;
 
     const std::string &sCommand = command.str();
 
@@ -993,7 +985,7 @@ namespace occa {
 
     system(sCommand.c_str());
 
-    return buildKernelFromSource(loopyFile2, functionName);
+    return buildKernelFromSource(clFile, functionName);
   }
 
   memory device::wrapMemory(void *handle_,
