@@ -13,12 +13,11 @@
 #define OCCA_MAX_THREADS 512
 #define OCCA_MEM_ALIGN   64
 
-template <class TM>
-class type2  { public: char x,y;                                               };
-class type3  { public: char x,y,z;                                             };
-class type4  { public: char x,y,z,w;                                           };
-class type8  { public: char x,y,z,w,s4,s5,s6,s7;                               };
-class type16 { public: char x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; };
+template <class TM> class type2  { public: TM x,y;                                               };
+template <class TM> class type3  { public: TM x,y,z;                                             };
+template <class TM> class type4  { public: TM x,y,z,w;                                           };
+template <class TM> class type8  { public: TM x,y,z,w,s4,s5,s6,s7;                               };
+template <class TM> class type16 { public: TM x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; };
 
 #if 0
 template <class TM>
@@ -56,32 +55,37 @@ type16<TM>& operator = (const type16<TM> &t){
 }
 
 template <class TM>
-type2<TM>& operator + (const type2<TM> &t){
+type2<TM> operator + (const type2<TM> &a, const type2<TM> &b){
+  type2<TM> r;
   x = t.x; y = t.y;
   return *this;
 }
 
 template <class TM>
-type3<TM>& operator + (const type3<TM> &t){
+type3<TM> operator + (const type3<TM> &a, const type3<TM> &b){
+  type3<TM> r;
   x = t.x; y = t.y; z = t.z;
   return *this;
 }
 
 template <class TM>
-type4<TM>& operator + (const type4<TM> &t){
+type4<TM> operator + (const type4<TM> &a, const type4<TM> &b){
+  type4<TM> r;
   x = t.x; y = t.y; z = t.z; w = t.w;
   return *this;
 }
 
 template <class TM>
-type8<TM>& operator + (const type8<TM> &t){
+type8<TM> operator + (const type8<TM> &a, const type8<TM> &b){
+  type8<TM> r;
   x  = t.x;  y  = t.y;  z  = t.z;  w  = t.w;
   s4 = t.s4; s5 = t.s5; s6 = t.s6; s7 = t.s7;
   return *this;
 }
 
 template <class TM>
-type16<TM>& operator + (const type16<TM> &t){
+type16<TM> operator + (const type16<TM> &a, const type16<TM> &b){
+  type16<TM> r;
   x   = t.x;   y  = t.y;    z   = t.z;   w   = t.w;
   s4  = t.s4;  s5 = t.s5;   s6  = t.s6;  s7  = t.s7;
   s8  = t.s8;  s9 = t.s9;   s10 = t.s10; s11 = t.s11;
