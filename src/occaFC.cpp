@@ -337,7 +337,7 @@ extern "C" {
   void OCCABUILDKERNELFROMLOOPY_FC(occaKernel *kernel, occaDevice *device,
                                    const char *filename     OCCA_F2C_LSTR(filename_l),
                                    const char *functionName OCCA_F2C_LSTR(functionName_l),
-                                   occaKernelInfo *info,
+                                   occaKernelInfo *info
                                    OCCA_F2C_RSTR(filename_l)
                                    OCCA_F2C_RSTR(functionName_l)
                                    OCCA_F2C_RSTR(pythonCode_l)){
@@ -355,7 +355,7 @@ extern "C" {
   void OCCABUILDKERNELFROMFLOOPY_FC(occaKernel *kernel, occaDevice *device,
                                     const char *filename     OCCA_F2C_LSTR(filename_l),
                                     const char *functionName OCCA_F2C_LSTR(functionName_l),
-                                    occaKernelInfo *info,
+                                    occaKernelInfo *info
                                     OCCA_F2C_RSTR(filename_l)
                                     OCCA_F2C_RSTR(functionName_l)
                                     OCCA_F2C_RSTR(pythonCode_l)){
