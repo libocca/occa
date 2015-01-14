@@ -67,8 +67,8 @@ public:
   inline type4(TM x_ = 0, TM y_ = 0, TM z_ = 0, TM w_ = 0) :
     x(x_), y(y_), z(z_), w(w_) {}
 
-  inline type3<TM> operator - () const {
-    return type3<TM>(-x, -y, -w);
+  inline type4<TM> operator - () const {
+    return type4<TM>(-x, -y, -z, -w);
   }
 
   template <class TM2> type4<TM>& operator  = (const type4<TM2> &t);
