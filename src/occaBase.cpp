@@ -964,7 +964,7 @@ namespace occa {
     getFilePrefixAndName(cachedBinary, prefix, cacheName);
 
     const std::string defsFile = prefix + "loopy1_" + cacheName + ".defs";
-    const std::string clFile = prefix + "loopy2_" + cacheName + ".cl";
+    const std::string clFile = prefix + "loopy2_" + cacheName + ".ocl";
 
     writeToFile(defsFile, info_.header);
 
