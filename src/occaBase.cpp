@@ -978,6 +978,7 @@ namespace occa {
     command << "floopy --lang=" << loopyLang
             << " --target=cl:0,0 "
             << " --occa-defines=" << defsFile << ' '
+            << " --occa-add-dummy-arg "
             << filename << ' ' << clFile;
 
     const std::string &sCommand = command.str();
