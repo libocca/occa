@@ -86,9 +86,4 @@ int main(int argc, char **argv){
   //   std::string parsedContent = parser.parseFile("tests/addVectors_loopy.cl");
   //   std::cout << parsedContent << '\n';
   // }
-
-  // {
-  //   std::string parsedContent = parser.parseFile("tests/maxIteration.okl");
-  //   std::cout << parsedContent << '\n';
-  // }
 }

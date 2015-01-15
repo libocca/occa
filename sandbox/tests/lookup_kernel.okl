@@ -1,130 +1,30 @@
-#ifndef __XSBENCH_HEADER_H__
-#define __XSBENCH_HEADER_H__
-
-typedef unsigned long long size_t;
-
-#include<stdio.h>
-#include<stdlib.h>
-#include<time.h>
-#include<string.h>
-#include<strings.h>
-#include<math.h>
-#include<omp.h>
-#include<unistd.h>
-#include<sys/time.h>
-#include"occa_c.h"
-
-// Papi Header
-#ifdef PAPI
-#include "papi.h"
-#endif
-
-// I/O Specifiers
-#define INFO 1
-#define DEBUG 1
-#define SAVE 1
-
-// Structures
 typedef struct{
-	double energy;
-	double total_xs;
-	double elastic_xs;
-	double absorbtion_xs;
-	double fission_xs;
-	double nu_fission_xs;
+  double energy;
+  double total_xs;
+  double elastic_xs;
+  double absorbtion_xs;
+  double fission_xs;
+  double nu_fission_xs;
+
+  struct blah {
+    int blah1, blah2;
+
+    union {
+      int a;
+      float b;
+      char c[4];
+    };
+  };
+
 } NuclideGridPoint;
 
 typedef struct{
-	double energy;
-	int xs_ptrs;
+  double energy;
+  int xs_ptrs;
 } GridPoint;
 
-typedef struct{
-	int nthreads;
-	long n_isotopes;
-	long n_gridpoints;
-	int lookups;
-	char * HM;
-} Inputs;
 
-// Function Prototypes
-void logo(int version);
-void center_print(const char *s, int width);
-void border_print(void);
-void fancy_int(long a);
-
-int sprintf();
-
-NuclideGridPoint ** gpmatrix(size_t m, size_t n);
-
-void gpmatrix_free( NuclideGridPoint ** M );
-
-int NGP_compare( const void * a, const void * b );
-
-void generate_grids( NuclideGridPoint ** nuclide_grids,
-                     long n_isotopes, long n_gridpoints );
-void generate_grids_v( NuclideGridPoint ** nuclide_grids,
-                     long n_isotopes, long n_gridpoints );
-
-void sort_nuclide_grids( NuclideGridPoint ** nuclide_grids, long n_isotopes,
-                         long n_gridpoints );
-
-int * generate_ptr_grid(int n_isotopes, int n_gridpoints);
-
-GridPoint * generate_energy_grid( long n_isotopes, long n_gridpoints,
-                                  NuclideGridPoint ** nuclide_grids, int * grid_ptrs);
-
-void set_grid_ptrs( GridPoint * energy_grid, NuclideGridPoint ** nuclide_grids,
-                    int * grid_ptrs, long n_isotopes, long n_gridpoints );
-
-int binary_search( NuclideGridPoint * A, double quarry, int n );
-
-void calculate_macro_xs(   double p_energy, int mat, long n_isotopes,
-                           long n_gridpoints, int * restrict num_nucs,
-                           double * restrict concs, GridPoint * restrict energy_grid,
-                           int * restrict grid_ptrs,
-			   NuclideGridPoint ** restrict nuclide_grids,
-			   int * restrict mats, int * restrict mats_ix,
-                           double * restrict macro_xs_vector );
-
-void calculate_micro_xs(   double p_energy, int nuc, long n_isotopes,
-                           long n_gridpoints,
-                           GridPoint * restrict energy_grid, int * restrict grid_ptrs,
-                           NuclideGridPoint ** restrict nuclide_grids, int idx,
-                           double * restrict xs_vector );
-
-long grid_search( long n, double quarry, GridPoint * A);
-
-int * load_num_nucs(long n_isotopes);
-int * load_mats_idx(int * num_nucs);
-int * load_mats( int * num_nucs, int * mats_idx, int size_mats, long n_isotopes );
-double * load_concs( int size_mats );
-double * load_concs_v( int size_mats );
-int pick_mat(unsigned long * seed);
-double rn(unsigned long * seed);
-int rn_int(unsigned long * seed);
-void counter_stop( int * eventset, int num_papi_events );
-void counter_init( int * eventset, int * num_papi_events );
-void do_flops(void);
-void do_loads( int nuc,
-               NuclideGridPoint ** restrict nuclide_grids,
-		       long n_gridpoints );
-Inputs read_CLI( int argc, char * argv[] );
-void print_CLI_error(void);
-double rn_v(void);
-double round_double( double input );
-unsigned int hash(unsigned char *str, int nbins);
-size_t estimate_mem_usage( Inputs in );
-void print_inputs(Inputs in, int nprocs, int version);
-void print_results( Inputs in, int mype, double runtime, int nprocs, unsigned long long vhash );
-void binary_dump(long n_isotopes, long n_gridpoints, NuclideGridPoint ** nuclide_grids,
-		 GridPoint * energy_grid, int * grid_ptrs);
-void binary_read(long n_isotopes, long n_gridpoints, NuclideGridPoint ** nuclide_grids,
-		 GridPoint * energy_grid, int * grid_ptrs);
-
-#endif
-
-occaFunction double rn(unsigned long * seed) {
+occaFunction double rn(unsigned long int * seed) {
   double ret;
   unsigned long int n1;
   unsigned long int a = 16807;
@@ -135,92 +35,116 @@ occaFunction double rn(unsigned long * seed) {
   return ret;
 }
 
-occaFunction long grid_search( const long int n, const double quarry, GridPoint * restrict A) {
-	long int lowerLimit = 0;
-	long int upperLimit = n-1;
-	long int examinationPoint;
-	long int length = upperLimit - lowerLimit;
+/*
+   occaFunction unsigned int hash(unsigned char *str, int nbins)
+   {
+   unsigned int hash = 5381;
+   int c;
 
-	while( length > 1 )
-	{
-		examinationPoint = lowerLimit + ( length / 2 );
+   while (c = *str++)
+   hash = ((hash << 5) + hash) + c;
+
+   return hash % nbins;
+   }
+ */
+
+
+occaFunction long grid_search( const long int n, const double quarry, GridPoint * restrict A) {
+  long int lowerLimit = 0;
+  long int upperLimit = n-1;
+  long int examinationPoint;
+  long int length = upperLimit - lowerLimit;
+
+  while( length > 1 )
+  {
+    examinationPoint = lowerLimit + ( length / 2 );
 
     // Some optimizations exist in CUDA XSBench but are not included here
-		/* if( A[examinationPoint].energy > quarry ) */
-		/* 	upperLimit = examinationPoint; */
-		/* else */
-		/* 	lowerLimit = examinationPoint; */
+    if( A[examinationPoint].energy > quarry )
+      upperLimit = examinationPoint;
+    else
+      lowerLimit = examinationPoint;
 
-		length = upperLimit - lowerLimit;
-	}
+    length = upperLimit - lowerLimit;
+  }
 
-	return lowerLimit;
+  return lowerLimit;
 }
 
 occaFunction int pick_mat( unsigned long int * seed ) {
-	// I have a nice spreadsheet supporting these numbers. They are
-	// the fractions (by volume) of material in the core. Not a
-	// *perfect* approximation of where XS lookups are going to occur,
-	// but this will do a good job of biasing the system nonetheless.
+  // I have a nice spreadsheet supporting these numbers. They are
+  // the fractions (by volume) of material in the core. Not a
+  // *perfect* approximation of where XS lookups are going to occur,
+  // but this will do a good job of biasing the system nonetheless.
 
-	// Also could be argued that doing fractions by weight would be
-	// a better approximation, but volume does a good enough job for now.
+  // Also could be argued that doing fractions by weight would be
+  // a better approximation, but volume does a good enough job for now.
 
-	double dist[12];
-	dist[0]  = 0.140;	// fuel
-	dist[1]  = 0.052;	// cladding
-	dist[2]  = 0.275;	// cold, borated water
-	dist[3]  = 0.134;	// hot, borated water
-	dist[4]  = 0.154;	// RPV
-	dist[5]  = 0.064;	// Lower, radial reflector
-	dist[6]  = 0.066;	// Upper reflector / top plate
-	dist[7]  = 0.055;	// bottom plate
-	dist[8]  = 0.008;	// bottom nozzle
-	dist[9]  = 0.015;	// top nozzle
-	dist[10] = 0.025;	// top of fuel assemblies
-	dist[11] = 0.013;	// bottom of fuel assemblies
+  double dist[12];
+  dist[0]  = 0.140;	// fuel
+  dist[1]  = 0.052;	// cladding
+  dist[2]  = 0.275;	// cold, borated water
+  dist[3]  = 0.134;	// hot, borated water
+  dist[4]  = 0.154;	// RPV
+  dist[5]  = 0.064;	// Lower, radial reflector
+  dist[6]  = 0.066;	// Upper reflector / top plate
+  dist[7]  = 0.055;	// bottom plate
+  dist[8]  = 0.008;	// bottom nozzle
+  dist[9]  = 0.015;	// top nozzle
+  dist[10] = 0.025;	// top of fuel assemblies
+  dist[11] = 0.013;	// bottom of fuel assemblies
 
-	//double roll = (double) rand() / (double) RAND_MAX;
-	const double roll = rn(seed);
+  //double roll = (double) rand() / (double) RAND_MAX;
+  const double roll = rn(seed);
 
-	// makes a pick based on the distro
-	for( int i = 0; i < 12; i++ )
-	{
-		double running = 0;
-		for( int j = i; j > 0; j-- )
-			running += dist[j];
-		if( roll < running )
-			return i;
-	}
+  // makes a pick based on the distro
+  for( int i = 0; i < 12; i++ )
+  {
+    double running = 0;
+    for( int j = i; j > 0; j-- )
+      running += dist[j];
+    if( roll < running )
+      return i;
+  }
 
-	return 0;
+  return 0;
 }
 
 occaKernel void lookup_kernel(
-    double * restrict energy_grid,
+    int * num_nucs,
+    GridPoint * restrict energy_grid,
+    int * grid_ptrs,
     NuclideGridPoint * restrict nuclide_vector,
     int * restrict mats,
     int * restrict mats_idx,
     double * restrict concs,
     const long int total_lookups,
     const long int n_isotopes,
-    const long int n_gridpoints
+    const long int n_gridpoints,
+    double *V_sums,
+    unsigned long int *L_sums
     ) {
 
-  for (int block=0; block<outer_dim; block++; outer0) {
+  for(int outer_id=0; outer_id<outer_dim; ++outer_id; outer0) {
 
-    for (int thread=0; thread<inner_dim; thread++; inner0) {
+    // A cache per outer unit.  Each inner unit i writes to V_sums_cache[i]
+    shared double            V_sums_cache[inner_dim];
+    shared unsigned long int L_sums_cache[inner_dim];
 
-      // Initialize seed
-      unsigned long int seed = 10000*occaInnerId0 + 10*occaOuterId0 + 1;
+    for (int inner_id=0; inner_id<inner_dim; ++inner_id; inner0) {
 
-      for (long int i=inner_id; i < total_lookups; i += occaGlobalDim0) {
+      // Variables declared in the scope of an InnerFor loop are register variables
+      const int global_id = outer_id*inner_dim + inner_id;
+      unsigned long int seed = global_id*10000 + 1;
+
+      double            inner_V_sum = 0;
+      unsigned long int inner_L_sum = 0;
+
+      for (long int i=global_id; i < total_lookups; i += occaGlobalDim0) {
 
         // Randomly pick energy and material
         const double p_energy = rn(&seed);
         const int mat = pick_mat(&seed);
-
-        //====== BEGIN: calculate macro xs
 
         // Initialize macro_xs_vector
         double macro_xs_vector[5];
@@ -241,10 +165,10 @@ occaKernel void lookup_kernel(
 
           // Get pointers to bounding values on nuclide energy grid
           NuclideGridPoint *low, *high;
-          if( energy_grid[idx].xs_ptrs[nuc] == n_gridpoints - 1 )
-            low = &nuclide_grids[ (nuc * n_gridpoints) + (energy_grid[idx].xs_ptrs[nuc] - 1) ];
+          if( grid_ptrs[energy_grid[idx].xs_ptrs + nuc] == n_gridpoints - 1 )
+            low = &nuclide_vector[(nuc * n_gridpoints) + grid_ptrs[energy_grid[idx].xs_ptrs + nuc] - 1];
           else
-            low = &nuclide_grids[ (nuc * n_gridpoints) + (energy_grid[idx].xs_ptrs[nuc]) ];
+            low = &nuclide_vector[(nuc * n_gridpoints) + grid_ptrs[energy_grid[idx].xs_ptrs + nuc]];
           high = low + 1;
 
           // Get interpolation factors
@@ -258,16 +182,50 @@ occaKernel void lookup_kernel(
           micro_xs_vector[3] = high->fission_xs - f * (high->fission_xs - low->fission_xs);
           micro_xs_vector[4] = high->nu_fission_xs - f * (high->nu_fission_xs - low->nu_fission_xs);
 
-          //===== END: calculate micro xs
-
           // Accumlate micro xs into macro xs
           for( int k = 0; k < 5; k++ )
             macro_xs_vector[k] += micro_xs_vector[k] * conc;
 
-        }
+        } // materials loop
 
-        //===== END: calculate macro xs
+        // Accumulate verification sum
+        inner_V_sum += (mat + p_energy + macro_xs_vector[0] +
+            macro_xs_vector[1] + macro_xs_vector[2] + macro_xs_vector[3] +
+            macro_xs_vector[4]);
+
+        // Increment number of lookups
+        ++inner_L_sum;
+
+      } // lookup loop
+
+      V_sums_cache[inner_id] = inner_V_sum;
+      L_sums_cache[inner_id] = inner_L_sum;
+
+    } //inner 0
+
+    barrier(localMemFence);
+
+    for (int i=inner_dim/2; i != 0; i /= 2) {
+      for (int inner_id=0; inner_id<inner_dim; ++inner_id; inner0) {
+
+        // Naive reduction
+        if (inner_id < i && inner_id + i < inner_dim) {
+          V_sums_cache[inner_id] += V_sums_cache[inner_id + i];
+          L_sums_cache[inner_id] += L_sums_cache[inner_id + i];
+        }
       }
-    }
-  }
+
+      barrier(localMemFence);
+    } //inner 0
+
+    for (int inner_id=0; inner_id<inner_dim; ++inner_id; inner0) {
+      if (inner_id == 0) {
+        V_sums[outer_id] = V_sums_cache[0];
+        L_sums[outer_id] = L_sums_cache[0];
+      }
+    } // inner 0
+
+  } // outer0
+
+
 }
