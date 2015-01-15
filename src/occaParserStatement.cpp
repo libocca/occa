@@ -5182,6 +5182,8 @@ namespace occa {
 
           if(statementCount > 1)
             ret += "{";
+          else if(statementCount == 0) // The [Jesse Chan] Case
+            ret += "\n" + tab + "  ;";
 
           ret += '\n';
         }

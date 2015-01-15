@@ -213,6 +213,9 @@ occaKernel void lookup_kernel(
           V_sums_cache[inner_id] += V_sums_cache[inner_id + i];
           L_sums_cache[inner_id] += L_sums_cache[inner_id + i];
         }
+
+        for(int i = 0; i < 3; ++i){
+        }
       }
 
       barrier(localMemFence);
@@ -226,6 +229,5 @@ occaKernel void lookup_kernel(
     } // inner 0
 
   } // outer0
-
 
 }
