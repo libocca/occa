@@ -10,10 +10,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/test.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/openclTest.cpp");
@@ -67,10 +67,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/reduction.cl");
@@ -84,6 +84,11 @@ int main(int argc, char **argv){
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/addVectors_loopy.cl");
+  //   std::cout << parsedContent << '\n';
+  // }
+
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/maxIteration.okl");
   //   std::cout << parsedContent << '\n';
   // }
 }

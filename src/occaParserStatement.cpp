@@ -344,6 +344,7 @@ namespace occa {
       newExp.info = info;
 
       typeInfo &type = newExp.addTypeInfoNode(0);
+      type.loadFrom(*this, 0);
 
       if(flags & expFlag::addTypeToScope){
         if(flags & expFlag::addToParent){
