@@ -7,14 +7,18 @@ program main
   integer(4) :: i, entries = 5
 
   integer(4) :: platformID = 0, deviceID = 0, dims
-  character(len=1024) :: mode = "OpenMP"
+
+  character(len=1024) :: OpenMP_Info   = "mode = OpenMP  , schedule = compact, chunk = 10"
+  character(len=1024) :: OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0"
+  character(len=1024) :: CUDA_Info     = "mode = CUDA    , deviceID = 0"
+  character(len=1024) :: Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"
+  character(len=1024) :: COI_Info      = "mode = COI     , deviceID = 0"
 
   real(4), allocatable :: a(:), b(:), ab(:)
 
   type(occaDevice) :: device
   type(occaKernel) :: addVectors
   type(occaMemory) :: o_a, o_b, o_ab
-  ! type(occaArgumentList) :: list
 
   allocate(a(1:entries), b(1:entries), ab(1:entries), stat = alloc_err)
   if (alloc_err /= 0) stop "*** Not enough memory ***"
@@ -25,30 +29,17 @@ program main
     ab(i) = 0
   end do
 
-  device = occaGetDevice(mode, platformID, deviceID)
+  device = occaGetDevice(OpenMP_Info)
 
   o_a  = occaDeviceMalloc(device, int(entries,8)*4_8)
   o_b  = occaDeviceMalloc(device, int(entries,8)*4_8)
   o_ab = occaDeviceMalloc(device, int(entries,8)*4_8)
 
-  addVectors = occaBuildKernelFromSource(device, "addVectors.occa", "addVectors")
-
-  ! list = occaGenArgumentList()
-
-  dims = 1
-  call occaKernelSetAllWorkingDims(addVectors, dims, 2_8, 1_8, 1_8, &
-                                   int((entries + 2 - 1)/2,8), 1_8, 1_8)
-
-  ! call occaArgumentListAddArg(list, 0, entries)
-  ! call occaArgumentListAddArg(list, 1, o_a)
-  ! call occaArgumentListAddArg(list, 2, o_b)
-  ! call occaArgumentListAddArg(list, 3, o_ab)
+  addVectors = occaBuildKernelFromSource(device, "addVectors.ofl", "addVectors")
 
 
   call occaCopyPtrToMem(o_a, a(1), int(entries,8)*4_8, 0_8);
   call occaCopyPtrToMem(o_b, b(1));
-
-  ! call occaKernelRun_(addVectors, list)
 
   call occaKernelRun(addVectors, occaTypeMem_t(entries), o_a, o_b, o_ab)
 
@@ -60,9 +51,6 @@ program main
 
   deallocate(a, b, ab, stat = alloc_err)
   if (alloc_err /= 0) stop "*** deallocation not successful ***"
-
-  ! call occaArgumentListClear(list)
-  ! call occaArgumentListFree(list)
 
   call occaKernelFree(addVectors)
   call occaMemoryFree(o_a)

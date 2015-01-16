@@ -36,6 +36,8 @@ module occa
     occaGenKernelInfo,          &
     occaKernelInfoAddDefine,    &
     occaKernelInfoFree,         &
+    occaDeviceWrapMemory,       &
+    occaDeviceWrapStream,       &
     occaCopyMemToMem,           &
     occaCopyPtrToMem,           &
     occaCopyMemToPtr,           &
@@ -87,6 +89,7 @@ module occa
 
   interface occaGetDevice
     module procedure occaGetDevice_func
+    module procedure occaGetDeviceFromArgs_func
   end interface occaGetDevice
 
   interface occaBuildKernelFromSource
@@ -642,7 +645,15 @@ module occa
       implicit none
       type(occaKernelInfo), intent(inout) :: info
     end subroutine occaKernelInfoFree_fc
-  end interface occaKernelInfoFree
+ end interface occaKernelInfoFree
+
+ interface occaDeviceWrapMemory
+    module procedure occaDeviceWrapMemory_func
+ end interface occaDeviceWrapMemory
+
+ interface occaDeviceWrapStream
+    module procedure occaDeviceWrapStream_func
+ end interface occaDeviceWrapStream
 
 ! ---[ Memory ]-----------------------
 
@@ -898,24 +909,39 @@ contains
 !  end interface occaDeviceMode
 
 
-  type(occaDevice) function occaGetDevice_func(mode, arg1, arg2) result(device)
+  type(occaDevice) function occaGetDevice_func(infos) result(device)
+    character(len=*), intent(in) :: infos
+
+    interface
+      subroutine occaGetDevice_fc(device, infos)
+        use occaFTypes_m
+        implicit none
+        type(occaDevice), intent(out) :: device
+        character(len=*), intent(in)  :: infos
+      end subroutine occaGetDevice_fc
+    end interface
+
+    call occaGetDevice_fc(device, infos)
+  end function occaGetDevice_func
+
+  type(occaDevice) function occaGetDeviceFromArgs_func(mode, arg1, arg2) result(device)
     character(len=*), intent(in)  :: mode
     integer(4),       intent(in)  :: arg1
     integer(4),       intent(in)  :: arg2
 
     interface
-      subroutine occaGetDevice_fc(device, mode, arg1, arg2)
+      subroutine occaGetDeviceFromArgs_fc(device, mode, arg1, arg2)
         use occaFTypes_m
         implicit none
         type(occaDevice), intent(out) :: device
         character(len=*), intent(in)  :: mode
         integer(4),       intent(in)  :: arg1
         integer(4),       intent(in)  :: arg2
-      end subroutine occaGetDevice_fc
+      end subroutine occaGetDeviceFromArgs_fc
     end interface
 
-    call occaGetDevice_fc(device, mode, arg1, arg2)
-  end function occaGetDevice_func
+    call occaGetDeviceFromArgs_fc(device, mode, arg1, arg2)
+  end function occaGetDeviceFromArgs_func
 
   type(occaKernel) function occaBuildKernelFromSource_func(device, filename, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device
@@ -1191,6 +1217,42 @@ contains
 
     call occaGenKernelInfo_fc(info)
   end function occaGenKernelInfo_func
+
+  type(occaMemory) function occaDeviceWrapMemory_func(device, handle, bytes) result(mem)
+    type(occaDevice), intent(in)  :: device
+    character       , intent(in)  :: handle
+    integer(8)      , intent(in)  :: bytes
+
+   interface
+      subroutine occaDeviceWrapMemory_fc(mem, device, handle, bytes)
+        use occaFTypes_m
+        implicit none
+        type(occaMemory), intent(out) :: mem
+        type(occaDevice), intent(in)  :: device
+        character       , intent(in)  :: handle
+        integer(8)      , intent(in)  :: bytes
+      end subroutine occaDeviceWrapMemory_fc
+   end interface
+
+   call occaDeviceWrapMemory_fc(mem, device, handle, bytes)
+ end function occaDeviceWrapMemory_func
+
+ type(occaStream) function occaDeviceWrapStream_func(device, handle) result(stream)
+   type(occaDevice), intent(in)  :: device
+   character       , intent(in)  :: handle
+
+   interface
+      subroutine occaDeviceWrapStream_fc(stream, device, handle)
+        use occaFTypes_m
+        implicit none
+        type(occaStream), intent(out) :: stream
+        type(occaDevice), intent(in)  :: device
+        character       , intent(in)  :: handle
+      end subroutine occaDeviceWrapStream_fc
+   end interface
+
+   call occaDeviceWrapStream_fc(stream, device, handle)
+ end function occaDeviceWrapStream_func
 
 ! ---[ Memory ]-----------------------
 !  interface occaMemoryMode

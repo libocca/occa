@@ -21,7 +21,7 @@ class device:
         return c_char_p(cMode).value
 
     # Ok
-    def __init__(self, mode, platformID, deviceID):
+    def __init__(self, infos):
         self.lib = libocca
 
         self.isAllocated = True
@@ -29,14 +29,12 @@ class device:
         getDevice = getattr(self.lib, "occaGetDevice")
         getDevice.restype = c_void_p
 
-        self.cDevice = c_void_p(self.lib.occaGetDevice(mode,
-                                                       c_int(platformID),
-                                                       c_int(deviceID)))
+        self.cDevice = c_void_p(self.lib.occaGetDevice(infos))
 
     # Ok
-    def setup(self, mode, platformID, deviceID):
+    def setup(self, infos):
         self.isAllocated = True
-        self.cDevice = self.lib.occaGetDevice(mode, platformID, deviceID)
+        self.cDevice = self.lib.occaGetDevice(infos)
 
     # Ok
     def setCompiler(self, compiler):

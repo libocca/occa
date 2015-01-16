@@ -165,9 +165,16 @@ extern "C" {
     device_.setCompilerFlags(compilerFlags);
   }
 
+  occaDevice LIBOCCA_CALLINGCONV occaGetDevice(const char *infos){
+    occa::device *device = new occa::device();
 
-  occaDevice LIBOCCA_CALLINGCONV occaGetDevice(const char *mode,
-                                                int arg1, int arg2){
+    device->setup(infos);
+
+    return (occaDevice) device;
+  }
+
+  occaDevice LIBOCCA_CALLINGCONV occaGetDeviceFromArgs(const char *mode,
+                                                       int arg1, int arg2){
     occa::device *device = new occa::device();
 
     device->setup(mode, arg1, arg2);
@@ -492,6 +499,63 @@ extern "C" {
 
   void LIBOCCA_CALLINGCONV occaKernelInfoFree(occaKernelInfo info){
     delete (occa::kernelInfo*) info;
+  }
+  //====================================
+
+
+  //---[ Wrappers ]---------------------
+#if OCCA_OPENCL_ENABLED
+  LIBOCCA_API occaDevice LIBOCCA_CALLINGCONV occaWrapOpenCLDevice(cl_platform_id platformID,
+                                                                  cl_device_id deviceID,
+                                                                  cl_context context){
+    occa::device *device = new occa::device();
+
+    *device = occa::cl::wrapDevice(platformID, deviceID, context);
+
+    return (occaDevice) device;
+  }
+#endif
+
+#if OCCA_CUDA_ENABLED
+  LIBOCCA_API occaDevice LIBOCCA_CALLINGCONV occaWrapCudaDevice(CUdevice device, CUcontext context){
+    occa::device *device = new occa::device();
+
+    *device = occa::cu::wrapDevice(device, context);
+
+    return (occaDevice) device;
+  }
+#endif
+
+#if OCCA_COI_ENABLED
+  LIBOCCA_API occaDevice LIBOCCA_CALLINGCONV occaWrapCoiDevice(COIENGINE coiDevice){
+    occa::device *device = new occa::device();
+
+    *device = occa::coi::wrapDevice(coiDevice);
+
+    return (occaDevice) device;
+  }
+#endif
+
+  LIBOCCA_API occaMemory LIBOCCA_CALLINGCONV occaDeviceWrapMemory(occaDevice device,
+                                                                  void *handle_,
+                                                                  const uintptr_t bytes){
+    occa::device &device_ = *((occa::device*) device);
+
+    occaMemory_t *memory = new occaMemory_t();
+
+    memory->type = OCCA_TYPE_MEMORY;
+    memory->mem = device_.wrapMemory(handle_, bytes);
+
+    return (occaMemory) memory;
+  }
+
+  LIBOCCA_API occaStream LIBOCCA_CALLINGCONV occaDeviceWrapStream(occaDevice device, void *handle_){
+    occa::device &device_ = *((occa::device*) device);
+    occaStream *stream = new occaStream;
+
+    *stream = device_.wrapStream(handle_);
+
+    return (occaStream) stream;
   }
   //====================================
 

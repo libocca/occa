@@ -10,14 +10,15 @@ type device
     cDevice::Ptr{Void}
 end
 
-function device(mode::String, arg1::Number = 0, arg2::Number = 0)
+function device(mode::String)
     convert(Int32, arg1)
     convert(Int32, arg2)
 
     cDevice = ccall((:occaGetDevice, @libocca()),
                     Ptr{Void},
-                    (Ptr{Uint8}, Int32, Int32,),
-                    bytestring(mode), arg1, arg2);
+                    (Ptr{Uint8},),
+                    bytestring(mode));
+
    return device(cDevice);
 end
 
@@ -254,6 +255,7 @@ function runKernel(k::kernel, args...)
                     Ptr{Void}, ())
 
     pos = convert(Int32, 0)
+
     for arg in args
         if isa(arg, memory)
             ccall((:occaArgumentListAddArg, @libocca()),

@@ -29,21 +29,21 @@ classdef device < handle
             mode_ = calllib('libocca', 'occaDeviceMode', this.cDevice);
         end
 
-        function this = device(mode, arg1, arg2)
+        function this = device(infos)
             occa.init()
 
             this.deviceCountFunction(1)
 
-            this.cDevice     = calllib('libocca', 'occaGetDevice', mode, arg1, arg2);
+            this.cDevice     = calllib('libocca', 'occaGetDevice', infos);
             this.isAllocated = 1;
         end
 
-        function setup(this, mode, arg1, arg2)
+        function setup(this, infos)
             occa.init()
 
             this.deviceCountFunction(1)
 
-            this.cDevice     = calllib('libocca', 'occaGetDevice', mode, arg1, arg2);
+            this.cDevice     = calllib('libocca', 'occaGetDevice', infos);
             this.isAllocated = 1;
         end
 

@@ -2,7 +2,13 @@ require( bytestring(ENV["OCCA_DIR"], "/lib/occa.jl") )
 
 entries = 5
 
-device = occa.device("OpenMP", 0, 0);
+OpenMP_Info   = "mode = OpenMP  , schedule = compact, chunk = 10";
+OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0";
+CUDA_Info     = "mode = CUDA    , deviceID = 0";
+Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]";
+COI_Info      = "mode = COI     , deviceID = 0";
+
+device = occa.device(OpenMP_Info);
 
 a  = Float32[1 - i for i in 1:entries]
 b  = Float32[i     for i in 1:entries]
@@ -13,15 +19,8 @@ o_b  = occa.malloc(device, b);
 o_ab = occa.malloc(device, ab);
 
 addVectors = occa.buildKernelFromSource(device,
-                                        "addVectors.occa",
+                                        "addVectors.okl",
                                         "addVectors")
-
-dims = 1;
-itemsPerGroup = 2;
-groups = (entries + itemsPerGroup - 1)/itemsPerGroup;
-
-occa.setWorkingDims(addVectors,
-                    dims, itemsPerGroup, groups);
 
 occa.runKernel(addVectors,
                (entries, Int32),

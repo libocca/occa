@@ -74,23 +74,23 @@
 #endif
 
 /* --------------------------------------------------------------------*/
-#define OCCA_F2C_ALLOC_STR(a,n,b) \
-do {\
-  if (a == OCCA_F2C_NULL_CHARACTER_Fortran) { \
-    b = 0; \
-  } else { \
-    while((n > 0) && (a[n-1] == ' ')) n--; \
-    b = (char*)malloc((n+1)*sizeof(char)); \
-    if(b==NULL) abort(); \
-    strncpy(b,a,n); \
-    b[n] = '\0'; \
-  } \
-} while (0)
+#define OCCA_F2C_ALLOC_STR(a,n,b)               \
+  do {                                          \
+    if (a == OCCA_F2C_NULL_CHARACTER_Fortran) { \
+      b = 0;                                    \
+    } else {                                    \
+      while((n > 0) && (a[n-1] == ' ')) n--;    \
+      b = (char*)malloc((n+1)*sizeof(char));    \
+      if(b==NULL) abort();                      \
+      strncpy(b,a,n);                           \
+      b[n] = '\0';                              \
+    }                                           \
+  } while (0)
 
-#define OCCA_F2C_FREE_STR(a,b) \
-do {\
-  if (a != b) free(b);\
-} while (0)
+#define OCCA_F2C_FREE_STR(a,b)                  \
+  do {                                          \
+    if (a != b) free(b);                        \
+  } while (0)
 
 #define OCCA_F2C_GLOBAL_(name,NAME) name##_
 
@@ -110,6 +110,7 @@ do {\
 #define  OCCADEVICESETCOMPILER_FC        OCCA_F2C_GLOBAL_(occadevicesetcompiler_fc      , OCCADEVICESETCOMPILER_FC)
 #define  OCCADEVICESETCOMPILERFLAGS_FC   OCCA_F2C_GLOBAL_(occadevicesetcompilerflags_fc , OCCADEVICESETCOMPILERFLAGS_FC)
 #define  OCCAGETDEVICE_FC                OCCA_F2C_GLOBAL_(occagetdevice_fc              , OCCAGETDEVICE_FC)
+#define  OCCAGETDEVICEFROMARGS_FC        OCCA_F2C_GLOBAL_(occagetdevicefromargs_fc      , OCCAGETDEVICEFROMARGS_FC)
 #define  OCCABUILDKERNELFROMSOURCE_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsource_fc  , OCCABUILDKERNELFROMSOURCE_FC)
 #define  OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsourcenokernelinfo_fc  , OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC)
 #define  OCCABUILDKERNELFROMBINARY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc  , OCCABUILDKERNELFROMBINARY_FC)
@@ -172,6 +173,8 @@ do {\
 #define  OCCAKERNELINFOADDDEFINEREAL8_FC OCCA_F2C_GLOBAL_(occakernelinfoadddefinereal8_fc, OCCAKERNELINFOADDDEFINEREAL8_FC)
 #define  OCCAKERNELINFOADDDEFINECHAR_FC  OCCA_F2C_GLOBAL_(occakernelinfoadddefinechar_fc, OCCAKERNELINFOADDDEFINECHAR_FC)
 #define  OCCAKERNELINFOFREE_FC           OCCA_F2C_GLOBAL_(occakernelinfofree_fc         , OCCAKERNELINFOFREE_FC)
+#define  OCCADEVICEWRAPMEMORY_FC         OCCA_F2C_GLOBAL_(occadevicewrapmemory_fc       , OCCADEVICEWRAPMEMORY_FC)
+#define  OCCADEVICEWRAPSTREAM _FC        OCCA_F2C_GLOBAL_(occadevicewrapstream_fc       , OCCADEVICEWRAPSTREAM_FC)
 #define  OCCAMEMORYMODE_FC               OCCA_F2C_GLOBAL_(occamemorymode_fc             , OCCAMEMORYMODE_FC)
 #define  OCCACOPYMEMTOMEM_FC             OCCA_F2C_GLOBAL_(occacopymemtomem_fc           , OCCACOPYMEMTOMEM_FC)
 #define  OCCACOPYMEMTOMEMAUTO_FC         OCCA_F2C_GLOBAL_(occacopymemtomemauto_fc       , OCCACOPYMEMTOMEMAUTO_FC)
@@ -279,12 +282,24 @@ extern "C" {
     OCCA_F2C_FREE_STR(compilerFlags, compilerFlags_c);
   }
 
-  void OCCAGETDEVICE_FC(occaDevice *device, const char *mode OCCA_F2C_LSTR(mode_l),
-                        int32_t *arg1, int32_t *arg2 OCCA_F2C_RSTR(mode_l)){
+  void OCCAGETDEVICE_FC(occaDevice *device,
+                        const char *infos
+                        OCCA_F2C_LSTR(infos_l)
+                        OCCA_F2C_RSTR(infos_l)){
+    char *infos_c;
+    OCCA_F2C_ALLOC_STR(infos, infos_l, infos_c);
+
+    *device = occaGetDevice(infos_c);
+
+    OCCA_F2C_FREE_STR(infos, infos_c);
+  }
+
+  void OCCAGETDEVICEFROMARGS_FC(occaDevice *device, const char *mode OCCA_F2C_LSTR(mode_l),
+                                int32_t *arg1, int32_t *arg2 OCCA_F2C_RSTR(mode_l)){
     char *mode_c;
     OCCA_F2C_ALLOC_STR(mode, mode_l, mode_c);
 
-    *device = occaGetDevice(mode_c, *arg1, *arg2);
+    *device = occaGetDeviceFromArgs(mode_c, *arg1, *arg2);
 
     OCCA_F2C_FREE_STR(mode, mode_c);
   }
@@ -819,6 +834,17 @@ extern "C" {
 
   void OCCAKERNELINFOFREE_FC(occaKernelInfo *info){
     occaKernelInfoFree(*info);
+  }
+  //====================================
+
+
+  //---[ Wrappers ]---------------------
+  void OCCADEVICEWRAPMEMORY_FC(occaMemory *mem, occaDevice *device, void *handle, const int64_t *bytes){
+    *mem = occaDeviceWrapMemory(*device, handle, *bytes);
+  }
+
+  void OCCADEVICEWRAPSTREAM_FC(occaStream *stream, occaDevice *device, void *handle){
+    *stream = occaDeviceWrapStream(*device, handle);
   }
   //====================================
 

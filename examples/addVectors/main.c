@@ -17,15 +17,18 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  const char *mode = "OpenMP";
-  int platformID = 0;
-  int deviceID   = 0;
-
   occaDevice device;
   occaKernel addVectors;
   occaMemory o_a, o_b, o_ab;
 
-  device = occaGetDevice(mode, platformID, deviceID);
+  //---[ Device setup with string flags ]-------------------
+  const char *OpenMP_Info   = "mode = OpenMP  , schedule = compact, chunk = 10";
+  const char *OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0";
+  const char *CUDA_Info     = "mode = CUDA    , deviceID = 0";
+  const char *Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]";
+  const char *COI_Info      = "mode = COI     , deviceID = 0";
+
+  device = occaGetDevice(OpenMP_Info);
 
   o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
   o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
@@ -47,20 +50,8 @@ int main(int argc, char **argv){
   occaCopyPtrToMem(o_a, a, entries*sizeof(float), 0);
   occaCopyPtrToMem(o_b, b, occaAutoSize, occaNoOffset);
 
-  /* occaArgumentList list = occaGenArgumentList(); */
-
-  /* occaArgumentListAddArg(list, 0, occaInt(entries)); */
-  /* occaArgumentListAddArg(list, 1, o_a); */
-  /* occaArgumentListAddArg(list, 2, o_b); */
-  /* occaArgumentListAddArg(list, 3, o_ab); */
-
-  /* occaKernelRun_(addVectors, list); */
-
   occaKernelRun(addVectors,
                occaInt(entries), o_a, o_b, o_ab);
-
-  /* occaArgumentListClear(list); */
-  /* occaArgumentListFree(list); */
 
   occaCopyMemToPtr(ab, o_ab, occaAutoSize, occaNoOffset);
 
