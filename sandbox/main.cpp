@@ -35,10 +35,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   std::string parsedContent = parser.parseFile("tests/cleanTest.c");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    std::string parsedContent = parser.parseFile("tests/cleanTest.c");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/clangTest.c");
@@ -67,10 +67,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/lookup_kernel.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/reduction.cl");

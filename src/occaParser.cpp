@@ -3473,8 +3473,8 @@ namespace occa {
 
       cKeywordType["long"]     = (qualifierType | specifierType);
       cKeywordType["short"]    = (qualifierType | specifierType);
-      cKeywordType["signed"]   = qualifierType;
-      cKeywordType["unsigned"] = qualifierType;
+      cKeywordType["signed"]   = (qualifierType | specifierType);
+      cKeywordType["unsigned"] = (qualifierType | specifierType);
 
       cKeywordType["inline"] = qualifierType;
       cKeywordType["static"] = qualifierType;
