@@ -174,7 +174,7 @@
 #define  OCCAKERNELINFOADDDEFINECHAR_FC  OCCA_F2C_GLOBAL_(occakernelinfoadddefinechar_fc, OCCAKERNELINFOADDDEFINECHAR_FC)
 #define  OCCAKERNELINFOFREE_FC           OCCA_F2C_GLOBAL_(occakernelinfofree_fc         , OCCAKERNELINFOFREE_FC)
 #define  OCCADEVICEWRAPMEMORY_FC         OCCA_F2C_GLOBAL_(occadevicewrapmemory_fc       , OCCADEVICEWRAPMEMORY_FC)
-#define  OCCADEVICEWRAPSTREAM _FC        OCCA_F2C_GLOBAL_(occadevicewrapstream_fc       , OCCADEVICEWRAPSTREAM_FC)
+#define  OCCADEVICEWRAPSTREAM_FC         OCCA_F2C_GLOBAL_(occadevicewrapstream_fc       , OCCADEVICEWRAPSTREAM_FC)
 #define  OCCAMEMORYMODE_FC               OCCA_F2C_GLOBAL_(occamemorymode_fc             , OCCAMEMORYMODE_FC)
 #define  OCCACOPYMEMTOMEM_FC             OCCA_F2C_GLOBAL_(occacopymemtomem_fc           , OCCACOPYMEMTOMEM_FC)
 #define  OCCACOPYMEMTOMEMAUTO_FC         OCCA_F2C_GLOBAL_(occacopymemtomemauto_fc       , OCCACOPYMEMTOMEMAUTO_FC)
