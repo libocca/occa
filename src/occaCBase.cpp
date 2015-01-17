@@ -518,11 +518,11 @@ extern "C" {
 
 #if OCCA_CUDA_ENABLED
   LIBOCCA_API occaDevice LIBOCCA_CALLINGCONV occaWrapCudaDevice(CUdevice device, CUcontext context){
-    occa::device *device = new occa::device();
+    occa::device *device_ = new occa::device();
 
-    *device = occa::cu::wrapDevice(device, context);
+    *device_ = occa::cuda::wrapDevice(device, context);
 
-    return (occaDevice) device;
+    return (occaDevice) device_;
   }
 #endif
 
