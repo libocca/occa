@@ -10,14 +10,12 @@ type device
     cDevice::Ptr{Void}
 end
 
-function device(mode::String)
-    convert(Int32, arg1)
-    convert(Int32, arg2)
+function device(infos::String)
 
     cDevice = ccall((:occaGetDevice, @libocca()),
                     Ptr{Void},
                     (Ptr{Uint8},),
-                    bytestring(mode));
+                    bytestring(infos));
 
    return device(cDevice);
 end
@@ -235,20 +233,20 @@ function setWorkingDims(k::kernel,
           groups_[1], groups_[2], groups_[3])
 end
 
-argType(arg::Int8)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int8,) , arg)
-argType(arg::Uint8) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint8,), arg)
+argType(arg::Int8)  = ccall((:occaChar , @libocca()), Ptr{Void}, (Int8,) , arg)
+argType(arg::Uint8) = ccall((:occaUChar, @libocca()), Ptr{Void}, (Uint8,), arg)
 
-argType(arg::Int16)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int16,) , arg)
-argType(arg::Uint16) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint16,), arg)
+argType(arg::Int16)  = ccall((:occaShort , @libocca()), Ptr{Void}, (Int16,) , arg)
+argType(arg::Uint16) = ccall((:occaUShort, @libocca()), Ptr{Void}, (Uint16,), arg)
 
-argType(arg::Int32)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int32,) , arg)
-argType(arg::Uint32) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint32,), arg)
+argType(arg::Int32)  = ccall((:occaInt , @libocca()), Ptr{Void}, (Int32,) , arg)
+argType(arg::Uint32) = ccall((:occaUInt, @libocca()), Ptr{Void}, (Uint32,), arg)
 
-argType(arg::Int64)  = ccall((:occaChar, @libocca()), Ptr{Void}, (Int64,) , arg)
-argType(arg::Uint64) = ccall((:occaChar, @libocca()), Ptr{Void}, (Uint64,), arg)
+argType(arg::Int64)  = ccall((:occaLong , @libocca()), Ptr{Void}, (Int64,) , arg)
+argType(arg::Uint64) = ccall((:occaULong, @libocca()), Ptr{Void}, (Uint64,), arg)
 
-argType(arg::Float32) = ccall((:occaChar, @libocca()), Ptr{Void}, (Float32,) , arg)
-argType(arg::Float64) = ccall((:occaChar, @libocca()), Ptr{Void}, (Float64,) , arg)
+argType(arg::Float32) = ccall((:occaFloat , @libocca()), Ptr{Void}, (Float32,) , arg)
+argType(arg::Float64) = ccall((:occaDouble, @libocca()), Ptr{Void}, (Float64,) , arg)
 
 function runKernel(k::kernel, args...)
     argList = ccall((:occaGenArgumentList, @libocca()),
