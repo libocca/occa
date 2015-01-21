@@ -467,7 +467,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -496,8 +498,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <=         size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -526,7 +533,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -555,8 +564,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
-    OCCA_CHECK((bytes_ + srcOffset)  <=       size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -585,7 +599,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -610,8 +626,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <=         size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -636,7 +657,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -661,8 +684,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
-    OCCA_CHECK((bytes_ + srcOffset)  <=       size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
                    COIEventWait(1, &(stream.lastEvent),
@@ -734,7 +762,9 @@ namespace occa {
     OCCA_COI_CHECK("Device: Get Count",
                    COIEngineGetCount(COI_ISA_MIC, &deviceCount));
 
-    OCCA_CHECK(deviceID < deviceCount);
+    OCCA_CHECK(deviceID < deviceCount,
+               "Trying to pick device [" << deviceID << "] out of the ["
+               << deviceCount << "] COI devices available");
 
     OCCA_COI_CHECK("Device: Get Handle",
                    COIEngineGetHandle(COI_ISA_MIC, deviceID, &data_.deviceID) );

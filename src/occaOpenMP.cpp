@@ -660,7 +660,7 @@ namespace occa {
     else if(sizeof(void*) == 8)
       byteness = "amd64";
     else
-      OCCA_CHECK("sizeof(void*) is not equal to 4 or 8");
+      OCCA_CHECK(false, "sizeof(void*) is not equal to 4 or 8");
 
     char* visual_studio_tools = getenv("VS100COMNTOOLS");
     if(visual_studio_tools != NULL){
