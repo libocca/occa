@@ -1,8 +1,6 @@
 #ifndef OCCA_CBASE_HEADER
 #define OCCA_CBASE_HEADER
 
-#include "ocl_preprocessor.hpp"
-
 #include "stdlib.h"
 
 #if OCCA_OPENCL_ENABLED
