@@ -3986,7 +3986,7 @@ namespace occa {
 
                  "Wrong 3rd statement for:\n  " << sInfo->expRoot);
 
-      OCCA_CHECK((node3[0][0].value == iter) &&
+      OCCA_CHECK((node3[0][0].value == iter) ||
                  (node3[0][1].value == iter),
 
                  "Wrong 3rd statement for:\n  " << sInfo->expRoot);
