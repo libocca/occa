@@ -269,6 +269,37 @@ def coiOperatorDefinition(N):
                            0,
                            &(stream.lastEvent));"""
 
+def cOperatorDeclarations(N):
+    return '\n\n'.join([cOperatorDeclaration(n + 1) for n in xrange(N)])
+
+def cOperatorDeclaration(N):
+    return '    OCCA_LFUNC void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1});\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
+
+def cOperatorDefinitions(N):
+    return '\n\n'.join([cOperatorDefinition(n + 1) for n in xrange(N)])
+
+def cOperatorDefinition(N):
+    addArguments = ''
+
+    for n in xrange(N):
+        addArguments += ('    {\n' + \
+                         '      occaMemory_t &__occa_memory__ = *((occaMemory_t*) arg' + str(n) + ');\n' + \
+                         '      if(__occa_memory__.type == 0){\n' + \
+                         '        __occa_kernel__.addArgument(' + str(n) + ', occa::kernelArg(__occa_memory__.mem));\n' + \
+                         '      }\n' + \
+                         '      else{\n' + \
+                         '        occaType_t &__occa_type__ = *((occaType_t*) arg' + str(n) + ');\n' + \
+                         '        __occa_kernel__.addArgument(' + str(n) + ', occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));\n' + \
+                         '      }\n' + \
+                         '    }\n')
+
+    return ('    void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in xrange(N)]) ) + \
+            '      occa::kernel &__occa_kernel__ = *((occa::kernel*) kernel);\n' + \
+            '    __occa_kernel__.clearArgumentList();\n' + \
+            addArguments + \
+            '    __occa_kernel__.runFromArguments();\n' + \
+            '    }\n');
+
 operatorModeDefinition = { 'Pthreads' : pthreadOperatorDefinition,
                            'OpenMP'   : ompOperatorDefinition,
                            'OpenCL'   : clOperatorDefinition,
@@ -307,3 +338,11 @@ for mode in operatorModeDefinition:
     cpp = open('../src/operators/occa' + mode + 'KernelOperators.cpp', 'w')
     cpp.write(operatorDefinitions(mode, maxN));
     cpp.close()
+
+hpp = open('../include/operators/occaCKernelOperators.hpp', 'w')
+hpp.write(cOperatorDeclarations(maxN));
+hpp.close()
+
+cpp = open('../src/operators/occaCKernelOperators.cpp', 'w')
+cpp.write(cOperatorDefinitions(maxN));
+cpp.close()

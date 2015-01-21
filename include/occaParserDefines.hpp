@@ -13,7 +13,12 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#include <unistd.h>
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  include <unistd.h>
+#else
+#  include <io.h>
+#endif
+
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>

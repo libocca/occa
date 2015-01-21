@@ -11,7 +11,6 @@ type device
 end
 
 function device(infos::String)
-
     cDevice = ccall((:occaGetDevice, @libocca()),
                     Ptr{Void},
                     (Ptr{Uint8},),
@@ -19,7 +18,6 @@ function device(infos::String)
 
    return device(cDevice);
 end
-
 
 type stream
     cStream::Ptr{Void}

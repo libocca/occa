@@ -12,7 +12,6 @@
 #include <iomanip>
 #include <utility>
 #include <algorithm>
-#include <sys/time.h>
 
 namespace occa {
 
