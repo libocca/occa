@@ -415,7 +415,9 @@ namespace occa {
                                 const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CUDA_CHECK("Memory: Copy From",
@@ -455,8 +457,13 @@ namespace occa {
                                 const uintptr_t srcOffset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     void *dstPtr, *srcPtr;
 
@@ -502,7 +509,9 @@ namespace occa {
                               const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CUDA_CHECK("Memory: Copy To",
@@ -542,8 +551,13 @@ namespace occa {
                               const uintptr_t srcOffset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + srcOffset)  <= size);
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     void *dstPtr, *srcPtr;
 
@@ -590,7 +604,9 @@ namespace occa {
     const CUstream &stream = *((CUstream*) dev->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CUDA_CHECK("Memory: Asynchronous Copy From",
@@ -608,8 +624,13 @@ namespace occa {
     const CUstream &stream = *((CUstream*) dev->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     void *dstPtr, *srcPtr;
 
@@ -656,7 +677,9 @@ namespace occa {
     const CUstream &stream = *((CUstream*) dev->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CUDA_CHECK("Memory: Asynchronous Copy To",
@@ -674,8 +697,13 @@ namespace occa {
     const CUstream &stream = *((CUstream*) dev->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + srcOffset)  <= size);
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     void *dstPtr, *srcPtr;
 
