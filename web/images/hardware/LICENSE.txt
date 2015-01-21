@@ -1,4 +1,0 @@
-Image : AMD_Phenom_II_X4_840
-Author: D-Kuru
-Source: Wikipedia
-Link  : http://commons.wikimedia.org/wiki/File:AMD_Phenom_II_X4_840_(HDX840WFK42GM)_CPU-top_oblique_PNr%C2%B00373.jpg
