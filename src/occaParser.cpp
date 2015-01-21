@@ -3911,7 +3911,7 @@ namespace occa {
         if((sInfo->info & forStatementType) &&
            (sInfo->getForStatementCount() > 3)){
 
-          OCCA_CHECK(4 < sInfo->getForStatementCount(),
+          OCCA_CHECK(sInfo->getForStatementCount() <= 4,
                      "More than 4 statements for:\n  " << sInfo->expRoot);
 
           if(tag.size()){

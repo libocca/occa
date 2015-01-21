@@ -139,6 +139,105 @@ typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } dou
 //================================================
 
 
+//---[ Atomics ]----------------------------------
+template <class TM>
+TM occaAtomicAdd(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr += update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicSub(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr -= update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicSwap(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr = update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicInc(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  ++(*ptr);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicDec(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  --(*ptr);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicMin(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr = ((old < update) ? old : update);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicMax(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr = ((old < update) ? update : old);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicAnd(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr &= update
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicOr(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr |= update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicXor(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  *ptr ^= update;
+
+  return old;
+}
+
+#define occaAtomicAddL  occaAtomicAdd
+#define occaAtomicSubL  occaAtomicSub
+#define occaAtomicSwapL occaAtomicSwap
+#define occaAtomicIncL  occaAtomicInc
+#define occaAtomicDecL  occaAtomicDec
+//================================================
+
+
 //---[ Math ]-------------------------------------
 #define occaFabs       fabs
 #define occaFastFabs   fabs

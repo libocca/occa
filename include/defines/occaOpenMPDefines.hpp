@@ -447,7 +447,7 @@ template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr += update;
 
   return old;
@@ -457,7 +457,7 @@ template <class TM>
 TM occaAtomicSub(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr -= update;
 
   return old;
@@ -467,7 +467,7 @@ template <class TM>
 TM occaAtomicSwap(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr = update;
 
   return old;
@@ -477,7 +477,7 @@ template <class TM>
 TM occaAtomicInc(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   ++(*ptr);
 
   return old;
@@ -487,7 +487,7 @@ template <class TM>
 TM occaAtomicDec(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   --(*ptr);
 
   return old;
@@ -497,7 +497,7 @@ template <class TM>
 TM occaAtomicMin(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr = ((old < update) ? old : update);
 
   return old;
@@ -507,7 +507,7 @@ template <class TM>
 TM occaAtomicMax(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr = ((old < update) ? update : old);
 
   return old;
@@ -517,7 +517,7 @@ template <class TM>
 TM occaAtomicAnd(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr &= update
 
   return old;
@@ -527,7 +527,7 @@ template <class TM>
 TM occaAtomicOr(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr |= update;
 
   return old;
@@ -537,7 +537,7 @@ template <class TM>
 TM occaAtomicXor(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-#pragma omp atomic
+  OCCA_OMP_PRAGMA("omp atomic")
   *ptr ^= update;
 
   return old;

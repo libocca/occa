@@ -520,9 +520,9 @@ extern "C" {
 
 #if OCCA_CUDA_ENABLED
   occaDevice OCCA_RFUNC occaWrapCudaDevice(CUdevice device, CUcontext context){
-    occa::device *device = new occa::device();
+    occa::device *device_ = new occa::device();
 
-    *device_ = occa::cuda::wrapDevice(device, context);
+    *device_ = occa::cuda::wrapDevice(device_, context);
 
     return (occaDevice) device_;
   }

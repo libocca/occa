@@ -133,6 +133,118 @@ typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } dou
 #define occaKernel         COINATIVELIBEXPORT
 #define occaFunction
 #define occaDeviceFunction
+
+#define OCCA_PRAGMA(STR)     __pragma(STR)
+#define OCCA_OMP_PRAGMA(STR) OCCA_PRAGMA(STR)
+//================================================
+
+
+//---[ Atomics ]----------------------------------
+template <class TM>
+TM occaAtomicAdd(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr += update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicSub(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr -= update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicSwap(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr = update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicInc(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  ++(*ptr);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicDec(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  --(*ptr);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicMin(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr = ((old < update) ? old : update);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicMax(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr = ((old < update) ? update : old);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicAnd(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr &= update
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicOr(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr |= update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicXor(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+  OCCA_OMP_PRAGMA("omp atomic")
+  *ptr ^= update;
+
+  return old;
+}
+
+#define occaAtomicAddL  occaAtomicAdd
+#define occaAtomicSubL  occaAtomicSub
+#define occaAtomicSwapL occaAtomicSwap
+#define occaAtomicIncL  occaAtomicInc
+#define occaAtomicDecL  occaAtomicDec
 //================================================
 
 
@@ -220,13 +332,12 @@ typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } dou
 
 
 //---[ Misc ]-------------------------------------
-#define occaParallelFor2 _Pragma("omp parallel for collapse(3) schedule(static)")
-#define occaParallelFor1 _Pragma("omp parallel for collapse(2) schedule(static)")
-#define occaParallelFor0 _Pragma("omp parallel for             schedule(static)")
-#define occaParallelFor  _Pragma("omp parallel for             schedule(static)")
-// - - - - - - - - - - 1 - - - - - - - - - - - - -
-#define occaUnroll3(N0 _Pragma(#N)
-#define occaUnroll3(N) _Pragma(#N)
+#define occaParallelFor2 OCCA_OMP_PRAGMA("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor1 OCCA_OMP_PRAGMA("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor0 OCCA_OMP_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor  OCCA_OMP_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+// - - - - - - - - - - - - - - - - - - - - - - - -
+#define occaUnroll3(N) OCCA_PRAGMA(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
 //================================================

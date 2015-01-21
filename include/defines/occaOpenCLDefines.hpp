@@ -88,6 +88,26 @@
 //================================================
 
 
+//---[ Atomics ]----------------------------------
+#define occaAtomicAdd(PTR, UPDATE)
+#define occaAtomicSub(PTR, UPDATE)
+#define occaAtomicSwap(PTR, UPDATE)
+#define occaAtomicInc(PTR, UPDATE)
+#define occaAtomicDec(PTR, UPDATE)
+#define occaAtomicMin(PTR, UPDATE)
+#define occaAtomicMax(PTR, UPDATE)
+#define occaAtomicAnd(PTR, UPDATE)
+#define occaAtomicOr(PTR, UPDATE)
+#define occaAtomicXor(PTR, UPDATE)
+
+#define occaAtomicAddL  occaAtomicAdd
+#define occaAtomicSubL  occaAtomicSub
+#define occaAtomicSwapL occaAtomicSwap
+#define occaAtomicIncL  occaAtomicInc
+#define occaAtomicDecL  occaAtomicDec
+//================================================
+
+
 //---[ Math ]-------------------------------------
 #define occaFabs       fabs
 #define occaFastFabs   fabs
