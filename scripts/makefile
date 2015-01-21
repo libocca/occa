@@ -6,17 +6,19 @@ iPath = include
 
 
 #---[ Default Variables ]-------------------------
-Debug_Enabled  = 0
-Check_Enabled  = 1
+Debug_Enabled   = 0
+Check_Enabled   = 1
 
-usingICPC      = 0
-OpenGL_Enabled = 0
+usingICPC       = 0
+OpenGL_Enabled  = 0
 
 openclEnabled   = 0
 openmpEnabled   = 0
 cudaEnabled     = 0
 coiEnabled      = 0
 pthreadsEnabled = 0
+
+compilingForJulia = 0
 
 ifdef OCCA_DEVELOPER
  ifeq ($(OCCA_DEVELOPER), 1)
@@ -63,6 +65,10 @@ compilerFlags = $(CXXFLAGS)
 
 Fcompiler      = $(FC)
 FcompilerFlags = $(FCFLAGS)
+
+ifdef COMPILING_FOR_JULIA
+  compilingForJulia = 1
+endif
 #=================================================
 
 
@@ -240,5 +246,9 @@ ifeq ($(COI_Enabled), 1)
 	links += $(COI_Links)
 else
 	flags += -DOCCA_COI_ENABLED=0
+endif
+
+ifeq ($(compilingForJulia), 1)
+	flags += -DOCCA_COMPILING_FOR_JULIA=1
 endif
 #=================================================
