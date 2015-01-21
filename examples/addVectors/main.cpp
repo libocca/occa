@@ -21,7 +21,7 @@ int main(int argc, char **argv){
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  device.setup("mode = OpenCL  , platformID = 0, deviceID = 1");
+  device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
 
   //---[ Device setup with string flags ]-------------------
   //    device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
