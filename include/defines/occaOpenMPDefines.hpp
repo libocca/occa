@@ -443,6 +443,7 @@ typedef type16<double> double16;
 
 
 //---[ Atomics ]----------------------------------
+#if 0
 template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
   const TM old = *ptr;
@@ -548,6 +549,7 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 #define occaAtomicSwapL occaAtomicSwap
 #define occaAtomicIncL  occaAtomicInc
 #define occaAtomicDecL  occaAtomicDec
+#endif
 //================================================
 
 

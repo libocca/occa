@@ -140,6 +140,7 @@ typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } dou
 
 
 //---[ Atomics ]----------------------------------
+#if 0
 template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
   const TM old = *ptr;
@@ -245,6 +246,7 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 #define occaAtomicSwapL occaAtomicSwap
 #define occaAtomicIncL  occaAtomicInc
 #define occaAtomicDecL  occaAtomicDec
+#endif
 //================================================
 
 
