@@ -73,10 +73,8 @@ namespace occa {
     if(profileApplication){
       assert(key == keyStack.top());
 
-      if(key != keyStack.top()){
-        std::cout << "Error in timer " << key << std::endl;
-        throw 1;
-      }
+      OCCA_CHECK(key == keyStack.top(),
+                 "Error in timer " << key << '\n');
 
       double currentTime = occa::currentTime();
       elapsedTime = (currentTime - timeStack.top());
@@ -99,10 +97,8 @@ namespace occa {
 
       assert(key == keyStack.top());
 
-      if(key != keyStack.top()){
-        std::cout << "Error in timer " << key << std::endl;
-        throw 1;
-      }
+      OCCA_CHECK(key == keyStack.top(),
+                 "Error in timer " << key << '\n');
 
       if(profileKernels){
         if(deviceInitialized)

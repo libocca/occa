@@ -419,7 +419,9 @@ extern "C" {
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
     if(list_.argc < (argPos + 1)){
-      OCCA_CHECK(argPos < OCCA_MAX_ARGS);
+      OCCA_CHECK(argPos < OCCA_MAX_ARGS,
+                 "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
+                 << " [" << argPos << "] arguments were set");
 
       list_.argc = (argPos + 1);
     }

@@ -108,7 +108,7 @@ namespace occa {
     if(m & CUDA)     return "CUDA";
     if(m & COI)      return "COI";
 
-    OCCA_CHECK(false);
+    OCCA_CHECK(false, "Mode [" << m << "] is not valid");
 
     return "No mode";
   }
@@ -122,7 +122,7 @@ namespace occa {
     if(upStr == "CUDA")     return CUDA;
     if(upStr == "COI")      return COI;
 
-    OCCA_CHECK(false);
+    OCCA_CHECK(false, "Mode [" << str << "] is not valid");
 
     return OpenMP;
   }
@@ -1447,10 +1447,10 @@ namespace occa {
 
   //---[ Kernel Database ]------------
   inline kernel& kernelDatabase::operator [] (device &d){
-    OCCA_CHECK((0 <= d.modelID_) && (d.modelID_ < modelKernelCount) &&
-               modelKernelAvailable[d.modelID_]);
-
-    OCCA_CHECK(0 <= d.id_);
+    OCCA_CHECK(0 <= d.modelID_                 , "Device [modelID] is not set");
+    OCCA_CHECK((d.modelID_ < modelKernelCount) , "Kernel is not compiled for chosen device");
+    OCCA_CHECK(modelKernelAvailable[d.modelID_], "Kernel is not compiled for chosen device");
+    OCCA_CHECK(0 <= d.id_                      , "Device not set");
 
     if((d.id_ < kernelCount) && kernelAllocated[d.id_])
       return kernels[d.id_];

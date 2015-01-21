@@ -1,8 +1,11 @@
 #ifndef OCCA_FBASE_HEADER
 #define OCCA_FBASE_HEADER
 
+#include <iostream>
 #include <stdint.h>
 #include <stdio.h>
+
+#include "occaDefines.hpp"
 #include "occaCBase.hpp"
 
 /*
@@ -202,8 +205,7 @@ extern "C" {
     if(sizeof(int) == 4)
       *type = occaInt(*value);
     else {
-      fprintf(stderr, "Bad integer size\n");
-      throw 1;
+      OCCA_CHECK(false, "Bad integer size");
     }
   }
 
@@ -492,8 +494,7 @@ extern "C" {
       occaArgumentListAddArg(*list, *argPos, occaInt(*v));
     }
     else {
-      fprintf(stderr, "Bad integer size\n");
-      throw 1;
+      OCCA_CHECK(false, "Bad integer size");
     }
   }
 
@@ -789,8 +790,7 @@ extern "C" {
     if(sizeof(int) == 4)
       occaKernelInfoAddDefine(*info, macro_c, occaInt(*value));
     else {
-      fprintf(stderr, "Bad integer size\n");
-      throw 1;
+      OCCA_CHECK(false, "Bad integer size");
     }
 
     OCCA_F2C_FREE_STR(macro, macro_c);

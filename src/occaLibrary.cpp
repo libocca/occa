@@ -31,7 +31,8 @@ namespace occa {
     }
 
     std::string getFilename(const int id){
-      OCCA_CHECK((0 <= id) && (id < filesInDatabase));
+      OCCA_CHECK((0 <= id) && (id < filesInDatabase),
+                 "File with ID [" << id << "] was not found");
 
       mutex.lock();
 

@@ -705,7 +705,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Copy From",
@@ -743,8 +745,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Copy From",
@@ -772,7 +779,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Copy To",
@@ -816,8 +825,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + srcOffset)  <= size);
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Copy To",
@@ -845,7 +859,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Asynchronous Copy From",
@@ -870,8 +886,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Asynchronous Copy From",
@@ -899,7 +920,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Asynchronous Copy To",
@@ -924,8 +947,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + srcOffset)  <= size);
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Asynchronous Copy To",
@@ -1026,14 +1054,11 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
-    if(!aim.has("platformID")){
-      std::cout << "[OpenCL] device not given [platformID]\n";
-      throw 1;
-    }
-    if(!aim.has("deviceID")){
-      std::cout << "[OpenCL] device not given [deviceID]\n";
-      throw 1;
-    }
+    OCCA_CHECK(aim.has("platformID"),
+               "[OpenCL] device not given [platformID]");
+
+    OCCA_CHECK(aim.has("deviceID"),
+               "[OpenCL] device not given [deviceID]");
 
     data_.platform = aim.iGet("platformID");
     data_.device   = aim.iGet("deviceID");
@@ -1617,7 +1642,7 @@ namespace occa {
     else if(dBuffer & CL_DEVICE_TYPE_GPU)
       isGPU = true;
     else{
-      OCCA_CHECK(false);
+      OCCA_CHECK(false, "Can only find SIMD width for CPU and GPU devices at the momement\n");
     }
 
     if(isGPU){
@@ -1630,7 +1655,7 @@ namespace occa {
       else if(vendor.find("Intel") != std::string::npos)   // <> Need to check for Xeon Phi
         simdWidth_ = OCCA_SIMD_WIDTH;
       else{
-        OCCA_CHECK(false);
+        OCCA_CHECK(false, "simdWidth() only available for AMD, Intel and NVIDIA architectures");
       }
     }
     else

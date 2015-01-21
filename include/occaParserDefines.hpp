@@ -23,6 +23,8 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#include "occaDefines.hpp"
+
 namespace occa {
   namespace parserNS {
     class opHolder;

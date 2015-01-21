@@ -6,10 +6,8 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
-    if(error){
-      std::cout << "Error initializing mutex\n";
-      throw 1;
-    }
+    OCCA_CHECK(error == 0,
+               "Error initializing mutex");
 #else
     mutexHandle = CreateMutex(NULL, FALSE, NULL);
 #endif
@@ -19,10 +17,8 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int error = pthread_mutex_destroy(&mutexHandle);
 
-    if(error){
-      std::cout << "Error freeing mutex\n";
-      throw 1;
-    }
+    OCCA_CHECK(error == 0,
+               "Error freeing mutex");
 #else
     CloseHandle(mutexHandle);
 #endif
@@ -210,10 +206,10 @@ namespace occa {
       return parsedKernelInfo( *((kIt++)->second) );
     }
 
-    std::cout << "Could not find function ["
-              << functionName << "] in file ["
-              << filename     << "].\n";
-    throw 1;
+    OCCA_CHECK(false,
+               "Could not find function ["
+               << functionName << "] in file ["
+               << filename     << "]");
 
     return parsedKernelInfo();
   }
@@ -263,10 +259,8 @@ namespace occa {
     // NBN: handle EOL chars on Windows
     FILE *fp = fopen(filename.c_str(), "r");
 
-    if(!fp){
-      printf("Failed to open: %s\n", filename.c_str());
-      throw 1;
-    }
+    OCCA_CHECK(fp != 0,
+               "Failed to open [" << filename << "]");
 
     struct stat statbuf;
     stat(filename.c_str(), &statbuf);
@@ -290,10 +284,8 @@ namespace occa {
 
     FILE *fp = fopen(filename.c_str(), "w");
 
-    if(!fp){
-      printf("Failed to open: %s\n", filename.c_str());
-      throw 1;
-    }
+    OCCA_CHECK(fp != 0,
+               "Failed to open [" << filename << "]");
 
     fputs(content.c_str(), fp);
 
@@ -306,8 +298,8 @@ namespace occa {
     if(c_occaPath != NULL)
       return c_occaPath;
 
-    std::cout << "Environment variable [OCCA_DIR] is not set.\n";
-    throw 1;
+    OCCA_CHECK(false,
+               "Environment variable [OCCA_DIR] is not set");
 
     return "";
   }
@@ -343,7 +335,8 @@ namespace occa {
 
     const int chars = occaCachePath.size();
 
-    OCCA_CHECK(0 < chars);
+    OCCA_CHECK(0 < chars,
+               "OCCA Cache Path is not set");
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const char slashChar = '/';

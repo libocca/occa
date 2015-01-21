@@ -283,7 +283,7 @@ namespace occa {
 
     if(compileError){
       releaseFile(cachedBinary);
-      throw 1;
+      OCCA_CHECK(false, "Compilation error");
     }
 
     OCCA_EXTRACT_DATA(COI, Kernel);
@@ -725,10 +725,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(COI, Device);
 
-    if(!aim.has("deviceID")){
-      std::cout << "[CUDA] device not given [deviceID]\n";
-      throw 1;
-    }
+    OCCA_CHECK(aim.has("deviceID"),
+               "[COI] device not given [deviceID]");
 
     const int deviceID = aim.iGet("deviceID");
 

@@ -38,8 +38,8 @@ namespace occa {
       else if(strcmp(c, "false") == 0)
         return false;
 
-      std::cout << "[" << c << "] is not a bool.\n";
-      throw 1;
+      OCCA_CHECK(false,
+                 "[" << c << "] is not a bool");
 
       return false;
     }
@@ -111,8 +111,8 @@ namespace occa {
       case floatType : value.float_  = toFloat(strValue.c_str());  break;
       case doubleType: value.double_ = toDouble(strValue.c_str()); break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
       }
     }
 
@@ -126,8 +126,9 @@ namespace occa {
       case floatType : return true;  break;
       case doubleType: return true;  break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return false;
       }
     }
 
@@ -141,8 +142,9 @@ namespace occa {
       case floatType : return (bool) value.float_;  break;
       case doubleType: return (bool) value.double_; break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return false;
       }
     }
 
@@ -156,8 +158,9 @@ namespace occa {
       case floatType : return (long) value.float_;  break;
       case doubleType: return (long) value.double_; break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return 0;
       }
     }
 
@@ -171,8 +174,9 @@ namespace occa {
       case floatType : return (double) value.float_;  break;
       case doubleType: return (double) value.double_; break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return 0;
       }
     }
 
@@ -186,8 +190,8 @@ namespace occa {
       case floatType : value.float_  = (float)  l; break;
       case doubleType: value.double_ = (double) l; break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
       }
     }
 
@@ -201,8 +205,8 @@ namespace occa {
       case floatType : value.float_  = (float)  d; break;
       case doubleType: value.double_ = (double) d; break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
       }
     }
 
@@ -218,8 +222,8 @@ namespace occa {
       case floatType : ss << value.float_;  break;
       case doubleType: ss << value.double_; break;
       default:
-        std::cout << "Value not set\n";
-        throw 1;
+        OCCA_CHECK(false,
+                   "Value not set\n");
       }
 
       return ss.str();
@@ -257,12 +261,11 @@ namespace occa {
       }
       else if(op == "~"){
         ret.type = a.type;
-        if(a.isAFloat()){
-          std::cout << "Cannot apply [~] to [" << a << "].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue( ~a.longValue() );
+
+        OCCA_CHECK(!a.isAFloat(),
+                   "Cannot apply [~] to [" << a << "]");
+
+        ret.setLongValue( ~a.longValue() );
       }
 
       return ret;
@@ -475,76 +478,58 @@ namespace occa {
       }
 
       else if(op == "<<"){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " << " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " << " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() << b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " << " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " << " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() << b.longValue());
       }
       else if(op == ">>"){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " >> " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " >> " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() >> b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " >> " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " >> " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() >> b.longValue());
       }
       else if(op == "^"){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " ^ " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " ^ " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() ^ b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " ^ " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " ^ " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() ^ b.longValue());
       }
       else if(op == "|"){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " | " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " | " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() | b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " | " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " | " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() | b.longValue());
       }
       else if(op == "&"){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " & " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " & " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() & b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " & " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " & " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() & b.longValue());
       }
       else if(op == "%"){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " % " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " % " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() % b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " % " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " % " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() % b.longValue());
       }
 
       else if(op == "&&")
@@ -553,76 +538,58 @@ namespace occa {
         ret.setLongValue( a.boolValue() || b.boolValue() );
 
       else if(op == "%="){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " %= " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " %= " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() % b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " %= " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " %= " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() % b.longValue());
       }
       else if(op == "&="){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " &= " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " &= " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() & b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " &= " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " &= " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() & b.longValue());
       }
       else if(op == "^="){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " ^= " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " ^= " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() ^ b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " ^= " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " ^= " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() ^ b.longValue());
       }
       else if(op == "|="){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " |= " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " |= " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() | b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " |= " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " |= " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() | b.longValue());
       }
       else if(op == ">>="){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " >>= " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " >>= " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() >> b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " >>= " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " >>= " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() >> b.longValue());
       }
       else if(op == "<<="){
-        if(bIsFloat){
-          std::cout << "Cannot apply [" << a << " <<= " << b << "] where " << b << " is [float].\n";
-          throw 1;
-        }
-        else if(aIsFloat){
-          std::cout << "Cannot apply [" << a << " <<= " << b << "] where " << a << " is [float].\n";
-          throw 1;
-        }
-        else
-          ret.setLongValue(ret.longValue() << b.longValue());
+        OCCA_CHECK(!bIsFloat,
+                   "Cannot apply [" << a << " <<= " << b << "] where " << b << " is [float]");
+
+        OCCA_CHECK(!aIsFloat,
+                   "Cannot apply [" << a << " <<= " << b << "] where " << a << " is [float]");
+
+        ret.setLongValue(ret.longValue() << b.longValue());
       }
 
       return ret;
@@ -652,17 +619,12 @@ namespace occa {
 
     std::string macroInfo::applyArgs(const std::vector<std::string> &args){
         if(argc != args.size()){
-          if(args.size() == 0)
-            printf("Macro [%s] uses [%d] arguments (None were provided).\n",
-                   name.c_str(), argc);
-          else if(args.size() == 1)
-            printf("Macro [%s] uses [%d] arguments ([1] was provided).\n",
-                   name.c_str(), argc);
-          else
-            printf("Macro [%s] uses [%d] arguments ([%d] were provided).\n",
-                   name.c_str(), argc, (int) args.size());
-
-          throw 1;
+          OCCA_CHECK(args.size() != 0,
+                     "Macro [" << name << "] uses [" << argc << "] arguments (None were provided)");
+          OCCA_CHECK(args.size() != 1,
+                     "Macro [" << name << "] uses [" << argc << "] arguments ([1] was provided)");
+          OCCA_CHECK(false,
+                     "Macro [" << name << "] uses [" << argc << "] arguments ([" << args.size() << "] were provided)");
         }
 
         const int subs = argBetweenParts.size();

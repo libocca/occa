@@ -177,9 +177,9 @@ namespace occa {
           if(labelNodeRoot && (labelNodeRoot->right == NULL))
             return typeHolder(*labelNodeRoot);
 
-          std::cout << "5. Error on:\n";
-          labelNodeRoot->print("  ");
-          throw 1;
+          OCCA_CHECK(false,
+                     "5. Error on:\n"
+                     << *(labelNodeRoot));
         }
         else{
           if(minOpType & unitaryOperatorType){
@@ -193,8 +193,8 @@ namespace occa {
               minOpNode->right->pop();
             }
             else if(minOpType & rUnitaryOperatorType){
-              std::cout << "Postfix operator [" << *minOpNode << "] cannot be used in a macro.\n";
-              throw 1;
+              OCCA_CHECK(false,
+                         "Postfix operator [" << *minOpNode << "] cannot be used in a macro");
             }
           }
           else if(minOpType & binaryOperatorType){
@@ -1373,12 +1373,9 @@ namespace occa {
             innerLoopCount = loopCount;
           }
           else{
-            if(loopCount != innerLoopCount){
-              std::cout << "Inner loops are inconsistent in:\n"
-                        << origin << '\n';
-
-              throw 1;
-            }
+            OCCA_CHECK(loopCount == innerLoopCount,
+                       "Inner loops are inconsistent in:\n"
+                       << origin);
           }
         }
         else{
@@ -1419,7 +1416,7 @@ namespace occa {
             std::cout << "] have duplicates or gaps:\n"
                       << origin << '\n';
 
-            throw 1;
+            OCCA_EMPTY_CHECK(false);
           }
         }
 
@@ -1498,10 +1495,8 @@ namespace occa {
       nodePos->info = unknownVariable;
 
       if(var.stackPointerCount){
-        if(1 < var.stackPointerCount){
-          std::cout << "Only 1D exclusive variables are currently supported [" << var << "]\n";
-          throw 1;
-        }
+        OCCA_CHECK(var.stackPointerCount < 2,
+                   "Only 1D exclusive variables are currently supported [" << var << "]");
 
         nodePos       = nodePos->push(",");
         nodePos->info = keywordType[","];
@@ -1634,11 +1629,9 @@ namespace occa {
           ss << ", ";
 
           // [-] Only supports 1D arrays
-          if(1 < var.stackPointerCount){
-            std::cout << "Only 1D exclusive arrays are supported:\n"
-                      << "exclusive " << s << '\n';
-            throw 1;
-          }
+          OCCA_CHECK(var.stackPointerCount < 2,
+                     "Only 1D exclusive arrays are supported:\n"
+                     << "exclusive " << s);
 
           ss << var.stackExpRoots[0][0];
         }
@@ -2373,9 +2366,11 @@ namespace occa {
         return outerDim;
       }
 
-      std::cout << "Error, outer-most loop doesn't contain obfuscate(\"" << tag << "\"):\n"
-                << s.expRoot << '\n';
-      throw 1;
+      OCCA_CHECK(false,
+                 "Error, outer-most loop doesn't contain obfuscate(\"" << tag << "\"):\n"
+                 << s.expRoot);
+
+      return -1;
     }
 
     void parserBase::checkPathForConditionals(statementNode *path){
@@ -2739,10 +2734,8 @@ namespace occa {
     void parserBase::addInnerFors(statement &s){
       int innerDim = getKernelInnerDim(s);
 
-      if(innerDim == -1){
-        std::cout << "OCCA Inner for-loop count could not be calculated\n";
-        throw 1;
-      }
+      OCCA_CHECK(0 <= innerDim,
+                 "OCCA Inner for-loop count could not be calculated");
 
       // Get path and ignore kernel
       statementNode *sPath = findStatementWith(s, &parserBase::statementHasBarrier);
@@ -2779,10 +2772,8 @@ namespace occa {
     void parserBase::addOuterFors(statement &s){
       int outerDim = getKernelOuterDim(s);
 
-      if(outerDim == -1){
-        std::cout << "OCCA Outer for-loop count could not be calculated\n";
-        throw 1;
-      }
+      OCCA_CHECK(0 <= outerDim,
+                 "OCCA Outer for-loop count could not be calculated");
 
       statement *sPos = &s;
 
@@ -3920,10 +3911,8 @@ namespace occa {
         if((sInfo->info & forStatementType) &&
            (sInfo->getForStatementCount() > 3)){
 
-          if(4 < sInfo->getForStatementCount()){
-            std::cout << "More than 4 statements for:\n  " << sInfo->expRoot << '\n';
-            throw 1;
-          }
+          OCCA_CHECK(4 < sInfo->getForStatementCount(),
+                     "More than 4 statements for:\n  " << sInfo->expRoot);
 
           if(tag.size()){
             std::string arg4 = (std::string) *(sInfo->getForStatement(3));
@@ -3952,22 +3941,18 @@ namespace occa {
       if(!parsingC){
         //---[ Node 4 Check ]---
         // If it has a fourth argument, make sure it's the correct one
-        if( !isAnOccaTag(arg4) ){
-          std::cout << "Wrong 4th statement for:\n  " << sInfo->expRoot << '\n';
-          throw 1;
-        }
+        OCCA_CHECK(isAnOccaTag(arg4),
+                   "Wrong 4th statement for:\n  " << sInfo->expRoot);
 
         return;
       }
 
       //---[ Node 1 Check ]---
-      if((node1.info != expType::declaration) ||
-         (node1.getVariableCount() != 1)      ||
-         !node1.variableHasInit(0)){
+      OCCA_CHECK((node1.info == expType::declaration) &&
+                 (node1.getVariableCount() == 1)      &&
+                 node1.variableHasInit(0),
 
-        std::cout << "Wrong 1st statement for:\n  " << sInfo->expRoot << '\n';
-        throw 1;
-      }
+                 "Wrong 1st statement for:\n  " << sInfo->expRoot);
 
       varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
@@ -3977,49 +3962,39 @@ namespace occa {
         iterVar.addQualifier("occaConst");
 
       //---[ Node 2 Check ]---
-      if((node2.leafCount != 1) ||
-         ((node2[0].value != "<=") &&
-          (node2[0].value != "<" ) &&
-          (node2[0].value != ">" ) &&
-          (node2[0].value != ">="))){
+      OCCA_CHECK((node2.leafCount == 1) &&
+                 ((node2[0].value == "<=") ||
+                  (node2[0].value == "<" ) ||
+                  (node2[0].value == ">" ) ||
+                  (node2[0].value == ">=")),
 
-        std::cout << "Wrong 2nd statement for:\n  " << sInfo->expRoot << '\n';
-        throw 1;
-      }
+                 "Wrong 2nd statement for:\n  " << sInfo->expRoot);
 
       if(parsingC){
-        if((node2[0][0].value != iter) &&
-           (node2[0][1].value != iter)){
+        OCCA_CHECK((node2[0][0].value == iter) ||
+                   (node2[0][1].value == iter),
 
-          std::cout << "Wrong 2nd statement for:\n  " << sInfo->expRoot << '\n';
-          throw 1;
-        }
+                   "Wrong 2nd statement for:\n  " << sInfo->expRoot);
       }
 
       //---[ Node 3 Check ]---
-      if((node3.leafCount != 1) ||
-         ((node3[0].value != "++") &&
-          (node3[0].value != "--") &&
-          (node3[0].value != "+=") &&
-          (node3[0].value != "-="))){
+      OCCA_CHECK((node3.leafCount == 1) &&
+                 ((node3[0].value == "++") ||
+                  (node3[0].value == "--") ||
+                  (node3[0].value == "+=") ||
+                  (node3[0].value == "-=")),
 
-        std::cout << "Wrong 3nd statement for:\n  " << sInfo->expRoot << '\n';
-        throw 1;
-      }
+                 "Wrong 3rd statement for:\n  " << sInfo->expRoot);
 
-      if((node3[0][0].value != iter) &&
-         (node3[0][1].value != iter)){
+      OCCA_CHECK((node3[0][0].value == iter) &&
+                 (node3[0][1].value == iter),
 
-        std::cout << "Wrong 3rd statement for:\n  " << sInfo->expRoot << '\n';
-        throw 1;
-      }
+                 "Wrong 3rd statement for:\n  " << sInfo->expRoot);
 
       //---[ Node 4 Check ]---
       // If it has a fourth argument, make sure it's the correct one
-      if( !isAnOccaTag(arg4) ){
-        std::cout << "Wrong 4th statement for:\n  " << sInfo->expRoot << '\n';
-        throw 1;
-      }
+      OCCA_CHECK(isAnOccaTag(arg4),
+                 "Wrong 4th statement for:\n  " << sInfo->expRoot);
     }
 
     // [-] Missing

@@ -505,10 +505,8 @@ namespace occa {
     // NBN: handle EOL chars on Windows
     FILE *fp = fopen(filename.c_str(), "r");
 
-    if(!fp){
-      printf("Failed to open: %s\n", filename.c_str());
-      throw 1;
-    }
+    OCCA_CHECK(fp != NULL,
+               "Failed to open [" << filename << ']');
 
     struct stat statbuf;
     stat(filename.c_str(), &statbuf);

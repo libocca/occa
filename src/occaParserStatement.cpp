@@ -464,13 +464,10 @@ namespace occa {
 
           varInfo *argVar = sInfo->hasVariableInScope(var.name);
 
-          if(argVar != NULL){
-            *(argVar) = var;
-          }
-          else{
-            std::cout << "Error: variable [" << var << "] is not a function argument.\n";
-            throw 1;
-          }
+          OCCA_CHECK(argVar != NULL,
+                     "Error: variable [" << var << "] is not a function argument");
+
+          *(argVar) = var;
         }
 
         sInfo->info = skipStatementType;
@@ -541,9 +538,9 @@ namespace occa {
             addNode(expType::operator_, ";");
         }
         else{
-          std::cout << "Function [" << (leaves[0]->value) << "] is not defined in ["
-                    << toString() << "].\n";
-          throw 1;
+          OCCA_CHECK(false,
+                     "Function [" << (leaves[0]->value) << "] is not defined in ["
+                     << toString() << "]");
         }
 
         return;
@@ -597,10 +594,8 @@ namespace occa {
               (sInfo->info == elseIfStatementType) ||
               (sInfo->info == whileStatementType)){
 
-        if(leafCount == 0){
-          std::cout << "No expression in if-statement: " << *this << '\n';
-          throw 1;
-        }
+        OCCA_CHECK(leafCount != 0,
+                   "No expression in if-statement: " << *this << '\n');
 
         leaves[0]       = leaves[1];
         leaves[0]->info = expType::root;
@@ -632,10 +627,8 @@ namespace occa {
 
       int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
 
-      if((statementCount < 2) || (4 < statementCount)){
-        std::cout << "Error: Wrong [DO] format [" << *this << "]\n";
-        throw 1;
-      }
+      OCCA_CHECK((statementCount == 3) || (statementCount == 4),
+                 "Error: Wrong [DO] format [" << *this << "]");
 
       int pos[5];
 
@@ -646,10 +639,8 @@ namespace occa {
       for(int i = 0; i < statementCount; ++i){
         pos[i + 1] = typeInfo::nextDelimeter(*this, pos[i], ",") + 1;
 
-        if(pos[i] == (pos[i + 1] + 1)){
-          std::cout << "Error: No expression given in [" << *this << "]\n";
-          throw 1;
-        }
+        OCCA_CHECK(pos[i] != (pos[i + 1] + 1),
+                   "Error: No expression given in [" << *this << "]");
       }
 
       // Check if last expressiong is an OCCA tag
@@ -674,11 +665,9 @@ namespace occa {
       const std::string &iter = leaves[1]->value;
       varInfo *var = sInfo->hasVariableInScope(iter);
 
-      if(var == NULL){
-        std::cout << "Error: Iterator [" << iter
-                  << "] is not defined before [" << *this << "]\n";
-        throw 1;
-      }
+      OCCA_CHECK(var != NULL,
+                 "Error: Iterator [" << iter
+                 << "] is not defined before [" << *this << "]");
 
       // Fortran iterations are not modified
       std::vector<std::string> doNames;
@@ -1607,11 +1596,10 @@ namespace occa {
                 var.stackPointersUsed = var.stackPointerCount;
 
                 // [+] Print [var] Fortran-style
-                std::cout << "Incorrect dimensions on variable ["
-                          << var << "], in statement ["
-                          << *(leaf.up) << "]\n";
-
-                throw 1;
+                OCCA_CHECK(false,
+                           "Incorrect dimensions on variable ["
+                           << var << "], in statement ["
+                           << *(leaf.up) << "]");
               }
 
               leaf.value = "[";
@@ -2213,10 +2201,8 @@ namespace occa {
         if(leafCount){
           expNode &lqNode = *(leaves[0]);
 
-          if( !(lqNode.info & expType::type) ){
-            std::cout << "5. Error on:" << *this << '\n';
-            throw 1;
-          }
+          OCCA_CHECK((lqNode.info & expType::type) != 0,
+                     "5. Error on:" << *this);
 
           if( !(lqNode.leaves[0]->info & expType::qualifier) )
             lqNode.addNode(expType::qualifier, 0);
@@ -2236,10 +2222,8 @@ namespace occa {
         if(leafCount){
           expNode &lqNode = *(leaves[0]);
 
-          if( !(lqNode.info & expType::type) ){
-            std::cout << "5. Error on:" << *this << '\n';
-            throw 1;
-          }
+          OCCA_CHECK((lqNode.info & expType::type) != 0,
+                     "5. Error on:" << *this);
 
           if( !(lqNode.lastLeaf()->info & expType::qualifier) )
             lqNode.addNode(expType::qualifier);
@@ -3173,9 +3157,9 @@ namespace occa {
       else if(nodeValue == "switch")
         return switchStatementType;
 
-      std::cout << "You found the [Waldo 2] error in:\n"
-                << prettyString(nodeRoot, "  ");
-      throw 1;
+      OCCA_CHECK(false,
+                 "You found the [Waldo 2] error in:\n"
+                 << prettyString(nodeRoot, "  "));
 
       return 0;
     }
@@ -3302,10 +3286,8 @@ namespace occa {
       newStatement->expRoot.loadFromNode(nodeRootEnd, parsingC);
       const int st = newStatement->info;
 
-      if(st & invalidStatementType){
-        std::cout << "Not a valid statement\n";
-        throw 1;
-      }
+      OCCA_CHECK((st & invalidStatementType) == 0,
+                 "Not a valid statement");
 
       if(st & skipStatementType){
         nodeRootEnd = skipAfterStatement(nodeRootEnd);
@@ -3564,10 +3546,8 @@ namespace occa {
             newStatement = makeSubStatement();
             newStatement->expRoot.loadFromNode(nodeRootEnd);
 
-            if(st & invalidStatementType){
-              std::cout << "Not a valid statement\n";
-              throw 1;
-            }
+            OCCA_CHECK((st & invalidStatementType) == 0,
+                       "Not a valid statement");
 
             addStatement(newStatement);
 
@@ -3804,9 +3784,9 @@ namespace occa {
       if(st)
         return st;
 
-      std::cout << "You found the [Waldo 3] error in:\n"
-                << prettyString(nodeRoot, "  ");
-      throw 1;
+      OCCA_CHECK(false,
+                 "You found the [Waldo 3] error in:\n"
+                 << prettyString(nodeRoot, "  "));
 
       return 0;
     }
@@ -4249,16 +4229,14 @@ namespace occa {
                                              statement *origin){
       scopeVarMapIterator it = scopeVarMap.find(var.name);
 
-      if(it != scopeVarMap.end()     &&
-         !var.hasQualifier("extern") &&
-         !((var.info & varType::functionDef))){
+      OCCA_CHECK((it == scopeVarMap.end())  ||
+                 var.hasQualifier("extern") ||
+                 (var.info & varType::functionDef),
 
-        std::cout << "Variable [" << var.name << "] defined in:\n"
-                  << *origin
-                  << "is already defined in:\n"
-                  << *this;
-        throw 1;
-      }
+                 "Variable [" << var.name << "] defined in:\n"
+                 << *origin
+                 << "is already defined in:\n"
+                 << *this);
     }
 
     statement* statement::getVarOriginStatement(varInfo &var){
@@ -4775,8 +4753,7 @@ namespace occa {
         return NULL;
       }
 
-      printf("Not added yet\n");
-      throw 1;
+      OCCA_CHECK(false, "Not added yet");
 
       return NULL;
     }
@@ -4803,8 +4780,7 @@ namespace occa {
         return getFunctionVar()->name;
       }
 
-      printf("Not added yet\n");
-      throw 1;
+      OCCA_CHECK(false, "Not added yet");
 
       return "";
     }
@@ -4815,8 +4791,7 @@ namespace occa {
         return;
       }
 
-      printf("Not added yet\n");
-      throw 1;
+      OCCA_CHECK(false, "Not added yet");
     }
 
     bool statement::functionHasQualifier(const std::string &qName){
@@ -4824,8 +4799,9 @@ namespace occa {
         return getFunctionVar()->hasQualifier(qName);
       }
 
-      printf("Not added yet\n");
-      throw 1;
+      OCCA_CHECK(false, "Not added yet");
+
+      return false;
     }
 
     int statement::getFunctionArgCount(){
@@ -4953,7 +4929,7 @@ namespace occa {
                   nodePos->print("  ");
                 }
 
-                throw 1;
+                OCCA_THROW;
               }
 
               ret += *nodePos;
@@ -4974,11 +4950,8 @@ namespace occa {
 
             nodePos = nodePos->right;
 
-            if((nodePos->right) == NULL){
-              std::cout << "3. Error on:\n";
-              nodePos->left->print("  ");
-              throw 1;
-            }
+            OCCA_CHECK((nodePos->right) != NULL,
+                       "3. Error on: " << *(nodePos->left));
 
             if((nodePos->down).size())
               ret += prettyString(nodePos, "", autoMode);
@@ -4987,12 +4960,10 @@ namespace occa {
 
             ret += " : ";
 
-            if(((nodePos->right) == NULL)       ||
-               ((nodePos->right->right) == NULL)){
-              std::cout << "4. Error on:\n";
-              nodePos->left->left->print("  ");
-              throw 1;
-            }
+            OCCA_CHECK(((nodePos->right)        != NULL) &&
+                       ((nodePos->right->right) != NULL),
+
+                       "4. Error on: " << *(nodePos->left->left));
 
             nodePos = nodePos->right->right;
 

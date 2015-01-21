@@ -170,7 +170,7 @@ namespace occa {
 
     if(compileError){
       releaseFile(cachedBinary);
-      throw 1;
+      OCCA_CHECK(false, "Compilation error");
     }
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
@@ -180,16 +180,16 @@ namespace occa {
 
     if(data_.dlHandle == NULL){
       releaseFile(cachedBinary);
-      throw 1;
+      OCCA_CHECK(false, "Error loading binary using dlopen");
     }
 #else
     data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
 
-    if(data_.dlHandle == NULL) {
-      DWORD errCode = GetLastError();
-      std::cerr << "Unable to load dll: " << cachedBinary << " (WIN32 error code: " << errCode << ")" << std::endl;
+    if(data_.dlHandle == NULL){
+      releaseFile(cachedBinary);
 
-      throw 1;
+      OCCA_CHECK(false,
+                 "Error loading dll [" << filename << "] (WIN32 error: " << GetLastError() << ")");
     }
 #endif
 
@@ -198,17 +198,15 @@ namespace occa {
 
     char *dlError;
     if ((dlError = dlerror()) != NULL)  {
-      fputs(dlError, stderr);
       releaseFile(cachedBinary);
-      throw 1;
+      OCCA_CHECK(false, "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
     }
 #else
     data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
 
-    if(data_.dlHandle == NULL) {
-      fputs("unable to load function", stderr);
+    if(data_.handle == NULL) {
       releaseFile(cachedBinary);
-      throw 1;
+      OCCA_CHECK(false, "Error loading symbol from binary with GetProcAddress");
     }
 #endif
 
@@ -228,29 +226,28 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(filename.c_str(), RTLD_NOW);
+
+    OCCA_CHECK(data_.dlHandle != NULL,
+               "Error loading binary using dlopen");
 #else
     data_.dlHandle = LoadLibraryA(filename.c_str());
-    if(data_.dlHandle == NULL) {
-      DWORD errCode = GetLastError();
-      std::cerr << "Unable to load dll: " << filename << " (WIN32 error code: " << errCode << ")" << std::endl;
-      throw 1;
-    }
+
+    OCCA_CHECK(false,
+               "Error loading dll [" << filename << "] (WIN32 error: " << GetLastError() << ")");
 #endif
-    OCCA_CHECK(data_.dlHandle != NULL);
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.handle = dlsym(data_.dlHandle, functionName.c_str());
 
     char *dlError;
     if ((dlError = dlerror()) != NULL)  {
-      fputs(dlError, stderr);
-      throw 1;
+      OCCA_CHECK(false, "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
     }
 #else
     data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
-    if(data_.dlHandle == NULL) {
-      fputs("unable to load function", stderr);
-      throw 1;
+
+    if(data_.handle == NULL) {
+      OCCA_CHECK(false, "Error loading symbol from binary with GetProcAddress");
     }
 #endif
 
@@ -379,7 +376,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
     const void *srcPtr = source;
@@ -396,8 +395,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
     const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
@@ -413,7 +417,9 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = dest;
     const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
@@ -430,8 +436,13 @@ namespace occa {
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + srcOffset)  <= size);
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
     const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
@@ -445,7 +456,9 @@ namespace occa {
                                        const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
     const void *srcPtr = source;
@@ -461,8 +474,13 @@ namespace occa {
                                        const uintptr_t srcOffset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + destOffset) <= size);
-    OCCA_CHECK((bytes_ + srcOffset)  <= source->size);
+    OCCA_CHECK((bytes_ + destOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
+               "Source has size [" << source->size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
     const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
@@ -476,7 +494,9 @@ namespace occa {
                                      const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + offset) <= size);
+    OCCA_CHECK((bytes_ + offset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = dest;
     const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
@@ -491,8 +511,13 @@ namespace occa {
                                      const uintptr_t srcOffset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
-    OCCA_CHECK((bytes_ + srcOffset)  <= size);
-    OCCA_CHECK((bytes_ + destOffset) <= dest->size);
+    OCCA_CHECK((bytes_ + srcOffset) <= size,
+               "Memory has size [" << size << "],"
+               << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
+
+    OCCA_CHECK((bytes_ + destOffset) <= dest->size,
+               "Destination has size [" << dest->size << "],"
+               << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
     const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
@@ -629,12 +654,13 @@ namespace occa {
     compilerFlags = " /Ox /openmp ";
 #  endif
     std::string byteness;
+
     if(sizeof(void*) == 4)
       byteness = "x86 ";
     else if(sizeof(void*) == 8)
       byteness = "amd64";
     else
-      throw 1;
+      OCCA_CHECK("sizeof(void*) is not equal to 4 or 8");
 
     char* visual_studio_tools = getenv("VS100COMNTOOLS");
     if(visual_studio_tools != NULL){

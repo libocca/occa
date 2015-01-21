@@ -427,6 +427,127 @@ typedef type16<double> double16;
 
 #define occaFunction
 #define occaDeviceFunction
+
+#ifndef MC_CL_EXE
+#  define OCCA_PRAGMA(STR) _Pragma(STR)
+#else
+#  define OCCA_PRAGMA(STR) __pragma(STR)
+#endif
+
+#if OCCA_OPENMP_ENABLED
+#  define OCCA_OMP_PRAGMA(STR) OCCA_PRAGMA(STR)
+#else
+#  define OCCA_OMP_PRAGMA(STR)
+#endif
+//================================================
+
+
+//---[ Atomics ]----------------------------------
+template <class TM>
+TM occaAtomicAdd(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr += update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicSub(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr -= update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicSwap(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr = update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicInc(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  ++(*ptr);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicDec(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  --(*ptr);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicMin(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr = ((old < update) ? old : update);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicMax(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr = ((old < update) ? update : old);
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicAnd(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr &= update
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicOr(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr |= update;
+
+  return old;
+}
+
+template <class TM>
+TM occaAtomicXor(TM *ptr, const TM &update){
+  const TM old = *ptr;
+
+#pragma omp atomic
+  *ptr ^= update;
+
+  return old;
+}
+
+#define occaAtomicAddL  occaAtomicAdd
+#define occaAtomicSubL  occaAtomicSub
+#define occaAtomicSwapL occaAtomicSwap
+#define occaAtomicIncL  occaAtomicInc
+#define occaAtomicDecL  occaAtomicDec
 //================================================
 
 
@@ -514,12 +635,12 @@ typedef type16<double> double16;
 
 
 //---[ Misc ]-------------------------------------
-#define occaParallelFor2 _Pragma("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor1 _Pragma("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor0 _Pragma("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor  _Pragma("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor2 OCCA_OMP_PRAGMA("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor1 OCCA_OMP_PRAGMA("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor0 OCCA_OMP_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor  OCCA_OMP_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaUnroll3(N) _Pragma(#N)
+#define occaUnroll3(N) OCCA_PRAGMA(#N)
 #define occaUnroll2(N) occaUnroll3(N)
 #define occaUnroll(N)  occaUnroll2(unroll N)
 //================================================

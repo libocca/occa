@@ -272,13 +272,10 @@ namespace occa {
     }
 
     const std::string& qualifierInfo::get(const int pos) const {
-      if((pos < 0) ||
-         (qualifierCount <= pos)){
-        std::cout << "There are only ["
-                  << qualifierCount << "] qualifiers (asking for ["
-                  << pos << "])\n";
-        throw 1;
-      }
+      OCCA_CHECK((0 <= pos) && (pos < qualifierCount),
+                 "There are only ["
+                 << qualifierCount << "] qualifiers (asking for ["
+                 << pos << "])");
 
       return qualifiers[pos];
     }
@@ -1004,10 +1001,8 @@ namespace occa {
       if( !(info & varType::functionType) )
         return leafPos;
 
-      if(expRoot.leafCount <= leafPos){
-        std::cout << "Missing arguments from function variable\n";
-        throw 1;
-      }
+      OCCA_CHECK(leafPos < expRoot.leafCount,
+                 "Missing arguments from function variable");
 
       if(expRoot[leafPos].leafCount){
         expNode &leaf = expRoot[leafPos];
@@ -1393,10 +1388,8 @@ namespace occa {
       if( !(info & varType::functionType) )
         return nodePos;
 
-      if(nodePos == NULL){
-        std::cout << "Missing arguments from function variable\n";
-        throw 1;
-      }
+      OCCA_CHECK(nodePos != NULL,
+                 "Missing arguments from function variable");
 
       strNode *nextNode = nodePos->right;
 
@@ -1544,8 +1537,8 @@ namespace occa {
             typeNode = "long long";
           break;
         default:
-          std::cout << "Error loading " << typeNode << "(" << bytes << ")\n";
-          throw 1;
+          OCCA_CHECK(false,
+                     "Error loading " << typeNode << "(" << bytes << ")");
         };
       }
 
@@ -1615,8 +1608,8 @@ namespace occa {
             typeNode = "long long";
           break;
         default:
-          std::cout << "Error loading " << typeNode << "(" << bytes << ")\n";
-          throw 1;
+          OCCA_CHECK(false,
+                     "Error loading " << typeNode << "(" << bytes << ")");
         };
       }
 

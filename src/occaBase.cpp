@@ -181,13 +181,8 @@ namespace occa {
   }
 
   int kernel::preferredDimSize(){
-    if(kHandle->nestedKernelCount == 0){
-      return kHandle->preferredDimSize();
-    }
-    else{
-      std::cout << "Cannot get preferred size for fused kernels\n";
-      throw 1;
-    }
+    OCCA_CHECK(kHandle->nestedKernelCount == 0,
+               "Cannot get preferred size for fused kernels");
 
     return 1;
   }
@@ -199,7 +194,9 @@ namespace occa {
   void kernel::addArgument(const int argPos,
                            const kernelArg &arg){
     if(argumentCount < (argPos + 1)){
-      OCCA_CHECK(argPos < OCCA_MAX_ARGS);
+      OCCA_CHECK(argPos < OCCA_MAX_ARGS,
+                 "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
+                 << " [" << argPos << "] arguments were set");
 
       argumentCount = (argPos + 1);
     }
@@ -279,7 +276,8 @@ namespace occa {
   }
 
   void kernelDatabase::modelKernelIsAvailable(const int id){
-    OCCA_CHECK(0 <= id);
+    OCCA_CHECK(0 <= id,
+               "Model kernel for ID [" << id << "] was not found");
 
     if(modelKernelCount <= id){
       modelKernelCount = (id + 1);
@@ -294,7 +292,8 @@ namespace occa {
   }
 
   void kernelDatabase::addKernel(const int id, kernel k){
-    OCCA_CHECK(0 <= id);
+    OCCA_CHECK(0 <= id,
+               "Model kernel for ID [" << id << "] was not found");
 
     if(kernelCount <= id){
       kernelCount = (id + 1);
@@ -532,8 +531,8 @@ namespace occa {
 #if OCCA_PTHREADS_ENABLED
       dHandle = new device_t<Pthreads>(); break;
 #else
-      std::cout << "OCCA mode [Pthreads] is not enabled\n";
-      throw 1;
+      OCCA_CHECK(false,
+                 "OCCA mode [Pthreads] is not enabled");
 #endif
 
     case OpenMP:
@@ -543,29 +542,29 @@ namespace occa {
 #if OCCA_OPENCL_ENABLED
       dHandle = new device_t<OpenCL>(); break;
 #else
-      std::cout << "OCCA mode [OpenCL] is not enabled\n";
-      throw 1;
+      OCCA_CHECK(false,
+                 "OCCA mode [OpenCL] is not enabled");
 #endif
 
     case CUDA:
 #if OCCA_CUDA_ENABLED
       dHandle = new device_t<CUDA>(); break;
 #else
-      std::cout << "OCCA mode [CUDA] is not enabled\n";
-      throw 1;
+      OCCA_CHECK(false,
+                 "OCCA mode [CUDA] is not enabled");
 #endif
 
     case COI:
 #if OCCA_COI_ENABLED
       dHandle = new device_t<COI>(); break;
 #else
-      std::cout << "OCCA mode [COI] is not enabled\n";
-      throw 1;
+      OCCA_CHECK(false,
+                 "OCCA mode [COI] is not enabled");
 #endif
 
     default:
-      std::cout << "Incorrect OCCA mode given\n";
-      throw 1;
+      OCCA_CHECK(false,
+                 "Incorrect OCCA mode given");
     }
 
     dHandle->dev = this;
@@ -578,10 +577,8 @@ namespace occa {
   void device::setup(const std::string &infos){
     argInfoMap aim(infos);
 
-    if(!aim.has("mode")){
-      std::cout << "OCCA mode not given\n";
-      throw 1;
-    }
+    OCCA_CHECK(aim.has("mode"),
+               "OCCA mode not given");
 
     // [-] Load aim from infos
     occa::mode m = strToMode(aim.get("mode"));
@@ -1006,10 +1003,10 @@ namespace occa {
   memory device::wrapTexture(void *handle_,
                              const int dim, const occa::dim &dims,
                              occa::formatType type, const int permissions){
-    if((dim != 1) && (dim != 2)){
-      printf("Textures of [%dD] are not supported, only 1D or 2D are supported at the moment.\n", dim);
-      throw 1;
-    }
+
+    OCCA_CHECK((dim == 1) || (dim == 2),
+               "Textures of [" << dim << "D] are not supported,"
+               << "only 1D or 2D are supported at the moment");
 
     memory mem;
 
@@ -1040,15 +1037,12 @@ namespace occa {
   memory device::talloc(const int dim, const occa::dim &dims,
                         void *source,
                         occa::formatType type, const int permissions){
-    if((dim != 1) && (dim != 2)){
-      printf("Textures of [%dD] are not supported, only 1D or 2D are supported at the moment.\n", dim);
-      throw 1;
-    }
+    OCCA_CHECK((dim == 1) || (dim == 2),
+               "Textures of [" << dim << "D] are not supported,"
+               << "only 1D or 2D are supported at the moment");
 
-    if(source == NULL){
-      printf("Non-NULL source is required for [talloc] (texture allocation).\n");
-      throw 1;
-    }
+    OCCA_CHECK(source != NULL,
+               "Non-NULL source is required for [talloc] (texture allocation)");
 
     memory mem;
 

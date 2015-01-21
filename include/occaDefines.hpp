@@ -39,10 +39,15 @@
 #endif
 
 //---[ Checks and Info ]----------------
-#if OCCA_CHECK_ENABLED
-#  define OCCA_CHECK2( _expr , file , line , func )                     \
+#ifndef OCCA_COMPILED_FOR_JULIA
+#  define OCCA_THROW throw 1
+#else
+#  define OCCA_THROW jl_error("Exiting OCCA\n")
+#endif
+
+#define OCCA_EMPTY_FORCE_CHECK2( _expr , file , line , func )           \
   do {                                                                  \
-    uintptr_t expr = (_expr);                                              \
+    intptr_t expr = (_expr);                                            \
     if( !expr ){                                                        \
       std::cout << '\n'                                                 \
                 << "---[ Error ]--------------------------------------------\n" \
@@ -50,12 +55,34 @@
                 << "    Function : " << func << '\n'                    \
                 << "    Line     : " << line << '\n'                    \
                 << "========================================================\n"; \
-      throw 1;                                                          \
+      OCCA_THROW;                                                       \
     }                                                                   \
   } while(0)
-#  define OCCA_CHECK( _expr ) OCCA_CHECK2( _expr , __FILE__ , __LINE__ , __PRETTY_FUNCTION__)
+
+#define OCCA_FORCE_CHECK2( _expr , _msg , file , line , func )          \
+  do {                                                                  \
+    intptr_t expr = (_expr);                                            \
+    if( !expr ){                                                        \
+      std::cout << '\n'                                                 \
+                << "---[ Error ]--------------------------------------------\n" \
+                << "    File     : " << file << '\n'                    \
+                << "    Function : " << func << '\n'                    \
+                << "    Line     : " << line << '\n'                    \
+                << "    Error    : " << _msg << '\n'                    \
+                << "========================================================\n"; \
+      OCCA_THROW;                                                       \
+    }                                                                   \
+  } while(0)
+
+#define OCCA_EMPTY_FORCE_CHECK( _expr )  OCCA_EMPTY_FORCE_CHECK2( _expr , __FILE__ , __LINE__ , __PRETTY_FUNCTION__)
+#define OCCA_FORCE_CHECK( _expr , _msg ) OCCA_FORCE_CHECK2( _expr , _msg , __FILE__ , __LINE__ , __PRETTY_FUNCTION__)
+
+#if OCCA_CHECK_ENABLED
+#  define OCCA_EMPTY_CHECK( _expr )  OCCA_EMPTY_FORCE_CHECK( _expr )
+#  define OCCA_CHECK( _expr , _msg ) OCCA_FORCE_CHECK( _expr , _msg )
 #else
-#  define OCCA_CHECK( _expr )
+#  define OCCA_EMPTY_CHECK( _expr )
+#  define OCCA_CHECK( _expr , _msg )
 #endif
 
 #if OCCA_OS == OSX_OS
@@ -120,7 +147,7 @@
                 << "    Line    : " << line << '\n'                     \
                 << "    Error   : OpenCL Error [ " << _error << " ]: " << occa::openclError(_error) << '\n' \
                 << "    Message : " << _str << '\n';                    \
-      throw 1;                                                          \
+      OCCA_THROW;                                                       \
     }                                                                   \
   } while(0)
 
@@ -142,7 +169,7 @@
                 << "    Line    : " << line << '\n'                     \
                 << "    Error   : CUDA Error [ " << errorCode << " ]: " << occa::cudaError(errorCode) << '\n' \
                 << "    Message : " << _str << '\n';                    \
-      throw 1;                                                          \
+      OCCA_THROW;                                                       \
     }                                                                   \
   } while(0)
 #else

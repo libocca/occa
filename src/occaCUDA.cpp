@@ -227,7 +227,7 @@ namespace occa {
     // Not needed here I guess
     // if(ptxError){
     //   releaseFile(cachedBinary);
-    //   throw 1;
+    //   OCCA_CHECK(false, "Compilation error");
     // }
 
     //---[ Compiling Command ]----------
@@ -249,7 +249,7 @@ namespace occa {
 
     if(compileError){
       releaseFile(cachedBinary);
-      throw 1;
+      OCCA_CHECK(false, "Compilation error");
     }
 
     const CUresult moduleLoadError = cuModuleLoad(&data_.module,
@@ -778,10 +778,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(CUDA, Device);
 
-    if(!aim.has("deviceID")){
-      std::cout << "[CUDA] device not given [deviceID]\n";
-      throw 1;
-    }
+    OCCA_CHECK(aim.has("deviceID"),
+               "[CUDA] device not given [deviceID]");
 
     const int deviceID = aim.iGet("deviceID");
 
