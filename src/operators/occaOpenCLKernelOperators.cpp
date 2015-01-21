@@ -101,7 +101,7 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -148,7 +148,7 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -201,7 +201,7 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -260,8 +260,8 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -326,8 +326,8 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -398,8 +398,8 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -476,9 +476,9 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -561,9 +561,9 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -652,9 +652,9 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -749,10 +749,10 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -853,10 +853,10 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -963,10 +963,10 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1079,11 +1079,11 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1202,11 +1202,11 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1331,11 +1331,11 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1466,12 +1466,12 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1608,12 +1608,12 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1756,12 +1756,12 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -1910,13 +1910,13 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -2071,13 +2071,13 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -2238,13 +2238,13 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -2411,14 +2411,14 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -2591,14 +2591,14 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -2777,14 +2777,14 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -2969,15 +2969,15 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -3168,15 +3168,15 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -3373,15 +3373,15 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -3584,16 +3584,16 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -3802,16 +3802,16 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -4026,16 +4026,16 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -4256,17 +4256,17 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -4493,17 +4493,17 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -4736,17 +4736,17 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -4985,18 +4985,18 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -5241,18 +5241,18 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -5503,18 +5503,18 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -5771,19 +5771,19 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -6046,19 +6046,19 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -6327,19 +6327,19 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -6614,20 +6614,20 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -6908,20 +6908,20 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -7208,20 +7208,20 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -7514,21 +7514,21 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
-                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
+                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -7827,21 +7827,21 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
-                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
+                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -8146,21 +8146,21 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
-                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
+                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -8471,22 +8471,22 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
-                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44,
-                      const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
+                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
+                      const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;
@@ -8803,22 +8803,22 @@
   }
 
   template <>
-  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2,
-                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5,
-                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8,
-                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11,
-                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14,
-                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17,
-                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20,
-                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23,
-                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26,
-                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29,
-                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32,
-                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35,
-                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38,
-                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41,
-                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44,
-                      const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47,
+  void kernel_t<OpenCL>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
+                      const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
+                      const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
+                      const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
+                      const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
+                      const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
+                      const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
+                      const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
+                      const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
+                      const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
+                      const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
+                      const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
+                      const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
+                      const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
+                      const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
+                      const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
     OpenCLKernelData_t &data_ = *((OpenCLKernelData_t*) data);
     cl_kernel kernel_ = data_.kernel;

@@ -3,7 +3,7 @@
 
 namespace occa {
   mutex_t::mutex_t(){
-#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
     if(error){
@@ -16,7 +16,7 @@ namespace occa {
   }
 
   void mutex_t::free(){
-#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int error = pthread_mutex_destroy(&mutexHandle);
 
     if(error){
@@ -29,7 +29,7 @@ namespace occa {
   }
 
   void mutex_t::lock(){
-#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     pthread_mutex_lock(&mutexHandle);
 #else
     WaitForSingleObject(mutexHandle, INFINITE);
@@ -37,7 +37,7 @@ namespace occa {
   }
 
   void mutex_t::unlock(){
-#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     pthread_mutex_unlock(&mutexHandle);
 #else
     ReleaseMutex(mutexHandle);

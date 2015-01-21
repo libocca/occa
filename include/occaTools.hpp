@@ -35,7 +35,7 @@ namespace occa {
 
   class mutex_t {
   public:
-#if (OCL_OS == OCL_LINUX_OS) || (OCL_OS == OCL_OSX_OS)
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     pthread_mutex_t mutexHandle;
 #else
     HANDLE mutexHandle;

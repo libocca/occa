@@ -290,7 +290,6 @@ namespace occa {
 
   template <>
   void kernel_t<OpenMP>::free(){
-    // [-] Fix later
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)

@@ -1,8 +1,6 @@
 #ifndef OCCA_DEFINES_HEADER
 #define OCCA_DEFINES_HEADER
 
-#include "ocl_preprocessor.hpp"
-
 #ifndef LINUX_OS
 #  define LINUX_OS 1
 #endif
