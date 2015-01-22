@@ -42,7 +42,7 @@
 #ifndef OCCA_COMPILED_FOR_JULIA
 #  define OCCA_THROW abort()
 #else
-#  define OCCA_THROW jl_error("Exiting OCCA\n")
+#  define OCCA_THROW exit(1)
 #endif
 
 #define OCCA_EMPTY_FORCE_CHECK2( _expr , file , line , func )           \
