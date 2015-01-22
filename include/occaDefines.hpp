@@ -40,7 +40,7 @@
 
 //---[ Checks and Info ]----------------
 #ifndef OCCA_COMPILED_FOR_JULIA
-#  define OCCA_THROW throw 1
+#  define OCCA_THROW abort()
 #else
 #  define OCCA_THROW jl_error("Exiting OCCA\n")
 #endif
