@@ -867,7 +867,7 @@ namespace occa {
       const char *c0 = (compilerFlags.c_str() + archPos);
       const char *c1 = c0;
 
-      while((*c0 != '\0') && (*c0 != ' '))
+      while((*c1 != '\0') && (*c1 != ' '))
         ++c1;
 
       dID.flagMap["sm_arch"] = std::string(c0, c1 - c0);

@@ -619,6 +619,10 @@ namespace occa {
 
     std::string macroInfo::applyArgs(const std::vector<std::string> &args){
         if(argc != args.size()){
+          std::cout << "Macro [" << name << "]:\n";
+          for(int i = 0; i < args.size(); ++i)
+            std::cout << "    args[" << i << "] = " << args[i] << '\n';
+
           OCCA_CHECK(args.size() != 0,
                      "Macro [" << name << "] uses [" << argc << "] arguments (None were provided)");
           OCCA_CHECK(args.size() != 1,

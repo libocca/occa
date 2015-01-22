@@ -20,6 +20,8 @@
 #define mX 0
 #define mY 0
 
+#define WR_MIN(X,Y) ((X) < (Y) ? (X) : (Y))
+
 int a23[1][2][3][4][5][6];
 
 int  a = 0, *b = 1;
@@ -121,6 +123,8 @@ occaKernel void fd2d(tFloat *u1,
         for(int lx = bx; lx < (by + lDimX); ++lx; inner0){
           const int tx = bx * lDimX + lx;
           const int ty = by * lDimY + ly;
+
+          Lu[0] = WR_MIN(Lu[tx], Lu[tx+512]);
 
           int y1, y2;
           y1 = y2 = 0;

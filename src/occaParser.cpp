@@ -497,26 +497,44 @@ namespace occa {
 
           macroInfo &info = macros[it->second];
 
-          if(!info.isAFunction)
+          if(!info.isAFunction || (*c != '(')){
             newLine += info.parts[0];
-
+          }
           else{
             std::vector<std::string> args;
 
-            ++c; // '('
+            cStart = c + 1;
+            skipWhitespace(cStart);
 
-            while(*c != '\0'){
-              skipWhitespace(c);
-              cStart = c;
-              skipWord(c);
+            skipPair(c);
 
-              args.push_back( std::string(cStart, c - cStart) );
+            const char *cEnd = c;
+            c = cStart;
 
-              skipWhitespace(c);
+            OCCA_CHECK(*c != '\0',
+                       "Missing ')' in ["
+                       << info.name
+                       << "(" << std::string(cStart, cEnd - cStart - 1) << ")]");
 
-              if(*(c++) == ')')
-                break;
+            while(c < cEnd){
+              if(*c == ','){
+                args.push_back( strip(cStart, c - cStart) );
+                cStart = ++c; // Skip the [,]
+              }
+              else{
+                if(segmentPair(*c))
+                  skipPair(c);
+                else if(isAString(c))
+                  skipString(c);
+                else
+                  ++c;
+              }
             }
+
+            c = cEnd;
+
+            if(cStart < (cEnd - 1))
+              args.push_back( std::string(cStart, cEnd - cStart - 1) );
 
             newLine += info.applyArgs(args);
           }
