@@ -138,7 +138,7 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
@@ -627,7 +627,7 @@ namespace occa {
 
       int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
 
-      OCCA_CHECK((statementCount == 3) || (statementCount == 4),
+      OCCA_CHECK((2 <= statementCount) && (statementCount <= 4),
                  "Error: Wrong [DO] format [" << *this << "]");
 
       int pos[5];
