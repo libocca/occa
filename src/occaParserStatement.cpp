@@ -138,7 +138,7 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
 
       // Only the root needs to free
       if(up == NULL)
