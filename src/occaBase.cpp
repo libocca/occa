@@ -857,8 +857,10 @@ namespace occa {
       parsedKernelInfo kInfo = parseFileForFunction(filename,
                                                     cachedBinary,
                                                     functionName,
-                                                    info);
+                                                    info_);
 
+
+      info = defaultKernelInfo;
       info.addDefine("OCCA_LAUNCH_KERNEL", 1);
 
       struct stat buffer;
