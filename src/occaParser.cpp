@@ -1301,17 +1301,18 @@ namespace occa {
             snPos = snPos->right;
           }
 
-          if((snPos == lastLoop) &&
-             warnForMissingBarriers){
+          if(snPos == lastLoop){
+            if(warnForMissingBarriers){
 
-            std::cout << "Warning: Placing a local barrier between:\n"
-                      << "---[ A ]--------------------------------\n"
-                      << *(firstLoop->value)
-                      << "---[ B ]--------------------------------\n"
-                      << *(lastLoop->value)
-                      << "========================================\n";
+              std::cout << "Warning: Placing a local barrier between:\n"
+                        << "---[ A ]--------------------------------\n"
+                        << *(firstLoop->value)
+                        << "---[ B ]--------------------------------\n"
+                        << *(lastLoop->value)
+                        << "========================================\n";
+            }
 
-            s.pushSourceLeftOf(lastLoop, "occaBarrier(occaLocalMemFence)");
+            s.pushSourceLeftOf(lastLoop, "occaBarrier(occaLocalMemFence);");
           }
         }
 
