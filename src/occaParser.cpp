@@ -656,6 +656,23 @@ namespace occa {
       loadMacro("#define localMemFence  occaLocalMemFence");
       loadMacro("#define globalMemFence occaGlobalMemFence");
 
+      loadMacro("#define atomicAdd  occaAtomicAdd");
+      loadMacro("#define atomicSub  occaAtomicSub");
+      loadMacro("#define atomicSwap occaAtomicSwap");
+      loadMacro("#define atomicInc  occaAtomicInc");
+      loadMacro("#define atomicDec  occaAtomicDec");
+      loadMacro("#define atomicMin  occaAtomicMin");
+      loadMacro("#define atomicMax  occaAtomicMax");
+      loadMacro("#define atomicAnd  occaAtomicAnd");
+      loadMacro("#define atomicOr   occaAtomicOr");
+      loadMacro("#define atomicXor  occaAtomicXor");
+
+      loadMacro("#define atomicAdd64  occaAtomicAdd64");
+      loadMacro("#define atomicSub64  occaAtomicSub64");
+      loadMacro("#define atomicSwap64 occaAtomicSwap64");
+      loadMacro("#define atomicInc64  occaAtomicInc64");
+      loadMacro("#define atomicDec64  occaAtomicDec64");
+
       loadMacro("#define shared   occaShared");
       loadMacro("#define restrict occaRestrict");
       loadMacro("#define volatile occaVolatile");
@@ -3566,6 +3583,23 @@ namespace occa {
       cKeywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
       cKeywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
 
+      cKeywordType["atomicAdd"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicSub"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicSwap"] = (presetValue | occaKeywordType);
+      cKeywordType["atomicInc"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicDec"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicMin"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicMax"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicAnd"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicOr"]   = (presetValue | occaKeywordType);
+      cKeywordType["atomicXor"]  = (presetValue | occaKeywordType);
+
+      cKeywordType["atomicAdd64"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicSub64"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicSwap64"] = (presetValue | occaKeywordType);
+      cKeywordType["atomicInc64"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicDec64"]  = (presetValue | occaKeywordType);
+
       cKeywordType["occaInnerFor0"] = occaForType;
       cKeywordType["occaInnerFor1"] = occaForType;
       cKeywordType["occaInnerFor2"] = occaForType;
@@ -3830,6 +3864,24 @@ namespace occa {
       fortranKeywordType["DEVICE"]    = qualifierType;
       fortranKeywordType["SHARED"]    = qualifierType;
       fortranKeywordType["EXCLUSIVE"] = qualifierType;
+
+      //---[ Atomics ]--------------------
+      fortranKeywordType["ATOMICADD"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICSUB"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICSWAP"] = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICINC"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICDEC"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICMIN"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICMAX"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICAND"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICOR"]   = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICXOR"]  = (presetValue | occaKeywordType);
+
+      fortranKeywordType["ATOMICADD64"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICSUB64"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICSWAP64"] = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICINC64"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICDEC64"]  = (presetValue | occaKeywordType);
 
       //---[ Constants ]------------------
       fortranKeywordType[":"]       = presetValue;

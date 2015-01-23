@@ -99,11 +99,11 @@
 #define occaAtomicOr(PTR, UPDATE)   atomicOr
 #define occaAtomicXor(PTR, UPDATE)  atomicXor
 
-#define occaAtomicAddL(PTR, UPDATE)  occaAtomicAdd
-#define occaAtomicSubL(PTR, UPDATE)  occaAtomicSub
-#define occaAtomicSwapL(PTR, UPDATE) occaAtomicSwap
-#define occaAtomicIncL(PTR, UPDATE)  occaAtomicInc
-#define occaAtomicDecL(PTR, UPDATE)  occaAtomicDec
+#define occaAtomicAdd64  occaAtomicAdd
+#define occaAtomicSub64  occaAtomicSub
+#define occaAtomicSwap64 occaAtomicSwap
+#define occaAtomicInc64  occaAtomicInc
+#define occaAtomicDec64  occaAtomicDec
 //================================================
 
 

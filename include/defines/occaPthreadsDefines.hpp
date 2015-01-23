@@ -222,11 +222,11 @@ TM occaAtomicXor(TM *ptr, const TM &update){
   return old;
 }
 
-#define occaAtomicAddL  occaAtomicAdd
-#define occaAtomicSubL  occaAtomicSub
-#define occaAtomicSwapL occaAtomicSwap
-#define occaAtomicIncL  occaAtomicInc
-#define occaAtomicDecL  occaAtomicDec
+#define occaAtomicAdd64  occaAtomicAdd
+#define occaAtomicSub64  occaAtomicSub
+#define occaAtomicSwap64 occaAtomicSwap
+#define occaAtomicInc64  occaAtomicInc
+#define occaAtomicDec64  occaAtomicDec
 //================================================
 
 

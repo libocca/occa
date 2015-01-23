@@ -129,11 +129,11 @@
 
 #ifdef cl_khr_int64_atomics
 #  pragma OPENCL EXTENSION cl_khr_int64_atomics : enable
-#  define occaAtomicAddL(PTR, UPDATE)  atom_add
-#  define occaAtomicSubL(PTR, UPDATE)  atom_sub
-#  define occaAtomicSwapL(PTR, UPDATE) atom_swap
-#  define occaAtomicIncL(PTR, UPDATE)  atom_inc
-#  define occaAtomicDecL(PTR, UPDATE)  atom_dec
+#  define occaAtomicAdd64(PTR, UPDATE)  atom_add
+#  define occaAtomicSub64(PTR, UPDATE)  atom_sub
+#  define occaAtomicSwap64(PTR, UPDATE) atom_swap
+#  define occaAtomicInc64(PTR, UPDATE)  atom_inc
+#  define occaAtomicDec64(PTR, UPDATE)  atom_dec
 #endif
 //================================================
 
