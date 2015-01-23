@@ -110,9 +110,28 @@ occaKernel void fd2d(tFloat *u1,
                      const tFloat currentTime){
   const int bDimX = 16;
   const int bDimY = 16 + bDimX;
+  const int bDimZ = 16 + bDimY;
 
   const int lDimX = 16 + bDimY;
   int lDimY = lDimX;
+  int lDimZ = lDimX + lDimY;
+
+  /*
+    for(int n = 0; n < bDimX; ++n; tile(lDimX)){
+    }
+
+    for(int2 n = 0; n < bDimX; ++n; tile(lDimX, lDimY)){
+    }
+
+    for(int2 n(0,0); n < int2(bDimX, bDimY); n += int2(1,1); tile(lDimX,lDimY)){
+    }
+
+    for(int3 n(0,0,0);
+    n < int3(bDimX, bDimY, bDimZ);
+    n += int3(lDimX, lDimY, lDimZ);
+    tile(lDimX,lDimY,lDimZ)){
+    }
+  */
 
   for(int by = 0; by < bDimY; by += 16; outer0){
     for(int bx = 0; bx < bDimX; bx += 16; outer1){
