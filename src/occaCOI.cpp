@@ -777,7 +777,13 @@ namespace occa {
     info_.addDefine("OCCA_USING_CPU", 1);
     info_.addDefine("OCCA_USING_COI", 1);
 
-    info_.addOCCAKeywords(occaCOIDefines);
+#if OCCA_OPENMP_ENABLED
+    info_.addOCCAKeywords(std::string("#define OCCA_OPENMP_ENABLED 1\n") +
+                          occaCOIDefines);
+#else
+    info_.addOCCAKeywords(std::string("#define OCCA_OPENMP_ENABLED 0\n") +
+                          occaCOIDefines);
+#endif
   }
 
   template <>

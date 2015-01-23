@@ -578,7 +578,13 @@ namespace occa {
     info_.addIncludeDefine("omp.h");
 #endif
 
-    info_.addOCCAKeywords(occaOpenMPDefines);
+#if OCCA_OPENMP_ENABLED
+    info_.addOCCAKeywords(std::string("#define OCCA_OPENMP_ENABLED 1\n") +
+                          occaOpenMPDefines);
+#else
+    info_.addOCCAKeywords(std::string("#define OCCA_OPENMP_ENABLED 0\n") +
+                          occaOpenMPDefines);
+#endif
   }
 
   template <>
