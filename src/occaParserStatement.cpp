@@ -3428,6 +3428,19 @@ namespace occa {
       return ret;
     }
 
+    expNode* statement::createPlainExpNodeFrom(const std::string &source){
+      strNode *nodeRoot = parserNS::splitContent(source);
+      nodeRoot          = parserNS::labelCode(nodeRoot);
+
+      expNode *ret = new expNode(*this);
+      ret->initLoadFromNode(nodeRoot);
+      ret->initOrganization();
+
+      free(nodeRoot);
+
+      return ret;
+    }
+
     strNode* statement::loadSimpleFromNode(const int st,
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd,
@@ -4227,6 +4240,9 @@ namespace occa {
 
     void statement::checkIfVariableIsDefined(varInfo &var,
                                              statement *origin){
+      if(var.name.size() == 0)
+        return;
+
       scopeVarMapIterator it = scopeVarMap.find(var.name);
 
       OCCA_CHECK((it == scopeVarMap.end())  ||
@@ -4260,6 +4276,9 @@ namespace occa {
 
     void statement::addVariable(varInfo *var,
                                 statement *origin){
+      if(var->name.size() == 0)
+        return;
+
       checkIfVariableIsDefined(*var, origin);
 
       scopeVarMap[var->name] = var;

@@ -89,7 +89,6 @@ namespace occa {
       std::string name;
 
       int nestedInfoCount;
-      bool *nestedInfoIsType;
       expNode *nestedExps;
 
       bool typedefHasDefinition;
@@ -107,10 +106,10 @@ namespace occa {
 
       //---[ NEW ]------------
       int loadFrom(expNode &expRoot,
-                   int leafPos);
+                   int leafPos = 0);
 
       int loadTypedefFrom(expNode &expRoot,
-                          int leafPos);
+                          int leafPos = 0);
 
       static int delimeterCount(expNode &expRoot,
                                 const char *delimiter);

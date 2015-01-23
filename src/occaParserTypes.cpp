@@ -373,7 +373,6 @@ namespace occa {
       name(""),
 
       nestedInfoCount(0),
-      nestedInfoIsType(NULL),
       nestedExps(NULL),
 
       typedefHasDefinition(false),
@@ -388,7 +387,6 @@ namespace occa {
       name(type.name),
 
       nestedInfoCount(type.nestedInfoCount),
-      nestedInfoIsType(type.nestedInfoIsType),
       nestedExps(type.nestedExps),
 
       typedefHasDefinition(type.typedefHasDefinition),
@@ -402,9 +400,8 @@ namespace occa {
 
       name = type.name;
 
-      nestedInfoCount  = type.nestedInfoCount;
-      nestedInfoIsType = type.nestedInfoIsType;
-      nestedExps       = type.nestedExps;
+      nestedInfoCount = type.nestedInfoCount;
+      nestedExps      = type.nestedExps;
 
       typedefHasDefinition = type.typedefHasDefinition;
       typedefing           = type.typedefing;
@@ -421,13 +418,10 @@ namespace occa {
       c.leftQualifiers = leftQualifiers.clone();
 
       if(nestedInfoCount){
-        c.nestedInfoIsType = new bool[nestedInfoCount];
-        c.nestedExps       = new expNode[nestedInfoCount];
+        c.nestedExps = new expNode[nestedInfoCount];
 
-        for(int i = 0; i < nestedInfoCount; ++i){
-          c.nestedInfoIsType[i] = nestedInfoIsType[i];
+        for(int i = 0; i < nestedInfoCount; ++i)
           nestedExps[i].cloneTo(c.nestedExps[i]);
-        }
       }
 
       if(typedefVar){

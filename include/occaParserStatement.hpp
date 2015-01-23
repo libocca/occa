@@ -424,6 +424,8 @@ namespace occa {
       expNode* createExpNodeFrom(strNode *nodePos);
       expNode* createExpNodeFrom(const std::string &source);
 
+      expNode* createPlainExpNodeFrom(const std::string &source);
+
       strNode* loadSimpleFromNode(const int st,
                                   strNode *nodeRoot,
                                   strNode *nodeRootEnd,

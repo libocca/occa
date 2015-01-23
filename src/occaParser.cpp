@@ -732,7 +732,7 @@ namespace occa {
     }
 
     void parserBase::loadLanguageTypes(){
-      // int parts[6]            = {1, 2, 3, 4, 8, 16};
+      int parts[6]            = {1, 2, 3, 4, 8, 16};
       std::string suffix[6]   = {"", "2", "3", "4", "8", "16"};
       std::string baseType[7] = {"int"  ,
                                  "bool" ,
@@ -742,55 +742,54 @@ namespace occa {
                                  "float",
                                  "double"};
 
+      std::stringstream ss;
+
       for(int t = 0; t < 7; ++t){
         for(int n = 0; n < 6; ++n){
           typeInfo &type = *(new typeInfo);
 
-          type.name     = baseType[t] + suffix[n];
-          type.baseType = &type;
+          if(n == 0){
+            type.name     = baseType[t] + suffix[n];
+            type.baseType = &type;
 
-          globalScope->scopeTypeMap[type.name] = &type;
-
-#if 0
-          if(n){
-            type.addQualifier("struct");
+            globalScope->scopeTypeMap[type.name] = &type;
+          }
+          else{
+            ss << "struct " << baseType[t] << parts[n] << " {\n";
 
             for(int n2 = 0; n2 < parts[n]; ++n2){
-              typeInfo &uType = *(new typeInfo);
-              uType.addQualifier("union");
+              const char varLetter = ('w' + ((n2 + 1) % 4));
+              const char varNum1   = ((n2 < 10) ? ('0' + n2) : ('a' + (n2 - 10)));
+              const char varNum2   = ((n2 < 10) ? ('0' + n2) : ('A' + (n2 - 10)));
 
-              if(n2 < 4){
-                std::string varName = "w";
-                varName[0] += ((n2 + 1) % 4);
+              const bool needsUnion = ((n2 < 4) || (10 <= n2));
 
-                typeInfo &sDef = uType.addType(varName);
-                sType.name = baseType[t];
-              }
+              std::string tab = (needsUnion ? "    " : "  ");
 
-              if(n2 < 10){
-                std::string varName = "s";
-                varName += '0' + n2;
+              if(needsUnion)
+                ss << "  union {\n";
 
-                typeInfo &sDef = (n2 < 4) ? uType.addType(varName) : type.addType(varName);
-                sType.name = baseType[t];
-              }
-              else{
-                std::string varName = "s";
+              if(n2 < 4)
+                ss << tab << baseType[t] << " " << varLetter << ";\n";
 
-                typeInfo &sDef1 = uType.addType(varName + (char) ('a' + (n2 - 10)));
-                sDef1.name = baseType[t];
+              ss << tab << baseType[t] << " s" << varNum1 << ";\n";
 
-                typeInfo &sDef2 = uType.addType(varName + (char) ('A' + (n2 - 10)));
-                sDef2.name = baseType[t];
-              }
+              if(10 <= n2)
+                ss << tab << baseType[t] << " s" << varNum2 << ";\n";
 
-              if((n2 < 4) || (10 <= n2))
-                type.addType(&uType);
-              else
-                delete &uType;
+              if(needsUnion)
+                ss << "  };\n";
             }
+
+            ss << "};";
+
+            expNode &typeExp = *(globalScope->createPlainExpNodeFrom(ss.str()));
+            type.loadFrom(typeExp);
+
+            globalScope->scopeTypeMap[type.name] = &type;
+
+            ss.str("");
           }
-#endif
         }
       }
 
@@ -3481,19 +3480,6 @@ namespace occa {
       cKeywordType["||"] = binaryOperatorType;
 
       cKeywordType["#"] = macroKeywordType;
-
-      //---[ Types & Specifiers ]---------
-      std::string suffix[6] = {"", "2", "3", "4", "8", "16"};
-
-      for(int i = 0; i < 6; ++i){
-        cKeywordType[std::string("int")    + suffix[i]] = specifierType;
-        cKeywordType[std::string("bool")   + suffix[i]] = specifierType;
-        cKeywordType[std::string("char")   + suffix[i]] = specifierType;
-        cKeywordType[std::string("long")   + suffix[i]] = specifierType;
-        cKeywordType[std::string("short")  + suffix[i]] = specifierType;
-        cKeywordType[std::string("float")  + suffix[i]] = specifierType;
-        cKeywordType[std::string("double") + suffix[i]] = specifierType;
-      }
 
       cKeywordType["void"]          = specifierType;
       cKeywordType["__attribute__"] = specifierType; // [--]
