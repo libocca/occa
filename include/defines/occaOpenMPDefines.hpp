@@ -443,103 +443,214 @@ typedef type16<double> double16;
 
 
 //---[ Atomics ]----------------------------------
-#if 0
 template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr += update;
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old   = *ptr;
+    *ptr += update;
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicSub(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr -= update;
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old   = *ptr;
+    *ptr -= update;
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicSwap(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr = update;
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old  = *ptr;
+    *ptr = update;
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
-TM occaAtomicInc(TM *ptr, const TM &update){
+TM occaAtomicInc(TM *ptr){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   ++(*ptr);
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old = *ptr;
+  ++(*ptr);
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicDec(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   --(*ptr);
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old = *ptr;
+    --(*ptr);
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicMin(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr = ((old < update) ? old : update);
+#else
+  TM old;
+
+#  pragma omp critical
+  {
+    old  = *ptr;
+    *ptr = ((old < update) ? old : update);
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicMax(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr = ((old < update) ? update : old);
+#else
+  TM old;
+
+#  pragma omp critical
+  {
+    old  = *ptr;
+    *ptr = ((old < update) ? update : old);
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicAnd(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
+  *ptr &= update;
+#else
+  TM old;
 
-  OCCA_OMP_PRAGMA("omp atomic")
-  *ptr &= update
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old   = *ptr;
+    *ptr &= update;
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicOr(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr |= update;
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old   = *ptr;
+    *ptr |= update;
+  }
+#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicXor(TM *ptr, const TM &update){
+#if !OCCA_OPENMP_ENABLED
   const TM old = *ptr;
-
-  OCCA_OMP_PRAGMA("omp atomic")
   *ptr ^= update;
+#else
+  TM old;
+
+#  ifdef(OPENMP_3_1)
+#    pragma omp atomic capture
+#  else
+#    pragma omp critical
+#  endif
+  {
+    old   = *ptr;
+    *ptr ^= update;
+  }
+#endif
 
   return old;
 }
@@ -549,7 +660,6 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 #define occaAtomicSwapL occaAtomicSwap
 #define occaAtomicIncL  occaAtomicInc
 #define occaAtomicDecL  occaAtomicDec
-#endif
 //================================================
 
 
