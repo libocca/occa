@@ -19,14 +19,14 @@ before_install:
   - sudo apt-get update -qq
   - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1 opencl-headers gcc-4.8 g++-4.8 gfortran-4.8
 script:
-  - make
+  - make -j
   - cd $OCCA_DIR/examples/addVectors
-  - make
+  - make -j
   - ./main
   - ./main_c
   - ./main_f90
   - cd $OCCA_DIR/examples/reduction
-  - make
+  - make -j
   - ./main
 
 notifications:
