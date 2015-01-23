@@ -358,7 +358,7 @@ extern "C" {
                                    OCCA_F2C_RSTR(filename_l)
                                    OCCA_F2C_RSTR(functionName_l)
                                    OCCA_F2C_RSTR(pythonCode_l)){
-    char *filename_c, *functionName_c, *pythonCode_c;
+    char *filename_c, *functionName_c;
 
     OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
     OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);

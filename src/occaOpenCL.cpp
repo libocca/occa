@@ -99,9 +99,12 @@ namespace occa {
 
       delete [] buffer;
 
-      int firstNS, lastNS;
+      int firstNS = ret.size();
+      int lastNS  = ret.size();
 
-      for(int i = 0; i < ret.size(); ++i){
+      int i;
+
+      for(i = 0; i < ret.size(); ++i){
         if((ret[i] != ' ') &&
            (ret[i] != '\t') &&
            (ret[i] != '\n')){
@@ -110,7 +113,10 @@ namespace occa {
         }
       }
 
-      for(int i = (ret.size() - 1); i > firstNS; --i){
+      if(i == ret.size())
+        return "";
+
+      for(i = (ret.size() - 1); i > firstNS; --i){
         if((ret[i] != ' ') &&
            (ret[i] != '\t') &&
            (ret[i] != '\n')){
@@ -118,6 +124,9 @@ namespace occa {
           break;
         }
       }
+
+      if(i == firstNS)
+        return "";
 
       return ret.substr(firstNS, (lastNS - firstNS + 1));
     }
@@ -478,7 +487,6 @@ namespace occa {
   template <>
   std::string kernel_t<OpenCL>::getCachedBinaryName(const std::string &filename,
                                                     kernelInfo &info_){
-    OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
     return getCachedName(filename,
                          dev->dHandle->getInfoSalt(info_));
@@ -544,8 +552,6 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
     functionName = functionName_;
-
-    cl_int binaryError, error;
 
     std::string cFile = readFile(filename);
 
@@ -1297,8 +1303,6 @@ namespace occa {
                                               const std::string &functionName,
                                               const kernelInfo &info_){
     //---[ Creating shared library ]----
-    OCCA_EXTRACT_DATA(OpenCL, Device);
-
     kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
@@ -1625,7 +1629,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
     cl_device_type dBuffer;
-    bool isGPU;
+    bool isGPU = false;
 
     const int bSize = 8192;
     char buffer[bSize + 1];

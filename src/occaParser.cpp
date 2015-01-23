@@ -2086,7 +2086,7 @@ namespace occa {
                                          varUsedMap));
 
         // [occaOuterFor][#]
-        const int outerDim = atoi(ks.expRoot.value.c_str() + 12);
+        // const int outerDim = atoi(ks.expRoot.value.c_str() + 12);
 
         ks2.info = sKernel.info;
 
