@@ -87,6 +87,26 @@
 //================================================
 
 
+//---[ Atomics ]----------------------------------
+#define occaAtomicAdd(PTR, UPDATE)  atomicAdd
+#define occaAtomicSub(PTR, UPDATE)  atomicSub
+#define occaAtomicSwap(PTR, UPDATE) atomicExch
+#define occaAtomicInc(PTR, UPDATE)  atomicInc
+#define occaAtomicDec(PTR, UPDATE)  atomicDec
+#define occaAtomicMin(PTR, UPDATE)  atomicMin
+#define occaAtomicMax(PTR, UPDATE)  atomicMax
+#define occaAtomicAnd(PTR, UPDATE)  atomicAnd
+#define occaAtomicOr(PTR, UPDATE)   atomicOr
+#define occaAtomicXor(PTR, UPDATE)  atomicXor
+
+#define occaAtomicAddL(PTR, UPDATE)  occaAtomicAdd
+#define occaAtomicSubL(PTR, UPDATE)  occaAtomicSub
+#define occaAtomicSwapL(PTR, UPDATE) occaAtomicSwap
+#define occaAtomicIncL(PTR, UPDATE)  occaAtomicInc
+#define occaAtomicDecL(PTR, UPDATE)  occaAtomicDec
+//================================================
+
+
 //---[ Math ]-------------------------------------
 __device__ inline float  occaCuda_fabs(const float x){  return fabsf(x); }
 __device__ inline double occaCuda_fabs(const double x){ return fabs(x);  }

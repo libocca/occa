@@ -140,7 +140,7 @@ typedef struct { double x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15; } dou
 
 
 //---[ Atomics ]----------------------------------
-#if 0
+// [-] Not implemented yet
 template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
   const TM old = *ptr;
@@ -169,7 +169,7 @@ TM occaAtomicSwap(TM *ptr, const TM &update){
 }
 
 template <class TM>
-TM occaAtomicInc(TM *ptr, const TM &update){
+TM occaAtomicInc(TM *ptr){
   const TM old = *ptr;
 
   ++(*ptr);
@@ -196,19 +196,10 @@ TM occaAtomicMin(TM *ptr, const TM &update){
 }
 
 template <class TM>
-TM occaAtomicMax(TM *ptr, const TM &update){
-  const TM old = *ptr;
-
-  *ptr = ((old < update) ? update : old);
-
-  return old;
-}
-
-template <class TM>
 TM occaAtomicAnd(TM *ptr, const TM &update){
   const TM old = *ptr;
 
-  *ptr &= update
+  *ptr &= update;
 
   return old;
 }
@@ -236,7 +227,6 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 #define occaAtomicSwapL occaAtomicSwap
 #define occaAtomicIncL  occaAtomicInc
 #define occaAtomicDecL  occaAtomicDec
-#endif
 //================================================
 
 

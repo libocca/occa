@@ -108,6 +108,36 @@
 //================================================
 
 
+//---[ Atomics ]----------------------------------
+#ifdef cl_khr_int32_base_atomics
+#  pragma OPENCL EXTENSION cl_khr_int32_base_atomics : enable
+#  define occaAtomicAdd(PTR, UPDATE)  atomic_add
+#  define occaAtomicSub(PTR, UPDATE)  atomic_sub
+#  define occaAtomicSwap(PTR, UPDATE) atomic_xchg
+#  define occaAtomicInc(PTR, UPDATE)  atomic_inc
+#  define occaAtomicDec(PTR, UPDATE)  atomic_dec
+#endif
+
+#ifdef cl_khr_int32_extended_atomics
+#  pragma OPENCL EXTENSION cl_khr_int32_extended_atomics : enable
+#  define occaAtomicMin(PTR, UPDATE)  atomic_min
+#  define occaAtomicMax(PTR, UPDATE)  atomic_max
+#  define occaAtomicAnd(PTR, UPDATE)  atomic_and
+#  define occaAtomicOr(PTR, UPDATE)   atomic_or
+#  define occaAtomicXor(PTR, UPDATE)  atomic_xor
+#endif
+
+#ifdef cl_khr_int64_atomics
+#  pragma OPENCL EXTENSION cl_khr_int64_atomics : enable
+#  define occaAtomicAddL(PTR, UPDATE)  atom_add
+#  define occaAtomicSubL(PTR, UPDATE)  atom_sub
+#  define occaAtomicSwapL(PTR, UPDATE) atom_swap
+#  define occaAtomicIncL(PTR, UPDATE)  atom_inc
+#  define occaAtomicDecL(PTR, UPDATE)  atom_dec
+#endif
+//================================================
+
+
 //---[ Math ]-------------------------------------
 #define occaFabs       fabs
 #define occaFastFabs   fabs
