@@ -60,6 +60,21 @@ kernel subroutine addVectors(entries, a, b, ab, a2, b2, ab2)
   integer(4), shared    :: sharedVar(16,30)
   integer(4), exclusive :: exclusiveVar
 
+  integer(4)   :: int_t
+  integer2(4)  :: int2_t
+  integer3(4)  :: int3_t
+  integer4(4)  :: int4_t
+  integer8(4)  :: int8_t
+  integer16(4) :: int16_t
+
+  integer16(1) :: int16_1_t
+  integer16(2) :: int16_2_t
+  integer16(4) :: int16_4_t
+  integer16(8) :: int16_8_t
+
+  real16(4) :: float16_4_t
+  real16(8) :: float16_8_t
+
   integer :: group, item, N
 
   do group = 1, entries, 16, outer0
@@ -72,6 +87,21 @@ kernel subroutine addVectors(entries, a, b, ab, a2, b2, ab2)
         array1D(1)
         array2D(1,2)
         array3D(1,2,3)
+
+        int_t   = 0
+        int2_t  = 0
+        int3_t  = 0
+        int4_t  = 0
+        int8_t  = 0
+        int16_t = 0
+
+        int16_1_t = 0
+        int16_2_t = 0
+        int16_4_t = 0
+        int16_8_t = 0
+
+        float16_4_t = 0
+        float16_8_t = 0
 
         if (N < entries) then
            ab(i) = a(i) + b(i, 1)

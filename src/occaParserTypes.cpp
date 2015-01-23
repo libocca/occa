@@ -1484,18 +1484,30 @@ namespace occa {
         int bytes = -1;
 
         // [-] Ignoring complex case
-        const bool isFloat = ((typeNode == "REAL")   ||
-                              (typeNode == "PRECISION") ||
+        const bool isFloat = ((typeNode.find("REAL") != std::string::npos) ||
+                              (typeNode == "PRECISION")                    ||
                               (typeNode == "COMPLEX"));
 
+        const int typeNodeChars = typeNode.size();
+        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
+
+        std::string suffix = "";
+
+        if(typeHasSuffix){
+          for(int i = 0; i < typeNodeChars; ++i){
+            if(isANumber(typeNode[i]))
+              suffix += typeNode[i];
+          }
+        }
+
         if(isFloat){
-          if(typeNode == "REAL")
+          if(typeNode.find("REAL") != std::string::npos)
             bytes = 4;
           else if(typeNode == "PRECISION")
             bytes = 8;
         }
         else {
-          if(typeNode == "INTEGER")
+          if(typeNode.find("INTEGER") != std::string::npos)
             bytes = 4;
           else if((typeNode == "LOGICAL") ||
                   (typeNode == "CHARACTER"))
@@ -1515,20 +1527,20 @@ namespace occa {
 
         switch(bytes){
         case 1:
-          typeNode = "char"; break;
+          typeNode = "char" + suffix; break;
         case 2:
-          typeNode = "short"; break;
+          typeNode = "short" + suffix; break;
         case 4:
           if(isFloat)
-            typeNode = "float";
+            typeNode = "float" + suffix;
           else
-            typeNode = "int";
+            typeNode = "int" + suffix;
           break;
         case 8:
           if(isFloat)
-            typeNode = "double";
+            typeNode = "double" + suffix;
           else
-            typeNode = "long long";
+            typeNode = "long long" + suffix;
           break;
         default:
           OCCA_CHECK(false,
@@ -1552,18 +1564,30 @@ namespace occa {
         int bytes = -1;
 
         // [-] Ignoring complex case
-        const bool isFloat = ((typeNode == "REAL")   ||
-                              (typeNode == "PRECISION") ||
+        const bool isFloat = ((typeNode.find("REAL") != std::string::npos) ||
+                              (typeNode == "PRECISION")                    ||
                               (typeNode == "COMPLEX"));
 
+        const int typeNodeChars = typeNode.size();
+        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
+
+        std::string suffix = "";
+
+        if(typeHasSuffix){
+          for(int i = 0; i < typeNodeChars; ++i){
+            if(isANumber(typeNode[i]))
+              suffix += typeNode[i];
+          }
+        }
+
         if(isFloat){
-          if(typeNode == "REAL")
+          if(typeNode.find("REAL") != std::string::npos)
             bytes = 4;
           else if(typeNode == "PRECISION")
             bytes = 8;
         }
         else {
-          if(typeNode == "INTEGER")
+          if(typeNode.find("INTEGER") != std::string::npos)
             bytes = 4;
           else if((typeNode == "LOGICAL") ||
                   (typeNode == "CHARACTER"))
@@ -1586,20 +1610,20 @@ namespace occa {
 
         switch(bytes){
         case 1:
-          typeNode = "char"; break;
+          typeNode = "char" + suffix; break;
         case 2:
-          typeNode = "short"; break;
+          typeNode = "short" + suffix; break;
         case 4:
           if(isFloat)
-            typeNode = "float";
+            typeNode = "float" + suffix;
           else
-            typeNode = "int";
+            typeNode = "int" + suffix;
           break;
         case 8:
           if(isFloat)
-            typeNode = "double";
+            typeNode = "double" + suffix;
           else
-            typeNode = "long long";
+            typeNode = "long long" + suffix;
           break;
         default:
           OCCA_CHECK(false,

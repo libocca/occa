@@ -44,6 +44,10 @@ namespace occa {
   bool isAFloat(const char *c);
   bool isANumber(const char *c);
 
+  inline bool isANumber(const char c){
+    return (('0' <= c) && (c <= '9'));
+  }
+
   void skipInt(const char *&c);
 
   void skipNumber(const char *&c, const bool parsingC = true);

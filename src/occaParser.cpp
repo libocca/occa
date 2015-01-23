@@ -3813,12 +3813,20 @@ namespace occa {
       fortranKeywordType["true"]  = presetValue;
       fortranKeywordType["false"] = presetValue;
 
-      fortranKeywordType["INTEGER"]    = specifierType;
-      fortranKeywordType["LOGICAL"]    = specifierType;
-      fortranKeywordType["REAL"]       = specifierType;
-      fortranKeywordType["PRECISION"]  = specifierType;
-      fortranKeywordType["COMPLEX"]    = specifierType;
-      fortranKeywordType["CHARACTER"]  = specifierType;
+      //---[ Types and Specifiers ]-----
+      fortranKeywordType["INTEGER"]   = specifierType;
+      fortranKeywordType["LOGICAL"]   = specifierType;
+      fortranKeywordType["REAL"]      = specifierType;
+      fortranKeywordType["PRECISION"] = specifierType;
+      fortranKeywordType["COMPLEX"]   = specifierType;
+      fortranKeywordType["CHARACTER"] = specifierType;
+
+      std::string suffix[5] = {"2", "3", "4", "8", "16"};
+
+      for(int i = 0; i < 5; ++i){
+        fortranKeywordType[std::string("INTEGER") + suffix[i]] = specifierType;
+        fortranKeywordType[std::string("REAL")    + suffix[i]] = specifierType;
+      }
 
       fortranKeywordType["FUNCTION"]   = specialKeywordType;
       fortranKeywordType["SUBROUTINE"] = specialKeywordType;
