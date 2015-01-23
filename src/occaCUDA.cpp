@@ -5,6 +5,8 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace cuda {
+    bool isNotInitialized = true;
+
     void init(){
       if(!isNotInitialized)
         return;
@@ -139,7 +141,6 @@ namespace occa {
   template <>
   std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
                                                   kernelInfo &info_){
-    OCCA_EXTRACT_DATA(CUDA, Kernel);
 
     return getCachedName(filename, dev->dHandle->getInfoSalt(info_));
   }
@@ -219,16 +220,10 @@ namespace occa {
     std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    const int ptxError = system(ptxCommand.c_str());
+    system(ptxCommand.c_str());
 #else
-    const int ptxError = system(("\"" +  ptxCommand + "\"").c_str());
+    system(("\"" +  ptxCommand + "\"").c_str());
 #endif
-
-    // Not needed here I guess
-    // if(ptxError){
-    //   releaseFile(cachedBinary);
-    //   OCCA_CHECK(false, "Compilation error");
-    // }
 
     //---[ Compiling Command ]----------
     command.str("");
@@ -828,8 +823,6 @@ namespace occa {
 
   template <>
   std::string device_t<CUDA>::getInfoSalt(const kernelInfo &info_){
-    OCCA_EXTRACT_DATA(CUDA, Device);
-
     std::stringstream salt;
 
     salt << "CUDA"
@@ -961,8 +954,6 @@ namespace occa {
 
   template <>
   stream device_t<CUDA>::createStream(){
-    OCCA_EXTRACT_DATA(CUDA, Device);
-
     CUstream *retStream = new CUstream;
 
     OCCA_CUDA_CHECK("Device: createStream",
@@ -1142,8 +1133,6 @@ namespace occa {
   template <>
   memory_v* device_t<CUDA>::malloc(const uintptr_t bytes,
                                    void *source){
-    OCCA_EXTRACT_DATA(CUDA, Device);
-
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dev    = dev;
@@ -1163,7 +1152,6 @@ namespace occa {
   memory_v* device_t<CUDA>::talloc(const int dim, const occa::dim &dims,
                                    void *source,
                                    occa::formatType type, const int permissions){
-    OCCA_EXTRACT_DATA(CUDA, Device);
 
     memory_v *mem = new memory_t<CUDA>;
 

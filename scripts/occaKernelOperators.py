@@ -164,8 +164,14 @@ def ompOperatorDefinition(N):
     return """
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -226,9 +232,14 @@ def coiOperatorDefinition(N):
     return """
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
     COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    int occaKernelArgs[6];
 
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     uintptr_t kSize = sizeof(data_.kernel);
 

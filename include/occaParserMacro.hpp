@@ -25,7 +25,6 @@ namespace occa {
     typedef opLevelMap_t::iterator       opLevelMapIterator;
     typedef opLevelMap_t::const_iterator cOpLevelMapIterator;
 
-    static int opLevels = 17;
     extern opTypeMap_t opPrecedence;
     extern opLevelMap_t opLevelMap[17];
     //==============================================

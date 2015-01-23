@@ -1132,7 +1132,7 @@ namespace occa {
   void deviceIdentifier::load(const char *c, const size_t chars){
     const char *c1 = c;
 
-    while(((c1 - c) < chars) && (*c1 != '\0')){
+    while((c1 < (c + chars)) && (*c1 != '\0')){
       const char *c2 = c1;
       const char *c3;
 
@@ -1141,7 +1141,7 @@ namespace occa {
 
       c3 = (c2 + 1);
 
-      while(((c3 - c) < chars) &&
+      while((c3 < (c + chars)) &&
             (*c3 != '\0') && (*c3 != '|'))
         ++c3;
 

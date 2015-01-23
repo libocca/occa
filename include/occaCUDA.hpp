@@ -34,7 +34,7 @@ namespace occa {
 
   //---[ Helper Functions ]-----------
   namespace cuda {
-    static bool isNotInitialized = true;
+    extern bool isNotInitialized;
 
     void init();
   };

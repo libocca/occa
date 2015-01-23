@@ -2,8 +2,14 @@
   void kernel_t<OpenMP>::operator () (const kernelArg &arg0){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer1 tmpKernel = (functionPointer1) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -16,8 +22,14 @@
   void kernel_t<OpenMP>::operator () (const kernelArg &arg0,  const kernelArg &arg1){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer2 tmpKernel = (functionPointer2) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -31,8 +43,14 @@
   void kernel_t<OpenMP>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer3 tmpKernel = (functionPointer3) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -48,8 +66,14 @@
                       const kernelArg &arg3){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer4 tmpKernel = (functionPointer4) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -66,8 +90,14 @@
                       const kernelArg &arg3,  const kernelArg &arg4){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer5 tmpKernel = (functionPointer5) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -85,8 +115,14 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer6 tmpKernel = (functionPointer6) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -106,8 +142,14 @@
                       const kernelArg &arg6){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer7 tmpKernel = (functionPointer7) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -128,8 +170,14 @@
                       const kernelArg &arg6,  const kernelArg &arg7){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer8 tmpKernel = (functionPointer8) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -151,8 +199,14 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer9 tmpKernel = (functionPointer9) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -176,8 +230,14 @@
                       const kernelArg &arg9){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer10 tmpKernel = (functionPointer10) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -202,8 +262,14 @@
                       const kernelArg &arg9,  const kernelArg &arg10){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer11 tmpKernel = (functionPointer11) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -229,8 +295,14 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer12 tmpKernel = (functionPointer12) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -258,8 +330,14 @@
                       const kernelArg &arg12){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer13 tmpKernel = (functionPointer13) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -288,8 +366,14 @@
                       const kernelArg &arg12,  const kernelArg &arg13){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer14 tmpKernel = (functionPointer14) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -319,8 +403,14 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer15 tmpKernel = (functionPointer15) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -352,8 +442,14 @@
                       const kernelArg &arg15){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer16 tmpKernel = (functionPointer16) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -386,8 +482,14 @@
                       const kernelArg &arg15,  const kernelArg &arg16){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer17 tmpKernel = (functionPointer17) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -421,8 +523,14 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer18 tmpKernel = (functionPointer18) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -458,8 +566,14 @@
                       const kernelArg &arg18){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer19 tmpKernel = (functionPointer19) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -496,8 +610,14 @@
                       const kernelArg &arg18,  const kernelArg &arg19){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer20 tmpKernel = (functionPointer20) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -535,8 +655,14 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer21 tmpKernel = (functionPointer21) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -576,8 +702,14 @@
                       const kernelArg &arg21){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer22 tmpKernel = (functionPointer22) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -618,8 +750,14 @@
                       const kernelArg &arg21,  const kernelArg &arg22){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer23 tmpKernel = (functionPointer23) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -661,8 +799,14 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer24 tmpKernel = (functionPointer24) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -706,8 +850,14 @@
                       const kernelArg &arg24){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer25 tmpKernel = (functionPointer25) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -752,8 +902,14 @@
                       const kernelArg &arg24,  const kernelArg &arg25){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer26 tmpKernel = (functionPointer26) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -799,8 +955,14 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer27 tmpKernel = (functionPointer27) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -848,8 +1010,14 @@
                       const kernelArg &arg27){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer28 tmpKernel = (functionPointer28) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -898,8 +1066,14 @@
                       const kernelArg &arg27,  const kernelArg &arg28){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer29 tmpKernel = (functionPointer29) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -949,8 +1123,14 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer30 tmpKernel = (functionPointer30) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1002,8 +1182,14 @@
                       const kernelArg &arg30){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer31 tmpKernel = (functionPointer31) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1056,8 +1242,14 @@
                       const kernelArg &arg30,  const kernelArg &arg31){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer32 tmpKernel = (functionPointer32) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1111,8 +1303,14 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer33 tmpKernel = (functionPointer33) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1168,8 +1366,14 @@
                       const kernelArg &arg33){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer34 tmpKernel = (functionPointer34) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1226,8 +1430,14 @@
                       const kernelArg &arg33,  const kernelArg &arg34){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer35 tmpKernel = (functionPointer35) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1285,8 +1495,14 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer36 tmpKernel = (functionPointer36) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1346,8 +1562,14 @@
                       const kernelArg &arg36){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer37 tmpKernel = (functionPointer37) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1408,8 +1630,14 @@
                       const kernelArg &arg36,  const kernelArg &arg37){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer38 tmpKernel = (functionPointer38) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1471,8 +1699,14 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer39 tmpKernel = (functionPointer39) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1536,8 +1770,14 @@
                       const kernelArg &arg39){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer40 tmpKernel = (functionPointer40) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1602,8 +1842,14 @@
                       const kernelArg &arg39,  const kernelArg &arg40){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer41 tmpKernel = (functionPointer41) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1669,8 +1915,14 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer42 tmpKernel = (functionPointer42) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1738,8 +1990,14 @@
                       const kernelArg &arg42){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer43 tmpKernel = (functionPointer43) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1808,8 +2066,14 @@
                       const kernelArg &arg42,  const kernelArg &arg43){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer44 tmpKernel = (functionPointer44) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1879,8 +2143,14 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer45 tmpKernel = (functionPointer45) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -1952,8 +2222,14 @@
                       const kernelArg &arg45){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer46 tmpKernel = (functionPointer46) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -2026,8 +2302,14 @@
                       const kernelArg &arg45,  const kernelArg &arg46){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer47 tmpKernel = (functionPointer47) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -2101,8 +2383,14 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer48 tmpKernel = (functionPointer48) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -2178,8 +2466,14 @@
                       const kernelArg &arg48){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer49 tmpKernel = (functionPointer49) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -2256,8 +2550,14 @@
                       const kernelArg &arg48,  const kernelArg &arg49){
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     functionPointer50 tmpKernel = (functionPointer50) data_.handle;
-    int occaKernelArgs[6] = {outer.z, outer.y, outer.x,
-                             inner.z, inner.y, inner.x};
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 

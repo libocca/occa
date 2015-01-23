@@ -80,8 +80,8 @@ namespace occa {
     return "N/A";
   }
 
-  static const uintptr_t useLoopy  = (1 << 0);
-  static const uintptr_t useFloopy = (1 << 1);
+  static const int useLoopy  = (1 << 0);
+  static const int useFloopy = (1 << 1);
   //==================================
 
   //---[ Mode ]-----------------------
