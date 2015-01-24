@@ -733,6 +733,10 @@ namespace occa {
   }
 
   template <>
+  void memory_t<CUDA>::mappedFree(){
+  }
+
+  template <>
   void memory_t<CUDA>::free(){
     if(!isTexture){
       cuMemFree(*((CUdeviceptr*) handle));
