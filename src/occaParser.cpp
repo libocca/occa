@@ -3908,53 +3908,58 @@ namespace occa {
         fortranKeywordType[ mathFunctions[i] ] = presetValue;
 
       //---[ Operator Precedence ]--------
-      opPrecedence[opHolder("**", binaryOperatorType)]     = 0;
-      opPrecedence[opHolder("//", binaryOperatorType)]     = 0;
+      opPrecedence[opHolder("%" , binaryOperatorType)]     = 0;
+      opPrecedence[opHolder("=>", binaryOperatorType)]     = 0;
 
-      opPrecedence[opHolder("+", lUnitaryOperatorType)]    = 1;
-      opPrecedence[opHolder("-", lUnitaryOperatorType)]    = 1;
+      opPrecedence[opHolder("**", binaryOperatorType)]     = 1;
+      opPrecedence[opHolder("//", binaryOperatorType)]     = 1;
 
-      opPrecedence[opHolder("*", binaryOperatorType)]      = 2;
-      opPrecedence[opHolder("/", binaryOperatorType)]      = 2;
+      opPrecedence[opHolder("+", lUnitaryOperatorType)]    = 2;
+      opPrecedence[opHolder("-", lUnitaryOperatorType)]    = 2;
 
-      opPrecedence[opHolder("+", binaryOperatorType)]      = 3;
-      opPrecedence[opHolder("-", binaryOperatorType)]      = 3;
+      opPrecedence[opHolder("*", binaryOperatorType)]      = 3;
+      opPrecedence[opHolder("/", binaryOperatorType)]      = 3;
 
-      opPrecedence[opHolder("<" , binaryOperatorType)]     = 4;
-      opPrecedence[opHolder("<=", binaryOperatorType)]     = 4;
-      opPrecedence[opHolder(">=", binaryOperatorType)]     = 4;
-      opPrecedence[opHolder(">" , binaryOperatorType)]     = 4;
+      opPrecedence[opHolder("+", binaryOperatorType)]      = 4;
+      opPrecedence[opHolder("-", binaryOperatorType)]      = 4;
 
-      opPrecedence[opHolder("!", binaryOperatorType)]      = 5;
-      opPrecedence[opHolder("&&", binaryOperatorType)]     = 6;
-      opPrecedence[opHolder("||", binaryOperatorType)]     = 7;
+      opPrecedence[opHolder("<" , binaryOperatorType)]     = 5;
+      opPrecedence[opHolder("<=", binaryOperatorType)]     = 5;
+      opPrecedence[opHolder(">=", binaryOperatorType)]     = 5;
+      opPrecedence[opHolder(">" , binaryOperatorType)]     = 5;
 
-      opPrecedence[opHolder("==" , binaryOperatorType)]    = 8;
-      opPrecedence[opHolder("!=", binaryOperatorType)]     = 8;
+      opPrecedence[opHolder("!", binaryOperatorType)]      = 6;
+      opPrecedence[opHolder("&&", binaryOperatorType)]     = 7;
+      opPrecedence[opHolder("||", binaryOperatorType)]     = 8;
 
-      opPrecedence[opHolder("=" , binaryOperatorType)]     = 9;
+      opPrecedence[opHolder("==" , binaryOperatorType)]    = 9;
+      opPrecedence[opHolder("!=", binaryOperatorType)]     = 9;
 
-      opPrecedence[opHolder("," , binaryOperatorType)]     = 10;
+      opPrecedence[opHolder("=" , binaryOperatorType)]     = 10;
 
-      opLevelMap[0]["**"]  = binaryOperatorType;
-      opLevelMap[0]["//"]  = binaryOperatorType;
-      opLevelMap[1]["+"]   = lUnitaryOperatorType;
-      opLevelMap[1]["-"]   = lUnitaryOperatorType;
-      opLevelMap[2]["*"]   = binaryOperatorType;
-      opLevelMap[2]["/"]   = binaryOperatorType;
-      opLevelMap[3]["+"]   = binaryOperatorType;
-      opLevelMap[3]["-"]   = binaryOperatorType;
-      opLevelMap[4]["<"]   = binaryOperatorType;
-      opLevelMap[4]["<="]  = binaryOperatorType;
-      opLevelMap[4][">="]  = binaryOperatorType;
-      opLevelMap[4][">"]   = binaryOperatorType;
-      opLevelMap[5]["!"]   = binaryOperatorType;
-      opLevelMap[6]["&&"]  = binaryOperatorType;
-      opLevelMap[7]["||"]  = binaryOperatorType;
-      opLevelMap[8]["=="]  = binaryOperatorType;
-      opLevelMap[8]["!="]  = binaryOperatorType;
-      opLevelMap[9]["="]   = binaryOperatorType;
-      opLevelMap[10][","]  = binaryOperatorType;
+      opPrecedence[opHolder("," , binaryOperatorType)]     = 11;
+
+      opLevelMap[0]["%"]   = binaryOperatorType;
+      opLevelMap[0]["=>"]  = binaryOperatorType;
+      opLevelMap[1]["**"]  = binaryOperatorType;
+      opLevelMap[1]["//"]  = binaryOperatorType;
+      opLevelMap[2]["+"]   = lUnitaryOperatorType;
+      opLevelMap[2]["-"]   = lUnitaryOperatorType;
+      opLevelMap[3]["*"]   = binaryOperatorType;
+      opLevelMap[3]["/"]   = binaryOperatorType;
+      opLevelMap[4]["+"]   = binaryOperatorType;
+      opLevelMap[4]["-"]   = binaryOperatorType;
+      opLevelMap[5]["<"]   = binaryOperatorType;
+      opLevelMap[5]["<="]  = binaryOperatorType;
+      opLevelMap[5][">="]  = binaryOperatorType;
+      opLevelMap[5][">"]   = binaryOperatorType;
+      opLevelMap[6]["!"]   = binaryOperatorType;
+      opLevelMap[7]["&&"]  = binaryOperatorType;
+      opLevelMap[8]["||"]  = binaryOperatorType;
+      opLevelMap[9]["=="]  = binaryOperatorType;
+      opLevelMap[9]["!="]  = binaryOperatorType;
+      opLevelMap[10]["="]  = binaryOperatorType;
+      opLevelMap[11][","]  = binaryOperatorType;
 
       keywordType = fortranKeywordType;
     }

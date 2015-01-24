@@ -1024,9 +1024,10 @@ namespace occa {
 
       mergeFortranArrays();
 
-      for(int i = 0; i < 11; ++i)
+      for(int i = 0; i < 12; ++i)
         organizeLeaves(i);
 
+      translateFortranMemberCalls();
       translateFortranPow();
     }
 
@@ -1657,6 +1658,22 @@ namespace occa {
 
         ++leafPos;
       }
+    }
+
+    void expNode::translateFortranMemberCalls(){
+      expNode &flatRoot = *(makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if((n.info == expType::LR) &&
+           (n.value == "%")){
+
+          n.value = ".";
+        }
+      }
+
+      freeFlatHandle(flatRoot);
     }
 
     void expNode::translateFortranPow(){

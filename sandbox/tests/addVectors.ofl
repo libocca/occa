@@ -95,6 +95,8 @@ kernel subroutine addVectors(entries, a, b, ab, a2, b2, ab2)
         int8_t  = 0
         int16_t = 0
 
+        int2_t%x = 0
+
         int16_1_t = 0
         int16_2_t = 0
         int16_4_t = 0

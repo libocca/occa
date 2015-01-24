@@ -218,6 +218,7 @@ namespace occa {
 
       void mergeFortranArrays();
 
+      void translateFortranMemberCalls();
       void translateFortranPow();
       //================================
 
