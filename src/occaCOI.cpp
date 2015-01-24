@@ -398,8 +398,10 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<COI>::memory_t(){
-    handle = NULL;
-    dev    = NULL;
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    dev  = NULL;
     size = 0;
 
     isTexture = false;
@@ -407,31 +409,22 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
+    isMapped   = false;
     isAWrapper = false;
   }
 
   template <>
   memory_t<COI>::memory_t(const memory_t<COI> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
-
-    isTexture = m.isTexture;
-    textureInfo.arg  = m.textureInfo.arg;
-    textureInfo.dim  = m.textureInfo.dim;
-
-    textureInfo.w = m.textureInfo.w;
-    textureInfo.h = m.textureInfo.h;
-    textureInfo.d = m.textureInfo.d;
-
-    isAWrapper = m.isAWrapper;
+    *this = m;
   }
 
   template <>
   memory_t<COI>& memory_t<COI>::operator = (const memory_t<COI> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
+    handle    = m.handle;
+    mappedPtr = m.mappedPtr;
+
+    dev  = m.dev;
+    size = m.size;
 
     isTexture = m.isTexture;
     textureInfo.arg  = m.textureInfo.arg;
@@ -441,6 +434,10 @@ namespace occa {
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
+    if(isTexture)
+      handle = &textureInfo;
+
+    isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
     return *this;
@@ -708,12 +705,24 @@ namespace occa {
   }
 
   template <>
+  void memory_t<COI>::mappedFree(){
+    OCCA_COI_CHECK("Memory: free",
+                   COIBufferDestroy( *((coiMemory*) handle) ) );
+
+    delete handle;
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    size = 0;
+  }
+
+  template <>
   void memory_t<COI>::free(){
     OCCA_COI_CHECK("Memory: free",
                    COIBufferDestroy( *((coiMemory*) handle) ) );
 
-    if(!isAWrapper)
-      delete handle;
+    delete handle;
+    handle = NULL;
 
     size = 0;
   }
@@ -1139,6 +1148,11 @@ namespace occa {
     mem->handle = &(mem->textureInfo);
 
     return mem;
+  }
+
+  template <>
+  memory_v* device_t<COI>::mappedAlloc(const uintptr_t bytes){
+#warning "Mapped allocation is not supported in [COI] yet"
   }
 
   template <>

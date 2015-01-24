@@ -25,15 +25,18 @@
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <unistd.h>
 #else
+#  include "occaWinDefines.hpp"
 #  include <io.h>
 #endif
 
-#if OCCA_OPENCL_ENABLED
-#  if   OCCA_OS == LINUX_OS
+#if (OCCA_OPENCL_ENABLED)
+#  if   (OCCA_OS == LINUX_OS)
 #    include <CL/cl.h>
 #    include <CL/cl_gl.h>
-#  elif OCCA_OS == OSX_OS
+#  elif (OCCA_OS == OSX_OS)
 #    include <OpenCL/OpenCl.h>
+#  else
+#    include "CL/opencl.h"
 #  endif
 #endif
 
@@ -47,7 +50,6 @@ namespace occa {
 
   //---[ Typedefs ]-------------------
   typedef void* stream;
-  typedef stream pStream; // hehe
 
   static const int CPU     = (1 << 0);
   static const int GPU     = (1 << 1);
@@ -857,7 +859,7 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
-    void *handle;
+    void *handle, *mappedPtr;
     occa::device *dev;
 
     uintptr_t size;
@@ -865,6 +867,7 @@ namespace occa {
     bool isTexture;
     occa::textureInfo_t textureInfo;
 
+    bool isMapped;
     bool isAWrapper;
 
   public:
@@ -908,6 +911,8 @@ namespace occa {
                              const uintptr_t bytes = 0,
                              const uintptr_t destOffset = 0,
                              const uintptr_t srcOffset = 0) = 0;
+
+    virtual void mappedFree() = 0;
 
     virtual void free() = 0;
   };
@@ -963,6 +968,8 @@ namespace occa {
                      const uintptr_t destOffset = 0,
                      const uintptr_t srcOffset = 0);
 
+    void mappedFree();
+
     void free();
   };
 
@@ -994,6 +1001,7 @@ namespace occa {
 
     void* textureArg() const;
 
+    void* getMappedPointer();
     void* getMemoryHandle();
     void* getTextureHandle();
 
@@ -1137,9 +1145,9 @@ namespace occa {
 
     virtual void getEnvironmentVariables() = 0;
 
-    virtual void setCompiler(const std::string &compiler) = 0;
+    virtual void setCompiler(const std::string &compiler_) = 0;
     virtual void setCompilerEnvScript(const std::string &compilerEnvScript_) = 0;
-    virtual void setCompilerFlags(const std::string &compilerFlags) = 0;
+    virtual void setCompilerFlags(const std::string &compilerFlags_) = 0;
 
     virtual std::string& getCompiler() = 0;
     virtual std::string& getCompilerEnvScript() = 0;
@@ -1199,6 +1207,8 @@ namespace occa {
                              void *source,
                              occa::formatType type, const int permissions) = 0;
 
+    virtual memory_v* mappedAlloc(const uintptr_t bytes) = 0;
+
     virtual void free() = 0;
 
     virtual int simdWidth() = 0;
@@ -1227,9 +1237,9 @@ namespace occa {
 
     static void appendAvailableDevices(std::vector<device> &dList);
 
-    void setCompiler(const std::string &compiler);
+    void setCompiler(const std::string &compiler_);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
-    void setCompilerFlags(const std::string &compilerFlags);
+    void setCompilerFlags(const std::string &compilerFlags_);
 
     std::string& getCompiler();
     std::string& getCompilerEnvScript();
@@ -1288,6 +1298,8 @@ namespace occa {
     memory_v* talloc(const int dim, const occa::dim &dims,
                      void *source,
                      occa::formatType type, const int permissions);
+
+    memory_v* mappedAlloc(const uintptr_t bytes);
 
     void free();
 
@@ -1348,9 +1360,9 @@ namespace occa {
     int modeID();
     std::string& mode();
 
-    void setCompiler(const std::string &compiler);
+    void setCompiler(const std::string &compiler_);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
-    void setCompilerFlags(const std::string &compilerFlags);
+    void setCompilerFlags(const std::string &compilerFlags_);
 
     std::string& getCompiler();
     std::string& getCompilerEnvScript();
@@ -1432,6 +1444,9 @@ namespace occa {
     memory talloc(const int dim, const occa::dim &dims,
                   void *source,
                   occa::formatType type, const int permissions = readWrite);
+
+
+    memory mappedAlloc(const uintptr_t bytes);
 
     void free();
 
@@ -1563,7 +1578,7 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       flags += " -I \"" + path + "\"";
 #else
-      flags += " /I\"" + path + "\"";
+      flags += " /I \"" + path + "\"";
 #endif
     }
   };

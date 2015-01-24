@@ -645,38 +645,32 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<OpenCL>::memory_t(){
-    handle = NULL;
-    dev    = NULL;
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    dev  = NULL;
     size = 0;
 
     isTexture = false;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
+    isMapped   = false;
     isAWrapper = false;
   }
 
   template <>
   memory_t<OpenCL>::memory_t(const memory_t<OpenCL> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
-
-    isTexture = m.isTexture;
-    textureInfo.dim  = m.textureInfo.dim;
-
-    textureInfo.w = m.textureInfo.w;
-    textureInfo.h = m.textureInfo.h;
-    textureInfo.d = m.textureInfo.d;
-
-    isAWrapper = m.isAWrapper;
+    *this = m;
   }
 
   template <>
   memory_t<OpenCL>& memory_t<OpenCL>::operator = (const memory_t<OpenCL> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    dev  = NULL;
+    size = 0;
 
     isTexture = m.isTexture;
     textureInfo.dim  = m.textureInfo.dim;
@@ -685,6 +679,7 @@ namespace occa {
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
+    isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
     return *this;
@@ -977,6 +972,25 @@ namespace occa {
                                         srcOffset, destOffset,
                                         bytes_,
                                         0, NULL, NULL));
+  }
+
+  template <>
+  void memory_t<OpenCL>::mappedFree(){
+    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_int error;
+
+    // Unmap pointer
+    error = clEnqueueUnmapMemObject(stream,
+                                    *((cl_mem*) handle),
+                                    mappedPtr,
+                                    0, NULL, NULL);
+
+    OCCA_CL_CHECK("Mapped Free: clEnqueueUnmapMemObject", error);
+
+    // Free mapped-host pointer
+    error = clReleaseMemObject(*((cl_mem*) handle));
+
+    OCCA_CL_CHECK("Mapped Free: clReleaseMemObject", error);
   }
 
   template <>
@@ -1609,6 +1623,44 @@ namespace occa {
 #endif
 
     finish();
+  }
+
+  template <>
+  memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes){
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+
+    memory_v *mem = new memory_t<OpenCL>;
+    cl_int error;
+
+    mem->dev    = dev;
+    mem->handle = new cl_mem;
+    mem->size   = bytes;
+
+    // Alloc pinned host buffer
+    *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,
+                                              CL_MEM_READ_WRITE | CL_MEM_ALLOC_HOST_PTR,
+                                              bytes,
+                                              NULL, &error);
+
+    OCCA_CL_CHECK("Device: clCreateBuffer", error);
+
+    // Map memory to read/write
+    mem->mappedPtr = clEnqueueMapBuffer(stream,
+                                        *((cl_mem*) mem->handle),
+                                        CL_TRUE,
+                                        CL_MAP_READ | CL_MAP_WRITE,
+                                        0, bytes,
+                                        0, NULL, NULL,
+                                        &error);
+
+    OCCA_CL_CHECK("Device: clEnqueueMapBuffer", error);
+
+    // Sync memory mapping
+    finish();
+
+    return mem;
   }
 
   template <>

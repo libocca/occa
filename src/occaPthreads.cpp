@@ -311,8 +311,10 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<Pthreads>::memory_t(){
-    handle = NULL;
-    dev    = NULL;
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    dev  = NULL;
     size = 0;
 
     isTexture = false;
@@ -320,14 +322,22 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
+    isMapped   = false;
     isAWrapper = false;
   }
 
   template <>
   memory_t<Pthreads>::memory_t(const memory_t<Pthreads> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
+    *this = m;
+  }
+
+  template <>
+  memory_t<Pthreads>& memory_t<Pthreads>::operator = (const memory_t<Pthreads> &m){
+    handle    = m.handle;
+    mappedPtr = m.mappedPtr;
+
+    dev  = m.dev;
+    size = m.size;
 
     isTexture = m.isTexture;
     textureInfo.arg  = m.textureInfo.arg;
@@ -337,22 +347,10 @@ namespace occa {
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
-    isAWrapper = m.isAWrapper;
-  }
+    if(isTexture)
+      handle = &textureInfo;
 
-  template <>
-  memory_t<Pthreads>& memory_t<Pthreads>::operator = (const memory_t<Pthreads> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
-
-    isTexture = m.isTexture;
-    textureInfo.arg  = m.textureInfo.arg;
-
-    textureInfo.w = m.textureInfo.w;
-    textureInfo.h = m.textureInfo.h;
-    textureInfo.d = m.textureInfo.d;
-
+    isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
     return *this;
@@ -529,11 +527,24 @@ namespace occa {
   }
 
   template <>
+  void memory_t<Pthreads>::mappedFree(){
+    ::free(handle);
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    size = 0;
+  }
+
+  template <>
   void memory_t<Pthreads>::free(){
-    if(isTexture)
+    if(isTexture){
       ::free(textureInfo.arg);
-    else
+      textureInfo.arg = NULL;
+    }
+    else{
       ::free(handle);
+      handle = NULL;
+    }
 
     size = 0;
   }
@@ -1005,6 +1016,15 @@ namespace occa {
 
     mem->textureInfo.arg = mem->handle;
     mem->handle = &(mem->textureInfo);
+
+    return mem;
+  }
+
+  template <>
+  memory_v* device_t<Pthreads>::mappedAlloc(const uintptr_t bytes){
+    memory_v *mem = malloc(bytes, NULL);
+
+    mem->mappedPtr = mem->handle;
 
     return mem;
   }

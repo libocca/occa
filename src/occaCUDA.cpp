@@ -346,38 +346,32 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<CUDA>::memory_t(){
-    handle = NULL;
-    dev    = NULL;
+    handle    = NULL;
+    mappedPtr = NULL;
+
+    dev  = NULL;
     size = 0;
 
     isTexture = false;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
+    isMapped   = false;
     isAWrapper = false;
   }
 
   template <>
   memory_t<CUDA>::memory_t(const memory_t<CUDA> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
-
-    isTexture = m.isTexture;
-    textureInfo.dim  = m.textureInfo.dim;
-
-    textureInfo.w = m.textureInfo.w;
-    textureInfo.h = m.textureInfo.h;
-    textureInfo.d = m.textureInfo.d;
-
-    isAWrapper = m.isAWrapper;
+    *this = m;
   }
 
   template <>
   memory_t<CUDA>& memory_t<CUDA>::operator = (const memory_t<CUDA> &m){
-    handle = m.handle;
-    dev    = m.dev;
-    size   = m.size;
+    handle    = m.handle;
+    mappedPtr = m.mappedPtr;
+
+    dev  = m.dev;
+    size = m.size;
 
     isTexture = m.isTexture;
     textureInfo.dim  = m.textureInfo.dim;
@@ -1213,6 +1207,11 @@ namespace occa {
     */
 
     return mem;
+  }
+
+  template <>
+  memory_v* device_t<CUDA>::mappedAlloc(const uintptr_t bytes){
+#warning "Mapped allocation is not supported in [CUDA] yet"
   }
 
   template <>

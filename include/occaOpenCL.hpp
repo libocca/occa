@@ -9,11 +9,13 @@
 
 #include "occaDefines.hpp"
 
-#if   OCCA_OS == LINUX_OS
+#if   (OCCA_OS == LINUX_OS)
 #  include <CL/cl.h>
 #  include <CL/cl_gl.h>
-#elif OCCA_OS == OSX_OS
+#elif (OCCA_OS == OSX_OS)
 #  include <OpenCL/OpenCl.h>
+#else
+#  include "CL/opencl.h"
 #endif
 
 namespace occa {
@@ -194,6 +196,9 @@ namespace occa {
                                      const uintptr_t srcOffset);
 
   template <>
+  void memory_t<OpenCL>::mappedFree();
+
+  template <>
   void memory_t<OpenCL>::free();
   //==================================
 
@@ -306,6 +311,9 @@ namespace occa {
   memory_v* device_t<OpenCL>::talloc(const int dim, const occa::dim &dims,
                                      void *source,
                                      occa::formatType type, const int permissions);
+
+  template <>
+  memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes);
 
   template <>
   void device_t<OpenCL>::free();

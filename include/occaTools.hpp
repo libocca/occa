@@ -13,10 +13,10 @@
 #include "occaDefines.hpp"
 #include "occaParser.hpp"
 
-#if   OCCA_OS == LINUX_OS
+#if   (OCCA_OS == LINUX_OS)
 #  include <sys/time.h>
 #  include <unistd.h>
-#elif OCCA_OS == OSX_OS
+#elif (OCCA_OS == OSX_OS)
 #  ifdef __clang__
 #    include <CoreServices/CoreServices.h>
 #    include <mach/mach_time.h>
@@ -25,9 +25,10 @@
 #    include <mach/mach.h>
 #  endif
 #else
-#  undef UNICODE
+#  define NOMINMAX       // NBN: clear min/max macros
 #  include <windows.h>
 #  include <string>
+#  include <direct.h>    // NBN: rmdir _rmdir
 #endif
 
 namespace occa {
@@ -74,7 +75,8 @@ namespace occa {
 
   bool fileExists(const std::string &filename);
 
-  std::string readFile(const std::string &filename);
+  std::string readFile(const std::string &filename,
+                       const bool readingBinary = false);
 
   void writeToFile(const std::string &filename,
                    const std::string &content);

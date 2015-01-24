@@ -130,6 +130,9 @@ namespace occa {
                                      const uintptr_t srcOffset);
 
   template <>
+  void memory_t<OpenMP>::mappedFree();
+
+  template <>
   void memory_t<OpenMP>::free();
   //==================================
 
@@ -239,6 +242,9 @@ namespace occa {
   memory_v* device_t<OpenMP>::talloc(const int dim, const occa::dim &dims,
                                      void *source,
                                      occa::formatType type, const int permissions);
+
+  template <>
+  memory_v* device_t<OpenMP>::mappedAlloc(const uintptr_t bytes);
 
   template <>
   void device_t<OpenMP>::free();

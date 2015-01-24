@@ -6,6 +6,168 @@
 
 
 //---[ Type-N ]-----------------------------------
+#if 0
+template <class TM>
+class type3 {
+public:
+  TM x,y,z;
+
+  inline type3(TM x_ = 0, TM y_ = 0, TM z_ = 0) :
+    x(x_), y(y_), z(z_) {}
+
+  template <class TM2>
+  inline type3<TM>& operator = (const type3<TM2> &b){
+    x = b.x; y = b.y; z = b.z;
+    return *this;
+  }
+
+  template <class TM2>
+  inline type3<TM>& operator = (const TM2 &b){
+    x = b; y = b; z = b;
+    return *this;
+  }
+
+  template <class TM2> friend type3<TM>& operator += (const type3<TM> &a, const type3<TM2> &b);
+  template <class TM2> friend type3<TM>& operator -= (const type3<TM> &a, const type3<TM2> &b);
+  template <class TM2> friend type3<TM>& operator *= (const type3<TM> &a, const type3<TM2> &b);
+  template <class TM2> friend type3<TM>& operator /= (const type3<TM> &a, const type3<TM2> &b);
+
+  template <class TM2> friend type3<TM>& operator += (const type3<TM> &a, const TM2 &b);
+  template <class TM2> friend type3<TM>& operator -= (const type3<TM> &a, const TM2 &b);
+  template <class TM2> friend type3<TM>& operator *= (const type3<TM> &a, const TM2 &b);
+  template <class TM2> friend type3<TM>& operator /= (const type3<TM> &a, const TM2 &b);
+};
+
+template <class TM>
+class type4 {
+public:
+  TM x,y,z,w;
+
+  inline type4(TM x_ = 0, TM y_ = 0, TM z_ = 0, TM w_ = 0) :
+    x(x_), y(y_), z(z_), w(w_) {}
+
+  inline type4<TM> operator - () const {
+    return type4<TM>(-x, -y, -z, -w);
+  }
+
+  template <class TM2>
+  inline type4<TM>& operator = (const type4<TM2> &b){
+    x = b.x; y = b.y; z = b.z; w = b.w;
+    return *this;
+  }
+
+  template <class TM2>
+  inline type4<TM>& operator = (const TM2 &b){
+    x = b; y = b; z = b; w = b;
+    return *this;
+  }
+
+  template <class TM2> friend type4<TM>& operator += (const type4<TM> &a, const type4<TM2> &b);
+  template <class TM2> friend type4<TM>& operator -= (const type4<TM> &a, const type4<TM2> &b);
+  template <class TM2> friend type4<TM>& operator *= (const type4<TM> &a, const type4<TM2> &b);
+  template <class TM2> friend type4<TM>& operator /= (const type4<TM> &a, const type4<TM2> &b);
+
+  template <class TM2> friend type4<TM>& operator += (const type4<TM> &a, const TM2 &b);
+  template <class TM2> friend type4<TM>& operator -= (const type4<TM> &a, const TM2 &b);
+  template <class TM2> friend type4<TM>& operator *= (const type4<TM> &a, const TM2 &b);
+  template <class TM2> friend type4<TM>& operator /= (const type4<TM> &a, const TM2 &b);
+};
+
+template <class TM>
+class type8 {
+public:
+  TM x,y,z,w,s4,s5,s6,s7;
+
+  inline type8(TM x_  = 0, TM y_  = 0, TM z_  = 0, TM w_  = 0,
+               TM s4_ = 0, TM s5_ = 0, TM s6_ = 0, TM s7_ = 0) :
+    x(x_)  , y(y_)    , z(z_)  , w(w_),
+    s4(s4_),  s5(s5_),  s6(s6_), s7(s7_) {}
+
+  inline type8<TM> operator - () const {
+    return type8<TM>(-x , -y , -w , -z,
+                     -s4, -s5, -s6, -s7);
+  }
+
+  template <class TM2>
+  inline type8<TM>& operator = (const type8<TM2> &b){
+    x  = b.x;  y  = b.y;  z  = b.z;  w  = b.w;
+    s4 = b.s4; s5 = b.s5; s6 = b.s6; s7 = b.s7;
+    return *this;
+  }
+
+  template <class TM2>
+  inline type8<TM>& operator = (const TM2 &b){
+    x  = b; y  = b; z  = b; w  = b;
+    s4 = b; s5 = b; s6 = b; s7 = b;
+    return *this;
+  }
+
+  template <class TM2> friend type8<TM>& operator += (const type8<TM> &a, const type8<TM2> &b);
+  template <class TM2> friend type8<TM>& operator -= (const type8<TM> &a, const type8<TM2> &b);
+  template <class TM2> friend type8<TM>& operator *= (const type8<TM> &a, const type8<TM2> &b);
+  template <class TM2> friend type8<TM>& operator /= (const type8<TM> &a, const type8<TM2> &b);
+
+  template <class TM2> friend type8<TM>& operator += (const type8<TM> &a, const TM2 &b);
+  template <class TM2> friend type8<TM>& operator -= (const type8<TM> &a, const TM2 &b);
+  template <class TM2> friend type8<TM>& operator *= (const type8<TM> &a, const TM2 &b);
+  template <class TM2> friend type8<TM>& operator /= (const type8<TM> &a, const TM2 &b);
+};
+
+template <class TM>
+class type16 {
+public:
+  TM x,y,z,w,s4,s5,s6,s7,s8,s9,s10,s11,s12,s13,s14,s15;
+
+  inline type16(TM x_   = 0, TM y_   = 0, TM z_   = 0, TM w_   = 0,
+                TM s4_  = 0, TM s5_  = 0, TM s6_  = 0, TM s7_  = 0,
+                TM s8_  = 0, TM s9_  = 0, TM s10_ = 0, TM s11_ = 0,
+                TM s12_ = 0, TM s13_ = 0, TM s14_ = 0, TM s15_ = 0) :
+    x(x_)    , y(y_)      , z(z_)    , w(w_)     ,
+    s4(s4_)  ,  s5(s5_)  ,  s6(s6_)  ,  s7(s7_)  ,
+    s8(s8_)  ,  s9(s9_)  ,  s10(s10_),  s11(s11_),
+    s12(s12_),  s13(s13_),  s14(s14_),  s15(s15_) {}
+
+  inline type16<TM> operator - () const {
+    return type16<TM>(-x  , -y  , -w  , -z  ,
+                      -s4 , -s5 , -s6 , -s7 ,
+                      -s8 , -s9 , -s10, -s11,
+                      -s12, -s13, -s14, -s15);
+  }
+
+  template <class TM2>
+  inline type16<TM>& operator = (const type16<TM2> &b){
+    x   = b.x;   y   = b.y;  z   = b.z;    w   = b.w;
+    s4  = b.s4;  s5  = b.s5; s6  = b.s6;   s7  = b.s7;
+    s8  = b.s8;  s9  = b.s9;  s10 = b.s10; s11 = b.s11;
+    s12 = b.s12; s13 = b.s14; s14 = b.s14; s15 = b.s15;
+    return *this;
+  }
+
+  template <class TM2>
+  inline type16<TM>& operator = (const TM2 &b){
+    x   = b; y   = b; z   = b; w   = b;
+    s4  = b; s5  = b; s6  = b; s7  = b;
+    s8  = b; s9  = b; s10 = b; s11 = b;
+    s12 = b; s13 = b; s14 = b; s15 = b;
+    return *this;
+  }
+
+  template <class TM2> friend type16<TM>& operator += (const type16<TM> &a, const type16<TM2> &b);
+  template <class TM2> friend type16<TM>& operator -= (const type16<TM> &a, const type16<TM2> &b);
+  template <class TM2> friend type16<TM>& operator *= (const type16<TM> &a, const type16<TM2> &b);
+  template <class TM2> friend type16<TM>& operator /= (const type16<TM> &a, const type16<TM2> &b);
+
+  template <class TM2> friend type16<TM>& operator += (const type16<TM> &a, const TM2 &b);
+  template <class TM2> friend type16<TM>& operator -= (const type16<TM> &a, const TM2 &b);
+  template <class TM2> friend type16<TM>& operator *= (const type16<TM> &a, const TM2 &b);
+  template <class TM2> friend type16<TM>& operator /= (const type16<TM> &a, const TM2 &b);
+};
+
+#define OCCA_DEF_TYPE3(TYPE)  typedef type3<TYPE>  TYPE##3;
+#define OCCA_DEF_TYPE4(TYPE)  typedef type4<TYPE>  TYPE##4;
+#define OCCA_DEF_TYPE8(TYPE)  typedef type8<TYPE>  TYPE##8;
+#define OCCA_DEF_TYPE16(TYPE) typedef type16<TYPE> TYPE##16;
+
 #define OCCA_TYPE_OPERATOR(O)                   \
   OCCA_TYPE_OPERATORS(O, char)                  \
   OCCA_TYPE_OPERATORS(O, short)                 \
@@ -172,6 +334,7 @@ OCCA_TYPE_EQUAL_OPERATORS(+=);
 OCCA_TYPE_EQUAL_OPERATORS(-=);
 OCCA_TYPE_EQUAL_OPERATORS(*=);
 OCCA_TYPE_EQUAL_OPERATORS(/=);
+#endif
 //================================================
 
 

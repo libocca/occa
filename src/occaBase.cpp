@@ -340,6 +340,10 @@ namespace occa {
     return (void*) ((mHandle->textureInfo).arg);
   }
 
+  void* memory::getMappedPointer(){
+    return mHandle->mappedPtr;
+  }
+
   void* memory::getMemoryHandle(){
     return mHandle->getMemoryHandle();
   }
@@ -351,6 +355,7 @@ namespace occa {
   void memory::copyFrom(const void *source,
                         const uintptr_t bytes,
                         const uintptr_t offset){
+
     mHandle->copyFrom(source, bytes, offset);
   }
 
@@ -358,12 +363,14 @@ namespace occa {
                         const uintptr_t bytes,
                         const uintptr_t destOffset,
                         const uintptr_t srcOffset){
+
     mHandle->copyFrom(source.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::copyTo(void *dest,
                       const uintptr_t bytes,
                       const uintptr_t offset){
+
     mHandle->copyTo(dest, bytes, offset);
   }
 
@@ -371,12 +378,14 @@ namespace occa {
                       const uintptr_t bytes,
                       const uintptr_t destOffset,
                       const uintptr_t srcOffset){
+
     mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyFrom(const void *source,
                              const uintptr_t bytes,
                              const uintptr_t offset){
+
     mHandle->asyncCopyFrom(source, bytes, offset);
   }
 
@@ -384,12 +393,14 @@ namespace occa {
                              const uintptr_t bytes,
                              const uintptr_t destOffset,
                              const uintptr_t srcOffset){
+
     mHandle->asyncCopyFrom(source.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyTo(void *dest,
                            const uintptr_t bytes,
                            const uintptr_t offset){
+
     mHandle->asyncCopyTo(dest, bytes, offset);
   }
 
@@ -397,6 +408,7 @@ namespace occa {
                            const uintptr_t bytes,
                            const uintptr_t destOffset,
                            const uintptr_t srcOffset){
+
     mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
@@ -404,6 +416,7 @@ namespace occa {
               const void *source,
               const uintptr_t bytes,
               const uintptr_t offset){
+
     dest.copyFrom(source, bytes, offset);
   }
 
@@ -412,6 +425,7 @@ namespace occa {
               const uintptr_t bytes,
               const uintptr_t destOffset,
               const uintptr_t srcOffset){
+
     dest.copyFrom(source, bytes, destOffset, srcOffset);
   }
 
@@ -419,6 +433,7 @@ namespace occa {
               memory &source,
               const uintptr_t bytes,
               const uintptr_t offset){
+
     source.copyTo(dest, bytes, offset);
   }
 
@@ -427,6 +442,7 @@ namespace occa {
               const uintptr_t bytes,
               const uintptr_t destOffset,
               const uintptr_t srcOffset){
+
     source.copyTo(dest, bytes, destOffset, srcOffset);
   }
 
@@ -434,6 +450,7 @@ namespace occa {
                    const void *source,
                    const uintptr_t bytes,
                    const uintptr_t offset){
+
     dest.asyncCopyFrom(source, bytes, offset);
   }
 
@@ -442,6 +459,7 @@ namespace occa {
                    const uintptr_t bytes,
                    const uintptr_t destOffset,
                    const uintptr_t srcOffset){
+
     dest.asyncCopyFrom(source, bytes, destOffset, srcOffset);
   }
 
@@ -449,6 +467,7 @@ namespace occa {
                    memory &source,
                    const uintptr_t bytes,
                    const uintptr_t offset){
+
     source.asyncCopyTo(dest, bytes, offset);
   }
 
@@ -457,6 +476,7 @@ namespace occa {
                    const uintptr_t bytes,
                    const uintptr_t destOffset,
                    const uintptr_t srcOffset){
+
     source.asyncCopyTo(dest, bytes, destOffset, srcOffset);
   }
 
@@ -475,7 +495,11 @@ namespace occa {
   }
 
   void memory::free(){
-    mHandle->free();
+    if( !(mHandle->isMapped) )
+      mHandle->free();
+    else
+      mHandle->mappedFree();
+
     delete mHandle;
   }
   //==================================
@@ -564,7 +588,7 @@ namespace occa {
 
     default:
       OCCA_CHECK(false,
-                 "Incorrect OCCA mode given");
+                 "Unsupported OCCA mode given");
     }
 
     dHandle->dev = this;
@@ -1052,6 +1076,18 @@ namespace occa {
     mem.strMode = strMode;
 
     mem.mHandle      = dHandle->talloc(dim, dims, source, type, permissions);
+    mem.mHandle->dev = this;
+
+    return mem;
+  }
+
+  memory device::mappedAlloc(const uintptr_t bytes){
+    memory mem;
+
+    mem.mode_   = mode_;
+    mem.strMode = strMode;
+
+    mem.mHandle      = dHandle->mappedAlloc(bytes);
     mem.mHandle->dev = this;
 
     return mem;

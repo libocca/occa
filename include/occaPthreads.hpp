@@ -183,6 +183,9 @@ namespace occa {
                                        const uintptr_t srcOffset);
 
   template <>
+  void memory_t<Pthreads>::mappedFree();
+
+  template <>
   void memory_t<Pthreads>::free();
   //==================================
 
@@ -295,6 +298,9 @@ namespace occa {
   memory_v* device_t<Pthreads>::talloc(const int dim, const occa::dim &dims,
                                        void *source,
                                        occa::formatType type, const int permissions);
+
+  template <>
+  memory_v* device_t<Pthreads>::mappedAlloc(const uintptr_t bytes);
 
   template <>
   int device_t<Pthreads>::simdWidth();

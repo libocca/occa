@@ -41,14 +41,14 @@ namespace occa {
   }
 
   double currentTime(){
-#if OCCA_OS == LINUX_OS
+#if (OCCA_OS == LINUX_OS)
 
     timespec ct;
     clock_gettime(CLOCK_MONOTONIC, &ct);
 
     return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
 
-#elif OCCA_OS == OSX_OS
+#elif (OCCA_OS == OSX_OS)
 #  ifdef __clang__
     uint64_t ct;
     ct = mach_absolute_time();
@@ -67,13 +67,20 @@ namespace occa {
 
     return (double) (ct.tv_sec + (1.0e-9 * ct.tv_nsec));
 #  endif
-#elif OCCA_OS == WINDOWS_OS
-    LARGE_INTEGER timestamp, timerfreq;
+#elif (OCCA_OS == WINDOWS_OS)
+    static LARGE_INTEGER freq;
+    static bool haveFreq = false;
 
-    QueryPerformanceFrequency(&timerfreq);
-    QueryPerformanceCounter(&timestamp);
+    if(!haveFreq){
+      QueryPerformanceFrequency(&freq);
+      haveFreq=true;
+    }
 
-    return ((double) timestamp.QuadPart) / ((double) timerfreq.QuadPart);
+    LARGE_INTEGER ct;
+
+    QueryPerformanceCounter(&ct);
+
+    return ((double) (ct.QuadPart)) / ((double) (freq.QuadPart));
 #endif
   }
 
@@ -137,22 +144,15 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int mkdirStatus = mkdir(lockDir.c_str(), 0755);
+#else
+    int mkdirStatus = _mkdir(lockDir.c_str());
+#endif
 
     // Someone else is making it
     if(mkdirStatus && (errno == EEXIST))
       return false;
 
     return true;
-#else
-    LPCSTR lockDirStr = lockDir.c_str();
-    BOOL mkdirStatus = CreateDirectoryA(lockDirStr, NULL);
-
-    if( mkdirStatus == FALSE) {
-      assert(GetLastError() == ERROR_ALREADY_EXISTS);
-      return false;
-    }
-    return true;
-#endif
   }
 
   void waitForFile(const std::string &filename){
@@ -162,16 +162,16 @@ namespace occa {
     const char *c_lockDir = lockDir.c_str();
 
     while(stat(c_lockDir, &buffer) == 0)
-      /* Do Nothing */;
+      ; // Do Nothing
   }
 
   void releaseFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     rmdir(lockDir.c_str());
 #else
-    BOOL retStatus = RemoveDirectoryA(lockDir.c_str());
-    assert(retStatus == TRUE);
+    _rmdir(lockDir.c_str());
 #endif
   }
 
@@ -255,9 +255,16 @@ namespace occa {
     return (stat(filename.c_str(), &buffer) == 0);
   }
 
-  std::string readFile(const std::string &filename){
-    // NBN: handle EOL chars on Windows
-    FILE *fp = fopen(filename.c_str(), "r");
+  // NBN: handle binary mode and EOL chars on Windows
+  std::string readFile(const std::string &filename, const bool readingBinary){
+    FILE *fp = NULL;
+
+    if(!readingBinary){
+      fp = fopen(filename.c_str(), "r");
+    }
+    else{
+      fp = fopen(filename.c_str(), "rb");
+    }
 
     OCCA_CHECK(fp != 0,
                "Failed to open [" << filename << "]");
@@ -267,10 +274,11 @@ namespace occa {
 
     const size_t nchars = statbuf.st_size;
 
-    char *buffer = (char*) calloc(nchars, sizeof(char));
+    char *buffer = (char*) calloc(nchars + 1, sizeof(char));
     size_t nread = fread(buffer, sizeof(char), nchars, fp);
 
     fclose(fp);
+    buffer[nread] = '\0';
 
     std::string contents(buffer, nread);
 
@@ -295,8 +303,9 @@ namespace occa {
   std::string getOCCADir(){
     char *c_occaPath = getenv("OCCA_DIR");
 
-    if(c_occaPath != NULL)
+    if(c_occaPath != NULL){
       return c_occaPath;
+    }
 
     OCCA_CHECK(false,
                "Environment variable [OCCA_DIR] is not set");
@@ -323,11 +332,11 @@ namespace occa {
 
       ss << c_home << "\\AppData\\Local\\OCCA";
 
-#  if OCCA_64_BIT
+#if OCCA_64_BIT
       ss << "_amd64";  // use different dir's fro 32 and 64 bit
-#  else
+#else
       ss << "_x86";    // use different dir's fro 32 and 64 bit
-#  endif
+#endif
 
       occaCachePath = ss.str();
 #endif
