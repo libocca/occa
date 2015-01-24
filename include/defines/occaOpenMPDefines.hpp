@@ -12,7 +12,10 @@
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
 #define OCCA_MEM_ALIGN   64
+//================================================
 
+
+//---[ Type-N ]-----------------------------------
 template <class TM>
 class type2 {
 public:
@@ -25,17 +28,27 @@ public:
     return type2<TM>(-x, -y);
   }
 
-  template <class TM2> type2<TM>& operator  = (const type2<TM2> &t);
-  template <class TM2> type2<TM>& operator += (const type2<TM2> &t);
-  template <class TM2> type2<TM>& operator -= (const type2<TM2> &t);
-  template <class TM2> type2<TM>& operator *= (const type2<TM2> &t);
-  template <class TM2> type2<TM>& operator /= (const type2<TM2> &t);
+  template <class TM2>
+  inline type2<TM>& operator = (const type2<TM2> &b){
+    x = b.x; y = b.y;
+    return *this;
+  }
 
-  template <class TM2> type2<TM>& operator  = (const TM2 &t);
-  template <class TM2> type2<TM>& operator += (const TM2 &t);
-  template <class TM2> type2<TM>& operator -= (const TM2 &t);
-  template <class TM2> type2<TM>& operator *= (const TM2 &t);
-  template <class TM2> type2<TM>& operator /= (const TM2 &t);
+  template <class TM2>
+  inline type2<TM>& operator = (const TM2 &b){
+    x = b; y = b;
+    return *this;
+  }
+
+  template <class TM2> friend type2<TM>& operator += (const type2<TM> &a, const type2<TM2> &b);
+  template <class TM2> friend type2<TM>& operator -= (const type2<TM> &a, const type2<TM2> &b);
+  template <class TM2> friend type2<TM>& operator *= (const type2<TM> &a, const type2<TM2> &b);
+  template <class TM2> friend type2<TM>& operator /= (const type2<TM> &a, const type2<TM2> &b);
+
+  template <class TM2> friend type2<TM>& operator += (const type2<TM> &a, const TM2 &b);
+  template <class TM2> friend type2<TM>& operator -= (const type2<TM> &a, const TM2 &b);
+  template <class TM2> friend type2<TM>& operator *= (const type2<TM> &a, const TM2 &b);
+  template <class TM2> friend type2<TM>& operator /= (const type2<TM> &a, const TM2 &b);
 };
 
 template <class TM>
@@ -46,17 +59,27 @@ public:
   inline type3(TM x_ = 0, TM y_ = 0, TM z_ = 0) :
     x(x_), y(y_), z(z_) {}
 
-  template <class TM2> type3<TM>& operator  = (const type3<TM2> &t);
-  template <class TM2> type3<TM>& operator += (const type3<TM2> &t);
-  template <class TM2> type3<TM>& operator -= (const type3<TM2> &t);
-  template <class TM2> type3<TM>& operator *= (const type3<TM2> &t);
-  template <class TM2> type3<TM>& operator /= (const type3<TM2> &t);
+  template <class TM2>
+  inline type3<TM>& operator = (const type3<TM2> &b){
+    x = b.x; y = b.y; z = b.z;
+    return *this;
+  }
 
-  template <class TM2> type3<TM>& operator  = (const TM2 &t);
-  template <class TM2> type3<TM>& operator += (const TM2 &t);
-  template <class TM2> type3<TM>& operator -= (const TM2 &t);
-  template <class TM2> type3<TM>& operator *= (const TM2 &t);
-  template <class TM2> type3<TM>& operator /= (const TM2 &t);
+  template <class TM2>
+  inline type3<TM>& operator = (const TM2 &b){
+    x = b; y = b; z = b;
+    return *this;
+  }
+
+  template <class TM2> friend type3<TM>& operator += (const type3<TM> &a, const type3<TM2> &b);
+  template <class TM2> friend type3<TM>& operator -= (const type3<TM> &a, const type3<TM2> &b);
+  template <class TM2> friend type3<TM>& operator *= (const type3<TM> &a, const type3<TM2> &b);
+  template <class TM2> friend type3<TM>& operator /= (const type3<TM> &a, const type3<TM2> &b);
+
+  template <class TM2> friend type3<TM>& operator += (const type3<TM> &a, const TM2 &b);
+  template <class TM2> friend type3<TM>& operator -= (const type3<TM> &a, const TM2 &b);
+  template <class TM2> friend type3<TM>& operator *= (const type3<TM> &a, const TM2 &b);
+  template <class TM2> friend type3<TM>& operator /= (const type3<TM> &a, const TM2 &b);
 };
 
 template <class TM>
@@ -71,17 +94,27 @@ public:
     return type4<TM>(-x, -y, -z, -w);
   }
 
-  template <class TM2> type4<TM>& operator  = (const type4<TM2> &t);
-  template <class TM2> type4<TM>& operator += (const type4<TM2> &t);
-  template <class TM2> type4<TM>& operator -= (const type4<TM2> &t);
-  template <class TM2> type4<TM>& operator *= (const type4<TM2> &t);
-  template <class TM2> type4<TM>& operator /= (const type4<TM2> &t);
+  template <class TM2>
+  inline type4<TM>& operator = (const type4<TM2> &b){
+    x = b.x; y = b.y; z = b.z; w = b.w;
+    return *this;
+  }
 
-  template <class TM2> type4<TM>& operator  = (const TM2 &t);
-  template <class TM2> type4<TM>& operator += (const TM2 &t);
-  template <class TM2> type4<TM>& operator -= (const TM2 &t);
-  template <class TM2> type4<TM>& operator *= (const TM2 &t);
-  template <class TM2> type4<TM>& operator /= (const TM2 &t);
+  template <class TM2>
+  inline type4<TM>& operator = (const TM2 &b){
+    x = b; y = b; z = b; w = b;
+    return *this;
+  }
+
+  template <class TM2> friend type4<TM>& operator += (const type4<TM> &a, const type4<TM2> &b);
+  template <class TM2> friend type4<TM>& operator -= (const type4<TM> &a, const type4<TM2> &b);
+  template <class TM2> friend type4<TM>& operator *= (const type4<TM> &a, const type4<TM2> &b);
+  template <class TM2> friend type4<TM>& operator /= (const type4<TM> &a, const type4<TM2> &b);
+
+  template <class TM2> friend type4<TM>& operator += (const type4<TM> &a, const TM2 &b);
+  template <class TM2> friend type4<TM>& operator -= (const type4<TM> &a, const TM2 &b);
+  template <class TM2> friend type4<TM>& operator *= (const type4<TM> &a, const TM2 &b);
+  template <class TM2> friend type4<TM>& operator /= (const type4<TM> &a, const TM2 &b);
 };
 
 template <class TM>
@@ -99,17 +132,29 @@ public:
                      -s4, -s5, -s6, -s7);
   }
 
-  template <class TM2> type8<TM>& operator  = (const type8<TM2> &t);
-  template <class TM2> type8<TM>& operator += (const type8<TM2> &t);
-  template <class TM2> type8<TM>& operator -= (const type8<TM2> &t);
-  template <class TM2> type8<TM>& operator *= (const type8<TM2> &t);
-  template <class TM2> type8<TM>& operator /= (const type8<TM2> &t);
+  template <class TM2>
+  inline type8<TM>& operator = (const type8<TM2> &b){
+    x  = b.x;  y  = b.y;  z  = b.z;  w  = b.w;
+    s4 = b.s4; s5 = b.s5; s6 = b.s6; s7 = b.s7;
+    return *this;
+  }
 
-  template <class TM2> type8<TM>& operator  = (const TM2 &t);
-  template <class TM2> type8<TM>& operator += (const TM2 &t);
-  template <class TM2> type8<TM>& operator -= (const TM2 &t);
-  template <class TM2> type8<TM>& operator *= (const TM2 &t);
-  template <class TM2> type8<TM>& operator /= (const TM2 &t);
+  template <class TM2>
+  inline type8<TM>& operator = (const TM2 &b){
+    x  = b; y  = b; z  = b; w  = b;
+    s4 = b; s5 = b; s6 = b; s7 = b;
+    return *this;
+  }
+
+  template <class TM2> friend type8<TM>& operator += (const type8<TM> &a, const type8<TM2> &b);
+  template <class TM2> friend type8<TM>& operator -= (const type8<TM> &a, const type8<TM2> &b);
+  template <class TM2> friend type8<TM>& operator *= (const type8<TM> &a, const type8<TM2> &b);
+  template <class TM2> friend type8<TM>& operator /= (const type8<TM> &a, const type8<TM2> &b);
+
+  template <class TM2> friend type8<TM>& operator += (const type8<TM> &a, const TM2 &b);
+  template <class TM2> friend type8<TM>& operator -= (const type8<TM> &a, const TM2 &b);
+  template <class TM2> friend type8<TM>& operator *= (const type8<TM> &a, const TM2 &b);
+  template <class TM2> friend type8<TM>& operator /= (const type8<TM> &a, const TM2 &b);
 };
 
 template <class TM>
@@ -133,169 +178,175 @@ public:
                       -s12, -s13, -s14, -s15);
   }
 
-  template <class TM2> type16<TM>& operator  = (const type16<TM2> &t);
-  template <class TM2> type16<TM>& operator += (const type16<TM2> &t);
-  template <class TM2> type16<TM>& operator -= (const type16<TM2> &t);
-  template <class TM2> type16<TM>& operator *= (const type16<TM2> &t);
-  template <class TM2> type16<TM>& operator /= (const type16<TM2> &t);
+  template <class TM2>
+  inline type16<TM>& operator = (const type16<TM2> &b){
+    x   = b.x;   y   = b.y;  z   = b.z;    w   = b.w;
+    s4  = b.s4;  s5  = b.s5; s6  = b.s6;   s7  = b.s7;
+    s8  = b.s8;  s9  = b.s9;  s10 = b.s10; s11 = b.s11;
+    s12 = b.s12; s13 = b.s14; s14 = b.s14; s15 = b.s15;
+    return *this;
+  }
 
-  template <class TM2> type16<TM>& operator  = (const TM2 &t);
-  template <class TM2> type16<TM>& operator += (const TM2 &t);
-  template <class TM2> type16<TM>& operator -= (const TM2 &t);
-  template <class TM2> type16<TM>& operator *= (const TM2 &t);
-  template <class TM2> type16<TM>& operator /= (const TM2 &t);
+  template <class TM2>
+  inline type16<TM>& operator = (const TM2 &b){
+    x   = b; y   = b; z   = b; w   = b;
+    s4  = b; s5  = b; s6  = b; s7  = b;
+    s8  = b; s9  = b; s10 = b; s11 = b;
+    s12 = b; s13 = b; s14 = b; s15 = b;
+    return *this;
+  }
+
+  template <class TM2> friend type16<TM>& operator += (const type16<TM> &a, const type16<TM2> &b);
+  template <class TM2> friend type16<TM>& operator -= (const type16<TM> &a, const type16<TM2> &b);
+  template <class TM2> friend type16<TM>& operator *= (const type16<TM> &a, const type16<TM2> &b);
+  template <class TM2> friend type16<TM>& operator /= (const type16<TM> &a, const type16<TM2> &b);
+
+  template <class TM2> friend type16<TM>& operator += (const type16<TM> &a, const TM2 &b);
+  template <class TM2> friend type16<TM>& operator -= (const type16<TM> &a, const TM2 &b);
+  template <class TM2> friend type16<TM>& operator *= (const type16<TM> &a, const TM2 &b);
+  template <class TM2> friend type16<TM>& operator /= (const type16<TM> &a, const TM2 &b);
 };
 
 #define OCCA_TYPE_OPERATOR(O)                                           \
   template <class TM>                                                   \
-  type2<TM> operator O (const type2<TM> &a, const type2<TM> &b){        \
+  inline type2<TM> operator O (const type2<TM> &a, const type2<TM> &b){ \
     return type2<TM>((a.x O b.x), (a.y O b.y));                         \
   }                                                                     \
   template <class TM>                                                   \
-  type2<TM> operator O (const type2<TM> &a, const TM &b){               \
+  inline type2<TM> operator O (const type2<TM> &a, const TM &b){        \
     return type2<TM>((a.x O b), (a.y O b));                             \
   }                                                                     \
   template <class TM>                                                   \
-  type2<TM> operator O (const TM &b, const type2<TM> &a){               \
+  inline type2<TM> operator O (const TM &b, const type2<TM> &a){        \
     return type2<TM>((b O a.x), (b O a.y));                             \
   }                                                                     \
                                                                         \
   template <class TM>                                                   \
-  type3<TM> operator O (const type3<TM> &a, const type3<TM> &b){        \
+  inline type3<TM> operator O (const type3<TM> &a, const type3<TM> &b){ \
     return type3<TM>((a.x O b.x), (a.y O b.y), (a.z O b.z));            \
   }                                                                     \
   template <class TM>                                                   \
-  type3<TM> operator O (const type3<TM> &a, const TM &b){               \
+  inline type3<TM> operator O (const type3<TM> &a, const TM &b){        \
     return type3<TM>((a.x O b), (a.y O b), (a.z O b));                  \
   }                                                                     \
   template <class TM>                                                   \
-  type3<TM> operator O (const TM &b, const type3<TM> &a){               \
+  inline type3<TM> operator O (const TM &b, const type3<TM> &a){        \
     return type3<TM>((b O a.x), (b O a.y), (b O a.z));                  \
   }                                                                     \
                                                                         \
   template <class TM>                                                   \
-  type4<TM> operator O (const type4<TM> &a, const type4<TM> &b){        \
+  inline type4<TM> operator O (const type4<TM> &a, const type4<TM> &b){ \
     return type4<TM>((a.x O b.x), (a.y O b.y), (a.z O b.z), (a.w O b.w)); \
   }                                                                     \
   template <class TM>                                                   \
-  type4<TM> operator O (const type4<TM> &a, const TM &b){               \
+  inline type4<TM> operator O (const type4<TM> &a, const TM &b){        \
     return type4<TM>((a.x O b), (a.y O b), (a.z O b), (a.w O b));       \
   }                                                                     \
   template <class TM>                                                   \
-  type4<TM> operator O (const TM &b, const type4<TM> &a){               \
+  inline type4<TM> operator O (const TM &b, const type4<TM> &a){        \
     return type4<TM>((b O a.x), (b O a.y), (b O a.z), (b O a.w));       \
   }                                                                     \
                                                                         \
   template <class TM>                                                   \
-  type8<TM> operator O (const type8<TM> &a, const type8<TM> &b){        \
+  inline type8<TM> operator O (const type8<TM> &a, const type8<TM> &b){ \
     return type8<TM>((a.x  O b.x) , (a.y  O b.y) , (a.z  O b.z) , (a.w  O b.w) , \
                      (a.s4 O b.s4), (a.s5 O b.s5), (a.s6 O b.s6), (a.s7 O b.s7)); \
   }                                                                     \
   template <class TM>                                                   \
-  type8<TM> operator O (const type8<TM> &a, const TM &b){               \
+  inline type8<TM> operator O (const type8<TM> &a, const TM &b){        \
     return type8<TM>((a.x  O b), (a.y  O b), (a.z  O b), (a.w  O b) ,   \
                      (a.s4 O b), (a.s5 O b), (a.s6 O b), (a.s7 O b));   \
   }                                                                     \
   template <class TM>                                                   \
-  type8<TM> operator O (const TM &b, const type8<TM> &a){               \
+  inline type8<TM> operator O (const TM &b, const type8<TM> &a){        \
     return type8<TM>((b O a.x ), (b O a.y ), (b O a.z ), (b O a.w ) ,   \
                      (b O a.s4), (b O a.s5), (b O a.s6), (b O a.s7));   \
   }                                                                     \
                                                                         \
   template <class TM>                                                   \
-  type16<TM> operator O (const type16<TM> &a, const type16<TM> &b){     \
+  inline type16<TM> operator O (const type16<TM> &a, const type16<TM> &b){ \
     return type16<TM>((a.x   O b.x)  , (a.y   O b.y)  , (a.z   O b.z)  , (a.w   O b.w)  , \
                       (a.s4  O b.s4) , (a.s5  O b.s5) , (a.s6  O b.s6) , (a.s7  O b.s7) , \
                       (a.s8  O b.s8) , (a.s9  O b.s9) , (a.s10 O b.s10), (a.s11 O b.s11), \
                       (a.s12 O b.s12), (a.s13 O b.s13), (a.s14 O b.s14), (a.s15 O b.s15)); \
   }                                                                     \
   template <class TM>                                                   \
-  type16<TM> operator O (const type16<TM> &a, const TM &b){             \
+  inline type16<TM> operator O (const type16<TM> &a, const TM &b){      \
     return type16<TM>((a.x   O b), (a.y   O b), (a.z   O b), (a.w   O b), \
                       (a.s4  O b), (a.s5  O b), (a.s6  O b), (a.s7  O b), \
                       (a.s8  O b), (a.s9  O b), (a.s10 O b), (a.s11 O b), \
                       (a.s12 O b), (a.s13 O b), (a.s14 O b), (a.s15 O b)); \
   }                                                                     \
   template <class TM>                                                   \
-  type16<TM> operator O (const TM &b, const type16<TM> &a){             \
+  inline type16<TM> operator O (const TM &b, const type16<TM> &a){      \
     return type16<TM>((b O a.x  ), (b O a.y  ), (b O a.z  ), (b O a.w  ), \
                       (b O a.s4 ), (b O a.s5 ), (b O a.s6 ), (b O a.s7 ), \
                       (b O a.s8 ), (b O a.s9 ), (b O a.s10), (b O a.s11), \
                       (b O a.s12), (b O a.s13), (b O a.s14), (b O a.s15)); \
   }
 
-#define OCCA_TYPE_EQUAL_OPERATOR(O)                           \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type2<TM>& type2<TM>::operator O (const type2<TM2> &t){     \
-    x O t.x; y O t.y;                                         \
-    return *this;                                             \
-  }                                                           \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type2<TM>& type2<TM>::operator O (const TM2 &t){            \
-    x O t; y O t;                                             \
-    return *this;                                             \
-  }                                                           \
-                                                              \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type3<TM>& type3<TM>::operator O (const type3<TM2> &t){     \
-    x O t.x; y O t.y; z O t.z;                                \
-    return *this;                                             \
-  }                                                           \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type3<TM>& type3<TM>::operator O (const TM2 &t){            \
-    x O t; y O t; z O t;                                      \
-    return *this;                                             \
-  }                                                           \
-                                                              \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type4<TM>& type4<TM>::operator O (const type4<TM2> &t){     \
-    x O t.x; y O t.y; z O t.z; w O t.w;                       \
-    return *this;                                             \
-  }                                                           \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type4<TM>& type4<TM>::operator O (const TM2 &t){             \
-    x O t; y O t; z O t; w O t;                               \
-    return *this;                                             \
-  }                                                           \
-                                                              \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type8<TM>& type8<TM>::operator O (const type8<TM2> &t){     \
-    x  O t.x;  y  O t.y;  z  O t.z;  w  O t.w;                \
-    s4 O t.s4; s5 O t.s5; s6 O t.s6; s7 O t.s7;               \
-    return *this;                                             \
-  }                                                           \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type8<TM>& type8<TM>::operator O (const TM2 &t){            \
-    x  O t; y  O t; z  O t; w  O t;                           \
-    s4 O t; s5 O t; s6 O t; s7 O t;                           \
-    return *this;                                             \
-  }                                                           \
-                                                              \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type16<TM>& type16<TM>::operator O (const type16<TM2> &t){  \
-    x   O t.x;   y  O t.y;    z   O t.z;   w   O t.w;         \
-    s4  O t.s4;  s5 O t.s5;   s6  O t.s6;  s7  O t.s7;        \
-    s8  O t.s8;  s9 O t.s9;   s10 O t.s10; s11 O t.s11;       \
-    s12 O t.s12; s13 O t.s13; s14 O t.s14; s15 O t.s15;       \
-    return *this;                                             \
-  }                                                           \
-  template <class TM>                                         \
-  template <class TM2>                                        \
-  type16<TM>& type16<TM>::operator O (const TM2 &t){          \
-    x   O t; y  O t;  z   O t; w   O t;                       \
-    s4  O t; s5 O t;  s6  O t; s7  O t;                       \
-    s8  O t; s9 O t;  s10 O t; s11 O t;                       \
-    s12 O t; s13 O t; s14 O t; s15 O t;                       \
-    return *this;                                             \
+#define OCCA_TYPE_EQUAL_OPERATOR(O)                                     \
+  template <class TM, class TM2>                                        \
+  inline type2<TM>& operator O (const type2<TM> &a, const type2<TM2> &b){ \
+    a.x O b.x; a.y O b.y;                                               \
+    return a;                                                           \
+  }                                                                     \
+  template <class TM, class TM2>                                        \
+  inline type2<TM>& operator O (const type2<TM> &a, const TM2 &b){      \
+    a.x O b; a.y O b;                                                   \
+    return a;                                                           \
+  }                                                                     \
+                                                                        \
+  template <class TM, class TM2>                                        \
+  inline type3<TM>& operator O (const type3<TM> &a, const type3<TM2> &b){ \
+    a.x O b.x; a.y O b.y; a.a.z O b.z;                                  \
+    return a;                                                           \
+  }                                                                     \
+  template <class TM, class TM2>                                        \
+  inline type3<TM>& operator O (const type3<TM> &a, const TM2 &b){      \
+    a.x O b; a.y O b; a.z O b;                                          \
+    return a;                                                           \
+  }                                                                     \
+                                                                        \
+  template <class TM, class TM2>                                        \
+  inline type4<TM>& operator O (const type4<TM> &a, const type4<TM2> &b){ \
+    a.x O b.x; a.y O b.y; a.z O b.z; a.a.w O b.w;                       \
+    return a;                                                           \
+  }                                                                     \
+  template <class TM, class TM2>                                        \
+  inline type4<TM>& operator O (const type4<TM> &a, const TM2 &b){      \
+    a.x O b; a.y O b; a.z O b; a.w O b;                                 \
+    return a;                                                           \
+  }                                                                     \
+                                                                        \
+  template <class TM, class TM2>                                        \
+  inline type8<TM>& operator O (const type8<TM> &a, const type8<TM2> &b){ \
+    a.x  O b.x;  a.y  O b.y;  a.z  O b.z;  a.w  O b.w;                  \
+    a.s4 O b.s4; a.s5 O b.s5; a.s6 O b.s6; a.s7 O b.s7;                 \
+    return a;                                                           \
+  }                                                                     \
+  template <class TM, class TM2>                                        \
+  inline type8<TM>& operator O (const type8<TM> &a, const TM2 &b){      \
+    a.x  O b; a.y  O b; a.z  O b; a.w  O b;                             \
+    a.s4 O b; a.s5 O b; a.s6 O b; a.s7 O b;                             \
+    return a;                                                           \
+  }                                                                     \
+                                                                        \
+  template <class TM, class TM2>                                        \
+  inline type16<TM>& operator O (const type16<TM> &a, const type16<TM2> &b){ \
+    a.x   O b.x;  a. y  O b.y;    a.z   O b.z;   a.w   O b.w;           \
+    a.s4  O b.s4;  a.s5 O b.s5;   a.s6  O b.s6;  a.s7  O b.s7;          \
+    a.s8  O b.s8;  a.s9 O b.s9;   a.s10 O b.s10; a.s11 O b.s11;         \
+    a.s12 O b.s12; a.s13 O b.s13; a.s14 O b.s14; a.s15 O b.s15;         \
+    return a;                                                           \
+  }                                                                     \
+  template <class TM, class TM2>                                        \
+  inline type16<TM>& operator O (const type16<TM> &a, const TM2 &b){    \
+    a.x   O b; a.y  O b;  a.z   O b; a.w   O b;                         \
+    a.s4  O b; a.s5 O b;  a.s6  O b; a.s7  O b;                         \
+    a.s8  O b; a.s9 O b;  a.s10 O b; a.s11 O b;                         \
+    a.s12 O b; a.s13 O b; a.s14 O b; a.s15 O b;                         \
+    return a;                                                           \
   }
 
 OCCA_TYPE_OPERATOR(+);
@@ -303,7 +354,6 @@ OCCA_TYPE_OPERATOR(-);
 OCCA_TYPE_OPERATOR(*);
 OCCA_TYPE_OPERATOR(/);
 
-OCCA_TYPE_EQUAL_OPERATOR(=);
 OCCA_TYPE_EQUAL_OPERATOR(+=);
 OCCA_TYPE_EQUAL_OPERATOR(-=);
 OCCA_TYPE_EQUAL_OPERATOR(*=);

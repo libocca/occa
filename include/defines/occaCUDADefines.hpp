@@ -5,6 +5,176 @@
 //================================================
 
 
+//---[ Type-N ]-----------------------------------
+#define OCCA_TYPE_OPERATOR(O)                   \
+  OCCA_TYPE_OPERATORS(O, char)                  \
+  OCCA_TYPE_OPERATORS(O, short)                 \
+  OCCA_TYPE_OPERATORS(O, int)                   \
+  OCCA_TYPE_OPERATORS(O, float)                 \
+  OCCA_TYPE_OPERATORS(O, double)
+
+#define OCCA_TYPE_OPERATOR(O, TYPE)                                     \
+  OCCA_TYPE_OPERATOR2(O, TYPE##2, TYPE##3, TYPE##4, TYPE##8, TYPE##16)
+
+#define OCCA_TYPE_OPERATOR2(O, TYPE2, TYPE3, TYPE4, TYPE8, TYPE16)      \
+  inline TYPE2 operator O (const TYPE2 &a, const TYPE2 &b){             \
+    return TYPE2((a.x O b.x), (a.y O b.y));                             \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE2 operator O (const TYPE2 &a, const TM &b){                \
+    return TYPE2((a.x O b), (a.y O b));                                 \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE2 operator O (const TM &b, const TYPE2 &a){                \
+    return TYPE2((b O a.x), (b O a.y));                                 \
+  }                                                                     \
+                                                                        \
+  inline TYPE3 operator O (const TYPE3 &a, const TYPE3 &b){             \
+    return TYPE3((a.x O b.x), (a.y O b.y), (a.z O b.z));                \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE3 operator O (const TYPE3 &a, const TM &b){                \
+    return TYPE3((a.x O b), (a.y O b), (a.z O b));                      \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE3 operator O (const TM &b, const TYPE3 &a){                \
+    return TYPE3((b O a.x), (b O a.y), (b O a.z));                      \
+  }                                                                     \
+                                                                        \
+  inline TYPE4 operator O (const TYPE4 &a, const TYPE4 &b){             \
+    return TYPE4((a.x O b.x), (a.y O b.y), (a.z O b.z), (a.w O b.w));   \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE4 operator O (const TYPE4 &a, const TM &b){                \
+    return TYPE4((a.x O b), (a.y O b), (a.z O b), (a.w O b));           \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE4 operator O (const TM &b, const TYPE4 &a){                \
+    return TYPE4((b O a.x), (b O a.y), (b O a.z), (b O a.w));           \
+  }                                                                     \
+                                                                        \
+  inline TYPE8 operator O (const TYPE8 &a, const TYPE8 &b){             \
+    return TYPE8((a.x  O b.x) , (a.y  O b.y) , (a.z  O b.z) , (a.w  O b.w) , \
+                 (a.s4 O b.s4), (a.s5 O b.s5), (a.s6 O b.s6), (a.s7 O b.s7)); \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE8 operator O (const TYPE8 &a, const TM &b){                \
+    return TYPE8((a.x  O b), (a.y  O b), (a.z  O b), (a.w  O b) ,       \
+                 (a.s4 O b), (a.s5 O b), (a.s6 O b), (a.s7 O b));       \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE8 operator O (const TM &b, const TYPE8 &a){                \
+    return TYPE8((b O a.x ), (b O a.y ), (b O a.z ), (b O a.w ) ,       \
+                 (b O a.s4), (b O a.s5), (b O a.s6), (b O a.s7));       \
+  }                                                                     \
+                                                                        \
+  inline TYPE16 operator O (const TYPE16 &a, const TYPE16 &b){          \
+    return TYPE16((a.x   O b.x)  , (a.y   O b.y)  , (a.z   O b.z)  , (a.w   O b.w)  , \
+                  (a.s4  O b.s4) , (a.s5  O b.s5) , (a.s6  O b.s6) , (a.s7  O b.s7) , \
+                  (a.s8  O b.s8) , (a.s9  O b.s9) , (a.s10 O b.s10), (a.s11 O b.s11), \
+                  (a.s12 O b.s12), (a.s13 O b.s13), (a.s14 O b.s14), (a.s15 O b.s15)); \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE16 operator O (const TYPE16 &a, const TM &b){              \
+    return TYPE16((a.x   O b), (a.y   O b), (a.z   O b), (a.w   O b),   \
+                  (a.s4  O b), (a.s5  O b), (a.s6  O b), (a.s7  O b),   \
+                  (a.s8  O b), (a.s9  O b), (a.s10 O b), (a.s11 O b),   \
+                  (a.s12 O b), (a.s13 O b), (a.s14 O b), (a.s15 O b));  \
+  }                                                                     \
+  template <class TM>                                                   \
+  inline TYPE16 operator O (const TM &b, const TYPE16 &a){              \
+    return TYPE16((b O a.x  ), (b O a.y  ), (b O a.z  ), (b O a.w  ),   \
+                  (b O a.s4 ), (b O a.s5 ), (b O a.s6 ), (b O a.s7 ),   \
+                  (b O a.s8 ), (b O a.s9 ), (b O a.s10), (b O a.s11),   \
+                  (b O a.s12), (b O a.s13), (b O a.s14), (b O a.s15));  \
+  }
+
+#define OCCA_TYPE_OPERATORS(O)                  \
+  OCCA_TYPE_EQUAL_OPERATOR(O, char)             \
+  OCCA_TYPE_EQUAL_OPERATOR(O, short)            \
+  OCCA_TYPE_EQUAL_OPERATOR(O, int)              \
+  OCCA_TYPE_EQUAL_OPERATOR(O, float)            \
+  OCCA_TYPE_EQUAL_OPERATOR(O, double)
+
+#define OCCA_TYPE_EQUAL_OPERATOR(O, TYPE)                              \
+  OCCA_TYPE_EQUAL_OPERATOR2(O, TYPE##2, TYPE##3, TYPE##4, TYPE##8, TYPE##16)
+
+#define OCCA_TYPE_EQUAL_OPERATOR2(O, TYPE2, TYPE3, TYPE4, TYPE8, TYPE16) \
+  template <class TM>                                           \
+  inline TYPE2& operator O (const TYPE2 &a, const TYPE2 &b){    \
+    a.x O b.x; a.y O b.y;                                       \
+    return a;                                                   \
+  }                                                             \
+  template <class TM>                                           \
+  inline TYPE2& operator O (const TYPE2 &a, const TM2 &b){      \
+    a.x O b; a.y O b;                                           \
+    return a;                                                   \
+  }                                                             \
+                                                                \
+  template <class TM>                                           \
+  inline TYPE3& operator O (const TYPE3 &a, const TYPE3 &b){    \
+    a.x O b.x; a.y O b.y; a.a.z O b.z;                          \
+    return a;                                                   \
+  }                                                             \
+  template <class TM>                                           \
+  inline TYPE3& operator O (const TYPE3 &a, const TM2 &b){      \
+    a.x O b; a.y O b; a.z O b;                                  \
+    return a;                                                   \
+  }                                                             \
+                                                                \
+  template <class TM>                                           \
+  inline TYPE4& operator O (const TYPE4 &a, const TYPE4 &b){    \
+    a.x O b.x; a.y O b.y; a.z O b.z; a.a.w O b.w;               \
+    return a;                                                   \
+  }                                                             \
+  template <class TM>                                           \
+  inline TYPE4& operator O (const TYPE4 &a, const TM2 &b){      \
+    a.x O b; a.y O b; a.z O b; a.w O b;                         \
+    return a;                                                   \
+  }                                                             \
+                                                                \
+  template <class TM>                                           \
+  inline TYPE8& operator O (const TYPE8 &a, const TYPE8 &b){    \
+    a.x  O b.x;  a.y  O b.y;  a.z  O b.z;  a.w  O b.w;          \
+    a.s4 O b.s4; a.s5 O b.s5; a.s6 O b.s6; a.s7 O b.s7;         \
+    return a;                                                   \
+  }                                                             \
+  template <class TM>                                           \
+  inline TYPE8& operator O (const TYPE8 &a, const TM2 &b){      \
+    a.x  O b; a.y  O b; a.z  O b; a.w  O b;                     \
+    a.s4 O b; a.s5 O b; a.s6 O b; a.s7 O b;                     \
+    return a;                                                   \
+  }                                                             \
+                                                                \
+  template <class TM>                                           \
+  inline TYPE16& operator O (const TYPE16 &a, const TYPE16 &b){ \
+    a.x   O b.x;  a. y  O b.y;    a.z   O b.z;   a.w   O b.w;   \
+    a.s4  O b.s4;  a.s5 O b.s5;   a.s6  O b.s6;  a.s7  O b.s7;  \
+    a.s8  O b.s8;  a.s9 O b.s9;   a.s10 O b.s10; a.s11 O b.s11; \
+    a.s12 O b.s12; a.s13 O b.s13; a.s14 O b.s14; a.s15 O b.s15; \
+    return a;                                                   \
+  }                                                             \
+  template <class TM>                                           \
+  inline TYPE16& operator O (const TYPE16 &a, const TM2 &b){    \
+    a.x   O b; a.y  O b;  a.z   O b; a.w   O b;                 \
+    a.s4  O b; a.s5 O b;  a.s6  O b; a.s7  O b;                 \
+    a.s8  O b; a.s9 O b;  a.s10 O b; a.s11 O b;                 \
+    a.s12 O b; a.s13 O b; a.s14 O b; a.s15 O b;                 \
+    return a;                                                   \
+  }
+
+OCCA_TYPE_OPERATORS(+);
+OCCA_TYPE_OPERATORS(-);
+OCCA_TYPE_OPERATORS(*);
+OCCA_TYPE_OPERATORS(/);
+
+OCCA_TYPE_EQUAL_OPERATORS(+=);
+OCCA_TYPE_EQUAL_OPERATORS(-=);
+OCCA_TYPE_EQUAL_OPERATORS(*=);
+OCCA_TYPE_EQUAL_OPERATORS(/=);
+//================================================
+
+
 //---[ Loop Info ]--------------------------------
 #define occaOuterDim2 gridDim.z
 #define occaOuterId2  blockIdx.z
