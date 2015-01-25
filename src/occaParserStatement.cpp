@@ -690,12 +690,20 @@ namespace occa {
       const std::string decl0 = "const int " + doStart + " = " + exp0;
       const std::string decl1 = "const int " + doEnd   + " = " + exp1;
 
+      OCCA_CHECK(exp0.size() != 0,
+                 "Error, missing 1st statement in the [DO]: " << toString() << '\n');
+      OCCA_CHECK(exp1.size() != 0,
+                 "Error, missing 2nd statement in the [DO]: " << toString() << '\n');
+
       sInfo->up->addStatementFromSource(decl0);
       sInfo->up->addStatementFromSource(decl1);
 
       if(statementCount == 3){
         const std::string exp2  = toString(pos[2], (pos[3] - pos[2] - 1));
         const std::string decl2 = "const int " + doStride + " = " + exp2;
+
+        OCCA_CHECK(exp2.size() != 0,
+                   "Error, missing 3rd statement in the [DO]: " << toString() << '\n');
 
         sInfo->up->addStatementFromSource(decl2);
 
