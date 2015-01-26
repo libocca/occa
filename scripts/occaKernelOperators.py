@@ -300,7 +300,7 @@ def cOperatorDefinition(N):
                          '      }\n' + \
                          '      else{\n' + \
                          '        occaType_t &__occa_type__ = *((occaType_t*) arg' + str(n) + ');\n' + \
-                         '        __occa_kernel__.addArgument(' + str(n) + ', occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));\n' + \
+                         '        __occa_kernel__.addArgument(' + str(n) + ', occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));\n' + \
                          '      }\n' + \
                          '    }\n')
 

@@ -16,6 +16,7 @@ extern "C" {
   // [-] Keep [int type] as the first entry
   struct occaType_t {
     int type;
+    uintptr_t bytes;
     occa::kernelArg_t value;
   };
 
@@ -29,26 +30,12 @@ extern "C" {
   const uintptr_t occaAutoSize = 0;
   const uintptr_t occaNoOffset = 0;
 
-  const uintptr_t occaTypeSize[OCCA_TYPE_COUNT] = {
-    sizeof(void*),
-    sizeof(int),
-    sizeof(unsigned int),
-    sizeof(char),
-    sizeof(unsigned char),
-    sizeof(short),
-    sizeof(unsigned short),
-    sizeof(long),
-    sizeof(unsigned long),
-    sizeof(float),
-    sizeof(double),
-    sizeof(char *)
-  };
-
   //---[ TypeCasting ]------------------
   occaType OCCA_RFUNC occaInt(int value){
     occaType_t *type = new occaType_t;
 
     type->type       = OCCA_TYPE_INT;
+    type->bytes      = sizeof(int);
     type->value.int_ = value;
 
     return (occaType) type;
@@ -58,6 +45,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type        = OCCA_TYPE_UINT;
+    type->bytes       = sizeof(unsigned int);
     type->value.uint_ = value;
 
     return (occaType) type;
@@ -67,6 +55,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type        = OCCA_TYPE_CHAR;
+    type->bytes       = sizeof(char);
     type->value.char_ = value;
 
     return (occaType) type;
@@ -76,6 +65,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type         = OCCA_TYPE_UCHAR;
+    type->bytes        = sizeof(unsigned char);
     type->value.uchar_ = value;
 
     return (occaType) type;
@@ -85,6 +75,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type         = OCCA_TYPE_SHORT;
+    type->bytes        = sizeof(short);
     type->value.short_ = value;
 
     return (occaType) type;
@@ -94,6 +85,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type          = OCCA_TYPE_USHORT;
+    type->bytes         = sizeof(unsigned short);
     type->value.ushort_ = value;
 
     return (occaType) type;
@@ -103,6 +95,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type        = OCCA_TYPE_LONG;
+    type->bytes       = sizeof(long);
     type->value.long_ = value;
 
     return (occaType) type;
@@ -111,7 +104,8 @@ extern "C" {
   occaType OCCA_RFUNC occaULong(unsigned long value){
     occaType_t *type = new occaType_t;
 
-    type->type          = OCCA_TYPE_ULONG;
+    type->type             = OCCA_TYPE_ULONG;
+    type->bytes            = sizeof(unsigned long);
     type->value.uintptr_t_ = value;
 
     return (occaType) type;
@@ -121,6 +115,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type         = OCCA_TYPE_FLOAT;
+    type->bytes        = sizeof(float);
     type->value.float_ = value;
 
     return (occaType) type;
@@ -130,7 +125,18 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type          = OCCA_TYPE_DOUBLE;
+    type->bytes         = sizeof(double);
     type->value.double_ = value;
+
+    return (occaType) type;
+  }
+
+  occaType OCCA_RFUNC occaStruct(void *value, uintptr_t bytes){
+    occaType_t *type = new occaType_t;
+
+    type->type        = OCCA_TYPE_STRUCT;
+    type->bytes       = bytes;
+    type->value.void_ = value;
 
     return (occaType) type;
   }
@@ -139,6 +145,7 @@ extern "C" {
     occaType_t *type = new occaType_t;
 
     type->type        = OCCA_TYPE_STRING;
+    type->bytes       = sizeof(char *);
     type->value.void_ = value;
 
     return (occaType) type;
@@ -448,7 +455,7 @@ extern "C" {
         occaType_t &type_ = *((occaType_t*) list_.argv[i]);
 
         kernel_.addArgument(i, occa::kernelArg(type_.value,
-                                               occaTypeSize[type_.type],
+                                               type_.bytes,
                                                false));
       }
     }

@@ -41,8 +41,9 @@
 #define OCCA_TYPE_ULONG  8
 #define OCCA_TYPE_FLOAT  9
 #define OCCA_TYPE_DOUBLE 10
-#define OCCA_TYPE_STRING 11
-#define OCCA_TYPE_COUNT  12
+#define OCCA_TYPE_STRUCT 11
+#define OCCA_TYPE_STRING 12
+#define OCCA_TYPE_COUNT  13
 
 #  ifdef __cplusplus
 extern "C" {
@@ -74,8 +75,6 @@ extern "C" {
   extern OCCA_LFUNC const uintptr_t occaAutoSize;
   extern OCCA_LFUNC const uintptr_t occaNoOffset;
 
-  extern OCCA_LFUNC const uintptr_t occaTypeSize[OCCA_TYPE_COUNT];
-
   //---[ TypeCasting ]------------------
   OCCA_LFUNC occaType OCCA_RFUNC occaInt(int value);
   OCCA_LFUNC occaType OCCA_RFUNC occaUInt(unsigned int value);
@@ -91,6 +90,8 @@ extern "C" {
 
   OCCA_LFUNC occaType OCCA_RFUNC occaFloat(float value);
   OCCA_LFUNC occaType OCCA_RFUNC occaDouble(double value);
+
+  OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value, uintptr_t bytes);
 
   OCCA_LFUNC occaType OCCA_RFUNC occaString(char *str);
   //====================================

@@ -8,7 +8,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -25,7 +25,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -35,7 +35,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -52,7 +52,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -62,7 +62,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -72,7 +72,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -90,7 +90,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -100,7 +100,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -110,7 +110,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -120,7 +120,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -138,7 +138,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -148,7 +148,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -158,7 +158,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -168,7 +168,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -178,7 +178,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -196,7 +196,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -206,7 +206,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -216,7 +216,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -226,7 +226,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -236,7 +236,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -246,7 +246,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -265,7 +265,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -275,7 +275,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -285,7 +285,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -295,7 +295,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -305,7 +305,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -315,7 +315,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -325,7 +325,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -344,7 +344,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -354,7 +354,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -364,7 +364,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -374,7 +374,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -384,7 +384,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -394,7 +394,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -404,7 +404,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -414,7 +414,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -433,7 +433,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -443,7 +443,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -453,7 +453,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -463,7 +463,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -473,7 +473,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -483,7 +483,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -493,7 +493,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -503,7 +503,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -513,7 +513,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -533,7 +533,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -543,7 +543,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -553,7 +553,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -563,7 +563,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -573,7 +573,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -583,7 +583,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -593,7 +593,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -603,7 +603,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -613,7 +613,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -623,7 +623,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -643,7 +643,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -653,7 +653,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -663,7 +663,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -673,7 +673,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -683,7 +683,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -693,7 +693,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -703,7 +703,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -713,7 +713,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -723,7 +723,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -733,7 +733,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -743,7 +743,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -763,7 +763,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -773,7 +773,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -783,7 +783,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -793,7 +793,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -803,7 +803,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -813,7 +813,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -823,7 +823,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -833,7 +833,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -843,7 +843,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -853,7 +853,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -863,7 +863,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -873,7 +873,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -894,7 +894,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -904,7 +904,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -914,7 +914,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -924,7 +924,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -934,7 +934,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -944,7 +944,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -954,7 +954,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -964,7 +964,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -974,7 +974,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -984,7 +984,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -994,7 +994,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1004,7 +1004,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1014,7 +1014,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -1035,7 +1035,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1045,7 +1045,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1055,7 +1055,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1065,7 +1065,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1075,7 +1075,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1085,7 +1085,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1095,7 +1095,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1105,7 +1105,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1115,7 +1115,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1125,7 +1125,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1135,7 +1135,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1145,7 +1145,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1155,7 +1155,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1165,7 +1165,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -1186,7 +1186,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1196,7 +1196,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1206,7 +1206,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1216,7 +1216,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1226,7 +1226,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1236,7 +1236,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1246,7 +1246,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1256,7 +1256,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1266,7 +1266,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1276,7 +1276,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1286,7 +1286,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1296,7 +1296,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1306,7 +1306,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1316,7 +1316,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1326,7 +1326,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -1348,7 +1348,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1358,7 +1358,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1368,7 +1368,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1378,7 +1378,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1388,7 +1388,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1398,7 +1398,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1408,7 +1408,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1418,7 +1418,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1428,7 +1428,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1438,7 +1438,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1448,7 +1448,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1458,7 +1458,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1468,7 +1468,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1478,7 +1478,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1488,7 +1488,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1498,7 +1498,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -1520,7 +1520,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1530,7 +1530,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1540,7 +1540,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1550,7 +1550,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1560,7 +1560,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1570,7 +1570,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1580,7 +1580,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1590,7 +1590,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1600,7 +1600,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1610,7 +1610,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1620,7 +1620,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1630,7 +1630,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1640,7 +1640,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1650,7 +1650,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1660,7 +1660,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1670,7 +1670,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1680,7 +1680,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -1702,7 +1702,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1712,7 +1712,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1722,7 +1722,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1732,7 +1732,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1742,7 +1742,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1752,7 +1752,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1762,7 +1762,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1772,7 +1772,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1782,7 +1782,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1792,7 +1792,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1802,7 +1802,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1812,7 +1812,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1822,7 +1822,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1832,7 +1832,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1842,7 +1842,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1852,7 +1852,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1862,7 +1862,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1872,7 +1872,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -1895,7 +1895,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1905,7 +1905,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1915,7 +1915,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1925,7 +1925,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1935,7 +1935,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1945,7 +1945,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1955,7 +1955,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1965,7 +1965,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1975,7 +1975,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1985,7 +1985,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -1995,7 +1995,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2005,7 +2005,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2015,7 +2015,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2025,7 +2025,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2035,7 +2035,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2045,7 +2045,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2055,7 +2055,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2065,7 +2065,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2075,7 +2075,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -2098,7 +2098,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2108,7 +2108,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2118,7 +2118,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2128,7 +2128,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2138,7 +2138,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2148,7 +2148,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2158,7 +2158,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2168,7 +2168,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2178,7 +2178,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2188,7 +2188,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2198,7 +2198,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2208,7 +2208,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2218,7 +2218,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2228,7 +2228,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2238,7 +2238,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2248,7 +2248,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2258,7 +2258,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2268,7 +2268,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2278,7 +2278,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2288,7 +2288,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -2311,7 +2311,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2321,7 +2321,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2331,7 +2331,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2341,7 +2341,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2351,7 +2351,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2361,7 +2361,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2371,7 +2371,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2381,7 +2381,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2391,7 +2391,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2401,7 +2401,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2411,7 +2411,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2421,7 +2421,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2431,7 +2431,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2441,7 +2441,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2451,7 +2451,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2461,7 +2461,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2471,7 +2471,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2481,7 +2481,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2491,7 +2491,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2501,7 +2501,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2511,7 +2511,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -2535,7 +2535,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2545,7 +2545,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2555,7 +2555,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2565,7 +2565,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2575,7 +2575,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2585,7 +2585,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2595,7 +2595,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2605,7 +2605,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2615,7 +2615,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2625,7 +2625,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2635,7 +2635,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2645,7 +2645,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2655,7 +2655,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2665,7 +2665,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2675,7 +2675,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2685,7 +2685,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2695,7 +2695,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2705,7 +2705,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2715,7 +2715,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2725,7 +2725,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2735,7 +2735,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2745,7 +2745,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -2769,7 +2769,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2779,7 +2779,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2789,7 +2789,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2799,7 +2799,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2809,7 +2809,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2819,7 +2819,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2829,7 +2829,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2839,7 +2839,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2849,7 +2849,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2859,7 +2859,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2869,7 +2869,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2879,7 +2879,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2889,7 +2889,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2899,7 +2899,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2909,7 +2909,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2919,7 +2919,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2929,7 +2929,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2939,7 +2939,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2949,7 +2949,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2959,7 +2959,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2969,7 +2969,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2979,7 +2979,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -2989,7 +2989,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -3013,7 +3013,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3023,7 +3023,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3033,7 +3033,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3043,7 +3043,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3053,7 +3053,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3063,7 +3063,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3073,7 +3073,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3083,7 +3083,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3093,7 +3093,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3103,7 +3103,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3113,7 +3113,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3123,7 +3123,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3133,7 +3133,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3143,7 +3143,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3153,7 +3153,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3163,7 +3163,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3173,7 +3173,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3183,7 +3183,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3193,7 +3193,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3203,7 +3203,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3213,7 +3213,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3223,7 +3223,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3233,7 +3233,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3243,7 +3243,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -3268,7 +3268,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3278,7 +3278,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3288,7 +3288,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3298,7 +3298,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3308,7 +3308,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3318,7 +3318,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3328,7 +3328,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3338,7 +3338,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3348,7 +3348,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3358,7 +3358,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3368,7 +3368,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3378,7 +3378,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3388,7 +3388,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3398,7 +3398,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3408,7 +3408,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3418,7 +3418,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3428,7 +3428,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3438,7 +3438,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3448,7 +3448,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3458,7 +3458,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3468,7 +3468,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3478,7 +3478,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3488,7 +3488,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3498,7 +3498,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3508,7 +3508,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -3533,7 +3533,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3543,7 +3543,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3553,7 +3553,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3563,7 +3563,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3573,7 +3573,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3583,7 +3583,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3593,7 +3593,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3603,7 +3603,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3613,7 +3613,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3623,7 +3623,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3633,7 +3633,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3643,7 +3643,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3653,7 +3653,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3663,7 +3663,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3673,7 +3673,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3683,7 +3683,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3693,7 +3693,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3703,7 +3703,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3713,7 +3713,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3723,7 +3723,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3733,7 +3733,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3743,7 +3743,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3753,7 +3753,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3763,7 +3763,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3773,7 +3773,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3783,7 +3783,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -3808,7 +3808,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3818,7 +3818,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3828,7 +3828,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3838,7 +3838,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3848,7 +3848,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3858,7 +3858,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3868,7 +3868,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3878,7 +3878,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3888,7 +3888,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3898,7 +3898,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3908,7 +3908,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3918,7 +3918,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3928,7 +3928,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3938,7 +3938,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3948,7 +3948,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3958,7 +3958,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3968,7 +3968,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3978,7 +3978,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3988,7 +3988,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -3998,7 +3998,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4008,7 +4008,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4018,7 +4018,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4028,7 +4028,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4038,7 +4038,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4048,7 +4048,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4058,7 +4058,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4068,7 +4068,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -4094,7 +4094,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4104,7 +4104,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4114,7 +4114,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4124,7 +4124,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4134,7 +4134,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4144,7 +4144,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4154,7 +4154,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4164,7 +4164,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4174,7 +4174,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4184,7 +4184,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4194,7 +4194,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4204,7 +4204,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4214,7 +4214,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4224,7 +4224,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4234,7 +4234,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4244,7 +4244,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4254,7 +4254,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4264,7 +4264,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4274,7 +4274,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4284,7 +4284,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4294,7 +4294,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4304,7 +4304,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4314,7 +4314,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4324,7 +4324,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4334,7 +4334,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4344,7 +4344,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4354,7 +4354,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4364,7 +4364,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -4390,7 +4390,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4400,7 +4400,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4410,7 +4410,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4420,7 +4420,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4430,7 +4430,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4440,7 +4440,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4450,7 +4450,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4460,7 +4460,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4470,7 +4470,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4480,7 +4480,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4490,7 +4490,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4500,7 +4500,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4510,7 +4510,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4520,7 +4520,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4530,7 +4530,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4540,7 +4540,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4550,7 +4550,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4560,7 +4560,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4570,7 +4570,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4580,7 +4580,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4590,7 +4590,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4600,7 +4600,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4610,7 +4610,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4620,7 +4620,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4630,7 +4630,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4640,7 +4640,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4650,7 +4650,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4660,7 +4660,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4670,7 +4670,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -4696,7 +4696,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4706,7 +4706,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4716,7 +4716,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4726,7 +4726,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4736,7 +4736,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4746,7 +4746,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4756,7 +4756,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4766,7 +4766,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4776,7 +4776,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4786,7 +4786,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4796,7 +4796,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4806,7 +4806,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4816,7 +4816,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4826,7 +4826,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4836,7 +4836,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4846,7 +4846,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4856,7 +4856,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4866,7 +4866,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4876,7 +4876,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4886,7 +4886,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4896,7 +4896,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4906,7 +4906,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4916,7 +4916,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4926,7 +4926,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4936,7 +4936,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4946,7 +4946,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4956,7 +4956,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4966,7 +4966,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4976,7 +4976,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -4986,7 +4986,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -5013,7 +5013,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5023,7 +5023,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5033,7 +5033,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5043,7 +5043,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5053,7 +5053,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5063,7 +5063,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5073,7 +5073,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5083,7 +5083,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5093,7 +5093,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5103,7 +5103,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5113,7 +5113,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5123,7 +5123,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5133,7 +5133,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5143,7 +5143,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5153,7 +5153,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5163,7 +5163,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5173,7 +5173,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5183,7 +5183,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5193,7 +5193,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5203,7 +5203,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5213,7 +5213,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5223,7 +5223,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5233,7 +5233,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5243,7 +5243,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5253,7 +5253,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5263,7 +5263,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5273,7 +5273,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5283,7 +5283,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5293,7 +5293,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5303,7 +5303,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5313,7 +5313,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -5340,7 +5340,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5350,7 +5350,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5360,7 +5360,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5370,7 +5370,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5380,7 +5380,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5390,7 +5390,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5400,7 +5400,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5410,7 +5410,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5420,7 +5420,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5430,7 +5430,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5440,7 +5440,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5450,7 +5450,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5460,7 +5460,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5470,7 +5470,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5480,7 +5480,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5490,7 +5490,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5500,7 +5500,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5510,7 +5510,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5520,7 +5520,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5530,7 +5530,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5540,7 +5540,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5550,7 +5550,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5560,7 +5560,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5570,7 +5570,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5580,7 +5580,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5590,7 +5590,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5600,7 +5600,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5610,7 +5610,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5620,7 +5620,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5630,7 +5630,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5640,7 +5640,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5650,7 +5650,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -5677,7 +5677,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5687,7 +5687,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5697,7 +5697,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5707,7 +5707,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5717,7 +5717,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5727,7 +5727,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5737,7 +5737,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5747,7 +5747,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5757,7 +5757,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5767,7 +5767,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5777,7 +5777,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5787,7 +5787,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5797,7 +5797,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5807,7 +5807,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5817,7 +5817,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5827,7 +5827,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5837,7 +5837,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5847,7 +5847,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5857,7 +5857,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5867,7 +5867,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5877,7 +5877,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5887,7 +5887,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5897,7 +5897,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5907,7 +5907,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5917,7 +5917,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5927,7 +5927,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5937,7 +5937,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5947,7 +5947,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5957,7 +5957,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5967,7 +5967,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5977,7 +5977,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5987,7 +5987,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -5997,7 +5997,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -6025,7 +6025,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6035,7 +6035,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6045,7 +6045,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6055,7 +6055,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6065,7 +6065,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6075,7 +6075,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6085,7 +6085,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6095,7 +6095,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6105,7 +6105,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6115,7 +6115,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6125,7 +6125,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6135,7 +6135,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6145,7 +6145,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6155,7 +6155,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6165,7 +6165,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6175,7 +6175,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6185,7 +6185,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6195,7 +6195,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6205,7 +6205,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6215,7 +6215,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6225,7 +6225,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6235,7 +6235,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6245,7 +6245,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6255,7 +6255,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6265,7 +6265,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6275,7 +6275,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6285,7 +6285,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6295,7 +6295,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6305,7 +6305,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6315,7 +6315,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6325,7 +6325,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6335,7 +6335,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6345,7 +6345,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6355,7 +6355,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -6383,7 +6383,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6393,7 +6393,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6403,7 +6403,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6413,7 +6413,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6423,7 +6423,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6433,7 +6433,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6443,7 +6443,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6453,7 +6453,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6463,7 +6463,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6473,7 +6473,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6483,7 +6483,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6493,7 +6493,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6503,7 +6503,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6513,7 +6513,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6523,7 +6523,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6533,7 +6533,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6543,7 +6543,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6553,7 +6553,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6563,7 +6563,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6573,7 +6573,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6583,7 +6583,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6593,7 +6593,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6603,7 +6603,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6613,7 +6613,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6623,7 +6623,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6633,7 +6633,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6643,7 +6643,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6653,7 +6653,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6663,7 +6663,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6673,7 +6673,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6683,7 +6683,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6693,7 +6693,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6703,7 +6703,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6713,7 +6713,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6723,7 +6723,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -6751,7 +6751,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6761,7 +6761,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6771,7 +6771,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6781,7 +6781,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6791,7 +6791,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6801,7 +6801,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6811,7 +6811,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6821,7 +6821,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6831,7 +6831,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6841,7 +6841,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6851,7 +6851,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6861,7 +6861,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6871,7 +6871,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6881,7 +6881,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6891,7 +6891,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6901,7 +6901,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6911,7 +6911,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6921,7 +6921,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6931,7 +6931,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6941,7 +6941,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6951,7 +6951,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6961,7 +6961,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6971,7 +6971,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6981,7 +6981,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -6991,7 +6991,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7001,7 +7001,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7011,7 +7011,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7021,7 +7021,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7031,7 +7031,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7041,7 +7041,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7051,7 +7051,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7061,7 +7061,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7071,7 +7071,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7081,7 +7081,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7091,7 +7091,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7101,7 +7101,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -7130,7 +7130,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7140,7 +7140,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7150,7 +7150,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7160,7 +7160,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7170,7 +7170,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7180,7 +7180,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7190,7 +7190,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7200,7 +7200,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7210,7 +7210,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7220,7 +7220,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7230,7 +7230,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7240,7 +7240,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7250,7 +7250,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7260,7 +7260,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7270,7 +7270,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7280,7 +7280,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7290,7 +7290,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7300,7 +7300,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7310,7 +7310,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7320,7 +7320,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7330,7 +7330,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7340,7 +7340,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7350,7 +7350,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7360,7 +7360,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7370,7 +7370,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7380,7 +7380,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7390,7 +7390,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7400,7 +7400,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7410,7 +7410,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7420,7 +7420,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7430,7 +7430,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7440,7 +7440,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7450,7 +7450,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7460,7 +7460,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7470,7 +7470,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7480,7 +7480,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7490,7 +7490,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -7519,7 +7519,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7529,7 +7529,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7539,7 +7539,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7549,7 +7549,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7559,7 +7559,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7569,7 +7569,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7579,7 +7579,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7589,7 +7589,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7599,7 +7599,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7609,7 +7609,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7619,7 +7619,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7629,7 +7629,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7639,7 +7639,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7649,7 +7649,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7659,7 +7659,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7669,7 +7669,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7679,7 +7679,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7689,7 +7689,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7699,7 +7699,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7709,7 +7709,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7719,7 +7719,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7729,7 +7729,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7739,7 +7739,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7749,7 +7749,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7759,7 +7759,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7769,7 +7769,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7779,7 +7779,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7789,7 +7789,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7799,7 +7799,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7809,7 +7809,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7819,7 +7819,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7829,7 +7829,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7839,7 +7839,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7849,7 +7849,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7859,7 +7859,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7869,7 +7869,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7879,7 +7879,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7889,7 +7889,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -7918,7 +7918,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7928,7 +7928,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7938,7 +7938,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7948,7 +7948,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7958,7 +7958,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7968,7 +7968,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7978,7 +7978,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7988,7 +7988,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -7998,7 +7998,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8008,7 +8008,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8018,7 +8018,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8028,7 +8028,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8038,7 +8038,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8048,7 +8048,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8058,7 +8058,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8068,7 +8068,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8078,7 +8078,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8088,7 +8088,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8098,7 +8098,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8108,7 +8108,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8118,7 +8118,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8128,7 +8128,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8138,7 +8138,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8148,7 +8148,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8158,7 +8158,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8168,7 +8168,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8178,7 +8178,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8188,7 +8188,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8198,7 +8198,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8208,7 +8208,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8218,7 +8218,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8228,7 +8228,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8238,7 +8238,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8248,7 +8248,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8258,7 +8258,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8268,7 +8268,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8278,7 +8278,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8288,7 +8288,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8298,7 +8298,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -8328,7 +8328,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8338,7 +8338,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8348,7 +8348,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8358,7 +8358,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8368,7 +8368,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8378,7 +8378,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8388,7 +8388,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8398,7 +8398,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8408,7 +8408,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8418,7 +8418,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8428,7 +8428,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8438,7 +8438,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8448,7 +8448,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8458,7 +8458,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8468,7 +8468,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8478,7 +8478,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8488,7 +8488,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8498,7 +8498,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8508,7 +8508,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8518,7 +8518,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8528,7 +8528,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8538,7 +8538,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8548,7 +8548,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8558,7 +8558,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8568,7 +8568,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8578,7 +8578,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8588,7 +8588,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8598,7 +8598,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8608,7 +8608,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8618,7 +8618,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8628,7 +8628,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8638,7 +8638,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8648,7 +8648,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8658,7 +8658,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8668,7 +8668,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8678,7 +8678,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8688,7 +8688,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8698,7 +8698,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8708,7 +8708,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8718,7 +8718,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -8748,7 +8748,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8758,7 +8758,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8768,7 +8768,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8778,7 +8778,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8788,7 +8788,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8798,7 +8798,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8808,7 +8808,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8818,7 +8818,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8828,7 +8828,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8838,7 +8838,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8848,7 +8848,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8858,7 +8858,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8868,7 +8868,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8878,7 +8878,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8888,7 +8888,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8898,7 +8898,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8908,7 +8908,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8918,7 +8918,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8928,7 +8928,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8938,7 +8938,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8948,7 +8948,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8958,7 +8958,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8968,7 +8968,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8978,7 +8978,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8988,7 +8988,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -8998,7 +8998,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9008,7 +9008,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9018,7 +9018,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9028,7 +9028,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9038,7 +9038,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9048,7 +9048,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9058,7 +9058,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9068,7 +9068,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9078,7 +9078,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9088,7 +9088,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9098,7 +9098,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9108,7 +9108,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9118,7 +9118,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9128,7 +9128,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9138,7 +9138,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9148,7 +9148,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -9178,7 +9178,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9188,7 +9188,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9198,7 +9198,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9208,7 +9208,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9218,7 +9218,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9228,7 +9228,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9238,7 +9238,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9248,7 +9248,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9258,7 +9258,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9268,7 +9268,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9278,7 +9278,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9288,7 +9288,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9298,7 +9298,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9308,7 +9308,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9318,7 +9318,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9328,7 +9328,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9338,7 +9338,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9348,7 +9348,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9358,7 +9358,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9368,7 +9368,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9378,7 +9378,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9388,7 +9388,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9398,7 +9398,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9408,7 +9408,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9418,7 +9418,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9428,7 +9428,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9438,7 +9438,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9448,7 +9448,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9458,7 +9458,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9468,7 +9468,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9478,7 +9478,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9488,7 +9488,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9498,7 +9498,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9508,7 +9508,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9518,7 +9518,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9528,7 +9528,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9538,7 +9538,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9548,7 +9548,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9558,7 +9558,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9568,7 +9568,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9578,7 +9578,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9588,7 +9588,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -9619,7 +9619,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9629,7 +9629,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9639,7 +9639,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9649,7 +9649,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9659,7 +9659,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9669,7 +9669,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9679,7 +9679,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9689,7 +9689,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9699,7 +9699,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9709,7 +9709,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9719,7 +9719,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9729,7 +9729,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9739,7 +9739,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9749,7 +9749,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9759,7 +9759,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9769,7 +9769,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9779,7 +9779,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9789,7 +9789,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9799,7 +9799,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9809,7 +9809,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9819,7 +9819,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9829,7 +9829,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9839,7 +9839,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9849,7 +9849,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9859,7 +9859,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9869,7 +9869,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9879,7 +9879,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9889,7 +9889,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9899,7 +9899,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9909,7 +9909,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9919,7 +9919,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9929,7 +9929,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9939,7 +9939,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9949,7 +9949,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9959,7 +9959,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9969,7 +9969,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9979,7 +9979,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9989,7 +9989,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -9999,7 +9999,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10009,7 +10009,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10019,7 +10019,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10029,7 +10029,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10039,7 +10039,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -10070,7 +10070,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10080,7 +10080,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10090,7 +10090,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10100,7 +10100,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10110,7 +10110,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10120,7 +10120,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10130,7 +10130,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10140,7 +10140,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10150,7 +10150,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10160,7 +10160,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10170,7 +10170,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10180,7 +10180,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10190,7 +10190,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10200,7 +10200,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10210,7 +10210,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10220,7 +10220,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10230,7 +10230,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10240,7 +10240,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10250,7 +10250,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10260,7 +10260,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10270,7 +10270,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10280,7 +10280,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10290,7 +10290,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10300,7 +10300,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10310,7 +10310,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10320,7 +10320,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10330,7 +10330,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10340,7 +10340,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10350,7 +10350,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10360,7 +10360,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10370,7 +10370,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10380,7 +10380,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10390,7 +10390,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10400,7 +10400,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10410,7 +10410,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10420,7 +10420,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10430,7 +10430,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10440,7 +10440,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10450,7 +10450,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10460,7 +10460,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10470,7 +10470,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10480,7 +10480,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10490,7 +10490,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10500,7 +10500,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -10531,7 +10531,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10541,7 +10541,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10551,7 +10551,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10561,7 +10561,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10571,7 +10571,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10581,7 +10581,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10591,7 +10591,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10601,7 +10601,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10611,7 +10611,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10621,7 +10621,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10631,7 +10631,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10641,7 +10641,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10651,7 +10651,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10661,7 +10661,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10671,7 +10671,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10681,7 +10681,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10691,7 +10691,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10701,7 +10701,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10711,7 +10711,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10721,7 +10721,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10731,7 +10731,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10741,7 +10741,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10751,7 +10751,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10761,7 +10761,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10771,7 +10771,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10781,7 +10781,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10791,7 +10791,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10801,7 +10801,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10811,7 +10811,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10821,7 +10821,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10831,7 +10831,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10841,7 +10841,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10851,7 +10851,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10861,7 +10861,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10871,7 +10871,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10881,7 +10881,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10891,7 +10891,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10901,7 +10901,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10911,7 +10911,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10921,7 +10921,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10931,7 +10931,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10941,7 +10941,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10951,7 +10951,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10961,7 +10961,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -10971,7 +10971,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg44);
-        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -11003,7 +11003,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11013,7 +11013,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11023,7 +11023,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11033,7 +11033,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11043,7 +11043,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11053,7 +11053,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11063,7 +11063,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11073,7 +11073,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11083,7 +11083,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11093,7 +11093,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11103,7 +11103,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11113,7 +11113,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11123,7 +11123,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11133,7 +11133,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11143,7 +11143,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11153,7 +11153,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11163,7 +11163,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11173,7 +11173,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11183,7 +11183,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11193,7 +11193,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11203,7 +11203,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11213,7 +11213,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11223,7 +11223,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11233,7 +11233,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11243,7 +11243,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11253,7 +11253,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11263,7 +11263,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11273,7 +11273,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11283,7 +11283,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11293,7 +11293,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11303,7 +11303,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11313,7 +11313,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11323,7 +11323,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11333,7 +11333,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11343,7 +11343,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11353,7 +11353,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11363,7 +11363,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11373,7 +11373,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11383,7 +11383,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11393,7 +11393,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11403,7 +11403,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11413,7 +11413,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11423,7 +11423,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11433,7 +11433,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11443,7 +11443,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg44);
-        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11453,7 +11453,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg45);
-        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -11485,7 +11485,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11495,7 +11495,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11505,7 +11505,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11515,7 +11515,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11525,7 +11525,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11535,7 +11535,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11545,7 +11545,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11555,7 +11555,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11565,7 +11565,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11575,7 +11575,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11585,7 +11585,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11595,7 +11595,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11605,7 +11605,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11615,7 +11615,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11625,7 +11625,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11635,7 +11635,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11645,7 +11645,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11655,7 +11655,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11665,7 +11665,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11675,7 +11675,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11685,7 +11685,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11695,7 +11695,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11705,7 +11705,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11715,7 +11715,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11725,7 +11725,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11735,7 +11735,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11745,7 +11745,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11755,7 +11755,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11765,7 +11765,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11775,7 +11775,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11785,7 +11785,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11795,7 +11795,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11805,7 +11805,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11815,7 +11815,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11825,7 +11825,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11835,7 +11835,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11845,7 +11845,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11855,7 +11855,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11865,7 +11865,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11875,7 +11875,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11885,7 +11885,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11895,7 +11895,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11905,7 +11905,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11915,7 +11915,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11925,7 +11925,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg44);
-        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11935,7 +11935,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg45);
-        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11945,7 +11945,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg46);
-        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -11977,7 +11977,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11987,7 +11987,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -11997,7 +11997,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12007,7 +12007,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12017,7 +12017,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12027,7 +12027,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12037,7 +12037,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12047,7 +12047,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12057,7 +12057,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12067,7 +12067,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12077,7 +12077,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12087,7 +12087,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12097,7 +12097,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12107,7 +12107,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12117,7 +12117,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12127,7 +12127,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12137,7 +12137,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12147,7 +12147,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12157,7 +12157,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12167,7 +12167,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12177,7 +12177,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12187,7 +12187,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12197,7 +12197,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12207,7 +12207,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12217,7 +12217,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12227,7 +12227,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12237,7 +12237,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12247,7 +12247,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12257,7 +12257,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12267,7 +12267,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12277,7 +12277,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12287,7 +12287,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12297,7 +12297,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12307,7 +12307,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12317,7 +12317,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12327,7 +12327,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12337,7 +12337,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12347,7 +12347,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12357,7 +12357,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12367,7 +12367,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12377,7 +12377,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12387,7 +12387,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12397,7 +12397,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12407,7 +12407,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12417,7 +12417,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg44);
-        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12427,7 +12427,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg45);
-        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12437,7 +12437,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg46);
-        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12447,7 +12447,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg47);
-        __occa_kernel__.addArgument(47, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(47, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -12480,7 +12480,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12490,7 +12490,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12500,7 +12500,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12510,7 +12510,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12520,7 +12520,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12530,7 +12530,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12540,7 +12540,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12550,7 +12550,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12560,7 +12560,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12570,7 +12570,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12580,7 +12580,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12590,7 +12590,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12600,7 +12600,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12610,7 +12610,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12620,7 +12620,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12630,7 +12630,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12640,7 +12640,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12650,7 +12650,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12660,7 +12660,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12670,7 +12670,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12680,7 +12680,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12690,7 +12690,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12700,7 +12700,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12710,7 +12710,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12720,7 +12720,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12730,7 +12730,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12740,7 +12740,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12750,7 +12750,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12760,7 +12760,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12770,7 +12770,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12780,7 +12780,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12790,7 +12790,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12800,7 +12800,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12810,7 +12810,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12820,7 +12820,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12830,7 +12830,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12840,7 +12840,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12850,7 +12850,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12860,7 +12860,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12870,7 +12870,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12880,7 +12880,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12890,7 +12890,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12900,7 +12900,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12910,7 +12910,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12920,7 +12920,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg44);
-        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12930,7 +12930,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg45);
-        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12940,7 +12940,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg46);
-        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12950,7 +12950,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg47);
-        __occa_kernel__.addArgument(47, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(47, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -12960,7 +12960,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg48);
-        __occa_kernel__.addArgument(48, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(48, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
@@ -12993,7 +12993,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg0);
-        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(0, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13003,7 +13003,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg1);
-        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(1, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13013,7 +13013,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg2);
-        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(2, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13023,7 +13023,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg3);
-        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(3, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13033,7 +13033,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg4);
-        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(4, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13043,7 +13043,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg5);
-        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(5, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13053,7 +13053,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg6);
-        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(6, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13063,7 +13063,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg7);
-        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(7, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13073,7 +13073,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg8);
-        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(8, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13083,7 +13083,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg9);
-        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(9, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13093,7 +13093,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg10);
-        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(10, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13103,7 +13103,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg11);
-        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(11, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13113,7 +13113,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg12);
-        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(12, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13123,7 +13123,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg13);
-        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(13, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13133,7 +13133,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg14);
-        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(14, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13143,7 +13143,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg15);
-        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(15, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13153,7 +13153,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg16);
-        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(16, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13163,7 +13163,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg17);
-        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(17, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13173,7 +13173,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg18);
-        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(18, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13183,7 +13183,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg19);
-        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(19, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13193,7 +13193,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg20);
-        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(20, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13203,7 +13203,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg21);
-        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(21, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13213,7 +13213,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg22);
-        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(22, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13223,7 +13223,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg23);
-        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(23, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13233,7 +13233,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg24);
-        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(24, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13243,7 +13243,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg25);
-        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(25, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13253,7 +13253,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg26);
-        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(26, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13263,7 +13263,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg27);
-        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(27, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13273,7 +13273,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg28);
-        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(28, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13283,7 +13283,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg29);
-        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(29, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13293,7 +13293,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg30);
-        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(30, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13303,7 +13303,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg31);
-        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(31, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13313,7 +13313,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg32);
-        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(32, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13323,7 +13323,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg33);
-        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(33, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13333,7 +13333,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg34);
-        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(34, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13343,7 +13343,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg35);
-        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(35, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13353,7 +13353,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg36);
-        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(36, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13363,7 +13363,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg37);
-        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(37, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13373,7 +13373,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg38);
-        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(38, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13383,7 +13383,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg39);
-        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(39, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13393,7 +13393,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg40);
-        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(40, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13403,7 +13403,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg41);
-        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(41, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13413,7 +13413,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg42);
-        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(42, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13423,7 +13423,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg43);
-        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(43, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13433,7 +13433,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg44);
-        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(44, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13443,7 +13443,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg45);
-        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(45, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13453,7 +13453,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg46);
-        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(46, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13463,7 +13463,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg47);
-        __occa_kernel__.addArgument(47, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(47, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13473,7 +13473,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg48);
-        __occa_kernel__.addArgument(48, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(48, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     {
@@ -13483,7 +13483,7 @@
       }
       else{
         occaType_t &__occa_type__ = *((occaType_t*) arg49);
-        __occa_kernel__.addArgument(49, occa::kernelArg(__occa_type__.value, occaTypeSize[__occa_type__.type], false));
+        __occa_kernel__.addArgument(49, occa::kernelArg(__occa_type__.value, __occa_type__.bytes, false));
       }
     }
     __occa_kernel__.runFromArguments();
