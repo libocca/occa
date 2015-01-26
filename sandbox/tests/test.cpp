@@ -196,8 +196,14 @@ occaKernel void fd2d(tFloat *u1,
           else
             blah;
 
-          for(int i = 0; i < (2*sr + 1); i++)
+          for(int i = 0; i < (2*sr + 1); i++){
             lap += xStencil[i]*Lu[ly + sr][lx + i] + xStencil[i]*Lu[ly + i][lx + sr];
+            if(i < 2)
+              continue;
+            break;
+          }
+
+          continue;
 
           for(int i = 0; i < (2*sr + 1); i++){
             lap += xStencil[i]*Lu[ly + sr][lx + i] + xStencil[i]*Lu[ly + i][lx + sr];

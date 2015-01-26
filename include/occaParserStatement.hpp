@@ -42,15 +42,16 @@ namespace occa {
       static const int gotoLabel_      = (1 << 21);
       static const int case_           = (1 << 22);
       static const int return_         = (1 << 23);
-      static const int occaFor         = (1 << 24);
-      static const int checkSInfo      = (1 << 25);
+      static const int transfer_       = (1 << 24);
+      static const int occaFor         = (1 << 25);
+      static const int checkSInfo      = (1 << 26);
 
-      static const int varInfo         = (1 << 26);
-      static const int typeInfo        = (1 << 27);
+      static const int varInfo         = (1 << 27);
+      static const int typeInfo        = (1 << 28);
 
-      static const int printValue      = (1 << 28);
-      static const int printLeaves     = (1 << 29);
-      static const int maxBit          = 29;
+      static const int printValue      = (1 << 29);
+      static const int printLeaves     = (1 << 30);
+      static const int maxBit          = 30;
     };
 
     namespace expFlag {
@@ -533,6 +534,10 @@ namespace occa {
       //---[ Misc ]---------------------
       bool hasBarrier();
       bool hasStatementWithBarrier();
+
+      unsigned int distToForLoop();
+      unsigned int distToOccaForLoop();
+      unsigned int distToStatementType(const int info_);
 
       void setStatementIdMap(statementIdMap_t &idMap);
 

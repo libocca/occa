@@ -103,11 +103,23 @@ namespace occa {
       //---[ Special Type ]---
       if(nodeRoot->info & specialKeywordType){
         if((nodeRoot->value == "break")    ||
-           (nodeRoot->value == "continue") ||
-           (nodeRoot->value == "default")){
+           (nodeRoot->value == "continue")){
 
-          value = nodeRoot->value;
-          info  = expType::printValue;
+          std::cout << "nodeRoot->value = " << nodeRoot->value << '\n'
+                    << "sInfo->distToOccaForLoop() = " << sInfo->distToOccaForLoop() << '\n'
+                    << "sInfo->distToForLoop() = " << sInfo->distToForLoop() << '\n';
+
+          if((nodeRoot->value == "continue") &&
+             (sInfo->distToOccaForLoop() <= sInfo->distToForLoop())){
+
+            value = "occaContinue";
+            info  = expType::transfer_;
+          }
+          else{
+            value = nodeRoot->value;
+            info  = expType::transfer_;
+          }
+
           return;
         }
 
@@ -120,10 +132,13 @@ namespace occa {
 
         // Case where nodeRoot = [case, return]
 
-        if(nodeRoot->value == "case")
+        if((nodeRoot->value == "case") ||
+           (nodeRoot->value == "default")){
           info = expType::case_;
-        else if(nodeRoot->value == "return")
+        }
+        else if(nodeRoot->value == "return"){
           info = expType::return_;
+        }
       }
       //======================
 
@@ -2777,6 +2792,23 @@ namespace occa {
         break;
       }
 
+      case (expType::transfer_):{
+        out << tab;
+
+        out << value;
+
+        if(leafCount){
+          out << ' ';
+
+          for(int i = 0; i < leafCount; ++i)
+            out << *(leaves[i]);
+        }
+
+        out << ";\n";
+
+        break;
+      }
+
       case (expType::occaFor):{
         out << value << ' ';
         break;
@@ -4162,6 +4194,48 @@ namespace occa {
 
       return false;
     }
+
+    unsigned int statement::distToForLoop(){
+      return distToStatementType(forStatementType);
+    }
+
+    unsigned int statement::distToOccaForLoop(){
+      statement *s = this;
+
+      unsigned int dist = 0;
+
+      while(s){
+        if((s->info == occaForType) ||
+           ((s->info == forStatementType) &&
+            (s->getForStatementCount() == 4))){
+
+          return dist;
+        }
+
+        s = s->up;
+        ++dist;
+      }
+
+      return -1; // Maximum distance
+    }
+
+    unsigned int statement::distToStatementType(const int info_){
+      statement *s = this;
+
+      unsigned int dist = 0;
+
+      while(s){
+        if(s->info == info_)
+          return dist;
+
+        s = s->up;
+        ++dist;
+      }
+
+      return -1; // Maximum distance
+    }
+
+
 
     void statement::setStatementIdMap(statementIdMap_t &idMap){
       int startID = 0;
