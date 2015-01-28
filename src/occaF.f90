@@ -6,6 +6,7 @@ module occa
   public ::                     &
     ! occaType_t,                 &
     occaTypeMem_t,              &
+    occaSetVerboseCompilation   &
     occaDeviceSetCompiler,      &
     occaGetDevice,              &
     occaBuildKernelFromSource,  &
@@ -64,6 +65,16 @@ module occa
     module procedure occaTypeMem_real8_c
     module procedure occaTypeMem_str_c
   end interface occaTypeMem_t
+
+! ---[ Globals ]----------------------
+  interface occaSetVerboseCompilation
+    subroutine occaSetVerboseCompilation_fc(value)
+      use occaFTypes_m
+
+      implicit none
+      logical(1), intent(in) :: value
+    end subroutine occaSetVerboseCompilation_fc
+  end interface occaSetVerboseCompilation
 
 
 ! ---[ Device ]-----------------------

@@ -97,7 +97,8 @@ namespace occa {
     if(!haveFile(cachedBinary)){
       waitForFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -108,7 +109,8 @@ namespace occa {
     if(fileExists){
       releaseFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -160,7 +162,8 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
+    if(verboseCompilation_f)
+      std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
@@ -914,8 +917,6 @@ namespace occa {
 #endif
 
     ::memcpy(mem->textureInfo.arg, source, mem->size);
-
-    std::cout << "Allocating: [" << (void*) mem->textureInfo.arg << "]\n";
 
     mem->handle = &(mem->textureInfo);
 

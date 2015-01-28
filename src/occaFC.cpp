@@ -97,6 +97,7 @@
 
 #define OCCA_F2C_GLOBAL_(name,NAME) name##_
 
+#define  OCCASETVERBOSECOMPILATION_FC    OCCA_F2C_GLOBAL_(occasetverbosecompilation_fc  , OCCASETVERBOSECOMPILATION_FC)
 #define  OCCAINT_FC                      OCCA_F2C_GLOBAL_(occaint_fc                    , OCCAINT_FC)
 #define  OCCAINT32_FC                    OCCA_F2C_GLOBAL_(occaint32_fc                  , OCCAINT32_FC)
 #define  OCCAUINT_FC                     OCCA_F2C_GLOBAL_(occauint_fc                   , OCCAUINT_FC)
@@ -202,6 +203,10 @@ extern "C" {
 
 
   //---[ TypeCasting ]------------------
+  void OCCASETVERBOSECOMPILATION(const bool value){
+    occaSetVerboseCompilation(value);
+  }
+
   void OCCAINT32_FC(occaType *type, int32_t *value){
     if(sizeof(int) == 4)
       *type = occaInt(*value);

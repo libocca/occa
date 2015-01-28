@@ -70,10 +70,15 @@ extern "C" {
     uintptr_t x, y, z;
   } occaDim;
 
+  //---[ Globals & Flags ]------------
   extern OCCA_LFUNC occaKernelInfo occaNoKernelInfo;
 
   extern OCCA_LFUNC const uintptr_t occaAutoSize;
   extern OCCA_LFUNC const uintptr_t occaNoOffset;
+
+  OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const bool value);
+  //==================================
+
 
   //---[ TypeCasting ]------------------
   OCCA_LFUNC occaType OCCA_RFUNC occaInt(int value);

@@ -20,8 +20,10 @@ namespace occa {
       struct stat buffer;
       bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
-      if(fileExists)
-        std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
+      if(fileExists){
+        if(verboseCompilation_f)
+          std::cout << "Found cached binary of [occaCOIMain] in [" << cachedBinary << "]\n";
+      }
       else{
         //---[ Write File ]-----------------
         std::string prefix, name;
@@ -31,7 +33,8 @@ namespace occa {
         const std::string iCachedBinary = prefix + "i_" + name;
 
         if(haveFile(cachedBinary)){
-          std::cout << "Making [" << iCachedBinary << "]\n";
+          if(verboseCompilation_f)
+            std::cout << "Making [" << iCachedBinary << "]\n";
 
           std::ofstream fs;
           fs.open(iCachedBinary.c_str());
@@ -50,7 +53,8 @@ namespace occa {
 
           const std::string &sCommand = command.str();
 
-          std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
+          if(verboseCompilation_f)
+            std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n\n";
 
           system(sCommand.c_str());
 
@@ -234,7 +238,8 @@ namespace occa {
     if(!haveFile(cachedBinary)){
       waitForFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -245,7 +250,8 @@ namespace occa {
     if(fileExists){
       releaseFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -277,7 +283,8 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
+    if(verboseCompilation_f)
+      std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
     const int compileError = system(sCommand.c_str());
 

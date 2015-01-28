@@ -25,10 +25,17 @@ extern "C" {
     occaMemory argv[100];
   };
 
+  //---[ Globals & Flags ]------------
   occaKernelInfo occaNoKernelInfo = NULL;
 
   const uintptr_t occaAutoSize = 0;
   const uintptr_t occaNoOffset = 0;
+
+  OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const bool value){
+    occa::setVerboseCompilation(value);
+  }
+  //==================================
+
 
   //---[ TypeCasting ]------------------
   occaType OCCA_RFUNC occaInt(int value){

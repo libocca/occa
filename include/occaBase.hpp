@@ -46,7 +46,14 @@
 
 namespace occa {
   class kernelInfo;
+
+  //---[ Globals & Flags ]------------
   extern kernelInfo defaultKernelInfo;
+
+  extern bool verboseCompilation_f;
+
+  void setVerboseCompilation(const bool value);
+  //==================================
 
   //---[ Typedefs ]-------------------
   typedef void* stream;

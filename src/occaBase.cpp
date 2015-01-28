@@ -3,9 +3,17 @@
 // Use events for timing!
 
 namespace occa {
-  //---[ Helper Classes ]-------------
+  //---[ Globals & Flags ]------------
   kernelInfo defaultKernelInfo;
 
+  bool verboseCompilation_f = true;
+
+  void setVerboseCompilation(const bool value){
+    verboseCompilation_f = value;
+  }
+  //==================================
+
+  //---[ Helper Classes ]-------------
   const char* deviceInfo::header = "| Name                                      | Num | Available Modes                  |";
   const char* deviceInfo::sLine  = "+-------------------------------------------+-----+----------------------------------+";
 
@@ -897,7 +905,9 @@ namespace occa {
       bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
       if(fileExists){
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        if(verboseCompilation_f)
+          std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+
         k->buildFromBinary(cachedBinary, functionName);
       }
       else
@@ -984,7 +994,9 @@ namespace occa {
     bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
 
     if(fileExists){
-      std::cout << "Found loo.py cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found loo.py cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+
       return buildKernelFromBinary(cachedBinary, functionName);
     }
 
@@ -1012,7 +1024,8 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << sCommand << '\n';
+    if(verboseCompilation_f)
+      std::cout << sCommand << '\n';
 
     system(sCommand.c_str());
 

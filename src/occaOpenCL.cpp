@@ -219,17 +219,19 @@ namespace occa {
       if(error && cachedBinary.size())
         releaseFile(cachedBinary);
 
-      if(iCachedBinary.size()){
-        std::cout << "OpenCL compiling " << functionName
-                  << " from [" << iCachedBinary << "]";
+      if(verboseCompilation_f){
+        if(iCachedBinary.size()){
+          std::cout << "OpenCL compiling " << functionName
+                    << " from [" << iCachedBinary << "]";
 
-        if(flags.size())
-          std::cout << " with flags [" << flags << "]";
+          if(flags.size())
+            std::cout << " with flags [" << flags << "]";
 
-        std::cout << '\n';
+          std::cout << '\n';
+        }
+        else
+          std::cout << "OpenCL compiling " << functionName << " from [Library]\n";
       }
-      else
-        std::cout << "OpenCL compiling " << functionName << " from [Library]\n";
 
       OCCA_CL_CHECK("Kernel (" + functionName + ") : Constructing Program", error);
 
@@ -270,16 +272,18 @@ namespace occa {
 
       OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
 
-      if(iCachedBinary.size()){
-        std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]";
+      if(verboseCompilation_f){
+        if(iCachedBinary.size()){
+          std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]";
 
-        if(flags.size())
-          std::cout << " with flags [" << flags << "]";
+          if(flags.size())
+            std::cout << " with flags [" << flags << "]";
 
-        std::cout << '\n';
+          std::cout << '\n';
+        }
+        else
+          std::cout << "OpenCL compiled " << functionName << " from [Library]\n";
       }
-      else
-        std::cout << "OpenCL compiled " << functionName << " from [Library]\n";
     }
 
     void buildKernelFromBinary(OpenCLKernelData_t &data_,
@@ -509,7 +513,8 @@ namespace occa {
     if(!haveFile(cachedBinary)){
       waitForFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -520,7 +525,8 @@ namespace occa {
     if(fileExists){
       releaseFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -800,12 +806,6 @@ namespace occa {
         offset_[1] = (offset / bie) / textureInfo.w;
         pixels_[1] = (bytes_ / bie) / textureInfo.w;
       }
-
-      for(int i = 0; i < 3; ++i)
-        std::cout << "offset[" << i << "] = " << offset_[i] << '\n';
-
-      for(int i = 0; i < 3; ++i)
-        std::cout << "pixels[" << i << "] = " << pixels_[i] << '\n';
 
       OCCA_CL_CHECK("Texture Memory: Copy From",
                     clEnqueueReadImage(stream, *((cl_mem*) handle),

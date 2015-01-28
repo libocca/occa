@@ -162,7 +162,8 @@ namespace occa {
     if(!haveFile(cachedBinary)){
       waitForFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -173,7 +174,8 @@ namespace occa {
     if(fileExists){
       releaseFile(cachedBinary);
 
-      std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -217,7 +219,8 @@ namespace occa {
 
     const std::string &ptxCommand = command.str();
 
-    std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
+    if(verboseCompilation_f)
+      std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     system(ptxCommand.c_str());
@@ -238,7 +241,8 @@ namespace occa {
 
     const std::string &sCommand = command.str();
 
-    std::cout << sCommand << '\n';
+    if(verboseCompilation_f)
+      std::cout << sCommand << '\n';
 
     const int compileError = system(sCommand.c_str());
 
