@@ -203,7 +203,7 @@ extern "C" {
 
 
   //---[ TypeCasting ]------------------
-  void OCCASETVERBOSECOMPILATION(const bool value){
+  void OCCASETVERBOSECOMPILATION_FC(const bool value){
     occaSetVerboseCompilation(value);
   }
 
