@@ -3,22 +3,22 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv){
-  int entries = 1024;
+  int entries = 10000; // Not divisible
   int p_Nred = 256;
-  int reducedEntries = entries/p_Nred;
+  int reducedEntries = (entries + p_Nred - 1)/p_Nred;
 
   float *a    = new float[entries];
   float *aRed = new float[reducedEntries];
 
+  float trueRed = 0;
+
   for(int i = 0; i < entries; ++i){
-    a[i]  = 1;
+    a[i]     = 1;
+    trueRed += a[i];
   }
 
-  for(int i = 0; i < reducedEntries; ++i){
-    aRed[i]  = 0;
-  }
-
-  // occa::availableDevices<occa::OpenCL>();
+  for(int i = 0; i < reducedEntries; ++i)
+    aRed[i] = 0;
 
   std::string mode = "OpenMP";
   int platformID = 0;
@@ -57,18 +57,18 @@ int main(int argc, char **argv){
 
   occa::printTimer();
 
-  for(int i = 0; i < reducedEntries; ++i)
-    std::cout << i << ": " << aRed[i] << '\n';
+  for(int i = 1; i < reducedEntries; ++i)
+    aRed[0] += aRed[i];
 
-  for(int i = 0; i < reducedEntries; ++i){
-    float red = 0;
+  if(aRed[0] != trueRed){
+    std::cout << "aRed[0] = " << aRed[0] << '\n'
+              << "trueRed = " << trueRed << '\n';
 
-    for(int j = 0; j < p_Nred; ++j)
-      red += a[i];
-
-    if(aRed[i] != red)
-      throw 1;
+    std::cout << "Reduction failed\n";
+    throw 1;
   }
+  else
+    std::cout << "Reduction(a) = " << aRed[0] << '\n';
 
   delete [] a;
   delete [] aRed;

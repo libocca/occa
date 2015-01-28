@@ -8,16 +8,19 @@ occaKernel void reduction(const int entries,
     shared float s_a[p_Nred];
 
     for(int item = 0; item < p_Nred; ++item; inner0){
-      s_a[item] = a[group*p_Nred + item];
+      if((group*p_Nred + item) < entries)
+        s_a[item] = a[group*p_Nred + item];
+      else
+        s_a[item] = 0;
     }
 
-    for(int alive=p_Nred/2;alive>=1;alive/=2){
+    for(int alive = ((p_Nred + 1) / 2); 0 < alive; alive /= 2){
 
       barrier(localMemFence);
 
       for(int item = 0; item < p_Nred; ++item; inner0){
-        if(item<alive)
-          s_a[item] += s_a[item+alive];
+        if(item < alive)
+          s_a[item] += s_a[item + alive];
       }
     }
 
