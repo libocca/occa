@@ -35,6 +35,7 @@ module occa
     occaKernelFree,             &
     occaGenKernelInfo,          &
     occaKernelInfoAddDefine,    &
+    occaKernelInfoAddInclude,   &
     occaKernelInfoFree,         &
     occaDeviceWrapMemory,       &
     occaDeviceWrapStream,       &
@@ -638,6 +639,15 @@ module occa
       character,            intent(in)    :: val
     end subroutine occaKernelInfoAddDefineChar_fc
   end interface occaKernelInfoAddDefine
+
+  interface occaKernelInfoAddInclude
+    subroutine occaKernelInfoAddInclude_fc(info, filename)
+      use occaFTypes_m
+      implicit none
+      type(occaKernelInfo), intent(inout) :: info
+      character(len=*),     intent(in)    :: filename
+    end subroutine occaKernelAddInclude_fc
+ end interface occaKernelAddInclude
 
   interface occaKernelInfoFree
     subroutine occaKernelInfoFree_fc(info)

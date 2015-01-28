@@ -211,6 +211,9 @@ extern "C" {
                                                      const char *macro,
                                                      occaType value);
 
+  OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddInclude(occaKernelInfo info,
+                                                      const char *filename);
+
   OCCA_LFUNC void OCCA_RFUNC occaKernelInfoFree(occaKernelInfo info);
   //====================================
 

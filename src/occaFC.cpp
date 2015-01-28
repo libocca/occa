@@ -175,6 +175,7 @@
 #define  OCCAKERNELINFOADDDEFINEREAL4_FC OCCA_F2C_GLOBAL_(occakernelinfoadddefinereal4_fc, OCCAKERNELINFOADDDEFINEREAL4_FC)
 #define  OCCAKERNELINFOADDDEFINEREAL8_FC OCCA_F2C_GLOBAL_(occakernelinfoadddefinereal8_fc, OCCAKERNELINFOADDDEFINEREAL8_FC)
 #define  OCCAKERNELINFOADDDEFINECHAR_FC  OCCA_F2C_GLOBAL_(occakernelinfoadddefinechar_fc, OCCAKERNELINFOADDDEFINECHAR_FC)
+#define  OCCAKERNELINFOADDINCLUDE_FC     OCCA_F2C_GLOBAL_(occakernelinfoaddinclude_fc   , OCCAKERNELINFOADDINCLUDE_FC)
 #define  OCCAKERNELINFOFREE_FC           OCCA_F2C_GLOBAL_(occakernelinfofree_fc         , OCCAKERNELINFOFREE_FC)
 #define  OCCADEVICEWRAPMEMORY_FC         OCCA_F2C_GLOBAL_(occadevicewrapmemory_fc       , OCCADEVICEWRAPMEMORY_FC)
 #define  OCCADEVICEWRAPSTREAM_FC         OCCA_F2C_GLOBAL_(occadevicewrapstream_fc       , OCCADEVICEWRAPSTREAM_FC)
@@ -830,6 +831,17 @@ extern "C" {
     occaKernelInfoAddDefine(*info, macro_c, occaChar(*value));
 
     OCCA_F2C_FREE_STR(macro, macro_c);
+  }
+
+  void OCCAKERNELINFOADDINCLUDE_FC(occaKernelInfo *info,
+                                   const char *filename OCCA_F2C_LSTR(filename_l)
+                                   OCCA_F2C_RSTR(filename_l)){
+    char *filename_c;
+    OCCA_F2C_ALLOC_STR(filename, filename_l, filename_c);
+
+    occaKernelInfoAddInclude(*info, filename_c);
+
+    OCCA_F2C_FREE_STR(filename, filename_c);
   }
 
   void OCCAKERNELINFOFREE_FC(occaKernelInfo *info){

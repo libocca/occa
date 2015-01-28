@@ -483,6 +483,7 @@ extern "C" {
   void OCCA_RFUNC occaKernelInfoAddDefine(occaKernelInfo info,
                                           const char *macro,
                                           occaType value){
+
     occa::kernelInfo &info_   = *((occa::kernelInfo*) info);
     occa::kernelArg_t &value_ = ((occaType_t*) value)->value;
     const int valueType       = ((occaType_t*) value)->type;
@@ -504,6 +505,14 @@ extern "C" {
     default:
       std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
     }
+  }
+
+  void OCCA_RFUNC occaKernelInfoAddInclude(occaKernelInfo info,
+                                           const char *filename){
+
+    occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
+    info_.addInclude(filename);
   }
 
   void OCCA_RFUNC occaKernelInfoFree(occaKernelInfo info){
