@@ -646,8 +646,8 @@ module occa
       implicit none
       type(occaKernelInfo), intent(inout) :: info
       character(len=*),     intent(in)    :: filename
-    end subroutine occaKernelAddInclude_fc
- end interface occaKernelAddInclude
+    end subroutine occaKernelInfoAddInclude_fc
+ end interface occaKernelInfoAddInclude
 
   interface occaKernelInfoFree
     subroutine occaKernelInfoFree_fc(info)
