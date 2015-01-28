@@ -495,6 +495,8 @@ namespace occa {
   }
 
   void memory::free(){
+    mHandle->dev->bytesAllocated_ -= (mHandle->size);
+
     if( !(mHandle->isMapped) )
       mHandle->free();
     else
@@ -726,6 +728,10 @@ namespace occa {
   void device::setup(const std::string &m,
                      const argInfo &arg1, const argInfo &arg2, const argInfo &arg3){
     setup(strToMode(m), arg1, arg2, arg3);
+  }
+
+  uintptr_t device::bytesAllocated() const {
+    return bytesAllocated_;
   }
 
   deviceIdentifier device::getIdentifier() const {
@@ -1057,6 +1063,8 @@ namespace occa {
     mem.mHandle      = dHandle->malloc(bytes, source);
     mem.mHandle->dev = this;
 
+    bytesAllocated_ += bytes;
+
     return mem;
   }
 
@@ -1078,6 +1086,11 @@ namespace occa {
     mem.mHandle      = dHandle->talloc(dim, dims, source, type, permissions);
     mem.mHandle->dev = this;
 
+    bytesAllocated_ += (type.bytes() *
+                        ((dim == 2) ?
+                         (dims[0] * dims[1]) :
+                         (dims[0]          )));
+
     return mem;
   }
 
@@ -1089,6 +1102,8 @@ namespace occa {
 
     mem.mHandle      = dHandle->mappedAlloc(bytes);
     mem.mHandle->dev = this;
+
+    bytesAllocated_ += bytes;
 
     return mem;
   }

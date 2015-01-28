@@ -466,6 +466,7 @@ namespace occa {
     inline bool hasNegativeEntries();
 
     inline uintptr_t& operator [] (int i);
+    inline uintptr_t operator [] (int i) const;
   };
 
   union kernelArg_t {
@@ -1311,6 +1312,7 @@ namespace occa {
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
 
+    friend class occa::memory;
     friend class occa::kernelDatabase;
 
   private:
@@ -1322,6 +1324,8 @@ namespace occa {
 
     stream currentStream;
     std::vector<stream> streams;
+
+    uintptr_t bytesAllocated_;
 
   public:
     device();
@@ -1351,6 +1355,8 @@ namespace occa {
                const argInfo &arg1, const argInfo &arg2);
     void setup(const std::string &m,
                const argInfo &arg1, const argInfo &arg2, const argInfo &arg3);
+
+    uintptr_t bytesAllocated() const;
 
     deviceIdentifier getIdentifier() const;
 
@@ -1703,6 +1709,10 @@ namespace occa {
   }
 
   inline uintptr_t& dim::operator [] (int i){
+    return data[i];
+  }
+
+  inline uintptr_t dim::operator [] (int i) const {
     return data[i];
   }
 };
