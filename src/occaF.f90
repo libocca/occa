@@ -6,7 +6,7 @@ module occa
   public ::                     &
     ! occaType_t,                 &
     occaTypeMem_t,              &
-    occaSetVerboseCompilation   &
+    occaSetVerboseCompilation,  &
     occaDeviceSetCompiler,      &
     occaGetDevice,              &
     occaBuildKernelFromSource,  &
