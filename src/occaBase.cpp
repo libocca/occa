@@ -11,6 +11,9 @@ namespace occa {
   void setVerboseCompilation(const bool value){
     verboseCompilation_f = value;
   }
+
+  ptrRangeMap_t  uvaMap;
+  memoryPtrMap_t dirtyManagedMap;
   //==================================
 
   //---[ Helper Classes ]-------------
@@ -794,6 +797,22 @@ namespace occa {
     dHandle->finish();
   }
 
+  void device::managedFinish(){
+    if(dirtyManagedMap.size()){
+      memoryPtrMap_t::iterator it;
+
+      for(it = dirtyManagedMap.begin(); it != dirtyManagedMap.end(); ++it){
+        occa::memory_v &mem = *(it->first);
+
+        mem.copyTo(mem.uvaPtr);
+      }
+
+      dirtyManagedMap.clear();
+    }
+    else
+      dHandle->finish();
+  }
+
   void device::waitFor(tag tag_){
     dHandle->waitFor(tag_);
   }
@@ -1079,6 +1098,13 @@ namespace occa {
     bytesAllocated_ += bytes;
 
     return mem;
+  }
+
+  memory device::managedAlloc(const uintptr_t bytes,
+                               void *source){
+    return malloc(bytes, source);
+    // memory mem = malloc(bytes
+
   }
 
   memory device::textureAlloc(const int dim, const occa::dim &dims,

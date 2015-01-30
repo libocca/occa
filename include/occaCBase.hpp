@@ -76,7 +76,7 @@ extern "C" {
   extern OCCA_LFUNC const uintptr_t occaAutoSize;
   extern OCCA_LFUNC const uintptr_t occaNoOffset;
 
-  OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const bool value);
+  OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const int value);
   //==================================
 
 

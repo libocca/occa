@@ -31,8 +31,8 @@ extern "C" {
   const uintptr_t occaAutoSize = 0;
   const uintptr_t occaNoOffset = 0;
 
-  OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const bool value){
-    occa::setVerboseCompilation(value);
+  OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const int value){
+    occa::setVerboseCompilation((bool) value);
   }
   //==================================
 

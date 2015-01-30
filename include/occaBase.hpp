@@ -45,6 +45,20 @@
 #endif
 
 namespace occa {
+  typedef int mode;
+
+  class kernel_v;
+  template <occa::mode> class kernel_t;
+  class kernel;
+
+  class memory_v;
+  template <occa::mode> class memory_t;
+  class memory;
+
+  class device_v;
+  template <occa::mode> class device_t;
+  class device;
+
   class kernelInfo;
 
   //---[ Globals & Flags ]------------
@@ -53,6 +67,25 @@ namespace occa {
   extern bool verboseCompilation_f;
 
   void setVerboseCompilation(const bool value);
+
+  class ptrRange_t {
+  public:
+    uintptr_t start, end;
+
+    inline ptrRange_t(const uintptr_t ptr, const uintptr_t bytes) :
+      start(ptr),
+      end(ptr + bytes) {}
+
+    inline friend bool operator < (const ptrRange_t &range, const ptrRange_t &ptr){
+      return ((range.end <= ptr.start) - 2*(ptr.start < range.start));
+    }
+  };
+
+  typedef std::map<ptrRange_t     , occa::memory_v*> ptrRangeMap_t;
+  typedef std::map<occa::memory_v*, bool>            memoryPtrMap_t;
+
+  extern ptrRangeMap_t  uvaMap;
+  extern memoryPtrMap_t dirtyManagedMap;
   //==================================
 
   //---[ Typedefs ]-------------------
@@ -94,8 +127,6 @@ namespace occa {
   //==================================
 
   //---[ Mode ]-----------------------
-  typedef int mode;
-
   static const occa::mode Pthreads = (1 << 20);
   static const occa::mode OpenMP   = (1 << 21);
   static const occa::mode OpenCL   = (1 << 22);
@@ -160,18 +191,6 @@ namespace occa {
   }
   //==================================
 
-
-  class kernel_v;
-  template <occa::mode> class kernel_t;
-  class kernel;
-
-  class memory_v;
-  template <occa::mode> class memory_t;
-  class memory;
-
-  class device_v;
-  template <occa::mode> class device_t;
-  class device;
 
   //---[ Helper Classes ]-------------
   class deviceInfo {
@@ -867,7 +886,7 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
-    void *handle, *mappedPtr;
+    void *handle, *mappedPtr, *uvaPtr;
     occa::device *dev;
 
     uintptr_t size;
@@ -875,6 +894,7 @@ namespace occa {
     bool isTexture;
     occa::textureInfo_t textureInfo;
 
+    bool inUVA;
     bool isMapped;
     bool isAWrapper;
 
@@ -1385,6 +1405,7 @@ namespace occa {
 
     void flush();
     void finish();
+    void managedFinish();
 
     void waitFor(tag tag_);
 
@@ -1456,12 +1477,28 @@ namespace occa {
     memory malloc(const uintptr_t bytes,
                   void *source = NULL);
 
+    memory managedAlloc(const uintptr_t bytes,
+                        void *source = NULL);
+
+    void* uvaAlloc(const uintptr_t bytes,
+                   void *source = NULL);
+
+    void* uvaManagedAlloc(const uintptr_t bytes,
+                          void *source = NULL);
+
     memory textureAlloc(const int dim, const occa::dim &dims,
                         void *source,
                         occa::formatType type, const int permissions = readWrite);
 
+    memory managedTextureAlloc(const int dim, const occa::dim &dims,
+                               void *source,
+                               occa::formatType type, const int permissions = readWrite);
+
     memory mappedAlloc(const uintptr_t bytes,
                        void *source = NULL);
+
+    memory managedMappedAlloc(const uintptr_t bytes,
+                              void *source = NULL);
 
     void free();
 
