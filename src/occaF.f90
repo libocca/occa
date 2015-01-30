@@ -14,6 +14,8 @@ module occa
     occaBuildKernelFromLoopy,   &
     occaBuildKernelFromFloopy,  &
     occaDeviceMalloc,           &
+    occaDeviceTextureAlloc,     &
+    occaDeviceMappedAlloc,      &
     occaDeviceFlush,            &
     occaDeviceFinish,           &
     occaDeviceGenStream,        &
@@ -128,7 +130,33 @@ module occa
     module procedure occaDeviceMalloc_real4
     module procedure occaDeviceMalloc_real8
     module procedure occaDeviceMalloc_char
-  end interface occaDeviceMalloc
+ end interface occaDeviceMalloc
+
+    ! integer(4), intent(in) :: v
+
+    ! interface
+    !   subroutine occaInt32_fc(t, v)
+    !     use occaFTypes_m
+    !     implicit none
+    !     type(occaMemory), intent(out) :: t
+    !     integer(4),       intent(in)  :: v
+    !   end subroutine occaInt32_fc
+    ! end interface
+
+    ! call occaInt32_fc(t, v)
+
+ interface occaDeviceTextureAlloc
+    module procedure occaDeviceTextureAlloc_func
+ end interface occaDeviceTextureAlloc
+
+ interface occaDeviceMappedAlloc
+    module procedure occaDeviceMappedAlloc_null
+    module procedure occaDeviceMappedAlloc_int4
+    module procedure occaDeviceMappedAlloc_int8
+    module procedure occaDeviceMappedAlloc_real4
+    module procedure occaDeviceMappedAlloc_real8
+    module procedure occaDeviceMappedAlloc_char
+ end interface occaDeviceMappedAlloc
 
   interface occaDeviceFlush
     subroutine occaDeviceFlush_fc(device, compilerFlags)
@@ -1067,6 +1095,7 @@ contains
     call occaBuildKernelFromFloopy_fc(kernel, device, filename, functionName, info)
   end function occaBuildKernelFromFloopy_func
 
+  !---[ Malloc ]------------------------
 
   type(occaMemory) function occaDeviceMalloc_null(device, sz) result(mem)
     type(occaDevice),  intent(inout) :: device
@@ -1110,6 +1139,76 @@ contains
 
     call occaDeviceMalloc_fc(mem, device, sz, buf)
   end function occaDeviceMalloc_char
+
+  !---[ Texture Alloc ]-----------------
+
+ type(occaMemory) function occaDeviceTextureAlloc_func(dim, dimX, dimY, dimZ, source, type, permissions) result(mem)
+   integer(4), intent(in) :: dim
+   integer(8), intent(in) :: dimX, dimY, dimZ
+   integer(8), intent(in) :: source
+   integer(8), intent(in) :: type
+   integer(4), intent(in) :: permissions
+
+   interface
+      subroutine occaDeviceTextureAlloc_fc(mem, dim, dimX, dimY, dimZ, source, type, permissions)
+        use occaFTypes_m
+        implicit none
+        type(occaMemory), intent(out) :: mem
+        integer(4)      , intent(in)  :: dim
+        integer(8)      , intent(in)  :: dimX, dimY, dimZ
+        integer(8)      , intent(in)  :: source
+        integer(8)      , intent(in)  :: type
+        integer(4)      , intent(in)  :: permissions
+      end subroutine occaDeviceTextureAlloc_fc
+   end interface
+
+    call occaDeviceTextureAlloc_fc(mem, dim, dimX, dimY, dimZ, source, type, permissions)
+ end function occaDeviceTextureAlloc_func
+
+  !---[ Mapped Alloc ]------------------
+
+  type(occaMemory) function occaDeviceMappedAlloc_null(device, sz) result(mem)
+    type(occaDevice),  intent(inout) :: device
+    integer(8),        intent(in)    :: sz
+
+    call occaDeviceMappedAllocNULL_fc(mem, device, sz)
+  end function occaDeviceMappedAlloc_null
+
+  type(occaMemory) function occaDeviceMappedAlloc_int4(device, sz, buf) result(mem)
+    type(occaDevice),  intent(inout) :: device
+    integer(8),        intent(in)    :: sz
+    integer(4),        intent(in)    :: buf
+
+    call occaDeviceMappedAlloc_fc(mem, device, sz, buf)
+  end function occaDeviceMappedAlloc_int4
+  type(occaMemory) function occaDeviceMappedAlloc_int8(device, sz, buf) result(mem)
+    type(occaDevice),  intent(inout) :: device
+    integer(8),        intent(in)    :: sz
+    integer(8),        intent(in)    :: buf
+
+    call occaDeviceMappedAlloc_fc(mem, device, sz, buf)
+  end function occaDeviceMappedAlloc_int8
+  type(occaMemory) function occaDeviceMappedAlloc_real4(device, sz, buf) result(mem)
+    type(occaDevice),  intent(inout) :: device
+    integer(8),        intent(in)    :: sz
+    real(4),           intent(in)    :: buf
+
+    call occaDeviceMappedAlloc_fc(mem, device, sz, buf)
+  end function occaDeviceMappedAlloc_real4
+  type(occaMemory) function occaDeviceMappedAlloc_real8(device, sz, buf) result(mem)
+    type(occaDevice),  intent(inout) :: device
+    integer(8),        intent(in)    :: sz
+    real(8),           intent(in)    :: buf
+
+    call occaDeviceMappedAlloc_fc(mem, device, sz, buf)
+  end function occaDeviceMappedAlloc_real8
+  type(occaMemory) function occaDeviceMappedAlloc_char(device, sz, buf) result(mem)
+    type(occaDevice),  intent(inout) :: device
+    integer(8),        intent(in)    :: sz
+    character,         intent(in)    :: buf
+
+    call occaDeviceMappedAlloc_fc(mem, device, sz, buf)
+  end function occaDeviceMappedAlloc_char
 
   type(occaStream) function occaDeviceGenStream_func(device) result(stream)
     type(occaDevice),     intent(inout)  :: device

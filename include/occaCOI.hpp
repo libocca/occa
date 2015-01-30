@@ -281,11 +281,12 @@ namespace occa {
 
   template <>
   memory_v* device_t<COI>::textureAlloc(const int dim, const occa::dim &dims,
-                                  void *source,
-                                  occa::formatType type, const int permissions);
+                                        void *source,
+                                        occa::formatType type, const int permissions);
 
   template <>
-  memory_v* device_t<COI>::mappedAlloc(const uintptr_t bytes);
+  memory_v* device_t<COI>::mappedAlloc(const uintptr_t bytes,
+                                       void *source);
 
   template <>
   void device_t<COI>::free();

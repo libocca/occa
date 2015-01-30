@@ -1127,8 +1127,8 @@ namespace occa {
 
   template <>
   memory_v* device_t<COI>::textureAlloc(const int dim, const occa::dim &dims,
-                                  void *source,
-                                  occa::formatType type, const int permissions){
+                                        void *source,
+                                        occa::formatType type, const int permissions){
 #warning "Textures not supported in COI yet"
 
     memory_v *mem = new memory_t<COI>;
@@ -1158,7 +1158,8 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<COI>::mappedAlloc(const uintptr_t bytes){
+  memory_v* device_t<COI>::mappedAlloc(const uintptr_t bytes,
+                                       void *source){
 #warning "Mapped allocation is not supported in [COI] yet"
   }
 

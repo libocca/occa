@@ -280,6 +280,19 @@ extern "C" {
     return (occaMemory) memory;
   }
 
+  occaMemory OCCA_RFUNC occaDeviceMappedAlloc(occaDevice device,
+                                              uintptr_t bytes,
+                                              void *source){
+    occa::device &device_ = *((occa::device*) device);
+
+    occaMemory_t *memory = new occaMemory_t();
+
+    memory->type = OCCA_TYPE_MEMORY;
+    memory->mem  = device_.mappedAlloc(bytes, source);
+
+    return (occaMemory) memory;
+  }
+
   void OCCA_RFUNC occaDeviceFlush(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
@@ -590,6 +603,24 @@ extern "C" {
     occa::memory &memory_ = memory->mem;
 
     return memory_.mode().c_str();
+  }
+
+  void* OCCA_RFUNC occaMemoryGetMappedPointer(occaMemory memory){
+    occa::memory &memory_ = memory->mem;
+
+    return memory_.getMappedPointer();
+  }
+
+  void* OCCA_RFUNC occaMemoryGetMemoryHandle(occaMemory memory){
+    occa::memory &memory_ = memory->mem;
+
+    return memory_.getMemoryHandle();
+  }
+
+  void* OCCA_RFUNC occaMemoryGetTextureHandle(occaMemory memory){
+    occa::memory &memory_ = memory->mem;
+
+    return memory_.getTextureHandle();
   }
 
   void OCCA_RFUNC occaCopyMemToMem(occaMemory dest, occaMemory src,

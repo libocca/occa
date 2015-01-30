@@ -894,8 +894,8 @@ namespace occa {
 
   template <>
   memory_v* device_t<OpenMP>::textureAlloc(const int dim, const occa::dim &dims,
-                                     void *source,
-                                     occa::formatType type, const int permissions){
+                                           void *source,
+                                           occa::formatType type, const int permissions){
     memory_v *mem = new memory_t<OpenMP>;
 
     mem->dev  = dev;
@@ -924,8 +924,9 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<OpenMP>::mappedAlloc(const uintptr_t bytes){
-    memory_v *mem = malloc(bytes, NULL);
+  memory_v* device_t<OpenMP>::mappedAlloc(const uintptr_t bytes,
+                                          void *source){
+    memory_v *mem = malloc(bytes, source);
 
     mem->mappedPtr = mem->handle;
 

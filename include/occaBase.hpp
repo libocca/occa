@@ -1212,10 +1212,11 @@ namespace occa {
                              void* source) = 0;
 
     virtual memory_v* textureAlloc(const int dim, const occa::dim &dims,
-                             void *source,
-                             occa::formatType type, const int permissions) = 0;
+                                   void *source,
+                                   occa::formatType type, const int permissions) = 0;
 
-    virtual memory_v* mappedAlloc(const uintptr_t bytes) = 0;
+    virtual memory_v* mappedAlloc(const uintptr_t bytes,
+                                  void *source) = 0;
 
     virtual void free() = 0;
 
@@ -1304,10 +1305,11 @@ namespace occa {
                      void *source);
 
     memory_v* textureAlloc(const int dim, const occa::dim &dims,
-                     void *source,
-                     occa::formatType type, const int permissions);
+                           void *source,
+                           occa::formatType type, const int permissions);
 
-    memory_v* mappedAlloc(const uintptr_t bytes);
+    memory_v* mappedAlloc(const uintptr_t bytes,
+                          void *source);
 
     void free();
 
@@ -1455,11 +1457,11 @@ namespace occa {
                   void *source = NULL);
 
     memory textureAlloc(const int dim, const occa::dim &dims,
-                  void *source,
-                  occa::formatType type, const int permissions = readWrite);
+                        void *source,
+                        occa::formatType type, const int permissions = readWrite);
 
-
-    memory mappedAlloc(const uintptr_t bytes);
+    memory mappedAlloc(const uintptr_t bytes,
+                       void *source = NULL);
 
     void free();
 

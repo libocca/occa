@@ -1152,8 +1152,8 @@ namespace occa {
 
   template <>
   memory_v* device_t<CUDA>::textureAlloc(const int dim, const occa::dim &dims,
-                                   void *source,
-                                   occa::formatType type, const int permissions){
+                                         void *source,
+                                         occa::formatType type, const int permissions){
 
     memory_v *mem = new memory_t<CUDA>;
 
@@ -1218,8 +1218,23 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<CUDA>::mappedAlloc(const uintptr_t bytes){
-#warning "Mapped allocation is not supported in [CUDA] yet"
+  memory_v* device_t<CUDA>::mappedAlloc(const uintptr_t bytes,
+                                        void *source){
+
+    memory_v *mem = new memory_t<CUDA>;
+
+    mem->dev  = dev;
+    mem->size = bytes;
+
+    OCCA_CUDA_CHECK("Device: malloc",
+                    cuMemAllocHost(&((void*) mem->handle), bytes));
+
+    if(source != NULL)
+      memcpy(mem->handle, source, bytes);
+
+    mem->mappedPtr = mem->handle;
+
+    return mem;
   }
 
   template <>

@@ -139,6 +139,10 @@ extern "C" {
                                                     uintptr_t bytes,
                                                     void *source);
 
+  OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMappedAlloc(occaDevice device,
+                                                         uintptr_t bytes,
+                                                         void *source);
+
   OCCA_LFUNC void OCCA_RFUNC occaDeviceFlush(occaDevice device);
   OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 
@@ -248,6 +252,10 @@ extern "C" {
 
   //---[ Memory ]-----------------------
   OCCA_LFUNC const char* OCCA_RFUNC occaMemoryMode(occaMemory memory);
+
+  OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetMappedPointer(occaMemory mem);
+  OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetMemoryHandle(occaMemory mem);
+  OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetTextureHandle(occaMemory mem);
 
   OCCA_LFUNC void OCCA_RFUNC occaCopyMemToMem(occaMemory dest, occaMemory src,
                                               const uintptr_t bytes,

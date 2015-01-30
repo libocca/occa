@@ -122,6 +122,9 @@
 #define  OCCABUILDKERNELFROMFLOOPY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromfloopy_fc  , OCCABUILDKERNELFROMFLOOPY_FC)
 #define  OCCADEVICEMALLOCNULL_FC         OCCA_F2C_GLOBAL_(occadevicemallocnull_fc       , OCCADEVICEMALLOCNULL_FC)
 #define  OCCADEVICEMALLOC_FC             OCCA_F2C_GLOBAL_(occadevicemalloc_fc           , OCCADEVICEMALLOC_FC)
+#define  OCCADEVICETEXTUREALLOC_FC       OCCA_F2C_GLOBAL_(occadevicetexturealloc_fc     , OCCADEVICETEXTUREALLOC_FC)
+#define  OCCADEVICEMAPPEDALLOCNULL_FC    OCCA_F2C_GLOBAL_(occadevicemappedallocnull_fc  , OCCADEVICEMAPPEDALLOCNULL_FC)
+#define  OCCADEVICEMAPPEDALLOC_FC        OCCA_F2C_GLOBAL_(occadevicemappedalloc_fc      , OCCADEVICEMAPPEDALLOC_FC)
 #define  OCCADEVICEFLUSH_FC              OCCA_F2C_GLOBAL_(occadeviceflush_fc            , OCCADEVICEFLUSH_FC)
 #define  OCCADEVICEFINISH_FC             OCCA_F2C_GLOBAL_(occadevicefinish_fc           , OCCADEVICEFINISH_FC)
 #define  OCCADEVICEGENSTREAM_FC          OCCA_F2C_GLOBAL_(occadevicegenstream_fc        , OCCADEVICEGENSTREAM_FC)
@@ -133,7 +136,7 @@
 #define  OCCADEVICEFREE_FC               OCCA_F2C_GLOBAL_(occadevicefree_fc             , OCCADEVICEFREE_FC)
 #define  OCCAKERNELMODE_FC               OCCA_F2C_GLOBAL_(occakernelmode_fc             , OCCAKERNELMODE_FC)
 #define  OCCAKERNELPREFERREDDIMSIZE_FC   OCCA_F2C_GLOBAL_(occakernelpreferreddimsize_fc , OCCAKERNELPREFERREDDIMSIZE_FC)
-#define  OCCAKERNELSETWORKINGDIMS_FC     OCCA_F2C_GLOBAL_(occakernelsetworkingdims_fc   , OCCAKERNELSETWORKINGDIMS_FC)
+// #define  OCCAKERNELSETWORKINGDIMS_FC     OCCA_F2C_GLOBAL_(occakernelsetworkingdims_fc   , OCCAKERNELSETWORKINGDIMS_FC)
 #define  OCCAKERNELSETALLWORKINGDIMS_FC  OCCA_F2C_GLOBAL_(occakernelsetallworkingdims_fc, OCCAKERNELSETALLWORKINGDIMS_FC)
 #define  OCCAKERNELTIMETAKEN_FC          OCCA_F2C_GLOBAL_(occakerneltimetaken_fc        , OCCAKERNELTIMETAKEN_FC)
 #define  OCCAGENARGUMENTLIST_FC          OCCA_F2C_GLOBAL_(occagenargumentlist_fc        , OCCAGENARGUMENTLIST_FC)
@@ -393,14 +396,37 @@ extern "C" {
     OCCA_F2C_FREE_STR(functionName, functionName_c);
   }
 
-  void OCCADEVICEMALLOC_FC(occaMemory *buf, occaDevice *device,
+  void OCCADEVICEMALLOC_FC(occaMemory *mem, occaDevice *device,
                            int64_t *bytes, void *source){
-    *buf = occaDeviceMalloc(*device, *bytes, source);
+    *mem = occaDeviceMalloc(*device, *bytes, source);
   }
 
-  void OCCADEVICEMALLOCNULL_FC(occaMemory *buf, occaDevice *device,
-                           int64_t *bytes){
-    *buf = occaDeviceMalloc(*device, *bytes, NULL);
+  void OCCADEVICEMALLOCNULL_FC(occaMemory *mem, occaDevice *device,
+                               int64_t *bytes){
+    *mem = occaDeviceMalloc(*device, *bytes, NULL);
+  }
+
+  void OCCADEVICETEXTUREALLOC_FC(occaMemory *mem,
+                                 int32_t    *dim,
+                                 int64_t    *dimX, int64_t *dimY, int64_t *dimZ,
+                                 void       *source,
+                                 void       *type, // occaFormatType Missing
+                                 int32_t    *permissions){
+    // *mem = occaDeviceTextureAlloc2(*mem,
+    //                                *dim,
+    //                                *dimX, *dimY, *dimZ,
+    //                                source,
+    //                                *type, permissions);
+  }
+
+  void OCCADEVICEMAPPEDALLOC_FC(occaMemory *mem, occaDevice *device,
+                                int64_t *bytes, void *source){
+    *mem = occaDeviceMappedAlloc(*device, *bytes, source);
+  }
+
+  void OCCADEVICEMAPPEDALLOCNULL_FC(occaMemory *mem, occaDevice *device,
+                                    int64_t *bytes){
+    *mem = occaDeviceMappedAlloc(*device, *bytes, NULL);
   }
 
   void OCCADEVICEFLUSH_FC(occaDevice *device){
@@ -447,12 +473,12 @@ extern "C" {
     *sz = occaKernelPreferredDimSize(*kernel);
   }
 
-  void OCCAKERNELSETWORKINGDIMS_FC(occaKernel *kernel,
-                                   int32_t *dims,
-                                   occaDim *items,
-                                   occaDim *groups){
-    occaKernelSetWorkingDims(*kernel, *dims, *items, *groups);
-  }
+  // void OCCAKERNELSETWORKINGDIMS_FC(occaKernel *kernel,
+  //                                  int32_t *dims,
+  //                                  occaDim *items,
+  //                                  occaDim *groups){
+  //   occaKernelSetWorkingDims(*kernel, *dims, *items, *groups);
+  // }
 
   void OCCAKERNELSETALLWORKINGDIMS_FC(occaKernel *kernel,
                                       int32_t *dims,

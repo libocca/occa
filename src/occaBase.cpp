@@ -1082,8 +1082,8 @@ namespace occa {
   }
 
   memory device::textureAlloc(const int dim, const occa::dim &dims,
-                        void *source,
-                        occa::formatType type, const int permissions){
+                              void *source,
+                              occa::formatType type, const int permissions){
     OCCA_CHECK((dim == 1) || (dim == 2),
                "Textures of [" << dim << "D] are not supported,"
                << "only 1D or 2D are supported at the moment");
@@ -1107,13 +1107,14 @@ namespace occa {
     return mem;
   }
 
-  memory device::mappedAlloc(const uintptr_t bytes){
+  memory device::mappedAlloc(const uintptr_t bytes,
+                             void *source){
     memory mem;
 
     mem.mode_   = mode_;
     mem.strMode = strMode;
 
-    mem.mHandle      = dHandle->mappedAlloc(bytes);
+    mem.mHandle      = dHandle->mappedAlloc(bytes, source);
     mem.mHandle->dev = this;
 
     bytesAllocated_ += bytes;

@@ -1499,8 +1499,8 @@ namespace occa {
 
   template <>
   memory_v* device_t<OpenCL>::textureAlloc(const int dim, const occa::dim &dims,
-                                     void *source,
-                                     occa::formatType type, const int permissions){
+                                           void *source,
+                                           occa::formatType type, const int permissions){
 #ifndef CL_VERSION_1_2
     if(dim == 1)
       return malloc(dims.x * type.bytes(), source);
@@ -1626,7 +1626,9 @@ namespace occa {
   }
 
   template <>
-  memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes){
+  memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes,
+                                          void *source){
+
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
     cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
@@ -1645,6 +1647,9 @@ namespace occa {
                                               NULL, &error);
 
     OCCA_CL_CHECK("Device: clCreateBuffer", error);
+
+    if(source != NULL)
+      mem->copyFrom(source);
 
     // Map memory to read/write
     mem->mappedPtr = clEnqueueMapBuffer(stream,

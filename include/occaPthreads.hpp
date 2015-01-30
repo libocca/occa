@@ -296,11 +296,12 @@ namespace occa {
 
   template <>
   memory_v* device_t<Pthreads>::textureAlloc(const int dim, const occa::dim &dims,
-                                       void *source,
-                                       occa::formatType type, const int permissions);
+                                             void *source,
+                                             occa::formatType type, const int permissions);
 
   template <>
-  memory_v* device_t<Pthreads>::mappedAlloc(const uintptr_t bytes);
+  memory_v* device_t<Pthreads>::mappedAlloc(const uintptr_t bytes,
+                                            void *source);
 
   template <>
   int device_t<Pthreads>::simdWidth();
