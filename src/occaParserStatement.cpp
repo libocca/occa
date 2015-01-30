@@ -105,10 +105,6 @@ namespace occa {
         if((nodeRoot->value == "break")    ||
            (nodeRoot->value == "continue")){
 
-          std::cout << "nodeRoot->value = " << nodeRoot->value << '\n'
-                    << "sInfo->distToOccaForLoop() = " << sInfo->distToOccaForLoop() << '\n'
-                    << "sInfo->distToForLoop() = " << sInfo->distToForLoop() << '\n';
-
           if((nodeRoot->value == "continue") &&
              (sInfo->distToOccaForLoop() <= sInfo->distToForLoop())){
 
