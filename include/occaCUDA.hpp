@@ -263,7 +263,7 @@ namespace occa {
                                    void *source);
 
   template <>
-  memory_v* device_t<CUDA>::talloc(const int dim, const occa::dim &dims,
+  memory_v* device_t<CUDA>::textureAlloc(const int dim, const occa::dim &dims,
                                    void *source,
                                    occa::formatType type, const int permissions);
 

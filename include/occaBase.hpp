@@ -1211,7 +1211,7 @@ namespace occa {
     virtual memory_v* malloc(const uintptr_t bytes,
                              void* source) = 0;
 
-    virtual memory_v* talloc(const int dim, const occa::dim &dims,
+    virtual memory_v* textureAlloc(const int dim, const occa::dim &dims,
                              void *source,
                              occa::formatType type, const int permissions) = 0;
 
@@ -1303,7 +1303,7 @@ namespace occa {
     memory_v* malloc(const uintptr_t bytes,
                      void *source);
 
-    memory_v* talloc(const int dim, const occa::dim &dims,
+    memory_v* textureAlloc(const int dim, const occa::dim &dims,
                      void *source,
                      occa::formatType type, const int permissions);
 
@@ -1454,7 +1454,7 @@ namespace occa {
     memory malloc(const uintptr_t bytes,
                   void *source = NULL);
 
-    memory talloc(const int dim, const occa::dim &dims,
+    memory textureAlloc(const int dim, const occa::dim &dims,
                   void *source,
                   occa::formatType type, const int permissions = readWrite);
 

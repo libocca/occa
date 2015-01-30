@@ -295,7 +295,7 @@ namespace occa {
                                        void *source);
 
   template <>
-  memory_v* device_t<Pthreads>::talloc(const int dim, const occa::dim &dims,
+  memory_v* device_t<Pthreads>::textureAlloc(const int dim, const occa::dim &dims,
                                        void *source,
                                        occa::formatType type, const int permissions);
 

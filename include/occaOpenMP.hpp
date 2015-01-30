@@ -239,7 +239,7 @@ namespace occa {
                                      void *source);
 
   template <>
-  memory_v* device_t<OpenMP>::talloc(const int dim, const occa::dim &dims,
+  memory_v* device_t<OpenMP>::textureAlloc(const int dim, const occa::dim &dims,
                                      void *source,
                                      occa::formatType type, const int permissions);
 

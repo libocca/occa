@@ -1081,7 +1081,7 @@ namespace occa {
     return mem;
   }
 
-  memory device::talloc(const int dim, const occa::dim &dims,
+  memory device::textureAlloc(const int dim, const occa::dim &dims,
                         void *source,
                         occa::formatType type, const int permissions){
     OCCA_CHECK((dim == 1) || (dim == 2),
@@ -1089,14 +1089,14 @@ namespace occa {
                << "only 1D or 2D are supported at the moment");
 
     OCCA_CHECK(source != NULL,
-               "Non-NULL source is required for [talloc] (texture allocation)");
+               "Non-NULL source is required for [textureAlloc] (texture allocation)");
 
     memory mem;
 
     mem.mode_   = mode_;
     mem.strMode = strMode;
 
-    mem.mHandle      = dHandle->talloc(dim, dims, source, type, permissions);
+    mem.mHandle      = dHandle->textureAlloc(dim, dims, source, type, permissions);
     mem.mHandle->dev = this;
 
     bytesAllocated_ += (type.bytes() *

@@ -27,7 +27,7 @@ int main(int argc, char **argv){
 
   const int dim = 2;
 
-  o_A = device.talloc(dim, occa::dim(width, height),
+  o_A = device.textureAlloc(dim, occa::dim(width, height),
                       A,
                       occa::floatFormat, occa::readOnly);
 
@@ -40,7 +40,7 @@ int main(int argc, char **argv){
     return 0;
   }
 
-  o_transA = device.talloc(dim, occa::dim(height, width),
+  o_transA = device.textureAlloc(dim, occa::dim(height, width),
                            transA,
                            occa::floatFormat, occa::readWrite);
 

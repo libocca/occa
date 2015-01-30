@@ -29,7 +29,7 @@ int main(int argc, char **argv){
 
   const int dim = 1;
 
-  o_A = device.talloc(dim, occa::dim(width),
+  o_A = device.textureAlloc(dim, occa::dim(width),
                       A,
                       occa::floatFormat, occa::readWrite);
 
@@ -42,7 +42,7 @@ int main(int argc, char **argv){
     return 0;
   }
 
-  o_copyA = device.talloc(dim, occa::dim(width),
+  o_copyA = device.textureAlloc(dim, occa::dim(width),
 			  copyA,
 			  occa::floatFormat, occa::readWrite);
 
