@@ -58,7 +58,7 @@ $(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
 $(occaOPath)/occaFTypes.mod:$(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	@true
 
-$(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaOPath)/occaFTypes.mod
+$(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp

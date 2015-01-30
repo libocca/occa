@@ -471,12 +471,19 @@ extern "C" {
       if(memory_.type == OCCA_TYPE_MEMORY){
         kernel_.addArgument(i, occa::kernelArg(memory_.mem));
       }
-      else{
+      else if(memory_.type != OCCA_TYPE_STRUCT){
         occaType_t &type_ = *((occaType_t*) list_.argv[i]);
 
         kernel_.addArgument(i, occa::kernelArg(type_.value,
                                                type_.bytes,
                                                false));
+      }
+      else{ // (memory_.type == OCCA_TYPE_STRUCT)
+        occaType_t &type_ = *((occaType_t*) list_.argv[i]);
+
+        kernel_.addArgument(i, occa::kernelArg(type_.value,
+                                               type_.bytes,
+                                               true));
       }
     }
 
