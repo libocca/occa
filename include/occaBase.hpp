@@ -70,11 +70,15 @@ namespace occa {
 
   class ptrRange_t {
   public:
-    uintptr_t start, end;
+    char *start, *end;
 
-    inline ptrRange_t(const uintptr_t ptr, const uintptr_t bytes) :
-      start(ptr),
-      end(ptr + bytes) {}
+    inline ptrRange_t() :
+      start(NULL),
+      end(NULL) {}
+
+    inline ptrRange_t(void *ptr, const uintptr_t bytes) :
+      start((char*) ptr),
+      end((char*) ptr + bytes) {}
 
     inline friend bool operator < (const ptrRange_t &range, const ptrRange_t &ptr){
       return ((range.end <= ptr.start) - 2*(ptr.start < range.start));
@@ -1033,6 +1037,8 @@ namespace occa {
     void* getMemoryHandle();
     void* getTextureHandle();
 
+    void manage();
+
     void copyFrom(const void *source,
                   const uintptr_t bytes = 0,
                   const uintptr_t offset = 0);
@@ -1405,7 +1411,6 @@ namespace occa {
 
     void flush();
     void finish();
-    void managedFinish();
 
     void waitFor(tag tag_);
 

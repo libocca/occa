@@ -363,6 +363,15 @@ namespace occa {
     return mHandle->getTextureHandle();
   }
 
+  void memory::manage(){
+    ptrRange_t uvaRange;
+
+    uvaRange.start = (char*) ::malloc(mHandle->size);
+    uvaRange.end   = (uvaRange.start + mHandle->size);
+
+    uvaMap[uvaRange] = mHandle;
+  }
+
   void memory::copyFrom(const void *source,
                         const uintptr_t bytes,
                         const uintptr_t offset){
@@ -794,10 +803,6 @@ namespace occa {
   }
 
   void device::finish(){
-    dHandle->finish();
-  }
-
-  void device::managedFinish(){
     if(dirtyManagedMap.size()){
       memoryPtrMap_t::iterator it;
 
@@ -1102,9 +1107,11 @@ namespace occa {
 
   memory device::managedAlloc(const uintptr_t bytes,
                                void *source){
-    return malloc(bytes, source);
-    // memory mem = malloc(bytes
+    memory mem = malloc(bytes, source);
 
+    mem.manage();
+
+    return mem;
   }
 
   memory device::textureAlloc(const int dim, const occa::dim &dims,
@@ -1133,6 +1140,16 @@ namespace occa {
     return mem;
   }
 
+  memory device::managedTextureAlloc(const int dim, const occa::dim &dims,
+                                     void *source,
+                                     occa::formatType type, const int permissions){
+    memory mem = textureAlloc(dim, dims, source, type, permissions);
+
+    mem.manage();
+
+    return mem;
+  }
+
   memory device::mappedAlloc(const uintptr_t bytes,
                              void *source){
     memory mem;
@@ -1144,6 +1161,15 @@ namespace occa {
     mem.mHandle->dev = this;
 
     bytesAllocated_ += bytes;
+
+    return mem;
+  }
+
+  memory device::managedMappedAlloc(const uintptr_t bytes,
+                                    void *source){
+    memory mem = mappedAlloc(bytes, source);
+
+    mem.manage();
 
     return mem;
   }
