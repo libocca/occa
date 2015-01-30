@@ -14,6 +14,15 @@ namespace occa {
 
   ptrRangeMap_t  uvaMap;
   memoryPtrMap_t dirtyManagedMap;
+
+  void free(void *ptr){
+    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+
+    if(it != uvaMap.end())
+      (it->second)->free();
+    else
+      ::free(ptr);
+  }
   //==================================
 
   //---[ Helper Classes ]-------------
@@ -363,10 +372,16 @@ namespace occa {
     return mHandle->getTextureHandle();
   }
 
+  void memory::placeInUVA(){
+    mHandle->uvaPtr = ::malloc(mHandle->size);
+  }
+
   void memory::manage(){
+    placeInUVA();
+
     ptrRange_t uvaRange;
 
-    uvaRange.start = (char*) ::malloc(mHandle->size);
+    uvaRange.start = (char*) (mHandle->uvaPtr);
     uvaRange.end   = (uvaRange.start + mHandle->size);
 
     uvaMap[uvaRange] = mHandle;
@@ -1112,6 +1127,24 @@ namespace occa {
     mem.manage();
 
     return mem;
+  }
+
+  void* device::uvaAlloc(const uintptr_t bytes,
+                         void *source){
+    memory mem = malloc(bytes, source);
+
+    mem.placeInUVA();
+
+    return mem.mHandle->uvaPtr;
+  }
+
+  void* device::managedUvaAlloc(const uintptr_t bytes,
+                                void *source){
+    memory mem = malloc(bytes, source);
+
+    mem.manage();
+
+    return mem.mHandle->uvaPtr;
   }
 
   memory device::textureAlloc(const int dim, const occa::dim &dims,

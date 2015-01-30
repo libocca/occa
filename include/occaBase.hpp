@@ -76,12 +76,27 @@ namespace occa {
       start(NULL),
       end(NULL) {}
 
-    inline ptrRange_t(void *ptr, const uintptr_t bytes) :
+    inline ptrRange_t(void *ptr, const uintptr_t bytes = 0) :
       start((char*) ptr),
       end((char*) ptr + bytes) {}
 
-    inline friend bool operator < (const ptrRange_t &range, const ptrRange_t &ptr){
-      return ((range.end <= ptr.start) - 2*(ptr.start < range.start));
+    inline ptrRange_t(const ptrRange_t &r) :
+      start(r.start),
+      end(r.end) {}
+
+    inline ptrRange_t& operator = (const ptrRange_t &r){
+      start = r.start;
+      end   = r.end;
+
+      return *this;
+    }
+
+    inline bool operator == (const ptrRange_t &r){
+      return ((start <= r.start) && (r.start < end));
+    }
+
+    inline friend int operator < (const ptrRange_t &a, const ptrRange_t &b){
+      return (a.start < b.start);
     }
   };
 
@@ -90,6 +105,8 @@ namespace occa {
 
   extern ptrRangeMap_t  uvaMap;
   extern memoryPtrMap_t dirtyManagedMap;
+
+  void free(void *ptr);
   //==================================
 
   //---[ Typedefs ]-------------------
@@ -898,7 +915,6 @@ namespace occa {
     bool isTexture;
     occa::textureInfo_t textureInfo;
 
-    bool inUVA;
     bool isMapped;
     bool isAWrapper;
 
@@ -1037,6 +1053,7 @@ namespace occa {
     void* getMemoryHandle();
     void* getTextureHandle();
 
+    void placeInUVA();
     void manage();
 
     void copyFrom(const void *source,
@@ -1488,7 +1505,7 @@ namespace occa {
     void* uvaAlloc(const uintptr_t bytes,
                    void *source = NULL);
 
-    void* uvaManagedAlloc(const uintptr_t bytes,
+    void* managedUvaAlloc(const uintptr_t bytes,
                           void *source = NULL);
 
     memory textureAlloc(const int dim, const occa::dim &dims,
