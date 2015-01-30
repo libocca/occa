@@ -1227,10 +1227,10 @@ namespace occa {
     mem->size = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",
-                    cuMemAllocHost(&((void*) mem->handle), bytes));
+                    cuMemAllocHost((void**) &(mem->handle), bytes));
 
     if(source != NULL)
-      memcpy(mem->handle, source, bytes);
+      ::memcpy(mem->handle, source, bytes);
 
     mem->mappedPtr = mem->handle;
 
