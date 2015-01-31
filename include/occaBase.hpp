@@ -78,7 +78,7 @@ namespace occa {
 
     inline ptrRange_t(void *ptr, const uintptr_t bytes = 0) :
       start((char*) ptr),
-      end((char*) ptr + bytes) {}
+      end(((char*) ptr) + bytes) {}
 
     inline ptrRange_t(const ptrRange_t &r) :
       start(r.start),
@@ -91,12 +91,16 @@ namespace occa {
       return *this;
     }
 
-    inline bool operator == (const ptrRange_t &r){
+    inline bool operator == (const ptrRange_t &r) const {
       return ((start <= r.start) && (r.start < end));
     }
 
+    inline bool operator != (const ptrRange_t &r) const {
+      return ((r.start < start) || (end <= r.start));
+    }
+
     inline friend int operator < (const ptrRange_t &a, const ptrRange_t &b){
-      return (a.start < b.start);
+      return ((a != b) && (a.start < b.start));
     }
   };
 
@@ -539,6 +543,7 @@ namespace occa {
   class kernelArg {
   public:
     occa::device *dev;
+    occa::memory_v *mHandle;
 
     kernelArg_t arg, arg2;
 
@@ -547,12 +552,14 @@ namespace occa {
 
     inline kernelArg(){
       dev        = NULL;
+      mHandle    = NULL;
       arg.void_  = NULL;
       hasTwoArgs = false;
     }
 
     inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
       dev(NULL),
+      mHandle(NULL),
       size(size_),
       pointer(pointer_),
       hasTwoArgs(false) {
@@ -561,6 +568,7 @@ namespace occa {
 
     inline kernelArg(const kernelArg &k) :
       dev(k.dev),
+      mHandle(k.mHandle),
       size(k.size),
       pointer(k.pointer),
       hasTwoArgs(k.hasTwoArgs) {
@@ -569,6 +577,7 @@ namespace occa {
 
     inline kernelArg& operator = (const kernelArg &k){
       dev        = k.dev;
+      mHandle    = k.mHandle;
       arg.void_  = k.arg.void_;
       size       = k.size;
       pointer    = k.pointer;
@@ -579,7 +588,8 @@ namespace occa {
 
     template <class TM>
     inline kernelArg(const TM &arg_){
-      dev = NULL;
+      dev     = NULL;
+      mHandle = NULL;
 
       arg.void_ = const_cast<TM*>(&arg_);
       size = sizeof(TM);
@@ -596,12 +606,8 @@ namespace occa {
     }
 
     inline void markDirty() const {
-      if(pointer){
-        ptrRangeMap_t::iterator it = uvaMap.find(arg.void_);
-
-        if(it != uvaMap.end())
-          dirtyManagedMap[it->second] = true;
-      }
+      if(mHandle)
+        dirtyManagedMap[mHandle] = true;
     }
   };
 
@@ -1093,7 +1099,8 @@ namespace occa {
     ptrRangeMap_t::iterator it = uvaMap.find(arg_);
 
     if(it == uvaMap.end()){
-      dev = NULL;
+      dev     = NULL;
+      mHandle = NULL;
 
       arg.void_ = arg_;
       size      = sizeof(TM*);
@@ -1102,11 +1109,10 @@ namespace occa {
       hasTwoArgs = false;
     }
     else{
-      occa::memory_v *mem = it->second;
+      mHandle = it->second;
+      dev     = mHandle->dev;
 
-      dev = mem->dev;
-
-      arg.void_ = mem;
+      arg.void_ = mHandle->handle;
       size      = sizeof(void*);
 
       pointer    = true;
@@ -1121,7 +1127,8 @@ namespace occa {
     ptrRangeMap_t::iterator it = uvaMap.find(arg_);
 
     if(it == uvaMap.end()){
-      dev = NULL;
+      dev     = NULL;
+      mHandle = NULL;
 
       arg.void_ = arg_;
       size      = sizeof(TM*);
@@ -1130,11 +1137,10 @@ namespace occa {
       hasTwoArgs = false;
     }
     else{
-      occa::memory_v *mem = it->second;
+      mHandle = it->second;
+      dev     = mHandle->dev;
 
-      dev = mem->dev;
-
-      arg.void_ = mem;
+      arg.void_ = mHandle->handle;
       size      = sizeof(void*);
 
       pointer    = true;
@@ -1144,7 +1150,8 @@ namespace occa {
 
   template <>
   inline kernelArg::kernelArg(const occa::memory &m){
-    dev = m.mHandle->dev;
+    dev     = m.mHandle->dev;
+    mHandle = NULL;
 
     arg.void_ = m.mHandle->handle;
     size      = sizeof(void*);

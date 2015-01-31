@@ -824,13 +824,13 @@ namespace occa {
       for(it = dirtyManagedMap.begin(); it != dirtyManagedMap.end(); ++it){
         occa::memory_v &mem = *(it->first);
 
-        mem.copyTo(mem.uvaPtr);
+        mem.asyncCopyTo(mem.uvaPtr);
       }
 
       dirtyManagedMap.clear();
     }
-    else
-      dHandle->finish();
+
+    dHandle->finish();
   }
 
   void device::waitFor(tag tag_){
