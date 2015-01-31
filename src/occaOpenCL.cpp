@@ -653,6 +653,7 @@ namespace occa {
   memory_t<OpenCL>::memory_t(){
     handle    = NULL;
     mappedPtr = NULL;
+    uvaPtr    = NULL;
 
     dev  = NULL;
     size = 0;
@@ -661,6 +662,7 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
+    isDirty    = false;
     isMapped   = false;
     isAWrapper = false;
   }
@@ -672,19 +674,21 @@ namespace occa {
 
   template <>
   memory_t<OpenCL>& memory_t<OpenCL>::operator = (const memory_t<OpenCL> &m){
-    handle    = NULL;
-    mappedPtr = NULL;
+    handle    = m.handle;
+    mappedPtr = m.mappedPtr;
+    uvaPtr    = m.uvaPtr;
 
-    dev  = NULL;
-    size = 0;
+    dev  = m.dev;
+    size = m.size;
 
-    isTexture = m.isTexture;
-    textureInfo.dim  = m.textureInfo.dim;
+    isTexture       = m.isTexture;
+    textureInfo.dim = m.textureInfo.dim;
 
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
+    isDirty    = m.isDirty;
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 

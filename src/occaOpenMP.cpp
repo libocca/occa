@@ -306,6 +306,7 @@ namespace occa {
   memory_t<OpenMP>::memory_t(){
     handle    = NULL;
     mappedPtr = NULL;
+    uvaPtr    = NULL;
 
     dev  = NULL;
     size = 0;
@@ -315,6 +316,7 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
+    isDirty    = false;
     isMapped   = false;
     isAWrapper = false;
   }
@@ -328,6 +330,7 @@ namespace occa {
   memory_t<OpenMP>& memory_t<OpenMP>::operator = (const memory_t<OpenMP> &m){
     handle    = m.handle;
     mappedPtr = m.mappedPtr;
+    uvaPtr    = m.uvaPtr;
 
     dev  = m.dev;
     size = m.size;
@@ -343,6 +346,7 @@ namespace occa {
     if(isTexture)
       handle = &textureInfo;
 
+    isDirty    = m.isDirty;
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 

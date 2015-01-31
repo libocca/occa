@@ -64,7 +64,12 @@ namespace occa {
   //---[ Globals & Flags ]------------
   extern kernelInfo defaultKernelInfo;
 
+  extern bool uvaEnabled_f;
   extern bool verboseCompilation_f;
+
+  bool uvaIsEnabled();
+  void enableUVA();
+  void disableUVA();
 
   void setVerboseCompilation(const bool value);
 
@@ -104,11 +109,11 @@ namespace occa {
     }
   };
 
-  typedef std::map<ptrRange_t     , occa::memory_v*> ptrRangeMap_t;
-  typedef std::map<occa::memory_v*, bool>            memoryPtrMap_t;
+  typedef std::map<ptrRange_t, occa::memory_v*> ptrRangeMap_t;
+  typedef std::vector<occa::memory_v*>          memoryArray_t;
 
-  extern ptrRangeMap_t  uvaMap;
-  extern memoryPtrMap_t dirtyManagedMap;
+  extern ptrRangeMap_t uvaMap;
+  extern memoryArray_t uvaDirtyMemory;
 
   void free(void *ptr);
   //==================================
@@ -605,10 +610,7 @@ namespace occa {
       return pointer ? arg.void_ : (void*) &arg;
     }
 
-    inline void markDirty() const {
-      if(mHandle)
-        dirtyManagedMap[mHandle] = true;
-    }
+    inline void markDirty() const;
   };
 
   OCCA_KERNEL_ARG_CONSTRUCTOR(int);
@@ -911,6 +913,7 @@ namespace occa {
     bool isTexture;
     occa::textureInfo_t textureInfo;
 
+    bool isDirty;
     bool isMapped;
     bool isAWrapper;
 
@@ -1096,24 +1099,31 @@ namespace occa {
   //---[ KernelArg ]----------
   template <class TM>
   inline kernelArg::kernelArg(TM *arg_){
-    ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+    bool set = false;
 
-    if(it == uvaMap.end()){
+    if(uvaEnabled_f){
+      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+
+      if(it != uvaMap.end()){
+        mHandle = it->second;
+        dev     = mHandle->dev;
+
+        arg.void_ = mHandle->handle;
+        size      = sizeof(void*);
+
+        pointer    = true;
+        hasTwoArgs = false;
+
+        set = true;
+      }
+    }
+
+    if(!set){
       dev     = NULL;
       mHandle = NULL;
 
       arg.void_ = arg_;
       size      = sizeof(TM*);
-
-      pointer    = true;
-      hasTwoArgs = false;
-    }
-    else{
-      mHandle = it->second;
-      dev     = mHandle->dev;
-
-      arg.void_ = mHandle->handle;
-      size      = sizeof(void*);
 
       pointer    = true;
       hasTwoArgs = false;
@@ -1123,25 +1133,31 @@ namespace occa {
   template <class TM>
   inline kernelArg::kernelArg(const TM *carg_){
     TM *arg_ = const_cast<TM*>(carg_);
+    bool set = false;
 
-    ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+    if(uvaEnabled_f){
+      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
 
-    if(it == uvaMap.end()){
+      if(it != uvaMap.end()){
+        mHandle = it->second;
+        dev     = mHandle->dev;
+
+        arg.void_ = mHandle->handle;
+        size      = sizeof(void*);
+
+        pointer    = true;
+        hasTwoArgs = false;
+
+        set = true;
+      }
+    }
+
+    if(!set){
       dev     = NULL;
       mHandle = NULL;
 
       arg.void_ = arg_;
       size      = sizeof(TM*);
-
-      pointer    = true;
-      hasTwoArgs = false;
-    }
-    else{
-      mHandle = it->second;
-      dev     = mHandle->dev;
-
-      arg.void_ = mHandle->handle;
-      size      = sizeof(void*);
 
       pointer    = true;
       hasTwoArgs = false;
@@ -1161,6 +1177,15 @@ namespace occa {
 
     if(hasTwoArgs)
       arg2.void_ = m.textureArg();
+  }
+
+  inline void kernelArg::markDirty() const {
+    if(uvaEnabled_f){
+      if(mHandle && !(mHandle->isDirty)){
+        mHandle->copyFrom(mHandle->uvaPtr);
+        uvaDirtyMemory.push_back(mHandle);
+      }
+    }
   }
   //==================================
 

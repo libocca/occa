@@ -6,14 +6,27 @@ namespace occa {
   //---[ Globals & Flags ]------------
   kernelInfo defaultKernelInfo;
 
+  bool uvaEnabled_f         = false;
   bool verboseCompilation_f = true;
+
+  bool uvaIsEnabled(){
+    return uvaEnabled_f;
+  }
+
+  void enableUVA(){
+    uvaEnabled_f = true;
+  }
+
+  void disableUVA(){
+    uvaEnabled_f = false;
+  }
 
   void setVerboseCompilation(const bool value){
     verboseCompilation_f = value;
   }
 
-  ptrRangeMap_t  uvaMap;
-  memoryPtrMap_t dirtyManagedMap;
+  ptrRangeMap_t uvaMap;
+  memoryArray_t uvaDirtyMemory;
 
   void free(void *ptr){
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
@@ -818,16 +831,18 @@ namespace occa {
   }
 
   void device::finish(){
-    if(dirtyManagedMap.size()){
-      memoryPtrMap_t::iterator it;
+    const size_t dirtyEntries = uvaDirtyMemory.size();
 
-      for(it = dirtyManagedMap.begin(); it != dirtyManagedMap.end(); ++it){
-        occa::memory_v &mem = *(it->first);
+    if(dirtyEntries){
+      for(int i = 0; i < dirtyEntries; ++i){
+        occa::memory_v *mem = uvaDirtyMemory[i];
 
-        mem.asyncCopyTo(mem.uvaPtr);
+        mem->asyncCopyTo(mem->uvaPtr);
+
+        mem->isDirty = false;
       }
 
-      dirtyManagedMap.clear();
+      uvaDirtyMemory.clear();
     }
 
     dHandle->finish();
