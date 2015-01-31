@@ -73,6 +73,8 @@ def operatorDefinitions(mode, N):
 def operatorDefinition(mode, N):
     if mode == 'Base':
         return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
+    """ + '    \n'.join(['arg' + str(n) + '.markDirty();' for n in xrange(N)]) + """
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
     }

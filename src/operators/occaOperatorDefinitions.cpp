@@ -1,4 +1,6 @@
   void kernel::operator() (const kernelArg &arg0){
+    arg0.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0);
     }
@@ -16,6 +18,9 @@
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1){
+    arg0.markDirty();    
+arg1.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1);
     }
@@ -34,6 +39,10 @@
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2);
     }
@@ -54,6 +63,11 @@
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3);
@@ -79,6 +93,12 @@
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4);
@@ -105,6 +125,13 @@
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5);
@@ -133,6 +160,14 @@
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -166,6 +201,15 @@
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -200,6 +244,16 @@
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -236,6 +290,17 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -277,6 +342,18 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -319,6 +396,19 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -363,6 +453,20 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -412,6 +516,21 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -462,6 +581,22 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -514,6 +649,23 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -571,6 +723,24 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -629,6 +799,25 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -689,6 +878,26 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -754,6 +963,27 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -820,6 +1050,28 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -888,6 +1140,29 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -961,6 +1236,30 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1035,6 +1334,31 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1111,6 +1435,32 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1192,6 +1542,33 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1274,6 +1651,34 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1358,6 +1763,35 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1447,6 +1881,36 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1537,6 +2001,37 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1629,6 +2124,38 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1726,6 +2253,39 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1824,6 +2384,40 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -1924,6 +2518,41 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2029,6 +2658,42 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2135,6 +2800,43 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2243,6 +2945,44 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2356,6 +3096,45 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2470,6 +3249,46 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2586,6 +3405,47 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2707,6 +3567,48 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2829,6 +3731,49 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -2953,6 +3898,50 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3082,6 +4071,51 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3212,6 +4246,52 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();    
+arg44.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3344,6 +4424,53 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();    
+arg44.markDirty();    
+arg45.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3481,6 +4608,54 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();    
+arg44.markDirty();    
+arg45.markDirty();    
+arg46.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3619,6 +4794,55 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();    
+arg44.markDirty();    
+arg45.markDirty();    
+arg46.markDirty();    
+arg47.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3759,6 +4983,56 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();    
+arg44.markDirty();    
+arg45.markDirty();    
+arg46.markDirty();    
+arg47.markDirty();    
+arg48.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
@@ -3904,6 +5178,57 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
+    arg0.markDirty();    
+arg1.markDirty();    
+arg2.markDirty();    
+arg3.markDirty();    
+arg4.markDirty();    
+arg5.markDirty();    
+arg6.markDirty();    
+arg7.markDirty();    
+arg8.markDirty();    
+arg9.markDirty();    
+arg10.markDirty();    
+arg11.markDirty();    
+arg12.markDirty();    
+arg13.markDirty();    
+arg14.markDirty();    
+arg15.markDirty();    
+arg16.markDirty();    
+arg17.markDirty();    
+arg18.markDirty();    
+arg19.markDirty();    
+arg20.markDirty();    
+arg21.markDirty();    
+arg22.markDirty();    
+arg23.markDirty();    
+arg24.markDirty();    
+arg25.markDirty();    
+arg26.markDirty();    
+arg27.markDirty();    
+arg28.markDirty();    
+arg29.markDirty();    
+arg30.markDirty();    
+arg31.markDirty();    
+arg32.markDirty();    
+arg33.markDirty();    
+arg34.markDirty();    
+arg35.markDirty();    
+arg36.markDirty();    
+arg37.markDirty();    
+arg38.markDirty();    
+arg39.markDirty();    
+arg40.markDirty();    
+arg41.markDirty();    
+arg42.markDirty();    
+arg43.markDirty();    
+arg44.markDirty();    
+arg45.markDirty();    
+arg46.markDirty();    
+arg47.markDirty();    
+arg48.markDirty();    
+arg49.markDirty();
+
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
