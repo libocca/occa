@@ -536,7 +536,8 @@ namespace occa {
     int status = parserNS::readingCode;
 
     while(*cRight != '\0'){
-      skipString(cRight, parsingC);
+      if(status != parserNS::insideCommentBlock)
+        skipString(cRight, parsingC);
 
       if((*cRight == '\0') || (*cRight == '\n'))
         break;

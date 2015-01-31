@@ -112,7 +112,7 @@ namespace occa {
     static const char whitespace[]     = " \t\r\n\v\f\0";
 
     static const char cWordDelimeter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
-    static const char cWordDelimeter2[] = "!=##%=&&&=*=+++=-=--->.*.*../=::<<<===>=>>^=|=||\0";
+    static const char cWordDelimeter2[] = "!=##%=&&&=*=+++=-=--->.*../=::<<<===>=>>^=|=||\0";
     static const char cWordDelimeter3[] = "->*...<<=>>=\0";
 
     static const char fortranWordDelimeter[]  = " \t\r\n\v\f\"#%'()*+,-./;<=>\0";

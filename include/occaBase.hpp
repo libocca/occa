@@ -90,17 +90,17 @@ namespace occa {
     friend int operator < (const ptrRange_t &a, const ptrRange_t &b);
   };
 
-  // class uvaPtrInfo_t {
-  // private:
-  //   occa::memory_v *mem;
+  class uvaPtrInfo_t {
+  private:
+    occa::memory_v *mem;
 
-  // public:
-  //   uvaPtrInfo_t();
-  //   uvaPtrInfo_t(occa::memory_v *mem);
+  public:
+    uvaPtrInfo_t();
+    uvaPtrInfo_t(occa::memory_v *mem);
 
-  //   occa::device getDevice();
-  //   occa::memory getMemory();
-  // };
+    occa::device getDevice();
+    occa::memory getMemory();
+  };
 
   typedef std::map<ptrRange_t, occa::memory_v*> ptrRangeMap_t;
   typedef std::vector<occa::memory_v*>          memoryArray_t;
