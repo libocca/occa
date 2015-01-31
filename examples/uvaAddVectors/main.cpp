@@ -3,13 +3,18 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv){
-  occa::enableUVA();
-
   int entries = 5;
+
+  // [U]nified [V]irtual [A]dressing is
+  //   disabled by default
+  occa::enableUVA();
 
   occa::device device;
   device.setup("mode = OpenMP, schedule = compact, chunk = 10");
 
+  // Allocate [managed] arrays that will
+  //   automatically synchronize between
+  //   the process and [device]
   float *a  = (float*) device.managedUvaAlloc(entries * sizeof(float));
   float *b  = (float*) device.managedUvaAlloc(entries * sizeof(float));
   float *ab = (float*) device.managedUvaAlloc(entries * sizeof(float));
@@ -23,8 +28,13 @@ int main(int argc, char **argv){
   occa::kernel addVectors = device.buildKernelFromSource("addVectors.okl",
                                                          "addVectors");
 
+  // Arrays a, b, and ab are now resident
+  //   on [device]
   addVectors(entries, a, b, ab);
 
+  // Finish work queued up in [device],
+  //   synchronizing a, b, and ab and
+  //   making it safe to use them again
   device.finish();
 
   for(int i = 0; i < 5; ++i)

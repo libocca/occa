@@ -386,7 +386,13 @@ namespace occa {
   }
 
   void memory::placeInUVA(){
+#if   (OCCA_OS == LINUX_OS)
+    posix_memalign(&(mHandle->uvaPtr), OCCA_MEM_ALIGN, mHandle->size);
+#elif (OCCA_OS == OSX_OS)
     mHandle->uvaPtr = ::malloc(mHandle->size);
+#else
+    mHandle->uvaPtr = ::malloc(mHandle->size);
+#endif
   }
 
   void memory::manage(){
@@ -544,6 +550,9 @@ namespace occa {
 
   void memory::free(){
     mHandle->dev->bytesAllocated_ -= (mHandle->size);
+
+    if(mHandle->uvaPtr)
+      ::free(mHandle->uvaPtr);
 
     if( !(mHandle->isMapped) )
       mHandle->free();
