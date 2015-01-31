@@ -594,6 +594,15 @@ namespace occa {
     inline void* data() const {
       return pointer ? arg.void_ : (void*) &arg;
     }
+
+    inline void markDirty() const {
+      if(pointer){
+        ptrRangeMap_t::iterator it = uvaMap.find(arg.void_);
+
+        if(it != uvaMap.end())
+          dirtyManagedMap[it->second] = true;
+      }
+    }
   };
 
   OCCA_KERNEL_ARG_CONSTRUCTOR(int);
