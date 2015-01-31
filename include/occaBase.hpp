@@ -67,47 +67,40 @@ namespace occa {
   extern bool uvaEnabled_f;
   extern bool verboseCompilation_f;
 
+  void setVerboseCompilation(const bool value);
+  //==================================
+
+  //---[ UVA ]------------------------
   bool uvaIsEnabled();
   void enableUVA();
   void disableUVA();
-
-  void setVerboseCompilation(const bool value);
 
   class ptrRange_t {
   public:
     char *start, *end;
 
-    inline ptrRange_t() :
-      start(NULL),
-      end(NULL) {}
+    ptrRange_t();
+    ptrRange_t(void *ptr, const uintptr_t bytes = 0);
+    ptrRange_t(const ptrRange_t &r);
 
-    inline ptrRange_t(void *ptr, const uintptr_t bytes = 0) :
-      start((char*) ptr),
-      end(((char*) ptr) + bytes) {}
+    ptrRange_t& operator =  (const ptrRange_t &r);
+    bool        operator == (const ptrRange_t &r) const;
+    bool        operator != (const ptrRange_t &r) const;
 
-    inline ptrRange_t(const ptrRange_t &r) :
-      start(r.start),
-      end(r.end) {}
-
-    inline ptrRange_t& operator = (const ptrRange_t &r){
-      start = r.start;
-      end   = r.end;
-
-      return *this;
-    }
-
-    inline bool operator == (const ptrRange_t &r) const {
-      return ((start <= r.start) && (r.start < end));
-    }
-
-    inline bool operator != (const ptrRange_t &r) const {
-      return ((r.start < start) || (end <= r.start));
-    }
-
-    inline friend int operator < (const ptrRange_t &a, const ptrRange_t &b){
-      return ((a != b) && (a.start < b.start));
-    }
+    friend int operator < (const ptrRange_t &a, const ptrRange_t &b);
   };
+
+  // class uvaPtrInfo_t {
+  // private:
+  //   occa::memory_v *mem;
+
+  // public:
+  //   uvaPtrInfo_t();
+  //   uvaPtrInfo_t(occa::memory_v *mem);
+
+  //   occa::device getDevice();
+  //   occa::memory getMemory();
+  // };
 
   typedef std::map<ptrRange_t, occa::memory_v*> ptrRangeMap_t;
   typedef std::vector<occa::memory_v*>          memoryArray_t;

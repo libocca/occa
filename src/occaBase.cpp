@@ -8,6 +8,12 @@ namespace occa {
 
   bool uvaEnabled_f         = false;
   bool verboseCompilation_f = true;
+  //==================================
+
+
+  //---[ UVA ]------------------------
+  ptrRangeMap_t uvaMap;
+  memoryArray_t uvaDirtyMemory;
 
   bool uvaIsEnabled(){
     return uvaEnabled_f;
@@ -25,8 +31,48 @@ namespace occa {
     verboseCompilation_f = value;
   }
 
-  ptrRangeMap_t uvaMap;
-  memoryArray_t uvaDirtyMemory;
+  ptrRange_t::ptrRange_t() :
+    start(NULL),
+    end(NULL) {}
+
+  ptrRange_t::ptrRange_t(void *ptr, const uintptr_t bytes) :
+    start((char*) ptr),
+    end(((char*) ptr) + bytes) {}
+
+  ptrRange_t::ptrRange_t(const ptrRange_t &r) :
+    start(r.start),
+    end(r.end) {}
+
+  ptrRange_t& ptrRange_t::operator = (const ptrRange_t &r){
+    start = r.start;
+    end   = r.end;
+
+    return *this;
+  }
+
+  bool ptrRange_t::operator == (const ptrRange_t &r) const {
+    return ((start <= r.start) && (r.start < end));
+  }
+
+  bool ptrRange_t::operator != (const ptrRange_t &r) const {
+    return ((r.start < start) || (end <= r.start));
+  }
+
+  int operator < (const ptrRange_t &a, const ptrRange_t &b){
+    return ((a != b) && (a.start < b.start));
+  }
+
+  // uvaPtrInfo_t::uvaPtrInfo_t(){
+  // }
+
+  // uvaPtrInfo_t::uvaPtrInfo_t(occa::memory_v *mem){
+  // }
+
+  // occa::device uvaPtrInfo_t::getDevice(){
+  // }
+
+  // occa::memory uvaPtrInfo_t::getMemory(){
+  // }
 
   void free(void *ptr){
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
