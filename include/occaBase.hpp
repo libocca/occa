@@ -539,6 +539,7 @@ namespace occa {
   class kernelArg {
   public:
     occa::device *dev;
+    occa::memory_v *mHandle;
 
     kernelArg_t arg, arg2;
 
@@ -547,12 +548,14 @@ namespace occa {
 
     inline kernelArg(){
       dev        = NULL;
+      mHandle    = NULL;
       arg.void_  = NULL;
       hasTwoArgs = false;
     }
 
     inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
       dev(NULL),
+      mHandle(NULL),
       size(size_),
       pointer(pointer_),
       hasTwoArgs(false) {
@@ -569,6 +572,7 @@ namespace occa {
 
     inline kernelArg& operator = (const kernelArg &k){
       dev        = k.dev;
+      mHandle    = k.mHandle;
       arg.void_  = k.arg.void_;
       size       = k.size;
       pointer    = k.pointer;
@@ -579,7 +583,8 @@ namespace occa {
 
     template <class TM>
     inline kernelArg(const TM &arg_){
-      dev = NULL;
+      dev     = NULL;
+      mHandle = NULL;
 
       arg.void_ = const_cast<TM*>(&arg_);
       size = sizeof(TM);
@@ -590,7 +595,8 @@ namespace occa {
 
     template <class TM>
     inline kernelArg(TM *arg_){
-      dev = NULL;
+      dev     = NULL;
+      mHandle = NULL;
 
       arg.void_ = arg_;
       size      = sizeof(TM*);
@@ -601,7 +607,8 @@ namespace occa {
 
     template <class TM>
     inline kernelArg(const TM *arg_){
-      dev = NULL;
+      dev     = NULL;
+      mHandle = NULL;
 
       arg.void_ = const_cast<TM*>(arg_);
       size      = sizeof(TM*);
@@ -1100,7 +1107,8 @@ namespace occa {
   //---[ KernelArg ]----------
   template <>
   inline kernelArg::kernelArg(const occa::memory &m){
-    dev = m.mHandle->dev;
+    dev     = m.mHandle->dev;
+    mHandle = NULL;
 
     arg.void_ = m.mHandle->handle;
     size = sizeof(void*);
