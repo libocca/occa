@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   // occa::enableUVAByDefault();
 
   occa::device device;
-  device.setup("mode = OpenMP, UVA = enabled, schedule = compact, chunk = 10");
+  device.setup("mode = Serial");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between

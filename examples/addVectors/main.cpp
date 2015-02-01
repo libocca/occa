@@ -21,9 +21,10 @@ int main(int argc, char **argv){
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
+  device.setup("mode = Serial");
 
   //---[ Device setup with string flags ]-------------------
+  //    device.setup("mode = Serial");
   //    device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
   //    device.setup("mode = OpenCL  , platformID = 0, deviceID = 0");
   //    device.setup("mode = CUDA    , deviceID = 0");

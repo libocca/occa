@@ -656,16 +656,17 @@ namespace occa {
 
   void device::setupHandle(occa::mode m){
     switch(m){
-    case Pthreads:
-#if OCCA_PTHREADS_ENABLED
-      dHandle = new device_t<Pthreads>(); break;
-#else
-      OCCA_CHECK(false,
-                 "OCCA mode [Pthreads] is not enabled");
-#endif
 
+    case Serial:
+      dHandle = new device_t<Serial>(); break;
+
+#if OCCA_OPENMP_ENABLED
     case OpenMP:
       dHandle = new device_t<OpenMP>(); break;
+#else
+      OCCA_CHECK(false,
+                 "OCCA mode [OpenMP] is not enabled");
+#endif
 
     case OpenCL:
 #if OCCA_OPENCL_ENABLED
@@ -681,6 +682,14 @@ namespace occa {
 #else
       OCCA_CHECK(false,
                  "OCCA mode [CUDA] is not enabled");
+#endif
+
+    case Pthreads:
+#if OCCA_PTHREADS_ENABLED
+      dHandle = new device_t<Pthreads>(); break;
+#else
+      OCCA_CHECK(false,
+                 "OCCA mode [Pthreads] is not enabled");
 #endif
 
     case COI:
@@ -737,9 +746,8 @@ namespace occa {
     argInfoMap aim;
 
     switch(m){
-    case Pthreads:{
-      aim.set("threadCount", arg1);
-      aim.set("pinningInfo", arg2);
+    case Serial:{
+      // Do Nothing
       break;
     }
     case OpenMP:{
@@ -753,6 +761,11 @@ namespace occa {
     }
     case CUDA:{
       aim.set("deviceID", arg1);
+      break;
+    }
+    case Pthreads:{
+      aim.set("threadCount", arg1);
+      aim.set("pinningInfo", arg2);
       break;
     }
     case COI:{
@@ -1002,8 +1015,8 @@ namespace occa {
     kernel_v *&k = ker.kHandle;
 
     if(usingParser){
-      k          = new kernel_t<OpenMP>;
-      k->dHandle = new device_t<OpenMP>();
+      k          = new kernel_t<Serial>;
+      k->dHandle = new device_t<Serial>();
 
       kernelInfo info = info_;
 
@@ -1311,8 +1324,11 @@ namespace occa {
       return deviceList;
     }
 
-    device_t<OpenMP>::appendAvailableDevices(deviceList);
+    device_t<Serial>::appendAvailableDevices(deviceList);
 
+#if OCCA_PTHREADS_ENABLED
+    device_t<OpenMP>::appendAvailableDevices(deviceList);
+#endif
 #if OCCA_PTHREADS_ENABLED
     device_t<Pthreads>::appendAvailableDevices(deviceList);
 #endif
@@ -1332,7 +1348,7 @@ namespace occa {
   }
 
   deviceIdentifier::deviceIdentifier() :
-    mode_(OpenMP) {}
+    mode_(Serial) {}
 
   deviceIdentifier::deviceIdentifier(occa::mode m,
                                      const char *c, const size_t chars){

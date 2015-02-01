@@ -1,21 +1,13 @@
-#ifndef OCCA_COI_DEFINES_HEADER
-#define OCCA_COI_DEFINES_HEADER
+#ifndef OCCA_OPENMP_DEFINES_HEADER
+#define OCCA_OPENMP_DEFINES_HEADER
 
 #include <stdint.h>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <unistd.h>
-#include <ctype.h>
+#include <cstdlib>
+#include <cstdio>
 #include <cmath>
 
-#include <omp.h>
-
-#include <intel-coi/sink/COIPipeline_sink.h>
-#include <intel-coi/sink/COIProcess_sink.h>
-#include <intel-coi/sink/COIBuffer_sink.h>
-#include <intel-coi/common/COIMacros_common.h>
-
+#include "occaBase.hpp"
 
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
@@ -476,173 +468,101 @@ typedef type16<double> double16;
 #define occaFunctionInfoArg const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
 #define occaFunctionInfo               occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
-#define occaKernel         COINATIVELIBEXPORT
+#ifndef MC_CL_EXE
+#  define occaKernel extern "C"
+#else
+// branch for Microsoft cl.exe - compiler: each symbol that a dll (shared object) should export must be decorated with __declspec(dllexport)
+#  define occaKernel extern "C" __declspec(dllexport)
+#endif
+
 #define occaFunction
 #define occaDeviceFunction
 
-#define OCCA_PRAGMA(STR) __pragma(STR)
+#ifndef MC_CL_EXE
+#  define OCCA_PRAGMA(STR) _Pragma(STR)
+#else
+#  define OCCA_PRAGMA(STR) __pragma(STR)
+#endif
 //================================================
 
 
 //---[ Atomics ]----------------------------------
 template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old   = *ptr;
-    *ptr += update;
-  }
+  const TM old = *ptr;
+  *ptr += update;
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicSub(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old   = *ptr;
-    *ptr -= update;
-  }
+  const TM old = *ptr;
+  *ptr -= update;
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicSwap(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old  = *ptr;
-    *ptr = update;
-  }
+  const TM old = *ptr;
+  *ptr = update;
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicInc(TM *ptr){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old = *ptr;
+  const TM old = *ptr;
   ++(*ptr);
-  }
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicDec(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old = *ptr;
-    --(*ptr);
-  }
+  const TM old = *ptr;
+  --(*ptr);
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicMin(TM *ptr, const TM &update){
-  TM old;
-
-#  pragma omp critical
-  {
-    old  = *ptr;
-    *ptr = ((old < update) ? old : update);
-  }
+  const TM old = *ptr;
+  *ptr = ((old < update) ? old : update);
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicMax(TM *ptr, const TM &update){
-  TM old;
-
-#  pragma omp critical
-  {
-    old  = *ptr;
-    *ptr = ((old < update) ? update : old);
-  }
+  const TM old = *ptr;
+  *ptr = ((old < update) ? update : old);
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicAnd(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old   = *ptr;
-    *ptr &= update;
-  }
+  const TM old = *ptr;
+  *ptr &= update;
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicOr(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old   = *ptr;
-    *ptr |= update;
-  }
+  const TM old = *ptr;
+  *ptr |= update;
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicXor(TM *ptr, const TM &update){
-  TM old;
-
-#ifdef(OPENMP_3_1)
-#  pragma omp atomic capture
-#else
-#  pragma omp critical
-#endif
-  {
-    old   = *ptr;
-    *ptr ^= update;
-  }
+  const TM old = *ptr;
+  *ptr ^= update;
 
   return old;
 }
@@ -739,10 +659,10 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 
 
 //---[ Misc ]-------------------------------------
-#define occaParallelFor2 OCCA_PRAGMA("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor1 OCCA_PRAGMA("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor0 OCCA_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor  OCCA_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor2
+#define occaParallelFor1
+#define occaParallelFor0
+#define occaParallelFor
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) OCCA_PRAGMA(#N)
 #define occaUnroll2(N) occaUnroll3(N)
@@ -883,6 +803,7 @@ public:
 struct occaTexture {
   void *data;
   int dim;
+
   uintptr_t w, h, d;
 };
 

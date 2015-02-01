@@ -483,132 +483,97 @@ typedef type16<double> double16;
 #else
 #  define OCCA_PRAGMA(STR) __pragma(STR)
 #endif
-
-#if OCCA_OPENMP_ENABLED
-#  define OCCA_OMP_PRAGMA(STR) OCCA_PRAGMA(STR)
-#else
-#  define OCCA_OMP_PRAGMA(STR)
-#endif
 //================================================
 
 
 //---[ Atomics ]----------------------------------
 template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr += update;
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old   = *ptr;
     *ptr += update;
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicSub(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr -= update;
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old   = *ptr;
     *ptr -= update;
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicSwap(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr = update;
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old  = *ptr;
     *ptr = update;
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicInc(TM *ptr){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  ++(*ptr);
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old = *ptr;
   ++(*ptr);
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicDec(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  --(*ptr);
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old = *ptr;
     --(*ptr);
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicMin(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr = ((old < update) ? old : update);
-#else
   TM old;
 
 #  pragma omp critical
@@ -616,17 +581,12 @@ TM occaAtomicMin(TM *ptr, const TM &update){
     old  = *ptr;
     *ptr = ((old < update) ? old : update);
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicMax(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr = ((old < update) ? update : old);
-#else
   TM old;
 
 #  pragma omp critical
@@ -634,73 +594,57 @@ TM occaAtomicMax(TM *ptr, const TM &update){
     old  = *ptr;
     *ptr = ((old < update) ? update : old);
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicAnd(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr &= update;
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old   = *ptr;
     *ptr &= update;
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicOr(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr |= update;
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old   = *ptr;
     *ptr |= update;
   }
-#endif
 
   return old;
 }
 
 template <class TM>
 TM occaAtomicXor(TM *ptr, const TM &update){
-#if !OCCA_OPENMP_ENABLED
-  const TM old = *ptr;
-  *ptr ^= update;
-#else
   TM old;
 
-#  ifdef OPENMP_3_1
-#    pragma omp atomic capture
-#  else
-#    pragma omp critical
-#  endif
+#ifdef OPENMP_3_1
+#  pragma omp atomic capture
+#else
+#  pragma omp critical
+#endif
   {
     old   = *ptr;
     *ptr ^= update;
   }
-#endif
 
   return old;
 }
@@ -797,10 +741,10 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 
 
 //---[ Misc ]-------------------------------------
-#define occaParallelFor2 OCCA_OMP_PRAGMA("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor1 OCCA_OMP_PRAGMA("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor0 OCCA_OMP_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
-#define occaParallelFor  OCCA_OMP_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor2 OCCA_PRAGMA("omp parallel for collapse(3) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor1 OCCA_PRAGMA("omp parallel for collapse(2) firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor0 OCCA_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
+#define occaParallelFor  OCCA_PRAGMA("omp parallel for             firstprivate(occaInnerId0,occaInnerId1,occaInnerId2)")
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) OCCA_PRAGMA(#N)
 #define occaUnroll2(N) occaUnroll3(N)

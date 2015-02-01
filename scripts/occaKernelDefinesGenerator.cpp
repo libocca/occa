@@ -63,7 +63,7 @@ inline std::string saveFileToVariable(std::string filename,
 }
 
 int main(int argc, char **argv){
-  int mpChars, clChars, cuChars, ptChars, coiChars, coiMainChars;
+  int srChars, mpChars, clChars, cuChars, ptChars, coiChars, coiMainChars;
 
   if(argc != 2){
     std::cout << "Needs [OCCA_DIR] as the argument\n";
@@ -74,10 +74,9 @@ int main(int argc, char **argv){
 
   std::string ns = "namespace occa {";
 
-
-  std::string pt = saveFileToVariable(occaDir + "/include/defines/occaPthreadsDefines.hpp",
-                                      "occaPthreadsDefines",
-                                      ptChars,
+  std::string sr = saveFileToVariable(occaDir + "/include/defines/occaSerialDefines.hpp",
+                                      "occaSerialDefines",
+                                      srChars,
                                       "    ");
 
   std::string mp = saveFileToVariable(occaDir + "/include/defines/occaOpenMPDefines.hpp",
@@ -93,6 +92,11 @@ int main(int argc, char **argv){
   std::string cu = saveFileToVariable(occaDir + "/include/defines/occaCUDADefines.hpp",
                                       "occaCUDADefines",
                                       cuChars,
+                                      "    ");
+
+  std::string pt = saveFileToVariable(occaDir + "/include/defines/occaPthreadsDefines.hpp",
+                                      "occaPthreadsDefines",
+                                      ptChars,
                                       "    ");
 
   std::string coi = saveFileToVariable(occaDir + "/include/defines/occaCOIDefines.hpp",
@@ -112,10 +116,11 @@ int main(int argc, char **argv){
   fs.open(occaKernelDefinesHeader.c_str());
 
   fs << ns << std::endl
-     << "    extern char occaPthreadsDefines[" << ptChars << "];" << std::endl
+     << "    extern char occaSerialDefines[" << srChars  << "];"  << std::endl
      << "    extern char occaOpenMPDefines[" << mpChars  << "];"  << std::endl
      << "    extern char occaOpenCLDefines[" << clChars  << "];"  << std::endl
      << "    extern char occaCUDADefines["   << cuChars  << "];"  << std::endl
+     << "    extern char occaPthreadsDefines[" << ptChars << "];" << std::endl
      << "    extern char occaCOIDefines["   << coiChars << "];"   << std::endl
      << "    extern char occaCOIMain["   << coiMainChars << "];"  << std::endl
      << "}" << std::endl;
@@ -125,10 +130,11 @@ int main(int argc, char **argv){
   fs.open(occaKernelDefinesSource.c_str());
 
   fs << ns      << std::endl
-     << pt      << std::endl
+     << sr      << std::endl
      << mp      << std::endl
      << cl      << std::endl
      << cu      << std::endl
+     << pt      << std::endl
      << coi     << std::endl
      << coiMain << std::endl
      << "}"     << std::endl;

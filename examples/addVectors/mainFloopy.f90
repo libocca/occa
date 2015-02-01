@@ -6,8 +6,12 @@ program main
 
   integer(4) :: i, entries = 5
 
-  integer(4) :: platformID = 0, deviceID = 0, dims, innerDim
-  character(len=1024) :: mode = "OpenMP"
+  character(len=1024) :: Serial_Info   = "mode = Serial"
+  character(len=1024) :: OpenMP_Info   = "mode = OpenMP  , schedule = compact, chunk = 10"
+  character(len=1024) :: OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0"
+  character(len=1024) :: CUDA_Info     = "mode = CUDA    , deviceID = 0"
+  character(len=1024) :: Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"
+  character(len=1024) :: COI_Info      = "mode = COI     , deviceID = 0"
 
   real(4), allocatable :: a(:), b(:), ab(:)
 
@@ -25,7 +29,7 @@ program main
     ab(i) = 0
   end do
 
-  device = occaGetDevice(mode, platformID, deviceID)
+  device = occaGetDevice(Serial_Info)
 
   o_a  = occaDeviceMalloc(device, int(entries,8)*4_8)
   o_b  = occaDeviceMalloc(device, int(entries,8)*4_8)

@@ -139,25 +139,28 @@ namespace occa {
   //==================================
 
   //---[ Mode ]-----------------------
-  static const occa::mode Pthreads = (1 << 20);
+  static const occa::mode Serial   = (1 << 20);
   static const occa::mode OpenMP   = (1 << 21);
   static const occa::mode OpenCL   = (1 << 22);
   static const occa::mode CUDA     = (1 << 23);
-  static const occa::mode COI      = (1 << 24);
+  static const occa::mode Pthreads = (1 << 24);
+  static const occa::mode COI      = (1 << 25);
 
 
-  static const occa::mode PthreadsIndex = 0;
+  static const occa::mode SerialIndex   = 0;
   static const occa::mode OpenMPIndex   = 1;
   static const occa::mode OpenCLIndex   = 2;
   static const occa::mode CUDAIndex     = 3;
-  static const occa::mode COIIndex      = 4;
+  static const occa::mode PthreadsIndex = 4;
+  static const occa::mode COIIndex      = 5;
   static const int modeCount = 5;
 
   inline std::string modeToStr(const occa::mode &m){
-    if(m & Pthreads) return "Pthreads";
+    if(m & Serial)   return "Serial";
     if(m & OpenMP)   return "OpenMP";
     if(m & OpenCL)   return "OpenCL";
     if(m & CUDA)     return "CUDA";
+    if(m & Pthreads) return "Pthreads";
     if(m & COI)      return "COI";
 
     OCCA_CHECK(false, "Mode [" << m << "] is not valid");
@@ -168,15 +171,16 @@ namespace occa {
   inline mode strToMode(const std::string &str){
     const std::string upStr = upString(str);
 
-    if(upStr == "PTHREADS") return Pthreads;
+    if(upStr == "SERIAL")   return Serial;
     if(upStr == "OPENMP")   return OpenMP;
     if(upStr == "OPENCL")   return OpenCL;
     if(upStr == "CUDA")     return CUDA;
+    if(upStr == "PTHREADS") return Pthreads;
     if(upStr == "COI")      return COI;
 
     OCCA_CHECK(false, "Mode [" << str << "] is not valid");
 
-    return OpenMP;
+    return Serial;
   }
 
   inline std::string modes(int info, int preferredMode = 0){
@@ -190,10 +194,11 @@ namespace occa {
       ++count;
     }
 
-    if(info_ & Pthreads) ret += std::string(count++ ? ", " : "") + "Pthreads";
+    if(info_ & Serial)   ret += std::string(count++ ? ", " : "") + "Serial";
     if(info_ & OpenMP)   ret += std::string(count++ ? ", " : "") + "OpenMP";
     if(info_ & OpenCL)   ret += std::string(count++ ? ", " : "") + "OpenCL";
     if(info_ & CUDA)     ret += std::string(count++ ? ", " : "") + "CUDA";
+    if(info_ & Pthreads) ret += std::string(count++ ? ", " : "") + "Pthreads";
     if(info_ & COI)      ret += std::string(count++ ? ", " : "") + "COI";
 
     if(count)
@@ -1731,10 +1736,11 @@ namespace occa {
       if((name == "OCCA_USING_CPU") ||
          (name == "OCCA_USING_GPU") ||
 
-         (name == "OCCA_USING_PTHREADS") ||
+         (name == "OCCA_USING_SERIAL")   ||
          (name == "OCCA_USING_OPENMP")   ||
          (name == "OCCA_USING_OPENCL")   ||
          (name == "OCCA_USING_CUDA")     ||
+         (name == "OCCA_USING_PTHREADS") ||
          (name == "OCCA_USING_COI")      ||
 
          (name == "occaInnerDim0") ||

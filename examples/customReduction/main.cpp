@@ -89,7 +89,7 @@ int main(int argc, char **argv){
   customReduction squareArray;
   occa::memory o_a, o_a2;
 
-  device.setup("mode = OpenMP");
+  device.setup("mode = Serial");
 
   o_a  = device.malloc(entries*sizeof(float));
   o_a2 = device.malloc(entries*sizeof(float));

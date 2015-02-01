@@ -798,14 +798,6 @@ namespace occa {
   void device_t<COI>::addOccaHeadersToInfo(kernelInfo &info_){
     info_.addDefine("OCCA_USING_CPU", 1);
     info_.addDefine("OCCA_USING_COI", 1);
-
-#if OCCA_OPENMP_ENABLED
-    info_.addOCCAKeywords(std::string("#define OCCA_OPENMP_ENABLED 1\n") +
-                          occaCOIDefines);
-#else
-    info_.addOCCAKeywords(std::string("#define OCCA_OPENMP_ENABLED 0\n") +
-                          occaCOIDefines);
-#endif
   }
 
   template <>

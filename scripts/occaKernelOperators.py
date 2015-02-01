@@ -162,6 +162,25 @@ def pthreadOperatorDefinition(N):
 
     delete &args;"""
 
+def serialOperatorDefinition(N):
+    return """
+    SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
+    functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) data_.handle;
+    int occaKernelArgs[6];
+
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
+
+    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
+
+    tmpKernel(occaKernelArgs,
+              occaInnerId0, occaInnerId1, occaInnerId2,
+              """ + ',\n              '.join(['arg{0}.data()'.format(n) for n in xrange(N)]) + ');'
+
 def ompOperatorDefinition(N):
     return """
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
@@ -313,10 +332,11 @@ def cOperatorDefinition(N):
             '    __occa_kernel__.runFromArguments();\n' + \
             '    }\n');
 
-operatorModeDefinition = { 'Pthreads' : pthreadOperatorDefinition,
+operatorModeDefinition = { 'Serial'   : serialOperatorDefinition,
                            'OpenMP'   : ompOperatorDefinition,
                            'OpenCL'   : clOperatorDefinition,
                            'CUDA'     : cudaOperatorDefinition,
+                           'Pthreads' : pthreadOperatorDefinition,
                            'COI'      : coiOperatorDefinition }
 
 hpp = open('../include/operators/occaVirtualOperatorDeclarations.hpp', 'w')

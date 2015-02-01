@@ -1,5 +1,4 @@
-[MODEL]
-OpenMP
+[DEVICE INFO] "mode = Serial"
 
 [STENCIL RADIUS]
 7

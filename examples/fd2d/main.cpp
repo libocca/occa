@@ -15,8 +15,7 @@ int click;
 
 setupAide setup;
 
-string model;
-int deviceID, platformID;
+std::string deviceInfo;
 
 int width, height;
 int Bx, By;
@@ -105,9 +104,7 @@ void run(){
 void setupMesh(){
   setup.read("setuprc");
 
-  setup.getArgs("MODEL"   , model);
-  setup.getArgs("PLATFORM", platformID);
-  setup.getArgs("DEVICE"  , deviceID);
+  setup.getArgs("DEVICE INFO", deviceInfo);
 
   setup.getArgs("STENCIL RADIUS" , stencilRadius);
 
@@ -129,8 +126,7 @@ void setupMesh(){
 
   currentTime = 0;
 
-  std::cout << "MODEL          = " << model << '\n'
-            << "STENCIL RADIUS = " << stencilRadius << '\n'
+  std::cout << "STENCIL RADIUS = " << stencilRadius << '\n'
             << "WIDTH          = " << width << '\n'
             << "HEIGHT         = " << height << '\n'
             << "DX             = " << dx << '\n'
@@ -273,7 +269,7 @@ occa::memory o_u1, o_u2, o_u3;
 occa::kernel fd2d;
 
 void setupSolver(){
-  dev.setup(model.c_str(), platformID, deviceID);
+  dev.setup(deviceInfo);
 
   o_u1 = dev.malloc(u1.size()*sizeof(tFloat), &(u1[0]));
   o_u2 = dev.malloc(u1.size()*sizeof(tFloat), &(u1[0]));

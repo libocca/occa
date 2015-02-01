@@ -20,17 +20,13 @@ int main(int argc, char **argv){
   for(int i = 0; i < reducedEntries; ++i)
     aRed[i] = 0;
 
-  std::string mode = "OpenMP";
-  int platformID = 0;
-  int deviceID   = 2;
-
   occa::device device;
   occa::kernel reduction;
   occa::memory o_a, o_aRed;
 
   occa::kernelInfo reductionInfo;
 
-  device.setup(mode, platformID, deviceID);
+  device.setup("mode = Serial");
 
   o_a  = device.malloc(entries*sizeof(float));
   o_aRed = device.malloc(reducedEntries*sizeof(float));

@@ -22,13 +22,14 @@ int main(int argc, char **argv){
   occaMemory o_a, o_b, o_ab;
 
   //---[ Device setup with string flags ]-------------------
+  const char *Serial_Info   = "mode = Serial";
   const char *OpenMP_Info   = "mode = OpenMP  , schedule = compact, chunk = 10";
   const char *OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0";
   const char *CUDA_Info     = "mode = CUDA    , deviceID = 0";
   const char *Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]";
   const char *COI_Info      = "mode = COI     , deviceID = 0";
 
-  device = occaGetDevice(OpenMP_Info);
+  device = occaGetDevice(Serial_Info);
 
   o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
   o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
