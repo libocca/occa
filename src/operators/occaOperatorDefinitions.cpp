@@ -1,5 +1,5 @@
   void kernel::operator() (const kernelArg &arg0){
-    arg0.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0);
@@ -18,8 +18,8 @@
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1){
-    arg0.markDirty();    
-arg1.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1);
@@ -39,9 +39,9 @@ arg1.markDirty();
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2);
@@ -63,10 +63,10 @@ arg2.markDirty();
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -93,11 +93,11 @@ arg3.markDirty();
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -125,12 +125,12 @@ arg4.markDirty();
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -160,13 +160,13 @@ arg5.markDirty();
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -201,14 +201,14 @@ arg6.markDirty();
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -244,15 +244,15 @@ arg7.markDirty();
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -290,16 +290,16 @@ arg8.markDirty();
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -342,17 +342,17 @@ arg9.markDirty();
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -396,18 +396,18 @@ arg10.markDirty();
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -453,19 +453,19 @@ arg11.markDirty();
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -516,20 +516,20 @@ arg12.markDirty();
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -581,21 +581,21 @@ arg13.markDirty();
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -649,22 +649,22 @@ arg14.markDirty();
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -723,23 +723,23 @@ arg15.markDirty();
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -799,24 +799,24 @@ arg16.markDirty();
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -878,25 +878,25 @@ arg17.markDirty();
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -963,26 +963,26 @@ arg18.markDirty();
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1050,27 +1050,27 @@ arg19.markDirty();
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1140,28 +1140,28 @@ arg20.markDirty();
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1236,29 +1236,29 @@ arg21.markDirty();
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1334,30 +1334,30 @@ arg22.markDirty();
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1435,31 +1435,31 @@ arg23.markDirty();
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1542,32 +1542,32 @@ arg24.markDirty();
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1651,33 +1651,33 @@ arg25.markDirty();
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1763,34 +1763,34 @@ arg26.markDirty();
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -1881,35 +1881,35 @@ arg27.markDirty();
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2001,36 +2001,36 @@ arg28.markDirty();
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2124,37 +2124,37 @@ arg29.markDirty();
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2253,38 +2253,38 @@ arg30.markDirty();
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2384,39 +2384,39 @@ arg31.markDirty();
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2518,40 +2518,40 @@ arg32.markDirty();
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2658,41 +2658,41 @@ arg33.markDirty();
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2800,42 +2800,42 @@ arg34.markDirty();
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -2945,43 +2945,43 @@ arg35.markDirty();
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -3096,44 +3096,44 @@ arg36.markDirty();
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -3249,45 +3249,45 @@ arg37.markDirty();
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -3405,46 +3405,46 @@ arg38.markDirty();
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -3567,47 +3567,47 @@ arg39.markDirty();
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -3731,48 +3731,48 @@ arg40.markDirty();
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -3898,49 +3898,49 @@ arg41.markDirty();
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -4071,50 +4071,50 @@ arg42.markDirty();
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -4246,51 +4246,51 @@ arg43.markDirty();
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();    
-arg44.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
+    arg44.setupForKernelCall(kHandle->metaInfo.argIsConst(44));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -4424,52 +4424,52 @@ arg44.markDirty();
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();    
-arg44.markDirty();    
-arg45.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
+    arg44.setupForKernelCall(kHandle->metaInfo.argIsConst(44));
+    arg45.setupForKernelCall(kHandle->metaInfo.argIsConst(45));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -4608,53 +4608,53 @@ arg45.markDirty();
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();    
-arg44.markDirty();    
-arg45.markDirty();    
-arg46.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
+    arg44.setupForKernelCall(kHandle->metaInfo.argIsConst(44));
+    arg45.setupForKernelCall(kHandle->metaInfo.argIsConst(45));
+    arg46.setupForKernelCall(kHandle->metaInfo.argIsConst(46));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -4794,54 +4794,54 @@ arg46.markDirty();
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();    
-arg44.markDirty();    
-arg45.markDirty();    
-arg46.markDirty();    
-arg47.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
+    arg44.setupForKernelCall(kHandle->metaInfo.argIsConst(44));
+    arg45.setupForKernelCall(kHandle->metaInfo.argIsConst(45));
+    arg46.setupForKernelCall(kHandle->metaInfo.argIsConst(46));
+    arg47.setupForKernelCall(kHandle->metaInfo.argIsConst(47));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -4983,55 +4983,55 @@ arg47.markDirty();
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();    
-arg44.markDirty();    
-arg45.markDirty();    
-arg46.markDirty();    
-arg47.markDirty();    
-arg48.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
+    arg44.setupForKernelCall(kHandle->metaInfo.argIsConst(44));
+    arg45.setupForKernelCall(kHandle->metaInfo.argIsConst(45));
+    arg46.setupForKernelCall(kHandle->metaInfo.argIsConst(46));
+    arg47.setupForKernelCall(kHandle->metaInfo.argIsConst(47));
+    arg48.setupForKernelCall(kHandle->metaInfo.argIsConst(48));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 
@@ -5178,56 +5178,56 @@ arg48.markDirty();
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
-    arg0.markDirty();    
-arg1.markDirty();    
-arg2.markDirty();    
-arg3.markDirty();    
-arg4.markDirty();    
-arg5.markDirty();    
-arg6.markDirty();    
-arg7.markDirty();    
-arg8.markDirty();    
-arg9.markDirty();    
-arg10.markDirty();    
-arg11.markDirty();    
-arg12.markDirty();    
-arg13.markDirty();    
-arg14.markDirty();    
-arg15.markDirty();    
-arg16.markDirty();    
-arg17.markDirty();    
-arg18.markDirty();    
-arg19.markDirty();    
-arg20.markDirty();    
-arg21.markDirty();    
-arg22.markDirty();    
-arg23.markDirty();    
-arg24.markDirty();    
-arg25.markDirty();    
-arg26.markDirty();    
-arg27.markDirty();    
-arg28.markDirty();    
-arg29.markDirty();    
-arg30.markDirty();    
-arg31.markDirty();    
-arg32.markDirty();    
-arg33.markDirty();    
-arg34.markDirty();    
-arg35.markDirty();    
-arg36.markDirty();    
-arg37.markDirty();    
-arg38.markDirty();    
-arg39.markDirty();    
-arg40.markDirty();    
-arg41.markDirty();    
-arg42.markDirty();    
-arg43.markDirty();    
-arg44.markDirty();    
-arg45.markDirty();    
-arg46.markDirty();    
-arg47.markDirty();    
-arg48.markDirty();    
-arg49.markDirty();
+    arg0.setupForKernelCall(kHandle->metaInfo.argIsConst(0));
+    arg1.setupForKernelCall(kHandle->metaInfo.argIsConst(1));
+    arg2.setupForKernelCall(kHandle->metaInfo.argIsConst(2));
+    arg3.setupForKernelCall(kHandle->metaInfo.argIsConst(3));
+    arg4.setupForKernelCall(kHandle->metaInfo.argIsConst(4));
+    arg5.setupForKernelCall(kHandle->metaInfo.argIsConst(5));
+    arg6.setupForKernelCall(kHandle->metaInfo.argIsConst(6));
+    arg7.setupForKernelCall(kHandle->metaInfo.argIsConst(7));
+    arg8.setupForKernelCall(kHandle->metaInfo.argIsConst(8));
+    arg9.setupForKernelCall(kHandle->metaInfo.argIsConst(9));
+    arg10.setupForKernelCall(kHandle->metaInfo.argIsConst(10));
+    arg11.setupForKernelCall(kHandle->metaInfo.argIsConst(11));
+    arg12.setupForKernelCall(kHandle->metaInfo.argIsConst(12));
+    arg13.setupForKernelCall(kHandle->metaInfo.argIsConst(13));
+    arg14.setupForKernelCall(kHandle->metaInfo.argIsConst(14));
+    arg15.setupForKernelCall(kHandle->metaInfo.argIsConst(15));
+    arg16.setupForKernelCall(kHandle->metaInfo.argIsConst(16));
+    arg17.setupForKernelCall(kHandle->metaInfo.argIsConst(17));
+    arg18.setupForKernelCall(kHandle->metaInfo.argIsConst(18));
+    arg19.setupForKernelCall(kHandle->metaInfo.argIsConst(19));
+    arg20.setupForKernelCall(kHandle->metaInfo.argIsConst(20));
+    arg21.setupForKernelCall(kHandle->metaInfo.argIsConst(21));
+    arg22.setupForKernelCall(kHandle->metaInfo.argIsConst(22));
+    arg23.setupForKernelCall(kHandle->metaInfo.argIsConst(23));
+    arg24.setupForKernelCall(kHandle->metaInfo.argIsConst(24));
+    arg25.setupForKernelCall(kHandle->metaInfo.argIsConst(25));
+    arg26.setupForKernelCall(kHandle->metaInfo.argIsConst(26));
+    arg27.setupForKernelCall(kHandle->metaInfo.argIsConst(27));
+    arg28.setupForKernelCall(kHandle->metaInfo.argIsConst(28));
+    arg29.setupForKernelCall(kHandle->metaInfo.argIsConst(29));
+    arg30.setupForKernelCall(kHandle->metaInfo.argIsConst(30));
+    arg31.setupForKernelCall(kHandle->metaInfo.argIsConst(31));
+    arg32.setupForKernelCall(kHandle->metaInfo.argIsConst(32));
+    arg33.setupForKernelCall(kHandle->metaInfo.argIsConst(33));
+    arg34.setupForKernelCall(kHandle->metaInfo.argIsConst(34));
+    arg35.setupForKernelCall(kHandle->metaInfo.argIsConst(35));
+    arg36.setupForKernelCall(kHandle->metaInfo.argIsConst(36));
+    arg37.setupForKernelCall(kHandle->metaInfo.argIsConst(37));
+    arg38.setupForKernelCall(kHandle->metaInfo.argIsConst(38));
+    arg39.setupForKernelCall(kHandle->metaInfo.argIsConst(39));
+    arg40.setupForKernelCall(kHandle->metaInfo.argIsConst(40));
+    arg41.setupForKernelCall(kHandle->metaInfo.argIsConst(41));
+    arg42.setupForKernelCall(kHandle->metaInfo.argIsConst(42));
+    arg43.setupForKernelCall(kHandle->metaInfo.argIsConst(43));
+    arg44.setupForKernelCall(kHandle->metaInfo.argIsConst(44));
+    arg45.setupForKernelCall(kHandle->metaInfo.argIsConst(45));
+    arg46.setupForKernelCall(kHandle->metaInfo.argIsConst(46));
+    arg47.setupForKernelCall(kHandle->metaInfo.argIsConst(47));
+    arg48.setupForKernelCall(kHandle->metaInfo.argIsConst(48));
+    arg49.setupForKernelCall(kHandle->metaInfo.argIsConst(49));
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(arg0,  arg1,  arg2, 

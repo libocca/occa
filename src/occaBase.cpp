@@ -77,8 +77,11 @@ namespace occa {
   void free(void *ptr){
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
-    if(it != uvaMap.end())
+    if((it != uvaMap.end()) &&
+       (((void*) it->first.start) != ((void*) it->second))){
+
       (it->second)->free();
+    }
     else
       ::free(ptr);
   }
@@ -456,6 +459,10 @@ namespace occa {
     uvaRange.end   = (uvaRange.start + mHandle->size);
 
     uvaMap[uvaRange] = mHandle;
+
+    // Needed for kernelArg.void_ -> mHandle checks
+    if(mHandle->uvaPtr != mHandle->handle)
+      uvaMap[mHandle->handle] = mHandle;
   }
 
   void memory::copyFrom(const void *source,
@@ -866,7 +873,8 @@ namespace occa {
 
         mem->asyncCopyTo(mem->uvaPtr);
 
-        mem->isDirty = false;
+        mem->uva_inDevice = false;
+        mem->uva_isDirty  = false;
       }
 
       uvaDirtyMemory.clear();
@@ -971,11 +979,10 @@ namespace occa {
       const std::string cachedBinary  = k->getCachedBinaryName(filename, info);
       const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
 
-      parsedKernelInfo kInfo = parseFileForFunction(filename,
-                                                    cachedBinary,
-                                                    functionName,
-                                                    info_);
-
+      k->metaInfo = parseFileForFunction(filename,
+                                         cachedBinary,
+                                         functionName,
+                                         info_);
 
       info = defaultKernelInfo;
       info.addDefine("OCCA_LAUNCH_KERNEL", 1);
@@ -992,23 +999,30 @@ namespace occa {
       else
         k->buildFromSource(iCachedBinary, functionName, info);
 
-      k->nestedKernelCount = kInfo.nestedKernels;
+      k->nestedKernelCount = k->metaInfo.nestedKernels;
 
       std::stringstream ss;
-      k->nestedKernels = new kernel[kInfo.nestedKernels];
+      k->nestedKernels = new kernel[k->metaInfo.nestedKernels];
 
-      for(int ki = 0; ki < kInfo.nestedKernels; ++ki){
+      for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
         ss << ki;
+
+        const std::string sKerName = k->metaInfo.baseName + ss.str();
+
+        ss.str("");
 
         kernel &sKer = k->nestedKernels[ki];
 
         sKer.strMode = strMode;
 
         sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
-                                                      kInfo.baseName + ss.str(),
+                                                      sKerName,
                                                       info_);
 
-        ss.str("");
+        sKer.kHandle->metaInfo               = k->metaInfo;
+        sKer.kHandle->metaInfo.name          = sKerName;
+        sKer.kHandle->metaInfo.nestedKernels = 0;
+        sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
       }
     }
     else{

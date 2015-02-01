@@ -6,6 +6,8 @@
 #include "occaParserStatement.hpp"
 
 namespace occa {
+  class parsedKernelInfo;
+
   namespace parserNS {
     class expNode;
     class typeInfo;
@@ -25,6 +27,10 @@ namespace occa {
       qualifierInfo& operator = (const qualifierInfo &q);
 
       inline std::string& operator [] (const int pos){
+        return qualifiers[pos];
+      }
+
+      inline const std::string& operator [] (const int pos) const {
         return qualifiers[pos];
       }
 
@@ -294,6 +300,8 @@ namespace occa {
       void addArgument(const int pos, varInfo &arg);
       //================================
 
+      bool isConst() const;
+
       std::string toString(const bool printType = true);
 
       operator std::string ();
@@ -368,33 +376,60 @@ namespace occa {
 
 
     //---[ Kernel Info ]--------------------------
+    class argumentInfo {
+    public:
+      int pos;
+      bool isConst;
+
+      argumentInfo();
+
+      argumentInfo(const argumentInfo &info);
+      argumentInfo& operator = (const argumentInfo &info);
+    };
+
     class kernelInfo {
     public:
       std::string name;
       std::string baseName;
 
       std::vector<statement*> nestedKernels;
+      std::vector<argumentInfo> argumentInfos;
 
-      inline kernelInfo() :
-        name(),
-        baseName() {}
+      kernelInfo();
+
+      kernelInfo(const kernelInfo &info);
+      kernelInfo& operator = (const kernelInfo &info);
+
+      occa::parsedKernelInfo makeParsedKernelInfo();
     };
     //==============================================
   };
 
+  //---[ Parsed Kernel Info ]---------------------
+  typedef parserNS::argumentInfo argumentInfo;
+
   class parsedKernelInfo {
   public:
-    std::string baseName;
+    std::string name, baseName;
     int nestedKernels;
 
-    inline parsedKernelInfo() :
-      baseName(""),
-      nestedKernels(0) {}
+    std::vector<argumentInfo> argumentInfos;
 
-    inline parsedKernelInfo(parserNS::kernelInfo &kInfo) :
-      baseName(kInfo.baseName),
-      nestedKernels(kInfo.nestedKernels.size()) {}
+    parsedKernelInfo();
+
+    parsedKernelInfo(const parsedKernelInfo & kInfo);
+    parsedKernelInfo& operator = (const parsedKernelInfo & kInfo);
+
+    void removeArg(const int pos);
+
+    inline bool argIsConst(const int pos) const {
+      if(pos < argumentInfos.size())
+        return argumentInfos[pos].isConst;
+
+      return false;
+    }
   };
+  //==============================================
 };
 
 #endif

@@ -2206,12 +2206,27 @@ namespace occa {
         statement &s = *(snPos->value);
 
         if(statementIsAKernel(s)){
+          varInfo &kernel = *(s.getFunctionVar());
+
           //---[ Setup Info ]-----------
           kernelInfo &info = *(new kernelInfo);
 
-          info.name     = s.getFunctionName();
+          info.name     = kernel.name;
           info.baseName = info.name;
           info.nestedKernels.push_back(&s);
+
+          if(kernel.argumentCount){
+            info.argumentInfos.reserve(kernel.argumentCount);
+
+            for(int arg = 0; arg < kernel.argumentCount; ++arg){
+              varInfo &varg = *(kernel.argumentVarInfos[arg]);
+
+              argumentInfo argInfo;
+              argInfo.isConst = varg.isConst();
+
+              info.argumentInfos.push_back(argInfo);
+            }
+          }
 
           kernelInfoMap[info.name] = &info;
           //============================

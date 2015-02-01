@@ -7,8 +7,6 @@ namespace occa {
     data    = NULL;
     dHandle = NULL;
 
-    functionName = "";
-
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
@@ -25,7 +23,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -46,7 +44,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -84,10 +82,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_){
-    functionName = functionName_;
-
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
@@ -220,12 +216,10 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_){
+                                                      const std::string &functionName){
     data = new OpenMPKernelData_t;
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
-
-    functionName = functionName_;
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(filename.c_str(), RTLD_NOW);
@@ -259,8 +253,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
-                                                      const std::string &functionName_){
-    return buildFromBinary(cache, functionName_);
+                                                      const std::string &functionName){
+    return buildFromBinary(cache, functionName);
   }
 
   // [-] Missing
@@ -316,7 +310,9 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
-    isDirty    = false;
+    uva_inDevice = false;
+    uva_isDirty  = false;
+
     isMapped   = false;
     isAWrapper = false;
   }
@@ -346,7 +342,9 @@ namespace occa {
     if(isTexture)
       handle = &textureInfo;
 
-    isDirty    = m.isDirty;
+    uva_inDevice = m.uva_inDevice;
+    uva_isDirty  = m.uva_isDirty;
+
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -828,10 +826,10 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
-                                                    const std::string &functionName_){
+                                                    const std::string &functionName){
     kernel_v *k = new kernel_t<OpenMP>;
     k->dHandle = this;
-    k->loadFromLibrary(cache, functionName_);
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

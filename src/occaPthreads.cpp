@@ -9,8 +9,6 @@ namespace occa {
     data    = NULL;
     dHandle = NULL;
 
-    functionName = "";
-
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
@@ -26,7 +24,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -50,7 +48,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -91,9 +89,8 @@ namespace occa {
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,
-                                                          const std::string &functionName_,
+                                                          const std::string &functionName,
                                                           const kernelInfo &info_){
-    functionName = functionName_;
 
     kernelInfo info = info_;
 
@@ -219,12 +216,10 @@ namespace occa {
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
-                                                          const std::string &functionName_){
+                                                          const std::string &functionName){
     data = new PthreadsKernelData_t;
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
-
-    functionName = functionName_;
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     data_.dlHandle = dlopen(filename.c_str(), RTLD_NOW);
@@ -270,8 +265,8 @@ namespace occa {
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
-                                                          const std::string &functionName_){
-    return buildFromBinary(cache, functionName_);
+                                                          const std::string &functionName){
+    return buildFromBinary(cache, functionName);
   }
 
   // [-] Missing
@@ -326,7 +321,9 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
-    isDirty    = false;
+    uva_inDevice = false;
+    uva_isDirty  = false;
+
     isMapped   = false;
     isAWrapper = false;
   }
@@ -356,7 +353,9 @@ namespace occa {
     if(isTexture)
       handle = &textureInfo;
 
-    isDirty    = m.isDirty;
+    uva_inDevice = m.uva_inDevice;
+    uva_isDirty  = m.uva_isDirty;
+
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -927,10 +926,10 @@ namespace occa {
 
   template <>
   kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
-                                                      const std::string &functionName_){
+                                                      const std::string &functionName){
     kernel_v *k = new kernel_t<Pthreads>;
     k->dHandle  = this;
-    k->loadFromLibrary(cache, functionName_);
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

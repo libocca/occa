@@ -132,8 +132,6 @@ namespace occa {
     data    = NULL;
     dHandle = NULL;
 
-    functionName = "";
-
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
@@ -151,7 +149,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -177,7 +175,7 @@ namespace occa {
     data    = k.data;
     dhandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -221,9 +219,8 @@ namespace occa {
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
-                                                          const std::string &functionName_,
+                                                          const std::string &functionName,
                                                           const kernelInfo &info_){
-    functionName = functionName_;
 
     kernelInfo info = info_;
 
@@ -304,8 +301,6 @@ namespace occa {
 
     OCCA_COI_CHECK("Kernel: Loading Kernel To Chief", loadingLibraryResult);
 
-    const char *c_functionName = functionName.c_str();
-
     const COIRESULT getFunctionHandleResult = COIProcessGetFunctionHandles(data_.chiefID,
                                                                            1,
                                                                            &c_functionName,
@@ -323,11 +318,8 @@ namespace occa {
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
-                                                const std::string &functionName_){
+                                                const std::string &functionName){
     OCCA_EXTRACT_DATA(COI, Kernel);
-
-    functionName = functionName_;
-
 
     std::string libPath, soname;
 
@@ -349,8 +341,6 @@ namespace occa {
                                                  NULL,
                                                  &outLibrary));
 
-    const char *c_functionName = functionName.c_str();
-
     OCCA_COI_CHECK("Kernel: Getting Handle",
                    COIProcessGetFunctionHandles(data_.chiefID,
                                                 1,
@@ -362,8 +352,8 @@ namespace occa {
 
   template <>
   kernel_t<COI>* kernel_t<COI>::loadFromLibrary(const char *cache,
-                                                const std::string &functionName_){
-    return buildFromBinary(cache, functionName_);
+                                                const std::string &functionName){
+    return buildFromBinary(cache, functionName);
   }
 
   // [-] Missing
@@ -413,7 +403,9 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
-    isDirty    = false;
+    uva_inDevice = false;
+    uva_isDirty  = false;
+
     isMapped   = false;
     isAWrapper = false;
   }
@@ -443,7 +435,9 @@ namespace occa {
     if(isTexture)
       handle = &textureInfo;
 
-    isDirty    = m.isDirty;
+    uva_inDevice = m.uva_inDevice;
+    uva_isDirty  = m.uva_isDirty;
+
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -1062,7 +1056,7 @@ namespace occa {
 
   template <>
   kernel_v* device_t<COI>::loadKernelFromLibrary(const char *cache,
-                                                 const std::string &functionName_){
+                                                 const std::string &functionName){
     OCCA_EXTRACT_DATA(COI, Device);
 
     kernel_v *k = new kernel_t<COI>;
@@ -1074,7 +1068,7 @@ namespace occa {
 
     kData_.chiefID = data_.chiefID;
 
-    k->loadFromLibrary(cache, functionName_);
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

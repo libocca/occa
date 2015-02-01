@@ -65,8 +65,6 @@ namespace occa {
     data    = NULL;
     dHandle = NULL;
 
-    functionName = "";
-
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
@@ -84,7 +82,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -110,7 +108,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -143,11 +141,9 @@ namespace occa {
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromSource(const std::string &filename,
-                                                  const std::string &functionName_,
+                                                  const std::string &functionName,
                                                   const kernelInfo &info_){
     OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-    functionName = functionName_;
 
     kernelInfo info = info_;
 
@@ -273,10 +269,8 @@ namespace occa {
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromBinary(const std::string &filename,
-                                                 const std::string &functionName_){
+                                                 const std::string &functionName){
     OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-    functionName = functionName_;
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
                     cuModuleLoad(&data_.module, filename.c_str()));
@@ -289,10 +283,8 @@ namespace occa {
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::loadFromLibrary(const char *cache,
-                                                  const std::string &functionName_){
+                                                  const std::string &functionName){
     OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-    functionName = functionName_;
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
                     cuModuleLoadData(&data_.module, cache));
@@ -357,7 +349,9 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w   = textureInfo.h = textureInfo.d = 0;
 
-    isDirty    = false;
+    uva_inDevice = false;
+    uva_isDirty  = false;
+
     isMapped   = false;
     isAWrapper = false;
   }
@@ -383,7 +377,9 @@ namespace occa {
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
-    isDirty    = m.isDirty;
+    uva_inDevice = m.uva_inDevice;
+    uva_isDirty  = m.uva_isDirty;
+
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 

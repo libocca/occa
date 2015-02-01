@@ -606,7 +606,7 @@ namespace occa {
       return pointer ? arg.void_ : (void*) &arg;
     }
 
-    inline void markDirty() const;
+    inline void setupForKernelCall(const bool isConst) const;
   };
 
   OCCA_KERNEL_ARG_CONSTRUCTOR(int);
@@ -694,7 +694,7 @@ namespace occa {
     void* data;
     occa::device_v *dHandle;
 
-    std::string functionName;
+    parsedKernelInfo metaInfo;
 
     int preferredDimSize_;
 
@@ -917,7 +917,7 @@ namespace occa {
     bool isTexture;
     occa::textureInfo_t textureInfo;
 
-    bool isDirty;
+    bool uva_inDevice, uva_isDirty;
     bool isMapped;
     bool isAWrapper;
 
@@ -1631,11 +1631,16 @@ namespace occa {
     return occa::device(dHandle);
   }
 
-  inline void kernelArg::markDirty() const {
-    if(uvaEnabled_f){
-      if(mHandle && !(mHandle->isDirty)){
+  inline void kernelArg::setupForKernelCall(const bool isConst) const {
+    if(uvaEnabled_f && mHandle){
+      if(!(mHandle->uva_inDevice)){
         mHandle->copyFrom(mHandle->uvaPtr);
+        mHandle->uva_inDevice = true;
+      }
+
+      if(!isConst && !(mHandle->uva_isDirty)){
         uvaDirtyMemory.push_back(mHandle);
+        mHandle->uva_isDirty = true;
       }
     }
   }

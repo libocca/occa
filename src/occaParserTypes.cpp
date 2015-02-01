@@ -1727,6 +1727,22 @@ namespace occa {
     }
     //================================
 
+    bool varInfo::isConst() const {
+      const int qCount = leftQualifiers.qualifierCount;
+
+      for(int i = 0; i < qCount; ++i){
+        const std::string &q = leftQualifiers[i];
+
+        if((q == "const") ||
+           (q == "occaConst")){
+
+          return true;
+        }
+      }
+
+      return false;
+    }
+
     std::string varInfo::toString(const bool printType){
       std::string ret;
 
@@ -2016,5 +2032,84 @@ namespace occa {
       }
     }
     //============================================
+
+
+    //---[ Kernel Info ]--------------------------
+    argumentInfo::argumentInfo() :
+      pos(0),
+      isConst(false) {}
+
+    argumentInfo::argumentInfo(const argumentInfo &info) :
+      pos(info.pos),
+      isConst(info.isConst) {}
+
+    argumentInfo& argumentInfo::operator = (const argumentInfo &info){
+      pos     = info.pos;
+      isConst = info.isConst;
+
+      return *this;
+    }
+
+    kernelInfo::kernelInfo() :
+      name(),
+      baseName() {}
+
+    kernelInfo::kernelInfo(const kernelInfo &info) :
+      name(info.name),
+      baseName(info.baseName),
+      nestedKernels(info.nestedKernels),
+      argumentInfos(info.argumentInfos) {}
+
+    kernelInfo& kernelInfo::operator = (const kernelInfo &info){
+      name     = info.name;
+      baseName = info.baseName;
+
+      nestedKernels = info.nestedKernels;
+      argumentInfos = info.argumentInfos;
+
+      return *this;
+    }
+
+    occa::parsedKernelInfo kernelInfo::makeParsedKernelInfo(){
+      occa::parsedKernelInfo kInfo;
+
+      kInfo.name     = name;
+      kInfo.baseName = baseName;
+
+      kInfo.nestedKernels = nestedKernels.size();
+
+      kInfo.argumentInfos = argumentInfos;
+
+      return kInfo;
+    }
+    //==============================================
   };
+
+  //---[ Parsed Kernel Info ]---------------------
+  parsedKernelInfo::parsedKernelInfo() :
+    baseName(""),
+    name(""),
+    nestedKernels(0) {}
+
+  parsedKernelInfo::parsedKernelInfo(const parsedKernelInfo &kInfo) :
+    name(kInfo.name),
+    baseName(kInfo.baseName),
+    nestedKernels(kInfo.nestedKernels),
+    argumentInfos(kInfo.argumentInfos) {}
+
+  parsedKernelInfo& parsedKernelInfo::operator = (const parsedKernelInfo &kInfo){
+    name     = kInfo.name;
+    baseName = kInfo.baseName;
+
+    nestedKernels = kInfo.nestedKernels;
+
+    argumentInfos = kInfo.argumentInfos;
+
+    return *this;
+  }
+
+  void parsedKernelInfo::removeArg(const int pos){
+    argumentInfos.erase(argumentInfos.begin() + pos);
+  }
+  //==============================================
 };

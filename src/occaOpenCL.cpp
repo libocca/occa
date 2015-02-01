@@ -413,8 +413,6 @@ namespace occa {
     data    = NULL;
     dHandle = NULL;
 
-    functionName = "";
-
     dims  = 1;
     inner = occa::dim(1,1,1);
     outer = occa::dim(1,1,1);
@@ -432,7 +430,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -458,7 +456,7 @@ namespace occa {
     data    = k.data;
     dHandle = k.dHandle;
 
-    functionName = k.functionName;
+    metaInfo = k.metaInfo;
 
     dims  = k.dims;
     inner = k.inner;
@@ -494,11 +492,9 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_){
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
-
-    functionName = functionName_;
 
     kernelInfo info = info_;
 
@@ -550,10 +546,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_){
+                                                      const std::string &functionName){
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
-
-    functionName = functionName_;
 
     std::string cFile = readFile(filename);
 
@@ -568,14 +562,12 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::loadFromLibrary(const char *cache,
-                                                      const std::string &functionName_){
+                                                      const std::string &functionName){
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
-
-    functionName = functionName_;
 
     cl::buildKernelFromSource(data_,
                               cache, strlen(cache),
-                              functionName_);
+                              functionName);
 
     return this;
   }
@@ -658,7 +650,9 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
-    isDirty    = false;
+    uva_inDevice = false;
+    uva_isDirty  = false;
+
     isMapped   = false;
     isAWrapper = false;
   }
@@ -684,7 +678,9 @@ namespace occa {
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
-    isDirty    = m.isDirty;
+    uva_inDevice = m.uva_inDevice;
+    uva_isDirty  = m.uva_isDirty;
+
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -1360,7 +1356,7 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,
-                                                    const std::string &functionName_){
+                                                    const std::string &functionName){
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
     kernel_v *k = new kernel_t<OpenCL>;
@@ -1377,7 +1373,7 @@ namespace occa {
     kData_.deviceID   = data_.deviceID;
     kData_.context    = data_.context;
 
-    k->loadFromLibrary(cache, functionName_);
+    k->loadFromLibrary(cache, functionName);
     return k;
   }
 

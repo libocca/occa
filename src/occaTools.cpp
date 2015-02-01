@@ -179,6 +179,7 @@ namespace occa {
                                         const std::string &cachedBinary,
                                         const std::string &functionName,
                                         const kernelInfo &info){
+
     const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
     const std::string pCachedBinary = getMidCachedBinaryName(cachedBinary, "p");
 
@@ -203,7 +204,7 @@ namespace occa {
     kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
 
     if(kIt != fileParser.kernelInfoMap.end()){
-      return parsedKernelInfo( *((kIt++)->second) );
+      return (kIt->second)->makeParsedKernelInfo();
     }
 
     OCCA_CHECK(false,

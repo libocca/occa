@@ -73,7 +73,7 @@ def operatorDefinitions(mode, N):
 def operatorDefinition(mode, N):
     if mode == 'Base':
         return """  void kernel::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    """ + '    \n'.join(['arg' + str(n) + '.markDirty();' for n in xrange(N)]) + """
+    """ + '\n    '.join(['arg' + str(n) + '.setupForKernelCall(kHandle->metaInfo.argIsConst(' + str(n) + '));' for n in xrange(N)]) + """
 
     if(kHandle->nestedKernelCount == 0){
       (*kHandle)(""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
@@ -190,16 +190,16 @@ def clOperatorDefinition(N):
 
     int argPos = 0;
 
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [0]",
+    OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
                   clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
 
-    """ + '\n\n    '.join(["""OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Kernel Argument [" << argPos << "]",
+    """ + '\n\n    '.join(["""OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << argPos << "]",
                   clSetKernelArg(kernel_, argPos++, arg{0}.size, arg{0}.data()));
     if(arg{0}.hasTwoArgs)
-      OCCA_CL_CHECK("Kernel (" + functionName + ") : Setting Texture Kernel Argument for [" << (argPos - 1) << "]",
+      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for [" << (argPos - 1) << "]",
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg{0}.arg2.void_));""".format(n) for n in xrange(N)]) + """
 
-    OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
+    OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
                   clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
