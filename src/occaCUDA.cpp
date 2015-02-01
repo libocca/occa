@@ -62,8 +62,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<CUDA>::kernel_t(){
-    data = NULL;
-    dev  = NULL;
+    data    = NULL;
+    dHandle = NULL;
 
     functionName = "";
 
@@ -81,8 +81,8 @@ namespace occa {
 
   template <>
   kernel_t<CUDA>::kernel_t(const kernel_t<CUDA> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -107,8 +107,8 @@ namespace occa {
 
   template <>
   kernel_t<CUDA>& kernel_t<CUDA>::operator = (const kernel_t<CUDA> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -350,8 +350,8 @@ namespace occa {
     mappedPtr = NULL;
     uvaPtr    = NULL;
 
-    dev  = NULL;
-    size = 0;
+    dHandle = NULL;
+    size    = 0;
 
     isTexture       = false;
     textureInfo.dim = 1;
@@ -373,8 +373,8 @@ namespace occa {
     mappedPtr = m.mappedPtr;
     uvaPtr    = m.uvaPtr;
 
-    dev  = m.dev;
-    size = m.size;
+    dHandle = m.dHandle;
+    size    = m.size;
 
     isTexture = m.isTexture;
     textureInfo.dim  = m.textureInfo.dim;
@@ -1005,8 +1005,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<CUDA>;
 
-    k->dev  = this;
-    k->data = new CUDAKernelData_t;
+    k->dHandle = this;
+    k->data    = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
