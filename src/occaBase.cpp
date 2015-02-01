@@ -6,6 +6,10 @@ namespace occa {
   //---[ Globals & Flags ]------------
   kernelInfo defaultKernelInfo;
 
+  const int autoDetect = (1 << 0);
+  const int srcInUva   = (1 << 1);
+  const int destInUva  = (1 << 2);
+
   bool uvaEnabledByDefault_f = false;
   bool verboseCompilation_f  = true;
 
@@ -444,6 +448,9 @@ namespace occa {
     if(mHandle->dHandle->fakesUva()){
       mHandle->uvaPtr = mHandle->handle;
     }
+    else if(mHandle->isMapped){
+      mHandle->uvaPtr = mHandle->mappedPtr;
+    }
     else{
 #if   (OCCA_OS == LINUX_OS)
       posix_memalign(&(mHandle->uvaPtr), OCCA_MEM_ALIGN, mHandle->size);
@@ -453,13 +460,6 @@ namespace occa {
       mHandle->uvaPtr = ::malloc(mHandle->size);
 #endif
     }
-  }
-
-  void memory::manage(){
-    placeInUva();
-
-    if( !(mHandle->dHandle->fakesUva()) )
-      return;
 
     ptrRange_t uvaRange;
 
@@ -474,19 +474,25 @@ namespace occa {
       uvaMap[mHandle->handle] = mHandle;
   }
 
-  void memory::copyFrom(const void *source,
+  void memory::manage(){
+    placeInUva();
+
+    mHandle->isManaged = true;
+  }
+
+  void memory::copyFrom(const void *src,
                         const uintptr_t bytes,
                         const uintptr_t offset){
 
-    mHandle->copyFrom(source, bytes, offset);
+    mHandle->copyFrom(src, bytes, offset);
   }
 
-  void memory::copyFrom(const memory &source,
+  void memory::copyFrom(const memory &src,
                         const uintptr_t bytes,
                         const uintptr_t destOffset,
                         const uintptr_t srcOffset){
 
-    mHandle->copyFrom(source.mHandle, bytes, destOffset, srcOffset);
+    mHandle->copyFrom(src.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::copyTo(void *dest,
@@ -504,19 +510,19 @@ namespace occa {
     mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
-  void memory::asyncCopyFrom(const void *source,
+  void memory::asyncCopyFrom(const void *src,
                              const uintptr_t bytes,
                              const uintptr_t offset){
 
-    mHandle->asyncCopyFrom(source, bytes, offset);
+    mHandle->asyncCopyFrom(src, bytes, offset);
   }
 
-  void memory::asyncCopyFrom(const memory &source,
+  void memory::asyncCopyFrom(const memory &src,
                              const uintptr_t bytes,
                              const uintptr_t destOffset,
                              const uintptr_t srcOffset){
 
-    mHandle->asyncCopyFrom(source.mHandle, bytes, destOffset, srcOffset);
+    mHandle->asyncCopyFrom(src.mHandle, bytes, destOffset, srcOffset);
   }
 
   void memory::asyncCopyTo(void *dest,
@@ -534,72 +540,124 @@ namespace occa {
     mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
   }
 
-  void memcpy(memory &dest,
-              const void *source,
+  void memcpy(void *dest, void *src,
               const uintptr_t bytes,
-              const uintptr_t offset){
+              const int flags){
 
-    dest.copyFrom(source, bytes, offset);
+    ptrRangeMap_t::iterator srcIt  = uvaMap.end();
+    ptrRangeMap_t::iterator destIt = uvaMap.end();
+
+    if(flags & occa::autoDetect){
+      srcIt  = uvaMap.find(src);
+      destIt = uvaMap.find(dest);
+    }
+    else{
+      if(flags & srcInUva)
+        srcIt  = uvaMap.find(src);
+
+      if(flags & destInUva)
+        destIt  = uvaMap.find(dest);
+    }
+
+    if(srcIt != uvaMap.end()){
+      occa::memory_v *srcMem = (srcIt->second);
+      const uintptr_t srcOff = ((char*) src) - ((char*) srcMem->uvaPtr);
+
+      if(destIt != uvaMap.end()){
+        occa::memory_v *destMem = (destIt->second);
+        const uintptr_t destOff = ((char*) dest) - ((char*) destMem->uvaPtr);
+
+        srcMem->copyTo(destMem, bytes, destOff, srcOff);
+
+        if(destMem->isManaged)
+          destMem->copyTo(dest, bytes, destOff);
+      }
+      else{
+        srcMem->copyTo(dest, bytes, srcOff);
+      }
+    }
+    else{
+      if(destIt != uvaMap.end()){
+        occa::memory_v *destMem = (destIt->second);
+        const uintptr_t destOff = ((char*) dest) - ((char*) destMem->uvaPtr);
+
+        destMem->copyFrom(src, bytes, destOff);
+
+        if(destMem->isManaged)
+          destMem->copyTo(dest, bytes, destOff);
+      }
+      else{
+        ::memcpy(dest, src, bytes);
+      }
+    }
   }
 
   void memcpy(memory &dest,
-              const memory &source,
+              const void *src,
+              const uintptr_t bytes,
+              const uintptr_t offset){
+
+    dest.copyFrom(src, bytes, offset);
+  }
+
+  void memcpy(memory &dest,
+              const memory &src,
               const uintptr_t bytes,
               const uintptr_t destOffset,
               const uintptr_t srcOffset){
 
-    dest.copyFrom(source, bytes, destOffset, srcOffset);
+    dest.copyFrom(src, bytes, destOffset, srcOffset);
   }
 
   void memcpy(void *dest,
-              memory &source,
+              memory &src,
               const uintptr_t bytes,
               const uintptr_t offset){
 
-    source.copyTo(dest, bytes, offset);
+    src.copyTo(dest, bytes, offset);
   }
 
   void memcpy(memory &dest,
-              memory &source,
+              memory &src,
               const uintptr_t bytes,
               const uintptr_t destOffset,
               const uintptr_t srcOffset){
 
-    source.copyTo(dest, bytes, destOffset, srcOffset);
+    src.copyTo(dest, bytes, destOffset, srcOffset);
   }
 
   void asyncMemcpy(memory &dest,
-                   const void *source,
+                   const void *src,
                    const uintptr_t bytes,
                    const uintptr_t offset){
 
-    dest.asyncCopyFrom(source, bytes, offset);
+    dest.asyncCopyFrom(src, bytes, offset);
   }
 
   void asyncMemcpy(memory &dest,
-                   const memory &source,
+                   const memory &src,
                    const uintptr_t bytes,
                    const uintptr_t destOffset,
                    const uintptr_t srcOffset){
 
-    dest.asyncCopyFrom(source, bytes, destOffset, srcOffset);
+    dest.asyncCopyFrom(src, bytes, destOffset, srcOffset);
   }
 
   void asyncMemcpy(void *dest,
-                   memory &source,
+                   memory &src,
                    const uintptr_t bytes,
                    const uintptr_t offset){
 
-    source.asyncCopyTo(dest, bytes, offset);
+    src.asyncCopyTo(dest, bytes, offset);
   }
 
   void asyncMemcpy(memory &dest,
-                   memory &source,
+                   memory &src,
                    const uintptr_t bytes,
                    const uintptr_t destOffset,
                    const uintptr_t srcOffset){
 
-    source.asyncCopyTo(dest, bytes, destOffset, srcOffset);
+    src.asyncCopyTo(dest, bytes, destOffset, srcOffset);
   }
 
   void memory::swap(memory &m){
@@ -1199,12 +1257,12 @@ namespace occa {
   }
 
   memory device::malloc(const uintptr_t bytes,
-                        void *source){
+                        void *src){
     memory mem;
 
     mem.strMode = strMode;
 
-    mem.mHandle          = dHandle->malloc(bytes, source);
+    mem.mHandle          = dHandle->malloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
 
     dHandle->bytesAllocated += bytes;
@@ -1213,8 +1271,8 @@ namespace occa {
   }
 
   memory device::managedAlloc(const uintptr_t bytes,
-                               void *source){
-    memory mem = malloc(bytes, source);
+                               void *src){
+    memory mem = malloc(bytes, src);
 
     mem.manage();
 
@@ -1222,8 +1280,8 @@ namespace occa {
   }
 
   void* device::uvaAlloc(const uintptr_t bytes,
-                         void *source){
-    memory mem = malloc(bytes, source);
+                         void *src){
+    memory mem = malloc(bytes, src);
 
     mem.placeInUva();
 
@@ -1231,8 +1289,8 @@ namespace occa {
   }
 
   void* device::managedUvaAlloc(const uintptr_t bytes,
-                                void *source){
-    memory mem = malloc(bytes, source);
+                                void *src){
+    memory mem = malloc(bytes, src);
 
     mem.manage();
 
@@ -1240,20 +1298,20 @@ namespace occa {
   }
 
   memory device::textureAlloc(const int dim, const occa::dim &dims,
-                              void *source,
+                              void *src,
                               occa::formatType type, const int permissions){
     OCCA_CHECK((dim == 1) || (dim == 2),
                "Textures of [" << dim << "D] are not supported,"
                << "only 1D or 2D are supported at the moment");
 
-    OCCA_CHECK(source != NULL,
+    OCCA_CHECK(src != NULL,
                "Non-NULL source is required for [textureAlloc] (texture allocation)");
 
     memory mem;
 
     mem.strMode = strMode;
 
-    mem.mHandle      = dHandle->textureAlloc(dim, dims, source, type, permissions);
+    mem.mHandle      = dHandle->textureAlloc(dim, dims, src, type, permissions);
     mem.mHandle->dHandle = dHandle;
 
     dHandle->bytesAllocated += (type.bytes() *
@@ -1265,9 +1323,9 @@ namespace occa {
   }
 
   memory device::managedTextureAlloc(const int dim, const occa::dim &dims,
-                                     void *source,
+                                     void *src,
                                      occa::formatType type, const int permissions){
-    memory mem = textureAlloc(dim, dims, source, type, permissions);
+    memory mem = textureAlloc(dim, dims, src, type, permissions);
 
     mem.manage();
 
@@ -1275,12 +1333,12 @@ namespace occa {
   }
 
   memory device::mappedAlloc(const uintptr_t bytes,
-                             void *source){
+                             void *src){
     memory mem;
 
     mem.strMode = strMode;
 
-    mem.mHandle          = dHandle->mappedAlloc(bytes, source);
+    mem.mHandle          = dHandle->mappedAlloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
 
     dHandle->bytesAllocated += bytes;
@@ -1289,8 +1347,8 @@ namespace occa {
   }
 
   memory device::managedMappedAlloc(const uintptr_t bytes,
-                                    void *source){
-    memory mem = mappedAlloc(bytes, source);
+                                    void *src){
+    memory mem = mappedAlloc(bytes, src);
 
     mem.manage();
 

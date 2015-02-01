@@ -313,6 +313,7 @@ namespace occa {
     uva_inDevice = false;
     uva_isDirty  = false;
 
+    isManaged  = false;
     isMapped   = false;
     isAWrapper = false;
   }
@@ -345,6 +346,7 @@ namespace occa {
     uva_inDevice = m.uva_inDevice;
     uva_isDirty  = m.uva_isDirty;
 
+    isManaged  = m.isManaged;
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -365,7 +367,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<Serial>::copyFrom(const void *source,
+  void memory_t<Serial>::copyFrom(const void *src,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
     dHandle->finish();
@@ -377,13 +379,13 @@ namespace occa {
                << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
-    const void *srcPtr = source;
+    const void *srcPtr = src;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
-  void memory_t<Serial>::copyFrom(const memory_v *source,
+  void memory_t<Serial>::copyFrom(const memory_v *src,
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset){
@@ -395,12 +397,12 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
-    const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
+    void *destPtr      = ((char*) (isTexture      ? textureInfo.arg      : handle))      + destOffset;
+    const void *srcPtr = ((char*) (src->isTexture ? src->textureInfo.arg : src->handle)) + srcOffset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -441,13 +443,13 @@ namespace occa {
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
-    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
+    const void *srcPtr = ((char*) (isTexture       ? textureInfo.arg       : handle))       + srcOffset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
-  void memory_t<Serial>::asyncCopyFrom(const void *source,
+  void memory_t<Serial>::asyncCopyFrom(const void *src,
                                        const uintptr_t bytes,
                                        const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
@@ -457,14 +459,14 @@ namespace occa {
                << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
-    const void *srcPtr = source;
+    const void *srcPtr = src;
 
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
 
   template <>
-  void memory_t<Serial>::asyncCopyFrom(const memory_v *source,
+  void memory_t<Serial>::asyncCopyFrom(const memory_v *src,
                                        const uintptr_t bytes,
                                        const uintptr_t destOffset,
                                        const uintptr_t srcOffset){
@@ -474,12 +476,12 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (isTexture         ? textureInfo.arg         : handle))         + destOffset;
-    const void *srcPtr = ((char*) (source->isTexture ? source->textureInfo.arg : source->handle)) + srcOffset;;
+    void *destPtr      = ((char*) (isTexture      ? textureInfo.arg      : handle))         + destOffset;
+    const void *srcPtr = ((char*) (src->isTexture ? src->textureInfo.arg : src->handle)) + srcOffset;;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -516,7 +518,7 @@ namespace occa {
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
     void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
-    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle))       + srcOffset;
+    const void *srcPtr = ((char*) (isTexture       ? textureInfo.arg       : handle))       + srcOffset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -873,7 +875,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<Serial>::malloc(const uintptr_t bytes,
-                                     void *source){
+                                     void *src){
     memory_v *mem = new memory_t<Serial>;
 
     mem->dHandle = this;
@@ -887,15 +889,15 @@ namespace occa {
     mem->handle = ::malloc(bytes);
 #endif
 
-    if(source != NULL)
-      ::memcpy(mem->handle, source, bytes);
+    if(src != NULL)
+      ::memcpy(mem->handle, src, bytes);
 
     return mem;
   }
 
   template <>
   memory_v* device_t<Serial>::textureAlloc(const int dim, const occa::dim &dims,
-                                           void *source,
+                                           void *src,
                                            occa::formatType type, const int permissions){
     memory_v *mem = new memory_t<Serial>;
 
@@ -917,7 +919,7 @@ namespace occa {
     mem->textureInfo.arg = ::malloc(mem->size);
 #endif
 
-    ::memcpy(mem->textureInfo.arg, source, mem->size);
+    ::memcpy(mem->textureInfo.arg, src, mem->size);
 
     mem->handle = &(mem->textureInfo);
 
@@ -926,8 +928,8 @@ namespace occa {
 
   template <>
   memory_v* device_t<Serial>::mappedAlloc(const uintptr_t bytes,
-                                          void *source){
-    memory_v *mem = malloc(bytes, source);
+                                          void *src){
+    memory_v *mem = malloc(bytes, src);
 
     mem->mappedPtr = mem->handle;
 

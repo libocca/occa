@@ -653,6 +653,7 @@ namespace occa {
     uva_inDevice = false;
     uva_isDirty  = false;
 
+    isManaged  = false;
     isMapped   = false;
     isAWrapper = false;
   }
@@ -681,6 +682,7 @@ namespace occa {
     uva_inDevice = m.uva_inDevice;
     uva_isDirty  = m.uva_isDirty;
 
+    isManaged  = m.isManaged;
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -701,7 +703,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<OpenCL>::copyFrom(const void *source,
+  void memory_t<OpenCL>::copyFrom(const void *src,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
     cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
@@ -716,7 +718,7 @@ namespace occa {
       OCCA_CL_CHECK("Memory: Copy From",
                     clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
                                          CL_TRUE,
-                                         offset, bytes_, source,
+                                         offset, bytes_, src,
                                          0, NULL, NULL));
     else{
       const int bie = textureInfo.bytesInEntry;
@@ -734,13 +736,13 @@ namespace occa {
                                         CL_TRUE,
                                         offset_, pixels_,
                                         0, 0,
-                                        source,
+                                        src,
                                         0, NULL, NULL));
     }
   }
 
   template <>
-  void memory_t<OpenCL>::copyFrom(const memory_v *source,
+  void memory_t<OpenCL>::copyFrom(const memory_v *src,
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset){
@@ -752,14 +754,14 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Copy From",
                     clEnqueueCopyBuffer(stream,
-                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) src->handle),
                                         *((cl_mem*) handle),
                                         srcOffset, destOffset,
                                         bytes_,
@@ -767,7 +769,7 @@ namespace occa {
     else
       OCCA_CL_CHECK("Texture Memory: Copy From",
                     clEnqueueCopyBuffer(stream,
-                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) src->handle),
                                         *((cl_mem*) handle),
                                         srcOffset, destOffset,
                                         bytes_,
@@ -849,7 +851,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<OpenCL>::asyncCopyFrom(const void *source,
+  void memory_t<OpenCL>::asyncCopyFrom(const void *src,
                                        const uintptr_t bytes,
                                        const uintptr_t offset){
     const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
@@ -864,18 +866,18 @@ namespace occa {
       OCCA_CL_CHECK("Memory: Asynchronous Copy From",
                     clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
                                          CL_FALSE,
-                                         offset, bytes_, source,
+                                         offset, bytes_, src,
                                          0, NULL, NULL));
     else
       OCCA_CL_CHECK("Texture Memory: Asynchronous Copy From",
                     clEnqueueWriteBuffer(stream, *((cl_mem*) handle),
                                          CL_FALSE,
-                                         offset, bytes_, source,
+                                         offset, bytes_, src,
                                          0, NULL, NULL));
   }
 
   template <>
-  void memory_t<OpenCL>::asyncCopyFrom(const memory_v *source,
+  void memory_t<OpenCL>::asyncCopyFrom(const memory_v *src,
                                        const uintptr_t bytes,
                                        const uintptr_t destOffset,
                                        const uintptr_t srcOffset){
@@ -887,14 +889,14 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     if(!isTexture)
       OCCA_CL_CHECK("Memory: Asynchronous Copy From",
                     clEnqueueCopyBuffer(stream,
-                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) src->handle),
                                         *((cl_mem*) handle),
                                         srcOffset, destOffset,
                                         bytes_,
@@ -902,7 +904,7 @@ namespace occa {
     else
       OCCA_CL_CHECK("Texture Memory: Asynchronous Copy From",
                     clEnqueueCopyBuffer(stream,
-                                        *((cl_mem*) source->handle),
+                                        *((cl_mem*) src->handle),
                                         *((cl_mem*) handle),
                                         srcOffset, destOffset,
                                         bytes_,
@@ -1484,7 +1486,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<OpenCL>::malloc(const uintptr_t bytes,
-                                     void *source){
+                                     void *src){
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
     memory_v *mem = new memory_t<OpenCL>;
@@ -1494,7 +1496,7 @@ namespace occa {
     mem->handle  = new cl_mem;
     mem->size    = bytes;
 
-    if(source == NULL){
+    if(src == NULL){
       *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,
                                                 CL_MEM_READ_WRITE,
                                                 bytes, NULL, &error);
@@ -1502,7 +1504,7 @@ namespace occa {
     else{
       *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,
                                                 CL_MEM_READ_WRITE | CL_MEM_COPY_HOST_PTR,
-                                                bytes, source, &error);
+                                                bytes, src, &error);
 
       finish();
     }
@@ -1512,11 +1514,11 @@ namespace occa {
 
   template <>
   memory_v* device_t<OpenCL>::textureAlloc(const int dim, const occa::dim &dims,
-                                           void *source,
+                                           void *src,
                                            occa::formatType type, const int permissions){
 #ifndef CL_VERSION_1_2
     if(dim == 1)
-      return malloc(dims.x * type.bytes(), source);
+      return malloc(dims.x * type.bytes(), src);
 
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
@@ -1556,7 +1558,7 @@ namespace occa {
                                                dims.x,
                                                dims.y,
                                                0,
-                                               source, &error);
+                                               src, &error);
 
     OCCA_CL_CHECK("Device: Allocating texture", error);
 
@@ -1618,7 +1620,7 @@ namespace occa {
 
     *((cl_mem*) mem->handle) = clCreateImage(data_.context, flag,
                                              &imageFormat, &imageDesc,
-                                             source, &error);
+                                             src, &error);
 
     OCCA_CL_CHECK("Device: Allocating texture", error);
 
@@ -1640,7 +1642,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes,
-                                          void *source){
+                                          void *src){
 
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
@@ -1661,8 +1663,8 @@ namespace occa {
 
     OCCA_CL_CHECK("Device: clCreateBuffer", error);
 
-    if(source != NULL)
-      mem->copyFrom(source);
+    if(src != NULL)
+      mem->copyFrom(src);
 
     // Map memory to read/write
     mem->mappedPtr = clEnqueueMapBuffer(stream,

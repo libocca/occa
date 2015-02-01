@@ -65,6 +65,9 @@ namespace occa {
   //---[ Globals & Flags ]------------
   extern kernelInfo defaultKernelInfo;
 
+  extern const int autoDetect;
+  extern const int srcInUva, destInUva;
+
   extern bool uvaEnabledByDefault_f;
   extern bool verboseCompilation_f;
 
@@ -869,46 +872,50 @@ namespace occa {
 
 
   //---[ Memory ]---------------------
+  void memcpy(void *dest, void *src,
+              const uintptr_t bytes,
+              const int flags = occa::autoDetect);
+
   void memcpy(memory &dest,
-              const void *source,
+              const void *src,
               const uintptr_t bytes = 0,
               const uintptr_t offset = 0);
 
   void memcpy(memory &dest,
-              const memory &source,
+              const memory &src,
               const uintptr_t bytes = 0,
               const uintptr_t destOffset = 0,
               const uintptr_t srcOffset = 0);
 
   void memcpy(void *dest,
-              memory &source,
+              memory &src,
               const uintptr_t bytes = 0,
               const uintptr_t offset = 0);
 
   void memcpy(memory &dest,
-              memory &source,
+              memory &src,
               const uintptr_t bytes = 0,
               const uintptr_t destOffset = 0,
               const uintptr_t srcOffset = 0);
 
   void asyncMemcpy(memory &dest,
-                   const void *source,
+                   const void *src,
                    const uintptr_t bytes = 0,
                    const uintptr_t offset = 0);
 
   void asyncMemcpy(memory &dest,
-                   const memory &source,
+                   const memory &src,
                    const uintptr_t bytes = 0,
                    const uintptr_t destOffset = 0,
                    const uintptr_t srcOffset = 0);
 
   void asyncMemcpy(void *dest,
-                   memory &source,
+                   memory &src,
                    const uintptr_t bytes = 0,
                    const uintptr_t offset = 0);
 
   void asyncMemcpy(memory &dest,
-                   memory &source,
+                   memory &src,
                    const uintptr_t bytes = 0,
                    const uintptr_t destOffset = 0,
                    const uintptr_t srcOffset = 0);
@@ -930,6 +937,7 @@ namespace occa {
     occa::textureInfo_t textureInfo;
 
     bool uva_inDevice, uva_isDirty;
+    bool isManaged;
     bool isMapped;
     bool isAWrapper;
 
@@ -940,11 +948,16 @@ namespace occa {
     virtual void* getMemoryHandle() = 0;
     virtual void* getTextureHandle() = 0;
 
-    virtual void copyFrom(const void *source,
+
+    friend void memcpy(void *dest, void *src,
+                       const uintptr_t bytes,
+                       const int flags);
+
+    virtual void copyFrom(const void *src,
                           const uintptr_t bytes = 0,
                           const uintptr_t offset = 0) = 0;
 
-    virtual void copyFrom(const memory_v *source,
+    virtual void copyFrom(const memory_v *src,
                           const uintptr_t bytes = 0,
                           const uintptr_t destOffset = 0,
                           const uintptr_t srcOffset = 0) = 0;
@@ -958,11 +971,11 @@ namespace occa {
                         const uintptr_t destOffset = 0,
                         const uintptr_t srcOffset = 0) = 0;
 
-    virtual void asyncCopyFrom(const void *source,
+    virtual void asyncCopyFrom(const void *src,
                                const uintptr_t bytes = 0,
                                const uintptr_t offset = 0) = 0;
 
-    virtual void asyncCopyFrom(const memory_v *source,
+    virtual void asyncCopyFrom(const memory_v *src,
                                const uintptr_t bytes = 0,
                                const uintptr_t destOffset = 0,
                                const uintptr_t srcOffset = 0) = 0;
@@ -1000,11 +1013,11 @@ namespace occa {
     void* getMemoryHandle();
     void* getTextureHandle();
 
-    void copyFrom(const void *source,
+    void copyFrom(const void *src,
                   const uintptr_t bytes = 0,
                   const uintptr_t offset = 0);
 
-    void copyFrom(const memory_v *source,
+    void copyFrom(const memory_v *src,
                   const uintptr_t bytes = 0,
                   const uintptr_t destOffset = 0,
                   const uintptr_t srcOffset = 0);
@@ -1018,11 +1031,11 @@ namespace occa {
                 const uintptr_t destOffset = 0,
                 const uintptr_t srcOffset = 0);
 
-    void asyncCopyFrom(const void *source,
+    void asyncCopyFrom(const void *src,
                        const uintptr_t bytes = 0,
                        const uintptr_t offset = 0);
 
-    void asyncCopyFrom(const memory_v *source,
+    void asyncCopyFrom(const memory_v *src,
                        const uintptr_t bytes = 0,
                        const uintptr_t destOffset = 0,
                        const uintptr_t srcOffset = 0);
@@ -1076,11 +1089,11 @@ namespace occa {
     void placeInUva();
     void manage();
 
-    void copyFrom(const void *source,
+    void copyFrom(const void *src,
                   const uintptr_t bytes = 0,
                   const uintptr_t offset = 0);
 
-    void copyFrom(const memory &source,
+    void copyFrom(const memory &src,
                   const uintptr_t bytes = 0,
                   const uintptr_t destOffset = 0,
                   const uintptr_t srcOffset = 0);
@@ -1094,11 +1107,11 @@ namespace occa {
                 const uintptr_t destOffset = 0,
                 const uintptr_t srcOffset = 0);
 
-    void asyncCopyFrom(const void *source,
+    void asyncCopyFrom(const void *src,
                        const uintptr_t bytes = 0,
                        const uintptr_t offset = 0);
 
-    void asyncCopyFrom(const memory &source,
+    void asyncCopyFrom(const memory &src,
                        const uintptr_t bytes = 0,
                        const uintptr_t destOffset = 0,
                        const uintptr_t srcOffset = 0);
@@ -1276,14 +1289,14 @@ namespace occa {
                                   occa::formatType type, const int permissions) = 0;
 
     virtual memory_v* malloc(const uintptr_t bytes,
-                             void* source) = 0;
+                             void* src) = 0;
 
     virtual memory_v* textureAlloc(const int dim, const occa::dim &dims,
-                                   void *source,
+                                   void *src,
                                    occa::formatType type, const int permissions) = 0;
 
     virtual memory_v* mappedAlloc(const uintptr_t bytes,
-                                  void *source) = 0;
+                                  void *src) = 0;
 
     virtual void free() = 0;
 
@@ -1387,14 +1400,14 @@ namespace occa {
                           occa::formatType type, const int permissions);
 
     memory_v* malloc(const uintptr_t bytes,
-                     void *source);
+                     void *src);
 
     memory_v* textureAlloc(const int dim, const occa::dim &dims,
-                           void *source,
+                           void *src,
                            occa::formatType type, const int permissions);
 
     memory_v* mappedAlloc(const uintptr_t bytes,
-                          void *source);
+                          void *src);
 
     void free();
 
@@ -1531,30 +1544,30 @@ namespace occa {
                        occa::formatType type, const int permissions);
 
     memory malloc(const uintptr_t bytes,
-                  void *source = NULL);
+                  void *src = NULL);
 
     memory managedAlloc(const uintptr_t bytes,
-                        void *source = NULL);
+                        void *src = NULL);
 
     void* uvaAlloc(const uintptr_t bytes,
-                   void *source = NULL);
+                   void *src = NULL);
 
     void* managedUvaAlloc(const uintptr_t bytes,
-                          void *source = NULL);
+                          void *src = NULL);
 
     memory textureAlloc(const int dim, const occa::dim &dims,
-                        void *source,
+                        void *src,
                         occa::formatType type, const int permissions = readWrite);
 
     memory managedTextureAlloc(const int dim, const occa::dim &dims,
-                               void *source,
+                               void *src,
                                occa::formatType type, const int permissions = readWrite);
 
     memory mappedAlloc(const uintptr_t bytes,
-                       void *source = NULL);
+                       void *src = NULL);
 
     memory managedMappedAlloc(const uintptr_t bytes,
-                              void *source = NULL);
+                              void *src = NULL);
 
     void freeStream(stream s);
 

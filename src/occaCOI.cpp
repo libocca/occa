@@ -406,6 +406,7 @@ namespace occa {
     uva_inDevice = false;
     uva_isDirty  = false;
 
+    isManaged  = false;
     isMapped   = false;
     isAWrapper = false;
   }
@@ -438,6 +439,7 @@ namespace occa {
     uva_inDevice = m.uva_inDevice;
     uva_isDirty  = m.uva_isDirty;
 
+    isManaged  = m.isManaged;
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -458,7 +460,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<COI>::copyFrom(const void *source,
+  void memory_t<COI>::copyFrom(const void *src,
                                const uintptr_t bytes,
                                const uintptr_t offset){
     coiStream &stream = *((coiStream*) dHandle->currentStream);
@@ -476,7 +478,7 @@ namespace occa {
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferWrite(*((coiMemory*) handle),
                                   offset,
-                                  source,
+                                  src,
                                   bytes_,
                                   COI_COPY_UNSPECIFIED,
                                   false, NULL,
@@ -488,7 +490,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<COI>::copyFrom(const memory_v *source,
+  void memory_t<COI>::copyFrom(const memory_v *src,
                                const uintptr_t bytes,
                                const uintptr_t destOffset,
                                const uintptr_t srcOffset){
@@ -500,8 +502,8 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
@@ -510,7 +512,7 @@ namespace occa {
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) handle),
-                                 *((coiMemory*) source->handle),
+                                 *((coiMemory*) src->handle),
                                  destOffset,
                                  srcOffset,
                                  bytes_,
@@ -590,7 +592,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<COI>::asyncCopyFrom(const void *source,
+  void memory_t<COI>::asyncCopyFrom(const void *src,
                                     const uintptr_t bytes,
                                     const uintptr_t offset){
     coiStream &stream = *((coiStream*) dHandle->currentStream);
@@ -608,7 +610,7 @@ namespace occa {
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferWrite(*((coiMemory*) handle),
                                   offset,
-                                  source,
+                                  src,
                                   bytes_,
                                   COI_COPY_UNSPECIFIED,
                                   false, NULL,
@@ -616,7 +618,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<COI>::asyncCopyFrom(const memory_v *source,
+  void memory_t<COI>::asyncCopyFrom(const memory_v *src,
                                     const uintptr_t bytes,
                                     const uintptr_t destOffset,
                                     const uintptr_t srcOffset){
@@ -628,8 +630,8 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     OCCA_COI_CHECK("Memory: Blocking on Memory Transfer",
@@ -638,7 +640,7 @@ namespace occa {
 
     OCCA_COI_CHECK("Memory: Copy From",
                    COIBufferCopy(*((coiMemory*) handle),
-                                 *((coiMemory*) source->handle),
+                                 *((coiMemory*) src->handle),
                                  destOffset,
                                  srcOffset,
                                  bytes_,
@@ -1107,7 +1109,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<COI>::malloc(const uintptr_t bytes,
-                                  void *source){
+                                  void *src){
     OCCA_EXTRACT_DATA(COI, Device);
 
     memory_v *mem = new memory_t<COI>;
@@ -1120,7 +1122,7 @@ namespace occa {
                    COIBufferCreate(bytes,
                                    COI_BUFFER_NORMAL,
                                    0,
-                                   source,
+                                   src,
                                    1,
                                    &(data_.chiefID),
                                    (coiMemory*) mem->handle) );
@@ -1130,7 +1132,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<COI>::textureAlloc(const int dim, const occa::dim &dims,
-                                        void *source,
+                                        void *src,
                                         occa::formatType type, const int permissions){
 #warning "Textures not supported in COI yet"
 
@@ -1152,7 +1154,7 @@ namespace occa {
     mem->handle = ::malloc(mem->size);
 #endif
 
-    ::memcpy(mem->handle, source, mem->size);
+    ::memcpy(mem->handle, src, mem->size);
 
     mem->textureInfo.arg = mem->handle;
     mem->handle = &(mem->textureInfo);
@@ -1162,7 +1164,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<COI>::mappedAlloc(const uintptr_t bytes,
-                                       void *source){
+                                       void *src){
 #warning "Mapped allocation is not supported in [COI] yet"
   }
 

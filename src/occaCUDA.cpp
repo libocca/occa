@@ -352,6 +352,7 @@ namespace occa {
     uva_inDevice = false;
     uva_isDirty  = false;
 
+    isManaged  = false;
     isMapped   = false;
     isAWrapper = false;
   }
@@ -380,6 +381,7 @@ namespace occa {
     uva_inDevice = m.uva_inDevice;
     uva_isDirty  = m.uva_isDirty;
 
+    isManaged  = m.isManaged;
     isMapped   = m.isMapped;
     isAWrapper = m.isAWrapper;
 
@@ -400,7 +402,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<CUDA>::copyFrom(const void *source,
+  void memory_t<CUDA>::copyFrom(const void *src,
                                 const uintptr_t bytes,
                                 const uintptr_t offset){
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
@@ -411,18 +413,18 @@ namespace occa {
 
     if(!isTexture)
       OCCA_CUDA_CHECK("Memory: Copy From",
-                      cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset, source, bytes_) );
+                      cuMemcpyHtoD(*((CUdeviceptr*) handle) + offset, src, bytes_) );
     else{
       if(textureInfo.dim == 1)
         OCCA_CUDA_CHECK("Texture Memory: Copy From",
-                        cuMemcpyHtoA(((CUDATextureData_t*) handle)->array, offset, source, bytes_) );
+                        cuMemcpyHtoA(((CUDATextureData_t*) handle)->array, offset, src, bytes_) );
       else{
         CUDA_MEMCPY2D info;
 
         info.srcXInBytes   = 0;
         info.srcY          = 0;
         info.srcMemoryType = CU_MEMORYTYPE_HOST;
-        info.srcHost       = source;
+        info.srcHost       = src;
         info.srcPitch      = 0;
 
         info.dstXInBytes   = offset;
@@ -441,7 +443,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<CUDA>::copyFrom(const memory_v *source,
+  void memory_t<CUDA>::copyFrom(const memory_v *src,
                                 const uintptr_t bytes,
                                 const uintptr_t destOffset,
                                 const uintptr_t srcOffset){
@@ -451,8 +453,8 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     void *dstPtr, *srcPtr;
@@ -462,13 +464,13 @@ namespace occa {
     else
       dstPtr = (void*) ((CUDATextureData_t*) handle)->array;
 
-    if( !(source->isTexture) )
-      srcPtr = source->handle;
+    if( !(src->isTexture) )
+      srcPtr = src->handle;
     else
-      srcPtr = (void*) ((CUDATextureData_t*) source->handle)->array;
+      srcPtr = (void*) ((CUDATextureData_t*) src->handle)->array;
 
     if(!isTexture){
-      if(!source->isTexture)
+      if(!src->isTexture)
         OCCA_CUDA_CHECK("Memory: Copy From [Memory -> Memory]",
                         cuMemcpyDtoD(*((CUdeviceptr*) dstPtr) + destOffset,
                                      *((CUdeviceptr*) srcPtr) + srcOffset,
@@ -480,7 +482,7 @@ namespace occa {
                                      bytes_) );
     }
     else{
-      if(!source->isTexture)
+      if(!src->isTexture)
         OCCA_CUDA_CHECK("Memory: Copy From [Memory -> Texture]",
                         cuMemcpyDtoA((CUarray) dstPtr         , destOffset,
                                      *((CUdeviceptr*) srcPtr) + srcOffset,
@@ -588,7 +590,7 @@ namespace occa {
   }
 
   template <>
-  void memory_t<CUDA>::asyncCopyFrom(const void *source,
+  void memory_t<CUDA>::asyncCopyFrom(const void *src,
                                      const uintptr_t bytes,
                                      const uintptr_t offset){
     const CUstream &stream = *((CUstream*) dHandle->currentStream);
@@ -600,14 +602,14 @@ namespace occa {
 
     if(!isTexture)
       OCCA_CUDA_CHECK("Memory: Asynchronous Copy From",
-                      cuMemcpyHtoDAsync(*((CUdeviceptr*) handle) + offset, source, bytes_, stream) );
+                      cuMemcpyHtoDAsync(*((CUdeviceptr*) handle) + offset, src, bytes_, stream) );
     else
       OCCA_CUDA_CHECK("Texture Memory: Asynchronous Copy From",
-                      cuMemcpyHtoAAsync(((CUDATextureData_t*) handle)->array, offset, source, bytes_, stream) );
+                      cuMemcpyHtoAAsync(((CUDATextureData_t*) handle)->array, offset, src, bytes_, stream) );
   }
 
   template <>
-  void memory_t<CUDA>::asyncCopyFrom(const memory_v *source,
+  void memory_t<CUDA>::asyncCopyFrom(const memory_v *src,
                                      const uintptr_t bytes,
                                      const uintptr_t destOffset,
                                      const uintptr_t srcOffset){
@@ -618,8 +620,8 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    OCCA_CHECK((bytes_ + srcOffset) <= source->size,
-               "Source has size [" << source->size << "],"
+    OCCA_CHECK((bytes_ + srcOffset) <= src->size,
+               "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
     void *dstPtr, *srcPtr;
@@ -629,13 +631,13 @@ namespace occa {
     else
       dstPtr = (void*) ((CUDATextureData_t*) handle)->array;
 
-    if( !(source->isTexture) )
-      srcPtr = source->handle;
+    if( !(src->isTexture) )
+      srcPtr = src->handle;
     else
-      srcPtr = (void*) ((CUDATextureData_t*) source->handle)->array;
+      srcPtr = (void*) ((CUDATextureData_t*) src->handle)->array;
 
     if(!isTexture){
-      if(!source->isTexture)
+      if(!src->isTexture)
         OCCA_CUDA_CHECK("Memory: Asynchronous Copy From [Memory -> Memory]",
                         cuMemcpyDtoDAsync(*((CUdeviceptr*) dstPtr) + destOffset,
                                           *((CUdeviceptr*) srcPtr) + srcOffset,
@@ -647,7 +649,7 @@ namespace occa {
                                      bytes_) );
     }
     else{
-      if(source->isTexture)
+      if(src->isTexture)
         OCCA_CUDA_CHECK("Memory: Asynchronous Copy From [Memory -> Texture]",
                         cuMemcpyDtoA((CUarray) dstPtr         , destOffset,
                                      *((CUdeviceptr*) srcPtr) + srcOffset,
@@ -1147,7 +1149,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<CUDA>::malloc(const uintptr_t bytes,
-                                   void *source){
+                                   void *src){
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle = this;
@@ -1157,15 +1159,15 @@ namespace occa {
     OCCA_CUDA_CHECK("Device: malloc",
                     cuMemAlloc((CUdeviceptr*) mem->handle, bytes));
 
-    if(source != NULL)
-      mem->copyFrom(source, bytes, 0);
+    if(src != NULL)
+      mem->copyFrom(src, bytes, 0);
 
     return mem;
   }
 
   template <>
   memory_v* device_t<CUDA>::textureAlloc(const int dim, const occa::dim &dims,
-                                         void *source,
+                                         void *src,
                                          occa::formatType type, const int permissions){
 
     memory_v *mem = new memory_t<CUDA>;
@@ -1209,7 +1211,7 @@ namespace occa {
     mem->textureInfo.arg = new int;
     *((int*) mem->textureInfo.arg) = CUDA_ADDRESS_CLAMP;
 
-    mem->copyFrom(source);
+    mem->copyFrom(src);
 
     /*
       if(dims == 3){
@@ -1232,7 +1234,7 @@ namespace occa {
 
   template <>
   memory_v* device_t<CUDA>::mappedAlloc(const uintptr_t bytes,
-                                        void *source){
+                                        void *src){
 
     memory_v *mem = new memory_t<CUDA>;
 
@@ -1242,8 +1244,8 @@ namespace occa {
     OCCA_CUDA_CHECK("Device: malloc",
                     cuMemAllocHost((void**) &(mem->handle), bytes));
 
-    if(source != NULL)
-      ::memcpy(mem->handle, source, bytes);
+    if(src != NULL)
+      ::memcpy(mem->handle, src, bytes);
 
     mem->mappedPtr = mem->handle;
 

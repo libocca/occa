@@ -152,12 +152,12 @@ namespace occa {
   void* memory_t<OpenCL>::getTextureHandle();
 
   template <>
-  void memory_t<OpenCL>::copyFrom(const void *source,
+  void memory_t<OpenCL>::copyFrom(const void *src,
                                   const uintptr_t bytes,
                                   const uintptr_t offset);
 
   template <>
-  void memory_t<OpenCL>::copyFrom(const memory_v *source,
+  void memory_t<OpenCL>::copyFrom(const memory_v *src,
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset);
@@ -174,12 +174,12 @@ namespace occa {
                                 const uintptr_t srcOffset);
 
   template <>
-  void memory_t<OpenCL>::asyncCopyFrom(const void *source,
+  void memory_t<OpenCL>::asyncCopyFrom(const void *src,
                                        const uintptr_t bytes,
                                        const uintptr_t destOffset);
 
   template <>
-  void memory_t<OpenCL>::asyncCopyFrom(const memory_v *source,
+  void memory_t<OpenCL>::asyncCopyFrom(const memory_v *src,
                                        const uintptr_t bytes,
                                        const uintptr_t srcOffset,
                                        const uintptr_t offset);
@@ -305,16 +305,16 @@ namespace occa {
 
   template <>
   memory_v* device_t<OpenCL>::malloc(const uintptr_t bytes,
-                                     void *source);
+                                     void *src);
 
   template <>
   memory_v* device_t<OpenCL>::textureAlloc(const int dim, const occa::dim &dims,
-                                           void *source,
+                                           void *src,
                                            occa::formatType type, const int permissions);
 
   template <>
   memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes,
-                                          void *source);
+                                          void *src);
 
   template <>
   void device_t<OpenCL>::free();
