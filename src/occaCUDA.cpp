@@ -1025,8 +1025,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<CUDA>;
 
-    k->dev  = this;
-    k->data = new CUDAKernelData_t;
+    k->dHandle = this;
+    k->data    = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
@@ -1082,8 +1082,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<CUDA>;
 
-    k->dev  = this;
-    k->data = new CUDAKernelData_t;
+    k->dHandle = this;
+    k->data    = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
 
@@ -1100,8 +1100,8 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     // CUdeviceptr ~ void*
-    mem->dev    = this;
-    mem->size   = bytes;
+    mem->dHandle = this;
+    mem->size    = bytes;
     mem->handle = &handle_;
 
     mem->isAWrapper = true;
@@ -1115,9 +1115,9 @@ namespace occa {
                                         occa::formatType type, const int permissions){
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev    = this;
-    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
-    mem->handle = handle_;
+    mem->dHandle = this;
+    mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->handle  = handle_;
 
     mem->isTexture       = true;
     mem->textureInfo.dim = dim;
@@ -1138,9 +1138,9 @@ namespace occa {
                                    void *source){
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev    = this;
-    mem->handle = new CUdeviceptr;
-    mem->size   = bytes;
+    mem->dHandle = this;
+    mem->handle  = new CUdeviceptr;
+    mem->size    = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",
                     cuMemAlloc((CUdeviceptr*) mem->handle, bytes));
@@ -1158,9 +1158,9 @@ namespace occa {
 
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev    = this;
-    mem->handle = new CUDATextureData_t;
-    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->dHandle = this;
+    mem->handle  = new CUDATextureData_t;
+    mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
     mem->isTexture       = true;
     mem->textureInfo.dim = dim;
@@ -1224,8 +1224,8 @@ namespace occa {
 
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev  = this;
-    mem->size = bytes;
+    mem->dHandle = this;
+    mem->size    = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",
                     cuMemAllocHost((void**) &(mem->handle), bytes));
