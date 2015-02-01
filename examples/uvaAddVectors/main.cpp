@@ -7,10 +7,10 @@ int main(int argc, char **argv){
 
   // [U]nified [V]irtual [A]dressing is
   //   disabled by default
-  occa::enableUVA();
+  // occa::enableUVAByDefault();
 
   occa::device device;
-  device.setup("mode = OpenMP, schedule = compact, chunk = 10");
+  device.setup("mode = OpenMP, UVA = enabled, schedule = compact, chunk = 10");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between

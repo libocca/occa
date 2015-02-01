@@ -270,6 +270,7 @@ extern "C" {
   occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                          uintptr_t bytes,
                                          void *source){
+
     occa::device &device_ = *((occa::device*) device);
 
     occaMemory_t *memory = new occaMemory_t();
@@ -278,6 +279,38 @@ extern "C" {
     memory->mem = device_.malloc(bytes, source);
 
     return (occaMemory) memory;
+  }
+
+  occaMemory OCCA_RFUNC occaDeviceManagedAlloc(occaDevice device,
+                                               uintptr_t bytes,
+                                               void *source){
+
+    occa::device &device_ = *((occa::device*) device);
+
+    occaMemory_t *memory = new occaMemory_t();
+
+    memory->type = OCCA_TYPE_MEMORY;
+    memory->mem = device_.managedAlloc(bytes, source);
+
+    return (occaMemory) memory;
+  }
+
+  void* OCCA_RFUNC occaDeviceUvaAlloc(occaDevice device,
+                                      uintptr_t bytes,
+                                      void *source){
+
+    occa::device &device_ = *((occa::device*) device);
+
+    return device_.uvaAlloc(bytes, source);
+  }
+
+  void* OCCA_RFUNC occaDeviceManagedUvaAlloc(occaDevice device,
+                                             uintptr_t bytes,
+                                             void *source){
+
+    occa::device &device_ = *((occa::device*) device);
+
+    return device_.managedUvaAlloc(bytes, source);
   }
 
   occaMemory OCCA_RFUNC occaDeviceMappedAlloc(occaDevice device,
@@ -289,6 +322,19 @@ extern "C" {
 
     memory->type = OCCA_TYPE_MEMORY;
     memory->mem  = device_.mappedAlloc(bytes, source);
+
+    return (occaMemory) memory;
+  }
+
+  occaMemory OCCA_RFUNC occaDeviceManagedMappedAlloc(occaDevice device,
+                                                     uintptr_t bytes,
+                                                     void *source){
+    occa::device &device_ = *((occa::device*) device);
+
+    occaMemory_t *memory = new occaMemory_t();
+
+    memory->type = OCCA_TYPE_MEMORY;
+    memory->mem  = device_.managedMappedAlloc(bytes, source);
 
     return (occaMemory) memory;
   }
@@ -351,7 +397,7 @@ extern "C" {
     occa::device &device_ = *((occa::device*) device);
     occa::stream &stream_ = *((occa::stream*) stream);
 
-    device_.free(stream_);
+    device_.freeStream(stream_);
   }
 
   void OCCA_RFUNC occaDeviceFree(occaDevice device){

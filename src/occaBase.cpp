@@ -6,8 +6,12 @@ namespace occa {
   //---[ Globals & Flags ]------------
   kernelInfo defaultKernelInfo;
 
-  bool uvaEnabled_f         = false;
-  bool verboseCompilation_f = true;
+  bool uvaEnabledByDefault_f = false;
+  bool verboseCompilation_f  = true;
+
+  void setVerboseCompilation(const bool value){
+    verboseCompilation_f = value;
+  }
   //==================================
 
 
@@ -15,20 +19,16 @@ namespace occa {
   ptrRangeMap_t uvaMap;
   memoryArray_t uvaDirtyMemory;
 
-  bool uvaIsEnabled(){
-    return uvaEnabled_f;
+  bool hasUvaEnabledByDefault(){
+    return uvaEnabledByDefault_f;
   }
 
-  void enableUVA(){
-    uvaEnabled_f = true;
+  void enableUvaByDefault(){
+    uvaEnabledByDefault_f = true;
   }
 
-  void disableUVA(){
-    uvaEnabled_f = false;
-  }
-
-  void setVerboseCompilation(const bool value){
-    verboseCompilation_f = value;
+  void disableUvaByDefault(){
+    uvaEnabledByDefault_f = false;
   }
 
   ptrRange_t::ptrRange_t() :
@@ -80,7 +80,7 @@ namespace occa {
     if((it != uvaMap.end()) &&
        (((void*) it->first.start) != ((void*) it->second))){
 
-      (it->second)->free();
+      occa::memory(it->second).free();
     }
     else
       ::free(ptr);
@@ -458,7 +458,8 @@ namespace occa {
     uvaRange.start = (char*) (mHandle->uvaPtr);
     uvaRange.end   = (uvaRange.start + mHandle->size);
 
-    uvaMap[uvaRange] = mHandle;
+    uvaMap[uvaRange]                   = mHandle;
+    mHandle->dHandle->uvaMap[uvaRange] = mHandle;
 
     // Needed for kernelArg.void_ -> mHandle checks
     if(mHandle->uvaPtr != mHandle->handle)
@@ -606,8 +607,17 @@ namespace occa {
   void memory::free(){
     mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
-    if(mHandle->uvaPtr)
+    if(mHandle->uvaPtr){
       ::free(mHandle->uvaPtr);
+
+      uvaMap.erase(mHandle->uvaPtr);
+      mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+
+      if(mHandle->uvaPtr != mHandle->handle){
+        uvaMap.erase(mHandle->handle);
+        mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+      }
+    }
 
     if( !(mHandle->isMapped) )
       mHandle->free();
@@ -688,8 +698,11 @@ namespace occa {
     OCCA_CHECK(aim.has("mode"),
                "OCCA mode not given");
 
-    // [-] Load aim from infos
+    // Load [mode] from aim
     occa::mode m = strToMode(aim.get("mode"));
+
+    // Load [UVA] status from aim
+    bool dHandleHasUvaEnabled = uvaEnabledByDefault_f;
 
     setupHandle(m);
 
@@ -697,6 +710,13 @@ namespace occa {
 
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
+
+    if(aim.has("UVA")){
+      if(upStringCheck(aim.get("UVA"), "enabled"))
+        dHandle->uvaEnabled_ = true;
+      else
+        dHandle->uvaEnabled_ = false;
+    }
 
     dHandle->currentStream = createStream();
   }
@@ -912,7 +932,7 @@ namespace occa {
     return dHandle->timeBetween(startTag, endTag);
   }
 
-  void device::free(stream s){
+  void device::freeStream(stream s){
     dHandle->freeStream(s);
   }
 

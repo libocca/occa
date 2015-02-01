@@ -65,16 +65,16 @@ namespace occa {
   //---[ Globals & Flags ]------------
   extern kernelInfo defaultKernelInfo;
 
-  extern bool uvaEnabled_f;
+  extern bool uvaEnabledByDefault_f;
   extern bool verboseCompilation_f;
 
   void setVerboseCompilation(const bool value);
   //==================================
 
   //---[ UVA ]------------------------
-  bool uvaIsEnabled();
-  void enableUVA();
-  void disableUVA();
+  bool hasUvaEnabledByDefault();
+  void enableUvaByDefault();
+  void disableUvaByDefault();
 
   class ptrRange_t {
   public:
@@ -89,18 +89,6 @@ namespace occa {
     bool        operator != (const ptrRange_t &r) const;
 
     friend int operator < (const ptrRange_t &a, const ptrRange_t &b);
-  };
-
-  class uvaPtrInfo_t {
-  private:
-    occa::memory_v *mem;
-
-  public:
-    uvaPtrInfo_t();
-    uvaPtrInfo_t(occa::memory_v *mem);
-
-    occa::device getDevice();
-    occa::memory getMemory();
   };
 
   typedef std::map<ptrRange_t, occa::memory_v*> ptrRangeMap_t;
@@ -377,6 +365,7 @@ namespace occa {
         n = n->right;
 
         if((info != "mode")        &&
+           (info != "UVA")         &&
            (info != "platformID")  &&
            (info != "deviceID")    &&
            (info != "schedule")    &&
@@ -440,6 +429,13 @@ namespace occa {
       return (iMap.find(info) != iMap.end());
     }
 
+    inline void remove(const std::string &info){
+      std::map<std::string, std::string>::iterator it = iMap.find(info);
+
+      if(it != iMap.end())
+        iMap.erase(it);
+    }
+
     template <class TM>
     inline void set(const std::string &info, const TM &value){
       iMap[info] = toString(value);
@@ -481,6 +477,17 @@ namespace occa {
         else
           ++c;
       }
+    }
+
+    friend inline std::ostream& operator << (std::ostream &out, const argInfoMap &m){
+      std::map<std::string,std::string>::const_iterator it = m.iMap.begin();
+
+      while(it != m.iMap.end()){
+        out << it->first << " = " << it->second << '\n';
+        ++it;
+      }
+
+      return out;
     }
   };
 
@@ -1178,6 +1185,10 @@ namespace occa {
 
     std::string compiler, compilerEnvScript, compilerFlags;
 
+    bool uvaEnabled_;
+    ptrRangeMap_t uvaMap;
+    memoryArray_t uvaDirtyMemory;
+
     stream currentStream;
     std::vector<stream> streams;
 
@@ -1211,6 +1222,8 @@ namespace occa {
 
     virtual void flush()  = 0;
     virtual void finish() = 0;
+
+    virtual bool hasUvaEnabled() = 0;
 
     virtual void waitFor(tag tag_) = 0;
 
@@ -1316,6 +1329,10 @@ namespace occa {
 
     void flush();
     void finish();
+
+    inline bool hasUvaEnabled(){
+      return uvaEnabled_;
+    }
 
     void waitFor(tag tag_);
 
@@ -1450,8 +1467,6 @@ namespace occa {
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);
 
-    void free(stream s);
-
     kernel buildKernelFromString(const std::string &content,
                                  const std::string &functionName,
                                  const bool useParser);
@@ -1533,6 +1548,8 @@ namespace occa {
     memory managedMappedAlloc(const uintptr_t bytes,
                               void *source = NULL);
 
+    void freeStream(stream s);
+
     void free();
 
     int simdWidth();
@@ -1547,26 +1564,20 @@ namespace occa {
   //---[ KernelArg ]----------
   template <class TM>
   inline kernelArg::kernelArg(TM *arg_){
-    bool set = false;
 
-    if(uvaEnabled_f){
-      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+    ptrRangeMap_t::iterator it = uvaMap.find(arg_);
 
-      if(it != uvaMap.end()){
-        mHandle = it->second;
-        dHandle = mHandle->dHandle;
+    if(it != uvaMap.end()){
+      mHandle = it->second;
+      dHandle = mHandle->dHandle;
 
-        arg.void_ = mHandle->handle;
-        size      = sizeof(void*);
+      arg.void_ = mHandle->handle;
+      size      = sizeof(void*);
 
-        pointer    = true;
-        hasTwoArgs = false;
-
-        set = true;
-      }
+      pointer    = true;
+      hasTwoArgs = false;
     }
-
-    if(!set){
+    else {
       dHandle = NULL;
       mHandle = NULL;
 
@@ -1581,26 +1592,20 @@ namespace occa {
   template <class TM>
   inline kernelArg::kernelArg(const TM *carg_){
     TM *arg_ = const_cast<TM*>(carg_);
-    bool set = false;
 
-    if(uvaEnabled_f){
-      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+    ptrRangeMap_t::iterator it = uvaMap.find(arg_);
 
-      if(it != uvaMap.end()){
-        mHandle = it->second;
-        dHandle = mHandle->dHandle;
+    if(it != uvaMap.end()){
+      mHandle = it->second;
+      dHandle = mHandle->dHandle;
 
-        arg.void_ = mHandle->handle;
-        size      = sizeof(void*);
+      arg.void_ = mHandle->handle;
+      size      = sizeof(void*);
 
-        pointer    = true;
-        hasTwoArgs = false;
-
-        set = true;
-      }
+      pointer    = true;
+      hasTwoArgs = false;
     }
-
-    if(!set){
+    else {
       dHandle = NULL;
       mHandle = NULL;
 
@@ -1632,7 +1637,7 @@ namespace occa {
   }
 
   inline void kernelArg::setupForKernelCall(const bool isConst) const {
-    if(uvaEnabled_f && mHandle){
+    if(mHandle && mHandle->dHandle->hasUvaEnabled()){
       if(!(mHandle->uva_inDevice)){
         mHandle->copyFrom(mHandle->uvaPtr);
         mHandle->uva_inDevice = true;

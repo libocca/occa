@@ -733,7 +733,10 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<COI>::device_t() {
-    data           = NULL;
+    data = NULL;
+
+    uvaEnabled_ = false;
+
     bytesAllocated = 0;
 
     getEnvironmentVariables();
@@ -749,10 +752,19 @@ namespace occa {
 
   template <>
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &d){
-    data           = d.data;
-    bytesAllocated = d.bytesAllocated;
+    modelID_ = d.modelID_;
+    id_      = d.id_;
 
+    data = d.data;
+
+    uvaEnabled_    = d.uvaEnabled_;
+    uvaMap         = d.uvaMap;
+    uvaDirtyMemory = d.uvaDirtyMemory;
+
+    compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
+
+    bytesAllocated = d.bytesAllocated;
 
     return *this;
   }

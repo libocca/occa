@@ -549,7 +549,10 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenMP>::device_t(){
-    data           = NULL;
+    data = NULL;
+
+    uvaEnabled_ = false;
+
     bytesAllocated = 0;
 
     getEnvironmentVariables();
@@ -557,20 +560,24 @@ namespace occa {
 
   template <>
   device_t<OpenMP>::device_t(const device_t<OpenMP> &d){
-    data           = d.data;
-    bytesAllocated = d.bytesAllocated;
-
-    compiler      = d.compiler;
-    compilerFlags = d.compilerFlags;
+    *this = d;
   }
 
   template <>
   device_t<OpenMP>& device_t<OpenMP>::operator = (const device_t<OpenMP> &d){
-    data           = d.data;
-    bytesAllocated = d.bytesAllocated;
+    modelID_ = d.modelID_;
+    id_      = d.id_;
+
+    data = d.data;
+
+    uvaEnabled_    = d.uvaEnabled_;
+    uvaMap         = d.uvaMap;
+    uvaDirtyMemory = d.uvaDirtyMemory;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
+
+    bytesAllocated = d.bytesAllocated;
 
     return *this;
   }
