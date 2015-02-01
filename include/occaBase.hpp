@@ -1170,7 +1170,6 @@ namespace occa {
     friend class occa::memory;
     friend class occa::device;
     friend class occa::kernelDatabase;
-    friend class occa::kernelDatabase;
 
   private:
     int modelID_, id_;

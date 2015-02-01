@@ -1510,7 +1510,7 @@ namespace occa {
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dhandle = this;
+    mem->dHandle = this;
     mem->handle  = new cl_mem;
     mem->size    = (dims.x * dims.y) * type.bytes();
 
