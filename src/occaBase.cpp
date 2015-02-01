@@ -440,18 +440,26 @@ namespace occa {
     return mHandle->getTextureHandle();
   }
 
-  void memory::placeInUVA(){
+  void memory::placeInUva(){
+    if(mHandle->dHandle->fakesUva()){
+      mHandle->uvaPtr = mHandle->handle;
+    }
+    else{
 #if   (OCCA_OS == LINUX_OS)
-    posix_memalign(&(mHandle->uvaPtr), OCCA_MEM_ALIGN, mHandle->size);
+      posix_memalign(&(mHandle->uvaPtr), OCCA_MEM_ALIGN, mHandle->size);
 #elif (OCCA_OS == OSX_OS)
-    mHandle->uvaPtr = ::malloc(mHandle->size);
+      mHandle->uvaPtr = ::malloc(mHandle->size);
 #else
-    mHandle->uvaPtr = ::malloc(mHandle->size);
+      mHandle->uvaPtr = ::malloc(mHandle->size);
 #endif
+    }
   }
 
   void memory::manage(){
-    placeInUVA();
+    placeInUva();
+
+    if( !(mHandle->dHandle->fakesUva()) )
+      return;
 
     ptrRange_t uvaRange;
 
@@ -608,14 +616,15 @@ namespace occa {
     mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if(mHandle->uvaPtr){
-      ::free(mHandle->uvaPtr);
-
       uvaMap.erase(mHandle->uvaPtr);
       mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
 
+      // CPU case where memory is shared
       if(mHandle->uvaPtr != mHandle->handle){
         uvaMap.erase(mHandle->handle);
         mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
+
+        ::free(mHandle->uvaPtr);
       }
     }
 
@@ -885,19 +894,21 @@ namespace occa {
   }
 
   void device::finish(){
-    const size_t dirtyEntries = uvaDirtyMemory.size();
+    if(dHandle->fakesUva()){
+      const size_t dirtyEntries = uvaDirtyMemory.size();
 
-    if(dirtyEntries){
-      for(int i = 0; i < dirtyEntries; ++i){
-        occa::memory_v *mem = uvaDirtyMemory[i];
+      if(dirtyEntries){
+        for(int i = 0; i < dirtyEntries; ++i){
+          occa::memory_v *mem = uvaDirtyMemory[i];
 
-        mem->asyncCopyTo(mem->uvaPtr);
+          mem->asyncCopyTo(mem->uvaPtr);
 
-        mem->uva_inDevice = false;
-        mem->uva_isDirty  = false;
+          mem->uva_inDevice = false;
+          mem->uva_isDirty  = false;
+        }
+
+        uvaDirtyMemory.clear();
       }
-
-      uvaDirtyMemory.clear();
     }
 
     dHandle->finish();
@@ -1201,7 +1212,7 @@ namespace occa {
                          void *source){
     memory mem = malloc(bytes, source);
 
-    mem.placeInUVA();
+    mem.placeInUva();
 
     return mem.mHandle->uvaPtr;
   }

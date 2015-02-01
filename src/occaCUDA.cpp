@@ -958,6 +958,11 @@ namespace occa {
   }
 
   template <>
+  bool device_t<CUDA>::fakesUva(){
+    return true;
+  }
+
+  template <>
   void device_t<CUDA>::waitFor(tag tag_){
     cuEventSynchronize(tag_.cuEvent);
   }

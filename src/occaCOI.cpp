@@ -930,6 +930,11 @@ namespace occa {
   }
 
   template <>
+  bool device_t<COI>::fakesUva(){
+    return true;
+  }
+
+  template <>
   void device_t<COI>::waitFor(tag tag_){
     finish(); // [-] Not done
   }

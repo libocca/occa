@@ -1068,7 +1068,7 @@ namespace occa {
     void* getMemoryHandle();
     void* getTextureHandle();
 
-    void placeInUVA();
+    void placeInUva();
     void manage();
 
     void copyFrom(const void *source,
@@ -1223,6 +1223,7 @@ namespace occa {
     virtual void flush()  = 0;
     virtual void finish() = 0;
 
+    virtual bool fakesUva() = 0;
     virtual bool hasUvaEnabled() = 0;
 
     virtual void waitFor(tag tag_) = 0;
@@ -1329,6 +1330,8 @@ namespace occa {
 
     void flush();
     void finish();
+
+    bool fakesUva();
 
     inline bool hasUvaEnabled(){
       return uvaEnabled_;
@@ -1619,17 +1622,29 @@ namespace occa {
 
   template <>
   inline kernelArg::kernelArg(const occa::memory &m){
-    dHandle = m.mHandle->dHandle;
-    mHandle = NULL;
+    if(m.mHandle->dHandle->fakesUva()){
+      dHandle = m.mHandle->dHandle;
+      mHandle = NULL;
 
-    arg.void_ = m.mHandle->handle;
-    size      = sizeof(void*);
+      arg.void_ = m.mHandle->handle;
+      size      = sizeof(void*);
 
-    pointer    = true;
-    hasTwoArgs = m.mHandle->isTexture;
+      pointer    = true;
+      hasTwoArgs = m.mHandle->isTexture;
 
-    if(hasTwoArgs)
-      arg2.void_ = m.textureArg();
+      if(hasTwoArgs)
+        arg2.void_ = m.textureArg();
+    }
+    else{
+      dHandle = NULL;
+      mHandle = NULL;
+
+      arg.void_ = m.mHandle->handle;
+      size      = sizeof(void*);
+
+      pointer    = true;
+      hasTwoArgs = false;
+    }
   }
 
   inline occa::device kernelArg::getDevice() const {
@@ -1637,7 +1652,10 @@ namespace occa {
   }
 
   inline void kernelArg::setupForKernelCall(const bool isConst) const {
-    if(mHandle && mHandle->dHandle->hasUvaEnabled()){
+    if(mHandle                      &&
+       mHandle->dHandle->fakesUva() &&
+       mHandle->dHandle->hasUvaEnabled()){
+
       if(!(mHandle->uva_inDevice)){
         mHandle->copyFrom(mHandle->uvaPtr);
         mHandle->uva_inDevice = true;

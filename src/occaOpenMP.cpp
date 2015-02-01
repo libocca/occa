@@ -739,6 +739,11 @@ namespace occa {
   void device_t<OpenMP>::finish(){}
 
   template <>
+  bool device_t<OpenMP>::fakesUva(){
+    return false;
+  }
+
+  template <>
   void device_t<OpenMP>::waitFor(tag tag_){}
 
   template <>

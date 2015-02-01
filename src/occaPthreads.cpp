@@ -841,6 +841,11 @@ namespace occa {
   }
 
   template <>
+  bool device_t<Pthreads>::fakesUva(){
+    return false;
+  }
+
+  template <>
   void device_t<Pthreads>::waitFor(tag tag_){
     finish(); // [-] Not done
   }

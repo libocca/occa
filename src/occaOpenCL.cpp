@@ -1203,6 +1203,11 @@ namespace occa {
   }
 
   template <>
+  bool device_t<OpenCL>::fakesUva(){
+    return true;
+  }
+
+  template <>
   void device_t<OpenCL>::waitFor(tag tag_){
     clWaitForEvents(1, &(tag_.clEvent));
   }
