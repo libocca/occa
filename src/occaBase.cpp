@@ -559,47 +559,26 @@ namespace occa {
         destIt  = uvaMap.find(dest);
     }
 
-    if(srcIt != uvaMap.end()){
-      occa::memory_v *srcMem = (srcIt->second);
-      const uintptr_t srcOff = ((char*) src) - ((char*) srcMem->uvaPtr);
+    occa::memory_v *srcMem  = ((srcIt != uvaMap.end())  ? (srcIt->second)  : NULL);
+    occa::memory_v *destMem = ((destIt != uvaMap.end()) ? (destIt->second) : NULL);
 
-      if(destIt != uvaMap.end()){
-        occa::memory_v *destMem = (destIt->second);
-        const uintptr_t destOff = ((char*) dest) - ((char*) destMem->uvaPtr);
+    const uintptr_t srcOff  = (srcMem  ? (((char*) src)  - ((char*) srcMem->uvaPtr))  : 0);
+    const uintptr_t destOff = (destMem ? (((char*) dest) - ((char*) destMem->uvaPtr)) : 0);
 
-        if(srcMem->isManaged){
-          if(destMem->isManaged)
-            ::memcpy(dest, src, bytes);
-          else
-            destMem->copyFrom(src, bytes, destOff);
-        }
-        else{
-          if(destMem->isManaged)
-            srcMem->copyTo(dest, bytes, srcOff);
-          else
-            srcMem->copyTo(destMem, bytes, destOff, srcOff);
-        }
-      }
-      else{
-        if(srcMem->isManaged)
-          ::memcpy(dest, src, bytes);
-        else
-          srcMem->copyTo(dest, bytes, srcOff);
-      }
+    const bool usingSrcPtr  = ((srcMem  == NULL) || (srcMem->isManaged));
+    const bool usingDestPtr = ((destMem == NULL) || (destMem->isManaged));
+
+    if(usingSrcPtr && usingDestPtr){
+      ::memcpy(dest, src, bytes);
     }
-    else{
-      if(destIt != uvaMap.end()){
-        occa::memory_v *destMem = (destIt->second);
-        const uintptr_t destOff = ((char*) dest) - ((char*) destMem->uvaPtr);
-
-        if(destMem->isManaged)
-          ::memcpy(dest, src, bytes);
-        else
-          destMem->copyFrom(src, bytes, destOff);
-      }
-      else{
-        ::memcpy(dest, src, bytes);
-      }
+    else if(usingSrcPtr){
+      destMem->copyFrom(src, bytes, destOff);
+    }
+    else if(usingDestPtr){
+      srcMem->copyTo(dest, bytes, srcOff);
+    }
+    else {
+      srcMem->copyTo(destMem, bytes, destOff, srcOff);
     }
   }
 
