@@ -1539,9 +1539,16 @@ namespace occa {
     memory wrapMemory(void *handle_,
                       const uintptr_t bytes);
 
+    memory wrapManagedMemory(void *handle_,
+                             const uintptr_t bytes);
+
     memory wrapTexture(void *handle_,
                        const int dim, const occa::dim &dims,
                        occa::formatType type, const int permissions);
+
+    memory wrapManagedTexture(void *handle_,
+                              const int dim, const occa::dim &dims,
+                              occa::formatType type, const int permissions);
 
     memory malloc(const uintptr_t bytes,
                   void *src = NULL);

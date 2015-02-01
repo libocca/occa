@@ -1226,6 +1226,15 @@ namespace occa {
     return mem;
   }
 
+  memory device::wrapManagedMemory(void *handle_,
+                                   const uintptr_t bytes){
+    memory mem = wrapMemory(handle_, bytes);
+
+    mem.manage();
+
+    return mem;
+  }
+
   memory device::wrapTexture(void *handle_,
                              const int dim, const occa::dim &dims,
                              occa::formatType type, const int permissions){
@@ -1242,6 +1251,17 @@ namespace occa {
                                        dim, dims,
                                        type, permissions);
     mem.mHandle->dHandle = dHandle;
+
+    return mem;
+  }
+
+  memory device::wrapManagedTexture(void *handle_,
+                                    const int dim, const occa::dim &dims,
+                                    occa::formatType type, const int permissions){
+
+    memory mem = wrapTexture(handle_, dim, dims, type, permissions);
+
+    mem.manage();
 
     return mem;
   }
