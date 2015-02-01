@@ -365,18 +365,14 @@ namespace occa {
                             cl_device_id deviceID,
                             cl_context context){
       occa::device dev;
-      device_t<OpenCL> &devH      = *(new device_t<OpenCL>());
+      device_t<OpenCL> &dHandle   = *(new device_t<OpenCL>());
       OpenCLDeviceData_t &devData = *(new OpenCLDeviceData_t);
 
-      dev.mode_   = occa::OpenCL;
       dev.strMode = "OpenCL";
-      dev.dHandle = &devH;
-
-      // This will get set in the copy-back
-      devH.dev = &dev;
+      dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
-      devH.data = &devData;
+      dHandle.data = &devData;
 
       devData.platform = -1;
       devData.device   = -1;
@@ -386,10 +382,10 @@ namespace occa {
       devData.context    = context;
       //======================
 
-      dev.modelID_ = library::deviceModelID(dev.getIdentifier());
-      dev.id_      = library::genDeviceID();
+      dHandle.modelID_ = library::deviceModelID(dHandle.getIdentifier());
+      dHandle.id_      = library::genDeviceID();
 
-      dev.currentStream = dev.createStream();
+      dHandle.currentStream = dHandle.createStream();
 
       return dev;
     }
@@ -414,8 +410,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenCL>::kernel_t(){
-    data = NULL;
-    dev  = NULL;
+    data    = NULL;
+    dHandle = NULL;
 
     functionName = "";
 
@@ -433,8 +429,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>::kernel_t(const kernel_t<OpenCL> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -459,8 +455,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>& kernel_t<OpenCL>::operator = (const kernel_t<OpenCL> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -493,7 +489,7 @@ namespace occa {
                                                     kernelInfo &info_){
 
     return getCachedName(filename,
-                         dev->dHandle->getInfoSalt(info_));
+                         dHandle->getInfoSalt(info_));
   }
 
   template <>
@@ -506,7 +502,7 @@ namespace occa {
 
     kernelInfo info = info_;
 
-    dev->dHandle->addOccaHeadersToInfo(info);
+    dHandle->addOccaHeadersToInfo(info);
 
     std::string cachedBinary = getCachedBinaryName(filename, info);
 
@@ -537,7 +533,7 @@ namespace occa {
 
     std::string cFunction = readFile(iCachedBinary);
 
-    std::string catFlags = info.flags + dev->dHandle->compilerFlags;
+    std::string catFlags = info.flags + dHandle->compilerFlags;
 
     cl::buildKernelFromSource(data_,
                               cFunction.c_str(), cFunction.size(),
@@ -565,7 +561,7 @@ namespace occa {
                               (const unsigned char*) cFile.c_str(),
                               cFile.size(),
                               functionName,
-                              dev->dHandle->compilerFlags);
+                              dHandle->compilerFlags);
 
     return this;
   }
@@ -655,7 +651,7 @@ namespace occa {
     mappedPtr = NULL;
     uvaPtr    = NULL;
 
-    dev  = NULL;
+    dHandle = NULL;
     size = 0;
 
     isTexture = false;
@@ -678,7 +674,7 @@ namespace occa {
     mappedPtr = m.mappedPtr;
     uvaPtr    = m.uvaPtr;
 
-    dev  = m.dev;
+    dHandle = m.dHandle;
     size = m.size;
 
     isTexture       = m.isTexture;
@@ -712,7 +708,7 @@ namespace occa {
   void memory_t<OpenCL>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
-    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -752,7 +748,7 @@ namespace occa {
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset){
-    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -786,7 +782,7 @@ namespace occa {
   void memory_t<OpenCL>::copyTo(void *dest,
                                 const uintptr_t bytes,
                                 const uintptr_t offset){
-    const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -826,7 +822,7 @@ namespace occa {
                                 const uintptr_t bytes,
                                 const uintptr_t destOffset,
                                 const uintptr_t srcOffset){
-    const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -860,7 +856,7 @@ namespace occa {
   void memory_t<OpenCL>::asyncCopyFrom(const void *source,
                                        const uintptr_t bytes,
                                        const uintptr_t offset){
-    const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -887,7 +883,7 @@ namespace occa {
                                        const uintptr_t bytes,
                                        const uintptr_t destOffset,
                                        const uintptr_t srcOffset){
-    const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -921,7 +917,7 @@ namespace occa {
   void memory_t<OpenCL>::asyncCopyTo(void *dest,
                                      const uintptr_t bytes,
                                      const uintptr_t offset){
-    const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -948,7 +944,7 @@ namespace occa {
                                      const uintptr_t bytes,
                                      const uintptr_t destOffset,
                                      const uintptr_t srcOffset){
-    const cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    const cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -980,7 +976,7 @@ namespace occa {
 
   template <>
   void memory_t<OpenCL>::mappedFree(){
-    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
     cl_int error;
 
     // Unmap pointer
@@ -1047,24 +1043,24 @@ namespace occa {
 
   template <>
   device_t<OpenCL>::device_t() {
-    data            = NULL;
-    memoryAllocated = 0;
+    data           = NULL;
+    bytesAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenCL>::device_t(const device_t<OpenCL> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data           = d.data;
+    bytesAllocated = d.bytesAllocated;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<OpenCL>& device_t<OpenCL>::operator = (const device_t<OpenCL> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data           = d.data;
+    bytesAllocated = d.bytesAllocated;
 
     compilerFlags = d.compilerFlags;
 
@@ -1190,12 +1186,12 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::flush(){
-    clFlush(*((cl_command_queue*) dev->currentStream));
+    clFlush(*((cl_command_queue*) currentStream));
   }
 
   template <>
   void device_t<OpenCL>::finish(){
-    clFinish(*((cl_command_queue*) dev->currentStream));
+    clFinish(*((cl_command_queue*) currentStream));
   }
 
   template <>
@@ -1230,7 +1226,7 @@ namespace occa {
 
   template <>
   tag device_t<OpenCL>::tagStream(){
-    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_command_queue &stream = *((cl_command_queue*) currentStream);
 
     tag ret;
 
@@ -1245,7 +1241,7 @@ namespace occa {
 
   template <>
   double device_t<OpenCL>::timeBetween(const tag &startTag, const tag &endTag){
-    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_command_queue &stream = *((cl_command_queue*) currentStream);
     cl_ulong start, end;
 
     clFinish(stream);
@@ -1276,8 +1272,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<OpenCL>;
 
-    k->dev  = dev;
-    k->data = new OpenCLKernelData_t;
+    k->dHandle = this;
+    k->data    = new OpenCLKernelData_t;
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -1300,8 +1296,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<OpenCL>;
 
-    k->dev  = dev;
-    k->data = new OpenCLKernelData_t;
+    k->dHandle = this;
+    k->data    = new OpenCLKernelData_t;
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -1321,7 +1317,7 @@ namespace occa {
                                               const std::string &functionName,
                                               const kernelInfo &info_){
     //---[ Creating shared library ]----
-    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
     kernelInfo info = info_;
@@ -1342,7 +1338,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.modelID    = dev->modelID_;
+    infoID.modelID    = modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -1369,8 +1365,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<OpenCL>;
 
-    k->dev  = dev;
-    k->data = new OpenCLKernelData_t;
+    k->dHandle = this;
+    k->data    = new OpenCLKernelData_t;
 
     OpenCLKernelData_t &kData_ = *((OpenCLKernelData_t*) k->data);
 
@@ -1390,9 +1386,9 @@ namespace occa {
                                          const uintptr_t bytes){
     memory_v *mem = new memory_t<OpenCL>;
 
-    mem->dev    = dev;
-    mem->size   = bytes;
-    mem->handle = handle_;
+    mem->dHandle = this;
+    mem->size    = bytes;
+    mem->handle  = handle_;
 
     mem->isAWrapper = true;
 
@@ -1412,9 +1408,9 @@ namespace occa {
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dev    = dev;
-    mem->size   = (dims.x * dims.y) * type.bytes();
-    mem->handle = handle_;
+    mem->dHandle = this;
+    mem->size    = (dims.x * dims.y) * type.bytes();
+    mem->handle  = handle_;
 
     mem->isAWrapper = true;
 
@@ -1444,9 +1440,9 @@ namespace occa {
 
     memory_v *mem = new memory_t<OpenCL>;
 
-    mem->dev    = dev;
-    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
-    mem->handle = handle_;
+    mem->dHandle = this;
+    mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->handle  = handle_;
 
     mem->isAWrapper = true;
 
@@ -1481,9 +1477,9 @@ namespace occa {
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dev    = dev;
-    mem->handle = new cl_mem;
-    mem->size   = bytes;
+    mem->dHandle = this;
+    mem->handle  = new cl_mem;
+    mem->size    = bytes;
 
     if(source == NULL){
       *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,
@@ -1514,9 +1510,9 @@ namespace occa {
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dev    = dev;
-    mem->handle = new cl_mem;
-    mem->size   = (dims.x * dims.y) * type.bytes();
+    mem->dhandle = this;
+    mem->handle  = new cl_mem;
+    mem->size    = (dims.x * dims.y) * type.bytes();
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;
@@ -1568,9 +1564,9 @@ namespace occa {
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dev    = dev;
-    mem->handle = new cl_mem;
-    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->dHandle = this;
+    mem->handle  = new cl_mem;
+    mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;
@@ -1635,14 +1631,14 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
-    cl_command_queue &stream = *((cl_command_queue*) dev->currentStream);
+    cl_command_queue &stream = *((cl_command_queue*) currentStream);
 
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dev    = dev;
-    mem->handle = new cl_mem;
-    mem->size   = bytes;
+    mem->dHandle = this;
+    mem->handle  = new cl_mem;
+    mem->size    = bytes;
 
     // Alloc pinned host buffer
     *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,

@@ -45,10 +45,10 @@ namespace occa {
 
           std::stringstream command;
 
-          command << dev->dHandle->compiler
+          command << dHandle->compiler
                   << " -o " << cachedBinary
                   << " -x c++"
-                  << ' '    << dev->dHandle->compilerFlags
+                  << ' '    << dHandle->compilerFlags
                   << ' '    << iCachedBinary;
 
           const std::string &sCommand = command.str();
@@ -77,7 +77,7 @@ namespace occa {
                                               0   , NULL,
                                               true, NULL,
                                               true, NULL,
-                                              memoryAllocated ? memoryAllocated : (4 << 30), // 4 GB
+                                              bytesAllocated ? bytesAllocated : (4 << 30), // 4 GB
                                               SINK_LD_LIBRARY_PATH.c_str(),
                                               &(data.chiefID)) );
 
@@ -101,28 +101,24 @@ namespace occa {
 
     occa::device wrapDevice(COIENGINE device){
       occa::device dev;
-      device_t<COI> &devH      = *(new device_t<COI>());
+      device_t<COI> &dHandle   = *(new device_t<COI>());
       COIDeviceData_t &devData = *(new COIDeviceData_t);
 
-      dev.mode_   = occa::COI;
       dev.strMode = "COI";
-      dev.dHandle = &devH;
-
-      // This will get set in the copy-back
-      devH.dev = &dev;
+      dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
-      devH.data = &devData;
+      dHandle.data = &devData;
 
       devData.deviceID = device;
 
       coi::initDevice(devData);
       //======================
 
-      dev.modelID_ = library::deviceModelID(dev.getIdentifier());
-      dev.id_      = library::genDeviceID();
+      dHandle.modelID_ = library::deviceModelID(dHandle.getIdentifier());
+      dHandle.id_      = library::genDeviceID();
 
-      dev.currentStream = dev.createStream();
+      dHandle.currentStream = dHandle.createStream();
 
       return dev;
     }
@@ -133,8 +129,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<COI>::kernel_t(){
-    data = NULL;
-    dev  = NULL;
+    data    = NULL;
+    dHandle = NULL;
 
     functionName = "";
 
@@ -152,8 +148,8 @@ namespace occa {
 
   template <>
   kernel_t<COI>::kernel_t(const kernel_t<COI> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -178,8 +174,8 @@ namespace occa {
 
   template <>
   kernel_t<COI>& kernel_t<COI>::operator = (const kernel_t<COI> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dhandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -212,7 +208,7 @@ namespace occa {
                                                  kernelInfo &info_){
 
     std::string cachedBinary = getCachedName(filename,
-                                             dev->dHandle->getInfoSalt(info_));
+                                             dHandle->getInfoSalt(info_));
 
     std::string libPath, soname;
 
@@ -231,7 +227,7 @@ namespace occa {
 
     kernelInfo info = info_;
 
-    dev->dHandle->addOccaHeadersToInfo(info);
+    dHandle->addOccaHeadersToInfo(info);
 
     std::string cachedBinary = getCachedBinaryName(filename, info);
 
@@ -262,16 +258,16 @@ namespace occa {
 
     std::stringstream command;
 
-    if(dev->dHandle->compilerEnvScript.size())
-      command << dev->dHandle->compilerEnvScript << " && ";
+    if(dHandle->compilerEnvScript.size())
+      command << dHandle->compilerEnvScript << " && ";
 
-    command << dev->dHandle->compiler
+    command << dHandle->compiler
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
 #else
             << " /TP /LD /D MC_CL_EXE"
 #endif
-            << ' '    << dev->dHandle->compilerFlags
+            << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
@@ -409,8 +405,8 @@ namespace occa {
     mappedPtr = NULL;
     uvaPtr    = NULL;
 
-    dev  = NULL;
-    size = 0;
+    dHandle = NULL;
+    size    = 0;
 
     isTexture = false;
     textureInfo.arg = NULL;
@@ -433,8 +429,8 @@ namespace occa {
     mappedPtr = m.mappedPtr;
     uvaPtr    = m.uvaPtr;
 
-    dev  = m.dev;
-    size = m.size;
+    dHandle = m.dHandle;
+    size    = m.size;
 
     isTexture = m.isTexture;
     textureInfo.arg  = m.textureInfo.arg;
@@ -471,7 +467,7 @@ namespace occa {
   void memory_t<COI>::copyFrom(const void *source,
                                const uintptr_t bytes,
                                const uintptr_t offset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -502,7 +498,7 @@ namespace occa {
                                const uintptr_t bytes,
                                const uintptr_t destOffset,
                                const uintptr_t srcOffset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -537,7 +533,7 @@ namespace occa {
   void memory_t<COI>::copyTo(void *dest,
                              const uintptr_t bytes,
                              const uintptr_t offset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -568,7 +564,7 @@ namespace occa {
                              const uintptr_t bytes,
                              const uintptr_t destOffset,
                              const uintptr_t srcOffset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -603,7 +599,7 @@ namespace occa {
   void memory_t<COI>::asyncCopyFrom(const void *source,
                                     const uintptr_t bytes,
                                     const uintptr_t offset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -630,7 +626,7 @@ namespace occa {
                                     const uintptr_t bytes,
                                     const uintptr_t destOffset,
                                     const uintptr_t srcOffset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -661,7 +657,7 @@ namespace occa {
   void memory_t<COI>::asyncCopyTo(void *dest,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -688,7 +684,7 @@ namespace occa {
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -743,24 +739,24 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<COI>::device_t() {
-    data            = NULL;
-    memoryAllocated = 0;
+    data           = NULL;
+    bytesAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<COI>::device_t(const device_t<COI> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data           = d.data;
+    bytesAllocated = d.bytesAllocated;
 
     compilerFlags = d.compilerFlags;
   }
 
   template <>
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data           = d.data;
+    bytesAllocated = d.bytesAllocated;
 
     compilerFlags = d.compilerFlags;
 
@@ -920,7 +916,7 @@ namespace occa {
 
   template <>
   void device_t<COI>::finish(){
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) currentStream);
 
     OCCA_COI_CHECK("Device: Waiting for Event",
                    COIEventWait(1, &(stream.lastEvent),
@@ -990,8 +986,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<COI>;
 
-    k->dev  = dev;
-    k->data = new COIKernelData_t;
+    k->dHandle = this;
+    k->data    = new COIKernelData_t;
 
     COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
 
@@ -1008,8 +1004,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<COI>;
 
-    k->dev  = dev;
-    k->data = new COIKernelData_t;
+    k->dHandle = this;
+    k->data    = new COIKernelData_t;
 
     COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
 
@@ -1025,7 +1021,7 @@ namespace occa {
                                            const std::string &functionName,
                                            const kernelInfo &info_){
     //---[ Creating shared library ]----
-    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
     kernelInfo info = info_;
@@ -1044,7 +1040,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.modelID    = dev->modelID_;
+    infoID.modelID    = modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -1071,8 +1067,8 @@ namespace occa {
 
     kernel_v *k = new kernel_t<COI>;
 
-    k->dev  = dev;
-    k->data = new COIKernelData_t;
+    k->dHandle = this;
+    k->data    = new COIKernelData_t;
 
     COIKernelData_t &kData_ = *((COIKernelData_t*) k->data);
 
@@ -1087,9 +1083,9 @@ namespace occa {
                                       const uintptr_t bytes){
     memory_v *mem = new memory_t<COI>;
 
-    mem->dev    = dev;
-    mem->size   = bytes;
-    mem->handle = handle_;
+    mem->dHandle = this;
+    mem->size    = bytes;
+    mem->handle  = handle_;
 
     mem->isAWrapper = true;
 
@@ -1113,9 +1109,9 @@ namespace occa {
 
     memory_v *mem = new memory_t<COI>;
 
-    mem->dev    = dev;
-    mem->handle = new coiMemory;
-    mem->size   = bytes;
+    mem->dHandle = this;
+    mem->handle  = new coiMemory;
+    mem->size    = bytes;
 
     OCCA_COI_CHECK("Device: Malloc",
                    COIBufferCreate(bytes,
@@ -1137,8 +1133,8 @@ namespace occa {
 
     memory_v *mem = new memory_t<COI>;
 
-    mem->dev  = dev;
-    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->dHandle = this;
+    mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;

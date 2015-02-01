@@ -17,7 +17,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg0.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -51,7 +51,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg1.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -91,7 +91,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg2.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -138,7 +138,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg3.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -191,7 +191,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg4.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -250,7 +250,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg5.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -316,7 +316,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg6.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -388,7 +388,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg7.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -466,7 +466,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg8.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -551,7 +551,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg9.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -642,7 +642,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg10.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -739,7 +739,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg11.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -843,7 +843,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg12.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -953,7 +953,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg13.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1069,7 +1069,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg14.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1192,7 +1192,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg15.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1321,7 +1321,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg16.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1456,7 +1456,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg17.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1598,7 +1598,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg18.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1746,7 +1746,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg19.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -1900,7 +1900,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg20.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -2061,7 +2061,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg21.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -2228,7 +2228,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg22.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -2401,7 +2401,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg23.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -2581,7 +2581,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg24.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -2767,7 +2767,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg25.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -2959,7 +2959,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg26.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -3158,7 +3158,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg27.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -3363,7 +3363,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg28.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -3574,7 +3574,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg29.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -3792,7 +3792,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg30.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -4016,7 +4016,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg31.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -4246,7 +4246,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg32.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -4483,7 +4483,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg33.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -4726,7 +4726,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg34.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -4975,7 +4975,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg35.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -5231,7 +5231,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg36.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -5493,7 +5493,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg37.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -5761,7 +5761,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg38.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -6036,7 +6036,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg39.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -6317,7 +6317,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg40.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -6604,7 +6604,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg41.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -6898,7 +6898,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg42.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -7198,7 +7198,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg43.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -7504,7 +7504,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg44.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -7817,7 +7817,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg45.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -8136,7 +8136,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg46.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -8461,7 +8461,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg47.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -8793,7 +8793,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg48.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -9131,7 +9131,7 @@
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg49.arg2.void_));
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,

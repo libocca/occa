@@ -85,11 +85,11 @@ def operatorDefinition(mode, N):
   }
 
   void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    """ + '    '.join([('else if(arg' + str(n + 1) + '.dev) launchDevice = arg' + str(n + 1) + '.dev;\n') for n in xrange(N - 1)]) + """
-    (*this)[*launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    """ + '    '.join([('else if(arg' + str(n + 1) + '.dHandle) launchDevice = const_cast<occa::device_v*>(arg' + str(n + 1) + '.dHandle);\n') for n in xrange(N - 1)]) + """
+    (*this)[launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
   }"""
     else:
         header = operatorDefinitionHeader(mode, N)
@@ -200,7 +200,7 @@ def clOperatorDefinition(N):
                     clSetKernelArg(kernel_, argPos++, sizeof(void*), arg{0}.arg2.void_));""".format(n) for n in xrange(N)]) + """
 
     OCCA_CL_CHECK("Kernel (" + functionName + ") : Kernel Run",
-                  clEnqueueNDRangeKernel(*((cl_command_queue*) dev->currentStream),
+                  clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
                                          kernel_,
                                          (cl_int) dims,
                                          NULL,
@@ -227,13 +227,13 @@ def cudaOperatorDefinition(N):
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);"""
 
 def coiOperatorDefinition(N):
     return """
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -267,7 +267,7 @@ def coiOperatorDefinition(N):
       hostPos += arg{0}.size;
     }}""".format(n) for n in xrange(N)]) + """
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[""" + str(N - 1) + """],

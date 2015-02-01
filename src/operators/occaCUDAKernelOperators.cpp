@@ -17,7 +17,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -43,7 +43,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -72,7 +72,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -105,7 +105,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -141,7 +141,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -180,7 +180,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -223,7 +223,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -269,7 +269,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -318,7 +318,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -371,7 +371,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -427,7 +427,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -486,7 +486,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -549,7 +549,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -615,7 +615,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -684,7 +684,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -757,7 +757,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -833,7 +833,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -912,7 +912,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -995,7 +995,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1081,7 +1081,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1170,7 +1170,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1263,7 +1263,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1359,7 +1359,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1458,7 +1458,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1561,7 +1561,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1667,7 +1667,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1776,7 +1776,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -1889,7 +1889,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2005,7 +2005,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2124,7 +2124,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2247,7 +2247,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2373,7 +2373,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2502,7 +2502,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2635,7 +2635,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2771,7 +2771,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -2910,7 +2910,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3053,7 +3053,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3199,7 +3199,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3348,7 +3348,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3501,7 +3501,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3657,7 +3657,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3816,7 +3816,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -3979,7 +3979,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -4145,7 +4145,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -4314,7 +4314,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -4487,7 +4487,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -4663,7 +4663,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -4842,7 +4842,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -5025,7 +5025,7 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }
 
@@ -5211,6 +5211,6 @@
     cuLaunchKernel(function_,
                    outer.x, outer.y, outer.z,
                    inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dev->currentStream),
+                   0, *((CUstream*) dHandle->currentStream),
                    args, 0);
   }

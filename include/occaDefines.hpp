@@ -101,7 +101,7 @@
 #define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)         \
   template <>                                     \
   inline kernelArg::kernelArg(const TYPE &arg_){  \
-    dev     = NULL;                               \
+    dHandle = NULL;                               \
     mHandle = NULL;                               \
                                                   \
     arg.TYPE##_ = arg_;                           \
@@ -114,7 +114,7 @@
 #define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
   template <>                                           \
   inline kernelArg::kernelArg(const TYPE &arg_){        \
-    dev     = NULL;                                     \
+    dHandle = NULL;                                     \
     mHandle = NULL;                                     \
                                                         \
     arg.ALIAS##_ = arg_;                                \

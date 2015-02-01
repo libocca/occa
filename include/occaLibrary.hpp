@@ -88,12 +88,12 @@ namespace occa {
 
     int genDeviceID();
 
-    int deviceModelID(occa::device &dev);
+    int deviceModelID(occa::device_v *dHandle);
     int deviceModelID(const occa::deviceIdentifier &id);
 
     occa::kernelDatabase loadKernelDatabase(const std::string &kernelName);
 
-    occa::kernel loadKernel(occa::device &dev,
+    occa::kernel loadKernel(occa::device_v *dHandle,
                             const std::string &kernelName);
   };
 };

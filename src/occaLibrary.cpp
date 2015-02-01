@@ -267,11 +267,11 @@ namespace occa {
       return kdb;
     }
 
-    kernel loadKernel(occa::device &dev,
+    kernel loadKernel(occa::device_v *dHandle,
                       const std::string &kernelName){
       infoID_t infoID;
 
-      infoID.modelID    = dev.modelID();
+      infoID.modelID    = dHandle->modelID();
       infoID.kernelName = kernelName;
 
       headerMutex.lock();
@@ -289,7 +289,7 @@ namespace occa {
 
       fclose(inFD);
 
-      kernel k = dev.loadKernelFromLibrary(buffer, kernelName);
+      kernel k = kernel(dHandle->loadKernelFromLibrary(buffer, kernelName));
 
       delete [] buffer;
       fclose(inFD);

@@ -60,6 +60,7 @@ namespace occa {
   class device;
 
   class kernelInfo;
+  class kernelDatabase;
 
   //---[ Globals & Flags ]------------
   extern kernelInfo defaultKernelInfo;
@@ -164,7 +165,7 @@ namespace occa {
   static const occa::mode COIIndex      = 4;
   static const int modeCount = 5;
 
-  inline std::string modeToStr(occa::mode m){
+  inline std::string modeToStr(const occa::mode &m){
     if(m & Pthreads) return "Pthreads";
     if(m & OpenMP)   return "OpenMP";
     if(m & OpenCL)   return "OpenCL";
@@ -540,7 +541,7 @@ namespace occa {
 
   class kernelArg {
   public:
-    occa::device *dev;
+    occa::device_v *dHandle;
     occa::memory_v *mHandle;
 
     kernelArg_t arg, arg2;
@@ -549,14 +550,14 @@ namespace occa {
     bool pointer, hasTwoArgs;
 
     inline kernelArg(){
-      dev        = NULL;
+      dHandle    = NULL;
       mHandle    = NULL;
       arg.void_  = NULL;
       hasTwoArgs = false;
     }
 
     inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
-      dev(NULL),
+      dHandle(NULL),
       mHandle(NULL),
       size(size_),
       pointer(pointer_),
@@ -565,7 +566,7 @@ namespace occa {
     }
 
     inline kernelArg(const kernelArg &k) :
-      dev(k.dev),
+      dHandle(k.dHandle),
       mHandle(k.mHandle),
       size(k.size),
       pointer(k.pointer),
@@ -574,7 +575,7 @@ namespace occa {
     }
 
     inline kernelArg& operator = (const kernelArg &k){
-      dev        = k.dev;
+      dHandle    = k.dHandle;
       mHandle    = k.mHandle;
       arg.void_  = k.arg.void_;
       size       = k.size;
@@ -586,7 +587,7 @@ namespace occa {
 
     template <class TM>
     inline kernelArg(const TM &arg_){
-      dev     = NULL;
+      dHandle = NULL;
       mHandle = NULL;
 
       arg.void_ = const_cast<TM*>(&arg_);
@@ -598,6 +599,8 @@ namespace occa {
 
     template <class TM> inline kernelArg(TM *arg_);
     template <class TM> inline kernelArg(const TM *carg_);
+
+    inline occa::device getDevice() const;
 
     inline void* data() const {
       return pointer ? arg.void_ : (void*) &arg;
@@ -689,7 +692,7 @@ namespace occa {
 
   private:
     void* data;
-    occa::device *dev;
+    occa::device_v *dHandle;
 
     std::string functionName;
 
@@ -704,6 +707,8 @@ namespace occa {
     kernel *nestedKernels;
 
   public:
+    virtual occa::mode mode() = 0;
+
     virtual inline ~kernel_v(){}
 
     virtual std::string getCachedBinaryName(const std::string &filename,
@@ -729,30 +734,34 @@ namespace occa {
     virtual void free() = 0;
   };
 
-  template <occa::mode mode>
+  template <occa::mode mode_>
   class kernel_t : public kernel_v {
   public:
+    inline occa::mode mode(){
+      return mode_;
+    }
+
     kernel_t();
     kernel_t(const std::string &filename,
              const std::string &functionName_,
              const kernelInfo &info_ = defaultKernelInfo);
 
-    kernel_t(const kernel_t<mode> &k);
-    kernel_t<mode>& operator = (const kernel_t<mode> &k);
+    kernel_t(const kernel_t<mode_> &k);
+    kernel_t<mode_>& operator = (const kernel_t<mode_> &k);
 
     ~kernel_t();
 
     std::string getCachedBinaryName(const std::string &filename,
                                     kernelInfo &info_);
 
-    kernel_t<mode>* buildFromSource(const std::string &filename,
+    kernel_t<mode_>* buildFromSource(const std::string &filename,
                                     const std::string &functionName_,
                                     const kernelInfo &info_ = defaultKernelInfo);
 
-    kernel_t<mode>* buildFromBinary(const std::string &filename,
+    kernel_t<mode_>* buildFromBinary(const std::string &filename,
                                     const std::string &functionName_);
 
-    kernel_t<mode>* loadFromLibrary(const char *cache,
+    kernel_t<mode_>* loadFromLibrary(const char *cache,
                                     const std::string &functionName_);
 
     int preferredDimSize();
@@ -769,7 +778,6 @@ namespace occa {
     friend class occa::device;
 
   private:
-    occa::mode mode_;
     std::string strMode;
 
     kernel_v *kHandle;
@@ -779,11 +787,12 @@ namespace occa {
 
   public:
     kernel();
+    kernel(kernel_v *kHandle_);
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
 
-    std::string& mode();
+    const std::string& mode();
 
     kernel& buildFromSource(const std::string &filename,
                             const std::string &functionName_,
@@ -834,11 +843,13 @@ namespace occa {
     void modelKernelIsAvailable(const int id);
 
     void addKernel(device d, kernel k);
+    void addKernel(device_v *d, kernel k);
     void addKernel(const int id, kernel k);
 
-    void loadKernelFromLibrary(device &d);
+    void loadKernelFromLibrary(device_v *d);
 
-    kernel& operator [] (device &d);
+    kernel& operator [] (device d);
+    kernel& operator [] (device_v *d);
 
 #include "operators/occaOperatorDeclarations.hpp"
   };
@@ -899,7 +910,7 @@ namespace occa {
 
   private:
     void *handle, *mappedPtr, *uvaPtr;
-    occa::device *dev;
+    occa::device_v *dHandle;
 
     uintptr_t size;
 
@@ -911,6 +922,7 @@ namespace occa {
     bool isAWrapper;
 
   public:
+    virtual inline occa::mode mode(){ return 0; }
     virtual inline ~memory_v(){}
 
     virtual void* getMemoryHandle() = 0;
@@ -957,15 +969,19 @@ namespace occa {
     virtual void free() = 0;
   };
 
-  template <occa::mode mode>
+  template <occa::mode mode_>
   class memory_t : public memory_v {
-    friend class occa::device_t<mode>;
+    friend class occa::device_t<mode_>;
 
   public:
     memory_t();
 
     memory_t(const memory_t &m);
     memory_t& operator = (const memory_t &m);
+
+    inline occa::mode mode(){
+      return mode_;
+    }
 
     inline ~memory_t(){};
 
@@ -1019,18 +1035,18 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
-    occa::mode mode_;
     std::string strMode;
 
     memory_v *mHandle;
 
   public:
     memory();
+    memory(memory_v *mHandle_);
 
     memory(const memory &m);
     memory& operator = (const memory &m);
 
-    std::string& mode();
+    const std::string& mode();
 
     inline uintptr_t bytes() const {
       if(mHandle == NULL)
@@ -1088,99 +1104,6 @@ namespace occa {
 
     void free();
   };
-
-  //---[ KernelArg ]----------
-  template <class TM>
-  inline kernelArg::kernelArg(TM *arg_){
-    bool set = false;
-
-    if(uvaEnabled_f){
-      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
-
-      if(it != uvaMap.end()){
-        mHandle = it->second;
-        dev     = mHandle->dev;
-
-        arg.void_ = mHandle->handle;
-        size      = sizeof(void*);
-
-        pointer    = true;
-        hasTwoArgs = false;
-
-        set = true;
-      }
-    }
-
-    if(!set){
-      dev     = NULL;
-      mHandle = NULL;
-
-      arg.void_ = arg_;
-      size      = sizeof(TM*);
-
-      pointer    = true;
-      hasTwoArgs = false;
-    }
-  }
-
-  template <class TM>
-  inline kernelArg::kernelArg(const TM *carg_){
-    TM *arg_ = const_cast<TM*>(carg_);
-    bool set = false;
-
-    if(uvaEnabled_f){
-      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
-
-      if(it != uvaMap.end()){
-        mHandle = it->second;
-        dev     = mHandle->dev;
-
-        arg.void_ = mHandle->handle;
-        size      = sizeof(void*);
-
-        pointer    = true;
-        hasTwoArgs = false;
-
-        set = true;
-      }
-    }
-
-    if(!set){
-      dev     = NULL;
-      mHandle = NULL;
-
-      arg.void_ = arg_;
-      size      = sizeof(TM*);
-
-      pointer    = true;
-      hasTwoArgs = false;
-    }
-  }
-
-  template <>
-  inline kernelArg::kernelArg(const occa::memory &m){
-    dev     = m.mHandle->dev;
-    mHandle = NULL;
-
-    arg.void_ = m.mHandle->handle;
-    size      = sizeof(void*);
-
-    pointer    = true;
-    hasTwoArgs = m.mHandle->isTexture;
-
-    if(hasTwoArgs)
-      arg2.void_ = m.textureArg();
-  }
-
-  inline void kernelArg::markDirty() const {
-    if(uvaEnabled_f){
-      if(mHandle && !(mHandle->isDirty)){
-        mHandle->copyFrom(mHandle->uvaPtr);
-        uvaDirtyMemory.push_back(mHandle);
-      }
-    }
-  }
-  //==================================
 
 
   //---[ Device ]---------------------
@@ -1240,21 +1163,35 @@ namespace occa {
 #endif
 
   class device_v {
-    template <occa::mode> friend class occa::device_t;
     template <occa::mode> friend class occa::kernel_t;
+    template <occa::mode> friend class occa::memory_t;
+    template <occa::mode> friend class occa::device_t;
+    friend class occa::kernel;
+    friend class occa::memory;
     friend class occa::device;
+    friend class occa::kernelDatabase;
+    friend class occa::kernelDatabase;
 
   private:
+    int modelID_, id_;
+
     void* data;
-    occa::device *dev;
 
     std::string compiler, compilerEnvScript, compilerFlags;
 
-    uintptr_t memoryAllocated;
+    stream currentStream;
+    std::vector<stream> streams;
+
+    uintptr_t bytesAllocated;
 
     int simdWidth_;
 
   public:
+    virtual occa::mode mode() = 0;
+
+    virtual int id() = 0;
+    virtual int modelID() = 0;
+
     virtual inline ~device_v(){}
 
     virtual void setup(argInfoMap &aim) = 0;
@@ -1335,18 +1272,30 @@ namespace occa {
     virtual int simdWidth() = 0;
   };
 
-  template <occa::mode mode>
+  template <occa::mode mode_>
   class device_t : public device_v {
     template <occa::mode> friend class occa::kernel_t;
 
   public:
+    inline occa::mode mode(){
+      return mode_;
+    }
+
+    inline int id(){
+      return id_;
+    }
+
+    inline int modelID(){
+      return modelID_;
+    }
+
     device_t();
     device_t(const int arg1, const int arg2);
 
     inline ~device_t(){}
 
-    device_t(const device_t<mode> &k);
-    device_t<mode>& operator = (const device_t<mode> &k);
+    device_t(const device_t<mode_> &k);
+    device_t<mode_>& operator = (const device_t<mode_> &k);
 
     void setup(argInfoMap &aim);
 
@@ -1437,19 +1386,13 @@ namespace occa {
     friend class occa::kernelDatabase;
 
   private:
-    occa::mode mode_;
     std::string strMode;
 
-    int modelID_, id_;
     device_v *dHandle;
-
-    stream currentStream;
-    std::vector<stream> streams;
-
-    uintptr_t bytesAllocated_;
 
   public:
     device();
+    device(device_v *dHandle_);
 
     device(const device &d);
     device& operator = (const device &d);
@@ -1485,7 +1428,7 @@ namespace occa {
     int id();
 
     int modeID();
-    std::string& mode();
+    const std::string& mode();
 
     void setCompiler(const std::string &compiler_);
     void setCompilerEnvScript(const std::string &compilerEnvScript_);
@@ -1602,24 +1545,125 @@ namespace occa {
   std::vector<device>& getDeviceList();
   //==================================
 
+  //---[ KernelArg ]----------
+  template <class TM>
+  inline kernelArg::kernelArg(TM *arg_){
+    bool set = false;
+
+    if(uvaEnabled_f){
+      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+
+      if(it != uvaMap.end()){
+        mHandle = it->second;
+        dHandle = mHandle->dHandle;
+
+        arg.void_ = mHandle->handle;
+        size      = sizeof(void*);
+
+        pointer    = true;
+        hasTwoArgs = false;
+
+        set = true;
+      }
+    }
+
+    if(!set){
+      dHandle = NULL;
+      mHandle = NULL;
+
+      arg.void_ = arg_;
+      size      = sizeof(TM*);
+
+      pointer    = true;
+      hasTwoArgs = false;
+    }
+  }
+
+  template <class TM>
+  inline kernelArg::kernelArg(const TM *carg_){
+    TM *arg_ = const_cast<TM*>(carg_);
+    bool set = false;
+
+    if(uvaEnabled_f){
+      ptrRangeMap_t::iterator it = uvaMap.find(arg_);
+
+      if(it != uvaMap.end()){
+        mHandle = it->second;
+        dHandle = mHandle->dHandle;
+
+        arg.void_ = mHandle->handle;
+        size      = sizeof(void*);
+
+        pointer    = true;
+        hasTwoArgs = false;
+
+        set = true;
+      }
+    }
+
+    if(!set){
+      dHandle = NULL;
+      mHandle = NULL;
+
+      arg.void_ = arg_;
+      size      = sizeof(TM*);
+
+      pointer    = true;
+      hasTwoArgs = false;
+    }
+  }
+
+  template <>
+  inline kernelArg::kernelArg(const occa::memory &m){
+    dHandle = m.mHandle->dHandle;
+    mHandle = NULL;
+
+    arg.void_ = m.mHandle->handle;
+    size      = sizeof(void*);
+
+    pointer    = true;
+    hasTwoArgs = m.mHandle->isTexture;
+
+    if(hasTwoArgs)
+      arg2.void_ = m.textureArg();
+  }
+
+  inline occa::device kernelArg::getDevice() const {
+    return occa::device(dHandle);
+  }
+
+  inline void kernelArg::markDirty() const {
+    if(uvaEnabled_f){
+      if(mHandle && !(mHandle->isDirty)){
+        mHandle->copyFrom(mHandle->uvaPtr);
+        uvaDirtyMemory.push_back(mHandle);
+      }
+    }
+  }
+  //==================================
+
 
   //---[ Kernel Database ]------------
-  inline kernel& kernelDatabase::operator [] (device &d){
-    OCCA_CHECK(0 <= d.modelID_                 , "Device [modelID] is not set");
-    OCCA_CHECK((d.modelID_ < modelKernelCount) , "Kernel is not compiled for chosen device");
-    OCCA_CHECK(modelKernelAvailable[d.modelID_], "Kernel is not compiled for chosen device");
-    OCCA_CHECK(0 <= d.id_                      , "Device not set");
+  inline kernel& kernelDatabase::operator [] (device d){
+    return (*this)[d.dHandle];
+  }
 
-    if((d.id_ < kernelCount) && kernelAllocated[d.id_])
-      return kernels[d.id_];
+  inline kernel& kernelDatabase::operator [] (device_v *d){
+    OCCA_CHECK(0 <= d->modelID_                 , "Device [modelID] is not set");
+    OCCA_CHECK((d->modelID_ < modelKernelCount) , "Kernel is not compiled for chosen device");
+    OCCA_CHECK(modelKernelAvailable[d->modelID_], "Kernel is not compiled for chosen device");
+    OCCA_CHECK(0 <= d->id_                      , "Device not set");
+
+    if((d->id_ < kernelCount) && kernelAllocated[d->id_])
+      return kernels[d->id_];
 
     loadKernelFromLibrary(d);
 
-    return kernels[d.id_];
+    return kernels[d->id_];
   }
 
   inline kernel& device::operator [] (kernelDatabase &kdb){
-    return kdb[*this];
+    return kdb[dHandle];
   }
   //==================================
 

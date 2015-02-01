@@ -4,8 +4,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenMP>::kernel_t(){
-    data = NULL;
-    dev  = NULL;
+    data    = NULL;
+    dHandle = NULL;
 
     functionName = "";
 
@@ -22,8 +22,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>::kernel_t(const kernel_t<OpenMP> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -43,8 +43,8 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>& kernel_t<OpenMP>::operator = (const kernel_t<OpenMP> &k){
-    data = k.data;
-    dev  = k.dev;
+    data    = k.data;
+    dHandle = k.dHandle;
 
     functionName = k.functionName;
 
@@ -72,7 +72,7 @@ namespace occa {
                                                     kernelInfo &info_){
 
     std::string cachedBinary = getCachedName(filename,
-                                             dev->dHandle->getInfoSalt(info_));
+                                             dHandle->getInfoSalt(info_));
 
 #if OCCA_OS == WINDOWS_OS
     // Windows refuses to load dll's that do not end with '.dll'
@@ -90,7 +90,7 @@ namespace occa {
 
     kernelInfo info = info_;
 
-    dev->dHandle->addOccaHeadersToInfo(info);
+    dHandle->addOccaHeadersToInfo(info);
 
     std::string cachedBinary = getCachedBinaryName(filename, info);
 
@@ -139,16 +139,16 @@ namespace occa {
 
     std::stringstream command;
 
-    if(dev->dHandle->compilerEnvScript.size())
-      command << dev->dHandle->compilerEnvScript << " && ";
+    if(dHandle->compilerEnvScript.size())
+      command << dHandle->compilerEnvScript << " && ";
 
-    command << dev->dHandle->compiler
+    command << dHandle->compiler
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -x c++ -w -fPIC -shared"
 #else
             << " /TP /LD /D MC_CL_EXE"
 #endif
-            << ' '    << dev->dHandle->compilerFlags
+            << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
             << " -L"  << occaDir << "/lib -locca"
@@ -308,8 +308,8 @@ namespace occa {
     mappedPtr = NULL;
     uvaPtr    = NULL;
 
-    dev  = NULL;
-    size = 0;
+    dHandle = NULL;
+    size    = 0;
 
     isTexture = false;
     textureInfo.arg = NULL;
@@ -332,8 +332,8 @@ namespace occa {
     mappedPtr = m.mappedPtr;
     uvaPtr    = m.uvaPtr;
 
-    dev  = m.dev;
-    size = m.size;
+    dHandle = m.dHandle;
+    size    = m.size;
 
     isTexture = m.isTexture;
     textureInfo.arg  = m.textureInfo.arg;
@@ -370,7 +370,7 @@ namespace occa {
   void memory_t<OpenMP>::copyFrom(const void *source,
                                   const uintptr_t bytes,
                                   const uintptr_t offset){
-    dev->finish();
+    dHandle->finish();
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -389,7 +389,7 @@ namespace occa {
                                   const uintptr_t bytes,
                                   const uintptr_t destOffset,
                                   const uintptr_t srcOffset){
-    dev->finish();
+    dHandle->finish();
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -411,7 +411,7 @@ namespace occa {
   void memory_t<OpenMP>::copyTo(void *dest,
                                 const uintptr_t bytes,
                                 const uintptr_t offset){
-    dev->finish();
+    dHandle->finish();
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -430,7 +430,7 @@ namespace occa {
                                 const uintptr_t bytes,
                                 const uintptr_t destOffset,
                                 const uintptr_t srcOffset){
-    dev->finish();
+    dHandle->finish();
 
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
@@ -551,16 +551,16 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenMP>::device_t(){
-    data            = NULL;
-    memoryAllocated = 0;
+    data           = NULL;
+    bytesAllocated = 0;
 
     getEnvironmentVariables();
   }
 
   template <>
   device_t<OpenMP>::device_t(const device_t<OpenMP> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data           = d.data;
+    bytesAllocated = d.bytesAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -568,8 +568,8 @@ namespace occa {
 
   template <>
   device_t<OpenMP>& device_t<OpenMP>::operator = (const device_t<OpenMP> &d){
-    data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    data           = d.data;
+    bytesAllocated = d.bytesAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -768,7 +768,7 @@ namespace occa {
                                                     const std::string &functionName,
                                                     const kernelInfo &info_){
     kernel_v *k = new kernel_t<OpenMP>;
-    k->dev = dev;
+    k->dHandle = this;
 
     k->buildFromSource(filename, functionName, info_);
 
@@ -779,7 +779,7 @@ namespace occa {
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
                                                     const std::string &functionName){
     kernel_v *k = new kernel_t<OpenMP>;
-    k->dev = dev;
+    k->dHandle = this;
     k->buildFromBinary(filename, functionName);
     return k;
   }
@@ -789,7 +789,7 @@ namespace occa {
                                               const std::string &functionName,
                                               const kernelInfo &info_){
     //---[ Creating shared library ]----
-    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
     kernelInfo info = info_;
@@ -806,7 +806,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.modelID    = dev->modelID_;
+    infoID.modelID    = modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -830,7 +830,7 @@ namespace occa {
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName_){
     kernel_v *k = new kernel_t<OpenMP>;
-    k->dev = dev;
+    k->dHandle = this;
     k->loadFromLibrary(cache, functionName_);
     return k;
   }
@@ -840,9 +840,9 @@ namespace occa {
                                          const uintptr_t bytes){
     memory_v *mem = new memory_t<OpenMP>;
 
-    mem->dev    = dev;
-    mem->size   = bytes;
-    mem->handle = handle_;
+    mem->dHandle = this;
+    mem->size    = bytes;
+    mem->handle  = handle_;
 
     mem->isAWrapper = true;
 
@@ -855,8 +855,8 @@ namespace occa {
                                           occa::formatType type, const int permissions){
     memory_v *mem = new memory_t<OpenMP>;
 
-    mem->dev  = dev;
-    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->dHandle = this;
+    mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;
@@ -879,8 +879,8 @@ namespace occa {
                                      void *source){
     memory_v *mem = new memory_t<OpenMP>;
 
-    mem->dev  = dev;
-    mem->size = bytes;
+    mem->dHandle = this;
+    mem->size    = bytes;
 
 #if   (OCCA_OS == LINUX_OS)
     posix_memalign(&(mem->handle), OCCA_MEM_ALIGN, bytes);
@@ -902,8 +902,8 @@ namespace occa {
                                            occa::formatType type, const int permissions){
     memory_v *mem = new memory_t<OpenMP>;
 
-    mem->dev  = dev;
-    mem->size = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
+    mem->dHandle = this;
+    mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
     mem->isTexture = true;
     mem->textureInfo.dim  = dim;

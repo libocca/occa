@@ -18,27 +18,23 @@ namespace occa {
 
     occa::device wrapDevice(CUdevice device, CUcontext context){
       occa::device dev;
-      device_t<CUDA> &devH      = *(new device_t<CUDA>());
+      device_t<CUDA> &dHandle   = *(new device_t<CUDA>());
       CUDADeviceData_t &devData = *(new CUDADeviceData_t);
 
-      dev.mode_   = occa::CUDA;
       dev.strMode = "CUDA";
-      dev.dHandle = &devH;
-
-      // This will get set in the copy-back
-      devH.dev = &dev;
+      dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
-      devH.data = &devData;
+      dHandle.data = &devData;
 
       devData.device  = device;
       devData.context = context;
       //======================
 
-      dev.modelID_ = library::deviceModelID(dev.getIdentifier());
-      dev.id_      = library::genDeviceID();
+      dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
+      dHandle->id_      = library::genDeviceID();
 
-      dev.currentStream = dev.createStream();
+      dHandle->currentStream = dHandle->createStream();
 
       return dev;
     }
@@ -142,7 +138,7 @@ namespace occa {
   std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
                                                   kernelInfo &info_){
 
-    return getCachedName(filename, dev->dHandle->getInfoSalt(info_));
+    return getCachedName(filename, dHandle->getInfoSalt(info_));
   }
 
   template <>
@@ -155,7 +151,7 @@ namespace occa {
 
     kernelInfo info = info_;
 
-    dev->dHandle->addOccaHeadersToInfo(info);
+    dHandle->addOccaHeadersToInfo(info);
 
     std::string cachedBinary = getCachedBinaryName(filename, info);
 
@@ -191,7 +187,7 @@ namespace occa {
 
     std::string archSM = "";
 
-    if(dev->dHandle->compilerFlags.find("-arch=sm_") == std::string::npos){
+    if(dHandle->compilerFlags.find("-arch=sm_") == std::string::npos){
       std::stringstream archSM_;
 
       int major, minor;
@@ -206,11 +202,11 @@ namespace occa {
     std::stringstream command;
 
     //---[ PTX Check Command ]----------
-    if(dev->dHandle->compilerEnvScript.size())
-      command << dev->dHandle->compilerEnvScript << " && ";
+    if(dHandle->compilerEnvScript.size())
+      command << dHandle->compilerEnvScript << " && ";
 
-    command << dev->dHandle->compiler
-            << ' '          << dev->dHandle->compilerFlags
+    command << dHandle->compiler
+            << ' '          << dHandle->compilerFlags
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
             << ' '          << info.flags
@@ -231,10 +227,10 @@ namespace occa {
     //---[ Compiling Command ]----------
     command.str("");
 
-    command << dev->dHandle->compiler
+    command << dHandle->compiler
             << " -o "       << cachedBinary
             << " -ptx -I."
-            << ' '          << dev->dHandle->compilerFlags
+            << ' '          << dHandle->compilerFlags
             << archSM
             << ' '          << info.flags
             << " -x cu "    << iCachedBinary;
@@ -443,7 +439,7 @@ namespace occa {
 
         cuMemcpy2D(&info);
 
-        dev->finish();
+        dHandle->finish();
       }
     }
   }
@@ -537,7 +533,7 @@ namespace occa {
 
         cuMemcpy2D(&info);
 
-        dev->finish();
+        dHandle->finish();
       }
     }
   }
@@ -599,7 +595,7 @@ namespace occa {
   void memory_t<CUDA>::asyncCopyFrom(const void *source,
                                      const uintptr_t bytes,
                                      const uintptr_t offset){
-    const CUstream &stream = *((CUstream*) dev->currentStream);
+    const CUstream &stream = *((CUstream*) dHandle->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size,
@@ -619,7 +615,7 @@ namespace occa {
                                      const uintptr_t bytes,
                                      const uintptr_t destOffset,
                                      const uintptr_t srcOffset){
-    const CUstream &stream = *((CUstream*) dev->currentStream);
+    const CUstream &stream = *((CUstream*) dHandle->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + destOffset) <= size,
@@ -672,7 +668,7 @@ namespace occa {
   void memory_t<CUDA>::asyncCopyTo(void *dest,
                                    const uintptr_t bytes,
                                    const uintptr_t offset){
-    const CUstream &stream = *((CUstream*) dev->currentStream);
+    const CUstream &stream = *((CUstream*) dHandle->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + offset) <= size,
@@ -692,7 +688,7 @@ namespace occa {
                                    const uintptr_t bytes,
                                    const uintptr_t destOffset,
                                    const uintptr_t srcOffset){
-    const CUstream &stream = *((CUstream*) dev->currentStream);
+    const CUstream &stream = *((CUstream*) dHandle->currentStream);
     const uintptr_t bytes_ = (bytes == 0) ? size : bytes;
 
     OCCA_CHECK((bytes_ + srcOffset) <= size,
@@ -775,7 +771,7 @@ namespace occa {
   template <>
   device_t<CUDA>::device_t() {
     data            = NULL;
-    memoryAllocated = 0;
+    bytesAllocated = 0;
 
     getEnvironmentVariables();
   }
@@ -783,7 +779,7 @@ namespace occa {
   template <>
   device_t<CUDA>::device_t(const device_t<CUDA> &d){
     data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    bytesAllocated = d.bytesAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -792,7 +788,7 @@ namespace occa {
   template <>
   device_t<CUDA>& device_t<CUDA>::operator = (const device_t<CUDA> &d){
     data            = d.data;
-    memoryAllocated = d.memoryAllocated;
+    bytesAllocated = d.bytesAllocated;
 
     compiler      = d.compiler;
     compilerFlags = d.compilerFlags;
@@ -951,7 +947,7 @@ namespace occa {
   template <>
   void device_t<CUDA>::finish(){
     OCCA_CUDA_CHECK("Device: Finish",
-                    cuStreamSynchronize(*((CUstream*) dev->currentStream)) );
+                    cuStreamSynchronize(*((CUstream*) currentStream)) );
   }
 
   template <>
@@ -1009,7 +1005,7 @@ namespace occa {
 
     kernel_v *k = new kernel_t<CUDA>;
 
-    k->dev  = dev;
+    k->dev  = this;
     k->data = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
@@ -1029,7 +1025,7 @@ namespace occa {
 
     kernel_v *k = new kernel_t<CUDA>;
 
-    k->dev  = dev;
+    k->dev  = this;
     k->data = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
@@ -1046,7 +1042,7 @@ namespace occa {
                                             const std::string &functionName,
                                             const kernelInfo &info_){
     //---[ Creating shared library ]----
-    kernel tmpK = dev->buildKernelFromSource(filename, functionName, info_);
+    kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
 
     kernelInfo info = info_;
@@ -1059,7 +1055,7 @@ namespace occa {
 
     library::infoID_t infoID;
 
-    infoID.modelID    = dev->modelID_;
+    infoID.modelID    = modelID_;
     infoID.kernelName = functionName;
 
     library::infoHeader_t &header = library::headerMap[infoID];
@@ -1086,7 +1082,7 @@ namespace occa {
 
     kernel_v *k = new kernel_t<CUDA>;
 
-    k->dev  = dev;
+    k->dev  = this;
     k->data = new CUDAKernelData_t;
 
     CUDAKernelData_t &kData_ = *((CUDAKernelData_t*) k->data);
@@ -1104,7 +1100,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     // CUdeviceptr ~ void*
-    mem->dev    = dev;
+    mem->dev    = this;
     mem->size   = bytes;
     mem->handle = &handle_;
 
@@ -1119,7 +1115,7 @@ namespace occa {
                                         occa::formatType type, const int permissions){
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev    = dev;
+    mem->dev    = this;
     mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
     mem->handle = handle_;
 
@@ -1142,7 +1138,7 @@ namespace occa {
                                    void *source){
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev    = dev;
+    mem->dev    = this;
     mem->handle = new CUdeviceptr;
     mem->size   = bytes;
 
@@ -1162,7 +1158,7 @@ namespace occa {
 
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev    = dev;
+    mem->dev    = this;
     mem->handle = new CUDATextureData_t;
     mem->size   = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
@@ -1228,7 +1224,7 @@ namespace occa {
 
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dev  = dev;
+    mem->dev  = this;
     mem->size = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",

@@ -1,7 +1,7 @@
   template <>
   void kernel_t<COI>::operator () (const kernelArg &arg0){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -35,7 +35,7 @@
       hostPos += arg0.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[0],
@@ -54,7 +54,7 @@
   template <>
   void kernel_t<COI>::operator () (const kernelArg &arg0,  const kernelArg &arg1){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -99,7 +99,7 @@
       hostPos += arg1.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[1],
@@ -118,7 +118,7 @@
   template <>
   void kernel_t<COI>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -174,7 +174,7 @@
       hostPos += arg2.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[2],
@@ -194,7 +194,7 @@
   void kernel_t<COI>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -261,7 +261,7 @@
       hostPos += arg3.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[3],
@@ -281,7 +281,7 @@
   void kernel_t<COI>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -359,7 +359,7 @@
       hostPos += arg4.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[4],
@@ -379,7 +379,7 @@
   void kernel_t<COI>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -468,7 +468,7 @@
       hostPos += arg5.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[5],
@@ -489,7 +489,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -589,7 +589,7 @@
       hostPos += arg6.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[6],
@@ -610,7 +610,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -721,7 +721,7 @@
       hostPos += arg7.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[7],
@@ -742,7 +742,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -864,7 +864,7 @@
       hostPos += arg8.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[8],
@@ -886,7 +886,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1019,7 +1019,7 @@
       hostPos += arg9.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[9],
@@ -1041,7 +1041,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1185,7 +1185,7 @@
       hostPos += arg10.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[10],
@@ -1207,7 +1207,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1362,7 +1362,7 @@
       hostPos += arg11.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[11],
@@ -1385,7 +1385,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1551,7 +1551,7 @@
       hostPos += arg12.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[12],
@@ -1574,7 +1574,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1751,7 +1751,7 @@
       hostPos += arg13.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[13],
@@ -1774,7 +1774,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1962,7 +1962,7 @@
       hostPos += arg14.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[14],
@@ -1986,7 +1986,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2185,7 +2185,7 @@
       hostPos += arg15.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[15],
@@ -2209,7 +2209,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2419,7 +2419,7 @@
       hostPos += arg16.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[16],
@@ -2443,7 +2443,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2664,7 +2664,7 @@
       hostPos += arg17.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[17],
@@ -2689,7 +2689,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2921,7 +2921,7 @@
       hostPos += arg18.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[18],
@@ -2946,7 +2946,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -3189,7 +3189,7 @@
       hostPos += arg19.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[19],
@@ -3214,7 +3214,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -3468,7 +3468,7 @@
       hostPos += arg20.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[20],
@@ -3494,7 +3494,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -3759,7 +3759,7 @@
       hostPos += arg21.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[21],
@@ -3785,7 +3785,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -4061,7 +4061,7 @@
       hostPos += arg22.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[22],
@@ -4087,7 +4087,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -4374,7 +4374,7 @@
       hostPos += arg23.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[23],
@@ -4401,7 +4401,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -4699,7 +4699,7 @@
       hostPos += arg24.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[24],
@@ -4726,7 +4726,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -5035,7 +5035,7 @@
       hostPos += arg25.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[25],
@@ -5062,7 +5062,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -5382,7 +5382,7 @@
       hostPos += arg26.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[26],
@@ -5410,7 +5410,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -5741,7 +5741,7 @@
       hostPos += arg27.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[27],
@@ -5769,7 +5769,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -6111,7 +6111,7 @@
       hostPos += arg28.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[28],
@@ -6139,7 +6139,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -6492,7 +6492,7 @@
       hostPos += arg29.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[29],
@@ -6521,7 +6521,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -6885,7 +6885,7 @@
       hostPos += arg30.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[30],
@@ -6914,7 +6914,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -7289,7 +7289,7 @@
       hostPos += arg31.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[31],
@@ -7318,7 +7318,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -7704,7 +7704,7 @@
       hostPos += arg32.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[32],
@@ -7734,7 +7734,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -8131,7 +8131,7 @@
       hostPos += arg33.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[33],
@@ -8161,7 +8161,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -8569,7 +8569,7 @@
       hostPos += arg34.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[34],
@@ -8599,7 +8599,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -9018,7 +9018,7 @@
       hostPos += arg35.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[35],
@@ -9049,7 +9049,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -9479,7 +9479,7 @@
       hostPos += arg36.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[36],
@@ -9510,7 +9510,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -9951,7 +9951,7 @@
       hostPos += arg37.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[37],
@@ -9982,7 +9982,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -10434,7 +10434,7 @@
       hostPos += arg38.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[38],
@@ -10466,7 +10466,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -10929,7 +10929,7 @@
       hostPos += arg39.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[39],
@@ -10961,7 +10961,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -11435,7 +11435,7 @@
       hostPos += arg40.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[40],
@@ -11467,7 +11467,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -11952,7 +11952,7 @@
       hostPos += arg41.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[41],
@@ -11985,7 +11985,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -12481,7 +12481,7 @@
       hostPos += arg42.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[42],
@@ -12514,7 +12514,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -13021,7 +13021,7 @@
       hostPos += arg43.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[43],
@@ -13054,7 +13054,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -13572,7 +13572,7 @@
       hostPos += arg44.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[44],
@@ -13606,7 +13606,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -14135,7 +14135,7 @@
       hostPos += arg45.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[45],
@@ -14169,7 +14169,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -14709,7 +14709,7 @@
       hostPos += arg46.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[46],
@@ -14743,7 +14743,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -15294,7 +15294,7 @@
       hostPos += arg47.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[47],
@@ -15329,7 +15329,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -15891,7 +15891,7 @@
       hostPos += arg48.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[48],
@@ -15926,7 +15926,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
     COIKernelData_t &data_ = *((COIKernelData_t*) data);
-    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dev->dHandle)->data);
+    COIDeviceData_t &dData = *((COIDeviceData_t*) ((device_t<COI>*) dHandle)->data);
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -16499,7 +16499,7 @@
       hostPos += arg49.size;
     }
 
-    coiStream &stream = *((coiStream*) dev->currentStream);
+    coiStream &stream = *((coiStream*) dHandle->currentStream);
 
     COIPipelineRunFunction(stream.handle,
                            dData.kernelWrapper[49],

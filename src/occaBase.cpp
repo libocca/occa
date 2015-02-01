@@ -193,19 +193,20 @@ namespace occa {
 
   //---[ Kernel ]---------------------
   kernel::kernel() :
-    mode_(),
     strMode(""),
 
     kHandle(NULL) {}
+  kernel::kernel(kernel_v *kHandle_) :
+    strMode( occa::modeToStr(kHandle_->mode()) ),
+
+    kHandle(kHandle_) {}
 
   kernel::kernel(const kernel &k) :
-    mode_(k.mode_),
     strMode(k.strMode),
 
     kHandle(k.kHandle) {}
 
   kernel& kernel::operator = (const kernel &k){
-    mode_   = k.mode_;
     strMode = k.strMode;
 
     kHandle = k.kHandle;
@@ -213,7 +214,7 @@ namespace occa {
     return *this;
   }
 
-  std::string& kernel::mode(){
+  const std::string& kernel::mode(){
     return strMode;
   }
 
@@ -367,7 +368,11 @@ namespace occa {
   }
 
   void kernelDatabase::addKernel(device d, kernel k){
-    addKernel(d.id_, k);
+    addKernel(d.dHandle->id_, k);
+  }
+
+  void kernelDatabase::addKernel(device_v *d, kernel k){
+    addKernel(d->id_, k);
   }
 
   void kernelDatabase::addKernel(const int id, kernel k){
@@ -385,7 +390,7 @@ namespace occa {
     kernelAllocated[id] = true;
   }
 
-  void kernelDatabase::loadKernelFromLibrary(device &d){
+  void kernelDatabase::loadKernelFromLibrary(device_v *d){
     addKernel(d, library::loadKernel(d, kernelName));
   }
   //==================================
@@ -393,17 +398,18 @@ namespace occa {
 
   //---[ Memory ]---------------------
   memory::memory() :
-    mode_(),
     strMode(""),
     mHandle(NULL) {}
 
+  memory::memory(memory_v *mHandle_) :
+    strMode( occa::modeToStr(mHandle_->mode()) ),
+    mHandle(mHandle_) {}
+
   memory::memory(const memory &m) :
-    mode_(m.mode_),
     strMode(m.strMode),
     mHandle(m.mHandle) {}
 
   memory& memory::operator = (const memory &m){
-    mode_   = m.mode_;
     strMode = m.strMode;
 
     mHandle = m.mHandle;
@@ -411,7 +417,7 @@ namespace occa {
     return *this;
   }
 
-  std::string& memory::mode(){
+  const std::string& memory::mode(){
     return strMode;
   }
 
@@ -581,10 +587,6 @@ namespace occa {
   }
 
   void memory::swap(memory &m){
-    occa::mode mode2 = m.mode_;
-    m.mode_        = mode_;
-    mode_          = mode2;
-
     std::string strMode2 = m.strMode;
     m.strMode            = strMode;
     strMode              = strMode2;
@@ -595,7 +597,7 @@ namespace occa {
   }
 
   void memory::free(){
-    mHandle->dev->bytesAllocated_ -= (mHandle->size);
+    mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if(mHandle->uvaPtr)
       ::free(mHandle->uvaPtr);
@@ -612,49 +614,21 @@ namespace occa {
 
   //---[ Device ]---------------------
   device::device() :
-    modelID_(-1),
-    id_(-1),
+    dHandle(NULL) {}
 
-    dHandle(NULL),
-    currentStream(NULL) {}
+  device::device(device_v *dHandle_) :
+    dHandle(dHandle_) {}
 
   device::device(const device &d) :
-    mode_(d.mode_),
-    strMode(d.strMode),
-
-    modelID_(d.modelID_),
-    id_(d.id_),
-
-    dHandle(d.dHandle),
-
-    currentStream(d.currentStream),
-    streams(d.streams) {
-
-    if(dHandle)
-      dHandle->dev = this;
-  }
+    dHandle(d.dHandle) {}
 
   device& device::operator = (const device &d){
-    mode_ = d.mode_;
-
-    modelID_ = d.modelID_;
-    id_      = d.id_;
-
     dHandle = d.dHandle;
-
-    currentStream = d.currentStream;
-    streams       = d.streams;
-
-    if(dHandle)
-      dHandle->dev = this;
 
     return *this;
   }
 
   void device::setupHandle(occa::mode m){
-    mode_   = m;
-    strMode = modeToStr(m);
-
     switch(m){
     case Pthreads:
 #if OCCA_PTHREADS_ENABLED
@@ -695,8 +669,6 @@ namespace occa {
       OCCA_CHECK(false,
                  "Unsupported OCCA mode given");
     }
-
-    dHandle->dev = this;
   }
 
   void device::setupHandle(const std::string &m){
@@ -716,10 +688,10 @@ namespace occa {
 
     dHandle->setup(aim);
 
-    modelID_ = library::deviceModelID(getIdentifier());
-    id_      = library::genDeviceID();
+    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
+    dHandle->id_      = library::genDeviceID();
 
-    currentStream = createStream();
+    dHandle->currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -755,10 +727,10 @@ namespace occa {
 
     dHandle->setup(aim);
 
-    modelID_ = library::deviceModelID(getIdentifier());
-    id_      = library::genDeviceID();
+    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
+    dHandle->id_      = library::genDeviceID();
 
-    currentStream = createStream();
+    dHandle->currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -771,10 +743,10 @@ namespace occa {
 
     dHandle->setup(aim);
 
-    modelID_ = library::deviceModelID(getIdentifier());
-    id_      = library::genDeviceID();
+    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
+    dHandle->id_      = library::genDeviceID();
 
-    currentStream = createStream();
+    dHandle->currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -788,10 +760,10 @@ namespace occa {
 
     dHandle->setup(aim);
 
-    modelID_ = library::deviceModelID(getIdentifier());
-    id_      = library::genDeviceID();
+    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
+    dHandle->id_      = library::genDeviceID();
 
-    currentStream = createStream();
+    dHandle->currentStream = createStream();
   }
 
   void device::setup(occa::mode m,
@@ -806,10 +778,10 @@ namespace occa {
 
     dHandle->setup(aim);
 
-    modelID_ = library::deviceModelID(getIdentifier());
-    id_      = library::genDeviceID();
+    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
+    dHandle->id_      = library::genDeviceID();
 
-    currentStream = createStream();
+    dHandle->currentStream = createStream();
   }
 
 
@@ -834,7 +806,7 @@ namespace occa {
   }
 
   uintptr_t device::bytesAllocated() const {
-    return bytesAllocated_;
+    return dHandle->bytesAllocated;
   }
 
   deviceIdentifier device::getIdentifier() const {
@@ -866,18 +838,18 @@ namespace occa {
   }
 
   int device::modelID(){
-    return modelID_;
+    return dHandle->modelID_;
   }
 
   int device::id(){
-    return id_;
+    return dHandle->id_;
   }
 
   int device::modeID(){
-    return mode_;
+    return dHandle->mode();
   }
 
-  std::string& device::mode(){
+  const std::string& device::mode(){
     return strMode;
   }
 
@@ -908,16 +880,16 @@ namespace occa {
   }
 
   stream device::createStream(){
-    streams.push_back( dHandle->createStream() );
-    return streams.back();
+    dHandle->streams.push_back( dHandle->createStream() );
+    return dHandle->streams.back();
   }
 
   stream device::getStream(){
-    return currentStream;
+    return dHandle->currentStream;
   }
 
   void device::setStream(stream s){
-    currentStream = s;
+    dHandle->currentStream = s;
   }
 
   stream device::wrapStream(void *handle_){
@@ -986,15 +958,13 @@ namespace occa {
 
     kernel ker;
 
-    ker.mode_   = mode_;
     ker.strMode = strMode;
 
     kernel_v *&k = ker.kHandle;
 
     if(usingParser){
-      k               = new kernel_t<OpenMP>;
-      k->dev          = new device;
-      k->dev->dHandle = new device_t<OpenMP>();
+      k          = new kernel_t<OpenMP>;
+      k->dHandle = new device_t<OpenMP>();
 
       kernelInfo info = info_;
 
@@ -1032,7 +1002,6 @@ namespace occa {
 
         kernel &sKer = k->nestedKernels[ki];
 
-        sKer.mode_   = mode_;
         sKer.strMode = strMode;
 
         sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
@@ -1043,8 +1012,8 @@ namespace occa {
       }
     }
     else{
-      k      = dHandle->buildKernelFromSource(filename, functionName, info_);
-      k->dev = this;
+      k          = dHandle->buildKernelFromSource(filename, functionName, info_);
+      k->dHandle = dHandle;
     }
 
     return ker;
@@ -1054,11 +1023,10 @@ namespace occa {
                                        const std::string &functionName){
     kernel ker;
 
-    ker.mode_   = mode_;
     ker.strMode = strMode;
 
-    ker.kHandle      = dHandle->buildKernelFromBinary(filename, functionName);
-    ker.kHandle->dev = this;
+    ker.kHandle          = dHandle->buildKernelFromBinary(filename, functionName);
+    ker.kHandle->dHandle = dHandle;
 
     return ker;
   }
@@ -1073,11 +1041,10 @@ namespace occa {
                                        const std::string &functionName){
     kernel ker;
 
-    ker.mode_   = mode_;
     ker.strMode = strMode;
 
-    ker.kHandle      = dHandle->loadKernelFromLibrary(cache, functionName);
-    ker.kHandle->dev = this;
+    ker.kHandle          = dHandle->loadKernelFromLibrary(cache, functionName);
+    ker.kHandle->dHandle = dHandle;
 
     return ker;
   }
@@ -1145,11 +1112,10 @@ namespace occa {
                             const uintptr_t bytes){
     memory mem;
 
-    mem.mode_   = mode_;
     mem.strMode = strMode;
 
     mem.mHandle = dHandle->wrapMemory(handle_, bytes);
-    mem.mHandle->dev = this;
+    mem.mHandle->dHandle = dHandle;
 
     return mem;
   }
@@ -1164,13 +1130,12 @@ namespace occa {
 
     memory mem;
 
-    mem.mode_   = mode_;
     mem.strMode = strMode;
 
     mem.mHandle = dHandle->wrapTexture(handle_,
                                        dim, dims,
                                        type, permissions);
-    mem.mHandle->dev = this;
+    mem.mHandle->dHandle = dHandle;
 
     return mem;
   }
@@ -1179,13 +1144,12 @@ namespace occa {
                         void *source){
     memory mem;
 
-    mem.mode_   = mode_;
     mem.strMode = strMode;
 
-    mem.mHandle      = dHandle->malloc(bytes, source);
-    mem.mHandle->dev = this;
+    mem.mHandle          = dHandle->malloc(bytes, source);
+    mem.mHandle->dHandle = dHandle;
 
-    bytesAllocated_ += bytes;
+    dHandle->bytesAllocated += bytes;
 
     return mem;
   }
@@ -1229,16 +1193,15 @@ namespace occa {
 
     memory mem;
 
-    mem.mode_   = mode_;
     mem.strMode = strMode;
 
     mem.mHandle      = dHandle->textureAlloc(dim, dims, source, type, permissions);
-    mem.mHandle->dev = this;
+    mem.mHandle->dHandle = dHandle;
 
-    bytesAllocated_ += (type.bytes() *
-                        ((dim == 2) ?
-                         (dims[0] * dims[1]) :
-                         (dims[0]          )));
+    dHandle->bytesAllocated += (type.bytes() *
+                                ((dim == 2) ?
+                                 (dims[0] * dims[1]) :
+                                 (dims[0]          )));
 
     return mem;
   }
@@ -1257,13 +1220,12 @@ namespace occa {
                              void *source){
     memory mem;
 
-    mem.mode_   = mode_;
     mem.strMode = strMode;
 
-    mem.mHandle      = dHandle->mappedAlloc(bytes, source);
-    mem.mHandle->dev = this;
+    mem.mHandle          = dHandle->mappedAlloc(bytes, source);
+    mem.mHandle->dHandle = dHandle;
 
-    bytesAllocated_ += bytes;
+    dHandle->bytesAllocated += bytes;
 
     return mem;
   }
@@ -1278,10 +1240,10 @@ namespace occa {
   }
 
   void device::free(){
-    const int streamCount = streams.size();
+    const int streamCount = dHandle->streams.size();
 
     for(int i = 0; i < streamCount; ++i)
-      dHandle->freeStream(streams[i]);
+      dHandle->freeStream(dHandle->streams[i]);
 
     dHandle->free();
 

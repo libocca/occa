@@ -10,11 +10,11 @@
   }
 
   void kernelDatabase::operator() (const kernelArg &arg0){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
     
-    (*this)[*launchDevice](arg0);
+    (*this)[launchDevice](arg0);
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1){
@@ -30,12 +30,12 @@ arg1.markDirty();
   }
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1);
+    (*this)[launchDevice](arg0,  arg1);
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
@@ -52,13 +52,13 @@ arg2.markDirty();
   }
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2);
+    (*this)[launchDevice](arg0,  arg1,  arg2);
   }
 
   void kernel::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
@@ -80,14 +80,14 @@ arg3.markDirty();
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3);
   }
 
@@ -111,15 +111,15 @@ arg4.markDirty();
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4);
   }
 
@@ -144,16 +144,16 @@ arg5.markDirty();
 
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5);
   }
 
@@ -183,17 +183,17 @@ arg6.markDirty();
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6);
   }
@@ -225,18 +225,18 @@ arg7.markDirty();
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7);
   }
@@ -269,19 +269,19 @@ arg8.markDirty();
   void kernelDatabase::operator() (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8);
   }
@@ -319,20 +319,20 @@ arg9.markDirty();
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9);
@@ -372,21 +372,21 @@ arg10.markDirty();
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10);
@@ -427,22 +427,22 @@ arg11.markDirty();
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11);
@@ -488,23 +488,23 @@ arg12.markDirty();
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -552,24 +552,24 @@ arg13.markDirty();
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -618,25 +618,25 @@ arg14.markDirty();
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -690,26 +690,26 @@ arg15.markDirty();
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -765,27 +765,27 @@ arg16.markDirty();
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -842,28 +842,28 @@ arg17.markDirty();
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -925,29 +925,29 @@ arg18.markDirty();
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1011,30 +1011,30 @@ arg19.markDirty();
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1099,31 +1099,31 @@ arg20.markDirty();
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1193,32 +1193,32 @@ arg21.markDirty();
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1290,33 +1290,33 @@ arg22.markDirty();
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1389,34 +1389,34 @@ arg23.markDirty();
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1494,35 +1494,35 @@ arg24.markDirty();
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1602,36 +1602,36 @@ arg25.markDirty();
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1712,37 +1712,37 @@ arg26.markDirty();
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1828,38 +1828,38 @@ arg27.markDirty();
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -1947,39 +1947,39 @@ arg28.markDirty();
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2068,40 +2068,40 @@ arg29.markDirty();
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2195,41 +2195,41 @@ arg30.markDirty();
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2325,42 +2325,42 @@ arg31.markDirty();
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2457,43 +2457,43 @@ arg32.markDirty();
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2595,44 +2595,44 @@ arg33.markDirty();
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2736,45 +2736,45 @@ arg34.markDirty();
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -2879,46 +2879,46 @@ arg35.markDirty();
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3028,47 +3028,47 @@ arg36.markDirty();
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3180,48 +3180,48 @@ arg37.markDirty();
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3334,49 +3334,49 @@ arg38.markDirty();
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3494,50 +3494,50 @@ arg39.markDirty();
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3657,51 +3657,51 @@ arg40.markDirty();
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3822,52 +3822,52 @@ arg41.markDirty();
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -3993,53 +3993,53 @@ arg42.markDirty();
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -4167,54 +4167,54 @@ arg43.markDirty();
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -4343,55 +4343,55 @@ arg44.markDirty();
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
-    else if(arg44.dev) launchDevice = arg44.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
+    else if(arg44.dHandle) launchDevice = const_cast<occa::device_v*>(arg44.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -4525,56 +4525,56 @@ arg45.markDirty();
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
-    else if(arg44.dev) launchDevice = arg44.dev;
-    else if(arg45.dev) launchDevice = arg45.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
+    else if(arg44.dHandle) launchDevice = const_cast<occa::device_v*>(arg44.dHandle);
+    else if(arg45.dHandle) launchDevice = const_cast<occa::device_v*>(arg45.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -4710,57 +4710,57 @@ arg46.markDirty();
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
-    else if(arg44.dev) launchDevice = arg44.dev;
-    else if(arg45.dev) launchDevice = arg45.dev;
-    else if(arg46.dev) launchDevice = arg46.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
+    else if(arg44.dHandle) launchDevice = const_cast<occa::device_v*>(arg44.dHandle);
+    else if(arg45.dHandle) launchDevice = const_cast<occa::device_v*>(arg45.dHandle);
+    else if(arg46.dHandle) launchDevice = const_cast<occa::device_v*>(arg46.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -4897,58 +4897,58 @@ arg47.markDirty();
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
-    else if(arg44.dev) launchDevice = arg44.dev;
-    else if(arg45.dev) launchDevice = arg45.dev;
-    else if(arg46.dev) launchDevice = arg46.dev;
-    else if(arg47.dev) launchDevice = arg47.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
+    else if(arg44.dHandle) launchDevice = const_cast<occa::device_v*>(arg44.dHandle);
+    else if(arg45.dHandle) launchDevice = const_cast<occa::device_v*>(arg45.dHandle);
+    else if(arg46.dHandle) launchDevice = const_cast<occa::device_v*>(arg46.dHandle);
+    else if(arg47.dHandle) launchDevice = const_cast<occa::device_v*>(arg47.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -5090,59 +5090,59 @@ arg48.markDirty();
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
-    else if(arg44.dev) launchDevice = arg44.dev;
-    else if(arg45.dev) launchDevice = arg45.dev;
-    else if(arg46.dev) launchDevice = arg46.dev;
-    else if(arg47.dev) launchDevice = arg47.dev;
-    else if(arg48.dev) launchDevice = arg48.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
+    else if(arg44.dHandle) launchDevice = const_cast<occa::device_v*>(arg44.dHandle);
+    else if(arg45.dHandle) launchDevice = const_cast<occa::device_v*>(arg45.dHandle);
+    else if(arg46.dHandle) launchDevice = const_cast<occa::device_v*>(arg46.dHandle);
+    else if(arg47.dHandle) launchDevice = const_cast<occa::device_v*>(arg47.dHandle);
+    else if(arg48.dHandle) launchDevice = const_cast<occa::device_v*>(arg48.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
@@ -5269,60 +5269,60 @@ arg49.markDirty();
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
-    occa::device *launchDevice = NULL;
+    occa::device_v *launchDevice = NULL;
 
-    if(arg0.dev) launchDevice = arg0.dev;
-    else if(arg1.dev) launchDevice = arg1.dev;
-    else if(arg2.dev) launchDevice = arg2.dev;
-    else if(arg3.dev) launchDevice = arg3.dev;
-    else if(arg4.dev) launchDevice = arg4.dev;
-    else if(arg5.dev) launchDevice = arg5.dev;
-    else if(arg6.dev) launchDevice = arg6.dev;
-    else if(arg7.dev) launchDevice = arg7.dev;
-    else if(arg8.dev) launchDevice = arg8.dev;
-    else if(arg9.dev) launchDevice = arg9.dev;
-    else if(arg10.dev) launchDevice = arg10.dev;
-    else if(arg11.dev) launchDevice = arg11.dev;
-    else if(arg12.dev) launchDevice = arg12.dev;
-    else if(arg13.dev) launchDevice = arg13.dev;
-    else if(arg14.dev) launchDevice = arg14.dev;
-    else if(arg15.dev) launchDevice = arg15.dev;
-    else if(arg16.dev) launchDevice = arg16.dev;
-    else if(arg17.dev) launchDevice = arg17.dev;
-    else if(arg18.dev) launchDevice = arg18.dev;
-    else if(arg19.dev) launchDevice = arg19.dev;
-    else if(arg20.dev) launchDevice = arg20.dev;
-    else if(arg21.dev) launchDevice = arg21.dev;
-    else if(arg22.dev) launchDevice = arg22.dev;
-    else if(arg23.dev) launchDevice = arg23.dev;
-    else if(arg24.dev) launchDevice = arg24.dev;
-    else if(arg25.dev) launchDevice = arg25.dev;
-    else if(arg26.dev) launchDevice = arg26.dev;
-    else if(arg27.dev) launchDevice = arg27.dev;
-    else if(arg28.dev) launchDevice = arg28.dev;
-    else if(arg29.dev) launchDevice = arg29.dev;
-    else if(arg30.dev) launchDevice = arg30.dev;
-    else if(arg31.dev) launchDevice = arg31.dev;
-    else if(arg32.dev) launchDevice = arg32.dev;
-    else if(arg33.dev) launchDevice = arg33.dev;
-    else if(arg34.dev) launchDevice = arg34.dev;
-    else if(arg35.dev) launchDevice = arg35.dev;
-    else if(arg36.dev) launchDevice = arg36.dev;
-    else if(arg37.dev) launchDevice = arg37.dev;
-    else if(arg38.dev) launchDevice = arg38.dev;
-    else if(arg39.dev) launchDevice = arg39.dev;
-    else if(arg40.dev) launchDevice = arg40.dev;
-    else if(arg41.dev) launchDevice = arg41.dev;
-    else if(arg42.dev) launchDevice = arg42.dev;
-    else if(arg43.dev) launchDevice = arg43.dev;
-    else if(arg44.dev) launchDevice = arg44.dev;
-    else if(arg45.dev) launchDevice = arg45.dev;
-    else if(arg46.dev) launchDevice = arg46.dev;
-    else if(arg47.dev) launchDevice = arg47.dev;
-    else if(arg48.dev) launchDevice = arg48.dev;
-    else if(arg49.dev) launchDevice = arg49.dev;
+    if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
+    else if(arg1.dHandle) launchDevice = const_cast<occa::device_v*>(arg1.dHandle);
+    else if(arg2.dHandle) launchDevice = const_cast<occa::device_v*>(arg2.dHandle);
+    else if(arg3.dHandle) launchDevice = const_cast<occa::device_v*>(arg3.dHandle);
+    else if(arg4.dHandle) launchDevice = const_cast<occa::device_v*>(arg4.dHandle);
+    else if(arg5.dHandle) launchDevice = const_cast<occa::device_v*>(arg5.dHandle);
+    else if(arg6.dHandle) launchDevice = const_cast<occa::device_v*>(arg6.dHandle);
+    else if(arg7.dHandle) launchDevice = const_cast<occa::device_v*>(arg7.dHandle);
+    else if(arg8.dHandle) launchDevice = const_cast<occa::device_v*>(arg8.dHandle);
+    else if(arg9.dHandle) launchDevice = const_cast<occa::device_v*>(arg9.dHandle);
+    else if(arg10.dHandle) launchDevice = const_cast<occa::device_v*>(arg10.dHandle);
+    else if(arg11.dHandle) launchDevice = const_cast<occa::device_v*>(arg11.dHandle);
+    else if(arg12.dHandle) launchDevice = const_cast<occa::device_v*>(arg12.dHandle);
+    else if(arg13.dHandle) launchDevice = const_cast<occa::device_v*>(arg13.dHandle);
+    else if(arg14.dHandle) launchDevice = const_cast<occa::device_v*>(arg14.dHandle);
+    else if(arg15.dHandle) launchDevice = const_cast<occa::device_v*>(arg15.dHandle);
+    else if(arg16.dHandle) launchDevice = const_cast<occa::device_v*>(arg16.dHandle);
+    else if(arg17.dHandle) launchDevice = const_cast<occa::device_v*>(arg17.dHandle);
+    else if(arg18.dHandle) launchDevice = const_cast<occa::device_v*>(arg18.dHandle);
+    else if(arg19.dHandle) launchDevice = const_cast<occa::device_v*>(arg19.dHandle);
+    else if(arg20.dHandle) launchDevice = const_cast<occa::device_v*>(arg20.dHandle);
+    else if(arg21.dHandle) launchDevice = const_cast<occa::device_v*>(arg21.dHandle);
+    else if(arg22.dHandle) launchDevice = const_cast<occa::device_v*>(arg22.dHandle);
+    else if(arg23.dHandle) launchDevice = const_cast<occa::device_v*>(arg23.dHandle);
+    else if(arg24.dHandle) launchDevice = const_cast<occa::device_v*>(arg24.dHandle);
+    else if(arg25.dHandle) launchDevice = const_cast<occa::device_v*>(arg25.dHandle);
+    else if(arg26.dHandle) launchDevice = const_cast<occa::device_v*>(arg26.dHandle);
+    else if(arg27.dHandle) launchDevice = const_cast<occa::device_v*>(arg27.dHandle);
+    else if(arg28.dHandle) launchDevice = const_cast<occa::device_v*>(arg28.dHandle);
+    else if(arg29.dHandle) launchDevice = const_cast<occa::device_v*>(arg29.dHandle);
+    else if(arg30.dHandle) launchDevice = const_cast<occa::device_v*>(arg30.dHandle);
+    else if(arg31.dHandle) launchDevice = const_cast<occa::device_v*>(arg31.dHandle);
+    else if(arg32.dHandle) launchDevice = const_cast<occa::device_v*>(arg32.dHandle);
+    else if(arg33.dHandle) launchDevice = const_cast<occa::device_v*>(arg33.dHandle);
+    else if(arg34.dHandle) launchDevice = const_cast<occa::device_v*>(arg34.dHandle);
+    else if(arg35.dHandle) launchDevice = const_cast<occa::device_v*>(arg35.dHandle);
+    else if(arg36.dHandle) launchDevice = const_cast<occa::device_v*>(arg36.dHandle);
+    else if(arg37.dHandle) launchDevice = const_cast<occa::device_v*>(arg37.dHandle);
+    else if(arg38.dHandle) launchDevice = const_cast<occa::device_v*>(arg38.dHandle);
+    else if(arg39.dHandle) launchDevice = const_cast<occa::device_v*>(arg39.dHandle);
+    else if(arg40.dHandle) launchDevice = const_cast<occa::device_v*>(arg40.dHandle);
+    else if(arg41.dHandle) launchDevice = const_cast<occa::device_v*>(arg41.dHandle);
+    else if(arg42.dHandle) launchDevice = const_cast<occa::device_v*>(arg42.dHandle);
+    else if(arg43.dHandle) launchDevice = const_cast<occa::device_v*>(arg43.dHandle);
+    else if(arg44.dHandle) launchDevice = const_cast<occa::device_v*>(arg44.dHandle);
+    else if(arg45.dHandle) launchDevice = const_cast<occa::device_v*>(arg45.dHandle);
+    else if(arg46.dHandle) launchDevice = const_cast<occa::device_v*>(arg46.dHandle);
+    else if(arg47.dHandle) launchDevice = const_cast<occa::device_v*>(arg47.dHandle);
+    else if(arg48.dHandle) launchDevice = const_cast<occa::device_v*>(arg48.dHandle);
+    else if(arg49.dHandle) launchDevice = const_cast<occa::device_v*>(arg49.dHandle);
 
-    (*this)[*launchDevice](arg0,  arg1,  arg2, 
+    (*this)[launchDevice](arg0,  arg1,  arg2, 
                       arg3,  arg4,  arg5, 
                       arg6,  arg7,  arg8, 
                       arg9,  arg10,  arg11, 
