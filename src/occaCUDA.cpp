@@ -31,10 +31,10 @@ namespace occa {
       devData.context = context;
       //======================
 
-      dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
-      dHandle->id_      = library::genDeviceID();
+      dHandle.modelID_ = library::deviceModelID(dHandle.getIdentifier());
+      dHandle.id_      = library::genDeviceID();
 
-      dHandle->currentStream = dHandle->createStream();
+      dHandle.currentStream = dHandle.createStream();
 
       return dev;
     }
