@@ -567,13 +567,24 @@ namespace occa {
         occa::memory_v *destMem = (destIt->second);
         const uintptr_t destOff = ((char*) dest) - ((char*) destMem->uvaPtr);
 
-        srcMem->copyTo(destMem, bytes, destOff, srcOff);
-
-        if(destMem->isManaged)
-          destMem->copyTo(dest, bytes, destOff);
+        if(srcMem->isManaged){
+          if(destMem->isManaged)
+            ::memcpy(dest, src, bytes);
+          else
+            destMem->copyFrom(src, bytes, destOff);
+        }
+        else{
+          if(destMem->isManaged)
+            srcMem->copyTo(dest, bytes, srcOff);
+          else
+            srcMem->copyTo(destMem, bytes, destOff, srcOff);
+        }
       }
       else{
-        srcMem->copyTo(dest, bytes, srcOff);
+        if(srcMem->isManaged)
+          ::memcpy(dest, src, bytes);
+        else
+          srcMem->copyTo(dest, bytes, srcOff);
       }
     }
     else{
@@ -581,10 +592,10 @@ namespace occa {
         occa::memory_v *destMem = (destIt->second);
         const uintptr_t destOff = ((char*) dest) - ((char*) destMem->uvaPtr);
 
-        destMem->copyFrom(src, bytes, destOff);
-
         if(destMem->isManaged)
-          destMem->copyTo(dest, bytes, destOff);
+          ::memcpy(dest, src, bytes);
+        else
+          destMem->copyFrom(src, bytes, destOff);
       }
       else{
         ::memcpy(dest, src, bytes);
