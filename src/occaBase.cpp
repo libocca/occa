@@ -712,45 +712,45 @@ namespace occa {
     case OpenMP:
       dHandle = new device_t<OpenMP>(); break;
 #else
-      OCCA_CHECK(false,
-                 "OCCA mode [OpenMP] is not enabled");
+      std::cout << "OCCA mode [OpenMP] is not enabled, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>(); break;
 #endif
 
     case OpenCL:
 #if OCCA_OPENCL_ENABLED
       dHandle = new device_t<OpenCL>(); break;
 #else
-      OCCA_CHECK(false,
-                 "OCCA mode [OpenCL] is not enabled");
+      std::cout << "OCCA mode [OpenCL] is not enabled, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>(); break;
 #endif
 
     case CUDA:
 #if OCCA_CUDA_ENABLED
       dHandle = new device_t<CUDA>(); break;
 #else
-      OCCA_CHECK(false,
-                 "OCCA mode [CUDA] is not enabled");
+      std::cout << "OCCA mode [CUDA] is not enabled, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>(); break;
 #endif
 
     case Pthreads:
 #if OCCA_PTHREADS_ENABLED
       dHandle = new device_t<Pthreads>(); break;
 #else
-      OCCA_CHECK(false,
-                 "OCCA mode [Pthreads] is not enabled");
+      std::cout << "OCCA mode [Pthreads] is not enabled, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>(); break;
 #endif
 
     case COI:
 #if OCCA_COI_ENABLED
       dHandle = new device_t<COI>(); break;
 #else
-      OCCA_CHECK(false,
-                 "OCCA mode [COI] is not enabled");
+      std::cout << "OCCA mode [COI] is not enabled, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>(); break;
 #endif
 
     default:
-      OCCA_CHECK(false,
-                 "Unsupported OCCA mode given");
+      std::cout << "Unsupported OCCA mode given, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>();
     }
   }
 
