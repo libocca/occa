@@ -17,7 +17,7 @@ namespace occa {
       if(cStart[c] != c2[c])
         return false;
 
-      if(c2[c] == '\0')
+      if((cStart[c] == '\0') || (c2[c] == '\0'))
         return false;
     }
 

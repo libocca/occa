@@ -564,7 +564,7 @@ namespace occa {
 
         macroMapIterator it = macroMap.find(word);
 
-        if(delimeterChars == 2){
+        while(delimeterChars == 2){
           //---[ #< #> ]----------------
           if(stringsAreEqual(c, delimeterChars, "#<")){
             c += 2;
@@ -595,24 +595,28 @@ namespace occa {
           }
           //---[ ## ]-------------------
           else if(stringsAreEqual(c, delimeterChars, "##")){
-            while(stringsAreEqual(c, delimeterChars, "##")){
-              c += 2;
+            c += 2;
 
-              cStart = c;
-              delimeterChars = skipWord(c);
+            cStart = c;
+            delimeterChars = skipWord(c);
 
-              std::string word2 = std::string(cStart, c - cStart);
+            std::string word2 = std::string(cStart, c - cStart);
 
-              it = macroMap.find(word2);
+            it = macroMap.find(word2);
 
-              if(it != macroMap.end()){
-                macroInfo &info = macros[it->second];
-                word += info.parts[0];
-              }
-              else
-                word += word2;
+            std::cout << "1. word = " << word << '\n';
+
+            if(it != macroMap.end()){
+              macroInfo &info = macros[it->second];
+              word += info.parts[0];
             }
+            else
+              word += word2;
+
+            std::cout << "2. word = " << word << '\n';
           }
+          else
+            break;
           //============================
         }
 
