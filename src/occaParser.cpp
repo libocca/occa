@@ -3,6 +3,8 @@
 namespace occa {
   namespace parserNS {
     parserBase::parserBase(){
+      env::initialize();
+
       parsingC = true;
 
       macrosAreInitialized = false;
@@ -12,8 +14,10 @@ namespace occa {
       warnForBarrierConditionals = true;
     }
 
-    const std::string parserBase::parseFile(const std::string &filename,
+    const std::string parserBase::parseFile(const std::string &filename_,
                                             const bool parsingC_){
+
+      filename = filename_;
 
       parsingC = parsingC_;
 
@@ -75,6 +79,30 @@ namespace occa {
       skipWord(c);
 
       return std::string(cStart, c - cStart);
+    }
+
+    std::string parserBase::getMacroIncludeFile(const char *&c){
+      const char *cStart = c;
+      skipWord(cStart);
+
+      c = cStart;
+
+      while((*c != '\n') &&
+            (*c != '\0')){
+
+        ++c;
+      }
+
+      std::string iFilename = strip(cStart, c - cStart);
+      const int chars = iFilename.size();
+
+      const bool skipFirst = ((iFilename[0] == '"') ||
+                              (iFilename[0] == '<'));
+
+      const bool skipLast  = ((iFilename[chars - 1] == '"') ||
+                              (iFilename[chars - 1] == '<'));
+
+      return iFilename.substr(skipFirst, chars - (skipFirst + skipLast));
     }
 
     bool parserBase::evaluateMacroStatement(const char *&c){
@@ -324,7 +352,17 @@ namespace occa {
       }
     }
 
+    int parserBase::loadMacro(strNode *nodePos, const int state){
+      return loadMacro(nodePos, nodePos->value, state);
+    }
+
     int parserBase::loadMacro(const std::string &line, const int state){
+      return loadMacro(NULL, line, state);
+    }
+
+    int parserBase::loadMacro(strNode *nodePos,
+                              const std::string &line, const int state){
+
       const char *c = (line.c_str() + 1); // 1 = #
 
       while(*c != '\0'){
@@ -425,9 +463,44 @@ namespace occa {
           if(state & ignoring)
             return state;
 
-          // Stick include file here
+          // Nothing to edit, just keep the #include for the compiler
+          if(nodePos == NULL)
+            return (state | keepMacro);
 
-          return state;
+          std::string includeFile = getMacroIncludeFile(c);
+
+          if(includeFile[0] == '~'){
+            includeFile = (env::HOME +
+                           includeFile.substr(1,
+                                              includeFile.size() - 1));
+          }
+          if(includeFile[0] != '/'){
+            includeFile = findFileInPath(includeFile);
+          }
+
+          if(includeFile == "")
+            return (state | forceLineRemoval);
+
+          const char *cRoot = cReadFile(includeFile);
+
+          strNode *includeNodeRoot = splitContent(cRoot, parsingC);
+
+          delete [] cRoot;
+
+          // Empty include file
+          if(includeNodeRoot == NULL)
+            return (state | forceLineRemoval);
+
+          strNode *nr = nodePos->right;
+          strNode *ir = lastNode(includeNodeRoot);
+
+          nodePos->right        = includeNodeRoot;
+          includeNodeRoot->left = nodePos;
+
+          nr->left  = ir;
+          ir->right = nr;
+
+          return (state | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "pragma"))
@@ -574,11 +647,15 @@ namespace occa {
         if(line[0] == '#'){
           const int oldState = currentState;
 
-          currentState = loadMacro(line, currentState);
+          currentState = loadMacro(nodePos, currentState);
 
           if(currentState & keepMacro)
             currentState &= ~keepMacro;
-          // Let's keep all the macros for now
+          else if(currentState & forceLineRemoval){
+            currentState &= ~forceLineRemoval;
+            ignoreLine = true;
+          }
+          // // Let's keep all the macros for now
           // else
           //   ignoreLine = true;
 

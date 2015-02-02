@@ -34,6 +34,18 @@
 namespace occa {
   class kernelInfo;
 
+  //---[ Helper Info ]----------------
+  namespace env {
+    extern bool isInitialized;
+
+    extern std::string HOME;
+    extern std::string PATH, LD_LIBRARY_PATH;
+
+    void initialize();
+    std::string echo(const std::string &var);
+  };
+  //==================================
+
   class mutex_t {
   public:
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)

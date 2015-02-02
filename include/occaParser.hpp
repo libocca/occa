@@ -17,6 +17,8 @@ namespace occa {
     public:
       static const int version = 100;
 
+      std::string filename;
+
       bool parsingC;
 
       macroMap_t macroMap;
@@ -37,6 +39,7 @@ namespace occa {
       //================================
 
       parserBase();
+      inline ~parserBase(){}
 
       const std::string parseFile(const std::string &filename,
                                   const bool parsingC_ = true);
@@ -45,12 +48,16 @@ namespace occa {
 
       //---[ Macro Parser Functions ]---
       std::string getMacroName(const char *&c);
+      std::string getMacroIncludeFile(const char *&c);
 
       bool evaluateMacroStatement(const char *&c);
       static typeHolder evaluateLabelNode(strNode *labelNodeRoot);
 
       void loadMacroInfo(macroInfo &info, const char *&c);
+
+      int loadMacro(strNode *nodePos, const int state = doNothing);
       int loadMacro(const std::string &line, const int state = doNothing);
+      int loadMacro(strNode *nodePos, const std::string &line, const int state = doNothing);
 
       void applyMacros(std::string &line);
 

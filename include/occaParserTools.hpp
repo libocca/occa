@@ -79,6 +79,9 @@ namespace occa {
   char segmentPair(const char c);
   void skipPair(const char *&c);
 
+
+  std::string findFileInPath(const std::string &filename);
+
   template <class TM>
   inline void swapValues(TM &a, TM &b){
     TM tmp = a;
