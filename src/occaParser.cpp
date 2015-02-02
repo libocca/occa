@@ -76,9 +76,17 @@ namespace occa {
       skipWord(cStart);
       skipWhitespace(cStart);
       c = cStart;
-      skipWord(c);
+      skipToWhitespace(c);
 
-      return std::string(cStart, c - cStart);
+      std::string name(cStart, c - cStart);
+      std::cout << "1. name = " << name << '\n';
+
+      if(macroMap.find(name) == macroMap.end())
+        applyMacros(name);
+
+      std::cout << "2. name = " << name << '\n';
+
+      return name;
     }
 
     std::string parserBase::getMacroIncludeFile(const char *&c){
@@ -105,11 +113,11 @@ namespace occa {
       return iFilename.substr(skipFirst, chars - (skipFirst + skipLast));
     }
 
-    bool parserBase::evaluateMacroStatement(const char *&c){
+    typeHolder parserBase::evaluateMacroStatement(const char *&c){
       skipWhitespace(c);
 
       if(*c == '\0')
-        return false;
+        return typeHolder("false");
 
       strNode *lineNode = new strNode(c);
       applyMacros(lineNode->value);
@@ -121,12 +129,16 @@ namespace occa {
       // Check if a variable snuck in
       while(labelNodePos){
         if(labelNodePos->info & unknownVariable)
-          return false;
+          return typeHolder("false");
 
         labelNodePos = labelNodePos->right;
       }
 
-      typeHolder th = evaluateLabelNode(labelNodeRoot);
+      return evaluateLabelNode(labelNodeRoot);
+    }
+
+    bool parserBase::evaluateMacroBoolStatement(const char *&c){
+      typeHolder th = evaluateMacroStatement(c);
 
       return (th.doubleValue() != 0);
     }
@@ -373,7 +385,7 @@ namespace occa {
         if(stringsAreEqual(c, (cEnd - c), "if")){
           c = cEnd;
 
-          bool isTrue = evaluateMacroStatement(c);
+          bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
             return (startHash | readUntilNextHash);
@@ -387,7 +399,7 @@ namespace occa {
 
           c = cEnd;
 
-          bool isTrue = evaluateMacroStatement(c);
+          bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
             return readUntilNextHash;
@@ -537,30 +549,56 @@ namespace occa {
 
         macroMapIterator it = macroMap.find(word);
 
-        if((delimeterChars == 2) &&
-           stringsAreEqual(c, delimeterChars, "##") &&
-           it != macroMap.end()){
-          macroInfo &info = macros[it->second];
-          word = info.parts[0];
-        }
+        if(delimeterChars == 2){
+          //---[ #< #> ]----------------
+          if(stringsAreEqual(c, delimeterChars, "#<")){
+            c += 2;
+            cStart = c;
 
-        while((delimeterChars == 2) &&
-              stringsAreEqual(c, delimeterChars, "##")){
-          c += 2;
+            while((c[0] != '\0') &&
+                  ((c[0] != '#') || (c[1] != '>'))){
 
-          cStart = c;
-          delimeterChars = skipWord(c);
+              ++c;
+            }
 
-          std::string word2 = std::string(cStart, c - cStart);
+            std::string expr(cStart, c - cStart);
+            const char *c_expr = expr.c_str();
 
-          it = macroMap.find(word2);
+            std::string expr2 = (std::string) evaluateMacroStatement(c_expr);
 
-          if(it != macroMap.end()){
-            macroInfo &info = macros[it->second];
-            word += info.parts[0];
+            while(expr != expr2){
+              expr = expr2;
+              applyMacros(expr2);
+            }
+
+            word += expr;
+            applyMacros(word);
+
+            // Don't include delimeter chars
+            c += 2;
+            delimeterChars = 0;
           }
-          else
-            word += word2;
+          //---[ ## ]-------------------
+          else if(stringsAreEqual(c, delimeterChars, "##")){
+            while(stringsAreEqual(c, delimeterChars, "##")){
+              c += 2;
+
+              cStart = c;
+              delimeterChars = skipWord(c);
+
+              std::string word2 = std::string(cStart, c - cStart);
+
+              it = macroMap.find(word2);
+
+              if(it != macroMap.end()){
+                macroInfo &info = macros[it->second];
+                word += info.parts[0];
+              }
+              else
+                word += word2;
+            }
+          }
+          //============================
         }
 
         it = macroMap.find(word);

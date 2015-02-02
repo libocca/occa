@@ -28,7 +28,10 @@ int  a = 0, *b = 1;
 int *c = 0,  d = 1;
 
 #define PI   3.14159265358
-#define PI_4 0.78539816339           // PI/4
+// #define PI_4 0.78539816339         // PI/4
+#define FOUR 3
+#define FOUR 4
+#define PI_#<FOUR#> 0.78539816339           // PI/4
 
 #define FD_STENCIL_1(D)                         \
   {1.0/(D*D), -2.0/(D*D), 1.0/(D*D)}
@@ -72,7 +75,7 @@ int *c = 0,  d = 1;
 
 const tFloat tStencil[] = FD_STENCIL(1 , dt);
 const tFloat xStencil[] = FD_STENCIL(sr, dx);
-const tFloat blah[1 + (2*3)];
+const tFloat blah[1 + (2*3) + PI_4];
 
 /* Testing 1 */
 

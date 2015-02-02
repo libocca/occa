@@ -50,7 +50,8 @@ namespace occa {
       std::string getMacroName(const char *&c);
       std::string getMacroIncludeFile(const char *&c);
 
-      bool evaluateMacroStatement(const char *&c);
+      typeHolder evaluateMacroStatement(const char *&c);
+      bool evaluateMacroBoolStatement(const char *&c);
       static typeHolder evaluateLabelNode(strNode *labelNodeRoot);
 
       void loadMacroInfo(macroInfo &info, const char *&c);
