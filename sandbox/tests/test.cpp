@@ -86,7 +86,7 @@ gotoTest:
 const tFloat hat_t0 = 1.3523661426929/freq; /* Testing 3 */
 const tFloat &hat_t1 = hat_t0;
 
-occaFunction tFloat dummyFunction(tFloat t){
+occaFunction tFloat dummyFunction(shared tFloat t){
   return 0;
 }
 

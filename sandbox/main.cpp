@@ -10,8 +10,13 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
+
   {
-    std::string parsedContent = parser.parseFile("tests/test.cpp");
+    std::string parsedContent = parser.parseFile("tests/pwdg.okl");
     std::cout << parsedContent << '\n';
   }
 
