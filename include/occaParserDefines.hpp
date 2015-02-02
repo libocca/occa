@@ -222,6 +222,7 @@ namespace occa {
     static const int startHash           = (1 << 5);
 
     static const int keepMacro           = (1 << 6);
+    static const int forceLineRemoval    = (1 << 7);
 
     static const int readingCode          = 0;
     static const int insideCommentBlock   = 1;

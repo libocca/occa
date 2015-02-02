@@ -1,4 +1,5 @@
 #include "occaParserTools.hpp"
+#include "occaTools.hpp"
 
 namespace occa {
   //---[ Helper Functions ]-----------------------
@@ -536,8 +537,7 @@ namespace occa {
     int status = parserNS::readingCode;
 
     while(*cRight != '\0'){
-      if(status != parserNS::insideCommentBlock)
-        skipString(cRight, parsingC);
+      skipString(cRight, parsingC);
 
       if((*cRight == '\0') || (*cRight == '\n'))
         break;
@@ -628,6 +628,26 @@ namespace occa {
 
     if(*c != '\0')
       ++c;
+  }
+
+  std::string findFileInPath(const std::string &filename){
+    const char *c0 = env::PATH.c_str();
+    const char *c1 = c0;
+
+    while(*c1 != '\0'){
+      while((*c1 != ':') && (*c1 != '\0'))
+        ++c1;
+
+      std::string fullFilename = std::string(c0, c1 - c0) + filename;
+
+      if(fileExists(fullFilename))
+        return fullFilename;
+
+      if(*c1 != '\0')
+        c0 = ++c1;
+    }
+
+    return "";
   }
   //==============================================
 

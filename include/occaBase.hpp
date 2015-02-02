@@ -74,6 +74,7 @@ namespace occa {
   void setVerboseCompilation(const bool value);
   //==================================
 
+
   //---[ UVA ]------------------------
   bool hasUvaEnabledByDefault();
   void enableUvaByDefault();

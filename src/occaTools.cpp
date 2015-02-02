@@ -2,6 +2,37 @@
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
+  //---[ Helper Info ]----------------
+  namespace env {
+    bool isInitialized = false;
+
+    std::string HOME;
+    std::string PATH, LD_LIBRARY_PATH;
+
+    void initialize(){
+      if(isInitialized)
+        return;
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      HOME            = echo("HOME");
+      PATH            = echo("PATH");
+      LD_LIBRARY_PATH = echo("LD_LIBRARY_PATH");
+#endif
+
+      isInitialized = true;
+    }
+
+    std::string echo(const std::string &var){
+      char *c_var = getenv(var.c_str());
+
+      if(c_var != NULL)
+        return std::string(c_var);
+
+      return "";
+    }
+  };
+  //==================================
+
   mutex_t::mutex_t(){
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     int error = pthread_mutex_init(&mutexHandle, NULL);
