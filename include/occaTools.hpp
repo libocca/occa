@@ -63,6 +63,7 @@ namespace occa {
 
   double currentTime();
 
+  std::string getFilePrefix(const std::string &filename);
   std::string getFileExtension(const std::string &filename);
 
   void getFilePrefixAndName(const std::string &fullFilename,

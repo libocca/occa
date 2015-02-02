@@ -498,11 +498,16 @@ namespace occa {
 
           if(includeFile[0] == '~'){
             includeFile = (env::HOME +
-                           includeFile.substr(1,
-                                              includeFile.size() - 1));
+                           includeFile.substr(1, includeFile.size() - 1));
           }
-          if(includeFile[0] != '/'){
+          else if(includeFile[0] != '/'){
             includeFile = findFileInPath(includeFile);
+          }
+          else{
+            std::string prefix = getFilePrefix(filename);
+
+            if(prefix.size())
+              includeFile = findFileInPath(prefix + '/' + includeFile);
           }
 
           if(includeFile == "")

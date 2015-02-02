@@ -115,6 +115,27 @@ namespace occa {
 #endif
   }
 
+  std::string getFilePrefix(const std::string &filename){
+    int lastSlash = 0;
+    const int chars = filename.size();
+
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    for(int i = 0; i < chars; ++i)
+      if(filename[i] == '/')
+        lastSlash = i;
+#else
+    for(int i = 0; i < chars; ++i)
+      if((filename[i] == '/') ||
+         (filename[i] == '\\'))
+        lastSlash = i;
+#endif
+
+    if(lastSlash || (filename[0] == '/'))
+      ++lastSlash;
+
+    return filename.substr(0, lastSlash);
+  }
+
   std::string getFileExtension(const std::string &filename){
     const char *c = filename.c_str();
     const char *i = NULL;
@@ -149,7 +170,8 @@ namespace occa {
         lastSlash = i;
 #endif
 
-    ++lastSlash;
+    if(lastSlash || (fullFilename[0] == '/'))
+      ++lastSlash;
 
     prefix   = fullFilename.substr(0, lastSlash);
     filename = fullFilename.substr(lastSlash, chars - lastSlash);
