@@ -609,16 +609,12 @@ namespace occa {
 
             it = macroMap.find(word2);
 
-            std::cout << "1. word = " << word << '\n';
-
             if(it != macroMap.end()){
               macroInfo &info = macros[it->second];
               word += info.parts[0];
             }
             else
               word += word2;
-
-            std::cout << "2. word = " << word << '\n';
           }
           else
             break;
