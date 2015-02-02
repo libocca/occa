@@ -29,9 +29,10 @@ int *c = 0,  d = 1;
 
 #define PI   3.14159265358
 // #define PI_4 0.78539816339         // PI/4
-#define FOUR 3
+#define THREE 3
+#define FOUR THREE
 #define FOUR 4
-#define PI_#<FOUR#> 0.78539816339           // PI/4
+#define PI_#<THREE + 1#> 0.78539816339           // PI/4
 
 #define FD_STENCIL_1(D)                         \
   {1.0/(D*D), -2.0/(D*D), 1.0/(D*D)}

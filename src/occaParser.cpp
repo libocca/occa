@@ -76,15 +76,27 @@ namespace occa {
       skipWord(cStart);
       skipWhitespace(cStart);
       c = cStart;
-      skipToWhitespace(c);
+
+      while((*c != '\0') &&
+            !isWhitespace(*c)){
+
+        if((c[0] == '#') && (c[1] == '<')){
+          while((c[0] != '\0') &&
+                ((c[0] != '#') || (c[1] != '>'))){
+
+            ++c;
+          }
+
+          c += 2;
+        }
+        else
+          ++c;
+      }
 
       std::string name(cStart, c - cStart);
-      std::cout << "1. name = " << name << '\n';
 
       if(macroMap.find(name) == macroMap.end())
         applyMacros(name);
-
-      std::cout << "2. name = " << name << '\n';
 
       return name;
     }
@@ -144,8 +156,11 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
-      if(labelNodeRoot->info & presetValue)
+      if((labelNodeRoot->info  & presetValue) &&
+         (labelNodeRoot->right == NULL)){
+
         return typeHolder(*labelNodeRoot);
+      }
 
       strNode *labelNodePos = labelNodeRoot;
 
