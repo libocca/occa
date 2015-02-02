@@ -183,7 +183,9 @@ namespace occa {
 
     std::string archSM = "";
 
-    if(dHandle->compilerFlags.find("-arch=sm_") == std::string::npos){
+    if((dHandle->compilerFlags.find("-arch=sm_") == std::string::npos) &&
+       (            info.flags.find("-arch=sm_") == std::string::npos)){
+
       std::stringstream archSM_;
 
       int major, minor;

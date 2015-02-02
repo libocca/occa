@@ -1,6 +1,48 @@
 #include "occaOpenMP.hpp"
 
 namespace occa {
+  //---[ Helper Functions ]-----------
+  namespace omp {
+    std::string compilerFlagFor(const std::string &compiler){
+      if((compiler.find("gcc")     != std::string::npos) || // GCC
+         (compiler.find("g++")     != std::string::npos) ||
+         (compiler.find("clang")   != std::string::npos) || // LLVM
+         (compiler.find("clang++") != std::string::npos)){
+
+        return "-fopenmp";
+      }
+      else if((compiler.find("icc")  != std::string::npos) || // Intel
+              (compiler.find("icpc") != std::string::npos)){
+
+        return "-openmp";
+      }
+      else if((compiler.find("xlc")   != std::string::npos) || // IBM
+              (compiler.find("xlc++") != std::string::npos)){
+
+        return "-qsmp=omp";
+      }
+      else if((compiler.find("icc")  != std::string::npos) || // Cray
+              (compiler.find("icpc") != std::string::npos)){
+
+        return ""; // On by default
+      }
+      else if((compiler.find("icc")  != std::string::npos) || // PGI
+              (compiler.find("icpc") != std::string::npos)){
+
+        return "-mp";
+      }
+      else if((compiler.find("icc")  != std::string::npos) || // PGI
+              (compiler.find("icpc") != std::string::npos)){
+
+        return "-openmp";
+      }
+
+      return "-fopenmp";
+    }
+  };
+  //==================================
+
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenMP>::kernel_t(){
@@ -137,6 +179,17 @@ namespace occa {
 
     if(dHandle->compilerEnvScript.size())
       command << dHandle->compilerEnvScript << " && ";
+
+    //---[ Check if compiler flag is added ]------
+    const std::string ompFlag = omp::compilerFlagFor(dHandle->compiler);
+
+    if((dHandle->compilerFlags.find(ompFlag) == std::string::npos) &&
+       (            info.flags.find(ompFlag) == std::string::npos)){
+
+      info.flags += ' ';
+      info.flags += ompFlag;
+    }
+    //============================================
 
     command << dHandle->compiler
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)

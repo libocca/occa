@@ -25,6 +25,13 @@ namespace occa {
   //==================================
 
 
+  //---[ Helper Functions ]-----------
+  namespace omp {
+    std::string compilerFlagFor(const std::string &compiler);
+  };
+  //==================================
+
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenMP>::kernel_t();
