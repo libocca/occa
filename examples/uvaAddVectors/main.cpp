@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   // occa::enableUVAByDefault();
 
   occa::device device;
-  device.setup("mode = Serial");
+  device.setup("mode = Serial, UVA = enabled");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between

@@ -3296,21 +3296,10 @@ namespace occa {
           const char *cRight = cLeft;
 
           bool loadString = isAString(cLeft);
-          bool loadNumber = isANumber(cLeft);
+          bool loadNumber = isANumber(cLeft) && ((cLeft[0] != '+') &&
+                                                 (cLeft[0] != '-'));
 
-          // Case: n +1
-          if(loadNumber){
-            const int delimeterChars = isAWordDelimeter(cLeft, parsingC);
-
-            if((delimeterChars == 1) &&
-               ((cLeft[0] == '+') || (cLeft[0] == '-'))){
-
-              if(nodePos->left)
-                loadNumber = false;
-            }
-          }
-
-          if(loadString){
+          if(loadString){ //-------------------------------------[ 1 ]
             skipString(cRight, parsingC);
 
             if(!firstSectionNode){
@@ -3326,8 +3315,7 @@ namespace occa {
 
             cLeft = cRight;
           }
-          else if(loadNumber){
-
+          else if(loadNumber){ //--------------------------------[ 2 ]
             skipNumber(cRight, parsingC);
 
             if(!firstSectionNode){
@@ -3343,13 +3331,13 @@ namespace occa {
 
             cLeft = cRight;
           }
-          else{
+          else{ //-----------------------------------------------[ 3 ]
             const int delimeterChars = isAWordDelimeter(cLeft, parsingC);
 
-            if(delimeterChars){
+            if(delimeterChars){ //-----------------------------[ 3.1 ]
               strNode *newNode;
 
-              if(!parsingC){
+              if(!parsingC){ //------------------------------[ 3.1.1 ]
                 // Translate Fortran keywords
                 std::string op(cLeft, delimeterChars);
                 std::string upOp = upString(op);
@@ -3378,15 +3366,15 @@ namespace occa {
                 else {
                   newNode = new strNode(op);
                 }
-              }
-              else {
+              }  //==========================================[ 3.1.1 ]
+              else { //--------------------------------------[ 3.1.2 ]
                 newNode = new strNode(std::string(cLeft, delimeterChars));
-              }
+              } //===========================================[ 3.1.2 ]
 
               newNode->info  = keywordType[newNode->value];
               newNode->depth = depth;
 
-              if(newNode->info & startSection){
+              if(newNode->info & startSection){ //-----------[ 3.1.3 ]
                 if(!firstSectionNode)
                   nodePos = nodePos->push(newNode);
                 else
@@ -3395,8 +3383,8 @@ namespace occa {
                 ++depth;
 
                 firstSectionNode = true;
-              }
-              else if(newNode->info & endSection){
+              } //===========================================[ 3.1.3 ]
+              else if(newNode->info & endSection){ //--------[ 3.1.4 ]
                 if(!firstSectionNode)
                   nodePos = nodePos->up;
 
@@ -3405,8 +3393,8 @@ namespace occa {
                 --depth;
 
                 firstSectionNode = false;
-              }
-              else if(newNode->info & macroKeywordType){
+              } //===========================================[ 3.1.4 ]
+              else if(newNode->info & macroKeywordType){ //--[ 3.1.5 ]
                 newNode->value = line;
 
                 if(!firstSectionNode)
@@ -3417,19 +3405,19 @@ namespace occa {
                 }
 
                 cLeft = line.c_str() + strlen(line.c_str()) - delimeterChars;
-              }
-              else{
+              } //===========================================[ 3.1.5 ]
+              else{ //---------------------------------------[ 3.1.6 ]
                 if(!firstSectionNode)
                   nodePos = nodePos->push(newNode);
                 else{
                   nodePos = nodePos->pushDown(newNode);
                   firstSectionNode = false;
                 }
-              }
+              } //===========================================[ 3.1.6 ]
 
               cLeft += delimeterChars;
-            }
-            else{
+            } //===============================================[ 3.1 ]
+            else{ //-------------------------------------------[ 3.2 ]
               skipWord(cRight, parsingC);
 
               std::string nodeValue(cLeft, (cRight - cLeft));
@@ -3504,8 +3492,8 @@ namespace occa {
               nodePos->depth = depth;
 
               cLeft = cRight;
-            }
-          }
+            } //===============================================[ 3.2 ]
+          } //===================================================[ 3 ]
         }
 
         if(!parsingC){
