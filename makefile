@@ -24,7 +24,7 @@ fsources = $(wildcard $(occaSPath)/*.f90)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
-dependencies = $(occaBPath)/occaInfo
+dependencies =
 
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
@@ -44,6 +44,8 @@ ifdef occaDirWasInitialized
 $(occaLPath)/libocca.so: .FORCE
 	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
 else
+.PHONY: $(occaLPath)/libocca.so $(occaBPath)/occaInfo
+
 $(occaLPath)/libocca.so:$(objects) $(headers) $(dependencies)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
@@ -63,7 +65,7 @@ $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOP
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
 
-$(occaBPath)/occaInfo:$(OCCA_DIR)/scripts/occaInfo.cpp
+$(occaBPath)/occaInfo:$(OCCA_DIR)/scripts/occaInfo.cpp $(occaLPath)/libocca.so
 	$(compiler) $(compilerFlags) -o $(occaBPath)/occaInfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links)
 
 ifdef OCCA_DEVELOPER
