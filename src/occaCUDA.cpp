@@ -27,7 +27,7 @@ namespace occa {
                       cuDeviceGetCount(&deviceCount));
 
       if(deviceCount == 0)
-        return;
+        return "";
 
       char deviceName[1024];
 
