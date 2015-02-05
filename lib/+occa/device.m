@@ -109,8 +109,8 @@ classdef device < handle
             end
         end
 
-        function stream_ = genStream(this)
-            stream_.cStream = calllib('libocca', 'occaGenStream', this.cDevice);
+        function stream_ = createStream(this)
+            stream_.cStream = calllib('libocca', 'occaCreateStream', this.cDevice);
         end
 
         function stream_ = getStream(this)

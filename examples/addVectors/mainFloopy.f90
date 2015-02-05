@@ -37,7 +37,7 @@ program main
 
   addVectors = occaBuildKernelFromFloopy(device, "addVectors.floopy", "addVectors", "")
 
-  ! list = occaGenArgumentList()
+  ! list = occaCreateArgumentList()
 
   dims     = 1
   innerDim = 16

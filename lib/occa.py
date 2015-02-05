@@ -84,7 +84,7 @@ class device:
                                                          cSource)))
 
     def createStream(self):
-        return self.lib.occaGenStream(self.cDevice)
+        return self.lib.occaCreateStream(self.cDevice)
 
     def getStream(self):
         return self.lib.occaGetStream(self.cDevice)
@@ -112,7 +112,7 @@ class kernelInfo:
     def __init__(self):
         self.lib = libocca
 
-        self.cKernelInfo = self.lib.occaGenKernelInfo()
+        self.cKernelInfo = self.lib.occaCreateKernelInfo()
 
     def addDefine(self, macro, value):
         self.lib.occaKernelInfoAddDefine(self.cKernelInfo,
@@ -163,10 +163,10 @@ class kernel:
         # X = getattr(self.lib, "X")
         # X.restype = c_void_p
 
-        occaGenArgumentList = getattr(self.lib, "occaGenArgumentList")
-        occaGenArgumentList.restype = c_void_p
+        occaCreateArgumentList = getattr(self.lib, "occaCreateArgumentList")
+        occaCreateArgumentList.restype = c_void_p
 
-        argList = c_void_p(self.lib.occaGenArgumentList())
+        argList = c_void_p(self.lib.occaCreateArgumentList())
 
         for i in xrange(len(args)):
             arg = args[i]

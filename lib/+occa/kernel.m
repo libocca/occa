@@ -56,7 +56,7 @@ classdef kernel < handle
                        varargout{1} = this.cKernel;
                    end
                case '()'
-                   argList = calllib('libocca', 'occaGenArgumentList');
+                   argList = calllib('libocca', 'occaCreateArgumentList');
 
                    for pos = 1:length(index.subs)
                        arg = index.subs{pos};
