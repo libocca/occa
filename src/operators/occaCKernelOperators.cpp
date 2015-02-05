@@ -10,7 +10,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg0);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -31,7 +31,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg1);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -52,7 +52,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg2);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -74,7 +74,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg3);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -96,7 +96,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg4);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -118,7 +118,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg5);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -141,7 +141,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg6);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -164,7 +164,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg7);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -187,7 +187,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg8);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -211,7 +211,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg9);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -235,7 +235,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg10);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -259,7 +259,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg11);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -284,7 +284,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg12);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -309,7 +309,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg13);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -334,7 +334,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg14);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -360,7 +360,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg15);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -386,7 +386,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg16);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -412,7 +412,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg17);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -439,7 +439,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg18);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -466,7 +466,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg19);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -493,7 +493,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg20);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -521,7 +521,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg21);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -549,7 +549,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg22);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -577,7 +577,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg23);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -606,7 +606,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg24);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -635,7 +635,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg25);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -664,7 +664,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg26);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -694,7 +694,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg27);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -724,7 +724,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg28);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -754,7 +754,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg29);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -785,7 +785,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg30);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -816,7 +816,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg31);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -847,7 +847,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg32);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -879,7 +879,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg33);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -911,7 +911,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg34);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -943,7 +943,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg35);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -976,7 +976,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg36);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1009,7 +1009,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg37);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1042,7 +1042,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg38);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1076,7 +1076,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg39);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1110,7 +1110,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg40);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1144,7 +1144,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg41);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1179,7 +1179,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg42);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1214,7 +1214,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg43);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1249,7 +1249,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg44);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1285,7 +1285,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg45);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1321,7 +1321,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg46);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1357,7 +1357,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg47);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1394,7 +1394,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg48);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
@@ -1431,7 +1431,7 @@
           kernel_.addArgument(i, occa::kernelArg(memory_.mem));
         }
         else{
-          occaType_t &type_ = *((occaType_t*) arg49);
+          occaType_t &type_ = *((occaType_t*) args[i]);
           kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));
         }
       }
