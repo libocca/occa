@@ -23,7 +23,7 @@ module occa
     occaDeviceManagedMappedAlloc,  &
     occaDeviceFlush,               &
     occaDeviceFinish,              &
-    occaDeviceGenStream,           &
+    occaDeviceCreateStream,        &
     occaDeviceGetStream,           &
     occaDeviceSetStream,           &
     occaDeviceTagStream,           &
@@ -34,14 +34,17 @@ module occa
     ! occaKernelSetWorkingDims,   &
     occaKernelSetAllWorkingDims,   &
     occaKernelTimeTaken,           &
-    occaGenArgumentList,           &
+    occaCreateArgumentList,        &
     occaArgumentListClear,         &
     occaArgumentListFree,          &
     occaArgumentListAddArg,        &
     occaKernelRun,                 &
     occaKernelRun_,                &
     occaKernelFree,                &
-    occaGenKernelInfo,             &
+    occaCreateDeviceInfo,          &
+    occaDeviceInfoAppend,          &
+    occaDeviceInfoFree,            &
+    occaCreateKernelInfo,          &
     occaKernelInfoAddDefine,       &
     occaKernelInfoAddInclude,      &
     occaKernelInfoFree,            &
@@ -116,6 +119,7 @@ module occa
   interface occaGetDevice
     module procedure occaGetDevice_func
     module procedure occaGetDeviceFromArgs_func
+    module procedure occaGetDeviceFromInfo_func
   end interface occaGetDevice
 
   interface occaBuildKernelFromSource
@@ -229,9 +233,9 @@ module occa
     end subroutine occaDeviceFinish_fc
   end interface occaDeviceFinish
 
-  interface occaDeviceGenStream
-    module procedure occaDeviceGenStream_func
-  end interface occaDeviceGenStream
+  interface occaDeviceCreateStream
+    module procedure occaDeviceCreateStream_func
+  end interface occaDeviceCreateStream
 
   interface occaDeviceGetStream
     module procedure occaDeviceGetStream_func
@@ -308,9 +312,9 @@ module occa
     module procedure occaKernelTimeTaken_func
   end interface occaKernelTimeTaken
 
-  interface occaGenArgumentList
-    module procedure occaGenArgumentList_func
-  end interface occaGenArgumentList
+  interface occaCreateArgumentList
+    module procedure occaCreateArgumentList_func
+  end interface occaCreateArgumentList
 
   interface occaArgumentListClear
     subroutine occaArgumentListClear_fc(list)
@@ -685,9 +689,31 @@ module occa
     end subroutine occaKernelFree_fc
   end interface occaKernelFree
 
-  interface occaGenKernelInfo
-    module procedure occaGenKernelInfo_func
-  end interface occaGenKernelInfo
+  interface occaCreateDeviceInfo
+    module procedure occaCreateDeviceInfo_func
+  end interface occaCreateDeviceInfo
+
+  interface occaDeviceInfoAppend
+    subroutine occaDeviceInfoAppend_fc(info, key, value_)
+      use occaFTypes_m
+      implicit none
+      type(occaDeviceInfo), intent(inout) :: info
+      character(len=*),     intent(in)    :: key
+      character(len=*),     intent(in)    :: value_
+    end subroutine occaDeviceInfoAppend_fc
+ end interface occaDeviceInfoAppend
+
+  interface occaDeviceInfoFree
+    subroutine occaDeviceInfoFree_fc(info)
+      use occaFTypes_m
+      implicit none
+      type(occaDeviceInfo), intent(inout) :: info
+    end subroutine occaDeviceInfoFree_fc
+ end interface occaDeviceInfoFree
+
+  interface occaCreateKernelInfo
+    module procedure occaCreateKernelInfo_func
+  end interface occaCreateKernelInfo
 
   interface occaKernelInfoAddDefine
     ! subroutine occaKernelInfoAddDefine_fc(info, macro, val)
@@ -1025,6 +1051,21 @@ contains
     call occaGetDevice_fc(device, infos)
   end function occaGetDevice_func
 
+  type(occaDevice) function occaGetDeviceFromInfo_func(dInfo) result(device)
+    type(occaDeviceInfo), intent(in) :: dInfo
+
+    interface
+      subroutine occaGetDeviceFromInfo_fc(device, dInfo)
+        use occaFTypes_m
+        implicit none
+        type(occaDevice), intent(out) :: device
+        type(occaDeviceInfo), intent(in) :: dInfo
+      end subroutine occaGetDeviceFromInfo_fc
+    end interface
+
+    call occaGetDeviceFromInfo_fc(device, dInfo)
+  end function occaGetDeviceFromInfo_func
+
   type(occaDevice) function occaGetDeviceFromArgs_func(mode, arg1, arg2) result(device)
     character(len=*), intent(in)  :: mode
     integer(4),       intent(in)  :: arg1
@@ -1064,6 +1105,19 @@ contains
 
     call occaBuildKernelFromSource_fc(kernel, device, filename, functionName, info)
   end function occaBuildKernelFromSource_func
+
+  type(occaDeviceInfo) function occaCreateDeviceInfo_func() result(info)
+
+    interface
+      subroutine occaCreateDeviceInfo_fc(info)
+        use occaFTypes_m
+        implicit none
+        type(occaDeviceInfo), intent(out) :: info
+      end subroutine occaCreateDeviceInfo_fc
+    end interface
+
+    call occaCreateDeviceInfo_fc(info)
+  end function occaCreateDeviceInfo_func
 
   type(occaKernel) function occaBuildKernelFromSourceNoKernelInfo_func(device, filename, functionName) result(kernel)
     type(occaDevice),     intent(in)  :: device
@@ -1469,20 +1523,20 @@ contains
 
   !=====================================
 
-  type(occaStream) function occaDeviceGenStream_func(device) result(stream)
+  type(occaStream) function occaDeviceCreateStream_func(device) result(stream)
     type(occaDevice),     intent(inout)  :: device
 
     interface
-      subroutine occaDeviceGenStream_fc(stream, device)
+      subroutine occaDeviceCreateStream_fc(stream, device)
         use occaFTypes_m
         implicit none
         type(occaStream),  intent(out)   :: stream
         type(occaDevice),  intent(inout) :: device
-      end subroutine occaDeviceGenStream_fc
+      end subroutine occaDeviceCreateStream_fc
     end interface
 
-    call occaDeviceGenStream_fc(stream, device)
-  end function occaDeviceGenStream_func
+    call occaDeviceCreateStream_fc(stream, device)
+  end function occaDeviceCreateStream_func
 
   type(occaStream) function occaDeviceGetStream_func(device) result(stream)
     type(occaDevice),     intent(inout)  :: device
@@ -1571,31 +1625,31 @@ contains
   end function occaKernelTimeTaken_func
 
 
-  type(occaArgumentList) function occaGenArgumentList_func() result(args)
+  type(occaArgumentList) function occaCreateArgumentList_func() result(args)
 
     interface
-      subroutine occaGenArgumentList_fc(args)
+      subroutine occaCreateArgumentList_fc(args)
         use occaFTypes_m
         implicit none
         type(occaArgumentList), intent(out) :: args
-      end subroutine occaGenArgumentList_fc
+      end subroutine occaCreateArgumentList_fc
     end interface
 
-    call occaGenArgumentList_fc(args)
-  end function occaGenArgumentList_func
+    call occaCreateArgumentList_fc(args)
+  end function occaCreateArgumentList_func
 
-  type(occaKernelInfo) function occaGenKernelInfo_func() result(info)
+  type(occaKernelInfo) function occaCreateKernelInfo_func() result(info)
 
     interface
-      subroutine occaGenKernelInfo_fc(info)
+      subroutine occaCreateKernelInfo_fc(info)
         use occaFTypes_m
         implicit none
         type(occaKernelInfo), intent(out) :: info
-      end subroutine occaGenKernelInfo_fc
+      end subroutine occaCreateKernelInfo_fc
     end interface
 
-    call occaGenKernelInfo_fc(info)
-  end function occaGenKernelInfo_func
+    call occaCreateKernelInfo_fc(info)
+  end function occaCreateKernelInfo_func
 
   type(occaMemory) function occaDeviceWrapMemory_func(device, handle, bytes) result(mem)
     type(occaDevice), intent(in)  :: device

@@ -64,6 +64,7 @@ extern "C" {
     void* otherStuff;
   } occaTag;
 
+  typedef void* occaDeviceInfo;
   typedef void* occaKernelInfo;
 
   typedef struct occaDim_t {
@@ -105,6 +106,14 @@ extern "C" {
   //---[ Device ]-----------------------
   OCCA_LFUNC void OCCA_RFUNC occaPrintAvailableDevices();
 
+  OCCA_LFUNC occaDeviceInfo OCCA_RFUNC occaCreateDeviceInfo();
+
+  OCCA_LFUNC void OCCA_RFUNC occaDeviceInfoAppend(occaDeviceInfo info,
+                                                  const char *key,
+                                                  const char *value);
+
+  OCCA_LFUNC void OCCA_RFUNC occaDeviceInfoFree(occaDeviceInfo info);
+
   OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
 
   OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompiler(occaDevice device,
@@ -114,6 +123,8 @@ extern "C" {
                                                         const char *compilerFlags);
 
   OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDevice(const char *infos);
+
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromInfo(occaDeviceInfo dInfo);
 
   OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromArgs(const char *mode,
                                                          int arg1, int arg2);
@@ -164,7 +175,7 @@ extern "C" {
   OCCA_LFUNC void OCCA_RFUNC occaDeviceFlush(occaDevice device);
   OCCA_LFUNC void OCCA_RFUNC occaDeviceFinish(occaDevice device);
 
-  OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGenStream(occaDevice device);
+  OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device);
   OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device);
   OCCA_LFUNC void       OCCA_RFUNC occaDeviceSetStream(occaDevice device, occaStream stream);
 
@@ -195,7 +206,7 @@ extern "C" {
 
   OCCA_LFUNC double OCCA_RFUNC occaKernelTimeTaken(occaKernel kernel);
 
-  OCCA_LFUNC occaArgumentList OCCA_RFUNC occaGenArgumentList();
+  OCCA_LFUNC occaArgumentList OCCA_RFUNC occaCreateArgumentList();
 
   OCCA_LFUNC void OCCA_RFUNC occaArgumentListClear(occaArgumentList list);
 
@@ -232,7 +243,7 @@ extern "C" {
 
   OCCA_LFUNC void OCCA_RFUNC occaKernelFree(occaKernel kernel);
 
-  OCCA_LFUNC occaKernelInfo OCCA_RFUNC occaGenKernelInfo();
+  OCCA_LFUNC occaKernelInfo OCCA_RFUNC occaCreateKernelInfo();
 
   OCCA_LFUNC void OCCA_RFUNC occaKernelInfoAddDefine(occaKernelInfo info,
                                                      const char *macro,

@@ -165,6 +165,172 @@ namespace occa {
   const occa::formatType floatx2Format(floatFormatIndex, 2);
   const occa::formatType floatx4Format(floatFormatIndex, 4);
 
+  //---[ Kernel Info ]--------
+  kernelInfo::kernelInfo() :
+    occaKeywords(""),
+    header(""),
+    flags("") {}
+
+  kernelInfo::kernelInfo(const kernelInfo &p) :
+    occaKeywords(p.occaKeywords),
+    header(p.header),
+    flags(p.flags) {}
+
+  kernelInfo& kernelInfo::operator = (const kernelInfo &p){
+    occaKeywords = p.occaKeywords;
+    header = p.header;
+    flags  = p.flags;
+
+    return *this;
+  }
+
+  kernelInfo& kernelInfo::operator += (const kernelInfo &p){
+    header += p.header;
+    flags  += p.flags;
+
+    return *this;
+  }
+
+  std::string kernelInfo::salt() const {
+    return (header + flags);
+  }
+
+  bool kernelInfo::isAnOccaDefine(const std::string &name){
+    if((name == "OCCA_USING_CPU") ||
+       (name == "OCCA_USING_GPU") ||
+
+       (name == "OCCA_USING_SERIAL")   ||
+       (name == "OCCA_USING_OPENMP")   ||
+       (name == "OCCA_USING_OPENCL")   ||
+       (name == "OCCA_USING_CUDA")     ||
+       (name == "OCCA_USING_PTHREADS") ||
+       (name == "OCCA_USING_COI")      ||
+
+       (name == "occaInnerDim0") ||
+       (name == "occaInnerDim1") ||
+       (name == "occaInnerDim2") ||
+
+       (name == "occaOuterDim0") ||
+       (name == "occaOuterDim1") ||
+       (name == "occaOuterDim2"))
+      return true;
+
+    return false;
+  }
+
+  void kernelInfo::addOCCAKeywords(const std::string &keywords){
+    occaKeywords = keywords;
+  }
+
+  void kernelInfo::addIncludeDefine(const std::string &filename){
+    header += "\n#include \"" + filename + "\"\n";
+  }
+
+  void kernelInfo::addInclude(const std::string &filename){
+    header += '\n';
+    header += readFile(filename);
+    header += '\n';
+  }
+
+  void kernelInfo::removeDefine(const std::string &macro){
+    if(!isAnOccaDefine(macro))
+      header += "#undef " + macro + '\n';
+  }
+
+  void kernelInfo::addSource(const std::string &content){
+    header += content;
+  }
+
+  void kernelInfo::addCompilerFlag(const std::string &f){
+    flags += " " + f;
+  }
+
+  void kernelInfo::addCompilerIncludePath(const std::string &path){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    flags += " -I \"" + path + "\"";
+#else
+    flags += " /I \"" + path + "\"";
+#endif
+  }
+
+  template <>
+  void kernelInfo::addDefine(const std::string &macro, const std::string &value){
+    std::stringstream ss;
+
+    if(isAnOccaDefine(macro))
+      ss << "#undef " << macro << "\n";
+
+    // Make sure newlines are followed by escape characters
+    std::string value2 = "";
+    const int chars = value.size();
+
+    for(int i = 0; i < chars; ++i){
+      if(value[i] != '\n')
+        value2 += value[i];
+      else{
+        if((i < (chars - 1))
+           && (value[i] != '\\'))
+          value2 += "\\\n";
+        else
+          value2 += '\n';
+      }
+    }
+
+    if(value2[value2.size() - 1] != '\n')
+      value2 += '\n';
+    //==============
+
+    ss << "#define " << macro << " " << value2 << '\n';
+
+    header = ss.str() + header;
+  }
+
+  template <>
+  void kernelInfo::addDefine(const std::string &macro, const float &value){
+    std::stringstream ss;
+
+    if(isAnOccaDefine(macro))
+      ss << "#undef " << macro << "\n";
+
+    ss << "#define " << macro << " ((float) " << std::setprecision(8) << value << ")\n";
+
+    header = ss.str() + header;
+  }
+
+  template <>
+  void kernelInfo::addDefine(const std::string &macro, const double &value){
+    std::stringstream ss;
+
+    if(isAnOccaDefine(macro))
+      ss << "#undef " << macro << "\n";
+
+    ss << "#define " << macro << " ((double) " << std::setprecision(16) << value << ")\n";
+
+    header = ss.str() + header;
+  }
+
+  //---[ Device Info ]--------
+  deviceInfo::deviceInfo(){}
+
+  deviceInfo::deviceInfo(const deviceInfo &dInfo) :
+    infos(dInfo.infos) {}
+
+  deviceInfo& deviceInfo::operator = (const deviceInfo &dInfo){
+    infos = dInfo.infos;
+
+    return *this;
+  }
+
+  void deviceInfo::append(const std::string &key,
+                          const std::string &value){
+    if(infos.size() != 0)
+      infos += ',';
+
+    infos += key;
+    infos += '=';
+    infos += value;
+  }
+
   //---[ Device :: Arg Info ]-
   argInfo::argInfo() :
     info(""),
@@ -750,6 +916,10 @@ namespace occa {
 
   void device::setupHandle(const std::string &m){
     setupHandle( strToMode(m) );
+  }
+
+  void device::setup(deviceInfo &dInfo){
+    setup(dInfo.infos);
   }
 
   void device::setup(const std::string &infos){

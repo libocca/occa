@@ -64,8 +64,6 @@ namespace occa {
 
     int deviceCoreCount(int pID, int dID);
 
-    occa::deviceInfo deviceInfo(int pID, int dID);
-
     std::string getDeviceListInfo();
 
     void buildKernelFromSource(OpenCLKernelData_t &data_,

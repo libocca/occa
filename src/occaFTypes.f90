@@ -41,6 +41,11 @@ module occaFTypes_m
      integer, pointer :: p
   end type occaTag
 
+  type :: occaDeviceInfo
+     private
+     integer, pointer :: p
+  end type occaDeviceInfo
+
   type :: occaKernelInfo
      private
      integer, pointer :: p

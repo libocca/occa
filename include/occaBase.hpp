@@ -45,9 +45,6 @@
 #endif
 
 namespace occa {
-  namespace cpu{
-    std::string getDeviceListInfo();
-  };
   typedef int mode;
 
   class kernel_v;
@@ -63,6 +60,7 @@ namespace occa {
   class device;
 
   class kernelInfo;
+  class deviceInfo;
   class kernelDatabase;
 
   //---[ Globals & Flags ]------------
@@ -218,119 +216,6 @@ namespace occa {
 
 
   //---[ Helper Classes ]-------------
-  class deviceInfo {
-  public:
-    static const char *sLine, *dLine1, *dLine2;
-    static const char *header;
-
-    std::string name;
-    int id, count, info;
-    float memoryGB;
-    int preferredMode;
-
-    std::vector<std::string> labels, labelInfo;
-
-    inline deviceInfo() :
-      name("N/A"),
-      id(0),
-      count(1),
-      info(0),
-      memoryGB(0),
-      preferredMode(0) {}
-
-    inline deviceInfo(const deviceInfo &dInfo) :
-      name(dInfo.name),
-      id(dInfo.id),
-      count(dInfo.count),
-      info(dInfo.info),
-      memoryGB(dInfo.memoryGB),
-      preferredMode(dInfo.preferredMode),
-
-      labels(dInfo.labels),
-      labelInfo(dInfo.labelInfo) {}
-
-    inline deviceInfo& operator = (const deviceInfo &dInfo){
-      name          = dInfo.name;
-      id            = dInfo.id;
-      count         = dInfo.count;
-      info          = dInfo.info;
-      memoryGB      = dInfo.memoryGB;
-      preferredMode = dInfo.preferredMode;
-
-      labels    = dInfo.labels;
-      labelInfo = dInfo.labelInfo;
-
-      return *this;
-    }
-
-    inline std::string summarizedInfo() const {
-      std::stringstream ss;
-
-      ss << "| " << std::left << std::setw(42) << name
-         << "| " << std::left << std::setw(4)  << count
-         << "| " << std::left << std::setw(33) << modes(info, preferredMode)
-         << "|";
-
-      return ss.str();
-    }
-
-    inline std::string detailedInfo() const {
-      std::stringstream ss;
-
-      const int labelCount = labels.size();
-
-      ss << dLine1 << '\n'
-         << "| " << std::left << std::setw(55) << name << "|\n"
-         << dLine1 << '\n'
-
-         << "| " << std::left << std::setw(16) << "Device Count"
-         << "| " << std::left << std::setw(37) << count << "|\n"
-         << dLine2 << '\n'
-
-         << "| " << std::left << std::setw(16) << "Vendor"
-         << "| " << std::left << std::setw(37) << vendor(info) << "|\n"
-
-         << "| " << std::left << std::setw(16) << "Memory"
-         << "| " << std::left << std::setw(37) << memoryGB << "|\n"
-         << dLine2 << '\n';
-
-      for(int i = 0; i < labelCount; ++i)
-        ss << "| " << std::left << std::setw(16) << labels[i]
-           << "| " << std::left << std::setw(37) << labelInfo[i]
-           << "|\n";
-
-      ss << dLine1 << '\n';
-
-      return ss.str();
-    }
-
-    inline bool operator == (const deviceInfo &dInfo) const {
-      return ((name   == dInfo.name) &&
-              (id     == dInfo.id)   &&
-              (info   == dInfo.info));
-    }
-
-    inline bool operator != (const deviceInfo &info) const {
-      return !(*this == info);
-    }
-
-    inline bool operator < (const deviceInfo &dInfo) const {
-      if(name < dInfo.name) return true;
-      if(name > dInfo.name) return false;
-
-      if(id < dInfo.id) return true;
-      if(id > dInfo.id) return false;
-
-      if(info < dInfo.info) return true;
-
-      return false;
-    }
-
-    inline bool operator > (const deviceInfo &info) const {
-      return ((*this != info) && !(*this < info));
-    }
-  };
-
   class argInfo {
   public:
     std::string info, value;
@@ -1441,6 +1326,7 @@ namespace occa {
     void setupHandle(occa::mode m);
     void setupHandle(const std::string &m);
 
+    void setup(deviceInfo &dInfo);
     void setup(const std::string &infos);
 
     void setup(occa::mode m,
@@ -1723,80 +1609,41 @@ namespace occa {
   }
   //==================================
 
+  class deviceInfo {
+  public:
+    std::string infos;
+
+    deviceInfo();
+
+    deviceInfo(const deviceInfo &dInfo);
+    deviceInfo& operator = (const deviceInfo &dInfo);
+
+    void append(const std::string &key,
+                const std::string &value);
+  };
+
   class kernelInfo {
   public:
     std::string occaKeywords, header, flags;
 
-    inline kernelInfo() :
-      occaKeywords(""),
-      header(""),
-      flags("") {}
+    kernelInfo();
 
-    inline kernelInfo(const kernelInfo &p) :
-      occaKeywords(p.occaKeywords),
-      header(p.header),
-      flags(p.flags) {}
+    kernelInfo(const kernelInfo &p);
+    kernelInfo& operator = (const kernelInfo &p);
 
-    inline kernelInfo& operator = (const kernelInfo &p){
-      occaKeywords = p.occaKeywords;
-      header = p.header;
-      flags  = p.flags;
+    kernelInfo& operator += (const kernelInfo &p);
 
-      return *this;
-    }
+    std::string salt() const;
 
-    inline kernelInfo& operator += (const kernelInfo &p){
-      header += p.header;
-      flags  += p.flags;
+    static bool isAnOccaDefine(const std::string &name);
 
-      return *this;
-    }
+    void addOCCAKeywords(const std::string &keywords);
 
-    inline std::string salt() const {
-      return (header + flags);
-    }
+    void addIncludeDefine(const std::string &filename);
 
-    inline static bool isAnOccaDefine(const std::string &name){
-      if((name == "OCCA_USING_CPU") ||
-         (name == "OCCA_USING_GPU") ||
+    void addInclude(const std::string &filename);
 
-         (name == "OCCA_USING_SERIAL")   ||
-         (name == "OCCA_USING_OPENMP")   ||
-         (name == "OCCA_USING_OPENCL")   ||
-         (name == "OCCA_USING_CUDA")     ||
-         (name == "OCCA_USING_PTHREADS") ||
-         (name == "OCCA_USING_COI")      ||
-
-         (name == "occaInnerDim0") ||
-         (name == "occaInnerDim1") ||
-         (name == "occaInnerDim2") ||
-
-         (name == "occaOuterDim0") ||
-         (name == "occaOuterDim1") ||
-         (name == "occaOuterDim2"))
-        return true;
-
-      return false;
-    }
-
-    inline void addOCCAKeywords(const std::string &keywords){
-      occaKeywords = keywords;
-    }
-
-    inline void addIncludeDefine(const std::string &filename){
-      header += "\n#include \"" + filename + "\"\n";
-    }
-
-    inline void addInclude(const std::string &filename){
-      header += '\n';
-      header += readFile(filename);
-      header += '\n';
-    }
-
-    inline void removeDefine(const std::string &macro){
-      if(!isAnOccaDefine(macro))
-        header += "#undef " + macro + '\n';
-    }
+    void removeDefine(const std::string &macro);
 
     template <class TM>
     inline void addDefine(const std::string &macro, const TM &value){
@@ -1810,78 +1657,16 @@ namespace occa {
       header = ss.str() + header;
     }
 
-    inline void addSource(const std::string &content){
-      header += content;
-    }
+    void addSource(const std::string &content);
 
-    inline void addCompilerFlag(const std::string &f){
-      flags += " " + f;
-    }
+    void addCompilerFlag(const std::string &f);
 
-    inline void addCompilerIncludePath(const std::string &path){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-      flags += " -I \"" + path + "\"";
-#else
-      flags += " /I \"" + path + "\"";
-#endif
-    }
+    void addCompilerIncludePath(const std::string &path);
   };
 
-  template <>
-  inline void kernelInfo::addDefine(const std::string &macro, const std::string &value){
-    std::stringstream ss;
-
-    if(isAnOccaDefine(macro))
-      ss << "#undef " << macro << "\n";
-
-    // Make sure newlines are followed by escape characters
-    std::string value2 = "";
-    const int chars = value.size();
-
-    for(int i = 0; i < chars; ++i){
-      if(value[i] != '\n')
-        value2 += value[i];
-      else{
-        if((i < (chars - 1))
-           && (value[i] != '\\'))
-          value2 += "\\\n";
-        else
-          value2 += '\n';
-      }
-    }
-
-    if(value2[value2.size() - 1] != '\n')
-      value2 += '\n';
-    //======================================================
-
-    ss << "#define " << macro << " " << value2 << '\n';
-
-    header = ss.str() + header;
-  }
-
-  template <>
-  inline void kernelInfo::addDefine(const std::string &macro, const float &value){
-    std::stringstream ss;
-
-    if(isAnOccaDefine(macro))
-      ss << "#undef " << macro << "\n";
-
-    ss << "#define " << macro << " ((float) " << std::setprecision(8) << value << ")\n";
-
-    header = ss.str() + header;
-  }
-
-  template <>
-  inline void kernelInfo::addDefine(const std::string &macro, const double &value){
-    std::stringstream ss;
-
-    if(isAnOccaDefine(macro))
-      ss << "#undef " << macro << "\n";
-
-    ss << "#define " << macro << " ((double) " << std::setprecision(16) << value << ")\n";
-
-    header = ss.str() + header;
-  }
+  template <> void kernelInfo::addDefine(const std::string &macro, const std::string &value);
+  template <> void kernelInfo::addDefine(const std::string &macro, const float &value);
+  template <> void kernelInfo::addDefine(const std::string &macro, const double &value);
 
   inline dim::dim() :
     x(1),

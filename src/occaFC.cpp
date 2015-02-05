@@ -115,6 +115,7 @@
 #define  OCCADEVICESETCOMPILER_FC        OCCA_F2C_GLOBAL_(occadevicesetcompiler_fc      , OCCADEVICESETCOMPILER_FC)
 #define  OCCADEVICESETCOMPILERFLAGS_FC   OCCA_F2C_GLOBAL_(occadevicesetcompilerflags_fc , OCCADEVICESETCOMPILERFLAGS_FC)
 #define  OCCAGETDEVICE_FC                OCCA_F2C_GLOBAL_(occagetdevice_fc              , OCCAGETDEVICE_FC)
+#define  OCCAGETDEVICEFROMINFO_FC        OCCA_F2C_GLOBAL_(occagetdevicefrominfo_fc      , OCCAGETDEVICEFROMINFO_FC)
 #define  OCCAGETDEVICEFROMARGS_FC        OCCA_F2C_GLOBAL_(occagetdevicefromargs_fc      , OCCAGETDEVICEFROMARGS_FC)
 #define  OCCABUILDKERNELFROMSOURCE_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsource_fc  , OCCABUILDKERNELFROMSOURCE_FC)
 #define  OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsourcenokernelinfo_fc  , OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC)
@@ -137,7 +138,7 @@
 #define  OCCADEVICEMANAGEDMAPPEDALLOC_FC     OCCA_F2C_GLOBAL_(occadevicemanagedmappedalloc_fc     , OCCADEVICEMANAGEDMAPPEDALLOC_FC)
 #define  OCCADEVICEFLUSH_FC              OCCA_F2C_GLOBAL_(occadeviceflush_fc            , OCCADEVICEFLUSH_FC)
 #define  OCCADEVICEFINISH_FC             OCCA_F2C_GLOBAL_(occadevicefinish_fc           , OCCADEVICEFINISH_FC)
-#define  OCCADEVICEGENSTREAM_FC          OCCA_F2C_GLOBAL_(occadevicegenstream_fc        , OCCADEVICEGENSTREAM_FC)
+#define  OCCADEVICECREATESTREAM_FC       OCCA_F2C_GLOBAL_(occadevicecreatestream_fc     , OCCADEVICECREATESTREAM_FC)
 #define  OCCADEVICEGETSTREAM_FC          OCCA_F2C_GLOBAL_(occadevicegetstream_fc        , OCCADEVICEGETSTREAM_FC)
 #define  OCCADEVICESETSTREAM_FC          OCCA_F2C_GLOBAL_(occadevicesetstream_fc        , OCCADEVICESETSTREAM_FC)
 #define  OCCADEVICETAGSTREAM_FC          OCCA_F2C_GLOBAL_(occadevicetagstream_fc        , OCCADEVICETAGSTREAM_FC)
@@ -149,7 +150,7 @@
 // #define  OCCAKERNELSETWORKINGDIMS_FC     OCCA_F2C_GLOBAL_(occakernelsetworkingdims_fc   , OCCAKERNELSETWORKINGDIMS_FC)
 #define  OCCAKERNELSETALLWORKINGDIMS_FC  OCCA_F2C_GLOBAL_(occakernelsetallworkingdims_fc, OCCAKERNELSETALLWORKINGDIMS_FC)
 #define  OCCAKERNELTIMETAKEN_FC          OCCA_F2C_GLOBAL_(occakerneltimetaken_fc        , OCCAKERNELTIMETAKEN_FC)
-#define  OCCAGENARGUMENTLIST_FC          OCCA_F2C_GLOBAL_(occagenargumentlist_fc        , OCCAGENARGUMENTLIST_FC)
+#define  OCCACREATEARGUMENTLIST_FC       OCCA_F2C_GLOBAL_(occacreateargumentlist_fc     , OCCACREATEARGUMENTLIST_FC)
 #define  OCCAARGUMENTLISTCLEAR_FC        OCCA_F2C_GLOBAL_(occaargumentlistclear_fc      , OCCAARGUMENTLISTCLEAR_FC)
 #define  OCCAARGUMENTLISTFREE_FC         OCCA_F2C_GLOBAL_(occaargumentlistfree_fc       , OCCAARGUMENTLISTFREE_FC)
 #define  OCCAARGUMENTLISTADDARGMEM_FC    OCCA_F2C_GLOBAL_(occaargumentlistaddargmem_fc  , OCCAARGUMENTLISTADDARGMEM_FC)
@@ -183,7 +184,10 @@
 #define  OCCAKERNELRUN22_FC              OCCA_F2C_GLOBAL_(occakernelrun22_fc            , OCCAKERNELRUN22_FC)
 #define  OCCAKERNELRUN24_FC              OCCA_F2C_GLOBAL_(occakernelrun24_fc            , OCCAKERNELRUN24_FC)
 #define  OCCAKERNELFREE_FC               OCCA_F2C_GLOBAL_(occakernelfree_fc             , OCCAKERNELFREE_FC)
-#define  OCCAGENKERNELINFO_FC            OCCA_F2C_GLOBAL_(occagenkernelinfo_fc          , OCCAGENKERNELINFO_FC)
+#define  OCCACREATEDEVICEINFO_FC         OCCA_F2C_GLOBAL_(occacreatedeviceinfo_fc       , OCCACREATEDEVICEINFO_FC)
+#define  OCCADEVICEINFOAPPEND_FC         OCCA_F2C_GLOBAL_(occadeviceinfoappend_fc       , OCCADEVICEINFOAPPEND_FC)
+#define  OCCADEVICEINFOFREE_FC           OCCA_F2C_GLOBAL_(occadeviceinfofree_fc         , OCCADEVICEINFOFREE_FC)
+#define  OCCACREATEKERNELINFO_FC         OCCA_F2C_GLOBAL_(occacreatekernelinfo_fc       , OCCACREATEKERNELINFO_FC)
 #define  OCCAKERNELINFOADDDEFINE_FC      OCCA_F2C_GLOBAL_(occakernelinfoadddefine_fc    , OCCAKERNELINFOADDDEFINE_FC)
 #define  OCCAKERNELINFOADDDEFINEINT4_FC  OCCA_F2C_GLOBAL_(occakernelinfoadddefineint4_fc, OCCAKERNELINFOADDDEFINEINT4_FC)
 #define  OCCAKERNELINFOADDDEFINEREAL4_FC OCCA_F2C_GLOBAL_(occakernelinfoadddefinereal4_fc, OCCAKERNELINFOADDDEFINEREAL4_FC)
@@ -317,6 +321,11 @@ extern "C" {
     *device = occaGetDevice(infos_c);
 
     OCCA_F2C_FREE_STR(infos, infos_c);
+  }
+
+  void OCCAGETDEVICEFROMINFO_FC(occaDevice *device,
+                                occaDeviceInfo *dInfo){
+    *device = occaGetDeviceFromInfo(dInfo);
   }
 
   void OCCAGETDEVICEFROMARGS_FC(occaDevice *device, const char *mode OCCA_F2C_LSTR(mode_l),
@@ -503,8 +512,8 @@ extern "C" {
     occaDeviceFinish(*device);
   }
 
-  void OCCADEVICEGENSTREAM_FC(occaStream *stream, occaDevice *device){
-    *stream = occaDeviceGenStream(*device);
+  void OCCADEVICECREATESTREAM_FC(occaStream *stream, occaDevice *device){
+    *stream = occaDeviceCreateStream(*device);
   }
   void OCCADEVICEGETSTREAM_FC(occaStream *stream, occaDevice *device){
     *stream = occaDeviceGetStream(*device);
@@ -561,8 +570,8 @@ extern "C" {
     *time = occaKernelTimeTaken(kernel);
   }
 
-  void OCCAGENARGUMENTLIST_FC(occaArgumentList *args){
-    *args = occaGenArgumentList();
+  void OCCACREATEARGUMENTLIST_FC(occaArgumentList *args){
+    *args = occaCreateArgumentList();
   }
 
   void OCCAARGUMENTLISTCLEAR_FC(occaArgumentList *list){
@@ -863,8 +872,31 @@ extern "C" {
     occaKernelFree(*kernel);
   }
 
-  void OCCAGENKERNELINFO_FC(occaKernelInfo *info){
-    *info = occaGenKernelInfo();
+  void OCCACREATEDEVICEINFO_FC(occaDeviceInfo *info){
+    *info = occaCreateDeviceInfo();
+  }
+
+  void OCCADEVICEINFOAPPEND_FC(occaDeviceInfo *info,
+                               const char *key   OCCA_F2C_LSTR(key_l),
+                               const char *value OCCA_F2C_LSTR(value_l)
+                               OCCA_F2C_RSTR(key_l)
+                               OCCA_F2C_RSTR(value_l)){
+    char *key_c, *value_c;
+    OCCA_F2C_ALLOC_STR(key, key_l, key_c);
+    OCCA_F2C_ALLOC_STR(value, value_l, value_c);
+
+    occaDeviceInfoAppend(*info, key_c, value_c);
+
+    OCCA_F2C_FREE_STR(key, key_c);
+    OCCA_F2C_FREE_STR(value, value_c);
+  }
+
+  void OCCADEVICEINFOFREE_FC(occaDeviceInfo *info){
+    occaDeviceInfoFree(*info);
+  }
+
+  void OCCACREATEKERNELINFO_FC(occaKernelInfo *info){
+    *info = occaCreateKernelInfo();
   }
 
   void OCCAKERNELINFOADDDEFINE_FC(occaKernelInfo *info,

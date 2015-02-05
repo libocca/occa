@@ -192,19 +192,6 @@ namespace occa {
       return ret;
     }
 
-    occa::deviceInfo deviceInfo(int pID, int dID){
-      occa::deviceInfo dInfo;
-
-      dInfo.name  = deviceName(pID, dID);
-      dInfo.id    = pID*100 + dID;
-      dInfo.info  = deviceType(pID, dID) | deviceVendor(pID, dID) | occa::OpenCL;
-
-      if((dInfo.info & occa::GPU) && (dInfo.info & occa::AMD))
-        dInfo.preferredMode = occa::OpenCL;
-
-      return dInfo;
-    }
-
     std::string getDeviceListInfo(){
       std::stringstream ss;
 

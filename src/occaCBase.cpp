@@ -165,6 +165,25 @@ extern "C" {
     occa::printAvailableDevices();
   }
 
+  occaDeviceInfo OCCA_RFUNC occaCreateDeviceInfo(){
+    occa::deviceInfo *info = new occa::deviceInfo();
+
+    return (occaDeviceInfo) info;
+  }
+
+  void OCCA_RFUNC occaDeviceInfoAppend(occaDeviceInfo info,
+                                       const char *key,
+                                       const char *value){
+
+    occa::deviceInfo &info_ = *((occa::deviceInfo*) info);
+
+    info_.append(key, value);
+  }
+
+  void OCCA_RFUNC occaDeviceInfoFree(occaDeviceInfo info){
+    delete (occa::deviceInfo*) info;
+  }
+
   const char* OCCA_RFUNC occaDeviceMode(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
@@ -187,6 +206,15 @@ extern "C" {
     occa::device *device = new occa::device();
 
     device->setup(infos);
+
+    return (occaDevice) device;
+  }
+
+  occaDevice OCCA_RFUNC occaGetDeviceFromInfo(occaDeviceInfo dInfo){
+
+    occa::device *device = new occa::device();
+
+    device->setup(*((occa::deviceInfo*) dInfo));
 
     return (occaDevice) device;
   }
@@ -355,7 +383,7 @@ extern "C" {
     device_.finish();
   }
 
-  occaStream OCCA_RFUNC occaDeviceGenStream(occaDevice device){
+  occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
     return (occaStream) device_.createStream();
@@ -415,7 +443,7 @@ extern "C" {
 
 
   //---[ Kernel ]-----------------------
-  occaDim OCCA_RFUNC occaGenDim(uintptr_t x, uintptr_t y, uintptr_t z){
+  occaDim OCCA_RFUNC occaCreateDim(uintptr_t x, uintptr_t y, uintptr_t z){
     occaDim ret;
 
     ret.x = x;
@@ -466,7 +494,7 @@ extern "C" {
     return kernel_.timeTaken();
   }
 
-  occaArgumentList OCCA_RFUNC occaGenArgumentList(){
+  occaArgumentList OCCA_RFUNC occaCreateArgumentList(){
     occaArgumentList_t *list = new occaArgumentList_t();
     list->argc = 0;
 
@@ -550,11 +578,10 @@ extern "C" {
     delete (occa::kernel*) kernel;
   }
 
-  occaKernelInfo OCCA_RFUNC occaGenKernelInfo(){
+  occaKernelInfo OCCA_RFUNC occaCreateKernelInfo(){
     occa::kernelInfo *info = new occa::kernelInfo();
 
     return (occaKernelInfo) info;
-
   }
 
   void OCCA_RFUNC occaKernelInfoAddDefine(occaKernelInfo info,
