@@ -1,4 +1,5 @@
 #---[ Paths ]-------------------------------------
+bPath = bin
 oPath = obj
 sPath = src
 iPath = include

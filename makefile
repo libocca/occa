@@ -10,6 +10,7 @@ compilerFlags += -fPIC
 FcompilerFlags += -fPIC
 lPath = lib
 
+occaBPath = ${OCCA_DIR}/$(bPath)
 occaIPath = ${OCCA_DIR}/$(iPath)
 occaOPath = ${OCCA_DIR}/$(oPath)
 occaSPath = ${OCCA_DIR}/$(sPath)
@@ -23,6 +24,8 @@ fsources = $(wildcard $(occaSPath)/*.f90)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
+dependencies = $(occaBPath)/occaInfo
+
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
 	objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
@@ -31,12 +34,8 @@ endif
 
 ifdef OCCA_DEVELOPER
 ifeq ($(OCCA_DEVELOPER), 1)
-	developerDependencies =	$(occaOPath)/occaKernelDefines.o
-else
-	developerDependencies =
+	dependencies += $(occaOPath)/occaKernelDefines.o
 endif
-else
-	developerDependencies =
 endif
 
 ifdef occaDirWasInitialized
@@ -45,7 +44,7 @@ ifdef occaDirWasInitialized
 $(occaLPath)/libocca.so: .FORCE
 	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
 else
-$(occaLPath)/libocca.so:$(objects) $(headers) $(developerDependencies)
+$(occaLPath)/libocca.so:$(objects) $(headers) $(dependencies)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 
@@ -63,6 +62,9 @@ $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOP
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
+
+$(occaBPath)/occaInfo:$(OCCA_DIR)/scripts/occaInfo.cpp
+	$(compiler) $(compilerFlags) -o $(occaBPath)/occaInfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links)
 
 ifdef OCCA_DEVELOPER
 ifeq ($(OCCA_DEVELOPER), 1)
@@ -90,10 +92,16 @@ $(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefinesGenerato
 endif
 endif
 
+ifdef occaDirWasInitialized
+clean: .FORCE
+	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
+else
 clean:
 	rm -f $(occaOPath)/*;
+	rm -f $(occaBPath)/*;
 	rm -f ${OCCA_DIR}/scripts/main;
 	rm -f $(occaLPath)/libocca.a;
 	rm -f $(occaLPath)/*.mod;
 	rm -f $(OCCA_DIR)/scripts/occaKernelDefinesGenerator
+endif
 #=================================================
