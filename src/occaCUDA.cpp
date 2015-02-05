@@ -16,6 +16,40 @@ namespace occa {
       isNotInitialized = false;
     }
 
+    std::string getDeviceListInfo(){
+      std::stringstream ss;
+
+      cuda::init();
+
+      int deviceCount;
+
+      OCCA_CUDA_CHECK("Finding Number of Devices",
+                      cuDeviceGetCount(&deviceCount));
+
+      if(deviceCount == 0)
+        return;
+
+      char deviceName[1024];
+
+      OCCA_CUDA_CHECK("Getting Device Name",
+                      cuDeviceGetName(deviceName, 1024, 0));
+
+      // << "==============o=======================o==========================================\n";
+      ss << "     CUDA     |  Device ID            | 0 "                                  << '\n'
+         << "              |  Device Name          | " << deviceName                      << '\n';
+
+      for(int i = 1; i < deviceCount; ++i){
+        OCCA_CUDA_CHECK("Getting Device Name",
+                        cuDeviceGetName(deviceName, 1024, i));
+
+        ss << "              |-----------------------+------------------------------------------\n"
+           << "              |  Device ID            | " << i                                << '\n'
+           << "              |  Device Name          | " << deviceName                       << '\n';
+      }
+
+      return ss.str();
+    }
+
     occa::device wrapDevice(CUdevice device, CUcontext context){
       occa::device dev;
       device_t<CUDA> &dHandle   = *(new device_t<CUDA>());

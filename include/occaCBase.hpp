@@ -103,6 +103,8 @@ extern "C" {
 
 
   //---[ Device ]-----------------------
+  OCCA_LFUNC void OCCA_RFUNC occaPrintAvailableDevices();
+
   OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
 
   OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompiler(occaDevice device,

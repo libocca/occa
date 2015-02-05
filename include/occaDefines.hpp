@@ -91,7 +91,105 @@
 #  define OCCA_MEM_ALIGN 64
 #endif
 
-#define OCCA_SIMD_WIDTH 8
+//---[ Vectorization ]--------
+#ifdef __MIC__
+#  define OCCA_MIC 1
+#else
+#  define OCCA_MIC 0
+#endif
+
+#ifdef __AVX2__
+#  define OCCA_AVX2 1
+#else
+#  define OCCA_AVX2 0
+#endif
+
+#ifdef __AVX__
+#  define OCCA_AVX 1
+#else
+#  define OCCA_AVX 0
+#endif
+
+#ifdef __SSE4_2__
+#  define OCCA_SSE4_2 1
+#else
+#  define OCCA_SSE4_2 0
+#endif
+
+#ifdef __SSE4_1__
+#  define OCCA_SSE4_1 1
+#else
+#  define OCCA_SSE4_1 0
+#endif
+
+#if OCCA_SSE4_1 || OCCA_SSE4_2
+#  define OCCA_SSE4 1
+#else
+#  define OCCA_SSE4 0
+#endif
+
+#ifdef __SSSE3__
+#  define OCCA_SSE3 1
+#else
+#  define OCCA_SSE3 0
+#endif
+
+#ifdef __SSE3__
+#  define OCCA_SSE3 1
+#else
+#  define OCCA_SSE3 0
+#endif
+
+#ifdef __SSE2__
+#  define OCCA_SSE2 1
+#else
+#  define OCCA_SSE2 0
+#endif
+
+#ifdef __SSE__
+#  define OCCA_SSE 1
+#else
+#  define OCCA_SSE 0
+#endif
+
+#ifdef __MMX__
+#  define OCCA_MMX 1
+#else
+#  define OCCA_MMX 0
+#endif
+
+#if OCCA_MIC
+#  define OCCA_VECTOR_SET "MIC AVX-512"
+#elif OCCA_AVX2
+#  define OCCA_VECTOR_SET "AVX2"
+#elif OCCA_AVX
+#  define OCCA_VECTOR_SET "AVX"
+#elif OCCA_SSE4
+#  define OCCA_VECTOR_SET "SSE4"
+#elif OCCA_SSE3
+#  define OCCA_VECTOR_SET "SSE3"
+#elif OCCA_SSE2
+#  define OCCA_VECTOR_SET "SSE2"
+#elif OCCA_SSE
+#  define OCCA_VECTOR_SET "SSE"
+#elif OCCA_MMX
+#  define OCCA_VECTOR_SET "MMX"
+#else
+#  define OCCA_VECTOR_SET "[Vector Instruction Set Not Found]"
+#endif
+
+#if   OCCA_MIC
+#  define OCCA_SIMD_WIDTH 16
+#elif OCCA_AVX
+#  define OCCA_SIMD_WIDTH 8
+#elif OCCA_SSE
+#  define OCCA_SIMD_WIDTH 4
+#elif OCCA_MMX
+#  define OCCA_SIMD_WIDTH 2
+#else
+#  define OCCA_SIMD_WIDTH 1
+#endif
+//============================
 
 #define OCCA_MAX_ARGS 50
 //======================================

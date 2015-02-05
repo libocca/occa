@@ -1,6 +1,223 @@
 #include "occaSerial.hpp"
 
 namespace occa {
+  //---[ Helper Functions ]-----------
+  namespace cpu {
+    std::string getLSCPUField(std::string field){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      std::stringstream ss;
+
+      ss << "/usr/bin/lscpu | /bin/grep '^" << field << "'";
+
+      std::string command = ss.str();
+
+      FILE *fp;
+      fp = popen(command.c_str(), "r");
+
+      const int bufferSize = 4096;
+      char *buffer = new char[bufferSize];
+
+      fread(buffer, sizeof(char), bufferSize, fp);
+
+      int begin, end;
+      for(begin = 0; begin < bufferSize; ++begin){
+        if(buffer[begin] == ':')
+          break;
+      }
+
+      while(buffer[++begin] == ' ')
+        ; // DO NOTHING;
+
+      for(end = 0; end < bufferSize; ++end){
+        if(buffer[begin + end] == '\n')
+          break;
+      }
+
+      std::string fieldValue(buffer + begin, end);
+
+      pclose(fp);
+      delete [] buffer;
+
+      return fieldValue;
+#elif (OCCA_OS == WINDOWS_OS) // [-] Missing
+      return "";
+#endif
+    }
+
+    std::string getCPUINFOField(std::string field){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      std::stringstream ss;
+
+      ss << "/bin/cat /proc/cpuinfo | /bin/grep '^" << field << "'";
+
+      std::string command = ss.str();
+
+      FILE *fp;
+      fp = popen(command.c_str(), "r");
+
+      const int bufferSize = 4096;
+      char *buffer = new char[bufferSize];
+
+      fread(buffer, sizeof(char), bufferSize, fp);
+
+      int begin, end;
+      for(begin = 0; begin < bufferSize; ++begin){
+        if(buffer[begin] == ':')
+          break;
+      }
+
+      while(buffer[++begin] == ' ')
+        ; // DO NOTHING
+
+      for(end = 0; end < bufferSize; ++end){
+        if(buffer[begin + end] == '\n')
+          break;
+      }
+
+      std::string fieldValue(buffer + begin, end);
+
+      pclose(fp);
+      delete [] buffer;
+
+      return fieldValue;
+#elif (OCCA_OS == WINDOWS_OS) // [-] Missing
+      return "";
+#endif
+    }
+
+    std::string getProcessorName(){
+#if   (OCCA_OS == LINUX_OS)
+      return getCPUINFOField("model name");
+#elif (OCCA_OS == OSX_OS)
+      size_t bufferSize = 100;
+      char buffer[100];
+
+      sysctlbyname("machdep.cpu.brand_string",
+                   &buffer, &bufferSize,
+                   NULL, 0);
+
+      return std::string(buffer);
+#elif (OCCA_OS == WINDOWS_OS) // [-] Missing
+      return "";
+#endif
+    }
+
+    int getCoreCount(){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      return sysconf(_SC_NPROCESSORS_ONLN);
+#elif (OCCA_OS == WINDOWS_OS) // [-] Missing
+      return 1;
+#endif
+    }
+
+    int getProcessorFrequency(){
+#if   (OCCA_OS == LINUX_OS)
+      std::stringstream ss;
+      int freq;
+
+      ss << getCPUINFOField("cpu MHz");
+
+      ss >> freq;
+
+      return freq;
+#elif (OCCA_OS == OSX_OS)
+      uint64_t frequency = 0;
+      size_t size = sizeof(frequency);
+
+      int error = sysctlbyname("hw.cpufrequency", &frequency, &size, NULL, 0);
+
+      OCCA_CHECK(error != ENOMEM,
+                 "Error getting CPU Frequency.\n");
+
+      return frequency/1.0e6;
+#elif (OCCA_OS == WINDOWS_OS) // [-] Missing
+      return 1;
+#endif
+    }
+
+    std::string getProcessorCacheSize(int level){
+#if   (OCCA_OS == LINUX_OS)
+      std::stringstream field;
+      field << 'L' << level;
+
+      if(level == 1)
+        field << 'd';
+
+      field << " cache";
+
+      return getLSCPUField(field.str());
+#elif (OCCA_OS == OSX_OS)
+      std::stringstream ss;
+      ss << "hw.l" << level;
+
+      if(level == 1)
+        ss << 'd';
+
+      ss << "cachesize";
+
+      std::string field = ss.str();
+
+      uint64_t cache = 0;
+      size_t size = sizeof(cache);
+
+      int error = sysctlbyname(field.c_str(), &cache, &size, NULL, 0);
+
+      OCCA_CHECK(error != ENOMEM,
+                 "Error getting L" << level << " Cache Size.\n");
+
+      ss.str("");
+
+      if(cache < (1 << 10))
+        ss << cache << " B";
+      else if(cache < (1 << 20))
+        ss << (cache >> 10) << " KB";
+      else if(cache < (1 << 30))
+        ss << (cache >> 20) << " MB";
+
+      return ss.str();
+#elif (OCCA_OS == WINDOWS_OS) // [-] Missing
+      return "";
+#endif
+    }
+
+    std::string getDeviceListInfo(){
+      std::stringstream ss;
+
+      std::stringstream ssFreq;
+      const int freq = getProcessorFrequency();
+      if(freq < 1000)
+        ssFreq << freq << " MHz";
+      else
+        ssFreq << (freq/1000.0) << " GHz";
+
+      std::string l1 = getProcessorCacheSize(1);
+      std::string l2 = getProcessorCacheSize(2);
+      std::string l3 = getProcessorCacheSize(3);
+
+      int maxSize = ((l1.size() < l2.size()) ? l2.size() : l1.size());
+      maxSize     = ((maxSize   < l3.size()) ? l3.size() : maxSize  );
+
+      l1 = std::string(maxSize - l1.size(), ' ') + l1;
+      l2 = std::string(maxSize - l2.size(), ' ') + l2;
+      l3 = std::string(maxSize - l3.size(), ' ') + l3;
+
+      // << "==============o=======================o==========================================\n";
+      ss << "   CPU Info   |  Processor Name       | " << getProcessorName()              << '\n'
+         << "              |  Cores                | " << getCoreCount()                  << '\n'
+         << "              |  Clock Frequency      | " << ssFreq.str()                    << '\n'
+         << "              |  SIMD Instruction Set | " << OCCA_VECTOR_SET                 << '\n'
+         << "              |  SIMD Width           | " << (32*OCCA_SIMD_WIDTH) << " bits" << '\n'
+         << "              |  L1 Cache Size (d)    | " << l1                              << '\n'
+         << "              |  L2 Cache Size        | " << l2                              << '\n'
+         << "              |  L3 Cache Size        | " << l3                              << '\n';
+      // << "==============o=======================o==========================================\n";
+
+      return ss.str();
+    }
+  };
+  //==================================
+
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<Serial>::kernel_t(){

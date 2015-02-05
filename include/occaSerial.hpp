@@ -1,6 +1,7 @@
 #ifndef OCCA_OPENMP_HEADER
 #define OCCA_OPENMP_HEADER
 
+#include <sys/sysctl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -21,6 +22,21 @@ namespace occa {
   //---[ Data Structs ]---------------
   struct SerialKernelData_t {
     void *dlHandle, *handle;
+  };
+  //==================================
+
+
+  //---[ Helper Functions ]-----------
+  namespace cpu {
+    std::string getLSCPUField(std::string field);
+    std::string getCPUINFOField(std::string field);
+
+    std::string getProcessorName();
+    int getCoreCount();
+    int getProcessorFrequency();
+    std::string getProcessorCacheSize(int level);
+
+    std::string getDeviceListInfo();
   };
   //==================================
 

@@ -99,6 +99,21 @@ namespace occa {
                                                   data.kernelWrapper));
     }
 
+    std::string getDeviceListInfo(){
+      std::stringstream ss;
+
+      uint32_t deviceCount;
+
+      OCCA_COI_CHECK("Device: Get Count",
+                     COIEngineGetCount(COI_ISA_MIC, &deviceCount));
+
+      // << "==============o=======================o==========================================\n";
+      ss << "     COI      |  Xeon Phi Count       | " << deviceCount                     << '\n';
+      // << "==============o=======================o==========================================\n";
+
+      return ss.str();
+    }
+
     occa::device wrapDevice(COIENGINE device){
       occa::device dev;
       device_t<COI> &dHandle   = *(new device_t<COI>());

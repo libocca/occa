@@ -85,6 +85,13 @@ module occa
 
 
 ! ---[ Device ]-----------------------
+  interface occaPrintAvailableDevices
+    subroutine occaPrintAvailableDevices_fc()
+      use occaFTypes_m
+
+      implicit none
+    end subroutine occaPrintAvailableDevices_fc
+  end interface occaPrintAvailableDevices
 
   interface occaDeviceSetCompiler
     subroutine occaDeviceSetCompiler_fc(device, compiler)

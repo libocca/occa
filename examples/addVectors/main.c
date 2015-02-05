@@ -4,6 +4,8 @@
 #include "occa_c.h"
 
 int main(int argc, char **argv){
+  occaPrintAvailableDevices();
+
   int entries = 5;
   int i;
 

@@ -92,12 +92,6 @@ namespace occa {
   //==================================
 
   //---[ Helper Classes ]-------------
-  const char* deviceInfo::header = "| Name                                      | Num | Available Modes                  |";
-  const char* deviceInfo::sLine  = "+-------------------------------------------+-----+----------------------------------+";
-
-  const char* deviceInfo::dLine1 = "+--------------------------------------------------------+";
-  const char* deviceInfo::dLine2 = "+  -  -  -  -  -  +  -  -  -  -  -  -  -  -  -  -  -  -  +";
-
   const int uint8FormatIndex  = 0;
   const int uint16FormatIndex = 1;
   const int uint32FormatIndex = 2;
@@ -1394,7 +1388,7 @@ namespace occa {
 
     device_t<Serial>::appendAvailableDevices(deviceList);
 
-#if OCCA_PTHREADS_ENABLED
+#if OCCA_OPENMP_ENABLED
     device_t<OpenMP>::appendAvailableDevices(deviceList);
 #endif
 #if OCCA_PTHREADS_ENABLED
@@ -1413,6 +1407,26 @@ namespace occa {
     deviceListMutex.unlock();
 
     return deviceList;
+  }
+  void printAvailableDevices(){
+    std::stringstream ss;
+    ss << "==============o=======================o==========================================\n";
+    ss << cpu::getDeviceListInfo();
+#if OCCA_OPENCL_ENABLED
+    ss << "==============o=======================o==========================================\n";
+    ss << cl::getDeviceListInfo();
+#endif
+#if OCCA_CUDA_ENABLED
+    ss << "==============o=======================o==========================================\n";
+    ss << cuda::getDeviceListInfo();
+#endif
+#if OCCA_COI_ENABLED
+    ss << "==============o=======================o==========================================\n";
+    ss << coi::getDeviceListInfo();
+#endif
+    ss << "==============o=======================o==========================================\n";
+
+    std::cout << ss.str();
   }
 
   deviceIdentifier::deviceIdentifier() :

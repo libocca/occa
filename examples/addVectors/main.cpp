@@ -3,6 +3,8 @@
 #include "occa.hpp"
 
 int main(int argc, char **argv){
+  occa::printAvailableDevices();
+
   int entries = 5;
 
   float *a  = new float[entries];

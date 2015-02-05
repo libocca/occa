@@ -66,6 +66,8 @@ namespace occa {
 
     occa::deviceInfo deviceInfo(int pID, int dID);
 
+    std::string getDeviceListInfo();
+
     void buildKernelFromSource(OpenCLKernelData_t &data_,
                                 const char *content,
                                 const size_t contentBytes,
@@ -204,9 +206,6 @@ namespace occa {
 
 
   //---[ Device ]---------------------
-  template <>
-  std::vector<occa::deviceInfo> availableDevices<OpenCL>();
-
   template <>
   device_t<OpenCL>::device_t();
 

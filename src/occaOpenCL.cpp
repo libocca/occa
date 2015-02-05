@@ -205,6 +205,33 @@ namespace occa {
       return dInfo;
     }
 
+    std::string getDeviceListInfo(){
+      std::stringstream ss;
+
+      int platformCount = occa::cl::platformCount();
+
+      for(int pID = 0; pID < platformCount; ++pID){
+        int deviceCount = occa::cl::deviceCountInPlatform(pID);
+
+        for(int dID = 0; dID < deviceCount; ++dID){
+          if(pID || dID){
+            ss << "              |-----------------------+------------------------------------------\n"
+               << "              |  Device Name          | " << deviceName(pID, dID)            << '\n';
+          }
+          else{
+            ss << "    OpenCL    |  Device Name          | " << deviceName(pID, dID)            << '\n';
+          }
+
+          ss << "              |  Driver Vendor        | " << occa::vendor(deviceVendor(pID,dID)) << '\n'
+             << "              |  Platform ID          | " << pID                                 << '\n'
+             << "              |  Device ID            | " << dID                                 << '\n';
+        }
+      }
+
+
+      return ss.str();
+    }
+
     void buildKernelFromSource(OpenCLKernelData_t &data_,
                                const char *content,
                                const size_t contentBytes,
@@ -1011,34 +1038,6 @@ namespace occa {
 
 
   //---[ Device ]---------------------
-  template <>
-  std::vector<occa::deviceInfo> availableDevices<OpenCL>(){
-    std::vector<occa::deviceInfo> ret( occa::cl::deviceCount() );
-    int pos = 0;
-
-    int platformCount = occa::cl::platformCount();
-
-    std::cout << occa::deviceInfo::sLine  << '\n'
-              << occa::deviceInfo::header << '\n'
-              << occa::deviceInfo::sLine  << '\n';
-
-    for(int p = 0; p < platformCount; ++p){
-      int deviceCount = occa::cl::deviceCountInPlatform(p);
-
-      for(int d = 0; d < deviceCount; ++d){
-        ret[pos] = occa::cl::deviceInfo(p,d);
-
-        std::cout << ret[pos].summarizedInfo() << '\n';
-
-        ++pos;
-      }
-    }
-
-    std::cout << occa::deviceInfo::sLine << '\n';
-
-    return ret;
-  }
-
   template <>
   device_t<OpenCL>::device_t() {
     data = NULL;

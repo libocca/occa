@@ -110,6 +110,7 @@
 #define  OCCAFLOAT_FC                    OCCA_F2C_GLOBAL_(occafloat_fc                  , OCCAFLOAT_FC)
 #define  OCCADOUBLE_FC                   OCCA_F2C_GLOBAL_(occadouble_fc                 , OCCADOUBLE_FC)
 #define  OCCASTRING_FC                   OCCA_F2C_GLOBAL_(occastring_fc                 , OCCASTRING_FC)
+#define  OCCAPRINTAVAILABLEDEVICES_FC    OCCA_F2C_GLOBAL_(occaprintavailabledevices_fc  , OCCAPRINTAVAILABLEDEVICES_FC)
 #define  OCCADEVICEMODE_FC               OCCA_F2C_GLOBAL_(occadevicemode_fc             , OCCADEVICEMODE_FC)
 #define  OCCADEVICESETCOMPILER_FC        OCCA_F2C_GLOBAL_(occadevicesetcompiler_fc      , OCCADEVICESETCOMPILER_FC)
 #define  OCCADEVICESETCOMPILERFLAGS_FC   OCCA_F2C_GLOBAL_(occadevicesetcompilerflags_fc , OCCADEVICESETCOMPILERFLAGS_FC)
@@ -276,6 +277,10 @@ extern "C" {
 
 
   //---[ Device ]-----------------------
+  void OCCAPRINTAVAILABLEDEVICES_FC(){
+    return occaPrintAvailableDevices();
+  }
+
   const char* OCCADEVICEMODE_FC(occaDevice device){ // [-]
     return occaDeviceMode(device);
   }

@@ -37,6 +37,8 @@ namespace occa {
     extern bool isNotInitialized;
 
     void init();
+
+    std::string getDeviceListInfo();
   };
 
   extern const CUarray_format cudaFormats[8];

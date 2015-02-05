@@ -21,6 +21,8 @@ program main
   type(occaKernel) :: addVectors
   type(occaMemory) :: o_a, o_b, o_ab
 
+  call occaPrintAvailableDevices
+
   allocate(a(1:entries), b(1:entries), ab(1:entries), stat = alloc_err)
   if (alloc_err /= 0) stop "*** Not enough memory ***"
 

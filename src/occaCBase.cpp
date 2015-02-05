@@ -161,6 +161,10 @@ extern "C" {
 
 
   //---[ Device ]-----------------------
+  void OCCA_RFUNC occaPrintAvailableDevices(){
+    occa::printAvailableDevices();
+  }
+
   const char* OCCA_RFUNC occaDeviceMode(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 

@@ -45,6 +45,9 @@
 #endif
 
 namespace occa {
+  namespace cpu{
+    std::string getDeviceListInfo();
+  };
   typedef int mode;
 
   class kernel_v;
@@ -134,6 +137,7 @@ namespace occa {
     if(type & Intel)  return "Intel";
     if(type & AMD)    return "AMD";
     if(type & NVIDIA) return "NVIDIA";
+    if(type & Altera) return "Altera";
 
     return "N/A";
   }
@@ -1133,6 +1137,8 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+  void printAvailableDevices();
+
   class deviceIdentifier {
   public:
     typedef std::map<std::string,std::string> flagMap_t;
@@ -1164,9 +1170,6 @@ namespace occa {
       return (a.compare(b) < 0);
     }
   };
-
-  template <occa::mode>
-  std::vector<occa::deviceInfo> availableDevices();
 
 #if OCCA_OPENCL_ENABLED
   namespace cl {
