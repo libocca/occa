@@ -38,6 +38,37 @@ extern "C" {
 
 
   //---[ TypeCasting ]------------------
+#  ifdef __cplusplus
+}
+#  endif
+  std::string typeToStr(occaType value){
+    occa::kernelArg_t &value_ = ((occaType_t*) value)->value;
+    const int valueType       = ((occaType_t*) value)->type;
+
+    switch(valueType){
+    case OCCA_TYPE_INT    : return occa::toString(value_.int_);
+    case OCCA_TYPE_UINT   : return occa::toString(value_.uint_);
+    case OCCA_TYPE_CHAR   : return occa::toString(value_.char_);
+    case OCCA_TYPE_UCHAR  : return occa::toString(value_.uchar_);
+    case OCCA_TYPE_SHORT  : return occa::toString(value_.short_);
+    case OCCA_TYPE_USHORT : return occa::toString(value_.ushort_);
+    case OCCA_TYPE_LONG   : return occa::toString(value_.long_);
+    case OCCA_TYPE_ULONG  : return occa::toString(value_.uintptr_t_);
+
+    case OCCA_TYPE_FLOAT  : return occa::toString(value_.float_);
+    case OCCA_TYPE_DOUBLE : return occa::toString(value_.double_);
+
+    case OCCA_TYPE_STRING : return std::string((char*) value_.void_);
+    default:
+      std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
+    }
+
+    return "";
+  }
+
+#  ifdef __cplusplus
+extern "C" {
+#  endif
   occaType OCCA_RFUNC occaInt(int value){
     occaType_t *type = new occaType_t;
 
@@ -178,6 +209,17 @@ extern "C" {
     occa::deviceInfo &info_ = *((occa::deviceInfo*) info);
 
     info_.append(key, value);
+  }
+
+  void OCCA_RFUNC occaDeviceInfoAppendType(occaDeviceInfo info,
+                                           const char *key,
+                                           occaType value){
+
+    occa::deviceInfo &info_ = *((occa::deviceInfo*) info);
+
+    info_.append(key, typeToStr(value));
+
+    delete (occaType_t*) value;
   }
 
   void OCCA_RFUNC occaDeviceInfoFree(occaDeviceInfo info){
@@ -538,6 +580,7 @@ extern "C" {
   //   Macro that is called > API function that is never seen
   void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
                                  occaArgumentList list){
+
     occa::kernel &kernel_     = *((occa::kernel*) kernel);
     occaArgumentList_t &list_ = *((occaArgumentList_t*) list);
 
@@ -588,27 +631,11 @@ extern "C" {
                                           const char *macro,
                                           occaType value){
 
-    occa::kernelInfo &info_   = *((occa::kernelInfo*) info);
-    occa::kernelArg_t &value_ = ((occaType_t*) value)->value;
-    const int valueType       = ((occaType_t*) value)->type;
+    occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
 
-    switch(valueType){
-    case OCCA_TYPE_INT    : info_.addDefine(macro, value_.int_);    break;
-    case OCCA_TYPE_UINT   : info_.addDefine(macro, value_.uint_);   break;
-    case OCCA_TYPE_CHAR   : info_.addDefine(macro, value_.char_);   break;
-    case OCCA_TYPE_UCHAR  : info_.addDefine(macro, value_.uchar_);  break;
-    case OCCA_TYPE_SHORT  : info_.addDefine(macro, value_.short_);  break;
-    case OCCA_TYPE_USHORT : info_.addDefine(macro, value_.ushort_); break;
-    case OCCA_TYPE_LONG   : info_.addDefine(macro, value_.long_);   break;
-    case OCCA_TYPE_ULONG  : info_.addDefine(macro, value_.uintptr_t_); break;
+    info_.addDefine(macro, typeToStr(value));
 
-    case OCCA_TYPE_FLOAT  : info_.addDefine(macro, value_.float_);  break;
-    case OCCA_TYPE_DOUBLE : info_.addDefine(macro, value_.double_); break;
-
-    case OCCA_TYPE_STRING : info_.addDefine(macro, std::string((char*) value_.void_)); break;
-    default:
-      std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
-    }
+    delete (occaType_t*) value;
   }
 
   void OCCA_RFUNC occaKernelInfoAddInclude(occaKernelInfo info,

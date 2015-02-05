@@ -112,6 +112,10 @@ extern "C" {
                                                   const char *key,
                                                   const char *value);
 
+  OCCA_LFUNC void OCCA_RFUNC occaDeviceInfoAppendType(occaDeviceInfo info,
+                                                      const char *key,
+                                                      occaType value);
+
   OCCA_LFUNC void OCCA_RFUNC occaDeviceInfoFree(occaDeviceInfo info);
 
   OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);

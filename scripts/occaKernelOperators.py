@@ -311,25 +311,26 @@ def cOperatorDefinitions(N):
     return '\n\n'.join([cOperatorDefinition(n + 1) for n in xrange(N)])
 
 def cOperatorDefinition(N):
-    addArguments = ''
-
-    for n in xrange(N):
-        addArguments += ('    {\n' + \
-                         '      occaMemory_t &__occa_memory__ = *((occaMemory_t*) arg' + str(n) + ');\n' + \
-                         '      if(__occa_memory__.type == 0){\n' + \
-                         '        __occa_kernel__.addArgument(' + str(n) + ', occa::kernelArg(__occa_memory__.mem));\n' + \
-                         '      }\n' + \
-                         '      else{\n' + \
-                         '        occaType_t &__occa_type__ = *((occaType_t*) arg' + str(n) + ');\n' + \
-                         '        __occa_kernel__.addArgument(' + str(n) + ', occa::kernelArg(__occa_type__.value, __occa_type__.bytes, (__occa_memory__.type == 1)));\n' + \
-                         '      }\n' + \
-                         '    }\n')
+    argsContent = ', '.join('(occaMemory_t*) arg' + str(n) for n in xrange(N))
 
     return ('    void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in xrange(N)]) ) + \
-            '      occa::kernel &__occa_kernel__ = *((occa::kernel*) kernel);\n' + \
-            '    __occa_kernel__.clearArgumentList();\n' + \
-            addArguments + \
-            '    __occa_kernel__.runFromArguments();\n' + \
+            '      occa::kernel &kernel_ = *((occa::kernel*) kernel);\n'          + \
+            '      kernel_.clearArgumentList();\n'                                + \
+            '      \n'                                                            + \
+            '      occaMemory_t *args[' + str(N) + '] = {' + argsContent + '};\n' + \
+            '      \n'                                                            + \
+            '      for(int i = 0; i < ' + str(N) + '; ++i){\n'                    + \
+            '        occaMemory_t &memory_ = *(args[i]);\n'                       + \
+            '        if(memory_.type == 0){\n'                                    + \
+            '          kernel_.addArgument(i, occa::kernelArg(memory_.mem));\n'   + \
+            '        }\n'                                                         + \
+            '        else{\n'                                                     + \
+            '          occaType_t &type_ = *((occaType_t*) arg' + str(n) + ');\n' + \
+            '          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));\n' + \
+            '        }\n'                                                         + \
+            '      }\n'                                                           + \
+            '      \n'                                                            + \
+            '      kernel_.runFromArguments();\n'                                 + \
             '    }\n');
 
 operatorModeDefinition = { 'Serial'   : serialOperatorDefinition,
