@@ -605,7 +605,7 @@ namespace occa {
   }
 
   void memory::placeInUva(){
-    if(mHandle->dHandle->fakesUva()){
+    if( !(mHandle->dHandle->fakesUva()) ){
       mHandle->uvaPtr = mHandle->handle;
     }
     else if(mHandle->isMapped){
