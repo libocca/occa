@@ -60,7 +60,8 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
 
-      applyToAllKernels(*globalScope, &parserBase::floatSharedAndExclusivesUp);
+      // Working, but not for trunk yet
+      // applyToAllKernels(*globalScope, &parserBase::floatSharedAndExclusivesUp);
 
       // Broken
       modifyTextureVariables();
