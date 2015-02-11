@@ -68,6 +68,13 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
 
+      varInfo *b__ = globalScope->hasVariableInScope("b__");
+
+      if(b__)
+        splitDefineAndInitForVariable(*b__);
+      else
+        std::cout << "b__ is not defined \n";
+
       return (std::string) *globalScope;
     }
 
@@ -2638,6 +2645,55 @@ namespace occa {
 
       // Print out type for the new statement
       origin.expRoot.getVariableInfoNode(0)->info |= expType::type;
+    }
+
+    void parserBase::splitDefineAndInitForVariable(varInfo &var){
+      statement &origin = *(varUpdateMap[&var].value);
+
+      // Ignore kernel arguments
+      if(origin.info & functionStatementType)
+        return;
+
+      int argc = origin.getDeclarationVarCount();
+
+      // Make sure var is the only variable
+      if(1 < argc)
+        splitDefineForVariable(var);
+
+      // Return if [var] is not being initialized
+      if(!origin.expRoot.variableHasInit(0))
+        return;
+
+      statement &s = origin.pushNewStatementRight(updateStatementType);
+
+      //---[ Swap Variables ]----------
+      expNode &varNode = *(origin.expRoot.getVariableInfoNode(0));
+
+      expNode &varNode2 = *(new expNode(s));
+      varNode2.info  = expType::variable;
+      varNode2.value = var.name;
+
+      expNode::swap(varNode, varNode2);
+      //================================
+
+      //---[ Swap ExpRoots ]------------
+      s.expRoot.info = origin.expRoot.info;
+      s.expRoot.addVarInfoNode(0);
+      s.expRoot.setVarInfo(0, var);
+
+      // Print out type for the new statement
+      s.expRoot[0].info |= expType::type;
+
+      // Swap and free old expNode
+      expNode *tmp = &(origin.expRoot[0]);
+
+      expNode::swap(origin.expRoot, origin.expRoot[0]);
+      expNode::swap(origin.expRoot, s.expRoot);
+
+      delete tmp;
+      //================================
+
+      s.addVariableToUpdateMap(var);
     }
 
     void parserBase::addInnerFors(statement &s){

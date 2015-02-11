@@ -181,6 +181,7 @@ namespace occa {
       int getForDim(statement &s, const std::string &tag);
 
       void splitDefineForVariable(varInfo &var);
+      void splitDefineAndInitForVariable(varInfo &var);
 
       void addInnerFors(statement &s);
       void addInnerForsTo(statement &s,

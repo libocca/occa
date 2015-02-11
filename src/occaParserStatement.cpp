@@ -1738,11 +1738,15 @@ namespace occa {
       swapValues(a.leafCount, b.leafCount);
       swapValues(a.leaves   , b.leaves);
 
-      for(int i = 0; i < a.leafCount; ++i)
-        a.leaves[i]->up = &a;
+      if( !(a.info & expType::varInfo) ){
+        for(int i = 0; i < a.leafCount; ++i)
+          a.leaves[i]->up = &a;
+      }
 
-      for(int i = 0; i < b.leafCount; ++i)
-        b.leaves[i]->up = &b;
+      if( !(b.info & expType::varInfo) ){
+        for(int i = 0; i < b.leafCount; ++i)
+          b.leaves[i]->up = &b;
+      }
     }
 
     expNode* expNode::clone(){
@@ -2350,8 +2354,9 @@ namespace occa {
       if(info & expType::declaration){
         const expNode &varNode = *(getVariableNode(pos));
 
-        if(varNode.leaves[0]->info & expType::varInfo)
+        if(varNode.leaves[0]->info & expType::varInfo){
           return varNode.leaves[0];
+        }
         else if(varNode.leafCount &&
                 (varNode.leaves[0]->value == "=")){
 
