@@ -59,6 +59,9 @@ namespace occa {
       addOccaFors();
 
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
+
+      applyToAllKernels(*globalScope, &parserBase::floatSharedAndExclusivesUp);
+
       // Broken
       modifyTextureVariables();
 
@@ -953,6 +956,21 @@ namespace occa {
       }
     }
 
+    void parserBase::applyToAllKernels(statement &s,
+                                       applyToAllStatements_t func){
+      if(statementIsAKernel(s)){
+        (this->*func)(s);
+        return;
+      }
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        applyToAllStatements(*(statementPos->value), func);
+        statementPos = statementPos->right;
+      }
+    }
+
     void parserBase::applyToStatementsUsingVar(varInfo &info,
                                                applyToStatementsUsingVar_t func){
       varUsedMapIterator it = varUsedMap.find(&info);
@@ -1169,7 +1187,7 @@ namespace occa {
       s.info = occaForType;
     }
 
-    bool parserBase::statementHasOccaOuterFor(statement &s){
+    bool parserBase::statementIsOccaOuterFor(statement &s){
       if(s.info == occaForType){
         std::string &forName = s.expRoot.value;
 
@@ -1181,6 +1199,29 @@ namespace occa {
           return true;
         }
       }
+
+      return false;
+    }
+
+    bool parserBase::statementIsOccaInnerFor(statement &s){
+      if(s.info == occaForType){
+        std::string &forName = s.expRoot.value;
+
+        if((forName.find("occaInnerFor") != std::string::npos) &&
+           ((forName == "occaInnerFor0") ||
+            (forName == "occaInnerFor1") ||
+            (forName == "occaInnerFor2"))){
+
+          return true;
+        }
+      }
+
+      return false;
+    }
+
+    bool parserBase::statementHasOccaOuterFor(statement &s){
+      if(statementIsOccaOuterFor(s))
+        return true;
 
       statementNode *statementPos = s.statementStart;
 
@@ -1742,6 +1783,97 @@ namespace occa {
 
         statementPos = statementPos->right;
       }
+    }
+
+    void parserBase::floatSharedAndExclusivesUp(statement &s){
+      statementNode sn;
+
+      // Get all shared and exclusive variables inside inner-loops
+      appendSharedAndExclusives(s, &sn);
+
+      statementNode *statementPos = sn.right;
+
+      while(statementPos){
+        statement &s2  = *(statementPos->value);
+        statement *sUp = s2.up;
+
+        // We're moving the definition else-where
+        if(sUp){
+          varInfo &var = s2.getDeclarationVarInfo(0);
+
+          sUp->scopeVarMap.erase(var.name);
+
+          sUp->removeStatement(s2);
+        }
+
+        // Find inner-most outer-for loop
+        while(sUp){
+          if((sUp->info == occaForType) &&
+             statementIsOccaOuterFor(*sUp)){
+
+            break;
+          }
+
+          sUp = sUp->up;
+        }
+
+        if(sUp){
+          statementNode *sn3 = sUp->statementStart;
+
+          // Skip exclusive and shared statements
+          while(sn3){
+            statement &s3 = *(sn3->value);
+
+            if((!(s3.info & declareStatementType)) ||
+               (!s3.hasQualifier("exclusive") &&
+                !s3.hasQualifier("occaShared"))){
+
+              break;
+            }
+
+            sn3 = sn3->right;
+          }
+
+          const bool appendToEnd   = (sn3 == NULL);
+          const bool appendToStart = (!appendToEnd) && (sn3->left == NULL);
+
+          // HERE!
+          if(appendToStart){
+          }
+        }
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    statementNode* parserBase::appendSharedAndExclusives(statement &s,
+                                                         statementNode *snTail,
+                                                         bool isAppending){
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        if((s2.info & declareStatementType)){
+          if(isAppending &&
+             (s2.hasQualifier("exclusive") ||
+              s2.hasQualifier("occaShared"))){
+
+            snTail = snTail->push(&s2);
+          }
+        }
+        else{
+          if(statementIsOccaInnerFor(s2))
+            isAppending = true;
+
+          snTail = appendSharedAndExclusives(s2, snTail, isAppending);
+        }
+
+        statementPos = statementPos->right;
+      }
+
+      return snTail;
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
@@ -2580,7 +2712,6 @@ namespace occa {
     }
 
     void parserBase::splitDefineForVariable(varInfo &var){
-
       statement &origin = *(varUpdateMap[&var].value);
 
       // Ignore kernel arguments
@@ -2796,7 +2927,6 @@ namespace occa {
 
           innerInnerS->addStatement(&s2);
 
-#if 0
           // Find variables
           expNode &flatRoot = *(s2.expRoot.makeFlatHandle());
 
@@ -2805,20 +2935,33 @@ namespace occa {
 
             // Check for variable
             if(flatRoot[i].info & expType::variable){
-              sVar = origin.hasVariableInScope(flatRoot[i].value);
+              sVar = s2.hasVariableInScope(flatRoot[i].value);
             }
             else if(flatRoot[i].info & expType::varInfo){
               sVar = &(flatRoot[i].getVarInfo());
             }
 
             // Has variable
-            if(sVar != NULL){
-              varInfoIdMap // HERE
+            if((sVar != NULL)                    &&
+               !sVar->hasQualifier("occaShared") &&
+               !sVar->hasQualifier("exclusive")){
+
+              varInfoIdMapIterator it = varInfoIdMap.find(sVar);
+
+              if(it != varInfoIdMap.end()){
+                if((it->second) != currentInnerID){
+                  statement &origin = *(varUpdateMap[sVar].value);
+
+                  splitDefineAndInitForVariable(*sVar);
+                  sVar->addQualifier("exclusive", 0);
+                }
+              }
+              else
+                varInfoIdMap[sVar] = currentInnerID;
             }
           }
 
           expNode::freeFlatHandle(flatRoot);
-#endif
 
           // Save this SN for outerInnerS
           if(ssStart != sn)

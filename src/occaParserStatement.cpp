@@ -251,6 +251,7 @@ namespace occa {
             sInfo->addVariable(&var);
         }
 
+        // Make sure the first one prints out the type
         if(i == 0){
           leaf.leaves[0]->info |= expType::type;
           firstVar = &var;
@@ -265,8 +266,10 @@ namespace occa {
 
         // Don't put the [;]
         if((sExpEnd == leafCount) &&
-           (leaves[sExpEnd - 1]->value == ";"))
+           (leaves[sExpEnd - 1]->value == ";")){
+
           --sExpEnd;
+        }
 
         if(sExpStart < sExpEnd){
           leaf.addNodes(0, 1, sExpEnd - sExpStart);
@@ -1856,7 +1859,8 @@ namespace occa {
             pVar = sInfo->hasVariableInScope(varName);
 
           if((newExp.up == NULL) ||
-             !isAnUpdateOperator(up->value)){
+             (up &&
+              !isAnUpdateOperator(up->value))){
 
             newExp.sInfo->addVariableToUsedMap(*pVar);
           }
@@ -2354,13 +2358,17 @@ namespace occa {
       if(info & expType::declaration){
         const expNode &varNode = *(getVariableNode(pos));
 
-        if(varNode.leaves[0]->info & expType::varInfo){
-          return varNode.leaves[0];
+        const expNode *varLeaf = ((varNode.info & expType::varInfo) ?
+                                  &varNode :
+                                  varNode.leaves[0]);
+
+        if(varLeaf->info & expType::varInfo){
+          return const_cast<expNode*>(varLeaf); // Check later
         }
         else if(varNode.leafCount &&
-                (varNode.leaves[0]->value == "=")){
+                (varLeaf->value == "=")){
 
-          return varNode.leaves[0]->leaves[0];
+          return varLeaf->leaves[0];
         }
       }
 
@@ -2372,11 +2380,12 @@ namespace occa {
         if(variableHasInit(pos)){
           const expNode &varNode = *(getVariableNode(pos));
 
-          if(varNode.leafCount &&
-             (varNode.leaves[0]->value == "=")){
+          const expNode *varLeaf = ((varNode.info & expType::varInfo) ?
+                                    &varNode :
+                                    varNode.leaves[0]);
 
-            return varNode.leaves[0]->leaves[1];
-          }
+          if(varLeaf->value == "=")
+            return varLeaf->leaves[1];
         }
       }
 
@@ -4428,6 +4437,37 @@ namespace occa {
       }
     }
 
+    void statement::removeStatement(statement &s){
+      statementNode *sn = statementStart;
+
+      if(sn == NULL)
+        return;
+
+      if(sn->value == &s){
+        statementStart = statementStart->right;
+
+        if(sn == statementEnd)
+          statementEnd = NULL;
+
+        delete sn;
+
+        return;
+      }
+
+      while(sn){
+        if(sn->value == &s){
+          if(sn == statementEnd)
+            statementEnd = statementEnd->left;
+
+          delete sn->pop();
+
+          return;
+        }
+
+        sn = sn->right;
+      }
+    }
+
     statement* statement::clone(statement *up_){
       statement *newStatement;
 
@@ -4953,6 +4993,21 @@ namespace occa {
       }
 
       return NULL;
+    }
+
+    bool statement::hasFunctionArgVar(varInfo &var){
+      if(info & functionDefinitionType){
+        const int argc = getFunctionArgCount();
+
+        for(int i = 0; i < argc; ++i){
+          if(&var == getFunctionArgVar(i))
+            return true;
+        }
+
+        return false;
+      }
+
+      return false;
     }
 
     void statement::addFunctionArg(const int pos, varInfo &var){

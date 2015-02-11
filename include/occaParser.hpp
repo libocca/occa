@@ -77,6 +77,9 @@ namespace occa {
       void applyToAllStatements(statement &s,
                                 applyToAllStatements_t func);
 
+      void applyToAllKernels(statement &s,
+                             applyToAllStatements_t func);
+
       void applyToStatementsDefiningVar(applyToStatementsDefiningVar_t func);
 
       void applyToStatementsUsingVar(varInfo &info,
@@ -99,6 +102,9 @@ namespace occa {
                              const std::string &loopIters = "");
 
       void setupOccaFors(statement &s);
+
+      bool statementIsOccaOuterFor(statement &s);
+      bool statementIsOccaInnerFor(statement &s);
 
       bool statementHasOccaOuterFor(statement &s);
       bool statementHasOccaFor(statement &s);
@@ -136,6 +142,11 @@ namespace occa {
                                     const int sideDepth);
 
       void addArgQualifiers();
+
+      void floatSharedAndExclusivesUp(statement &s);
+      statementNode* appendSharedAndExclusives(statement &s,
+                                               statementNode *snTail,
+                                               bool isAppending = false);
 
       void modifyExclusiveVariables(statement &s);
 

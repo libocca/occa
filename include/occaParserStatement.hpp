@@ -580,6 +580,7 @@ namespace occa {
                             statement *origin);
 
       void addStatement(statement *newStatement);
+      void removeStatement(statement &s);
 
       statement* clone(statement *up_ = NULL);
 
@@ -647,6 +648,7 @@ namespace occa {
       std::string getFunctionArgType(const int pos);
       std::string getFunctionArgName(const int pos);
       varInfo* getFunctionArgVar(const int pos);
+      bool hasFunctionArgVar(varInfo &var);
 
       void addFunctionArg(const int pos, varInfo &var);
 
