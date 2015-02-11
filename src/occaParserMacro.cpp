@@ -623,12 +623,8 @@ namespace occa {
           for(int i = 0; i < args.size(); ++i)
             std::cout << "    args[" << i << "] = " << args[i] << '\n';
 
-          OCCA_CHECK(args.size() != 0,
-                     "Macro [" << name << "] uses [" << argc << "] arguments (None were provided)");
-          OCCA_CHECK(args.size() != 1,
-                     "Macro [" << name << "] uses [" << argc << "] arguments ([1] was provided)");
           OCCA_CHECK(false,
-                     "Macro [" << name << "] uses [" << argc << "] arguments ([" << args.size() << "] were provided)");
+                     "Macro [" << name << "] uses [" << argc << "] argument(s) ([" << args.size() << "] provided)");
         }
 
         const int subs = argBetweenParts.size();

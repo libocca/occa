@@ -33,9 +33,21 @@ int main(int argc, char **argv){
 
   reductionInfo.addDefine("p_Nred", p_Nred);
 
+#if 1
   reduction = device.buildKernelFromSource("reduction.okl",
                                            "reduction",
                                            reductionInfo);
+#else
+  reduction = device.buildKernelFromSource("reduction.cu",
+                                           "reduction",
+                                           reductionInfo);
+
+  size_t dims     = 1;
+  occa::dim inner(p_Nred);
+  occa::dim outer((entries + p_Nred - 1) / p_Nred);
+
+  reduction.setWorkingDims(dims, inner, outer);
+#endif
 
   o_a.copyFrom(a);
 

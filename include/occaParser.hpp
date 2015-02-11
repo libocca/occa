@@ -200,6 +200,10 @@ namespace occa {
                           int &currentInnerID,
                           const int innerDim);
 
+      void checkStatementForExclusives(statement &s,
+                                       varInfoIdMap_t &varInfoIdMap,
+                                       const int innerID);
+
       void addOuterFors(statement &s);
 
       void removeUnnecessaryBlocksInKernel(statement &s);

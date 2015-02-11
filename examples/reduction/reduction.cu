@@ -5,17 +5,20 @@ __global__ void reduction(const int entries, float *a, float *aRed){
 
   __shared__ float s_a[p_Nred];
 
-  s_a[item] = a[group*p_Nred + item];
+  if((group*p_Nred + item) < entries)
+    s_a[item] = a[group*p_Nred + item];
+  else
+    s_a[item] = 0;
 
-  for(int alive=p_Nred/2;alive>=1;alive/=2){
+  for(int alive = ((p_Nred + 1) / 2); 0 < alive; alive /= 2){
 
     __syncthreads();
 
-    if(item<alive)
+    if(item < alive)
       s_a[item] += s_a[item+alive];
   }
 
-  if(item==0){
+  if(item == 0){
     aRed[group] = s_a[0];
   }
 }

@@ -335,7 +335,9 @@ namespace occa {
       typedef macroArgMap_t::iterator macroArgMapIterator;
       macroArgMap_t macroArgMap;
 
-      while(*c != '\0'){
+      while((*c != '\0') &&
+            (*c != ')')){
+
         skipWhitespace(c);
         const char *cStart = c;
         skipWord(c);
@@ -343,10 +345,10 @@ namespace occa {
         macroArgMap[std::string(cStart, c - cStart)] = (info.argc++);
 
         skipWhitespace(c);
-
-        if(*(c++) == ')')
-          break;
       }
+
+      if(*c == ')')
+        ++c;
 
       skipWhitespace(c);
 
@@ -2861,22 +2863,26 @@ namespace occa {
       statementNode *ssEnd   = lastNode(ssStart);
 
       statementNode *statementPos = ssStart;
-      const int sStatementCount = length(ssStart);
 
       std::vector<statement*> sBreaks;
+      std::vector<int> cInnerIDs;
 
-      for(int i = 0; i < sStatementCount; ++i){
+      cInnerIDs.push_back(currentInnerID);
+
+      while(statementPos){
         statement &s2 = *(statementPos->value);
 
         // Add inner-for inside the for/while loop
         if(s2.info & (forStatementType |
                       whileStatementType)){
 
-          sBreaks.push_back(&s2);
           addInnerForsTo(s2, varInfoIdMap, currentInnerID, innerDim);
+          sBreaks.push_back(&s2);
+          cInnerIDs.push_back(++currentInnerID);
         }
         else if(s2.hasBarrier()){
           sBreaks.push_back(&s2);
+          cInnerIDs.push_back(++currentInnerID);
         }
 
         statementPos = statementPos->right;
@@ -2884,11 +2890,14 @@ namespace occa {
 
       sBreaks.push_back(NULL);
 
-      int breaks = sBreaks.size();
+      const int oldBreaks = sBreaks.size();
+      int breaks = oldBreaks;
 
       // Start with first non-break statement
       for(int b = 0; b < breaks; ++b){
-        if(sBreaks[b] == ssStart->value){
+        if(ssStart &&
+           (sBreaks[b] == ssStart->value)){
+
           ssStart = ssStart->right;
 
           --b;
@@ -2901,11 +2910,21 @@ namespace occa {
       if(breaks == 0)
         return;
 
-      ssEnd = ssStart;
+      // Remove first non-break statement info
+      const int deltaBreaks = (oldBreaks - breaks);
 
       for(int b = 0; b < breaks; ++b){
+        sBreaks[b]   = sBreaks[deltaBreaks + b];
+        cInnerIDs[b] = cInnerIDs[deltaBreaks + b];
+      }
+
+      for(int b = 0; b < breaks; ++b){
+        ssEnd = ssStart;
+
         if(ssEnd == NULL)
           break;
+
+        const int cInnerID = cInnerIDs[b];
 
         // Find statements for inner-loop
         while(ssEnd &&
@@ -2917,6 +2936,7 @@ namespace occa {
         statement *outerInnerS = NULL;
         statement *innerInnerS = NULL;
 
+        // Add inner-for loops
         for(int i = 0; i <= innerDim; ++i){
           const int innerID = (innerDim - i);
 
@@ -2946,41 +2966,9 @@ namespace occa {
 
           innerInnerS->addStatement(&s2);
 
-          // Find variables
-          expNode &flatRoot = *(s2.expRoot.makeFlatHandle());
-
-          for(int i = 0; i < flatRoot.leafCount; ++i){
-            varInfo *sVar = NULL;
-
-            // Check for variable
-            if(flatRoot[i].info & expType::variable){
-              sVar = s2.hasVariableInScope(flatRoot[i].value);
-            }
-            else if(flatRoot[i].info & expType::varInfo){
-              sVar = &(flatRoot[i].getVarInfo());
-            }
-
-            // Has variable
-            if((sVar != NULL)                    &&
-               !sVar->hasQualifier("occaShared") &&
-               !sVar->hasQualifier("exclusive")){
-
-              varInfoIdMapIterator it = varInfoIdMap.find(sVar);
-
-              if(it != varInfoIdMap.end()){
-                if((it->second) != currentInnerID){
-                  statement &origin = *(varUpdateMap[sVar].value);
-
-                  splitDefineAndInitForVariable(*sVar);
-                  sVar->addQualifier("exclusive", 0);
-                }
-              }
-              else
-                varInfoIdMap[sVar] = currentInnerID;
-            }
-          }
-
-          expNode::freeFlatHandle(flatRoot);
+          checkStatementForExclusives(s2,
+                                      varInfoIdMap,
+                                      cInnerID);
 
           // Save this SN for outerInnerS
           if(ssStart != sn)
@@ -2988,8 +2976,6 @@ namespace occa {
           else
             ssStart = ssStart->right;
         }
-
-        ++currentInnerID;
 
         // Move to the right of the break
         if(ssStart)
@@ -3005,7 +2991,62 @@ namespace occa {
           ssStart = ssStart->right;
           ++b;
         }
+      } // for(breaks)
+    }
+
+    void parserBase::checkStatementForExclusives(statement &s,
+                                                 varInfoIdMap_t &varInfoIdMap,
+                                                 const int innerID){
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        checkStatementForExclusives(*(statementPos->value),
+                                    varInfoIdMap,
+                                    innerID);
+
+        statementPos = statementPos->right;
       }
+
+      // Find variables
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        varInfo *sVar = NULL;
+
+        // Check for variable
+        if(flatRoot[i].info & expType::variable){
+          sVar = s.hasVariableInScope(flatRoot[i].value);
+        }
+        else if(flatRoot[i].info & expType::varInfo){
+          sVar = &(flatRoot[i].getVarInfo());
+        }
+
+        // Has variable
+        if((sVar != NULL)                    &&
+           !sVar->hasQualifier("occaShared") &&
+           !sVar->hasQualifier("exclusive")){
+
+          varInfoIdMapIterator it = varInfoIdMap.find(sVar);
+
+          if(it != varInfoIdMap.end()){
+            if(((it->second) != -1) &&
+               ((it->second) != innerID)){
+
+              statement &origin = *(varUpdateMap[sVar].value);
+
+              splitDefineAndInitForVariable(*sVar);
+              sVar->addQualifier("exclusive", 0);
+
+              it->second = -1;
+            }
+          }
+          else
+            varInfoIdMap[sVar] = innerID;
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     void parserBase::addOuterFors(statement &s){
@@ -3082,58 +3123,6 @@ namespace occa {
           break;
       }
     }
-
-    // void parserBase::floatSharedVarsInKernel(statement &s){
-    //   statementNode *sn = s.statementStart;
-
-    //   statementNode *sharedStart = NULL;
-    //   statementNode *sharedPos   = NULL;
-
-    //   while(sn){
-    //     statementNode *sn2 = sn;
-    //     statement &s2      = *(sn->value);
-
-    //     sn = sn->right;
-
-    //     if((s2.info & declareStatementType) &&
-    //        (s2.hasDescriptorVariable("occaShared") ||
-    //         s2.hasDescriptorVariable("exclusive"))){
-
-    //       if(s.statementStart == sn2)
-    //         s.statementStart = sn;
-
-    //       if(sn2->left)
-    //         sn2->left->right = sn2->right;
-    //       if(sn2->right)
-    //         sn2->right->left = sn2->left;
-
-    //       sn2->left  = NULL;
-    //       sn2->right = NULL;
-
-    //       if(sharedStart){
-    //         sharedPos->right = sn2;
-    //         sn2->left        = sharedPos;
-    //         sharedPos        = sn2;
-    //       }
-    //       else{
-    //         sharedStart = sn2;
-    //         sharedPos   = sharedStart;
-    //       }
-    //     }
-    //   }
-
-    //   if(sharedStart){
-    //     if(s.statementStart == NULL)
-    //       s.statementStart = sharedStart;
-    //     else{
-    //       statementNode *oldStart = s.statementStart;
-
-    //       s.statementStart = sharedStart;
-    //       sharedPos->right = oldStart;
-    //       oldStart->left   = sharedPos;
-    //     }
-    //   }
-    // }
 
     void parserBase::addOccaForsToKernel(statement &s){
       addInnerFors(s);
