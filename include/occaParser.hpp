@@ -185,12 +185,13 @@ namespace occa {
 
       void addInnerFors(statement &s);
       void addInnerForsTo(statement &s,
+                          varInfoIdMap_t &varInfoIdMap,
+                          int &currentInnerID,
                           const int innerDim);
 
       void addOuterFors(statement &s);
 
       void removeUnnecessaryBlocksInKernel(statement &s);
-      void floatSharedVarsInKernel(statement &s);
       void addOccaForsToKernel(statement &s);
 
       void addOccaFors();

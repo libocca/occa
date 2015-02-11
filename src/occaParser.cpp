@@ -68,13 +68,6 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::modifyExclusiveVariables);
 
-      varInfo *b__ = globalScope->hasVariableInScope("b__");
-
-      if(b__)
-        splitDefineAndInitForVariable(*b__);
-      else
-        std::cout << "b__ is not defined \n";
-
       return (std::string) *globalScope;
     }
 
@@ -2702,51 +2695,16 @@ namespace occa {
       OCCA_CHECK(0 <= innerDim,
                  "OCCA Inner for-loop count could not be calculated");
 
+      varInfoIdMap_t varInfoIdMap;
+      int currentInnerID = 0;
+
       // Add inner for-loops
-      addInnerForsTo(s, innerDim);
-
-
-
-      //------------------------------------------------
-
-      /*
-        Map[Statement] -> innerForID
-
-        const int origin = Map[ statement[0] ]
-
-        for(statement[1..] using var){
-          if(Map[ s ] != origin)
-            exclusify(var)
-        }
-      */
-
-      //------------------------------------------------
-
-      /*
-        If statement[0] has multiple definitions:
-          Remove var definition in statement[0] and place in ns
-        Else
-          ns = Pick statement[0]
-
-        Go to inner-most outer-loop
-
-        while(shared or exclusive)
-          Go to next statement
-
-        Stick ns there
-       */
-
-      // findStatementWith();
-      // checkPathForConditionals(); // Keep warning statement
-      // findLoopSections();
-      // findVarsMovingToTop();
-      // varInTwoSegments(); // ?
-      // splitDefineForVariable(); // Check
-      // floatSharedVarsInKernel();
-      // addInnerForsToStatement();
+      addInnerForsTo(s, varInfoIdMap, currentInnerID, innerDim);
     }
 
     void parserBase::addInnerForsTo(statement &s,
+                                    varInfoIdMap_t &varInfoIdMap,
+                                    int &currentInnerID,
                                     const int innerDim){
 
       statementNode *ssStart = s.statementStart;
@@ -2765,7 +2723,7 @@ namespace occa {
                       whileStatementType)){
 
           sBreaks.push_back(&s2);
-          addInnerForsTo(s2, innerDim);
+          addInnerForsTo(s2, varInfoIdMap, currentInnerID, innerDim);
         }
         else if(s2.hasBarrier()){
           sBreaks.push_back(&s2);
@@ -2834,7 +2792,33 @@ namespace occa {
         statementNode *sn = ssStart;
 
         while(ssStart != ssEnd){
-          innerInnerS->addStatement(ssStart->value);
+          statement &s2 = *(ssStart->value);
+
+          innerInnerS->addStatement(&s2);
+
+#if 0
+          // Find variables
+          expNode &flatRoot = *(s2.expRoot.makeFlatHandle());
+
+          for(int i = 0; i < flatRoot.leafCount; ++i){
+            varInfo *sVar = NULL;
+
+            // Check for variable
+            if(flatRoot[i].info & expType::variable){
+              sVar = origin.hasVariableInScope(flatRoot[i].value);
+            }
+            else if(flatRoot[i].info & expType::varInfo){
+              sVar = &(flatRoot[i].getVarInfo());
+            }
+
+            // Has variable
+            if(sVar != NULL){
+              varInfoIdMap // HERE
+            }
+          }
+
+          expNode::freeFlatHandle(flatRoot);
+#endif
 
           // Save this SN for outerInnerS
           if(ssStart != sn)
@@ -2842,6 +2826,8 @@ namespace occa {
           else
             ssStart = ssStart->right;
         }
+
+        ++currentInnerID;
 
         // Move to the right of the break
         if(ssStart)
@@ -2935,57 +2921,57 @@ namespace occa {
       }
     }
 
-    void parserBase::floatSharedVarsInKernel(statement &s){
-      statementNode *sn = s.statementStart;
+    // void parserBase::floatSharedVarsInKernel(statement &s){
+    //   statementNode *sn = s.statementStart;
 
-      statementNode *sharedStart = NULL;
-      statementNode *sharedPos   = NULL;
+    //   statementNode *sharedStart = NULL;
+    //   statementNode *sharedPos   = NULL;
 
-      while(sn){
-        statementNode *sn2 = sn;
-        statement &s2      = *(sn->value);
+    //   while(sn){
+    //     statementNode *sn2 = sn;
+    //     statement &s2      = *(sn->value);
 
-        sn = sn->right;
+    //     sn = sn->right;
 
-        if((s2.info & declareStatementType) &&
-           (s2.hasDescriptorVariable("occaShared") ||
-            s2.hasDescriptorVariable("exclusive"))){
+    //     if((s2.info & declareStatementType) &&
+    //        (s2.hasDescriptorVariable("occaShared") ||
+    //         s2.hasDescriptorVariable("exclusive"))){
 
-          if(s.statementStart == sn2)
-            s.statementStart = sn;
+    //       if(s.statementStart == sn2)
+    //         s.statementStart = sn;
 
-          if(sn2->left)
-            sn2->left->right = sn2->right;
-          if(sn2->right)
-            sn2->right->left = sn2->left;
+    //       if(sn2->left)
+    //         sn2->left->right = sn2->right;
+    //       if(sn2->right)
+    //         sn2->right->left = sn2->left;
 
-          sn2->left  = NULL;
-          sn2->right = NULL;
+    //       sn2->left  = NULL;
+    //       sn2->right = NULL;
 
-          if(sharedStart){
-            sharedPos->right = sn2;
-            sn2->left        = sharedPos;
-            sharedPos        = sn2;
-          }
-          else{
-            sharedStart = sn2;
-            sharedPos   = sharedStart;
-          }
-        }
-      }
+    //       if(sharedStart){
+    //         sharedPos->right = sn2;
+    //         sn2->left        = sharedPos;
+    //         sharedPos        = sn2;
+    //       }
+    //       else{
+    //         sharedStart = sn2;
+    //         sharedPos   = sharedStart;
+    //       }
+    //     }
+    //   }
 
-      if(sharedStart){
-        if(s.statementStart == NULL)
-          s.statementStart = sharedStart;
-        else{
-          statementNode *oldStart = s.statementStart;
+    //   if(sharedStart){
+    //     if(s.statementStart == NULL)
+    //       s.statementStart = sharedStart;
+    //     else{
+    //       statementNode *oldStart = s.statementStart;
 
-          s.statementStart = sharedStart;
-          sharedPos->right = oldStart;
-          oldStart->left   = sharedPos;
-        }
-      }
-    }
+    //       s.statementStart = sharedStart;
+    //       sharedPos->right = oldStart;
+    //       oldStart->left   = sharedPos;
+    //     }
+    //   }
+    // }
 
     void parserBase::addOccaForsToKernel(statement &s){
       addInnerFors(s);
