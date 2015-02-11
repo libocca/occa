@@ -172,6 +172,9 @@ namespace occa {
       // Add used vars to varUsedMap
       void labelUsedVariables();
 
+      // <const int,float>
+      void mergeTypes();
+
       // class(...), class{1,2,3}
       void mergeClassConstructs();
 

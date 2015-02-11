@@ -60,8 +60,7 @@ namespace occa {
 
       applyToAllStatements(*globalScope, &parserBase::setupOccaFors);
 
-      // Working, but not for trunk yet
-      // applyToAllKernels(*globalScope, &parserBase::floatSharedAndExclusivesUp);
+      applyToAllKernels(*globalScope, &parserBase::floatSharedAndExclusivesUp);
 
       // Broken
       modifyTextureVariables();
@@ -1838,9 +1837,22 @@ namespace occa {
           const bool appendToEnd   = (sn3 == NULL);
           const bool appendToStart = (!appendToEnd) && (sn3->left == NULL);
 
-          // HERE!
+          statementNode *sn2 = new statementNode(&s2);
+
           if(appendToStart){
+            sn2->right                = sUp->statementStart;
+            sUp->statementStart->left = sn2;
+
+            sUp->statementStart = sn2;
           }
+          else if(appendToEnd){
+            sUp->statementEnd = lastNode(sUp->statementStart);
+
+            sUp->statementEnd->right = sn2;
+            sn2->left                = sUp->statementEnd;
+          }
+          else
+            sn3->left->push(sn2);
         }
 
         statementPos = statementPos->right;
@@ -1935,6 +1947,9 @@ namespace occa {
       for(int i = 0; i < argc; ++i){
         varInfo &var = s.getDeclarationVarInfo(i);
         var.removeQualifier("exclusive");
+
+        if(var.hasQualifier("occaConst"))
+          var.removeQualifier("occaConst");
 
         const int isPrivateArray = var.stackPointerCount;
 
@@ -2817,6 +2832,9 @@ namespace occa {
 
       delete tmp;
       //================================
+
+      if(s.expRoot.lastLeaf()->value != ";")
+        s.expRoot.addNode(expType::operator_, ";");
 
       s.addVariableToUpdateMap(var);
     }

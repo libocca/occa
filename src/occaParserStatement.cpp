@@ -986,6 +986,9 @@ namespace occa {
         labelUsedVariables();
 
       //---[ Level 1 ]------
+      // <const int,float>
+      mergeTypes();
+
       // class(...), class{1,2,3}
       mergeClassConstructs();
 
@@ -1228,13 +1231,30 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if((leaves[leafPos]->value == "(")       &&
-           (leaves[leafPos]->leafCount)          &&
-           (leaves[leafPos]->leaves[0]->info & (expType::type      |
-                                                expType::qualifier |
-                                                expType::typeInfo))){
+        expNode &leaf = *(leaves[leafPos]);
 
-          leaves[leafPos]->info |= expType::cast_;
+        if((leaf.value == "(")                      &&
+           (leaf.leafCount)                         &&
+           ((leaf[0].info & (expType::type      |
+                             expType::qualifier |
+                             expType::typeInfo))     ||
+            sInfo->hasTypeInScope(leaves[leafPos]->value))){
+
+          bool isCast = true;
+
+          for(int i = 1; i < leaf.leafCount; ++i){
+            if(!(leaf[i].info & (expType::type      |
+                                 expType::qualifier |
+                                 expType::typeInfo))     &&
+               !sInfo->hasTypeInScope(leaves[leafPos]->value)){
+
+              isCast = false;
+              break;
+            }
+          }
+
+          if(isCast)
+            leaf.info |= expType::cast_;
         }
 
         ++leafPos;
@@ -1259,6 +1279,27 @@ namespace occa {
             sInfo->addVariableToUsedMap(var);
           }
         }
+      }
+    }
+
+    // <const int,float>
+    void expNode::mergeTypes(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if(sInfo->hasTypeInScope(leaves[leafPos]->value) ||
+           (leaves[leafPos]->info == expType::qualifier)){
+
+          varInfo &var = addVarInfoNode(leafPos);
+
+          leaves[leafPos++]->info |= expType::type;
+
+          const int nextLeafPos = var.loadFrom(*this, leafPos);
+
+          removeNodes(leafPos, nextLeafPos - leafPos);
+        }
+
+        ++leafPos;
       }
     }
 
@@ -2753,8 +2794,7 @@ namespace occa {
       case (expType::C | expType::cast_):{
         out << '(';
 
-        for(int i = 0; i < leafCount; ++i)
-          out << *(leaves[i]);
+        out << *(leaves[0]);
 
         out << ')';
 
