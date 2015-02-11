@@ -118,6 +118,7 @@ namespace occa {
       int statementOccaForNest(statement &s);
       bool statementIsAnOccaFor(statement &s);
 
+      void checkOccaBarriers(statement &s);
       void addOccaBarriers();
       void addOccaBarriersToStatement(statement &s);
 
@@ -179,30 +180,12 @@ namespace occa {
       int getInnerMostForDim(statement &s);
       int getForDim(statement &s, const std::string &tag);
 
-      void checkPathForConditionals(statementNode *path);
-
-      int findLoopSections(statement &s,
-                           statementNode *path,
-                           statementIdMap_t &loopSection,
-                           int section = 0);
-
-      bool varInTwoSegments(varInfo &var,
-                            statementIdMap_t &loopSection);
-
-      varInfoNode* findVarsMovingToTop(statement &s,
-                                       statementIdMap_t &loopSection);
-
-      void splitDefineForVariable(statement &origin,
-                                  varInfo &var);
-
-      void addInnerForsToStatement(statement &s,
-                                   const int innerDim);
-
-      statementNode* addInnerForsBetweenBarriers(statement &origin,
-                                                 statementNode *includeStart,
-                                                 const int innerDim);
+      void splitDefineForVariable(varInfo &var);
 
       void addInnerFors(statement &s);
+      void addInnerForsTo(statement &s,
+                          const int innerDim);
+
       void addOuterFors(statement &s);
 
       void removeUnnecessaryBlocksInKernel(statement &s);

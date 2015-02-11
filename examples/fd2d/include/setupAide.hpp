@@ -46,6 +46,9 @@ public:
   void getArgs(string key, vector<string>& args, string delimeter);
 };
 
+template <>
+void setupAide::getArgs(string key, string &t);
+
 #include "setupAide.tpp"
 
 #endif

@@ -50,6 +50,7 @@ namespace occa {
       // Broken
       // fixOccaForOrder();
 
+      checkOccaBarriers(*globalScope);
       addOccaBarriers();
 
       addFunctionPrototypes();
@@ -78,6 +79,7 @@ namespace occa {
       c = cStart;
 
       while((*c != '\0') &&
+            (*c != '(')  &&
             !isWhitespace(*c)){
 
         if((c[0] == '#') && (c[1] == '<')){
@@ -1422,6 +1424,25 @@ namespace occa {
       return !(nest & notAnOccaFor);
     }
 
+    void parserBase::checkOccaBarriers(statement &s){
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        if(s2.info & ifStatementType){
+          if(s2.hasStatementWithBarrier()){
+            OCCA_CHECK(false,
+                       "Barriers are not allowed in conditional statements:\n" << s2);
+          }
+        }
+        else
+          checkOccaBarriers(s2);
+
+        statementPos = statementPos->right;
+      }
+    }
+
     void parserBase::addOccaBarriers(){
       statementNode *statementPos = globalScope->statementStart;
 
@@ -1429,7 +1450,7 @@ namespace occa {
         statement *s = statementPos->value;
 
         if(statementIsAKernel(*s)      && // Kernel
-           (s->statementStart != NULL)){  //   not empty
+           (s->statementStart != NULL)){  // not empty
 
           addOccaBarriersToStatement(*s);
         }
@@ -1473,7 +1494,7 @@ namespace occa {
           if(snPos == lastLoop){
             if(warnForMissingBarriers){
 
-              std::cout << "Warning: Placing a local barrier between:\n"
+              std::cout << "Warning: Placing a shared-memory barrier between:\n"
                         << "---[ A ]--------------------------------\n"
                         << *(firstLoop->value)
                         << "---[ B ]--------------------------------\n"
@@ -2558,161 +2579,14 @@ namespace occa {
       return -1;
     }
 
-    void parserBase::checkPathForConditionals(statementNode *path){
-      if((warnForBarrierConditionals == false) ||
-         (path == NULL)                        ||
-         (path->value == NULL)){
+    void parserBase::splitDefineForVariable(varInfo &var){
 
+      statement &origin = *(varUpdateMap[&var].value);
+
+      // Ignore kernel arguments
+      if(origin.info & functionStatementType)
         return;
-      }
 
-      if(path->value->info & ifStatementType){
-        std::cout << '\n'
-                  << "+---------+--------------------------------------------------+\n"
-                  << "|         | Barriers inside conditional statements will only |\n"
-                  << "| Warning | work properly if it's always called or never     |\n"
-                  << "|         | called.                                          |\n"
-                  << "+---------+--------------------------------------------------+\n"
-                  << *(path->value)
-                  << "+---------+--------------------------------------------------+\n\n";
-      }
-
-      if(path->down){
-        statementNode *nodePos = path->down;
-
-        while(nodePos){
-          checkPathForConditionals(nodePos);
-          nodePos = nodePos->right;
-        }
-      }
-    }
-
-    int parserBase::findLoopSections(statement &s,
-                                     statementNode *path,
-                                     statementIdMap_t &loopSection,
-                                     int section){
-      if(s.statementCount == 0)
-        return section;
-
-      statementNode *sPos  = s.statementStart;
-      statementNode *sNext = NULL;
-
-      if((path != NULL) &&
-         (path->down != NULL)){
-
-        sNext = path->down;
-      }
-
-      while(sPos){
-        if(sNext &&
-           (sPos->value == sNext->value)){
-          // Last one is a barrier
-          if(sNext->down == NULL)
-            ++section;
-
-          section = findLoopSections(*(sPos->value),
-                                     sNext,
-                                     loopSection,
-                                     section);
-
-          sNext = sNext->right;
-        }
-        else{
-          loopSection[sPos->value] = section;
-
-          findLoopSections(*(sPos->value),
-                           NULL,
-                           loopSection,
-                           section);
-        }
-
-        sPos = sPos->right;
-      }
-
-      return section;
-    }
-
-    bool parserBase::varInTwoSegments(varInfo &var,
-                                      statementIdMap_t &loopSection){
-      // Don't count shared memory
-      if(var.hasQualifier("occaPointer")  ||
-         var.hasQualifier("occaVariable") ||
-         var.hasQualifier("occaShared"))
-        return false;
-
-      varUsedMapIterator it = varUsedMap.find(&var);
-
-      // Variable is not used
-      if(it == varUsedMap.end())
-        return false;
-
-      const int segment = loopSection[varUpdateMap[&var].value];
-
-      statementNode *pos = (it->second).right;
-
-      while(pos){
-        if(segment != loopSection[pos->value])
-          return true;
-
-        pos = pos->right;
-      }
-
-      return false;
-    }
-
-    varInfoNode* parserBase::findVarsMovingToTop(statement &s,
-                                                 statementIdMap_t &loopSection){
-      // Statement defines have doubles (to know how many variables
-      //                                 were defined)
-      //    so ... ignore duplicates
-      const bool ignoringVariables = (s.info & simpleStatementType);
-
-      scopeVarMapIterator it = s.scopeVarMap.begin();
-      varInfoNode *root = NULL;
-      varInfoNode *pos  = NULL;
-
-      if(!ignoringVariables){
-        while(it != s.scopeVarMap.end()){
-          varInfo &var = *(it->second);
-
-          if(varInTwoSegments(var, loopSection)){
-            // No longer const
-            if(var.hasQualifier("occaConst"))
-              var.removeQualifier("occaConst");
-
-            if(root == NULL){
-              root = new varInfoNode(&var);
-              pos  = root;
-            }
-            else
-              pos = pos->push(&var);
-          }
-
-          ++it;
-        }
-      }
-
-      statementNode *sn = s.statementStart;
-
-      while(sn){
-        varInfoNode *pos2 = findVarsMovingToTop(*(sn->value),
-                                                loopSection);
-
-        if(pos2 != NULL){
-          pos->right = pos2;
-          pos2->left = pos;
-
-          pos = lastNode(pos);
-        }
-
-        sn = sn->right;
-      }
-
-      return root;
-    }
-
-    void parserBase::splitDefineForVariable(statement &origin,
-                                            varInfo &var){
       int argc   = origin.getDeclarationVarCount();
       int argPos = 0;
 
@@ -2725,11 +2599,8 @@ namespace occa {
         }
       }
 
-      if(!var.hasQualifier("exclusive"))
-        var.addQualifier("exclusive");
-
       if(argPos){
-        statement &s = origin.pushNewStatementLeft(declareStatementType);
+        statement &s        = origin.pushNewStatementLeft(declareStatementType);
         s.expRoot.info      = origin.expRoot.info;
         s.expRoot.leaves    = new expNode*[argPos];
         s.expRoot.leafCount = argPos;
@@ -2745,7 +2616,7 @@ namespace occa {
       if((argPos + 1) < argc){
         const int newLeafCount = (argc - (argPos + 1));
 
-        statement &s = origin.pushNewStatementLeft(declareStatementType);
+        statement &s        = origin.pushNewStatementRight(declareStatementType);
         s.expRoot.info      = origin.expRoot.info;
         s.expRoot.leaves    = new expNode*[newLeafCount];
         s.expRoot.leafCount = newLeafCount;
@@ -2755,165 +2626,18 @@ namespace occa {
 
           s.expRoot.leaves[i]         = origin.expRoot.leaves[argPos + 1 + i];
           varUpdateMap[&argVar].value = &s;
+
+          // Print out type for the new statement
+          if(i == 0)
+            s.expRoot.getVariableInfoNode(0)->info |= expType::type;
         }
       }
 
       origin.expRoot.leaves[0] = origin.expRoot.leaves[argPos];
       origin.expRoot.leafCount = 1;
 
-      if(origin.expRoot.variableHasInit(0)){
-        std::stringstream ss;
-
-        ss << var.name << " = " << *(origin.expRoot.getVariableInitNode(0)) << ";";
-
-        origin.up->pushSourceRightOf(origin.getStatementNode(),
-                                     ss.str());
-      }
-
-      return;
-    }
-
-    void parserBase::addInnerForsToStatement(statement &s,
-                                             const int innerDim){
-      statementNode *sn = s.statementStart;
-
-      while(sn &&
-            (sn->value->hasDescriptorVariable("occaShared") ||
-             sn->value->hasDescriptorVariable("exclusive")  ||
-             sn->value->hasBarrier()))
-        sn = sn->right;
-
-      while(sn){
-        sn = addInnerForsBetweenBarriers(s, sn, innerDim);
-
-        while(sn &&
-              sn->value->hasBarrier()){
-
-          sn = sn->right;
-        }
-      }
-    }
-
-    statementNode* parserBase::addInnerForsBetweenBarriers(statement &origin,
-                                                           statementNode *includeStart,
-                                                           const int innerDim){
-      if(includeStart == NULL)
-        return NULL;
-
-      const int occaForType = keywordType["occaInnerFor0"];
-
-      statement *outerMostLoop = NULL;
-      statement *innerMostLoop = NULL;
-
-      statementNode *includeEnd = includeStart;
-      statementNode *returnNode;
-
-      bool stoppedAtFor = false;
-
-      while(includeEnd){
-        if(includeEnd->value->hasBarrier())
-          break;
-
-        // [-] Re-add if we want to split between for-loops
-        if(includeEnd->value->info & forStatementType){
-          stoppedAtFor = true;
-          break;
-        }
-
-        includeEnd = includeEnd->right;
-      }
-
-      returnNode = (includeEnd ? includeEnd->right : NULL);
-
-      if(includeEnd && stoppedAtFor){
-        statementNode *forStart = includeEnd;
-        statementNode *forNode  = includeEnd;
-
-        while(forStart->left &&
-              forStart->left->value->info & macroStatementType)
-          forStart = forStart->left;
-
-        includeEnd = forStart;
-
-        addInnerForsToStatement(*(forNode->value), innerDim);
-
-        if(includeStart == forStart)
-          return returnNode;
-      }
-
-      if(includeEnd)
-        includeEnd = includeEnd->left;
-
-      for(int i = innerDim; 0 <= i; --i){
-        statement *newStatement = new statement(includeStart->value->depth,
-                                                occaForType, &origin);
-
-        newStatement->expRoot.info   = expType::occaFor;
-        newStatement->expRoot.value  = "occaInnerFor";
-        newStatement->expRoot.value += ('0' + i);
-
-        if(i == innerDim){
-          outerMostLoop = newStatement;
-          innerMostLoop = outerMostLoop;
-        }
-        else{
-          innerMostLoop->addStatement(newStatement);
-          innerMostLoop->statementStart->value->up = innerMostLoop;
-          innerMostLoop = innerMostLoop->statementStart->value;
-        }
-      }
-
-      // Keep privates and shared outside inner loops
-      while(includeStart &&
-            (includeStart->value->hasDescriptorVariable("occaShared") ||
-             includeStart->value->hasDescriptorVariable("exclusive"))){
-
-        includeStart->value->up = innerMostLoop;
-        includeStart = includeStart->right;
-      }
-
-      // Put the loop node on the origin's statements
-      //   and remove nodes that are going to be put
-      //   in the inner loops
-      statementNode *outerMostLoopSN = new statementNode(outerMostLoop);
-
-      if(origin.statementStart == includeStart)
-        origin.statementStart = outerMostLoopSN;
-
-      outerMostLoopSN->left = includeStart->left;
-
-      if(includeStart->left)
-        includeStart->left->right = outerMostLoopSN;
-
-      includeStart->left = NULL;
-
-      if(includeEnd){
-        outerMostLoopSN->right = includeEnd->right;
-
-        if(includeEnd->right)
-          includeEnd->right->left = outerMostLoopSN;
-
-        includeEnd->right = NULL;
-      }
-
-      innerMostLoop->statementStart = includeStart;
-      innerMostLoop->statementEnd   = includeEnd;
-
-      while(includeStart){
-        includeStart->value->up = innerMostLoop;
-        includeStart = includeStart->right;
-      }
-
-      // Increment the depth of statements in the loops
-      for(int i = 0; i < innerDim; ++i){
-        outerMostLoop = outerMostLoop->statementStart->value;
-        applyToAllStatements(*outerMostLoop, &parserBase::incrementDepth);
-      }
-
-      applyToAllStatements(*outerMostLoop, &parserBase::incrementDepth);
-      --(outerMostLoop->depth);
-
-      return returnNode;
+      // Print out type for the new statement
+      origin.expRoot.getVariableInfoNode(0)->info |= expType::type;
     }
 
     void parserBase::addInnerFors(statement &s){
@@ -2922,36 +2646,162 @@ namespace occa {
       OCCA_CHECK(0 <= innerDim,
                  "OCCA Inner for-loop count could not be calculated");
 
-      // Get path and ignore kernel
-      statementNode *sPath = findStatementWith(s, &parserBase::statementHasBarrier);
+      // Add inner for-loops
+      addInnerForsTo(s, innerDim);
 
-      checkPathForConditionals(sPath);
 
-      statementIdMap_t loopSection;
-      findLoopSections(s, sPath, loopSection);
 
-      // Get private and shared vars
-      varInfoNode *varRoot = findVarsMovingToTop(s, loopSection);
-      varInfoNode *varPos  = lastNode(varRoot);
+      //------------------------------------------------
 
-      while(varPos){
-        statement &origin = *(varUpdateMap[varPos->value].value);
+      /*
+        Map[Statement] -> innerForID
 
-        // Ignore kernel arguments
-        if(origin.info & functionStatementType){
-          varPos = varPos->left;
-          continue;
+        const int origin = Map[ statement[0] ]
+
+        for(statement[1..] using var){
+          if(Map[ s ] != origin)
+            exclusify(var)
+        }
+      */
+
+      //------------------------------------------------
+
+      /*
+        If statement[0] has multiple definitions:
+          Remove var definition in statement[0] and place in ns
+        Else
+          ns = Pick statement[0]
+
+        Go to inner-most outer-loop
+
+        while(shared or exclusive)
+          Go to next statement
+
+        Stick ns there
+       */
+
+      // findStatementWith();
+      // checkPathForConditionals(); // Keep warning statement
+      // findLoopSections();
+      // findVarsMovingToTop();
+      // varInTwoSegments(); // ?
+      // splitDefineForVariable(); // Check
+      // floatSharedVarsInKernel();
+      // addInnerForsToStatement();
+    }
+
+    void parserBase::addInnerForsTo(statement &s,
+                                    const int innerDim){
+
+      statementNode *ssStart = s.statementStart;
+      statementNode *ssEnd   = lastNode(ssStart);
+
+      statementNode *statementPos = ssStart;
+      const int sStatementCount = length(ssStart);
+
+      std::vector<statement*> sBreaks;
+
+      for(int i = 0; i < sStatementCount; ++i){
+        statement &s2 = *(statementPos->value);
+
+        // Add inner-for inside the for/while loop
+        if(s2.info & (forStatementType |
+                      whileStatementType)){
+
+          sBreaks.push_back(&s2);
+          addInnerForsTo(s2, innerDim);
+        }
+        else if(s2.hasBarrier()){
+          sBreaks.push_back(&s2);
         }
 
-        varInfo &info = *(varPos->value);
-
-        splitDefineForVariable(origin, info);
-
-        varPos = varPos->left;
+        statementPos = statementPos->right;
       }
 
-      floatSharedVarsInKernel(s);
-      addInnerForsToStatement(s, innerDim);
+      sBreaks.push_back(NULL);
+
+      int breaks = sBreaks.size();
+
+      // Start with first non-break statement
+      for(int b = 0; b < breaks; ++b){
+        if(sBreaks[b] == ssStart->value){
+          ssStart = ssStart->right;
+
+          --b;
+          --breaks;
+        }
+        else
+          break;
+      }
+
+      if(breaks == 0)
+        return;
+
+      ssEnd = ssStart;
+
+      for(int b = 0; b < breaks; ++b){
+        if(ssEnd == NULL)
+          break;
+
+        // Find statements for inner-loop
+        while(ssEnd &&
+              ssEnd->value != sBreaks[b]){
+
+          ssEnd = ssEnd->right;
+        }
+
+        statement *outerInnerS = NULL;
+        statement *innerInnerS = NULL;
+
+        for(int i = 0; i <= innerDim; ++i){
+          const int innerID = (innerDim - i);
+
+          statement *newInnerS = new statement(s.depth + i + 1,
+                                               occaForType,
+                                               (outerInnerS ? outerInnerS : &s));
+
+          if(outerInnerS == NULL){
+            outerInnerS = newInnerS;
+            innerInnerS = newInnerS;
+          }
+
+          newInnerS->expRoot.info   = expType::occaFor;
+          newInnerS->expRoot.value  = "occaInnerFor";
+          newInnerS->expRoot.value += ('0' + innerID);
+
+          if(innerInnerS != newInnerS){
+            innerInnerS->addStatement(newInnerS);
+            innerInnerS = newInnerS;
+          }
+        }
+
+        statementNode *sn = ssStart;
+
+        while(ssStart != ssEnd){
+          innerInnerS->addStatement(ssStart->value);
+
+          // Save this SN for outerInnerS
+          if(ssStart != sn)
+            popAndGoRight(ssStart);
+          else
+            ssStart = ssStart->right;
+        }
+
+        // Move to the right of the break
+        if(ssStart)
+          ssStart = ssStart->right;
+
+        sn->value = outerInnerS;
+
+        // Skip breaks
+        while(ssStart            &&
+              ((b + 1) < breaks) &&
+              ssStart->value == sBreaks[b + 1]){
+
+          ssStart = ssStart->right;
+          ++b;
+        }
+      }
     }
 
     void parserBase::addOuterFors(statement &s){

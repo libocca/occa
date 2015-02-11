@@ -51,17 +51,15 @@ void setupAide::read(string setupFile){
 
     // Batch strings together
     if(c == '\'' || c == '"'){
-      current += c;
       i++;
 
       while(i < size && args[i] != c)
-	current += args[i++];
+        current += args[i++];
 
       if(i >= size)
-	break;
+        break;
 
-      if( i < (size-1) )
-	current += args[i];
+      ++i;
     }
 
     // Batch comments
@@ -69,10 +67,10 @@ void setupAide::read(string setupFile){
       i += 2;
 
       while( args[i] != '*' || (i < size && args[i+1] != '/') )
-	i++;
+        i++;
 
       if(i >= size)
-	break;
+        break;
 
       i++;
     }
@@ -82,7 +80,7 @@ void setupAide::read(string setupFile){
       i++;
 
       while(i < size && args[i] != '\n')
-	i++;
+        i++;
     }
 
     // Change \[\] to []
@@ -101,7 +99,7 @@ void setupAide::read(string setupFile){
       i++;
 
       while(i < size && args[i] != ']')
-	current += args[i++];
+        current += args[i++];
 
       keyword2.push_back(current);
       current = "";
@@ -130,7 +128,12 @@ string setupAide::getArgs(string key){
   return data[key];
 }
 
-void setupAide::getArgs(string key, vector<string>& argv, string delimeter){
+template <>
+void setupAide::getArgs(string key, string &t){
+  t = data[key];
+}
+
+void setupAide::getArgs(string key, vector<string> &argv, string delimeter){
   string args, current;
   int size;
 

@@ -1,13 +1,8 @@
 [DEVICE INFO] "mode = Serial"
+[DEVICE INFO] "mode = OpenCL, platformID = 0, deviceID = 1"
 
 [STENCIL RADIUS]
 7
-
-[PLATFORM]
-0
-
-[DEVICE]
-0
 
 [WIDTH]  256
 [LENGTH] 256

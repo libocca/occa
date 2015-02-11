@@ -1,5 +1,5 @@
 template <class T>
-void setupAide::getArgs(string key, T& t){
+void setupAide::getArgs(string key, T &t){
   vector<T> argv;
 
   getArgs(key, argv);
@@ -11,7 +11,7 @@ void setupAide::getArgs(string key, T& t){
 }
 
 template <class T>
-void setupAide::getArgs(string key, vector<T>& argv){
+void setupAide::getArgs(string key, vector<T> &argv){
   stringstream args;
   T input;
 

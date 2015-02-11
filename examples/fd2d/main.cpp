@@ -122,11 +122,12 @@ void setupMesh(){
 
   setup.getArgs("FREQUENCY", freq);
 
-  heightScale = 10000.0;
+  heightScale = 20000.0;
 
   currentTime = 0;
 
-  std::cout << "STENCIL RADIUS = " << stencilRadius << '\n'
+  std::cout << "DEVICE INFO    = " << deviceInfo << '\n'
+            << "STENCIL RADIUS = " << stencilRadius << '\n'
             << "WIDTH          = " << width << '\n'
             << "HEIGHT         = " << height << '\n'
             << "DX             = " << dx << '\n'
@@ -298,6 +299,7 @@ void setupSolver(){
   else
     fdInfo.addDefine("tFloat", "double");
 
+  // fd2d = dev.buildKernelFromSource("fd2d.cl", "fd2d", fdInfo);
   fd2d = dev.buildKernelFromSource("fd2d.okl", "fd2d", fdInfo);
 
   fd2d.setWorkingDims(dims, inner, outer);
