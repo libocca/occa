@@ -26,6 +26,7 @@ cudaDefined = { 'char2'   : True,
                 'float3'  : True,
                 'float4'  : True,
                 'double2' : True,
+                'double3' : True,
                 'double4' : True }
 
 unaryOps  = ['+', '-']

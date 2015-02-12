@@ -11997,7 +11997,12 @@ inline std::ostream& operator << (std::ostream &out, const double2& a){
 
 
 //---[ double3 ]------------------------
+#if (OCCA_USING_CUDA == 0)
 #  define double3_CONSTRUCTOR(...) double3(__VA_ARGS__)
+#else
+#  define double3_CONSTRUCTOR(...) make_double3(__VA_ARGS__)
+#endif
+#if (OCCA_USING_CUDA == 0)
 class double3{
 public:
   union { double s0, x; };
@@ -12027,6 +12032,7 @@ public:
     y(y_),
     z(z_) {}
 };
+#endif
 
 inline double3 operator + (const double3 &a){
   return double3_CONSTRUCTOR(+a.x,
