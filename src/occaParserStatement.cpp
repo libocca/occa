@@ -226,7 +226,7 @@ namespace occa {
     void expNode::splitDeclareStatement(const int flags){
       info = expType::declaration;
 
-      int varCount = 1 + typeInfo::delimeterCount(*this, ",");
+      int varCount = 1 + typeInfo::delimiterCount(*this, ",");
       int leafPos  = 0;
 
       varInfo *firstVar = NULL;
@@ -260,7 +260,7 @@ namespace occa {
         removeNodes(leafPos, nextLeafPos - leafPos);
 
         int sExpStart = leafPos;
-        int sExpEnd   = typeInfo::nextDelimeter(*this, leafPos, ",");
+        int sExpEnd   = typeInfo::nextDelimiter(*this, leafPos, ",");
 
         leafPos = sExpEnd;
 
@@ -292,7 +292,7 @@ namespace occa {
 
       expNode &expDown = *(leaves[1]);
 
-      int statementCount = 1 + typeInfo::delimeterCount(expDown, ";");
+      int statementCount = 1 + typeInfo::delimiterCount(expDown, ";");
 
       expNode newExp(*sInfo);
       newExp.info = info;
@@ -303,7 +303,7 @@ namespace occa {
       for(int i = 0; i < statementCount; ++i){
         expNode &leaf = newExp[i];
 
-        int nextLeafPos = typeInfo::nextDelimeter(expDown, leafPos, ";");
+        int nextLeafPos = typeInfo::nextDelimiter(expDown, leafPos, ";");
 
         if(leafPos < nextLeafPos){
           leaf.addNodes(0, 0, (nextLeafPos - leafPos));
@@ -381,7 +381,7 @@ namespace occa {
       varInfo dummyVar;
       int varStart = dummyVar.loadTypeFromFortran(*this, 0);
 
-      leafCount = typeInfo::nextDelimeter(*this, 0, "\\n");
+      leafCount = typeInfo::nextDelimiter(*this, 0, "\\n");
 
       // [+] Needs to be updated on C++
       for(int i = varStart; i < leafCount; ++i){
@@ -415,7 +415,7 @@ namespace occa {
         removeNodes(leafPos, nextLeafPos - leafPos);
 
         int sExpStart = leafPos;
-        int sExpEnd   = typeInfo::nextDelimeter(*this, leafPos, ",");
+        int sExpEnd   = typeInfo::nextDelimiter(*this, leafPos, ",");
 
         leafPos = sExpEnd;
 
@@ -637,9 +637,9 @@ namespace occa {
         return;
       }
 
-      leafCount = typeInfo::nextDelimeter(*this, 0, "\\n");
+      leafCount = typeInfo::nextDelimiter(*this, 0, "\\n");
 
-      int statementCount = 1 + typeInfo::delimeterCount(*this, ",");
+      int statementCount = 1 + typeInfo::delimiterCount(*this, ",");
 
       OCCA_CHECK((2 <= statementCount) && (statementCount <= 4),
                  "Error: Wrong [DO] format [" << *this << "]");
@@ -651,7 +651,7 @@ namespace occa {
 
       // Find [,] positions
       for(int i = 0; i < statementCount; ++i){
-        pos[i + 1] = typeInfo::nextDelimeter(*this, pos[i], ",") + 1;
+        pos[i + 1] = typeInfo::nextDelimiter(*this, pos[i], ",") + 1;
 
         OCCA_CHECK(pos[i] != (pos[i + 1] + 1),
                    "Error: No expression given in [" << *this << "]");

@@ -457,13 +457,13 @@ namespace occa {
         const bool usesSemicolon = !leftQualifiers.has("enum");
         const char *delimiter = (usesSemicolon ? ";" : ",");
 
-        nestedInfoCount = delimeterCount(leaf, delimiter);
+        nestedInfoCount = delimiterCount(leaf, delimiter);
         nestedExps      = new expNode[nestedInfoCount];
 
         int sLeafPos = 0;
 
         for(int i = 0; i < nestedInfoCount; ++i){
-          int sNextLeafPos = nextDelimeter(leaf, sLeafPos, delimiter);
+          int sNextLeafPos = nextDelimiter(leaf, sLeafPos, delimiter);
 
           // Empty statements
           if(sNextLeafPos != sLeafPos){
@@ -495,7 +495,7 @@ namespace occa {
       return leafPos;
     }
 
-    int typeInfo::delimeterCount(expNode &expRoot,
+    int typeInfo::delimiterCount(expNode &expRoot,
                                  const char *delimiter){
       int count = 0;
 
@@ -507,7 +507,7 @@ namespace occa {
       return count;
     }
 
-    int typeInfo::nextDelimeter(expNode &expRoot,
+    int typeInfo::nextDelimiter(expNode &expRoot,
                                 int leafPos,
                                 const char *delimiter){
       for(int i = leafPos; i < expRoot.leafCount; ++i){
@@ -1002,13 +1002,13 @@ namespace occa {
         expNode &leaf = expRoot[leafPos];
         int sLeafPos  = 0;
 
-        argumentCount    = 1 + typeInfo::delimeterCount(leaf, ",");
+        argumentCount    = 1 + typeInfo::delimiterCount(leaf, ",");
         argumentVarInfos = new varInfo*[argumentCount];
 
         for(int i = 0; i < argumentCount; ++i){
           argumentVarInfos[i] = new varInfo();
           sLeafPos = argumentVarInfos[i]->loadFrom(leaf, sLeafPos);
-          sLeafPos = typeInfo::nextDelimeter(leaf, sLeafPos, ",") + 1;
+          sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
         }
       }
 

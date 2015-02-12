@@ -24,38 +24,38 @@ namespace occa {
     return true;
   }
 
-  bool charIsIn(const char c, const char *delimeters){
-    while((*delimeters) != '\0')
-      if(c == *(delimeters++))
+  bool charIsIn(const char c, const char *delimiters){
+    while((*delimiters) != '\0')
+      if(c == *(delimiters++))
         return true;
 
     return false;
   }
 
-  bool charIsIn2(const char *c, const char *delimeters){
+  bool charIsIn2(const char *c, const char *delimiters){
     const char c0 = c[0];
     const char c1 = c[1];
 
-    while((*delimeters) != '\0'){
-      if((c0 == delimeters[0]) && (c1 == delimeters[1]))
+    while((*delimiters) != '\0'){
+      if((c0 == delimiters[0]) && (c1 == delimiters[1]))
         return true;
 
-      delimeters += 2;
+      delimiters += 2;
     }
 
     return false;
   }
 
-  bool charIsIn3(const char *c, const char *delimeters){
+  bool charIsIn3(const char *c, const char *delimiters){
     const char c0 = c[0];
     const char c1 = c[1];
     const char c2 = c[2];
 
-    while((*delimeters) != '\0'){
-      if((c0 == delimeters[0]) && (c1 == delimeters[1]) && (c2 == delimeters[2]))
+    while((*delimiters) != '\0'){
+      if((c0 == delimiters[0]) && (c1 == delimiters[1]) && (c2 == delimiters[2]))
         return true;
 
-      delimeters += 3;
+      delimiters += 3;
     }
 
     return false;
@@ -241,13 +241,13 @@ namespace occa {
     }
   }
 
-  char isAWordDelimeter(const char *c, const bool parsingC){
+  char isAWordDelimiter(const char *c, const bool parsingC){
     if(!parsingC)
-      return isAFortranWordDelimeter(c);
+      return isAFortranWordDelimiter(c);
 
-    if(charIsIn(c[0], parserNS::cWordDelimeter)){
-      if(charIsIn2(c, parserNS::cWordDelimeter2)){
-        if(charIsIn3(c, parserNS::cWordDelimeter3))
+    if(charIsIn(c[0], parserNS::cWordDelimiter)){
+      if(charIsIn2(c, parserNS::cWordDelimiter2)){
+        if(charIsIn3(c, parserNS::cWordDelimiter3))
           return 3;
 
         return 2;
@@ -259,11 +259,11 @@ namespace occa {
     return 0;
   }
 
-  char isAFortranWordDelimeter(const char *c){
-    if(charIsIn2(c, parserNS::fortranWordDelimeter2)){
+  char isAFortranWordDelimiter(const char *c){
+    if(charIsIn2(c, parserNS::fortranWordDelimiter2)){
       return 2;
     }
-    else if(charIsIn(c[0], parserNS::fortranWordDelimeter)){
+    else if(charIsIn(c[0], parserNS::fortranWordDelimiter)){
       if(c[0] == '.'){
         const char *c2 = (c + 1);
 
@@ -281,12 +281,12 @@ namespace occa {
 
   int skipWord(const char *&c, const bool parsingC){
     while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0')){
-      const int delimeterChars = isAWordDelimeter(c, parsingC);
+      const int delimiterChars = isAWordDelimiter(c, parsingC);
 
-      if(delimeterChars == 0)
+      if(delimiterChars == 0)
         ++c;
       else
-        return delimeterChars;
+        return delimiterChars;
     }
 
     return 0;
@@ -628,6 +628,51 @@ namespace occa {
 
     if(*c != '\0')
       ++c;
+  }
+
+  void skipTo(const char *&c, const char delimiter){
+    while(*c != '\0'){
+      if(*c == delimiter)
+        return;
+
+      ++c;
+    }
+  }
+
+  void skipTo(const char *&c, std::string delimiters){
+    const size_t chars = delimiters.size();
+    const char *d      = delimiters.c_str();
+
+    while(*c != '\0'){
+      for(size_t i = 0; i < chars; ++i){
+        if(*c == d[i])
+          return;
+      }
+
+      ++c;
+    }
+  }
+
+  void skipToWord(const char *&c, std::string word){
+    const size_t chars = word.size();
+    const char *d      = word.c_str();
+
+    while(*c != '\0'){
+      size_t i;
+
+      for(i = 0; i < chars; ++i){
+        if((c[i] == '\0') ||
+           (c[i] == d[i])){
+
+          break;
+        }
+      }
+
+      if(i == chars)
+        return;
+
+      ++c;
+    }
   }
 
   std::string findFileInPath(const std::string &filename){

@@ -11,9 +11,9 @@ namespace occa {
   bool stringsAreEqual(const char *cStart, const size_t chars,
                        const char *c2);
 
-  bool charIsIn(const char c, const char *delimeters);
-  bool charIsIn2(const char *c, const char *delimeters);
-  bool charIsIn3(const char *c, const char *delimeters);
+  bool charIsIn(const char c, const char *delimiters);
+  bool charIsIn2(const char *c, const char *delimiters);
+  bool charIsIn3(const char *c, const char *delimiters);
 
   char upChar(const char c);
   char downChar(const char c);
@@ -55,8 +55,8 @@ namespace occa {
 
   void skipString(const char *&c, const bool parsingC = true);
 
-  char isAWordDelimeter(const char *c, const bool parsingC = true);
-  char isAFortranWordDelimeter(const char *c);
+  char isAWordDelimiter(const char *c, const bool parsingC = true);
+  char isAFortranWordDelimiter(const char *c);
 
   int skipWord(const char *&c, const bool parsingC = true);
 
@@ -79,6 +79,9 @@ namespace occa {
   char segmentPair(const char c);
   void skipPair(const char *&c);
 
+  void skipTo(const char *&c, const char delimiter);
+  void skipTo(const char *&c, std::string delimiters);
+  void skipToWord(const char *&c, std::string word);
 
   std::string findFileInPath(const std::string &filename);
 

@@ -111,15 +111,15 @@ namespace occa {
     // By default, parsingC is true;
     static const bool parsingFortran = false;
 
-    //   ---[ Delimeters ]---------
+    //   ---[ Delimiters ]---------
     static const char whitespace[]     = " \t\r\n\v\f\0";
 
-    static const char cWordDelimeter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
-    static const char cWordDelimeter2[] = "!=###<#>%=&&&=*=+++=-=--->.*../=::<<<===>=>>^=|=||\0";
-    static const char cWordDelimeter3[] = "->*...<<=>>=\0";
+    static const char cWordDelimiter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~\0";
+    static const char cWordDelimiter2[] = "!=###<#>%=&&&=*=+++=-=--->.*../=::<<<===>=>>^=|=||\0";
+    static const char cWordDelimiter3[] = "->*...<<=>>=\0";
 
-    static const char fortranWordDelimeter[]  = " \t\r\n\v\f\"#%'()*+,-./;<=>\0";
-    static const char fortranWordDelimeter2[] = "**/=::<===>=\0";
+    static const char fortranWordDelimiter[]  = " \t\r\n\v\f\"#%'()*+,-./;<=>\0";
+    static const char fortranWordDelimiter2[] = "**/=::<===>=\0";
 
     //   ---[ Keyword Types ]---
     static const int everythingType       = 0xFFFFFFFF;

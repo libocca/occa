@@ -47,9 +47,6 @@ namespace occa {
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
 
-      // Broken
-      // fixOccaForOrder();
-
       checkOccaBarriers(*globalScope);
       addOccaBarriers();
 
@@ -62,7 +59,7 @@ namespace occa {
 
       applyToAllKernels(*globalScope, &parserBase::floatSharedAndExclusivesUp);
 
-      // Broken
+      // [-] Missing
       modifyTextureVariables();
 
       addArgQualifiers();
@@ -338,20 +335,20 @@ namespace occa {
       typedef macroArgMap_t::iterator macroArgMapIterator;
       macroArgMap_t macroArgMap;
 
-      while((*c != '\0') &&
-            (*c != ')')){
-
-        skipWhitespace(c);
+      while(*c != '\0'){
         const char *cStart = c;
-        skipWord(c);
 
-        macroArgMap[std::string(cStart, c - cStart)] = (info.argc++);
+        skipTo(c, ",)");
 
-        skipWhitespace(c);
+        macroArgMap[strip(cStart, c - cStart)] = (info.argc++);
+
+        if(*c == ')')
+          break;
+
+        ++c;
       }
 
-      if(*c == ')')
-        ++c;
+      ++c; // ')'
 
       skipWhitespace(c);
 
@@ -365,7 +362,7 @@ namespace occa {
           continue;
         }
 
-        const int delimeterChars = skipWord(c);
+        const int delimiterChars = skipWord(c);
 
         std::string word = std::string(cStart, c - cStart);
 
@@ -380,7 +377,7 @@ namespace occa {
         }
 
         cStart = c;
-        c += delimeterChars;
+        c += delimiterChars;
 
         if(cStart != c)
           info.parts[partPos] += std::string(cStart, c - cStart);
@@ -573,15 +570,15 @@ namespace occa {
           continue;
         }
 
-        int delimeterChars = skipWord(c);
+        int delimiterChars = skipWord(c);
 
         std::string word = std::string(cStart, c - cStart);
 
         macroMapIterator it = macroMap.find(word);
 
-        while(delimeterChars == 2){
+        while(delimiterChars == 2){
           //---[ #< #> ]----------------
-          if(stringsAreEqual(c, delimeterChars, "#<")){
+          if(stringsAreEqual(c, delimiterChars, "#<")){
             c += 2;
             cStart = c;
 
@@ -604,16 +601,16 @@ namespace occa {
             word += expr;
             applyMacros(word);
 
-            // Don't include delimeter chars
+            // Don't include delimiter chars
             c += 2;
-            delimeterChars = 0;
+            delimiterChars = 0;
           }
           //---[ ## ]-------------------
-          else if(stringsAreEqual(c, delimeterChars, "##")){
+          else if(stringsAreEqual(c, delimiterChars, "##")){
             c += 2;
 
             cStart = c;
-            delimeterChars = skipWord(c);
+            delimiterChars = skipWord(c);
 
             std::string word2 = std::string(cStart, c - cStart);
 
@@ -684,7 +681,7 @@ namespace occa {
           newLine += word;
 
         cStart = c;
-        c += delimeterChars;
+        c += delimiterChars;
 
         if(cStart != c)
           newLine += std::string(cStart, c - cStart);
@@ -1560,120 +1557,6 @@ namespace occa {
       return s.hasBarrier();
     }
 
-    void parserBase::fixOccaForStatementOrder(statement &origin,
-                                              statementNode *sn){
-      int innerLoopCount = -1;
-
-      while(sn){
-        std::vector<statement*> forLoopS;
-        std::vector<int> nestStack, nestStackInv;
-
-        statement &s = *(sn->value);
-
-        const int sNest = statementOccaForNest(s);
-
-        if(sNest & notAnOccaFor){
-          sn = sn->right;
-          continue;
-        }
-
-        const bool isAnInnerLoop = (sNest & occaInnerForMask);
-
-        const int shift = (isAnInnerLoop ? occaInnerForShift : occaOuterForShift);
-        const int mask  = (isAnInnerLoop ? occaInnerForMask  : occaOuterForMask);
-
-        statement *sp = &s;
-
-        forLoopS.push_back(sp);
-        nestStack.push_back((sNest >> shift) - 1);
-
-        int loopCount = 1;
-
-        sp = sp->statementStart->value;
-
-        while(sp){
-          const int nest = statementOccaForNest(*sp);
-
-          if(nest & (~mask))
-            break;
-
-          forLoopS.push_back(sp);
-          nestStack.push_back((nest >> shift) - 1);
-
-          ++loopCount;
-
-          sp = sp->statementStart->value;
-        }
-
-        if(isAnInnerLoop){
-          if(innerLoopCount == -1){
-            innerLoopCount = loopCount;
-          }
-          else{
-            OCCA_CHECK(loopCount == innerLoopCount,
-                       "Inner loops are inconsistent in:\n"
-                       << origin);
-          }
-        }
-        else{
-          // Re-order inner loops
-          fixOccaForStatementOrder(origin, (sp->up->statementStart));
-        }
-
-        nestStackInv.resize(loopCount);
-
-        for(int i = 0; i < loopCount; ++i)
-          nestStackInv[ nestStack[i] ] = i;
-
-        for(int i = 0; i < loopCount; ++i){
-          const int sInv1 = (loopCount - i - 1);
-          const int sInv2 = nestStack[i];
-
-          if(sInv1 == sInv2)
-            continue;
-
-          const int s1 = nestStackInv[sInv1];
-          const int s2 = nestStackInv[sInv2];
-
-          swapValues(nestStack[s1]      , nestStack[s2]);
-          swapValues(nestStackInv[sInv1], nestStackInv[sInv2]);
-
-          // [-] Warning: It doesn't swap variables defined in the for-loop
-          //              Should be ok ...
-          expNode::swap(forLoopS[s1]->expRoot, forLoopS[s2]->expRoot);
-        }
-
-        for(int i = 0; i < loopCount; ++i){
-          if(nestStack[i] != (loopCount - i - 1)){
-            std::cout << "Inner loops ";
-
-            for(int i2 = 0; i2 < loopCount; ++i2)
-              std::cout << (i2 ? ", " : "[") << nestStack[i2];
-
-            std::cout << "] have duplicates or gaps:\n"
-                      << origin << '\n';
-
-            OCCA_EMPTY_CHECK(false);
-          }
-        }
-
-        sn = sn->right;
-      }
-    }
-
-    void parserBase::fixOccaForOrder(){
-      statementNode *snPos = globalScope->statementStart;
-
-      while(snPos){
-        statement &s = *(snPos->value);
-
-        if(statementIsAKernel(s))
-          fixOccaForStatementOrder(s, s.statementStart);
-
-        snPos = snPos->right;
-      }
-    }
-
     void parserBase::updateConstToConstant(){
       statementNode *snPos = globalScope->statementStart;
 
@@ -2010,7 +1893,19 @@ namespace occa {
       s.statementCount = 0;
     }
 
+    // [-] Missing
     void parserBase::modifyTextureVariables(){
+      /*
+
+        kernel void kern(texture float **tex){
+          tex[j][i];
+        }
+
+        CPU:
+        kernel void kern(int64 offsets[argc],
+                         texture float tex,
+                         sampler/textureInfo tex_info)
+       */
     }
 
     statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
@@ -3376,14 +3271,14 @@ namespace occa {
             cLeft = cRight;
           }
           else{ //-----------------------------------------------[ 3 ]
-            const int delimeterChars = isAWordDelimeter(cLeft, parsingC);
+            const int delimiterChars = isAWordDelimiter(cLeft, parsingC);
 
-            if(delimeterChars){ //-----------------------------[ 3.1 ]
+            if(delimiterChars){ //-----------------------------[ 3.1 ]
               strNode *newNode;
 
               if(!parsingC){ //------------------------------[ 3.1.1 ]
                 // Translate Fortran keywords
-                std::string op(cLeft, delimeterChars);
+                std::string op(cLeft, delimiterChars);
                 std::string upOp = upString(op);
 
                 if(upOp[0] == '.'){
@@ -3412,7 +3307,7 @@ namespace occa {
                 }
               }  //==========================================[ 3.1.1 ]
               else { //--------------------------------------[ 3.1.2 ]
-                newNode = new strNode(std::string(cLeft, delimeterChars));
+                newNode = new strNode(std::string(cLeft, delimiterChars));
               } //===========================================[ 3.1.2 ]
 
               newNode->info  = keywordType[newNode->value];
@@ -3448,7 +3343,7 @@ namespace occa {
                   firstSectionNode = false;
                 }
 
-                cLeft = line.c_str() + strlen(line.c_str()) - delimeterChars;
+                cLeft = line.c_str() + strlen(line.c_str()) - delimiterChars;
               } //===========================================[ 3.1.5 ]
               else{ //---------------------------------------[ 3.1.6 ]
                 if(!firstSectionNode)
@@ -3459,7 +3354,7 @@ namespace occa {
                 }
               } //===========================================[ 3.1.6 ]
 
-              cLeft += delimeterChars;
+              cLeft += delimiterChars;
             } //===============================================[ 3.1 ]
             else{ //-------------------------------------------[ 3.2 ]
               skipWord(cRight, parsingC);

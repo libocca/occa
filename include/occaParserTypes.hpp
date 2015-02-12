@@ -117,10 +117,10 @@ namespace occa {
       int loadTypedefFrom(expNode &expRoot,
                           int leafPos = 0);
 
-      static int delimeterCount(expNode &expRoot,
+      static int delimiterCount(expNode &expRoot,
                                 const char *delimiter);
 
-      static int nextDelimeter(expNode &expRoot,
+      static int nextDelimiter(expNode &expRoot,
                                int leafPos,
                                const char *delimiter);
 

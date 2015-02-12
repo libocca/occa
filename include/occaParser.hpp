@@ -130,9 +130,6 @@ namespace occa {
 
       bool statementHasBarrier(statement &s);
 
-      void fixOccaForStatementOrder(statement &origin, statementNode *sn);
-      void fixOccaForOrder();
-
       void addParallelFors(statement &s);
 
       void updateConstToConstant();
