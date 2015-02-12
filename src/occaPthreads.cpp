@@ -1,5 +1,6 @@
 #if OCCA_PTHREADS_ENABLED
 
+#include "occaSerial.hpp"
 #include "occaPthreads.hpp"
 
 namespace occa {
@@ -79,8 +80,8 @@ namespace occa {
     std::string cachedBinary = getCachedName(filename,
                                              dHandle->getInfoSalt(info_));
 
-#if OCCA_OS == WINDOWS_OS
-    // Windows refuses to load dll's that do not end with '.dll'
+#if (OCCA_OS == WINDOWS_OS)
+    // Windows requires .dll extension
     cachedBinary = cachedBinary + ".dll";
 #endif
 
@@ -125,33 +126,46 @@ namespace occa {
                                                          cachedBinary,
                                                          info);
 
+    const std::string occaDir = getOCCADir();
+
     std::stringstream command;
 
     if(dHandle->compilerEnvScript.size())
       command << dHandle->compilerEnvScript << " && ";
 
-    command << dHandle->compiler
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    command << dHandle->compiler
             << " -x c++ -w -fPIC -shared"
-#else
-            << " /TP /LD /D MC_CL_EXE"
-#endif
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
+            << " -I"  << occaDir << "/include"
+            << " -L"  << occaDir << "/lib -locca"
             << ' '    << iCachedBinary
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -o " << cachedBinary
-#else
-            << " /link /OUT:" << cachedBinary
-#endif
             << std::endl;
+#else
+    command << dHandle->compiler
+            << " /TP /LD /MD  /D MC_CL_EXE"         // NBN: specify runtime library (release)
+         // << " /TP /LD /MDd /D MC_CL_EXE"         // NBN: specify runtime library (debug)
+            << ' '    << dHandle->compilerFlags
+            << ' '    << info.flags
+            << " /I"  << occaDir << "\\inc"         // NBN: /inc
+            << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
+            << ' '    << iCachedBinary
+            << " /link " << occaDir << "\\lib\\libocca.lib /OUT:" << cachedBinary
+            << std::endl;
+#endif
 
     const std::string &sCommand = command.str();
 
     if(verboseCompilation_f)
       std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const int compileError = system(sCommand.c_str());
+#else
+    const int compileError = system(("\"" +  sCommand + "\"").c_str());
+#endif
 
     if(compileError){
       releaseFile(cachedBinary);
@@ -160,40 +174,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    data_.dlHandle = dlopen(cachedBinary.c_str(), RTLD_NOW);
-
-    if(data_.dlHandle == NULL){
-      releaseFile(cachedBinary);
-      OCCA_CHECK(false, "Error loading binary using dlopen");
-    }
-#else
-    data_.dlHandle = LoadLibraryA(cachedBinary.c_str());
-
-    if(data_.dlHandle == NULL){
-      releaseFile(cachedBinary);
-
-      OCCA_CHECK(false,
-                 "Error loading dll [" << filename << "] (WIN32 error: " << GetLastError() << ")");
-    }
-#endif
-
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-
-    char *dlError;
-    if ((dlError = dlerror()) != NULL)  {
-      releaseFile(cachedBinary);
-      OCCA_CHECK(false, "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
-    }
-#else
-    data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
-
-    if(data_.handle == NULL) {
-      releaseFile(cachedBinary);
-      OCCA_CHECK(false, "Error loading symbol from binary with GetProcAddress");
-    }
-#endif
+    data_.dlHandle = cpu::dlopen(cachedBinary, true);
+    data_.handle   = cpu::dlsym(data_.dlHandle, cachedBinary, functionName, true);
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dHandle)->data);
 
@@ -221,30 +203,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    data_.dlHandle = dlopen(filename.c_str(), RTLD_NOW);
-
-    OCCA_CHECK(data_.dlHandle != NULL,
-               "Error loading binary using dlopen");
-#else
-    data_.dlHandle = LoadLibraryA(filename.c_str());
-
-    OCCA_CHECK(data_.dlHandle != NULL,
-               "Error loading dll [" << filename << "] (WIN32 error: " << GetLastError() << ")");
-#endif
-
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    data_.handle = dlsym(data_.dlHandle, functionName.c_str());
-
-    char *dlError;
-    if((dlError = dlerror()) != NULL)
-      OCCA_CHECK(false, "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
-#else
-    data_.handle = GetProcAddress((HMODULE) (data_.dlHandle), functionName.c_str());
-
-    OCCA_CHECK(data_.handle != NULL,
-               "Error loading symbol from binary with GetProcAddress");
-#endif
+    data_.dlHandle = cpu::dlopen(filename, false);
+    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName, false);
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dHandle)->data);
 
@@ -607,11 +567,7 @@ namespace occa {
 
     data_.pendingJobs = 0;
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    data_.coreCount = sysconf(_SC_NPROCESSORS_ONLN);
-#else
-#  warning "Core finding not implemented for this OS"
-#endif
+    data_.coreCount = cpu::getCoreCount();
 
     std::vector<int> pinnedCores;
 
@@ -712,9 +668,6 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addDefine("OCCA_USING_CPU"     , 1);
-    info_.addDefine("OCCA_USING_PTHREADS", 1);
-
     info_.addOCCAKeywords(occaPthreadsDefines);
   }
 
@@ -761,28 +714,62 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::getEnvironmentVariables(){
-    char *c_compiler = getenv("OCCA_PTHREADS_COMPILER");
+    char *c_compiler = getenv("OCCA_CPP_COMPILER");
 
-    if(c_compiler != NULL)
+    if(c_compiler != NULL){
       compiler = std::string(c_compiler);
-    else
+    }
+    else{
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       compiler = "g++";
 #else
       compiler = "cl.exe";
 #endif
+    }
 
-    char *c_compilerFlags = getenv("OCCA_PTHREADS_COMPILER_FLAGS");
+    char *c_compilerFlags = getenv("OCCA_CPP_COMPILER_FLAGS");
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
-#if OCCA_DEBUG_ENABLED
+#  if OCCA_DEBUG_ENABLED
       compilerFlags = "-g";
-#else
+#  else
       compilerFlags = "";
-#endif
+#  endif
     }
+#else
+#  if OCCA_DEBUG_ENABLED
+    compilerFlags = " /Od ";
+#  else
+    compilerFlags = "";
+#  endif
+    std::string byteness;
+
+    if(sizeof(void*) == 4)
+      byteness = "x86 ";
+    else if(sizeof(void*) == 8)
+      byteness = "amd64";
+    else
+      OCCA_CHECK(false, "sizeof(void*) is not equal to 4 or 8");
+
+    // NBN: adjusted path
+#  if      (1800 == _MSC_VER)
+    char *visual_studio_tools = getenv("VS120COMNTOOLS");   // MSVC++ 12.0 - Visual Studio 2013
+#  elif    (1700 == _MSC_VER)
+    char *visual_studio_tools = getenv("VS110COMNTOOLS");   // MSVC++ 11.0 - Visual Studio 2012
+#  else // (1600 == _MSC_VER)
+    char *visual_studio_tools = getenv("VS100COMNTOOLS");   // MSVC++ 10.0 - Visual Studio 2010
+#  endif
+
+    if(visual_studio_tools != NULL){
+      setCompilerEnvScript("\"" + std::string(visual_studio_tools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness);
+    }
+    else{
+      std::cout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
+    }
+#endif
   }
 
   template <>
@@ -838,8 +825,13 @@ namespace occa {
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
     // Fence local data (incase of out-of-socket updates)
-    while(data_.pendingJobs)
+    while(data_.pendingJobs){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       __asm__ __volatile__ ("lfence");
+#else
+      __faststorefence(); // NBN: x64 only?
+#endif
+    }
   }
 
   template <>
@@ -998,11 +990,11 @@ namespace occa {
     mem->dHandle = this;
     mem->size    = bytes;
 
-#if   OCCA_OS == LINUX_OS
+#if   (OCCA_OS == LINUX_OS)
     posix_memalign(&mem->handle, OCCA_MEM_ALIGN, bytes);
-#elif OCCA_OS == OSX_OS
+#elif (OCCA_OS == OSX_OS)
     mem->handle = ::malloc(bytes);
-#else
+#elif (OCCA_OS == WINDOWS_OS)
     mem->handle = ::malloc(bytes);
 #endif
 
@@ -1028,11 +1020,11 @@ namespace occa {
     mem->textureInfo.h = dims.y;
     mem->textureInfo.d = dims.z;
 
-#if   OCCA_OS == LINUX_OS
+#if   (OCCA_OS == LINUX_OS)
     posix_memalign(&mem->handle, OCCA_MEM_ALIGN, mem->size);
-#elif OCCA_OS == OSX_OS
+#elif (OCCA_OS == OSX_OS)
     mem->handle = ::malloc(mem->size);
-#else
+#elif (OCCA_OS == WINDOWS_OS)
     mem->handle = ::malloc(mem->size);
 #endif
 

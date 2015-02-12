@@ -1172,6 +1172,16 @@ namespace occa {
     dHandle->freeStream(s);
   }
 
+  kernel device::buildKernel(const std::string &str,
+                             const std::string &functionName,
+                             const kernelInfo &info_){
+
+    if(fileExists(str))
+      return buildKernelFromSource(str, functionName, info_);
+    else
+      return buildKernelFromString(str, functionName, info_);
+  }
+
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &functionName,
                                        const bool useParser){

@@ -2,11 +2,14 @@
 #  ifndef OCCA_PTHREADS_HEADER
 #  define OCCA_PTHREADS_HEADER
 
-#include <sys/sysctl.h>
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  include <sys/sysctl.h>
+#  include <dlfcn.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
-#include <dlfcn.h>
 #include <fcntl.h>
 
 #include <pthread.h>
@@ -320,12 +323,18 @@ namespace occa {
     CPU_ZERO(&cpuHandle);
     CPU_SET(data.pinnedCore, &cpuHandle);
 #else
+    // NBN: affinity on hyperthreaded multi-socket systems?
     fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
+    // BOOL SetProcessAffinityMask(HANDLE hProcess,DWORD_PTR dwProcessAffinityMask);
 #endif
 
     while(true){
       // Fence local data (incase of out-of-socket updates)
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       __asm__ __volatile__ ("lfence");
+#else
+      __faststorefence(); // NBN: x64 only?
+#endif
 
       if( *(data.pendingJobs) ){
         pthread_mutex_lock(data.kernelMutex);
@@ -347,8 +356,13 @@ namespace occa {
         --( *(data.pendingJobs) );
         pthread_mutex_unlock(data.pendingJobsMutex);
 
-        while((*data.pendingJobs) % data.count)
+        while((*data.pendingJobs) % data.count){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
           __asm__ __volatile__ ("lfence");
+#else
+          __faststorefence(); // NBN: x64 only?
+#endif
+        }
         //==============================
       }
     }

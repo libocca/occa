@@ -773,6 +773,10 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::mappedFree(){
+    if(isMapped){
+      OCCA_CUDA_CHECK("Device: mappedFree()",
+                      cuMemFreeHost(handle));
+    }
   }
 
   template <>
@@ -863,9 +867,6 @@ namespace occa {
 
   template <>
   void device_t<CUDA>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addDefine("OCCA_USING_GPU" , 1);
-    info_.addDefine("OCCA_USING_CUDA", 1);
-
     info_.addOCCAKeywords(occaCUDADefines);
   }
 
@@ -1274,8 +1275,9 @@ namespace occa {
 
     memory_v *mem = new memory_t<CUDA>;
 
-    mem->dHandle = this;
-    mem->size    = bytes;
+    mem->dHandle  = this;
+    mem->size     = bytes;
+    mem->isMapped = true;
 
     OCCA_CUDA_CHECK("Device: malloc",
                     cuMemAllocHost((void**) &(mem->handle), bytes));

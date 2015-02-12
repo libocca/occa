@@ -32,12 +32,6 @@ ifeq ($(OCCA_FORTRAN_ENABLED), 1)
 endif
 endif
 
-ifdef OCCA_DEVELOPER
-ifeq ($(OCCA_DEVELOPER), 1)
-	dependencies += $(occaOPath)/occaKernelDefines.o
-endif
-endif
-
 ifdef occaDirWasInitialized
 .FORCE:
 
@@ -69,29 +63,21 @@ $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 $(occaBPath)/occainfo:$(OCCA_DIR)/scripts/occaInfo.cpp $(occaLPath)/libocca.so
 	$(compiler) $(compilerFlags) -o $(occaBPath)/occainfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links)
 
-ifdef OCCA_DEVELOPER
-ifeq ($(OCCA_DEVELOPER), 1)
-$(occaOPath)/occaKernelDefines.o:            \
+$(occaOPath)/occaKernelDefines.o:              \
 	$(occaIPath)/defines/occaOpenMPDefines.hpp   \
 	$(occaIPath)/defines/occaOpenCLDefines.hpp   \
 	$(occaIPath)/defines/occaCUDADefines.hpp     \
 	$(occaIPath)/defines/occaPthreadsDefines.hpp \
 	$(occaIPath)/defines/occaCOIDefines.hpp      \
 	$(occaIPath)/defines/occaCOIMain.hpp         \
-	$(occaIPath)/occaKernelDefines.hpp
+	$(occaIPath)/occaKernelDefines.hpp	         \
+	$(OCCA_DIR)/scripts/occaKernelDefines.py
 	$(compiler) $(compilerFlags) -o $(occaOPath)/occaKernelDefines.o $(flags) -c $(paths) $(occaSPath)/occaKernelDefines.cpp
 
-$(OCCA_DIR)/scripts/occaKernelDefinesGenerator:\
-	$(occaIPath)/defines/occaOpenMPDefines.hpp     \
-	$(occaIPath)/defines/occaOpenCLDefines.hpp     \
-	$(occaIPath)/defines/occaCUDADefines.hpp       \
-	$(occaIPath)/defines/occaPthreadsDefines.hpp   \
-	$(occaIPath)/defines/occaCOIDefines.hpp        \
-	$(occaIPath)/defines/occaCOIMain.hpp
-	$(compiler) -o $(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)/scripts/occaKernelDefinesGenerator.cpp
-
-$(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefinesGenerator
-	$(OCCA_DIR)/scripts/occaKernelDefinesGenerator $(OCCA_DIR)
+ifdef OCCA_DEVELOPER
+ifeq ($(OCCA_DEVELOPER), 1)
+$(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefines.py
+	python $(OCCA_DIR)/scripts/occaKernelDefines.py
 endif
 endif
 
@@ -103,8 +89,7 @@ clean:
 	rm -f $(occaOPath)/*;
 	rm -f $(occaBPath)/*;
 	rm -f ${OCCA_DIR}/scripts/main;
-	rm -f $(occaLPath)/libocca.a;
+	rm -f $(occaLPath)/libocca.so;
 	rm -f $(occaLPath)/*.mod;
-	rm -f $(OCCA_DIR)/scripts/occaKernelDefinesGenerator
 endif
 #=================================================

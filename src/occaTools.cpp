@@ -470,13 +470,17 @@ namespace occa {
 
   std::string createIntermediateSource(const std::string &filename,
                                        const std::string &cachedBinary,
-                                       const kernelInfo &info){
+                                       const kernelInfo &info,
+                                       const bool useParser){
     std::string prefix, name;
     getFilePrefixAndName(cachedBinary, prefix, name);
 
     const std::string iCachedBinary = prefix + "i_" + name;
 
-    if(fileNeedsParser(filename)){
+    if(fileExists(iCachedBinary))
+      return iCachedBinary;
+
+    if(useParser && fileNeedsParser(filename)){
       const std::string pCachedBinary = prefix + "p_" + name;
       parser fileParser;
 
@@ -488,7 +492,9 @@ namespace occa {
       fs.close();
 
       fs.open(iCachedBinary.c_str());
-      fs << info.occaKeywords << fileParser.parseFile(pCachedBinary);
+      fs << info.occaKeywords
+         << occaVectorDefines
+         << fileParser.parseFile(pCachedBinary);
 
       fs.close();
     }
@@ -496,7 +502,10 @@ namespace occa {
       std::ofstream fs;
       fs.open(iCachedBinary.c_str());
 
-      fs << info.occaKeywords << info.header << readFile(filename);
+      fs << info.occaKeywords
+         << occaVectorDefines
+         << info.header
+         << readFile(filename);
 
       fs.close();
     }

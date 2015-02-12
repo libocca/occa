@@ -161,6 +161,9 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateLabelNode(strNode *labelNodeRoot){
+      if(labelNodeRoot == NULL)
+        return typeHolder("0");
+
       if((labelNodeRoot->info  & presetValue) &&
          (labelNodeRoot->right == NULL)){
 

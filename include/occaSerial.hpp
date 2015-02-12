@@ -1,7 +1,13 @@
 #ifndef OCCA_OPENMP_HEADER
 #define OCCA_OPENMP_HEADER
 
-#include <sys/sysctl.h>
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#  include <sys/sysctl.h>
+#  include <dlfcn.h>
+#else
+#  include <windows.h>
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
@@ -11,12 +17,6 @@
 #include "occaLibrary.hpp"
 
 #include "occaKernelDefines.hpp"
-
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-#  include <dlfcn.h>
-#else
-#  include <windows.h>
-#endif
 
 namespace occa {
   //---[ Data Structs ]---------------
@@ -37,6 +37,14 @@ namespace occa {
     std::string getProcessorCacheSize(int level);
 
     std::string getDeviceListInfo();
+
+    void* dlopen(const std::string &filename,
+                 const bool releaseWithError);
+
+    void* dlsym(void *dlHandle,
+                const std::string &filename,
+                const std::string &functionName,
+                const bool releaseWithError);
   };
   //==================================
 

@@ -140,6 +140,8 @@ namespace occa {
     return "N/A";
   }
 
+  static const bool useParser = true;
+
   static const int useLoopy  = (1 << 0);
   static const int useFloopy = (1 << 1);
   //==================================
@@ -1377,6 +1379,10 @@ namespace occa {
 
     tag tagStream();
     double timeBetween(const tag &startTag, const tag &endTag);
+
+    kernel buildKernel(const std::string &str,
+                       const std::string &functionName,
+                       const kernelInfo &info_ = defaultKernelInfo);
 
     kernel buildKernelFromString(const std::string &content,
                                  const std::string &functionName,

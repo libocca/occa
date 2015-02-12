@@ -340,43 +340,45 @@ operatorModeDefinition = { 'Serial'   : serialOperatorDefinition,
                            'Pthreads' : pthreadOperatorDefinition,
                            'COI'      : coiOperatorDefinition }
 
-hpp = open('../include/operators/occaVirtualOperatorDeclarations.hpp', 'w')
+occaDir = ENV['OCCA_DIR']
+
+hpp = open(occaDir + '/include/operators/occaVirtualOperatorDeclarations.hpp', 'w')
 hpp.write(virtualOperatorDeclarations(maxN));
 hpp.close()
 
-hpp = open('../include/operators/occaOperatorDeclarations.hpp', 'w')
+hpp = open(occaDir + '/include/operators/occaOperatorDeclarations.hpp', 'w')
 hpp.write(operatorDeclarations('Base', maxN));
 hpp.close()
 
-hpp = open('../include/operators/occaFunctionPointerTypeDefs.hpp', 'w')
+hpp = open(occaDir + '/include/operators/occaFunctionPointerTypeDefs.hpp', 'w')
 hpp.write(functionPointerTypeDefs(maxN));
 hpp.close()
 
-hpp = open('../include/operators/occaCOIFunctionPointerTypeDefs.hpp', 'w')
+hpp = open(occaDir + '/include/operators/occaCOIFunctionPointerTypeDefs.hpp', 'w')
 hpp.write(coiFunctionPointerTypeDefs(maxN));
 hpp.close()
 
-hpp = open('../src/operators/occaOperatorDefinitions.cpp', 'w')
+hpp = open(occaDir + '/src/operators/occaOperatorDefinitions.cpp', 'w')
 hpp.write(operatorDefinitions('Base', maxN));
 hpp.close()
 
-hpp = open('../src/operators/occaRunFromArguments.cpp', 'w')
+hpp = open(occaDir + '/src/operators/occaRunFromArguments.cpp', 'w')
 hpp.write(runFromArguments(maxN));
 hpp.close()
 
 for mode in operatorModeDefinition:
-    hpp = open('../include/operators/occa' + mode + 'KernelOperators.hpp', 'w')
+    hpp = open(occaDir + '/include/operators/occa' + mode + 'KernelOperators.hpp', 'w')
     hpp.write(operatorDeclarations(mode, maxN));
     hpp.close()
 
-    cpp = open('../src/operators/occa' + mode + 'KernelOperators.cpp', 'w')
+    cpp = open(occaDir + '/src/operators/occa' + mode + 'KernelOperators.cpp', 'w')
     cpp.write(operatorDefinitions(mode, maxN));
     cpp.close()
 
-hpp = open('../include/operators/occaCKernelOperators.hpp', 'w')
+hpp = open(occaDir + '/include/operators/occaCKernelOperators.hpp', 'w')
 hpp.write(cOperatorDeclarations(maxN));
 hpp.close()
 
-cpp = open('../src/operators/occaCKernelOperators.cpp', 'w')
+cpp = open(occaDir + '/src/operators/occaCKernelOperators.cpp', 'w')
 cpp.write(cOperatorDefinitions(maxN));
 cpp.close()

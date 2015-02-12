@@ -110,7 +110,8 @@ namespace occa {
 
   std::string createIntermediateSource(const std::string &filename,
                                        const std::string &cachedBinary,
-                                       const kernelInfo &info);
+                                       const kernelInfo &info,
+                                       const bool useParser = true);
 };
 
 #endif

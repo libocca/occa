@@ -813,9 +813,6 @@ namespace occa {
 
   template <>
   void device_t<COI>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addDefine("OCCA_USING_CPU", 1);
-    info_.addDefine("OCCA_USING_COI", 1);
-
     info_.addOCCAKeywords(occaCOIDefines);
   }
 

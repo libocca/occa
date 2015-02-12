@@ -1088,9 +1088,6 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addDefine("OCCA_USING_GPU"   , 1);
-    info_.addDefine("OCCA_USING_OPENCL", 1);
-
     info_.addOCCAKeywords(occaOpenCLDefines);
   }
 
@@ -1637,9 +1634,10 @@ namespace occa {
     memory_v *mem = new memory_t<OpenCL>;
     cl_int error;
 
-    mem->dHandle = this;
-    mem->handle  = new cl_mem;
-    mem->size    = bytes;
+    mem->dHandle  = this;
+    mem->handle   = new cl_mem;
+    mem->size     = bytes;
+    mem->isMapped = true;
 
     // Alloc pinned host buffer
     *((cl_mem*) mem->handle) = clCreateBuffer(data_.context,

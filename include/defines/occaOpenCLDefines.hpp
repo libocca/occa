@@ -3,6 +3,16 @@
 
 //---[ Defines ]----------------------------------
 #pragma OPENCL EXTENSION cl_khr_fp64 : enable
+
+#define OCCA_USING_SERIAL   0
+#define OCCA_USING_OPENMP   0
+#define OCCA_USING_OPENCL   1
+#define OCCA_USING_CUDA     0
+#define OCCA_USING_PTHREADS 0
+#define OCCA_USING_COI      0
+
+#define OCCA_USING_CPU (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHRADS || OCCA_USING_COI)
+#define OCCA_USING_GPU (OCCA_USING_OPENCL || OCCA_USING_CUDA)
 //================================================
 
 

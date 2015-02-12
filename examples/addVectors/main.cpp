@@ -17,8 +17,6 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  // occa::availableDevices<occa::OpenCL>();
-
   occa::device device;
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
