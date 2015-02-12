@@ -931,9 +931,6 @@ namespace occa {
     // Load [mode] from aim
     occa::mode m = strToMode(aim.get("mode"));
 
-    // Load [UVA] status from aim
-    bool dHandleHasUvaEnabled = uvaEnabledByDefault_f;
-
     setupHandle(m);
 
     dHandle->setup(aim);
@@ -947,6 +944,8 @@ namespace occa {
       else
         dHandle->uvaEnabled_ = false;
     }
+    else
+      dHandle->uvaEnabled_ = uvaEnabledByDefault_f;
 
     dHandle->currentStream = createStream();
   }
@@ -1123,7 +1122,7 @@ namespace occa {
       const size_t dirtyEntries = uvaDirtyMemory.size();
 
       if(dirtyEntries){
-        for(int i = 0; i < dirtyEntries; ++i){
+        for(size_t i = 0; i < dirtyEntries; ++i){
           occa::memory_v *mem = uvaDirtyMemory[i];
 
           mem->asyncCopyTo(mem->uvaPtr);

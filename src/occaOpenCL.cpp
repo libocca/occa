@@ -99,10 +99,10 @@ namespace occa {
 
       delete [] buffer;
 
-      int firstNS = ret.size();
-      int lastNS  = ret.size();
+      size_t firstNS = ret.size();
+      size_t lastNS  = ret.size();
 
-      int i;
+      size_t i;
 
       for(i = 0; i < ret.size(); ++i){
         if((ret[i] != ' ') &&

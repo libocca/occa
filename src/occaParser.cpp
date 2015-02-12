@@ -3036,8 +3036,6 @@ namespace occa {
             if(((it->second) != -1) &&
                ((it->second) != innerID)){
 
-              statement &origin = *(varUpdateMap[sVar].value);
-
               splitDefineAndInitForVariable(*sVar);
               sVar->addQualifier("exclusive", 0);
 

@@ -226,8 +226,9 @@ namespace occa {
                                   double parentTime,
                                   double overallTime){
 
-    double sumChildrenTime = 0.;
-    for(int i=0; i<childs.size(); i++){
+    double sumChildrenTime = 0.0;
+
+    for(size_t i = 0; i < childs.size(); ++i){
 
       keyStack.push(childs[i]);
 
@@ -348,8 +349,8 @@ namespace occa {
       std::vector<std::pair<std::string, timerTraits> > flatVec(flat.size());
 
       std::map<std::string, timerTraits>::iterator iter2 = flat.begin();
-      for(int i=0; i<flat.size(); i++){
 
+      for(size_t i = 0; i < flat.size(); ++i){
         flatVec[i].first = iter2->first;
 
         flatVec[i].second.timeTaken = iter2->second.timeTaken;

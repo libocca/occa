@@ -423,7 +423,7 @@ namespace occa {
     void removeArg(const int pos);
 
     inline bool argIsConst(const int pos) const {
-      if(pos < argumentInfos.size())
+      if(((size_t) pos) < argumentInfos.size())
         return argumentInfos[pos].isConst;
 
       return false;

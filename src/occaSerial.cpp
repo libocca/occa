@@ -246,8 +246,8 @@ namespace occa {
       std::string l2 = getProcessorCacheSize(2);
       std::string l3 = getProcessorCacheSize(3);
 
-      int maxSize = ((l1.size() < l2.size()) ? l2.size() : l1.size());
-      maxSize     = ((maxSize   < l3.size()) ? l3.size() : maxSize  );
+      size_t maxSize = ((l1.size() < l2.size()) ? l2.size() : l1.size());
+      maxSize        = ((maxSize   < l3.size()) ? l3.size() : maxSize  );
 
       l1 = std::string(maxSize - l1.size(), ' ') + l1;
       l2 = std::string(maxSize - l2.size(), ' ') + l2;

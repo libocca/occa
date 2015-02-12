@@ -2087,8 +2087,8 @@ namespace occa {
 
   //---[ Parsed Kernel Info ]---------------------
   parsedKernelInfo::parsedKernelInfo() :
-    baseName(""),
     name(""),
+    baseName(""),
     nestedKernels(0) {}
 
   parsedKernelInfo::parsedKernelInfo(const parsedKernelInfo &kInfo) :

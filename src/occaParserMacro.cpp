@@ -618,40 +618,40 @@ namespace occa {
     macroInfo::macroInfo(){};
 
     std::string macroInfo::applyArgs(const std::vector<std::string> &args){
-        if(argc != args.size()){
-          std::cout << "Macro [" << name << "]:\n";
-          for(int i = 0; i < args.size(); ++i)
-            std::cout << "    args[" << i << "] = " << args[i] << '\n';
+      if(((size_t) argc) != args.size()){
+        std::cout << "Macro [" << name << "]:\n";
+        for(size_t i = 0; i < args.size(); ++i)
+          std::cout << "    args[" << i << "] = " << args[i] << '\n';
 
-          OCCA_CHECK(false,
-                     "Macro [" << name << "] uses [" << argc << "] argument(s) ([" << args.size() << "] provided)");
-        }
-
-        const int subs = argBetweenParts.size();
-
-        std::string ret = parts[0];
-
-        for(int i = 0; i < subs; ++i){
-          const int argPos = argBetweenParts[i];
-          ret += args[argPos];
-          ret += parts[i + 1];
-        }
-
-        return ret;
+        OCCA_CHECK(false,
+                   "Macro [" << name << "] uses [" << argc << "] argument(s) ([" << args.size() << "] provided)");
       }
+
+      const int subs = argBetweenParts.size();
+
+      std::string ret = parts[0];
+
+      for(int i = 0; i < subs; ++i){
+        const int argPos = argBetweenParts[i];
+        ret += args[argPos];
+        ret += parts[i + 1];
+      }
+
+      return ret;
+    }
 
     std::ostream& operator << (std::ostream &out, const macroInfo &info){
-        const int argc = info.argBetweenParts.size();
+      const int argc = info.argBetweenParts.size();
 
-        out << info.name << ": " << info.parts[0];
+      out << info.name << ": " << info.parts[0];
 
-        for(int i = 0; i < argc; ++i){
-          const int argPos = info.argBetweenParts[i];
-          out << "ARG" << argPos << info.parts[i + 1];
-        }
-
-        return out;
+      for(int i = 0; i < argc; ++i){
+        const int argPos = info.argBetweenParts[i];
+        out << "ARG" << argPos << info.parts[i + 1];
       }
+
+      return out;
+    }
     //==============================================
   };
 };

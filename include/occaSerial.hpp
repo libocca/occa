@@ -1,5 +1,5 @@
-#ifndef OCCA_OPENMP_HEADER
-#define OCCA_OPENMP_HEADER
+#ifndef OCCA_SERIAL_HEADER
+#define OCCA_SERIAL_HEADER
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <sys/sysctl.h>
