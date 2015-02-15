@@ -225,8 +225,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(filename, true);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName, true);
+    data_.dlHandle = cpu::dlopen(cachedBinary, true);
+    data_.handle   = cpu::dlsym(data_.dlHandle, cachedBinary, functionName, true);
 
     releaseFile(cachedBinary);
 

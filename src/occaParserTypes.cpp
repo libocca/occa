@@ -2025,9 +2025,13 @@ namespace occa {
         statement &s = *(sVec[sDep.sID]);
 
         for(int v = 0; v < varCount; ++v){
-          varDepGraph vdg(sDep[v], s, idMap);
+          varInfo &var = sDep[v];
 
-          vdg.addFullDependencyMap(depMap, idMap, sVec);
+          if(&var != NULL){
+            varDepGraph vdg(sDep[v], s, idMap);
+
+            vdg.addFullDependencyMap(depMap, idMap, sVec);
+          }
         }
       }
     }
