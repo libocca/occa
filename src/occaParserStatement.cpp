@@ -3545,6 +3545,7 @@ namespace occa {
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd,
                                            const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3559,6 +3560,7 @@ namespace occa {
                                                  strNode *nodeRoot,
                                                  strNode *nodeRootEnd,
                                                  const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3583,6 +3585,7 @@ namespace occa {
                                         strNode *nodeRoot,
                                         strNode *nodeRootEnd,
                                         const bool parsingC){
+
       if(parsingC){
         return loadOneStatementFromNode(st,
                                         nodeRoot, nodeRootEnd,
@@ -3597,6 +3600,7 @@ namespace occa {
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd,
                                           const bool parsingC){
+
       if(parsingC){
         if(st == whileStatementType)
           return loadOneStatementFromNode(st, nodeRoot, nodeRootEnd);
@@ -3627,6 +3631,7 @@ namespace occa {
                                        strNode *nodeRoot,
                                        strNode *nodeRootEnd,
                                        const bool parsingC){
+
       statement *newStatement = statementEnd->value;
 
       if(parsingC){
@@ -3707,6 +3712,7 @@ namespace occa {
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd,
                                            const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3722,6 +3728,7 @@ namespace occa {
                                          strNode *nodeRoot,
                                          strNode *nodeRootEnd,
                                          const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3736,6 +3743,7 @@ namespace occa {
                                                        strNode *nodeRoot,
                                                        strNode *nodeRootEnd,
                                                        const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3758,6 +3766,7 @@ namespace occa {
                                                       strNode *nodeRoot,
                                                       strNode *nodeRootEnd,
                                                       const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3773,7 +3782,8 @@ namespace occa {
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd,
                                           const bool parsingC){
-      strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
+
+      strNode *nextNode = nodeRoot->right;
 
       if(nodeRoot->down)
         loadAllFromNode(nodeRoot->down);
@@ -3786,6 +3796,7 @@ namespace occa {
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd,
                                            const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3801,6 +3812,7 @@ namespace occa {
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd,
                                           const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)
@@ -3816,6 +3828,7 @@ namespace occa {
                                           strNode *nodeRoot,
                                           strNode *nodeRootEnd,
                                           const bool parsingC){
+
       strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
 
       if(nodeRoot)

@@ -65,7 +65,10 @@ occaKernel void fd2d(tFloat *u1,
           Lu[0] = WR_MIN(Lu[tx], Lu[tx+512]);
 
           int y1, y2;
-          y1 = y2 = 0;
+
+          {
+            y1 = y2 = 0;
+          }
 
           const int id = ty*w + tx;
 
