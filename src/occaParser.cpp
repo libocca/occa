@@ -3513,10 +3513,10 @@ namespace occa {
       //---[ Operator Info ]--------------
       cKeywordType["!"]  = lUnitaryOperatorType;
       cKeywordType["%"]  = binaryOperatorType;
-      cKeywordType["&"]  = (binaryOperatorType | qualifierType);
+      cKeywordType["&"]  = (lUnitaryOperatorType | binaryOperatorType | qualifierType);
       cKeywordType["("]  = startParentheses;
       cKeywordType[")"]  = endParentheses;
-      cKeywordType["*"]  = (binaryOperatorType | qualifierType);
+      cKeywordType["*"]  = (lUnitaryOperatorType | binaryOperatorType | qualifierType);
       cKeywordType["+"]  = (lUnitaryOperatorType | binaryOperatorType);
       cKeywordType[","]  = binaryOperatorType;
       cKeywordType["-"]  = (lUnitaryOperatorType | binaryOperatorType);
@@ -3736,8 +3736,8 @@ namespace occa {
       opPrecedence[opHolder("-" , lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("!" , lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("~" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("*" , qualifierType)]        = 2;
-      opPrecedence[opHolder("&" , qualifierType)]        = 2;
+      opPrecedence[opHolder("*" , lUnitaryOperatorType)] = 2;
+      opPrecedence[opHolder("&" , lUnitaryOperatorType)] = 2;
 
       opPrecedence[opHolder(".*" , binaryOperatorType)]  = 3;
       opPrecedence[opHolder("->*", binaryOperatorType)]  = 3;
@@ -3798,8 +3798,8 @@ namespace occa {
       opLevelMap[ 2]["-" ]  = lUnitaryOperatorType;
       opLevelMap[ 2]["!" ]  = lUnitaryOperatorType;
       opLevelMap[ 2]["~" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["*" ]  = qualifierType;
-      opLevelMap[ 2]["&" ]  = qualifierType;
+      opLevelMap[ 2]["*" ]  = lUnitaryOperatorType;
+      opLevelMap[ 2]["&" ]  = lUnitaryOperatorType;
       opLevelMap[ 3][".*" ] = binaryOperatorType;
       opLevelMap[ 3]["->*"] = binaryOperatorType;
       opLevelMap[ 4]["*" ]  = binaryOperatorType;

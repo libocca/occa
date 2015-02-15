@@ -150,6 +150,7 @@ namespace occa {
         splitAndOrganizeFortranNode(newNodeRoot);
 
       // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -799,6 +800,8 @@ namespace occa {
       int leafPos = 0;
 
       while(nodePos){
+        const int oldLeafPos = leafPos;
+
         expNode *&leaf = leaves[leafPos++];
 
         leaf        = new expNode(*this);
@@ -1176,45 +1179,35 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if(leaves[leafPos]->info == (expType::operator_ |
+        if(leaves[leafPos]->info != (expType::operator_ |
                                      expType::qualifier)){
-          if(leafPos == 0){
+
+          ++leafPos;
+          continue;
+        }
+
+        if(leafPos == 0){
+          leaves[++leafPos]->info = expType::operator_;
+          continue;
+        }
+
+        expNode &lLeaf = *(leaves[leafPos - 1]);
+
+        if(lLeaf.info & (expType::qualifier |
+                         expType::type)){
+
+          leaves[leafPos]->info = expType::qualifier;
+        }
+
+        else if(lLeaf.info & expType::unknown){
+          if(!sInfo->hasTypeInScope(lLeaf.value))
+            leaves[leafPos]->info = expType::operator_;
+          else
             leaves[leafPos]->info = expType::qualifier;
-          }
-          else{
-            expNode &lLeaf = *(leaves[leafPos - 1]);
+        }
 
-            if(lLeaf.info & expType::qualifier){
-              leaves[leafPos]->info = expType::qualifier;
-            }
-
-            else if(lLeaf.info & expType::unknown){
-              if(!sInfo->hasTypeInScope(lLeaf.value))
-                leaves[leafPos]->info = expType::operator_;
-              else
-                leaves[leafPos]->info = expType::qualifier;
-            }
-
-            else if(lLeaf.info & (expType::L           |
-                                  expType::R           |
-                                  expType::presetValue |
-                                  expType::variable    |
-                                  expType::function)){
-
-              leaves[leafPos]->info = expType::operator_;
-            }
-
-            else if((lLeaf.info & expType::C)      &&
-                    !(lLeaf.info & expType::cast_) &&
-                    (lLeaf.value != "{")){
-
-              leaves[leafPos]->info = expType::operator_;
-            }
-
-            else{
-              leaves[leafPos]->info = expType::qualifier;
-            }
-          }
+        else{
+          leaves[leafPos]->info = expType::operator_;
         }
 
         ++leafPos;
