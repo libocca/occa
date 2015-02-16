@@ -1186,8 +1186,11 @@ namespace occa {
           continue;
         }
 
+        expNode &leaf = *(leaves[leafPos]);
+
         if(leafPos == 0){
-          leaves[++leafPos]->info = expType::operator_;
+          leaf.info = expType::operator_;
+          ++leafPos;
           continue;
         }
 
@@ -1196,18 +1199,18 @@ namespace occa {
         if(lLeaf.info & (expType::qualifier |
                          expType::type)){
 
-          leaves[leafPos]->info = expType::qualifier;
+          leaf.info = expType::qualifier;
         }
 
         else if(lLeaf.info & expType::unknown){
           if(!sInfo->hasTypeInScope(lLeaf.value))
-            leaves[leafPos]->info = expType::operator_;
+            leaf.info = expType::operator_;
           else
-            leaves[leafPos]->info = expType::qualifier;
+            leaf.info = expType::qualifier;
         }
 
         else{
-          leaves[leafPos]->info = expType::operator_;
+          leaf.info = expType::operator_;
         }
 
         ++leafPos;

@@ -72,7 +72,8 @@ occaKernel void fd2d(tFloat *u1,
 
           const int id = ty*w + tx;
 
-          float *__u = &u1[bDimX];
+          float *__u1 = &u1[bDimX];
+          float *__u2 = (&(u1[bDimX]));
 
           float data = tex1[0][0];
           tex1[0][0] = data;
