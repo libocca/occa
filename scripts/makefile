@@ -96,12 +96,10 @@ flags += -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS)
 
 ifdef SystemRoot
 	OS = WINDOWS
-else
-ifeq ($(shell uname -s),Darwin)
+else ifeq ($(shell uname -s),Darwin)
 	OS = OSX
 else
 	OS = LINUX
-endif
 endif
 #=================================================
 
@@ -117,7 +115,7 @@ else
 	FcompilerModFlag = -J
 endif
 
-ifeq ($(OS),OSX)
+ifeq ($(OS), OSX)
 	flags       += -D OCCA_OS=OSX_OS
 	OpenGL_Flags =
 	OpenCL_Flags =
@@ -129,9 +127,7 @@ ifeq ($(OS),OSX)
 	OpenCL_Links = -framework OpenCL
 	CUDA_Links   = -framework CUDA
 	COI_Links    =
-endif
-
-ifeq ($(OS),LINUX)
+else ifeq ($(OS), LINUX)
 	flags        += -D OCCA_OS=LINUX_OS
 	OpenGL_Flags  = -D GL_GLEXT_PROTOTYPES
 	OpenCL_Flags  =
@@ -143,9 +139,7 @@ ifeq ($(OS),LINUX)
 	OpenCL_Links  = -lOpenCL
 	CUDA_Links    = -lcuda
 	COI_Links     = -lcoi_host
-endif
-
-ifeq ($(OS),WINDOWS)
+else ifeq ($(OS), WINDOWS)
 	flags        += -D OCCA_OS=WINDOWS_OS
 	OpenGL_Flags  =
 	OpenCL_Flags  =
@@ -158,6 +152,13 @@ ifeq ($(OS),WINDOWS)
 	CUDA_Links    =
 	COI_Links     =
 endif
+
+findInLdConfig = $(shell ldconfig -p | grep $(1) | wc -l)
+findInDydlPath = $(shell for dydir in ${DYLD_LIBRARY_PATH//:/ }; do if ls $dydir/$(1) >/dev/null 2>&1; then echo 1; fi; done)
+findFramework  = $(shell if ls /System/Library/Frameworks/$(1).framework >/dev/null 2>&1; then echo 1; fi)
+
+findLinuxLibrary = $(call findInLdConfig, $(1))
+findOSXLibrary   = $(or, $(call findInDydlPath, $(1)), $(call findFramework, $(2)))
 #=================================================
 
 
@@ -180,13 +181,25 @@ endif
 ifdef OCCA_OPENCL_ENABLED
 	OpenCL_Enabled = $(OCCA_OPENCL_ENABLED)
 else
+ifeq ($(OS), OSX)
+	OpenCL_Enabled = $(call findFramework,OpenCL)
+else ifeq ($(OS), LINUX)
+	OpenCL_Enabled = $(call findLinuxLibrary,libOpenCL.so)
+else
 	OpenCL_Enabled = openclEnabled
+endif
 endif
 
 ifdef OCCA_CUDA_ENABLED
 	CUDA_Enabled = $(OCCA_CUDA_ENABLED)
 else
+ifeq ($(OS), OSX)
+	CUDA_Enabled = $(call findOsxLibrary,CUDA,libcuda.so)
+else ifeq ($(OS), LINUX)
+	CUDA_Enabled = $(call findLinuxLibrary,libcuda.so)
+else
 	CUDA_Enabled = cudaEnabled
+endif
 endif
 
 ifdef OCCA_COI_ENABLED

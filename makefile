@@ -24,8 +24,6 @@ fsources = $(wildcard $(occaSPath)/*.f90)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
-dependencies =
-
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
 	objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
@@ -41,7 +39,7 @@ else
 
 all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
 
-$(occaLPath)/libocca.so:$(objects) $(headers) $(dependencies)
+$(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 
