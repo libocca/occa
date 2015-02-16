@@ -153,7 +153,7 @@ else ifeq ($(OS), WINDOWS)
 	COI_Links     =
 endif
 
-findInLdConfig = $(shell ldconfig -p | grep $(1) | wc -l)
+findInLdConfig = $(shell ldconfig -p | grep --quiet $(1) && echo 1 || echo 0)
 findInDydlPath = $(shell for dydir in ${DYLD_LIBRARY_PATH//:/ }; do if ls $dydir/$(1) >/dev/null 2>&1; then echo 1; fi; done)
 findFramework  = $(shell if ls /System/Library/Frameworks/$(1).framework >/dev/null 2>&1; then echo 1; fi)
 
