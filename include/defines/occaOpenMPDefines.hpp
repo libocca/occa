@@ -11,7 +11,6 @@
 
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
-#define OCCA_MEM_ALIGN   64
 
 #define OCCA_USING_SERIAL   0
 #define OCCA_USING_OPENMP   1

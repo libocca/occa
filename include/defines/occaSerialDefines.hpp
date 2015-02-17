@@ -1,5 +1,5 @@
-#ifndef OCCA_OPENMP_DEFINES_HEADER
-#define OCCA_OPENMP_DEFINES_HEADER
+#ifndef OCCA_SERIAL_DEFINES_HEADER
+#define OCCA_SERIAL_DEFINES_HEADER
 
 #include <stdint.h>
 
@@ -11,7 +11,6 @@
 
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
-#define OCCA_MEM_ALIGN   64
 
 #define OCCA_USING_SERIAL   1
 #define OCCA_USING_OPENMP   0

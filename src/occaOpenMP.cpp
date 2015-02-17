@@ -5,8 +5,6 @@ namespace occa {
   //---[ Helper Functions ]-----------
   namespace omp {
     bool compilerSupportsOpenMP(const std::string &compiler){
-      return false;
-
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       std::string testContent = ("#include \"omp.h\""
                                  ""
