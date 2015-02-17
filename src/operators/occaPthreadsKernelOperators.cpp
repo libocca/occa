@@ -47,11 +47,20 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
@@ -112,18 +121,27 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data());
+              args.args[1].data());
 
     delete &args;
   }
@@ -179,19 +197,28 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data());
+              args.args[1].data(),
+              args.args[2].data());
 
     delete &args;
   }
@@ -249,20 +276,29 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data());
 
     delete &args;
   }
@@ -321,21 +357,30 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data());
 
     delete &args;
   }
@@ -395,22 +440,31 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data());
 
     delete &args;
   }
@@ -472,23 +526,32 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data());
 
     delete &args;
   }
@@ -551,24 +614,33 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data());
 
     delete &args;
   }
@@ -632,25 +704,34 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data());
 
     delete &args;
   }
@@ -716,26 +797,35 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data());
 
     delete &args;
   }
@@ -802,27 +892,36 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data());
 
     delete &args;
   }
@@ -890,28 +989,37 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data());
 
     delete &args;
   }
@@ -981,29 +1089,38 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data());
 
     delete &args;
   }
@@ -1074,30 +1191,39 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data());
 
     delete &args;
   }
@@ -1169,31 +1295,40 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data());
 
     delete &args;
   }
@@ -1267,32 +1402,41 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data());
 
     delete &args;
   }
@@ -1367,33 +1511,42 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data());
 
     delete &args;
   }
@@ -1469,34 +1622,43 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data());
 
     delete &args;
   }
@@ -1574,35 +1736,44 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data());
 
     delete &args;
   }
@@ -1681,36 +1852,45 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data());
 
     delete &args;
   }
@@ -1790,37 +1970,46 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data());
 
     delete &args;
   }
@@ -1902,38 +2091,47 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data());
 
     delete &args;
   }
@@ -2016,39 +2214,48 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data());
 
     delete &args;
   }
@@ -2132,40 +2339,49 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data());
 
     delete &args;
   }
@@ -2251,41 +2467,50 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data());
 
     delete &args;
   }
@@ -2372,42 +2597,51 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data());
 
     delete &args;
   }
@@ -2495,43 +2729,52 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data());
 
     delete &args;
   }
@@ -2621,44 +2864,53 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data());
 
     delete &args;
   }
@@ -2749,45 +3001,54 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data());
 
     delete &args;
   }
@@ -2879,46 +3140,55 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data());
 
     delete &args;
   }
@@ -3012,47 +3282,56 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data());
 
     delete &args;
   }
@@ -3147,48 +3426,57 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data());
 
     delete &args;
   }
@@ -3284,49 +3572,58 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data());
 
     delete &args;
   }
@@ -3424,50 +3721,59 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data());
 
     delete &args;
   }
@@ -3566,51 +3872,60 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data());
 
     delete &args;
   }
@@ -3710,52 +4025,61 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data());
 
     delete &args;
   }
@@ -3857,53 +4181,62 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data());
 
     delete &args;
   }
@@ -4006,54 +4339,63 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data());
 
     delete &args;
   }
@@ -4157,55 +4499,64 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data());
 
     delete &args;
   }
@@ -4311,56 +4662,65 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data());
 
     delete &args;
   }
@@ -4467,57 +4827,66 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data());
 
     delete &args;
   }
@@ -4625,58 +4994,67 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data());
 
     delete &args;
   }
@@ -4786,59 +5164,68 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data());
 
     delete &args;
   }
@@ -4949,60 +5336,69 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data());
 
     delete &args;
   }
@@ -5114,61 +5510,70 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data(),
-            args.args[44].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data(),
+              args.args[44].data());
 
     delete &args;
   }
@@ -5282,62 +5687,71 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data(),
-            args.args[44].data(),
-            args.args[45].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data(),
+              args.args[44].data(),
+              args.args[45].data());
 
     delete &args;
   }
@@ -5452,63 +5866,72 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data(),
-            args.args[44].data(),
-            args.args[45].data(),
-            args.args[46].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data(),
+              args.args[44].data(),
+              args.args[45].data(),
+              args.args[46].data());
 
     delete &args;
   }
@@ -5624,64 +6047,73 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data(),
-            args.args[44].data(),
-            args.args[45].data(),
-            args.args[46].data(),
-            args.args[47].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data(),
+              args.args[44].data(),
+              args.args[45].data(),
+              args.args[46].data(),
+              args.args[47].data());
 
     delete &args;
   }
@@ -5799,65 +6231,74 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data(),
-            args.args[44].data(),
-            args.args[45].data(),
-            args.args[46].data(),
-            args.args[47].data(),
-            args.args[48].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data(),
+              args.args[44].data(),
+              args.args[45].data(),
+              args.args[46].data(),
+              args.args[47].data(),
+              args.args[48].data());
 
     delete &args;
   }
@@ -5976,66 +6417,75 @@
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               args.args[0].data(),
-            args.args[1].data(),
-            args.args[2].data(),
-            args.args[3].data(),
-            args.args[4].data(),
-            args.args[5].data(),
-            args.args[6].data(),
-            args.args[7].data(),
-            args.args[8].data(),
-            args.args[9].data(),
-            args.args[10].data(),
-            args.args[11].data(),
-            args.args[12].data(),
-            args.args[13].data(),
-            args.args[14].data(),
-            args.args[15].data(),
-            args.args[16].data(),
-            args.args[17].data(),
-            args.args[18].data(),
-            args.args[19].data(),
-            args.args[20].data(),
-            args.args[21].data(),
-            args.args[22].data(),
-            args.args[23].data(),
-            args.args[24].data(),
-            args.args[25].data(),
-            args.args[26].data(),
-            args.args[27].data(),
-            args.args[28].data(),
-            args.args[29].data(),
-            args.args[30].data(),
-            args.args[31].data(),
-            args.args[32].data(),
-            args.args[33].data(),
-            args.args[34].data(),
-            args.args[35].data(),
-            args.args[36].data(),
-            args.args[37].data(),
-            args.args[38].data(),
-            args.args[39].data(),
-            args.args[40].data(),
-            args.args[41].data(),
-            args.args[42].data(),
-            args.args[43].data(),
-            args.args[44].data(),
-            args.args[45].data(),
-            args.args[46].data(),
-            args.args[47].data(),
-            args.args[48].data(),
-            args.args[49].data());
+              args.args[1].data(),
+              args.args[2].data(),
+              args.args[3].data(),
+              args.args[4].data(),
+              args.args[5].data(),
+              args.args[6].data(),
+              args.args[7].data(),
+              args.args[8].data(),
+              args.args[9].data(),
+              args.args[10].data(),
+              args.args[11].data(),
+              args.args[12].data(),
+              args.args[13].data(),
+              args.args[14].data(),
+              args.args[15].data(),
+              args.args[16].data(),
+              args.args[17].data(),
+              args.args[18].data(),
+              args.args[19].data(),
+              args.args[20].data(),
+              args.args[21].data(),
+              args.args[22].data(),
+              args.args[23].data(),
+              args.args[24].data(),
+              args.args[25].data(),
+              args.args[26].data(),
+              args.args[27].data(),
+              args.args[28].data(),
+              args.args[29].data(),
+              args.args[30].data(),
+              args.args[31].data(),
+              args.args[32].data(),
+              args.args[33].data(),
+              args.args[34].data(),
+              args.args[35].data(),
+              args.args[36].data(),
+              args.args[37].data(),
+              args.args[38].data(),
+              args.args[39].data(),
+              args.args[40].data(),
+              args.args[41].data(),
+              args.args[42].data(),
+              args.args[43].data(),
+              args.args[44].data(),
+              args.args[45].data(),
+              args.args[46].data(),
+              args.args[47].data(),
+              args.args[48].data(),
+              args.args[49].data());
 
     delete &args;
   }

@@ -1,3 +1,5 @@
+from os import environ as ENV
+
 maxN = 50
 nSpacing = 3
 
@@ -148,17 +150,26 @@ def pthreadOperatorDefinition(N):
       start[dp] = args.rank*loops + coolRanks;
       end[dp] = start[dp] + loops;
     }
-    int occaKernelArgs[12] = {outer.z, outer.y, outer.x,
-                              inner.z, inner.y, inner.x,
-                              start.z, end.z,
-                              start.y, end.y,
-                              start.x, end.x};
+    int occaKernelArgs[12];
+
+    occaKernelArgs[0]  = outer.z;
+    occaKernelArgs[1]  = outer.y;
+    occaKernelArgs[2]  = outer.x;
+    occaKernelArgs[3]  = inner.z;
+    occaKernelArgs[4]  = inner.y;
+    occaKernelArgs[5]  = inner.x;
+    occaKernelArgs[6]  = start.z;
+    occaKernelArgs[7]  = end.z;
+    occaKernelArgs[8]  = start.y;
+    occaKernelArgs[9]  = end.y;
+    occaKernelArgs[10] = start.x;
+    occaKernelArgs[11] = end.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
     tmpKernel(occaKernelArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
-              """ + ',\n            '.join(['args.args[{0}].data()'.format(n) for n in xrange(N)]) + """);
+              """ + ',\n              '.join(['args.args[{0}].data()'.format(n) for n in xrange(N)]) + """);
 
     delete &args;"""
 

@@ -586,7 +586,7 @@ namespace occa {
     if(aim.has("pinnedCores")){
       aim.iGets("pinnedCores", pinnedCores);
 
-      if(pinnedCores.size() != data_.pThreadCount){
+      if(pinnedCores.size() != (size_t) data_.pThreadCount){
         std::cout << "[Pthreads]: Mismatch between thread count and pinned cores\n"
                   << "            Defaulting to ["
                   << ((data_.schedule == occa::compact) ?
@@ -598,7 +598,7 @@ namespace occa {
         if(pinnedCores.size()){
           std::cout << pinnedCores[0];
 
-          for(int i = 1; i < pinnedCores.size(); ++i)
+          for(size_t i = 1; i < pinnedCores.size(); ++i)
             std::cout << ", " << pinnedCores[i];
         }
 
@@ -607,7 +607,7 @@ namespace occa {
         pinnedCores.clear();
       }
       else{
-        for(int i = 0; i < pinnedCores.size(); ++i)
+        for(size_t i = 0; i < pinnedCores.size(); ++i)
           if(pinnedCores[i] < 0){
             const int newPC = (((pinnedCores[i] % data_.coreCount)
                                 + pinnedCores[i]) % data_.coreCount);
