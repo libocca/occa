@@ -494,7 +494,7 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::mappedFree(){
-    ::free(handle);
+    cpu::free(handle);
     handle    = NULL;
     mappedPtr = NULL;
 
@@ -504,11 +504,11 @@ namespace occa {
   template <>
   void memory_t<Pthreads>::free(){
     if(isTexture){
-      ::free(textureInfo.arg);
+      cpu::free(textureInfo.arg);
       textureInfo.arg = NULL;
     }
     else{
-      ::free(handle);
+      cpu::free(handle);
       handle = NULL;
     }
 
@@ -995,13 +995,7 @@ namespace occa {
     mem->dHandle = this;
     mem->size    = bytes;
 
-#if   (OCCA_OS == LINUX_OS)
-    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, bytes);
-#elif (OCCA_OS == OSX_OS)
-    mem->handle = ::malloc(bytes);
-#elif (OCCA_OS == WINDOWS_OS)
-    mem->handle = ::malloc(bytes);
-#endif
+    mem->handle = cpu::malloc(bytes);
 
     if(src != NULL)
       ::memcpy(mem->handle, src, bytes);

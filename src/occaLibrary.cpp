@@ -185,13 +185,13 @@ namespace occa {
           FILE *inFD = fopen(hFilename.c_str(), "rb");
 
           fseek(inFD, h.flagsOffset, SEEK_SET);
-          fread(buffer , sizeof(char), h.flagsBytes, inFD);
+          (void) fread(buffer , sizeof(char), h.flagsBytes, inFD);
           fwrite(buffer, sizeof(char), h.flagsBytes, outFD);
 
-          fread(buffer , sizeof(char), h.contentBytes, inFD);
+          (void) fread(buffer , sizeof(char), h.contentBytes, inFD);
           fwrite(buffer, sizeof(char), h.contentBytes, outFD);
 
-          fread(buffer , sizeof(char), h.kernelNameBytes, inFD);
+          (void) fread(buffer , sizeof(char), h.kernelNameBytes, inFD);
           fwrite(buffer, sizeof(char), h.kernelNameBytes, outFD);
 
           fclose(inFD);
@@ -285,7 +285,8 @@ namespace occa {
       buffer[h.contentBytes] = '\0';
 
       fseek(inFD, h.contentOffset, SEEK_SET);
-      fread(buffer, sizeof(char), h.contentBytes, inFD);
+
+      (void) fread(buffer, sizeof(char), h.contentBytes, inFD);
 
       fclose(inFD);
 

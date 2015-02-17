@@ -17,7 +17,7 @@ namespace occa {
       const int bufferSize = 4096;
       char *buffer = new char[bufferSize];
 
-      fread(buffer, sizeof(char), bufferSize, fp);
+      (void) fread(buffer, sizeof(char), bufferSize, fp);
 
       int begin, end;
       for(begin = 0; begin < bufferSize; ++begin){
@@ -58,7 +58,7 @@ namespace occa {
       const int bufferSize = 4096;
       char *buffer = new char[bufferSize];
 
-      fread(buffer, sizeof(char), bufferSize, fp);
+      (void) fread(buffer, sizeof(char), bufferSize, fp);
 
       int begin, end;
       for(begin = 0; begin < bufferSize; ++begin){
@@ -265,6 +265,24 @@ namespace occa {
       // << "==============o=======================o==========================================\n";
 
       return ss.str();
+    }
+
+    void* malloc(uintptr_t bytes){
+      void* ptr;
+
+#if   (OCCA_OS == LINUX_OS)
+      (void) posix_memalign(&ptr, OCCA_MEM_ALIGN, bytes);
+#elif (OCCA_OS == OSX_OS)
+      ptr = ::malloc(bytes);
+#elif (OCCA_OS == WINDOWS_OS)
+      ptr = ::malloc(bytes);
+#endif
+
+      return ptr;
+    }
+
+    void free(void *ptr){
+      ::free(ptr);
     }
 
     void* dlopen(const std::string &filename,
@@ -783,7 +801,7 @@ namespace occa {
 
   template <>
   void memory_t<Serial>::mappedFree(){
-    ::free(handle);
+    cpu::free(handle);
     handle    = NULL;
     mappedPtr = NULL;
 
@@ -793,11 +811,11 @@ namespace occa {
   template <>
   void memory_t<Serial>::free(){
     if(isTexture){
-      ::free(textureInfo.arg);
+      cpu::free(textureInfo.arg);
       textureInfo.arg = NULL;
     }
     else{
-      ::free(handle);
+      cpu::free(handle);
       handle = NULL;
     }
 
@@ -1156,13 +1174,7 @@ namespace occa {
     mem->dHandle = this;
     mem->size    = bytes;
 
-#if   (OCCA_OS == LINUX_OS)
-    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, bytes);
-#elif (OCCA_OS == OSX_OS)
-    mem->handle = ::malloc(bytes);
-#elif (OCCA_OS == WINDOWS_OS)
-    mem->handle = ::malloc(bytes);
-#endif
+    mem->handle = cpu::malloc(bytes);
 
     if(src != NULL)
       ::memcpy(mem->handle, src, bytes);

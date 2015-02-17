@@ -612,13 +612,7 @@ namespace occa {
       mHandle->uvaPtr = mHandle->mappedPtr;
     }
     else{
-#if   (OCCA_OS == LINUX_OS)
-      posix_memalign(&(mHandle->uvaPtr), OCCA_MEM_ALIGN, mHandle->size);
-#elif (OCCA_OS == OSX_OS)
-      mHandle->uvaPtr = ::malloc(mHandle->size);
-#else
-      mHandle->uvaPtr = ::malloc(mHandle->size);
-#endif
+      mHandle->uvaPtr = cpu::malloc(mHandle->size);
     }
 
     ptrRange_t uvaRange;
@@ -1381,7 +1375,14 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << sCommand << '\n';
 
-    system(sCommand.c_str());
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+    const int compileError = system(sCommand.c_str());
+#else
+    const int compileError = system(("\"" +  sCommand + "\"").c_str());
+#endif
+
+    if(compileError)
+      OCCA_CHECK(false, "Compilation error");
 
     return buildKernelFromSource(clFile, functionName);
   }

@@ -38,6 +38,9 @@ namespace occa {
 
     std::string getDeviceListInfo();
 
+    void* malloc(uintptr_t bytes);
+    void free(void *ptr);
+
     void* dlopen(const std::string &filename,
                  const bool releaseWithError);
 
