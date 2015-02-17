@@ -41,7 +41,7 @@ namespace occa {
     std::string compilerFlag(const std::string &compiler){
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       std::string testFilename = (getCachePath() + ".ompTest.cpp");
-      std::string infoFilename = (std::string(".ompTest_") + compiler);
+      std::string infoFilename = (getCachePath() + std::string(".ompTest_") + compiler);
 
       if(!haveFile(testFilename)){
         waitForFile(testFilename);
@@ -78,10 +78,10 @@ namespace occa {
             compileError = system(sCommand.c_str());
           }
 
-          if(!compileError)
-            writeToFile(infoFilename, flag);
-          else
-            writeToFile(infoFilename, omp::notSupported);
+          if(compileError)
+            flag = omp::notSupported;
+
+          writeToFile(infoFilename, flag);
 
           releaseFile(testFilename);
 
@@ -604,6 +604,8 @@ namespace occa {
     bytesAllocated = 0;
 
     getEnvironmentVariables();
+
+    cpu::addSharedBinaryFlagsTo(compiler, compilerFlags);
   }
 
   template <>
@@ -640,7 +642,7 @@ namespace occa {
     data_.OpenMPFlag     = omp::compilerFlag(compiler);
     data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
 
-    compilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>
@@ -779,10 +781,7 @@ namespace occa {
     data_.OpenMPFlag     = omp::compilerFlag(compiler);
     data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
 
-    std::string sCompilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
-
-    if(compilerFlags.find(sCompilerFlags) == std::string::npos)
-      compilerFlags = sCompilerFlags + compilerFlags;
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>
@@ -794,23 +793,9 @@ namespace occa {
   void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
-    compilerFlags  = cpu::compilerSharedBinaryFlags(data_.vendor);
-    compilerFlags += compilerFlags_;
-  }
+    compilerFlags = compilerFlags_;
 
-  template <>
-  std::string& device_t<OpenMP>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<OpenMP>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<OpenMP>::getCompilerFlags(){
-    return compilerFlags;
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>

@@ -525,6 +525,8 @@ namespace occa {
     bytesAllocated = 0;
 
     getEnvironmentVariables();
+
+    cpu::addSharedBinaryFlagsTo(compiler, compilerFlags);
   }
 
   template <>
@@ -561,8 +563,9 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
-    data_.vendor  = cpu::compilerVendor(compiler);
-    compilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+    data_.vendor = cpu::compilerVendor(compiler);
+
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
 
     data_.pendingJobs = 0;
 
@@ -801,10 +804,7 @@ namespace occa {
 
     data_.vendor = cpu::compilerVendor(compiler);
 
-    std::string sCompilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
-
-    if(compilerFlags.find(sCompilerFlags) == std::string::npos)
-      compilerFlags = sCompilerFlags + compilerFlags;
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>
@@ -816,23 +816,9 @@ namespace occa {
   void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_){
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
-    compilerFlags  = cpu::compilerSharedBinaryFlags(data_.vendor);
-    compilerFlags += compilerFlags_;
-  }
+    compilerFlags = compilerFlags_;
 
-  template <>
-  std::string& device_t<Pthreads>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<Pthreads>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<Pthreads>::getCompilerFlags(){
-    return compilerFlags;
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>

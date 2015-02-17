@@ -232,15 +232,6 @@ namespace occa {
   void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_);
 
   template <>
-  std::string& device_t<Pthreads>::getCompiler();
-
-  template <>
-  std::string& device_t<Pthreads>::getCompilerEnvScript();
-
-  template <>
-  std::string& device_t<Pthreads>::getCompilerFlags();
-
-  template <>
   void device_t<Pthreads>::flush();
 
   template <>

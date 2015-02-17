@@ -1079,15 +1079,15 @@ namespace occa {
   }
 
   std::string& device::getCompiler(){
-    return dHandle->getCompiler();
+    return dHandle->compiler;
   }
 
   std::string& device::getCompilerEnvScript(){
-    return dHandle->getCompilerEnvScript();
+    return dHandle->compilerEnvScript;
   }
 
   std::string& device::getCompilerFlags(){
-    return dHandle->getCompilerFlags();
+    return dHandle->compilerFlags;
   }
 
   int device::modelID(){

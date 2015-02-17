@@ -348,6 +348,20 @@ namespace occa {
       return "";
     }
 
+    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &flags){
+      addSharedBinaryFlagsTo(cpu::compilerVendor(compiler), flags);
+    }
+
+    void addSharedBinaryFlagsTo(const int vendor_, std::string &flags){
+      std::string sFlags = cpu::compilerSharedBinaryFlags(vendor_);
+
+      if(flags.size() == 0)
+        flags = sFlags;
+
+      if(flags.find(sFlags) == std::string::npos)
+        flags = (sFlags + " " + flags);
+    }
+
     void* malloc(uintptr_t bytes){
       void* ptr;
 
@@ -913,6 +927,8 @@ namespace occa {
     bytesAllocated = 0;
 
     getEnvironmentVariables();
+
+    cpu::addSharedBinaryFlagsTo(compiler, compilerFlags);
   }
 
   template <>
@@ -945,8 +961,9 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Serial, Device);
 
-    data_.vendor  = cpu::compilerVendor(compiler);
-    compilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+    data_.vendor = cpu::compilerVendor(compiler);
+
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>
@@ -1078,10 +1095,7 @@ namespace occa {
 
     data_.vendor = cpu::compilerVendor(compiler);
 
-    std::string sCompilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
-
-    if(compilerFlags.find(sCompilerFlags) == std::string::npos)
-      compilerFlags = sCompilerFlags + compilerFlags;
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>
@@ -1093,23 +1107,9 @@ namespace occa {
   void device_t<Serial>::setCompilerFlags(const std::string &compilerFlags_){
     OCCA_EXTRACT_DATA(Serial, Device);
 
-    compilerFlags  = cpu::compilerSharedBinaryFlags(data_.vendor);
-    compilerFlags += compilerFlags_;
-  }
+    compilerFlags = compilerFlags_;
 
-  template <>
-  std::string& device_t<Serial>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<Serial>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<Serial>::getCompilerFlags(){
-    return compilerFlags;
+    cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
   }
 
   template <>

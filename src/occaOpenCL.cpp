@@ -1163,21 +1163,6 @@ namespace occa {
   }
 
   template <>
-  std::string& device_t<OpenCL>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<OpenCL>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<OpenCL>::getCompilerFlags(){
-    return compilerFlags;
-  }
-
-  template <>
   void device_t<OpenCL>::flush(){
     clFlush(*((cl_command_queue*) currentStream));
   }

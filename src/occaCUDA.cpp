@@ -973,21 +973,6 @@ namespace occa {
   }
 
   template <>
-  std::string& device_t<CUDA>::getCompiler(){
-    return compiler;
-  }
-
-  template <>
-  std::string& device_t<CUDA>::getCompilerEnvScript(){
-    return compilerEnvScript;
-  }
-
-  template <>
-  std::string& device_t<CUDA>::getCompilerFlags(){
-    return compilerFlags;
-  }
-
-  template <>
   void device_t<CUDA>::flush(){}
 
   template <>

@@ -60,6 +60,9 @@ namespace occa {
     std::string compilerSharedBinaryFlags(const std::string &compiler);
     std::string compilerSharedBinaryFlags(const int vendor_);
 
+    void addSharedBinaryFlagsTo(const std::string &compiler, std::string &flags);
+    void addSharedBinaryFlagsTo(const int vendor_, std::string &flags);
+
     void* malloc(uintptr_t bytes);
     void free(void *ptr);
 
@@ -222,15 +225,6 @@ namespace occa {
 
   template <>
   void device_t<Serial>::setCompilerFlags(const std::string &compilerFlags_);
-
-  template <>
-  std::string& device_t<Serial>::getCompiler();
-
-  template <>
-  std::string& device_t<Serial>::getCompilerEnvScript();
-
-  template <>
-  std::string& device_t<Serial>::getCompilerFlags();
 
   template <>
   void device_t<Serial>::flush();
