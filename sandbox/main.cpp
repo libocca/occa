@@ -16,6 +16,11 @@ int main(int argc, char **argv){
   }
 
   // {
+  //   std::string parsedContent = parser.parseFile("tests/scratch.okl");
+  //   std::cout << parsedContent << '\n';
+  // }
+
+  // {
   //   std::string parsedContent = parser.parseFile("tests/pwdg.okl");
   //   std::cout << parsedContent << '\n';
   // }

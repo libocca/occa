@@ -70,6 +70,8 @@ occaKernel void fd2d(tFloat *u1,
             y1 = y2 = 0;
           }
 
+          int tmpin = *u1;
+
           const int id = ty*w + tx;
 
           float *__u1 = &u1[bDimX];

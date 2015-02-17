@@ -285,6 +285,52 @@ namespace occa {
       ::free(ptr);
     }
 
+    std::string sharedBinaryFlags(const std::string compiler){
+      if((compiler.find("gcc")     != std::string::npos) ||   // GCC
+         (compiler.find("g++")     != std::string::npos) ||
+         (compiler.find("clang")   != std::string::npos) ||   // LLVM
+         (compiler.find("clang++") != std::string::npos) ||
+         (compiler.find("icc")     != std::string::npos) ||   // Intel
+         (compiler.find("icpc")    != std::string::npos)){
+
+        return "-x c++ -fPIC -shared";
+      }
+      else if(compiler.find("cl.exe")  != std::string::npos){   // VC++
+
+#if OCCA_DEBUG_ENABLED
+        return "/TP /LD /MDd";
+#else
+        return "/TP /LD /MD";
+#endif
+      }
+      else if((compiler.find("xlc")   != std::string::npos) ||  // IBM
+              (compiler.find("xlc++") != std::string::npos)){
+
+        return "-qsourcetype=c++ -qpic=large -qmkshrobj";
+      }
+      else if((compiler.find("pgcc")  != std::string::npos) ||  // PGI [-] Missing: -x c++, [-- filename] ?
+              (compiler.find("pgc++") != std::string::npos)){
+
+        return "-x c++ -fpic -shlib";
+      }
+      else if((compiler.find("pathcc") != std::string::npos) || // Pathscale
+              (compiler.find("pathCC") != std::string::npos)){
+
+        return "-cpp -fPIC -shared";
+      }
+      else if((compiler.find("aCC") != std::string::npos)){     // HP [-] Missing: -x c++, [-- filename] ?
+
+        return "+z -b";
+      }
+      else if((compiler.find("cc") != std::string::npos) ||     // Cray
+              (compiler.find("CC") != std::string::npos)){
+
+        return "-h PIC"; // On by default
+      }
+
+      return "-fopenmp";
+    }
+
     void* dlopen(const std::string &filename,
                  const bool releaseWithError){
 
@@ -467,7 +513,7 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     command << dHandle->compiler
-            << " -x c++ -w -fPIC -shared"
+            << " -x c++ -fPIC -shared"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
@@ -477,8 +523,8 @@ namespace occa {
             << std::endl;
 #else
     command << dHandle->compiler
-            << " /TP /LD /MD  /D MC_CL_EXE"         // NBN: specify runtime library (release)
-         // << " /TP /LD /MDd /D MC_CL_EXE"         // NBN: specify runtime library (debug)
+            << sharedBinaryFlags(dHandle->compiler)
+            << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " /I"  << occaDir << "\\inc"         // NBN: /inc

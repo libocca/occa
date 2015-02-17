@@ -5,6 +5,8 @@ namespace occa {
   //---[ Helper Functions ]-----------
   namespace omp {
     bool compilerSupportsOpenMP(const std::string &compiler){
+      return false;
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       std::string testContent = ("#include \"omp.h\""
                                  ""
@@ -56,12 +58,12 @@ namespace occa {
          (compiler.find("clang")   != std::string::npos) ||     // LLVM
          (compiler.find("clang++") != std::string::npos)){
 
-        return "-fopenmp"; //libgomp
+        return "-fopenmp";
       }
       else if((compiler.find("icc")  != std::string::npos) ||   // Intel
               (compiler.find("icpc") != std::string::npos)){
 
-        return "-openmp"; // libiomp*.so
+        return "-openmp";
       }
       else if(compiler.find("cl.exe")  != std::string::npos){   // VC++
 

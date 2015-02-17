@@ -547,8 +547,11 @@ namespace occa {
         return parserNS::readingCode;
       }
       else if((cRight[0] == '/') && (cRight[1] == '*')){
-        line += std::string(cLeft, cRight - cLeft);
-        status = parserNS::insideCommentBlock;
+        if( !(status == parserNS::insideCommentBlock) ){
+          line += std::string(cLeft, cRight - cLeft);
+          status = parserNS::insideCommentBlock;
+        }
+
         cLeft = cRight + 2;
       }
       else if((cRight[0] == '*') && (cRight[1] == '/')){
@@ -556,6 +559,7 @@ namespace occa {
           status = parserNS::readingCode;
         else
           status = parserNS::finishedCommentBlock;
+
         cLeft = cRight + 2;
       }
 
