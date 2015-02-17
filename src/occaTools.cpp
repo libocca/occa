@@ -355,22 +355,31 @@ namespace occa {
   }
 
   std::string getOCCADir(){
+    static std::string occaDir = "";
+
+    if(occaDir.size())
+      return occaDir;
+
     char *c_occaPath = getenv("OCCA_DIR");
 
     if(c_occaPath != NULL){
-      return c_occaPath;
+      occaDir = c_occaPath;
+      return occaDir;
     }
 
     OCCA_CHECK(false,
                "Environment variable [OCCA_DIR] is not set");
 
-    return "";
+    return occaDir;
   }
 
   std::string getCachePath(){
-    char *c_cachePath = getenv("OCCA_CACHE_DIR");
+    static std::string occaCachePath = "";
 
-    std::string occaCachePath;
+    if(occaCachePath.size())
+      return occaCachePath;
+
+    char *c_cachePath = getenv("OCCA_CACHE_DIR");
 
     if(c_cachePath != NULL)
       occaCachePath = c_cachePath;

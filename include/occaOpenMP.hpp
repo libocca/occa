@@ -22,11 +22,16 @@ namespace occa {
   struct OpenMPKernelData_t {
     void *dlHandle, *handle;
   };
+
+  struct OpenMPDeviceData_t {
+    bool supportsOpenMP;
+  };
   //==================================
 
 
   //---[ Helper Functions ]-----------
   namespace omp {
+    bool compilerSupportsOpenMP(const std::string &compiler);
     std::string compilerFlagFor(const std::string &compiler);
   };
   //==================================

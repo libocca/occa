@@ -21,7 +21,7 @@ int main(int argc, char **argv){
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  device.setup("mode = Serial");
+  device.setup("mode = OpenMP");
 
   //---[ Device setup with string flags ]-------------------
   //    device.setup("mode = Serial");

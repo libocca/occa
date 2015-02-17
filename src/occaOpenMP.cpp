@@ -4,37 +4,93 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace omp {
+    bool compilerSupportsOpenMP(const std::string &compiler){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      std::string testContent = ("#include \"omp.h\""
+                                 ""
+                                 "int main(int argc, char **argv){"
+                                 "  char j[32];"
+                                 ""
+                                 "#pragma omp parallel"
+                                 "  for(int i = 0; i < 32; ++i) j[i] = 0;"
+                                 ""
+                                 "  return 0;"
+                                 "}");
+
+      std::string hashName = (getCachePath() +
+                              ".ompTest_"  +
+                              getCacheHash(testContent, compiler));
+
+      if(fileExists(hashName)){
+        if(fileExists(hashName + "_passed"))
+          return true;
+        if(fileExists(hashName + "_failed"))
+          return false;
+      }
+
+      std::stringstream ss;
+
+      writeToFile(hashName, testContent);
+
+      ss << compiler
+         << ' '
+         << compilerFlagFor(compiler)
+         << ' '
+         << hashName
+         << " > /dev/null 2>&1";
+
+      const int compileError = system(ss.str().c_str());
+
+      hashName += (compileError ? "_failed" : "_passed");
+
+      mkdir(hashName.c_str(), 0755);
+
+      return (!compileError);
+#elif (OCCA_OS == WINDOWS_OS)
+      return true;
+#endif
+    }
+
     std::string compilerFlagFor(const std::string &compiler){
-      if((compiler.find("gcc")     != std::string::npos) || // GCC
+      if((compiler.find("gcc")     != std::string::npos) ||     // GCC
          (compiler.find("g++")     != std::string::npos) ||
-         (compiler.find("clang")   != std::string::npos) || // LLVM
+         (compiler.find("clang")   != std::string::npos) ||     // LLVM
          (compiler.find("clang++") != std::string::npos)){
 
-        return "-fopenmp";
+        return "-fopenmp"; //libgomp
       }
-      else if((compiler.find("icc")  != std::string::npos) || // Intel
+      else if((compiler.find("icc")  != std::string::npos) ||   // Intel
               (compiler.find("icpc") != std::string::npos)){
 
-        return "-openmp";
+        return "-openmp"; // libiomp*.so
       }
-      else if(compiler.find("cl.exe")  != std::string::npos){  // VC++
+      else if(compiler.find("cl.exe")  != std::string::npos){   // VC++
 
         return "/openmp";
       }
-      else if((compiler.find("xlc")   != std::string::npos) || // IBM
+      else if((compiler.find("xlc")   != std::string::npos) ||  // IBM
               (compiler.find("xlc++") != std::string::npos)){
 
-        return "-qsmp=omp";
+        return "-qsmp";
       }
-      else if((compiler.find("cc") != std::string::npos) || // Cray
-              (compiler.find("CC") != std::string::npos)){
-
-        return ""; // On by default
-      }
-      else if((compiler.find("pgcc")  != std::string::npos) || // PGI
+      else if((compiler.find("pgcc")  != std::string::npos) ||  // PGI
               (compiler.find("pgc++") != std::string::npos)){
 
         return "-mp";
+      }
+      else if((compiler.find("pathcc") != std::string::npos) || // Pathscale
+              (compiler.find("pathCC") != std::string::npos)){
+
+        return "-openmp";
+      }
+      else if((compiler.find("aCC") != std::string::npos)){     // HP
+
+        return "+Oopenmp";
+      }
+      else if((compiler.find("cc") != std::string::npos) ||     // Cray
+              (compiler.find("CC") != std::string::npos)){
+
+        return ""; // On by default
       }
 
       return "-fopenmp";
@@ -573,11 +629,22 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenMP>::setup(argInfoMap &aim){}
+  void device_t<OpenMP>::setup(argInfoMap &aim){
+    data = new OpenMPDeviceData_t;
+
+    OCCA_EXTRACT_DATA(OpenMP, Device);
+
+    data_.supportsOpenMP = omp::compilerSupportsOpenMP(compiler);
+  }
 
   template <>
   void device_t<OpenMP>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaOpenMPDefines);
+    OCCA_EXTRACT_DATA(OpenMP, Device);
+
+    if(data_.supportsOpenMP)
+      info_.addOCCAKeywords(occaOpenMPDefines);
+    else
+      info_.addOCCAKeywords(occaSerialDefines);
   }
 
   template <>
@@ -629,11 +696,18 @@ namespace occa {
       compiler = std::string(c_compiler);
     }
     else{
+      c_compiler = getenv("CXX");
+
+      if(c_compiler != NULL){
+        compiler = std::string(c_compiler);
+      }
+      else{
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-      compiler = "g++";
+        compiler = "g++";
 #else
-      compiler = "cl.exe";
+        compiler = "cl.exe";
 #endif
+      }
     }
 
     char *c_compilerFlags = getenv("OCCA_CXXFLAGS");
@@ -692,6 +766,10 @@ namespace occa {
   template <>
   void device_t<OpenMP>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
+
+    OCCA_EXTRACT_DATA(OpenMP, Device);
+
+    data_.supportsOpenMP = omp::compilerSupportsOpenMP(compiler);
   }
 
   template <>
@@ -764,7 +842,18 @@ namespace occa {
   kernel_v* device_t<OpenMP>::buildKernelFromSource(const std::string &filename,
                                                     const std::string &functionName,
                                                     const kernelInfo &info_){
-    kernel_v *k = new kernel_t<OpenMP>;
+    OCCA_EXTRACT_DATA(OpenMP, Device);
+
+    kernel_v *k;
+
+    if(data_.supportsOpenMP){
+      k = new kernel_t<OpenMP>;
+    }
+    else{
+      std::cout << "Compiler [" << compiler << "] does not support OpenMP, defaulting to [Serial] mode\n";
+      k = new kernel_t<Serial>;
+    }
+
     k->dHandle = this;
 
     k->buildFromSource(filename, functionName, info_);
@@ -775,9 +864,22 @@ namespace occa {
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
                                                     const std::string &functionName){
-    kernel_v *k = new kernel_t<OpenMP>;
+    OCCA_EXTRACT_DATA(OpenMP, Device);
+
+    kernel_v *k;
+
+    if(data_.supportsOpenMP){
+      k = new kernel_t<OpenMP>;
+    }
+    else{
+      std::cout << "Compiler [" << compiler << "] does not support OpenMP, defaulting to [Serial] mode\n";
+      k = new kernel_t<Serial>;
+    }
+
     k->dHandle = this;
+
     k->buildFromBinary(filename, functionName);
+
     return k;
   }
 

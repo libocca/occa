@@ -122,14 +122,16 @@ else ifneq (,$(findstring pgcc,$(compiler)))
   cCompilerType = PGI
 else ifneq (,$(findstring pgc++,$(compiler)))
   cCompilerType = PGI
-else ifneq (,$(findstring cc,$(compiler)))
-  cCompilerType = CRAY
-else ifneq (,$(findstring CC,$(compiler)))
-  cCompilerType = CRAY
 else ifneq (,$(findstring pathcc,$(compiler)))
   cCompilerType = PATHSCALE
 else ifneq (,$(findstring pathCC,$(compiler)))
   cCompilerType = PATHSCALE
+else ifneq (,$(findstring aCC,$(compiler)))
+  cCompilerType = HP
+else ifneq (,$(findstring cc,$(compiler)))
+  cCompilerType = CRAY
+else ifneq (,$(findstring CC,$(compiler)))
+  cCompilerType = CRAY
 else ifneq (,$(findstring cl.exe,$(compiler)))
   cCompilerType = VS
 else
@@ -155,6 +157,9 @@ else ifneq (,$(filter $(cCompilerType),PGI))
 else ifneq (,$(filter $(cCompilerType),PATHSCALE))
   debugFlags   = -g
   releaseFlags = -O3 -march=auto
+else ifneq (,$(filter $(cCompilerType),HP))
+  debugFlags   = -g
+  releaseFlags = +O3
 else ifneq (,$(filter $(cCompilerType),VS))
   debugFlags   =      # [-] Missing
   releaseFlags =      # [-] Missing

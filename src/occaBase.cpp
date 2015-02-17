@@ -865,52 +865,51 @@ namespace occa {
   void device::setupHandle(occa::mode m){
     switch(m){
 
-    case Serial:
-      dHandle = new device_t<Serial>(); break;
-
-#if OCCA_OPENMP_ENABLED
-    case OpenMP:
-      dHandle = new device_t<OpenMP>(); break;
-#else
-      std::cout << "OCCA mode [OpenMP] is not enabled, defaulting to [Serial] mode\n";
-      dHandle = new device_t<Serial>(); break;
-#endif
-
-    case OpenCL:
+    case Serial:{
+      dHandle = new device_t<Serial>();
+      break;
+    }
+    case OpenMP:{
+      dHandle = new device_t<OpenMP>();
+      break;
+    }
+    case OpenCL:{
 #if OCCA_OPENCL_ENABLED
-      dHandle = new device_t<OpenCL>(); break;
+      dHandle = new device_t<OpenCL>();
 #else
       std::cout << "OCCA mode [OpenCL] is not enabled, defaulting to [Serial] mode\n";
-      dHandle = new device_t<Serial>(); break;
+      dHandle = new device_t<Serial>();
 #endif
-
-    case CUDA:
+      break;
+    }
+    case CUDA:{
 #if OCCA_CUDA_ENABLED
-      dHandle = new device_t<CUDA>(); break;
+      dHandle = new device_t<CUDA>();
 #else
       std::cout << "OCCA mode [CUDA] is not enabled, defaulting to [Serial] mode\n";
-      dHandle = new device_t<Serial>(); break;
+      dHandle = new device_t<Serial>();
 #endif
-
-    case Pthreads:
-#if OCCA_PTHREADS_ENABLED
-      dHandle = new device_t<Pthreads>(); break;
-#else
-      std::cout << "OCCA mode [Pthreads] is not enabled, defaulting to [Serial] mode\n";
-      dHandle = new device_t<Serial>(); break;
-#endif
-
-    case COI:
+      break;
+    }
+    case Pthreads:{
+      std::cout << "OCCA mode [Pthreads] is still in development-mode (unstable)\n";
+      dHandle = new device_t<Pthreads>();
+      break;
+    }
+    case COI:{
 #if OCCA_COI_ENABLED
-      dHandle = new device_t<COI>(); break;
+      std::cout << "OCCA mode [COI] is deprecated (unstable)\n";
+      dHandle = new device_t<COI>();
 #else
       std::cout << "OCCA mode [COI] is not enabled, defaulting to [Serial] mode\n";
-      dHandle = new device_t<Serial>(); break;
+      dHandle = new device_t<Serial>();
 #endif
-
-    default:
+      break;
+    }
+    default:{
       std::cout << "Unsupported OCCA mode given, defaulting to [Serial] mode\n";
       dHandle = new device_t<Serial>();
+    }
     }
   }
 
