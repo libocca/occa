@@ -120,6 +120,8 @@ namespace occa {
 
     data = new PthreadsKernelData_t;
 
+    PthreadsDeviceData_t &dData_ = *((PthreadsDeviceData_t*) dHandle->data);
+
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
                                                          info);
@@ -133,7 +135,7 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     command << dHandle->compiler
-            << " -x c++ -w -fPIC -shared"
+            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
@@ -143,8 +145,8 @@ namespace occa {
             << std::endl;
 #else
     command << dHandle->compiler
-            << " /TP /LD /MD  /D MC_CL_EXE"         // NBN: specify runtime library (release)
-         // << " /TP /LD /MDd /D MC_CL_EXE"         // NBN: specify runtime library (debug)
+            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
+            << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " /I"  << occaDir << "\\inc"         // NBN: /inc

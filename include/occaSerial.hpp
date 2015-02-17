@@ -23,13 +23,30 @@ namespace occa {
   struct SerialKernelData_t {
     void *dlHandle, *handle;
   };
+
+  struct SerialDeviceData_t {
+    std::string sharedBinaryFlags;
+  };
   //==================================
 
 
   //---[ Helper Functions ]-----------
   namespace cpu {
-    std::string getLSCPUField(std::string field);
-    std::string getCPUINFOField(std::string field);
+    namespace vendor {
+      static const int notFound     = 0;
+      static const int GNU          = (1 << 0); // gcc    , g++
+      static const int LLVM         = (1 << 1); // clang  , clang++
+      static const int Intel        = (1 << 2); // icc    , icpc
+      static const int Pathscale    = (1 << 3); // pathCC
+      static const int IBM          = (1 << 4); // xlc    , xlc++
+      static const int PGI          = (1 << 5); // pgcc   , pgc++
+      static const int HP           = (1 << 6); // aCC
+      static const int VisualStudio = (1 << 7); // cl.exe
+      static const int Cray         = (1 << 8); // cc     , CC
+    };
+
+    std::string getLSCPUField(const std::string &field);
+    std::string getCPUINFOField(const std::string &field);
 
     std::string getProcessorName();
     int getCoreCount();
@@ -37,6 +54,9 @@ namespace occa {
     std::string getProcessorCacheSize(int level);
 
     std::string getDeviceListInfo();
+
+    int compilerVendor(const std::string &compiler);
+    std::string compilerSharedBinaryFlags(const std::string &compiler);
 
     void* malloc(uintptr_t bytes);
     void free(void *ptr);

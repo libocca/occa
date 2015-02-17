@@ -39,6 +39,8 @@ namespace occa {
     std::queue<PthreadKernelArg_t*> kernelArgs[OCCA_MAX_ARGS];
 
     pthread_mutex_t pendingJobsMutex, kernelMutex;
+
+    std::string sharedBinaryFlags;
   };
 
   struct PthreadsKernelData_t {

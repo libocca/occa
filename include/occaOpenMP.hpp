@@ -25,14 +25,17 @@ namespace occa {
 
   struct OpenMPDeviceData_t {
     bool supportsOpenMP;
+    std::string sharedBinaryFlags, OpenMPFlag;
   };
   //==================================
 
 
   //---[ Helper Functions ]-----------
   namespace omp {
-    bool compilerSupportsOpenMP(const std::string &compiler);
-    std::string compilerFlagFor(const std::string &compiler);
+    extern std::string notSupported;
+
+    std::string baseCompilerFlag(const std::string &compiler);
+    std::string compilerFlag(const std::string &compiler);
   };
   //==================================
 

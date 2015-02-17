@@ -4,95 +4,96 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace omp {
-    bool compilerSupportsOpenMP(const std::string &compiler){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-      std::string testContent = ("#include \"omp.h\""
-                                 ""
-                                 "int main(int argc, char **argv){"
-                                 "  char j[32];"
-                                 ""
-                                 "#pragma omp parallel"
-                                 "  for(int i = 0; i < 32; ++i) j[i] = 0;"
-                                 ""
-                                 "  return 0;"
-                                 "}");
+    std::string notSupported = "N/A";
 
-      std::string hashName = (getCachePath() +
-                              ".ompTest_"  +
-                              getCacheHash(testContent, compiler));
+    std::string baseCompilerFlag(const std::string &compiler){
+      const int compilerVendor = cpu::compilerVendor(compiler);
 
-      if(fileExists(hashName)){
-        if(fileExists(hashName + "_passed"))
-          return true;
-        if(fileExists(hashName + "_failed"))
-          return false;
-      }
-
-      std::stringstream ss;
-
-      writeToFile(hashName, testContent);
-
-      ss << compiler
-         << " -x c++ "
-         << ' ' << compilerFlagFor(compiler)
-         << ' ' << hashName
-         << " > /dev/null 2>&1";
-
-      const int compileError = system(ss.str().c_str());
-
-      hashName += (compileError ? "_failed" : "_passed");
-
-      writeToFile(hashName.c_str(), "");
-
-      return (!compileError);
-#elif (OCCA_OS == WINDOWS_OS)
-      return true;
-#endif
-    }
-
-    std::string compilerFlagFor(const std::string &compiler){
-      if((compiler.find("gcc")     != std::string::npos) ||     // GCC
-         (compiler.find("g++")     != std::string::npos) ||
-         (compiler.find("clang")   != std::string::npos) ||     // LLVM
-         (compiler.find("clang++") != std::string::npos)){
+      if(compilerVendor & (cpu::vendor::GNU |
+                           cpu::vendor::LLVM)){
 
         return "-fopenmp";
       }
-      else if((compiler.find("icc")  != std::string::npos) ||   // Intel
-              (compiler.find("icpc") != std::string::npos)){
+      else if(compilerVendor & (cpu::vendor::Intel |
+                                cpu::vendor::Pathscale)){
 
         return "-openmp";
       }
-      else if(compiler.find("cl.exe")  != std::string::npos){   // VC++
-
-        return "/openmp";
-      }
-      else if((compiler.find("xlc")   != std::string::npos) ||  // IBM
-              (compiler.find("xlc++") != std::string::npos)){
-
+      else if(compilerVendor & cpu::vendor::IBM){
         return "-qsmp";
       }
-      else if((compiler.find("pgcc")  != std::string::npos) ||  // PGI
-              (compiler.find("pgc++") != std::string::npos)){
-
+      else if(compilerVendor & cpu::vendor::PGI){
         return "-mp";
       }
-      else if((compiler.find("pathcc") != std::string::npos) || // Pathscale
-              (compiler.find("pathCC") != std::string::npos)){
-
-        return "-openmp";
-      }
-      else if((compiler.find("aCC") != std::string::npos)){     // HP
-
+      else if(compilerVendor & cpu::vendor::HP){
         return "+Oopenmp";
       }
-      else if((compiler.find("cc") != std::string::npos) ||     // Cray
-              (compiler.find("CC") != std::string::npos)){
-
-        return ""; // On by default
+      else if(compilerVendor & cpu::vendor::VisualStudio){
+        return "/openmp";
+      }
+      else if(compilerVendor & cpu::vendor::Cray){
+        return "";
       }
 
-      return "-fopenmp";
+      return omp::notSupported;
+    }
+
+    std::string compilerFlag(const std::string &compiler){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+      std::string testFilename = (getCachePath() + ".ompTest.cpp");
+      std::string infoFilename = (std::string(".ompTest_") + compiler);
+
+      if(!haveFile(testFilename)){
+        waitForFile(testFilename);
+      }
+      else{
+        if(!fileExists(testFilename)){
+          std::string testContent = ("#include <omp.h>\n"
+                                     "\n"
+                                     "int main(int argc, char **argv){\n"
+                                     "#ifdef _OPENMP\n"
+                                     "  return 0;\n"
+                                     "#else\n"
+                                     "  return 1;\n"
+                                     "#endif\n"
+                                     "}");
+
+          writeToFile(testFilename, testContent);
+        }
+
+        if(!fileExists(infoFilename)){
+          std::string flag = baseCompilerFlag(compiler);
+          int compileError = 1;
+
+          std::string sCommand;
+
+          if(flag != omp::notSupported){
+            sCommand += compiler;
+            sCommand += ' ';
+            sCommand += flag;
+            sCommand += ' ';
+            sCommand += testFilename;
+            sCommand += " -o .ompTest_binary > /dev/null 2>&1";
+
+            compileError = system(sCommand.c_str());
+          }
+
+          if(!compileError)
+            writeToFile(infoFilename, flag);
+          else
+            writeToFile(infoFilename, omp::notSupported);
+
+          return flag;
+        }
+
+        releaseFile(testFilename);
+      }
+
+      return readFile(infoFilename);
+
+#elif (OCCA_OS == WINDOWS_OS)
+      return "/openmp"; // VS Compilers support OpenMP
+#endif
     }
   };
   //==================================
@@ -222,7 +223,9 @@ namespace occa {
       command << dHandle->compilerEnvScript << " && ";
 
     //---[ Check if compiler flag is added ]------
-    const std::string ompFlag = omp::compilerFlagFor(dHandle->compiler);
+    OpenMPDeviceData_t &dData_ = *((OpenMPDeviceData_t*) dHandle->data);
+
+    const std::string ompFlag = dData_.OpenMPFlag;
 
     if((dHandle->compilerFlags.find(ompFlag) == std::string::npos) &&
        (            info.flags.find(ompFlag) == std::string::npos)){
@@ -234,7 +237,7 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     command << dHandle->compiler
-            << " -x c++ -w -fPIC -shared"
+            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
@@ -244,8 +247,8 @@ namespace occa {
             << std::endl;
 #else
     command << dHandle->compiler
-            << " /TP /LD /MD  /D MC_CL_EXE"         // NBN: specify runtime library (release)
-         // << " /TP /LD /MDd /D MC_CL_EXE"         // NBN: specify runtime library (debug)
+            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
+            << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " /I"  << occaDir << "\\inc"         // NBN: /inc
@@ -633,7 +636,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
-    data_.supportsOpenMP = omp::compilerSupportsOpenMP(compiler);
+    data_.OpenMPFlag     = omp::compilerFlag(compiler);
+    data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
   }
 
   template <>
@@ -768,7 +772,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
-    data_.supportsOpenMP = omp::compilerSupportsOpenMP(compiler);
+    data_.OpenMPFlag     = omp::compilerFlag(compiler);
+    data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
   }
 
   template <>
