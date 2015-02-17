@@ -321,7 +321,7 @@ namespace occa {
                            cpu::vendor::Intel |
                            cpu::vendor::Pathscale)){
 
-        return "-fPIC -shared";
+        return "-x c++ -fPIC -shared"; // [-] -x c++ for now
       }
       else if(compilerVendor & cpu::vendor::Cray){
         return "-h PIC";
@@ -362,52 +362,6 @@ namespace occa {
 
     void free(void *ptr){
       ::free(ptr);
-    }
-
-    std::string sharedBinaryFlags(const std::string compiler){
-      if((compiler.find("gcc")     != std::string::npos) ||   // GCC [-x c++]
-         (compiler.find("g++")     != std::string::npos) ||
-         (compiler.find("clang")   != std::string::npos) ||   // LLVM
-         (compiler.find("clang++") != std::string::npos) ||
-         (compiler.find("icc")     != std::string::npos) ||   // Intel
-         (compiler.find("icpc")    != std::string::npos)){
-
-        return "-fPIC -shared";
-      }
-      else if(compiler.find("cl.exe")  != std::string::npos){   // VC++ [/LD]
-
-#if OCCA_DEBUG_ENABLED
-        return "/TP /MDd";
-#else
-        return "/TP /MD";
-#endif
-      }
-      else if((compiler.find("xlc")   != std::string::npos) ||  // IBM [-qsourcetype=c++]
-              (compiler.find("xlc++") != std::string::npos)){
-
-        return "-qpic=large -qmkshrobj";
-      }
-      else if((compiler.find("pgcc")  != std::string::npos) ||  // PGI [-x c++]
-              (compiler.find("pgc++") != std::string::npos)){
-
-        return "-fpic -shlib";
-      }
-      else if((compiler.find("pathcc") != std::string::npos) || // Pathscale [-cpp]
-              (compiler.find("pathCC") != std::string::npos)){
-
-        return "-fPIC -shared";
-      }
-      else if((compiler.find("aCC") != std::string::npos)){     // HP
-
-        return "+z -b";
-      }
-      else if((compiler.find("cc") != std::string::npos) ||     // Cray
-              (compiler.find("CC") != std::string::npos)){
-
-        return "-h PIC";
-      }
-
-      return "";
     }
 
     void* dlopen(const std::string &filename,
