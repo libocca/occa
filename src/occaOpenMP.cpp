@@ -44,7 +44,7 @@ namespace occa {
 
       hashName += (compileError ? "_failed" : "_passed");
 
-      mkdir(hashName.c_str(), 0755);
+      writeToFile(hashName.c_str(), "");
 
       return (!compileError);
 #elif (OCCA_OS == WINDOWS_OS)
