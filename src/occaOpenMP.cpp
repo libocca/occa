@@ -83,10 +83,12 @@ namespace occa {
           else
             writeToFile(infoFilename, omp::notSupported);
 
+          releaseFile(testFilename);
+
           return flag;
         }
-
-        releaseFile(testFilename);
+        else
+          releaseFile(testFilename);
       }
 
       return readFile(infoFilename);
