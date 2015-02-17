@@ -33,10 +33,9 @@ namespace occa {
       writeToFile(hashName, testContent);
 
       ss << compiler
-         << ' '
-         << compilerFlagFor(compiler)
-         << ' '
-         << hashName
+         << " -x c++ "
+         << ' ' << compilerFlagFor(compiler)
+         << ' ' << hashName
          << " > /dev/null 2>&1";
 
       const int compileError = system(ss.str().c_str());
