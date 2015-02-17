@@ -46,11 +46,11 @@ endif
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
-$(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
-	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
-
 $(occaOPath)/occaFTypes.mod:$(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	@true
+
+$(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
+	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
 
 $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<

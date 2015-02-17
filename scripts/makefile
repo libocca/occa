@@ -106,31 +106,31 @@ links = -locca
 
 #---[ C++ Compiler Info ]-------------------------
 # C/C++ Compiler
-ifneq (,$(findstring $(compiler),g++))
+ifneq (,$(findstring g++,$(compiler)))
   cCompilerType = GCC
-else ifneq (,$(findstring $(compiler),gcc))
+else ifneq (,$(findstring gcc,$(compiler)))
   cCompilerType = GCC
-else ifneq (,$(findstring $(compiler),clang))
+else ifneq (,$(findstring clang,$(compiler)))
   cCompilerType = CLANG
-else ifneq (,$(findstring $(compiler),icc))
+else ifneq (,$(findstring icc,$(compiler)))
   cCompilerType = INTEL
-else ifneq (,$(findstring $(compiler),icpc))
+else ifneq (,$(findstring icpc,$(compiler)))
   cCompilerType = INTEL
-else ifneq (,$(findstring $(compiler),xlc))
+else ifneq (,$(findstring xlc,$(compiler)))
   cCompilerType = IBM
-else ifneq (,$(findstring $(compiler),pgcc))
+else ifneq (,$(findstring pgcc,$(compiler)))
   cCompilerType = PGI
-else ifneq (,$(findstring $(compiler),pgc++))
+else ifneq (,$(findstring pgc++,$(compiler)))
   cCompilerType = PGI
-else ifneq (,$(findstring $(compiler),cc))
+else ifneq (,$(findstring cc,$(compiler)))
   cCompilerType = CRAY
-else ifneq (,$(findstring $(compiler),CC))
+else ifneq (,$(findstring CC,$(compiler)))
   cCompilerType = CRAY
-else ifneq (,$(findstring $(compiler),pathcc))
+else ifneq (,$(findstring pathcc,$(compiler)))
   cCompilerType = PATHSCALE
-else ifneq (,$(findstring $(compiler),pathCC))
+else ifneq (,$(findstring pathCC,$(compiler)))
   cCompilerType = PATHSCALE
-else ifneq (,$(findstring $(compiler),cl.exe))
+else ifneq (,$(findstring cl.exe,$(compiler)))
   cCompilerType = VS
 else
   cCompilerType = NOT_FOUND
@@ -163,17 +163,17 @@ endif
 
 
 #---[ Fortran Compiler Info ]---------------------
-ifneq (,$(findstring $(fCompiler),gfortran))
+ifneq (,$(findstring gfortran,$(fCompiler)))
   fCompilerType = GCC
-else ifneq (,$(findstring $(fCompiler),ifort))
+else ifneq (,$(findstring ifort,$(fCompiler)))
   fCompilerType = INTEL
-else ifneq (,$(findstring $(fCompiler),ftn))
+else ifneq (,$(findstring ftn,$(fCompiler)))
   fCompilerType = CRAY
-else ifneq (,$(findstring $(fCompiler),xlf))
+else ifneq (,$(findstring xlf,$(fCompiler)))
   fCompilerType = IBM
-else ifneq (,$(findstring $(fCompiler),pgfortran))
+else ifneq (,$(findstring pgfortran,$(fCompiler)))
   fCompilerType = PGI
-else ifneq (,$(findstring $(fCompiler),pathf95))
+else ifneq (,$(findstring pathf95,$(fCompiler)))
   fCompilerType = PATHSCALE
 else
   fCompilerType = NOT_FOUND
