@@ -1,6 +1,5 @@
-#if OCCA_PTHREADS_ENABLED
-#  ifndef OCCA_PTHREADS_HEADER
-#  define OCCA_PTHREADS_HEADER
+#ifndef OCCA_PTHREADS_HEADER
+#define OCCA_PTHREADS_HEADER
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <sys/sysctl.h>
@@ -370,5 +369,4 @@ namespace occa {
   //==================================
 };
 
-#  endif
 #endif

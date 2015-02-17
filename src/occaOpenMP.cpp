@@ -1,5 +1,3 @@
-#if OCCA_OPENMP_ENABLED
-
 #include "occaSerial.hpp"
 #include "occaOpenMP.hpp"
 
@@ -28,20 +26,15 @@ namespace occa {
 
         return "-qsmp=omp";
       }
-      else if((compiler.find("icc")  != std::string::npos) || // Cray
-              (compiler.find("icpc") != std::string::npos)){
+      else if((compiler.find("cc") != std::string::npos) || // Cray
+              (compiler.find("CC") != std::string::npos)){
 
         return ""; // On by default
       }
-      else if((compiler.find("icc")  != std::string::npos) || // PGI
-              (compiler.find("icpc") != std::string::npos)){
+      else if((compiler.find("pgcc")  != std::string::npos) || // PGI
+              (compiler.find("pgc++") != std::string::npos)){
 
         return "-mp";
-      }
-      else if((compiler.find("icc")  != std::string::npos) || // PGI
-              (compiler.find("icpc") != std::string::npos)){
-
-        return "-openmp";
       }
 
       return "-fopenmp";
@@ -630,7 +623,7 @@ namespace occa {
 
   template <>
   void device_t<OpenMP>::getEnvironmentVariables(){
-    char *c_compiler = getenv("OCCA_CPP_COMPILER");
+    char *c_compiler = getenv("OCCA_CXX");
 
     if(c_compiler != NULL){
       compiler = std::string(c_compiler);
@@ -643,7 +636,7 @@ namespace occa {
 #endif
     }
 
-    char *c_compilerFlags = getenv("OCCA_CPP_COMPILER_FLAGS");
+    char *c_compilerFlags = getenv("OCCA_CXXFLAGS");
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     if(c_compilerFlags != NULL)
@@ -951,5 +944,3 @@ namespace occa {
   }
   //==================================
 };
-
-#endif

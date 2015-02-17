@@ -1,25 +1,27 @@
 ifndef OCCA_DIR
 ERROR:
-	@echo "Error, environment variable [OCCA_DIR] is not set"
+  @echo "Error, environment variable [OCCA_DIR] is not set"
 endif
 
 include ${OCCA_DIR}/scripts/makefile
 
-flags += -DtFloat=float -DOCCA_GL_ENABLED=1
-
 ifeq ($(OS),OSX)
-	links += -framework OpenGL -framework GLUT
+  flags += -D OCCA_GL_ENABLED=1 -D GL_GLEXT_PROTOTYPES
+  links += -framework OpenGL -lX11 -lGL -framework OpenGL -framework GLUT
+  paths += -I/opt/X11/include -L/opt/X11/lib
+else ifeq ($(OS),LINUX)
+  flags += -D OCCA_GL_ENABLED=1 -D GL_GLEXT_PROTOTYPES
+  links += -L/usr/lib/fglrx/ -lGL -lX11 -lGLU -lglut -lGL
+  paths += -I/opt/X11/include -L/opt/X11/lib
 endif
 
-ifeq ($(OS),LINUX)
-	links += -lGLU -lglut -lGL
-endif
+flags += -D tFloat=float
 
 #---[ COMPILATION ]-------------------------------
 headers = $(wildcard $(iPath)/*.hpp) $(wildcard $(iPath)/*.tpp)
 sources = $(wildcard $(sPath)/*.cpp)
 
-objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
+objects = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
 main: $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)

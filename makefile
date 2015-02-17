@@ -1,13 +1,13 @@
 ifndef OCCA_DIR
-	OCCA_DIR = $(shell pwd)
-	occaDirWasInitialized = 1
+  OCCA_DIR = $(shell pwd)
+  occaDirWasInitialized = 1
 endif
 
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
-compilerFlags += -fPIC
-FcompilerFlags += -fPIC
+compilerFlags  += -fPIC
+fCompilerFlags += -fPIC
 lPath = lib
 
 occaBPath = ${OCCA_DIR}/$(bPath)
@@ -26,7 +26,7 @@ objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
-	objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
+  objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
 endif
 endif
 
@@ -47,13 +47,13 @@ $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaS
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
-	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
+	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
 
 $(occaOPath)/occaFTypes.mod:$(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	@true
 
 $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
-	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
+	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<

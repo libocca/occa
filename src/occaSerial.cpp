@@ -893,7 +893,7 @@ namespace occa {
 
   template <>
   void device_t<Serial>::getEnvironmentVariables(){
-    char *c_compiler = getenv("OCCA_CPP_COMPILER");
+    char *c_compiler = getenv("OCCA_CXX");
 
     if(c_compiler != NULL){
       compiler = std::string(c_compiler);
@@ -906,7 +906,7 @@ namespace occa {
 #endif
     }
 
-    char *c_compilerFlags = getenv("OCCA_CPP_COMPILER_FLAGS");
+    char *c_compilerFlags = getenv("OCCA_CXXFLAGS");
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     if(c_compilerFlags != NULL)

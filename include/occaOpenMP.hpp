@@ -1,6 +1,5 @@
-#if OCCA_OPENMP_ENABLED
-#  ifndef OCCA_OPENMP_HEADER
-#  define OCCA_OPENMP_HEADER
+#ifndef OCCA_OPENMP_HEADER
+#define OCCA_OPENMP_HEADER
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -267,5 +266,4 @@ namespace occa {
 
 };
 
-#  endif
 #endif
