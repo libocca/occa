@@ -314,28 +314,30 @@ namespace occa {
     }
 
     std::string compilerSharedBinaryFlags(const std::string &compiler){
-      const int compilerVendor = cpu::compilerVendor(compiler);
+      return compilerSharedBinaryFlags( cpu::compilerVendor(compiler) );
+    }
 
-      if(compilerVendor & (cpu::vendor::GNU   |
-                           cpu::vendor::LLVM  |
-                           cpu::vendor::Intel |
-                           cpu::vendor::Pathscale)){
+    std::string compilerSharedBinaryFlags(const int vendor_){
+      if(vendor_ & (cpu::vendor::GNU   |
+                    cpu::vendor::LLVM  |
+                    cpu::vendor::Intel |
+                    cpu::vendor::Pathscale)){
 
         return "-x c++ -fPIC -shared"; // [-] -x c++ for now
       }
-      else if(compilerVendor & cpu::vendor::Cray){
+      else if(vendor_ & cpu::vendor::Cray){
         return "-h PIC";
       }
-      else if(compilerVendor & cpu::vendor::IBM){
+      else if(vendor_ & cpu::vendor::IBM){
         return "-qpic=large -qmkshrobj";
       }
-      else if(compilerVendor & cpu::vendor::PGI){
+      else if(vendor_ & cpu::vendor::PGI){
         return "-fpic -shlib";
       }
-      else if(compilerVendor & cpu::vendor::HP){
+      else if(vendor_ & cpu::vendor::HP){
         return "+z -b";
       }
-      else if(compilerVendor & cpu::vendor::VisualStudio){
+      else if(vendor_ & cpu::vendor::VisualStudio){
 #if OCCA_DEBUG_ENABLED
         return "/TP /MDd";
 #else
@@ -532,8 +534,6 @@ namespace occa {
 
     data = new SerialKernelData_t;
 
-    SerialDeviceData_t &dData_ = *((SerialDeviceData_t*) dHandle->data);
-
     const std::string iCachedBinary = createIntermediateSource(filename,
                                                                cachedBinary,
                                                                info,
@@ -548,7 +548,6 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     command << dHandle->compiler
-            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
@@ -558,7 +557,6 @@ namespace occa {
             << std::endl;
 #else
     command << dHandle->compiler
-            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
@@ -942,7 +940,14 @@ namespace occa {
   }
 
   template <>
-  void device_t<Serial>::setup(argInfoMap &aim){}
+  void device_t<Serial>::setup(argInfoMap &aim){
+    data = new SerialDeviceData_t;
+
+    OCCA_EXTRACT_DATA(Serial, Device);
+
+    data_.vendor  = cpu::compilerVendor(compiler);
+    compilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+  }
 
   template <>
   void device_t<Serial>::addOccaHeadersToInfo(kernelInfo &info_){
@@ -1068,6 +1073,15 @@ namespace occa {
   template <>
   void device_t<Serial>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
+
+    OCCA_EXTRACT_DATA(Serial, Device);
+
+    data_.vendor = cpu::compilerVendor(compiler);
+
+    std::string sCompilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+
+    if(compilerFlags.find(sCompilerFlags) == std::string::npos)
+      compilerFlags = sCompilerFlags + compilerFlags;
   }
 
   template <>
@@ -1077,7 +1091,10 @@ namespace occa {
 
   template <>
   void device_t<Serial>::setCompilerFlags(const std::string &compilerFlags_){
-    compilerFlags = compilerFlags_;
+    OCCA_EXTRACT_DATA(Serial, Device);
+
+    compilerFlags  = cpu::compilerSharedBinaryFlags(data_.vendor);
+    compilerFlags += compilerFlags_;
   }
 
   template <>

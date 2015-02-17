@@ -24,8 +24,9 @@ namespace occa {
   };
 
   struct OpenMPDeviceData_t {
+    int vendor;
     bool supportsOpenMP;
-    std::string sharedBinaryFlags, OpenMPFlag;
+    std::string OpenMPFlag;
   };
   //==================================
 

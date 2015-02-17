@@ -346,8 +346,6 @@ namespace occa {
     bool breakNextLine = true;
 
     while(*c != '\0'){
-      skipString(c, parsingC);
-
       if(*c == '\0')
         break;
 
@@ -404,8 +402,6 @@ namespace occa {
     }
 
     while(*c != '\0'){
-      skipString(c, parserNS::parsingFortran);
-
       if(*c == '\0')
         break;
 
@@ -537,8 +533,6 @@ namespace occa {
     int status = parserNS::readingCode;
 
     while(*cRight != '\0'){
-      skipString(cRight, parsingC);
-
       if((*cRight == '\0') || (*cRight == '\n'))
         break;
 
@@ -582,8 +576,6 @@ namespace occa {
     int status = parserNS::readingCode;
 
     while(*cRight != '\0'){
-      skipString(cRight, parserNS::parsingFortran);
-
       if((*cRight == '\0') || (*cRight == '\n'))
         break;
 

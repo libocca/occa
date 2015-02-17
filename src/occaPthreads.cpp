@@ -120,8 +120,6 @@ namespace occa {
 
     data = new PthreadsKernelData_t;
 
-    PthreadsDeviceData_t &dData_ = *((PthreadsDeviceData_t*) dHandle->data);
-
     std::string iCachedBinary = createIntermediateSource(filename,
                                                          cachedBinary,
                                                          info);
@@ -135,7 +133,6 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     command << dHandle->compiler
-            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
@@ -145,7 +142,6 @@ namespace occa {
             << std::endl;
 #else
     command << dHandle->compiler
-            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
@@ -565,6 +561,9 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Device);
 
+    data_.vendor  = cpu::compilerVendor(compiler);
+    compilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+
     data_.pendingJobs = 0;
 
     data_.coreCount = cpu::getCoreCount();
@@ -797,6 +796,15 @@ namespace occa {
   template <>
   void device_t<Pthreads>::setCompiler(const std::string &compiler_){
     compiler = compiler_;
+
+    OCCA_EXTRACT_DATA(Pthreads, Device);
+
+    data_.vendor = cpu::compilerVendor(compiler);
+
+    std::string sCompilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+
+    if(compilerFlags.find(sCompilerFlags) == std::string::npos)
+      compilerFlags = sCompilerFlags + compilerFlags;
   }
 
   template <>
@@ -806,7 +814,10 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::setCompilerFlags(const std::string &compilerFlags_){
-    compilerFlags = compilerFlags_;
+    OCCA_EXTRACT_DATA(Pthreads, Device);
+
+    compilerFlags  = cpu::compilerSharedBinaryFlags(data_.vendor);
+    compilerFlags += compilerFlags_;
   }
 
   template <>

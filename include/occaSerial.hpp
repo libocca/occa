@@ -25,7 +25,7 @@ namespace occa {
   };
 
   struct SerialDeviceData_t {
-    std::string sharedBinaryFlags;
+    int vendor;
   };
   //==================================
 
@@ -56,7 +56,9 @@ namespace occa {
     std::string getDeviceListInfo();
 
     int compilerVendor(const std::string &compiler);
+
     std::string compilerSharedBinaryFlags(const std::string &compiler);
+    std::string compilerSharedBinaryFlags(const int vendor_);
 
     void* malloc(uintptr_t bytes);
     void free(void *ptr);

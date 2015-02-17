@@ -239,7 +239,6 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     command << dHandle->compiler
-            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " -I"  << occaDir << "/include"
@@ -249,7 +248,6 @@ namespace occa {
             << std::endl;
 #else
     command << dHandle->compiler
-            << ' '    << cpu::compilerSharedBinaryFlags(dHandle->compiler)
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
@@ -638,8 +636,11 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
+    data_.vendor         = cpu::compilerVendor(compiler);
     data_.OpenMPFlag     = omp::compilerFlag(compiler);
     data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
+
+    compilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
   }
 
   template <>
@@ -774,8 +775,14 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
+    data_.vendor         = cpu::compilerVendor(compiler);
     data_.OpenMPFlag     = omp::compilerFlag(compiler);
     data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
+
+    std::string sCompilerFlags = cpu::compilerSharedBinaryFlags(data_.vendor);
+
+    if(compilerFlags.find(sCompilerFlags) == std::string::npos)
+      compilerFlags = sCompilerFlags + compilerFlags;
   }
 
   template <>
@@ -785,7 +792,10 @@ namespace occa {
 
   template <>
   void device_t<OpenMP>::setCompilerFlags(const std::string &compilerFlags_){
-    compilerFlags = compilerFlags_;
+    OCCA_EXTRACT_DATA(OpenMP, Device);
+
+    compilerFlags  = cpu::compilerSharedBinaryFlags(data_.vendor);
+    compilerFlags += compilerFlags_;
   }
 
   template <>
