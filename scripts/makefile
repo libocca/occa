@@ -140,7 +140,6 @@ endif
 ifneq (,$(filter $(cCompilerType),GCC CLANG))
   debugFlags   = -g
   releaseFlags = -O3 -D __extern_always_inline=inline
-  Shared_Flags
 else ifneq (,$(filter $(cCompilerType),INTEL))
   debugFlags   = -g
   releaseFlags = -O3 -xHost
