@@ -800,8 +800,6 @@ namespace occa {
       int leafPos = 0;
 
       while(nodePos){
-        const int oldLeafPos = leafPos;
-
         expNode *&leaf = leaves[leafPos++];
 
         leaf        = new expNode(*this);
