@@ -92,7 +92,11 @@ function dirWithLibrary {
     case "$(uname)" in
         Darwin)
             if ls /System/Library/Frameworks/$1.framework > /dev/null 2>&1; then
-                echo "Is A Framework"
+                echo "Is A System/Library Framework"
+                return
+            fi
+            if ls /Library/Frameworks/$1.framework > /dev/null 2>&1; then
+                echo "Is A Library Framework"
                 return
             fi;;
     esac
@@ -158,13 +162,23 @@ function libraryAndHeaderFlags {
     local libDir=$(dirWithLibrary $libName)
     local incDirs
     local flags
+    local isAFramework=0
 
-    if [ -z $libDir ]; then echo ""; return; fi
+    if [ -z "$libDir" ]; then echo ""; return; fi
 
-    if [ $libDir != "Is A Framework" ]; then
+    if [ "$libDir" == "Is A System/Library Framework" ]; then
         flags="-framework $libName"
+        isAFramework=1
+    elif [ "$libDir" == "Is A Library Framework" ]; then
+        flags="-F/Library/Frameworks -framework $libName"
+        isAFramework=1
     else
         flags="-L$libDir"
+    fi
+
+    if [ $isAFramework -eq 1 ]; then
+        echo $flags
+        return
     fi
 
     if [ ! -z $headers ]; then

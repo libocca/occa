@@ -104,8 +104,8 @@ links = -locca
 #=================================================
 
 
-#---[ Sehll Tools ]-------------------------------
-shellTool = $(shell . $OCCA_DIR/scripts/shellTools.sh; ls)
+#---[ Shell Tools ]-------------------------------
+flagsForLibrary = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryAndHeaderFlags $1 $2)
 #=================================================
 
 
@@ -215,34 +215,13 @@ endif
 #---[ Flags and Libraries ]-----------------------
 ifeq ($(OS),OSX)
   flags      += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
-  openclFlags =
-  cudaFlags   =
-  coiFlags    =
-
   links      += -framework accelerate -framework CoreServices
-  openclLinks = -framework OpenCL
-  cudaLinks   = -framework CUDA
-  coiLinks    =
 else ifeq ($(OS), LINUX)
   flags       += -D OCCA_OS=LINUX_OS
-  openclFlags  =
-  cudaFlags    =
-  coiFlags     =
-
   links       += -lm -lrt -ldl
-  openclLinks  = -lOpenCL
-  cudaLinks    = -lcuda
-  coiLinks     = -lcoi_host
 else ifeq ($(OS), WINDOWS)
   flags       += -D OCCA_OS=WINDOWS_OS
-  openclFlags  =
-  cudaFlags    =
-  coiFlags     =
-
   links       +=
-  openclLinks  =
-  cudaLinks    =
-  coiLinks     =
 endif
 #=================================================
 
@@ -251,30 +230,48 @@ endif
 ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
 else
-  openclEnabled = 0
-  # ifeq ($(OS), OSX)
-  #   openclEnabled = $(call findFramework,OpenCL)
-  # else ifeq ($(OS), LINUX)
-  #   openclEnabled = $(call findLinuxLibrary,libOpenCL.so)
-  # endif
+  openclFlags =
+
+  ifeq ($(OS), OSX)
+    openclFlags = $(call flagsForLibrary,OpenCL)
+  else ifeq ($(OS), LINUX)
+    openclFlags = $(call flagsForLibrary,OpenCL CL/cl.h)
+  endif
+
+  ifneq (,$(openclFlags))
+    openclEnabled  = 1
+    compilerFlags += $(openclFlags)
+  endif
 endif
 
 ifdef OCCA_CUDA_ENABLED
   cudaEnabled = $(OCCA_CUDA_ENABLED)
 else
-  cudaEnabled = 0
-  # ifeq ($(OS), OSX)
-  #   cudaEnabled = $(call findOsxLibrary,CUDA,libcuda.so)
-  # else ifeq ($(OS), LINUX)
-  #   cudaEnabled = $(call findLinuxLibrary,libcuda.so)
-  # endif
+  cudaFlags =
+
+  ifeq ($(OS), OSX)
+    cudaFlags = $(call flagsForLibrary,CUDA)
+  else ifeq ($(OS), LINUX)
+    cudaFlags = $(call flagsForLibrary,cuda cuda.h)
+  endif
+
+  ifneq (,$(cudaFlags))
+    cudaEnabled  = 1
+    compilerFlags += $(cudaFlags)
+  endif
 endif
 
 ifdef OCCA_COI_ENABLED
   coiEnabled = $(OCCA_COI_ENABLED)
 else ifeq ($(OS), LINUX)
-  coiEnabled = 0
-  # coiEnabled = $(call findLinuxLibrary,coi_host.so)
+  ifeq ($(OS), LINUX)
+    coiFlags = $(call flagsForLibrary,coi_host intel-coi/source/COIProcess_source.h)
+
+    ifneq (,$(coiFlags))
+      coiEnabled  = 1
+      compilerFlags += $(coiFlags)
+    endif
+  endif
 endif
 
 ifeq ($(debugEnabled), 1)
