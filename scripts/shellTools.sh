@@ -161,7 +161,11 @@ function libraryAndHeaderFlags {
 
     if [ -z $libDir ]; then echo ""; return; fi
 
-    flags="-L$libDir "
+    if [ $libDir != "Is A Framework" ]; then
+        flags="-framework $libName"
+    else
+        flags="-L$libDir"
+    fi
 
     if [ ! -z $headers ]; then
         incDirs=$(dirsWithHeaders $headers)

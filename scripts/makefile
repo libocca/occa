@@ -104,6 +104,11 @@ links = -locca
 #=================================================
 
 
+#---[ Sehll Tools ]-------------------------------
+shellTool = $(shell . $OCCA_DIR/scripts/shellTools.sh; ls)
+#=================================================
+
+
 #---[ C++ Compiler Info ]-------------------------
 # C/C++ Compiler
 ifneq (,$(findstring g++,$(compiler)))
@@ -239,13 +244,6 @@ else ifeq ($(OS), WINDOWS)
   cudaLinks    =
   coiLinks     =
 endif
-
-findInLdConfig = $(shell ldconfig -p | grep --quiet $(1) && echo 1 || echo 0)
-findInDydlPath = $(shell for dydir in ${DYLD_LIBRARY_PATH//:/ }; do if ls $dydir/$(1) >/dev/null 2>&1; then echo 1; fi; done)
-findFramework  = $(shell if ls /System/Library/Frameworks/$(1).framework >/dev/null 2>&1; then echo 1; fi)
-
-findLinuxLibrary = $(call findInLdConfig, $(1))
-findOSXLibrary   = $(or, $(call findInDydlPath, $(1)), $(call findFramework, $(2)))
 #=================================================
 
 
@@ -253,27 +251,30 @@ findOSXLibrary   = $(or, $(call findInDydlPath, $(1)), $(call findFramework, $(2
 ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
 else
-  ifeq ($(OS), OSX)
-    openclEnabled = $(call findFramework,OpenCL)
-  else ifeq ($(OS), LINUX)
-    openclEnabled = $(call findLinuxLibrary,libOpenCL.so)
-  endif
+  openclEnabled = 0
+  # ifeq ($(OS), OSX)
+  #   openclEnabled = $(call findFramework,OpenCL)
+  # else ifeq ($(OS), LINUX)
+  #   openclEnabled = $(call findLinuxLibrary,libOpenCL.so)
+  # endif
 endif
 
 ifdef OCCA_CUDA_ENABLED
   cudaEnabled = $(OCCA_CUDA_ENABLED)
 else
-  ifeq ($(OS), OSX)
-    cudaEnabled = $(call findOsxLibrary,CUDA,libcuda.so)
-  else ifeq ($(OS), LINUX)
-    cudaEnabled = $(call findLinuxLibrary,libcuda.so)
-  endif
+  cudaEnabled = 0
+  # ifeq ($(OS), OSX)
+  #   cudaEnabled = $(call findOsxLibrary,CUDA,libcuda.so)
+  # else ifeq ($(OS), LINUX)
+  #   cudaEnabled = $(call findLinuxLibrary,libcuda.so)
+  # endif
 endif
 
 ifdef OCCA_COI_ENABLED
   coiEnabled = $(OCCA_COI_ENABLED)
 else ifeq ($(OS), LINUX)
-  coiEnabled = $(call findLinuxLibrary,coi_host.so)
+  coiEnabled = 0
+  # coiEnabled = $(call findLinuxLibrary,coi_host.so)
 endif
 
 ifeq ($(debugEnabled), 1)
