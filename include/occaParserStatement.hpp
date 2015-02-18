@@ -146,6 +146,8 @@ namespace occa {
       void splitFortranFunctionStatement();
       //  ====================
 
+      static void translateOccaKeyword(strNode *nodePos, const bool parsingC);
+
       void initLoadFromNode(strNode *nodeRoot);
       void initLoadFromFortranNode(strNode *nodeRoot);
 

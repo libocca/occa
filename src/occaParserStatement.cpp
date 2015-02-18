@@ -783,6 +783,20 @@ namespace occa {
     }
     //  ======================
 
+    void expNode::translateOccaKeyword(strNode *nodePos, const bool parsingC){
+      if(nodePos->info & occaKeywordType){
+
+        if(((parsingC)  &&
+            (nodePos->value == "directLoad")) ||
+           ((!parsingC) &&
+            upStringCheck(nodePos->value, "DIRECTLOAD"))){
+
+          nodePos->value = "occaDirectLoad";
+        }
+
+      }
+    }
+
     void expNode::initLoadFromNode(strNode *nodeRoot){
       strNode *nodePos = nodeRoot;
 
@@ -800,6 +814,9 @@ namespace occa {
       int leafPos = 0;
 
       while(nodePos){
+        if(nodePos->info & occaKeywordType)
+          translateOccaKeyword(nodePos, true);
+
         expNode *&leaf = leaves[leafPos++];
 
         leaf        = new expNode(*this);

@@ -68,6 +68,8 @@
 #define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue return
+// - - - - - - - - - - - - - - - - - - - - - - - -
+#define occaDirectLoad(X) (__ldg(X))
 //================================================
 
 

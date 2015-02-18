@@ -41,13 +41,13 @@ main_c: main.c
 	$(compiler) $(compilerFlags) -o main_c $(flags) $(objects) main.c $(paths) $(links)
 
 main_f90: main.f90
-	$(fCompiler) $(fCompilerFlags) -o main_f90 $(flags) $(objects) main.f90 $(paths) $(links)
+	$(Fcompiler) $(FcompilerFlags) -o main_f90 $(flags) $(objects) main.f90 $(paths) $(links)
 
 mainFloopy: $(objects) $(headers) mainFloopy.cpp
 	$(compiler) $(compilerFlags) -o mainFloopy $(flags) $(objects) mainFloopy.cpp $(paths) $(links)
 
 mainFloopy_f90: $(objects) $(headers) mainFloopy.f90
-	$(fCompiler) $(fCompilerFlags) -o mainFloopy_f90 $(flags) $(objects) mainFloopy.f90 $(paths) $(links)
+	$(Fcompiler) $(FcompilerFlags) -o mainFloopy_f90 $(flags) $(objects) mainFloopy.f90 $(paths) $(links)
 
 $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<

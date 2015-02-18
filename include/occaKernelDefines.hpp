@@ -1,9 +1,9 @@
 namespace occa {
-  extern char occaSerialDefines[11907];
-  extern char occaOpenMPDefines[13157];
-  extern char occaOpenCLDefines[11993];
-  extern char occaCUDADefines[12150];
-  extern char occaPthreadsDefines[11876];
-  extern char occaCOIDefines[13087];
+  extern char occaSerialDefines[11991];
+  extern char occaOpenMPDefines[13241];
+  extern char occaOpenCLDefines[12077];
+  extern char occaCUDADefines[12238];
+  extern char occaPthreadsDefines[11960];
+  extern char occaCOIDefines[13171];
   extern char occaVectorDefines[314828];
 }
