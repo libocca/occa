@@ -6,7 +6,7 @@ endif
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
-compilerFlags += -fPIC
+compilerFlags  += -fPIC
 FcompilerFlags += -fPIC
 lPath = lib
 

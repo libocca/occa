@@ -7,7 +7,7 @@ kernel void addVectors(const int entries,
       const int N = (item + (16 * group));
 
       if(N < entries)
-        ab[N] = a[N] + directLoad(b + N);
+        ab[N] = a[N] + b[N];
     }
   }
 }
