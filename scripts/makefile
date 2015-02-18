@@ -7,17 +7,83 @@ iPath = include
 
 
 #---[ Default Variables ]-------------------------
-debugEnabled   = 0
-checkEnabled   = 1
+Debug_Enabled   = 0
+Check_Enabled   = 1
 
-# CXX      : C++ Compiler
-# CXXFLAGS : C++ Compiler Flags
+usingICPC       = 0
+OpenGL_Enabled  = 0
 
-# FC       : Fortran Compiler
-# FCFLAGS  : Fortran Compiler Flags
+openclEnabled   = 0
+openmpEnabled   = 0
+cudaEnabled     = 0
+coiEnabled      = 0
+pthreadsEnabled = 0
 
-# OCCA_INCLUDE_PATH : Extra include paths
-# OCCA_LIBRARY_PATH : Extra library paths
+compilingForJulia = 0
+
+ifdef OCCA_DEVELOPER
+ ifeq ($(OCCA_DEVELOPER), 1)
+  ifeq ($(DEBUG), 0)
+     Debug_Enabled = 0
+  else
+     Debug_Enabled = 1
+  endif
+ else
+  ifeq ($(DEBUG), 1)
+     Debug_Enabled = 1
+  else
+     Debug_Enabled = 0
+  endif
+ endif
+endif
+
+ifndef CXX
+	CXX = g++
+endif
+
+ifndef FC
+	FC = gfortran
+endif
+
+ifndef CXXFLAGS
+	ifeq ($(DEBUG), 1)
+		CXXFLAGS = -g
+	else
+		CXXFLAGS = -O3
+	endif
+endif
+
+ifndef FCFLAGS
+	ifeq ($(DEBUG), 1)
+		FCFLAGS = -g
+	else
+		FCFLAGS = -O3
+	endif
+endif
+
+compiler      = $(CXX)
+compilerFlags = $(CXXFLAGS)
+
+Fcompiler      = $(FC)
+FcompilerFlags = $(FCFLAGS)
+
+ifdef COMPILING_FOR_JULIA
+  compilingForJulia = 1
+endif
+#=================================================
+
+
+#---[ Paths/Flags/Links ]-------------------------
+paths  = -I./$(sPath) -I./$(iPath) -I${OCCA_DIR}/lib -I${OCCA_DIR}/include
+paths += -I/sw/include/ -I/opt/AMDAPP/include/ -I/usr/include/ -I/opt/X11/include
+paths += -I/Developer/NVIDIA/CUDA-5.5/include/ -I/usr/local/cuda/include -I/glb/data/comp_mod/Tools/cuda-5.5/include
+paths += -L/opt/X11/lib -L${OCCA_DIR}/lib -L/usr/local/cuda/lib64 -L/usr/local/cuda/lib -L/usr/lib
+paths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
+paths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
+
+flags = -Wno-deprecated
+
+links = -locca
 #=================================================
 
 
@@ -26,291 +92,164 @@ LINUX_OS   = 1
 OSX_OS     = 2
 WINDOWS_OS = 4
 
-flags = -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS)
+flags += -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS)
 
 ifdef SystemRoot
 	OS = WINDOWS
-else ifeq ($(shell uname -s),Darwin)
+else
+ifeq ($(shell uname -s),Darwin)
 	OS = OSX
 else
 	OS = LINUX
 endif
+endif
 #=================================================
 
 
-#---[ Variables ]---------------------------------
-ifdef OCCA_DEVELOPER
- ifeq ($(OCCA_DEVELOPER), 1)
-  ifeq ($(DEBUG), 0)
-     debugEnabled = 0
-  else
-     debugEnabled = 1
-  endif
- else
-  ifeq ($(DEBUG), 1)
-     debugEnabled = 1
-  else
-     debugEnabled = 0
-  endif
- endif
-endif
-
-ifndef CXX
-  ifdef OCCA_CXX
-    CXX = ${OCCA_CXX}
-  else
-    CXX = g++
-  endif
-endif
-
-ifndef FC
-  FC = gfortran
-endif
-
-ifndef CXXFLAGS
-  ifeq ($(DEBUG),1)
-    CXXFLAGS = -g
-  else
-    CXXFLAGS = -O3
-  endif
-endif
-
-ifndef FCFLAGS
-  ifeq ($(DEBUG),1)
-    FCFLAGS = -g
-  else
-    FCFLAGS = -O3
-  endif
-endif
-
-compiler      = $(CXX)
-compilerFlags = $(CXXFLAGS)
-
-fCompiler      = $(FC)
-fCompilerFlags = $(FCFLAGS)
-#=================================================
-
-
-#---[ Paths/Flags/Links ]-------------------------
-paths = -I${OCCA_DIR}/lib -I${OCCA_DIR}/include -L${OCCA_DIR}/lib
-paths += $(foreach path, $(subst :, ,$(OCCA_INCLUDE_PATH)), -I$(path))
-paths += $(foreach path, $(subst :, ,$(OCCA_LIBRARY_PATH)), -L$(path))
-
-ifneq (,$(wildcard ./$(iPath)/*))
-  paths += -I./$(iPath)
-endif
-
-links = -locca
-#=================================================
-
-
-#---[ C++ Compiler Info ]-------------------------
-# C/C++ Compiler
-ifneq (,$(findstring g++,$(compiler)))
-  cCompilerType = GCC
-else ifneq (,$(findstring gcc,$(compiler)))
-  cCompilerType = GCC
-else ifneq (,$(findstring clang,$(compiler)))
-  cCompilerType = CLANG
-else ifneq (,$(findstring icc,$(compiler)))
-  cCompilerType = INTEL
-else ifneq (,$(findstring icpc,$(compiler)))
-  cCompilerType = INTEL
-else ifneq (,$(findstring xlc,$(compiler)))
-  cCompilerType = IBM
-else ifneq (,$(findstring pgcc,$(compiler)))
-  cCompilerType = PGI
-else ifneq (,$(findstring pgc++,$(compiler)))
-  cCompilerType = PGI
-else ifneq (,$(findstring pathcc,$(compiler)))
-  cCompilerType = PATHSCALE
-else ifneq (,$(findstring pathCC,$(compiler)))
-  cCompilerType = PATHSCALE
-else ifneq (,$(findstring aCC,$(compiler)))
-  cCompilerType = HP
-else ifneq (,$(findstring cc,$(compiler)))
-  cCompilerType = CRAY
-else ifneq (,$(findstring CC,$(compiler)))
-  cCompilerType = CRAY
-else ifneq (,$(findstring cl.exe,$(compiler)))
-  cCompilerType = VS
+#---[ OS-Based Dependencies ]---------------------
+ifeq ($(usingICPC), 1)
+	Debug_Flags      = -g
+	Release_Flags    = -ldl -no-ansi-alias -funroll-all-loops -fp-model fast=2 -ftz -O3 -xHost
+	FcompilerModFlag = -module
 else
-  cCompilerType = NOT_FOUND
+	Debug_Flags      = -g
+	Release_Flags    = -msse -O3 -ftree-vectorize -funroll-all-loops -ffast-math -Wno-unused-value
+	FcompilerModFlag = -J
 endif
 
-# Debug and Release Flags
-ifneq (,$(filter $(cCompilerType),GCC CLANG))
-  debugFlags   = -g
-  releaseFlags = -O3 -D __extern_always_inline=inline
-else ifneq (,$(filter $(cCompilerType),INTEL))
-  debugFlags   = -g
-  releaseFlags = -O3 -xHost
-else ifneq (,$(filter $(cCompilerType),CRAY))
-  debugFlags   = -g
-  releaseFlags = -O3 -h intrinsics -fast
-else ifneq (,$(filter $(cCompilerType),IBM))
-  debugFlags   = -g
-  releaseFlags = -O3 -qhot=simd
-else ifneq (,$(filter $(cCompilerType),PGI))
-  debugFlags   = -g
-  releaseFlags = -O3 -fast -Mipa=fast,inline -Msmartalloc
-else ifneq (,$(filter $(cCompilerType),PATHSCALE))
-  debugFlags   = -g
-  releaseFlags = -O3 -march=auto
-else ifneq (,$(filter $(cCompilerType),HP))
-  debugFlags   = -g
-  releaseFlags = +O3
-else ifneq (,$(filter $(cCompilerType),VS))
-  debugFlags   =      # [-] Missing
-  releaseFlags =      # [-] Missing
-endif
-#=================================================
-
-
-#---[ Fortran Compiler Info ]---------------------
-ifneq (,$(findstring gfortran,$(fCompiler)))
-  fCompilerType = GCC
-else ifneq (,$(findstring ifort,$(fCompiler)))
-  fCompilerType = INTEL
-else ifneq (,$(findstring ftn,$(fCompiler)))
-  fCompilerType = CRAY
-else ifneq (,$(findstring xlf,$(fCompiler)))
-  fCompilerType = IBM
-else ifneq (,$(findstring pgfortran,$(fCompiler)))
-  fCompilerType = PGI
-else ifneq (,$(findstring pathf95,$(fCompiler)))
-  fCompilerType = PATHSCALE
-else
-  fCompilerType = NOT_FOUND
-endif
-
-# Fortran Compiler
-ifneq (,$(filter $(fCompilerType),GCC))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -J
-else ifneq (,$(filter $(fCompilerType),INTEL))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -module
-else ifneq (,$(filter $(fCompilerType),CRAY))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -J
-else ifneq (,$(filter $(fCompilerType),IBM))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -qmoddir
-else ifneq (,$(filter $(fCompilerType),PGI))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -module
-else ifneq (,$(filter $(fCompilerType),PATHSCALE))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -module
-endif
-#=================================================
-
-
-#---[ Flags and Libraries ]-----------------------
 ifeq ($(OS),OSX)
-  flags      += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
-  openclFlags =
-  cudaFlags   =
-  coiFlags    =
+	flags       += -D OCCA_OS=OSX_OS
+	OpenGL_Flags =
+	OpenCL_Flags =
+	CUDA_Flags   =
+	COI_Flags    =
 
-  links      += -framework accelerate -framework CoreServices
-  openclLinks = -framework OpenCL
-  cudaLinks   = -framework CUDA
-  coiLinks    =
-else ifeq ($(OS), LINUX)
-  flags       += -D OCCA_OS=LINUX_OS
-  openclFlags  =
-  cudaFlags    =
-  coiFlags     =
-
-  links       += -lm -lrt -ldl
-  openclLinks  = -lOpenCL
-  cudaLinks    = -lcuda
-  coiLinks     = -lcoi_host
-else ifeq ($(OS), WINDOWS)
-  flags       += -D OCCA_OS=WINDOWS_OS
-  openclFlags  =
-  cudaFlags    =
-  coiFlags     =
-
-  links       +=
-  openclLinks  =
-  cudaLinks    =
-  coiLinks     =
+	links       += -framework accelerate -framework CoreServices
+	OpenGL_Links = -D GL_GLEXT_PROTOTYPES -framework OpenGL -lX11 -lGL
+	OpenCL_Links = -framework OpenCL
+	CUDA_Links   = -framework CUDA
+	COI_Links    =
 endif
 
-findInLdConfig = $(shell ldconfig -p | grep --quiet $(1) && echo 1 || echo 0)
-findInDydlPath = $(shell for dydir in ${DYLD_LIBRARY_PATH//:/ }; do if ls $dydir/$(1) >/dev/null 2>&1; then echo 1; fi; done)
-findFramework  = $(shell if ls /System/Library/Frameworks/$(1).framework >/dev/null 2>&1; then echo 1; fi)
+ifeq ($(OS),LINUX)
+	flags        += -D OCCA_OS=LINUX_OS
+	OpenGL_Flags  = -D GL_GLEXT_PROTOTYPES
+	OpenCL_Flags  =
+	CUDA_Flags    =
+	COI_Flags     =
 
-findLinuxLibrary = $(call findInLdConfig, $(1))
-findOSXLibrary   = $(or, $(call findInDydlPath, $(1)), $(call findFramework, $(2)))
+	links        += -lm -lrt -ldl
+	OpenGL_Links  =  -L/usr/lib/fglrx/ -lGL -lX11
+	OpenCL_Links  = -lOpenCL
+	CUDA_Links    = -lcuda
+	COI_Links     = -lcoi_host
+endif
+
+ifeq ($(OS),WINDOWS)
+	flags        += -D OCCA_OS=WINDOWS_OS
+	OpenGL_Flags  =
+	OpenCL_Flags  =
+	CUDA_Flags    =
+	COI_Flags     =
+
+	links        +=
+	OpenGL_Links  =
+	OpenCL_Links  =
+	CUDA_Links    =
+	COI_Links     =
+endif
 #=================================================
 
 
 #---[ Variable Dependencies ]---------------------
-ifdef OCCA_OPENCL_ENABLED
-  openclEnabled = $(OCCA_OPENCL_ENABLED)
+ifdef OCCA_PTHREADS_ENABLED
+	Pthreads_Enabled = $(OCCA_PTHREADS_ENABLED)
 else
-  ifeq ($(OS), OSX)
-    openclEnabled = $(call findFramework,OpenCL)
-  else ifeq ($(OS), LINUX)
-    openclEnabled = $(call findLinuxLibrary,libOpenCL.so)
-  endif
+	Pthreads_Enabled = pthreadsEnabled
+endif
+
+ifdef OCCA_OPENMP_ENABLED
+	OpenMP_Enabled = $(OCCA_OPENMP_ENABLED)
+ifeq ($(OCCA_OPENMP_ENABLED),1)
+	links += -fopenmp
+endif
+else
+	OpenMP_Enabled = openmpEnabled
+endif
+
+ifdef OCCA_OPENCL_ENABLED
+	OpenCL_Enabled = $(OCCA_OPENCL_ENABLED)
+else
+	OpenCL_Enabled = openclEnabled
 endif
 
 ifdef OCCA_CUDA_ENABLED
-  cudaEnabled = $(OCCA_CUDA_ENABLED)
+	CUDA_Enabled = $(OCCA_CUDA_ENABLED)
 else
-  ifeq ($(OS), OSX)
-    cudaEnabled = $(call findOsxLibrary,CUDA,libcuda.so)
-  else ifeq ($(OS), LINUX)
-    cudaEnabled = $(call findLinuxLibrary,libcuda.so)
-  endif
+	CUDA_Enabled = cudaEnabled
 endif
 
 ifdef OCCA_COI_ENABLED
-  coiEnabled = $(OCCA_COI_ENABLED)
-else ifeq ($(OS), LINUX)
-  coiEnabled = $(call findLinuxLibrary,coi_host.so)
-endif
-
-ifeq ($(debugEnabled), 1)
-  flags += $(debugFlags)   -DOCCA_DEBUG_ENABLED=1
+	COI_Enabled = $(OCCA_COI_ENABLED)
 else
-  flags += $(releaseFlags) -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
+	COI_Enabled = coiEnabled
 endif
 
-ifeq ($(checkEnabled), 1)
-  flags += -DOCCA_CHECK_ENABLED=1
+ifeq ($(Debug_Enabled), 1)
+	flags += $(Debug_Flags)   -DOCCA_DEBUG_ENABLED=1
 else
-  flags += -DOCCA_CHECK_ENABLED=0
+	flags += $(Release_Flags) -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
 endif
 
-ifeq ($(openclEnabled), 1)
-  flags += $(openclFlags) -DOCCA_OPENCL_ENABLED=1
-  links += $(openclLinks)
+ifeq ($(OpenMP_Enabled), 1)
+	flags += -fopenmp -DOCCA_OPENMP_ENABLED=1
 else
-  flags +=                 -DOCCA_OPENCL_ENABLED=0
+	flags +=          -DOCCA_OPENMP_ENABLED=0
 endif
 
-
-ifeq ($(cudaEnabled), 1)
-  flags += $(cudaFlags) -DOCCA_CUDA_ENABLED=1
-  links += $(cudaLinks)
+ifeq ($(Check_Enabled), 1)
+	flags += -DOCCA_CHECK_ENABLED=1
 else
-  flags +=               -DOCCA_CUDA_ENABLED=0
+	flags += -DOCCA_CHECK_ENABLED=0
 endif
 
-ifeq ($(coiEnabled), 1)
-  flags += $(coiFlags) -DOCCA_COI_ENABLED=1
-  links += $(coiLinks)
+ifeq ($(Pthreads_Enabled), 1)
+	flags += -DOCCA_PTHREADS_ENABLED=1
 else
-  flags += -DOCCA_COI_ENABLED=0
+	flags += -DOCCA_PTHREADS_ENABLED=0
 endif
 
-ifdef COMPILING_WITH_JULIA
-  flags += -DOCCA_COMPILED_FOR_JULIA=1
+ifeq ($(OpenGL_Enabled), 1)
+	flags += $(OpenGL_Flags) -DOCCA_OPENGL_ENABLED=1
+	links += $(OpenGL_Links)
+else
+	flags +=                 -DOCCA_OPENGL_ENABLED=0
+endif
+
+
+ifeq ($(OpenCL_Enabled), 1)
+	flags += $(OpenCL_Flags) -DOCCA_OPENCL_ENABLED=1
+	links += $(OpenCL_Links)
+else
+	flags +=                 -DOCCA_OPENCL_ENABLED=0
+endif
+
+
+ifeq ($(CUDA_Enabled), 1)
+	flags += $(CUDA_Flags) -DOCCA_CUDA_ENABLED=1
+	links += $(CUDA_Links)
+else
+	flags +=               -DOCCA_CUDA_ENABLED=0
+endif
+
+ifeq ($(COI_Enabled), 1)
+	flags += $(COI_Flags) -DOCCA_COI_ENABLED=1
+	links += $(COI_Links)
+else
+	flags += -DOCCA_COI_ENABLED=0
+endif
+
+ifeq ($(compilingForJulia), 1)
+	flags += -DOCCA_COMPILING_FOR_JULIA=1
 endif
 #=================================================

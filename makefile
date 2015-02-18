@@ -1,13 +1,13 @@
 ifndef OCCA_DIR
-  OCCA_DIR = $(shell pwd)
-  occaDirWasInitialized = 1
+	OCCA_DIR = $(shell pwd)
+	occaDirWasInitialized = 1
 endif
 
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
-compilerFlags  += -fPIC
-fCompilerFlags += -fPIC
+compilerFlags += -fPIC
+FcompilerFlags += -fPIC
 lPath = lib
 
 occaBPath = ${OCCA_DIR}/$(bPath)
@@ -24,9 +24,11 @@ fsources = $(wildcard $(occaSPath)/*.f90)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
 
+dependencies =
+
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
-  objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
+	objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
 endif
 endif
 
@@ -39,21 +41,21 @@ else
 
 all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
 
-$(occaLPath)/libocca.so:$(objects) $(headers)
+$(occaLPath)/libocca.so:$(objects) $(headers) $(dependencies)
 	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
+$(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
+	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
+
 $(occaOPath)/occaFTypes.mod:$(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	@true
 
-$(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
-	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
-
 $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
-	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
+	$(Fcompiler) $(FcompilerFlags) $(FcompilerModFlag) $(occaLPath) -o $@ -c $<
 
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
