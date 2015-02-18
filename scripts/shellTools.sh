@@ -150,3 +150,27 @@ function dirsWithHeaders {
 
     echo $path
 }
+
+function libraryAndHeaderFlags {
+    local libName=$1
+    local headers=$2
+
+    local libDir=$(dirWithLibrary $libName)
+    local incDirs
+    local flags
+
+    if [ -z $libDir ]; then echo ""; return; fi
+
+    flags="-L$libDir "
+
+    if [ ! -z $headers ]; then
+        incDirs=$(dirsWithHeaders $headers)
+
+        if [ -z $incDirs ]; then echo ""; return; fi
+
+        incDirs=${incDirs%?}               # Remove the last :
+        flags="$flags -I${incDirs//:/ -I}" # : -> -I
+    fi
+
+    echo $flags
+}
