@@ -70,6 +70,8 @@
 #define occaOuterBarrier(FENCE)
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaContinue return
+// - - - - - - - - - - - - - - - - - - - - - - - -
+#define occaDirectLoad(X) (*(X))
 //================================================
 
 

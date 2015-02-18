@@ -3646,6 +3646,8 @@ namespace occa {
       cKeywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
       cKeywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
 
+      cKeywordType["directLoad"]  = (presetValue | occaKeywordType);
+
       cKeywordType["atomicAdd"]  = (presetValue | occaKeywordType);
       cKeywordType["atomicSub"]  = (presetValue | occaKeywordType);
       cKeywordType["atomicSwap"] = (presetValue | occaKeywordType);
@@ -3935,6 +3937,8 @@ namespace occa {
       fortranKeywordType["DEVICE"]    = qualifierType;
       fortranKeywordType["SHARED"]    = qualifierType;
       fortranKeywordType["EXCLUSIVE"] = qualifierType;
+
+      fortranKeywordType["DIRECTLOAD"] = (presetValue | occaKeywordType);
 
       //---[ Atomics ]--------------------
       fortranKeywordType["ATOMICADD"]  = (presetValue | occaKeywordType);
