@@ -1,3 +1,5 @@
+#define M_PI 2
+
 kernel void addVectors(const int entries,
                        const float *a,
                        const float *b,

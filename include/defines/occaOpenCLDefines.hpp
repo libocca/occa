@@ -16,6 +16,23 @@
 //================================================
 
 
+//---[ Math Defines ]-----------------------------
+#define OCCA_E         2.7182818284590452 // e
+#define OCCA_LOG2E     1.4426950408889634 // log2(e)
+#define OCCA_LOG10E    0.4342944819032518 // log10(e)
+#define OCCA_LN2       0.6931471805599453 // loge(2)
+#define OCCA_LN10      2.3025850929940456 // loge(10)
+#define OCCA_PI        3.1415926535897932 // pi
+#define OCCA_PI_2      1.5707963267948966 // pi/2
+#define OCCA_PI_4      0.7853981633974483 // pi/4
+#define OCCA_1_PI      0.3183098861837906 // 1/pi
+#define OCCA_2_PI      0.6366197723675813 // 2/pi
+#define OCCA_2_SQRTPI  1.1283791670955125 // 2/sqrt(pi)
+#define OCCA_SQRT2     1.4142135623730950 // sqrt(2)
+#define OCCA_SQRT1_2   0.7071067811865475 // 1/sqrt(2)
+//================================================
+
+
 //---[ Loop Info ]--------------------------------
 #define occaOuterDim2 (get_num_groups(2))
 #define occaOuterId2  (get_group_id(2))
