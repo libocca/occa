@@ -258,12 +258,6 @@ function compilerSharedBinaryFlags {
     esac
 }
 
-function compilerSupportsOpenMP {
-    local compilerVendor=$(compilerVendor $1)
-
-    echo 0
-}
-
 function compilerOpenMPFlags {
     local compilerVendor=$(compilerVendor $1)
 
@@ -276,5 +270,26 @@ function compilerOpenMPFlags {
         HP)                echo "+Oopenmp" ;; # [-]
         *)                 echo ""         ;;
     esac
+}
+
+function compilerSupportsOpenMP {
+    local compiler=$1
+    local compilerVendor=$(compilerVendor $compiler)
+    local ompFlag=$(compilerOpenMPFlags $compiler)
+
+    local filename=$OCCA_DIR/scripts/ompTest.cpp
+    local binary=$OCCA_DIR/scripts/ompTest
+
+    local output=$($compiler $ompFlag $filename -o $binary 2>&1 > /dev/null)
+
+    if [[ $output =~ ^-?[0-9]+$ && $output -eq 1 ]]; then
+        echo 1
+    else
+        echo 0
+    fi
+
+    if [ ! -z $binary ]; then
+        rm -f $binary
+    fi
 }
 #=======================================
