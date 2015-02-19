@@ -133,6 +133,8 @@ extern "C" {
   OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromArgs(const char *mode,
                                                          int arg1, int arg2);
 
+  OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
+
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromSource(occaDevice device,
                                                              const char *filename,
                                                              const char *functionName,

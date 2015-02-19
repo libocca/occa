@@ -135,10 +135,10 @@ namespace occa {
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " -I"  << occaDir << "/include"
-            << " -L"  << occaDir << "/lib -locca"
             << ' '    << iCachedBinary
             << " -o " << cachedBinary
+            << " -I"  << occaDir << "/include"
+            << " -L"  << occaDir << "/lib -locca"
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)

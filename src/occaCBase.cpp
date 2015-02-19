@@ -270,6 +270,12 @@ extern "C" {
     return (occaDevice) device;
   }
 
+  uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device){
+    occa::device &device_ = *((occa::device*) device);
+
+    return device_.bytesAllocated();
+  }
+
   occaKernel OCCA_RFUNC occaBuildKernelFromSource(occaDevice device,
                                                   const char *filename,
                                                   const char *functionName,

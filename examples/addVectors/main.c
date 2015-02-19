@@ -37,9 +37,16 @@ int main(int argc, char **argv){
   o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
   o_ab = occaDeviceMalloc(device, entries*sizeof(float), NULL);
 
+  occaKernelInfo info = occaCreateKernelInfo();
+  occaKernelInfoAddDefine(info, "DIMENSION", occaInt(10));
+
   addVectors = occaBuildKernelFromSource(device,
                                          "addVectors.occa", "addVectors",
-                                         occaNoKernelInfo);
+                                         info);
+
+  /* addVectors = occaBuildKernelFromSource(device, */
+  /*                                        "addVectors.occa", "addVectors", */
+  /*                                        occaNoKernelInfo); */
 
   int dims = 1;
   occaDim itemsPerGroup, groups;
