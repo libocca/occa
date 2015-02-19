@@ -1,3 +1,5 @@
+#!/bin/bash
+
 function uniqueAddToPath {
     local path=$1
     local dir=$2
@@ -173,7 +175,7 @@ function libraryAndHeaderFlags {
         flags="-F/Library/Frameworks -framework $libName"
         isAFramework=1
     else
-        flags="-L$libDir"
+        flags="-L$libDir -l$libName"
     fi
 
     if [ $isAFramework -eq 1 ]; then
