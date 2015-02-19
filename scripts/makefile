@@ -258,10 +258,10 @@ else
       links += $(openclLibFlags)
     endif
   else ifeq ($(OS), LINUX)
-    openclLibFlags = $(call libraryFlagsFor,CL/cl.h)
+    openclLibFlags = $(call libraryFlagsFor,OpenCL)
     ifneq (,$(openclLibFlags))
 
-      openclIncFlags = $(call includeFlagsFor,OpenCL)
+      openclIncFlags = $(call includeFlagsFor,CL/cl.h)
       ifneq (,$(openclIncFlags))
         openclEnabled = 1
         paths += $(openclIncFlags)
@@ -318,7 +318,7 @@ else
       ifneq (,$(coiIncFlags))
         coiEnabled = 1
         paths += $(coiIncFlags)
-        links += $(call libraryFlagsFor,coi_host)
+        links += $(coiLibFlags)
       endif
     endif
   endif
