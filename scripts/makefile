@@ -105,77 +105,30 @@ links = -locca
 
 
 #---[ Shell Tools ]-------------------------------
-ifneq (,$(wildcard /bin/bash))
-  SHELL := /bin/bash
-  libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
-  includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
-else
-  libraryFlagsFor =
-  includeFlagsFor =
+ifeq (,$(findstring bash,${SHELL}))
+  ifneq (,$(wildcard /bin/bash))
+    SHELL := /bin/bash
+  else
+    $(error /bin/bash not found, set SHELL environment variable to compile [export SHELL=/path/to/bash])
+  endif
 endif
+
+libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
+includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
+
+compilerReleaseFlags      = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerReleaseFlags      $(compiler))
+compilerDebugFlags        = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerDebugFlags        $(compiler))
+compilerSharedBinaryFlags = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSharedBinaryFlags $(compiler))
+
+compilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(compiler))
+compilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(compiler))
 #=================================================
 
 
 #---[ C++ Compiler Info ]-------------------------
-# C/C++ Compiler
-ifneq (,$(findstring g++,$(compiler)))
-  cCompilerType = GCC
-else ifneq (,$(findstring gcc,$(compiler)))
-  cCompilerType = GCC
-else ifneq (,$(findstring clang,$(compiler)))
-  cCompilerType = CLANG
-else ifneq (,$(findstring icc,$(compiler)))
-  cCompilerType = INTEL
-else ifneq (,$(findstring icpc,$(compiler)))
-  cCompilerType = INTEL
-else ifneq (,$(findstring xlc,$(compiler)))
-  cCompilerType = IBM
-else ifneq (,$(findstring pgcc,$(compiler)))
-  cCompilerType = PGI
-else ifneq (,$(findstring pgc++,$(compiler)))
-  cCompilerType = PGI
-else ifneq (,$(findstring pathcc,$(compiler)))
-  cCompilerType = PATHSCALE
-else ifneq (,$(findstring pathCC,$(compiler)))
-  cCompilerType = PATHSCALE
-else ifneq (,$(findstring aCC,$(compiler)))
-  cCompilerType = HP
-else ifneq (,$(findstring cc,$(compiler)))
-  cCompilerType = CRAY
-else ifneq (,$(findstring CC,$(compiler)))
-  cCompilerType = CRAY
-else ifneq (,$(findstring cl.exe,$(compiler)))
-  cCompilerType = VS
-else
-  cCompilerType = NOT_FOUND
-endif
-
-# Debug and Release Flags
-ifneq (,$(filter $(cCompilerType),GCC CLANG))
-  debugFlags   = -g
-  releaseFlags = -O3 -D __extern_always_inline=inline
-else ifneq (,$(filter $(cCompilerType),INTEL))
-  debugFlags   = -g
-  releaseFlags = -O3 -xHost
-else ifneq (,$(filter $(cCompilerType),CRAY))
-  debugFlags   = -g
-  releaseFlags = -O3 -h intrinsics -fast
-else ifneq (,$(filter $(cCompilerType),IBM))
-  debugFlags   = -g
-  releaseFlags = -O3 -qhot=simd
-else ifneq (,$(filter $(cCompilerType),PGI))
-  debugFlags   = -g
-  releaseFlags = -O3 -fast -Mipa=fast,inline -Msmartalloc
-else ifneq (,$(filter $(cCompilerType),PATHSCALE))
-  debugFlags   = -g
-  releaseFlags = -O3 -march=auto
-else ifneq (,$(filter $(cCompilerType),HP))
-  debugFlags   = -g
-  releaseFlags = +O3
-else ifneq (,$(filter $(cCompilerType),VS))
-  debugFlags   =      # [-] Missing
-  releaseFlags =      # [-] Missing
-endif
+debugFlags        = $(call compilerDebugFlags)
+releaseFlags      = $(call compilerReleaseFlags)
+sharedBinaryFlags = $(call compilerSharedBinaryFlags)
 #=================================================
 
 
@@ -234,9 +187,17 @@ endif
 
 
 #---[ Variable Dependencies ]---------------------
+openmpEnabled = 0
 openclEnabled = 0
 cudaEnabled   = 0
 coiEnabled    = 0
+
+ifdef OCCA_OPENMP_ENABLED
+  openmpEnabled = $(OCCA_OPENMP_ENABLED)
+else
+  openmpEnabled = $(call compilerSupportsOpenMP)
+  flags        += $(call compilerOpenMPFlags)
+endif
 
 ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
@@ -336,6 +297,7 @@ else
   flags += -DOCCA_CHECK_ENABLED=0
 endif
 
+flags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
 flags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
 flags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
 flags += -DOCCA_COI_ENABLED=$(coiEnabled)

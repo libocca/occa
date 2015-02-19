@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#---[ Library Information ]-------------
+
 function uniqueAddToPath {
     local path=$1
     local dir=$2
@@ -198,3 +200,81 @@ function headerFlags {
 
     echo $flags
 }
+#=======================================
+
+
+#---[ Compiler Information ]------------
+function compilerVendor {
+    local compiler=$1
+
+    case $compiler in
+        g++* | gcc*)       echo GCC          ;;
+        clang*)            echo LLVM         ;;
+        icc* | icpc*)      echo INTEL        ;;
+        xlc*)              echo IBM          ;;
+        pgcc* | pgc++*)    echo PGI          ;;
+        pathcc* | pathCC*) echo PATHSCALE    ;;
+        aCC*)              echo HP           ;;
+        cc* | CC*)         echo CRAY         ;;
+        cl*.exe*)          echo VISUALSTUDIO ;;
+        *)                 echo N/A          ;;
+    esac
+}
+
+function compilerReleaseFlags {
+    local compilerVendor=$(compilerVendor $1)
+
+    case $compilerVendor in
+        GCC | CLANG) echo "-O3 -D __extern_always_inline=inline"     ;;
+        INTEL)       echo "-O3 -xHost"                               ;;
+        CRAY)        echo "-O3 -h intrinsics -fast"                  ;; # [-]
+        IBM)         echo "-O3 -qhot=simd"                           ;; # [-]
+        PGI)         echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;; # [-]
+        PATHSCALE)   echo "-O3 -march=auto"                          ;; # [-]
+        HP)          echo "+O3"                                      ;; # [-]
+        *)           echo ""                                         ;;
+    esac
+}
+
+function compilerDebugFlags {
+    local compilerVendor=$(compilerVendor $1)
+
+    case $compilerVendor in
+        N/A)           ;;
+        *)   echo "-g" ;;
+    esac
+}
+
+function compilerSharedBinaryFlags {
+    local compilerVendor=$(compilerVendor $1)
+
+    case $compilerVendor in
+        GCC | CLANG | INTEL | PATHSCALE) echo "-fPIC -shared"          ;;
+        CRAY)                            echo "-h PIC"                 ;; # [-]
+        IBM)                             echo "-qpic=large -qmkshrobj" ;; # [-]
+        PGI)                             echo "-fpic -shlib"           ;; # [-]
+        HP)                              echo "+z -b"                  ;; # [-]
+        *)                               echo ""                       ;;
+    esac
+}
+
+function compilerSupportsOpenMP {
+    local compilerVendor=$(compilerVendor $1)
+
+    echo 0
+}
+
+function compilerOpenMPFlags {
+    local compilerVendor=$(compilerVendor $1)
+
+    case $compilerVendor in
+        GCC   | CLANG)     echo "-fopenmp" ;;
+        INTEL | PATHSCALE) echo "-openmp"  ;;
+        CRAY)              echo ""         ;; # [-]
+        IBM)               echo "-qsmp"    ;; # [-]
+        PGI)               echo "-mp"      ;; # [-]
+        HP)                echo "+Oopenmp" ;; # [-]
+        *)                 echo ""         ;;
+    esac
+}
+#=======================================

@@ -864,7 +864,12 @@ namespace occa {
       break;
     }
     case OpenMP:{
+#if OCCA_OPENMP_ENABLED
       dHandle = new device_t<OpenMP>();
+#else
+      std::cout << "OCCA mode [OpenMP] is not enabled, defaulting to [Serial] mode\n";
+      dHandle = new device_t<Serial>();
+#endif
       break;
     }
     case OpenCL:{

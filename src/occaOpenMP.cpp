@@ -1,5 +1,9 @@
+#if OCCA_OPENMP_ENABLED
+
 #include "occaSerial.hpp"
 #include "occaOpenMP.hpp"
+
+#include <omp.h>
 
 namespace occa {
   //---[ Helper Functions ]-----------
@@ -61,6 +65,8 @@ namespace occa {
           writeToFile(testFilename, testContent);
         }
 
+        std::string binaryFilename = (getCachePath() + std::string(".ompBinary"));
+
         if(!fileExists(infoFilename)){
           std::string flag = baseCompilerFlag(compiler);
           int compileError = 1;
@@ -73,7 +79,9 @@ namespace occa {
             sCommand += flag;
             sCommand += ' ';
             sCommand += testFilename;
-            sCommand += " -o .ompTest_binary > /dev/null 2>&1";
+            sCommand += " -o ";
+            sCommand += binaryFilename;
+            sCommand += " > /dev/null 2>&1";
 
             compileError = system(sCommand.c_str());
           }
@@ -634,6 +642,9 @@ namespace occa {
 
   template <>
   void device_t<OpenMP>::setup(argInfoMap &aim){
+    // Generate an OpenMP library dependency (so it doesn't crash when dlclose())
+    omp_get_num_threads();
+
     data = new OpenMPDeviceData_t;
 
     OCCA_EXTRACT_DATA(OpenMP, Device);
@@ -1041,3 +1052,5 @@ namespace occa {
   }
   //==================================
 };
+
+#endif
