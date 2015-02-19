@@ -222,47 +222,47 @@ function compilerVendor {
 }
 
 function compilerReleaseFlags {
-    local compilerVendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor $1)
 
-    case $compilerVendor in
-        GCC | CLANG) echo "-O3 -D __extern_always_inline=inline"     ;;
-        INTEL)       echo "-O3 -xHost"                               ;;
-        CRAY)        echo "-O3 -h intrinsics -fast"                  ;; # [-]
-        IBM)         echo "-O3 -qhot=simd"                           ;; # [-]
-        PGI)         echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;; # [-]
-        PATHSCALE)   echo "-O3 -march=auto"                          ;; # [-]
-        HP)          echo "+O3"                                      ;; # [-]
-        *)           echo ""                                         ;;
+    case $vendor in
+        GCC | LLVM) echo "-O3 -D __extern_always_inline=inline"     ;;
+        INTEL)      echo "-O3 -xHost"                               ;;
+        CRAY)       echo "-O3 -h intrinsics -fast"                  ;; # [-]
+        IBM)        echo "-O3 -qhot=simd"                           ;; # [-]
+        PGI)        echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;; # [-]
+        PATHSCALE)  echo "-O3 -march=auto"                          ;; # [-]
+        HP)         echo "+O3"                                      ;; # [-]
+        *)          echo ""                                         ;;
     esac
 }
 
 function compilerDebugFlags {
-    local compilerVendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor $1)
 
-    case $compilerVendor in
+    case $vendor in
         N/A)           ;;
         *)   echo "-g" ;;
     esac
 }
 
 function compilerSharedBinaryFlags {
-    local compilerVendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor $1)
 
-    case $compilerVendor in
-        GCC | CLANG | INTEL | PATHSCALE) echo "-fPIC -shared"          ;;
-        CRAY)                            echo "-h PIC"                 ;; # [-]
-        IBM)                             echo "-qpic=large -qmkshrobj" ;; # [-]
-        PGI)                             echo "-fpic -shlib"           ;; # [-]
-        HP)                              echo "+z -b"                  ;; # [-]
-        *)                               echo ""                       ;;
+    case $vendor in
+        GCC | LLVM | INTEL | PATHSCALE) echo "-fPIC -shared"          ;;
+        CRAY)                           echo "-h PIC"                 ;; # [-]
+        IBM)                            echo "-qpic=large -qmkshrobj" ;; # [-]
+        PGI)                            echo "-fpic -shlib"           ;; # [-]
+        HP)                             echo "+z -b"                  ;; # [-]
+        *)                              echo ""                       ;;
     esac
 }
 
 function compilerOpenMPFlags {
-    local compilerVendor=$(compilerVendor $1)
+    local vendor=$(compilerVendor $1)
 
-    case $compilerVendor in
-        GCC   | CLANG)     echo "-fopenmp" ;;
+    case $vendor in
+        GCC   | LLVM)      echo "-fopenmp" ;;
         INTEL | PATHSCALE) echo "-openmp"  ;;
         CRAY)              echo ""         ;; # [-]
         IBM)               echo "-qsmp"    ;; # [-]
@@ -274,7 +274,7 @@ function compilerOpenMPFlags {
 
 function compilerSupportsOpenMP {
     local compiler=$1
-    local compilerVendor=$(compilerVendor $compiler)
+    local vendor=$(compilerVendor $compiler)
     local ompFlag=$(compilerOpenMPFlags $compiler)
 
     local filename=$OCCA_DIR/scripts/ompTest.cpp

@@ -6,7 +6,7 @@ endif
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
-compilerFlags  += -fPIC
+compilerFlags  += $(sharedBinaryFlags)
 fCompilerFlags += -fPIC
 lPath = lib
 
@@ -40,7 +40,7 @@ else
 all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
-	$(compiler) $(compilerFlags) -shared -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
+	$(compiler) $(compilerFlags) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))
