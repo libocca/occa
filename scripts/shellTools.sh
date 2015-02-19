@@ -114,6 +114,7 @@ function dirWithHeader {
     local mergedLibPaths=""
 
     mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
+    mergedPaths=$mergedPaths:"/Developer/NVIDIA/CUDA*/include"
     mergedPaths=$mergedPaths:"/usr/include"
     mergedPaths=$mergedPaths:$OCCA_INCLUDE_PATH
     mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
@@ -181,26 +182,10 @@ function libraryFlags {
 
 
 function headerFlags {
-    local libName=$1
-    local headers=$2
+    local headers=$1
 
-    local libDir=$(dirWithLibrary $libName)
     local incDirs
     local flags=""
-    local isAFramework=0
-
-    if [ -z "$libDir" ]; then echo ""; return; fi
-
-    if [ "$libDir" == "Is A System/Library Framework" ]; then
-        isAFramework=1
-    elif [ "$libDir" == "Is A Library Framework" ]; then
-        isAFramework=1
-    fi
-
-    if [ $isAFramework -eq 1 ]; then
-        echo ""
-        return
-    fi
 
     if [ ! -z $headers ]; then
         incDirs=$(dirsWithHeaders $headers)

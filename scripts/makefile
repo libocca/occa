@@ -250,19 +250,23 @@ ifdef OCCA_OPENCL_ENABLED
   endif
 else
   ifeq ($(OS), OSX)
-    openclLinkFlags = $(call libraryFlagsFor,OpenCL)
+    # OpenCL includes are embedded in the framework
+    openclLibFlags = $(call libraryFlagsFor,OpenCL)
 
-    ifneq (,$(openclLinkFlags))
+    ifneq (,$(openclLibFlags))
       openclEnabled = 1
-      links += $(openclLinkFlags)
+      links += $(openclLibFlags)
     endif
   else ifeq ($(OS), LINUX)
-    openclIncFlags = $(call includeFlagsFor,OpenCL CL/cl.h)
+    openclLibFlags = $(call libraryFlagsFor,CL/cl.h)
+    ifneq (,$(openclLibFlags))
 
-    ifneq (,$(openclIncFlags))
-      openclEnabled = 1
-      paths += $(openclIncFlags)
-      links += $(call libraryFlagsFor,OpenCL)
+      openclIncFlags = $(call includeFlagsFor,OpenCL)
+      ifneq (,$(openclIncFlags))
+        openclEnabled = 1
+        paths += $(openclIncFlags)
+        links += $(openclLibFlags)
+      endif
     endif
   endif
 endif
@@ -279,20 +283,20 @@ ifdef OCCA_CUDA_ENABLED
   endif
 else
 
-  ifeq ($(OS), OSX)
-    cudaLinkFlags = $(call libraryFlagsFor,CUDA)
+  cudaIncFlags = $(call includeFlagsFor,cuda.h)
 
-    ifneq (,$(cudaLinkFlags))
-      cudaEnabled = 1
-      links += $(cudaLinkFlags)
+  ifneq (,$(cudaIncFlags))
+
+    ifeq ($(OS), OSX)
+      cudaLibFlags = $(call libraryFlagsFor,CUDA)
+    else ifeq ($(OS), LINUX)
+      cudaLibFlags = $(call libraryFlagsFor,cuda)
     endif
-  else ifeq ($(OS), LINUX)
-    cudaIncFlags = $(call includeFlagsFor,cuda cuda.h)
 
-    ifneq (,$(cudaIncFlags))
+    ifneq (,$(cudaLibFlags))
       cudaEnabled = 1
       paths += $(cudaIncFlags)
-     links  += $(call libraryFlagsFor,cuda)
+      links += $(cudaLibFlags)
     endif
   endif
 endif
@@ -307,12 +311,15 @@ ifdef OCCA_COI_ENABLED
   endif
 else
   ifeq ($(OS), LINUX)
-    coiIncFlags = $(call includeFlagsFor,coi_host intel-coi/source/COIProcess_source.h)
+    coiLibFlags = $(call libraryFlagsFor,coi_host)
+    ifneq (,$(coiLibFlags))
 
-    ifneq (,$(coiIncFlags))
-      coiEnabled = 1
-      paths += $(coiIncFlags)
-      links += $(call libraryFlagsFor,coi_host)
+      coiIncFlags = $(call includeFlagsFor,intel-coi/source/COIProcess_source.h)
+      ifneq (,$(coiIncFlags))
+        coiEnabled = 1
+        paths += $(coiIncFlags)
+        links += $(call libraryFlagsFor,coi_host)
+      endif
     endif
   endif
 endif
