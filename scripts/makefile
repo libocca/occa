@@ -105,8 +105,14 @@ links = -locca
 
 
 #---[ Shell Tools ]-------------------------------
-libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
-includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
+ifneq (,$(wildcard /bin/bash))
+  SHELL := /bin/bash
+  libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
+  includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
+else
+  libraryFlagsFor =
+  includeFlagsFor =
+endif
 #=================================================
 
 
