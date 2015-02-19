@@ -89,7 +89,7 @@ function dirWithLibrary {
     if [ ! -z $result ]; then echo $result; return; fi
 
     if hash ldconfig 2> /dev/null; then
-        echo $(ldconfig -p | /bin/grep -m 1 $libName | sed 's/.*=>\(.*\/\).*/\1/g')
+        echo $(ldconfig -p | command grep -m 1 $libName | sed 's/.*=>\(.*\/\).*/\1/g')
         return
     fi
 
@@ -204,10 +204,19 @@ function headerFlags {
 
 
 #---[ Compiler Information ]------------
+function mpiCompilerVendor {
+    local mpiCompiler=$1
+    local compiler=$($mpiCompiler --chichamanga 2>&1 > /dev/null | command grep -m 1 error | sed 's/\([^:]*\):.*/\1/g')
+
+    echo $compiler
+}
+
 function compilerVendor {
     local compiler=$1
 
     case $compiler in
+        mpi*) echo $(mpiCompilerVendor $compiler) ;;
+
         g++* | gcc*)       echo GCC          ;;
         clang*)            echo LLVM         ;;
         icc* | icpc*)      echo INTEL        ;;
