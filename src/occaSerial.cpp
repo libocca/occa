@@ -58,7 +58,7 @@ namespace occa {
       const int bufferSize = 4096;
       char *buffer = new char[bufferSize];
 
-      static_cast<void>(fread(buffer, sizeof(char), bufferSize, fp));
+      ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
 
       int begin, end;
       for(begin = 0; begin < bufferSize; ++begin){

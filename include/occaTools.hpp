@@ -112,6 +112,9 @@ namespace occa {
                                        const std::string &cachedBinary,
                                        const kernelInfo &info,
                                        const bool useParser = true);
+
+  template <class TM>
+  void ignoreResult(const TM &t){}
 };
 
 #endif

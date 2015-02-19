@@ -1,5 +1,6 @@
 #---[ Paths ]-------------------------------------
 bPath = bin
+lPath = lib
 oPath = obj
 sPath = src
 iPath = include
@@ -116,9 +117,10 @@ endif
 libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
 includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
 
-compilerReleaseFlags      = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerReleaseFlags      $(compiler))
-compilerDebugFlags        = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerDebugFlags        $(compiler))
-compilerSharedBinaryFlags = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSharedBinaryFlags $(compiler))
+compilerReleaseFlags = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerReleaseFlags $(compiler))
+compilerDebugFlags   = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerDebugFlags   $(compiler))
+compilerPicFlag      = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerPicFlag      $(compiler))
+compilerSharedFlag   = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSharedFlag   $(compiler))
 
 compilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(compiler))
 compilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(compiler))
@@ -126,9 +128,10 @@ compilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOp
 
 
 #---[ C++ Compiler Info ]-------------------------
-debugFlags        = $(call compilerDebugFlags)
-releaseFlags      = $(call compilerReleaseFlags)
-sharedBinaryFlags = $(call compilerSharedBinaryFlags)
+debugFlags   = $(call compilerDebugFlags)
+releaseFlags = $(call compilerReleaseFlags)
+picFlag      = $(call compilerPicFlag)
+sharedFlag   = $(call compilerSharedFlag)
 #=================================================
 
 
@@ -289,7 +292,7 @@ else
 endif
 
 ifeq ($(debugEnabled), 1)
-  flags += $(debugFlags)   -DOCCA_DEBUG_ENABLED=1
+  flags += $(debugFlags) -DOCCA_DEBUG_ENABLED=1
 else
   flags += $(releaseFlags) -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
 endif

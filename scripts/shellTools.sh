@@ -256,16 +256,27 @@ function compilerDebugFlags {
     esac
 }
 
-function compilerSharedBinaryFlags {
+function compilerPicFlag {
     local vendor=$(compilerVendor $1)
 
     case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE) echo "-fPIC -shared"          ;;
-        CRAY)                           echo "-h PIC"                 ;; # [-]
-        IBM)                            echo "-qpic=large -qmkshrobj" ;; # [-]
-        PGI)                            echo "-fpic -shlib"           ;; # [-]
-        HP)                             echo "+z -b"                  ;; # [-]
-        *)                              echo ""                       ;;
+        GCC | LLVM | INTEL | PATHSCALE | CRAY) echo "-fPIC"       ;;
+        IBM)                                   echo "-qpic=large" ;; # [-]
+        PGI)                                   echo "-fpic"       ;; # [-]
+        HP)                                    echo "+z"          ;; # [-]
+        *)                                     echo ""            ;;
+    esac
+}
+
+function compilerSharedFlag {
+    local vendor=$(compilerVendor $1)
+
+    case $vendor in
+        GCC | LLVM | INTEL | PATHSCALE | CRAY) echo "-shared"    ;;
+        IBM)                                   echo "-qmkshrobj" ;; # [-]
+        PGI)                                   echo "-shlib"     ;; # [-]
+        HP)                                    echo "-b"         ;; # [-]
+        *)                                     echo ""           ;;
     esac
 }
 

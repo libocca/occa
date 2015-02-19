@@ -6,9 +6,13 @@ endif
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
-compilerFlags  += $(sharedBinaryFlags)
+compilerFlags  += $(picFlag)
 fCompilerFlags += -fPIC
-lPath = lib
+
+# [-L$OCCA_DIR/lib -locca] are kept for applications
+#   using $OCCA_DIR/scripts/makefile
+paths := $(filter-out -L${OCCA_DIR}/lib,$(paths))
+links := $(filter-out -locca,$(links))
 
 occaBPath = ${OCCA_DIR}/$(bPath)
 occaIPath = ${OCCA_DIR}/$(iPath)
@@ -18,8 +22,8 @@ occaLPath = ${OCCA_DIR}/$(lPath)
 #=================================================
 
 #---[ COMPILATION ]-------------------------------
-headers = $(wildcard $(occaIPath)/*.hpp) $(wildcard $(occaIPath)/*.tpp)
-sources = $(wildcard $(occaSPath)/*.cpp)
+headers  = $(wildcard $(occaIPath)/*.hpp) $(wildcard $(occaIPath)/*.tpp)
+sources  = $(wildcard $(occaSPath)/*.cpp)
 fsources = $(wildcard $(occaSPath)/*.f90)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
@@ -40,7 +44,7 @@ else
 all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
-	$(compiler) $(compilerFlags) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
+	$(compiler) $(compilerFlags) $(sharedFlag) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp$(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))
@@ -55,11 +59,14 @@ $(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
 $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
 
+# Ingore [-Wl,--enable-new-dtags] warnings if COI isn't being compiled
+ifeq (coiEnabled, 1)
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
+endif
 
 $(occaBPath)/occainfo:$(OCCA_DIR)/scripts/occaInfo.cpp $(occaLPath)/libocca.so
-	$(compiler) $(compilerFlags) -o $(occaBPath)/occainfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links)
+	$(compiler) $(compilerFlags) -o $(occaBPath)/occainfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links) -L${OCCA_DIR}/lib -locca
 
 $(occaOPath)/occaKernelDefines.o:              \
 	$(occaIPath)/defines/occaOpenMPDefines.hpp   \
