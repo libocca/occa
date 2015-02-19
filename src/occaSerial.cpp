@@ -17,7 +17,7 @@ namespace occa {
       const int bufferSize = 4096;
       char *buffer = new char[bufferSize];
 
-      static_cast<void>(fread(buffer, sizeof(char), bufferSize, fp));
+      ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
 
       int begin, end;
       for(begin = 0; begin < bufferSize; ++begin){
@@ -366,7 +366,7 @@ namespace occa {
       void* ptr;
 
 #if   (OCCA_OS == LINUX_OS)
-      static_cast<void>(posix_memalign(&ptr, OCCA_MEM_ALIGN, bytes));
+      ignoreResult( posix_memalign(&ptr, OCCA_MEM_ALIGN, bytes) );
 #elif (OCCA_OS == OSX_OS)
       ptr = ::malloc(bytes);
 #elif (OCCA_OS == WINDOWS_OS)
