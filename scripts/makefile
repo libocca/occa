@@ -250,15 +250,20 @@ ifdef OCCA_OPENCL_ENABLED
   endif
 else
   ifeq ($(OS), OSX)
-    openclIncFlags = $(call includeFlagsFor,OpenCL)
+    openclLinkFlags = $(call libraryFlagsFor,OpenCL)
+
+    ifneq (,$(openclLinkFlags))
+      openclEnabled = 1
+      links += $(openclLinkFlags)
+    endif
   else ifeq ($(OS), LINUX)
     openclIncFlags = $(call includeFlagsFor,OpenCL CL/cl.h)
-  endif
 
-  ifneq (,$(openclIncFlags))
-    openclEnabled = 1
-    paths += $(openclIncFlags)
-    links += $(call libraryFlagsFor,OpenCL)
+    ifneq (,$(openclIncFlags))
+      openclEnabled = 1
+      paths += $(openclIncFlags)
+      links += $(call libraryFlagsFor,OpenCL)
+    endif
   endif
 endif
 
@@ -275,19 +280,19 @@ ifdef OCCA_CUDA_ENABLED
 else
 
   ifeq ($(OS), OSX)
-    cudaIncFlags = $(call includeFlagsFor,CUDA)
+    cudaLinkFlags = $(call libraryFlagsFor,CUDA)
+
+    ifneq (,$(cudaLinkFlags))
+      cudaEnabled = 1
+      links += $(cudaLinkFlags)
+    endif
   else ifeq ($(OS), LINUX)
     cudaIncFlags = $(call includeFlagsFor,cuda cuda.h)
-  endif
 
-  ifneq (,$(cudaIncFlags))
-    cudaEnabled = 1
-    paths += $(cudaIncFlags)
-
-    ifeq ($(OS), OSX)
-      links += $(call libraryFlagsFor,CUDA)
-    else ifeq ($(OS), LINUX)
-      links += $(call libraryFlagsFor,cuda)
+    ifneq (,$(cudaIncFlags))
+      cudaEnabled = 1
+      paths += $(cudaIncFlags)
+     links  += $(call libraryFlagsFor,cuda)
     endif
   endif
 endif
