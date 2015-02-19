@@ -69,11 +69,11 @@ def defineTypeN(type_, n):
     define += '\n'
 
     for i in xrange(n + 1):
-        start = '  inline ' + typeN + '('
+        start = '  occaFunction inline ' + typeN + '('
 
         args = (',\n' + (' ' * len(start))).join('const ' + type_ + ' &' + varL(j) + '_' for j in xrange(i))
 
-        define += '  inline ' + typeN + '(' + args + ') : \n' + \
+        define += '  inline occaFunction ' + typeN + '(' + args + ') : \n' + \
                   '    ' + (',\n    '.join(varL(j) +'(' + ('0' if (i <= j) else varL(j) + '_') + ')' for j in xrange(n))) + \
                   ' {}\n'
 
@@ -123,9 +123,9 @@ def unaryOpDef(type_, n, op):
     op2   = op + op
     ops = [op, op2, op2]
 
-    defines = ['inline ' + typeN + ' operator '  + ops[0] + ' (const ' + typeN + ' &a){\n',
-               'inline ' + typeN + ' operator '  + ops[1] + ' (' + typeN + ' &a, int unused){\n',
-               'inline ' + typeN + '& operator ' + ops[2] + ' (' + typeN + ' &a){\n']
+    defines = ['occaFunction inline ' + typeN + ' operator '  + ops[0] + ' (const ' + typeN + ' &a){\n',
+               'occaFunction inline ' + typeN + ' operator '  + ops[1] + ' (' + typeN + ' &a, int unused){\n',
+               'occaFunction inline ' + typeN + '& operator ' + ops[2] + ' (' + typeN + ' &a){\n']
 
     maxDefs = (1 if isFloat else 3)
 
@@ -176,11 +176,11 @@ def binaryOpDef(type_, n, op):
     a = 'a.'
     b = 'b.'
 
-    defines = ['inline ' + typeN + ' operator ' + op + ' (const ' + typeN + ' &a, const ' + typeN + ' &b){\n',
-               'inline ' + typeN + ' operator ' + op + ' (const ' + type_ + ' &a, const ' + typeN + ' &b){\n',
-               'inline ' + typeN + ' operator ' + op + ' (const ' + typeN + ' &a, const ' + type_ + ' &b){\n',
-               'inline ' + typeN + '& operator ' + op + '= (' + typeN + ' &a, const ' + typeN + ' &b){\n',
-               'inline ' + typeN + '& operator ' + op + '= (' + typeN + ' &a, const ' + type_ + ' &b){\n']
+    defines = ['occaFunction inline ' + typeN + ' operator ' + op + ' (const ' + typeN + ' &a, const ' + typeN + ' &b){\n',
+               'occaFunction inline ' + typeN + ' operator ' + op + ' (const ' + type_ + ' &a, const ' + typeN + ' &b){\n',
+               'occaFunction inline ' + typeN + ' operator ' + op + ' (const ' + typeN + ' &a, const ' + type_ + ' &b){\n',
+               'occaFunction inline ' + typeN + '& operator ' + op + '= (' + typeN + ' &a, const ' + typeN + ' &b){\n',
+               'occaFunction inline ' + typeN + '& operator ' + op + '= (' + typeN + ' &a, const ' + type_ + ' &b){\n']
 
     aIsTypeN = [True, False, True, True, True]
     bIsTypeN = [True, True, False, True, False]

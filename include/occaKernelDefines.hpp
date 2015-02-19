@@ -5,5 +5,5 @@ namespace occa {
   extern char occaCUDADefines[13015];
   extern char occaPthreadsDefines[12709];
   extern char occaCOIDefines[13920];
-  extern char occaVectorDefines[314828];
+  extern char occaVectorDefines[343584];
 }
