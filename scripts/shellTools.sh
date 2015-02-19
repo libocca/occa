@@ -157,13 +157,11 @@ function dirsWithHeaders {
     echo $path
 }
 
-function libraryAndHeaderFlags {
+function libraryFlags {
     local libName=$1
-    local headers=$2
 
     local libDir=$(dirWithLibrary $libName)
-    local incDirs
-    local flags
+    local flags=""
     local isAFramework=0
 
     if [ -z "$libDir" ]; then echo ""; return; fi
@@ -178,8 +176,29 @@ function libraryAndHeaderFlags {
         flags="-L$libDir -l$libName"
     fi
 
+    echo $flags
+}
+
+
+function headerFlags {
+    local libName=$1
+    local headers=$2
+
+    local libDir=$(dirWithLibrary $libName)
+    local incDirs
+    local flags=""
+    local isAFramework=0
+
+    if [ -z "$libDir" ]; then echo ""; return; fi
+
+    if [ "$libDir" == "Is A System/Library Framework" ]; then
+        isAFramework=1
+    elif [ "$libDir" == "Is A Library Framework" ]; then
+        isAFramework=1
+    fi
+
     if [ $isAFramework -eq 1 ]; then
-        echo $flags
+        echo ""
         return
     fi
 
@@ -188,8 +207,8 @@ function libraryAndHeaderFlags {
 
         if [ -z $incDirs ]; then echo ""; return; fi
 
-        incDirs=${incDirs%?}               # Remove the last :
-        flags="$flags -I${incDirs//:/ -I}" # : -> -I
+        incDirs=${incDirs%?}        # Remove the last :
+        flags="-I${incDirs//:/ -I}" # : -> -I
     fi
 
     echo $flags
