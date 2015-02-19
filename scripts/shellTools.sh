@@ -74,7 +74,15 @@ function dirWithLibrary {
     local libName="lib$1.so"
     local result=""
 
-    result=$(dirWithFileInPath "$OCCA_LIBRARY_PATH" $libName)
+    local mergedLibPaths=""
+
+    mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
+    mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
+    mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
+    mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
+    mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
+
+    result=$(dirWithFileInPath "$mergedLibPaths" $libName)
 
     if [ ! -z $result ]; then echo $result; return; fi
 
@@ -82,14 +90,6 @@ function dirWithLibrary {
         echo $(ldconfig -p | /bin/grep -m 1 $libName | sed 's/.*=>\(.*\/\).*/\1/g')
         return
     fi
-
-    local result=$(dirWithFileInPath "$LD_LIBRARY_PATH" $libName)
-
-    if [ ! -z $result ]; then echo $result; return; fi
-
-    local result=$(dirWithFileInPath "$DYLD_LIBRARY_PATH" $libName)
-
-    if [ ! -z $result ]; then echo $result; return; fi
 
     case "$(uname)" in
         Darwin)
@@ -110,27 +110,25 @@ function dirWithHeader {
     local filename="$1"
     local result=""
 
-    result=$(dirWithFileInPath "$OCCA_INCLUDE_PATH" $filename)
+    local mergedPaths=""
+    local mergedLibPaths=""
 
+    mergedPaths=$mergedPaths:"/usr/include"
+    mergedPaths=$mergedPaths:$OCCA_INCLUDE_PATH
+    mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
+    mergedPaths=$mergedPaths:$C_INCLUDE_PATH
+    mergedPaths=$mergedPaths:$INCLUDEPATH
+
+    mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
+    mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
+    mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
+    mergedLibPaths=$mergedLibPaths:$LD_LIBRARY_PATH
+    mergedLibPaths=$mergedLibPaths:$DYLD_LIBRARY_PATH
+
+    result=$(dirWithFileInPath "$mergedPaths" $filename)
     if [ ! -z $result ]; then echo $result; return; fi
 
-    result=$(dirWithFileInPath "$CPLUS_INCLUDE_PATH" $filename)
-
-    if [ ! -z $result ]; then echo $result; return; fi
-
-    result=$(dirWithFileInPath "$C_INCLUDE_PATH" $filename)
-
-    if [ ! -z $result ]; then echo $result; return; fi
-
-    result=$(dirWithFileInPath "$INCLUDEPATH" $filename)
-
-    if [ ! -z $result ]; then echo $result; return; fi
-
-    result=$(dirWithFileInIncludePath "$LD_LIBRARY_PATH" $filename)
-
-    if [ ! -z $result ]; then echo $result; return; fi
-
-    result=$(dirWithFileInIncludePath "$DYLD_LIBRARY_PATH" $filename)
+    result=$(dirWithFileInIncludePath "$mergedLibPaths" $filename)
 
     if [ ! -z $result ]; then echo $result; return; fi
 
