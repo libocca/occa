@@ -206,9 +206,19 @@ function headerFlags {
 #---[ Compiler Information ]------------
 function mpiCompilerVendor {
     local mpiCompiler=$1
-    local compiler=$($mpiCompiler --chichamanga 2>&1 > /dev/null | command grep -m 1 error | sed 's/\([^:]*\):.*/\1/g')
+    local compiler
 
-    echo $compiler
+    # gcc, clang
+    compiler=$($mpiCompiler --chichamanga 2>&1 > /dev/null | command grep -m 1 error | sed 's/\([^:]*\):.*/\1/g')
+
+    if [ ! -z $compiler ]; then echo $compiler; return; fi
+
+    # intel
+    compiler=$($mpiCompiler --chichamanga 2>&1 > /dev/null | command grep -m 1 "command not found" | sed 's/[^:]*:[^:]*:\s*\([^:]*\):.*/\1/g')
+
+    if [ ! -z $compiler ]; then echo $compiler; return; fi
+
+    echo ""
 }
 
 function compilerVendor {
