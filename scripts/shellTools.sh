@@ -215,8 +215,10 @@ function compilerVendor {
     local compiler=$1
 
     case $compiler in
-        mpi*) echo $(mpiCompilerVendor $compiler) ;;
+        mpi*) compiler=$(mpiCompilerVendor $compiler) ;;
+    esac
 
+    case $compiler in
         g++* | gcc*)       echo GCC          ;;
         clang*)            echo LLVM         ;;
         icc* | icpc*)      echo INTEL        ;;
