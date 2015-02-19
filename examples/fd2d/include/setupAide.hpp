@@ -11,6 +11,8 @@
 #include <vector>
 #include <map>
 
+#include "occa.hpp"
+
 using std::stringstream;
 using std::string;
 using std::vector;
@@ -27,9 +29,6 @@ public:
 
   setupAide(const setupAide&);
   setupAide& operator=(const setupAide&);
-
-  /// Read the given file
-  string readFile(string setupFile);
 
   /// Parse through the read file
   void read(string setupFile);

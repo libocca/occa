@@ -9,15 +9,17 @@
 #include <math.h>
 #include <ctime>
 
-#include <iostream>
+#include "occa.hpp"
 
-#if   OCCA_OS == LINUX_OS
+#if   (OCCA_OS == LINUX_OS)
 #  include <GL/glew.h>
 #  include <GL/gl.h>
 #  include <GL/glut.h>
-#elif OCCA_OS == OSX_OS
+#elif (OCCA_OS == OSX_OS)
 #  include <OpenGL/gl.h>
 #  include <GLUT/glut.h>
+#elif (OCCA_OS == WINDOW_OS)
+#  include <gl/glut.h>
 #endif
 
 using std::string;

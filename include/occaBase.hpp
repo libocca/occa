@@ -17,6 +17,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
+#ifdef _MSC_VER
+#  include "occaWinDefines.hpp" // NBN: WINDOWS_OS gets #defined here
+#endif
+
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
 
@@ -25,7 +29,6 @@
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <unistd.h>
 #else
-#  include "occaWinDefines.hpp"
 #  include <io.h>
 #endif
 

@@ -15,31 +15,11 @@ setupAide& setupAide::operator = (const setupAide& sa){
   return *this;
 }
 
-string setupAide::readFile(string filename){
-  struct stat statbuf;
-
-  FILE *fh = fopen(filename.c_str(), "r");
-
-  if (fh == 0){
-    printf("Failed to open: %s\n", filename.c_str());
-    exit(1);
-  }
-
-  stat(filename.c_str(), &statbuf);
-  char *source = (char *) malloc(statbuf.st_size + 1);
-  fread(source, statbuf.st_size, 1, fh);
-  source[statbuf.st_size] = '\0';
-
-  string ret = source;
-
-  return ret;
-}
-
 void setupAide::read(string setupFile){
   vector<string> data2;
   vector<string> keyword2;
 
-  string args = readFile(setupFile);
+  string args = occa::readFile(setupFile);
 
   int size = args.length();
   string current = "";

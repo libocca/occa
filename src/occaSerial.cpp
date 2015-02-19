@@ -101,7 +101,7 @@ namespace occa {
       char buffer[MAX_COMPUTERNAME_LENGTH + 1];
       int bytes;
 
-      GetComputerName(buffer, (LPDWORD) &bytes);
+      GetComputerName((LPWSTR) buffer, (LPDWORD) &bytes);
 
       return std::string(buffer, bytes);
 #endif
@@ -187,7 +187,7 @@ namespace occa {
       return ss.str();
 #elif (OCCA_OS == WINDOWS_OS)
       std::stringstream ss;
-      dim cache = 0;
+      DWORD cache = 0;
 
       PSYSTEM_LOGICAL_PROCESSOR_INFORMATION buffer = NULL;
       int bytes;
@@ -197,7 +197,7 @@ namespace occa {
       OCCA_CHECK((GetLastError() == ERROR_INSUFFICIENT_BUFFER),
                  "[GetLogicalProcessorInformation] Failed");
 
-      buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION) malloc(bytes);
+      buffer = (PSYSTEM_LOGICAL_PROCESSOR_INFORMATION) cpu::malloc(bytes);
 
       bool passed = GetLogicalProcessorInformation(buffer, (LPDWORD) &bytes);
 
@@ -228,7 +228,7 @@ namespace occa {
       else if(cache < (1 << 30))
         ss << (cache >> 20) << " MB";
 
-      free(buffer);
+      cpu::free(buffer);
 
       return ss.str();
 #endif
@@ -421,7 +421,7 @@ namespace occa {
                    "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
       }
 #else
-      void *sym = GetProcAddress((HMODULE) handle, functionName.c_str());
+      void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
       if((sym == NULL) && releaseWithError){
         releaseFile(filename);
@@ -507,7 +507,7 @@ namespace occa {
     std::string cachedBinary = getCachedName(filename,
                                              dHandle->getInfoSalt(info_));
 
-#if OCCA_OS == WINDOWS_OS
+#if (OCCA_OS == WINDOWS_OS)
     // Windows requires .dll extension
     cachedBinary = cachedBinary + ".dll";
 #endif
@@ -570,6 +570,12 @@ namespace occa {
             << " -o " << cachedBinary
             << std::endl;
 #else
+#  if (OCCA_DEBUG_ENABLED)
+    std::string occaLib = occaDir + "\\lib\\libocca_d.lib";
+#  else
+    std::string occaLib = occaDir + "\\lib\\libocca.lib";
+#  endif
+
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
@@ -577,7 +583,7 @@ namespace occa {
             << " /I"  << occaDir << "\\inc"         // NBN: /inc
             << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
             << ' '    << iCachedBinary
-            << " /link " << occaDir << "\\lib\\libocca.lib /OUT:" << cachedBinary
+            << " /link " << occaLib << " /OUT:" << cachedBinary
             << std::endl;
 #endif
 
@@ -991,7 +997,11 @@ namespace occa {
 
     dID.mode_ = Serial;
 
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
     const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
+#else
+    const bool debugEnabled = (compilerFlags.find("/Od") != std::string::npos);
+#endif
 
     dID.flagMap["compiler"]     = compiler;
     dID.flagMap["debugEnabled"] = (debugEnabled ? "true" : "false");
@@ -1048,10 +1058,11 @@ namespace occa {
     }
 #else
 #  if OCCA_DEBUG_ENABLED
-    compilerFlags = " /Od ";
+    compilerFlags = " /Od /openmp";
 #  else
-    compilerFlags = "";
+    compilerFlags = " /O2 /openmp";
 #  endif
+
     std::string byteness;
 
     if(sizeof(void*) == 4)
@@ -1063,15 +1074,15 @@ namespace occa {
 
     // NBN: adjusted path
 #  if      (1800 == _MSC_VER)
-    char *visual_studio_tools = getenv("VS120COMNTOOLS");   // MSVC++ 12.0 - Visual Studio 2013
+    char *visualStudioTools = getenv("VS120COMNTOOLS");   // MSVC++ 12.0 - Visual Studio 2013
 #  elif    (1700 == _MSC_VER)
-    char *visual_studio_tools = getenv("VS110COMNTOOLS");   // MSVC++ 11.0 - Visual Studio 2012
+    char *visualStudioTools = getenv("VS110COMNTOOLS");   // MSVC++ 11.0 - Visual Studio 2012
 #  else // (1600 == _MSC_VER)
-    char *visual_studio_tools = getenv("VS100COMNTOOLS");   // MSVC++ 10.0 - Visual Studio 2010
+    char *visualStudioTools = getenv("VS100COMNTOOLS");   // MSVC++ 10.0 - Visual Studio 2010
 #  endif
 
-    if(visual_studio_tools != NULL){
-      setCompilerEnvScript("\"" + std::string(visual_studio_tools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness);
+    if(visualStudioTools != NULL){
+      setCompilerEnvScript("\"" + std::string(visualStudioTools) + "..\\..\\VC\\vcvarsall.bat\" " + byteness);
     }
     else{
       std::cout << "WARNING: Visual Studio environment variable not found -> compiler environment (vcvarsall.bat) maybe not correctly setup." << std::endl;
@@ -1188,8 +1199,8 @@ namespace occa {
 
     std::string cachedBinary = getCachedName(filename, getInfoSalt(info));
 
-#if OCCA_OS == WINDOWS_OS
-    // Windows refuses to load dll's that do not end with '.dll'
+#if (OCCA_OS == WINDOWS_OS)
+    // Windows requires .dll extension
     cachedBinary = cachedBinary + ".dll";
 #endif
     //==================================
