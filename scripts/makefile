@@ -271,7 +271,8 @@ else
   ifeq ($(OS), OSX)
     cudaIncFlags = $(call includeFlagsFor,CUDA)
   else ifeq ($(OS), LINUX)
-    cudaIncFlags = $(call includeFlagsFor,cuda cuda.h)
+	  # cuda.h is where cudart is /lib* -> /include
+    cudaIncFlags = $(call includeFlagsFor,cudart cuda.h)
   endif
 
   ifneq (,$(cudaIncFlags))
