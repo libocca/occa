@@ -30,6 +30,13 @@ ifeq ($(OCCA_FORTRAN_ENABLED), 1)
 endif
 endif
 
+.FORCE:
+
+blah: .FORCE
+	@echo $(openmpEnabled)
+	@echo $(call compilerSupportsOpenMP)
+	@echo $(call compilerOpenMPFlags)
+
 ifdef occaDirWasInitialized
 .FORCE:
 

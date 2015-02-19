@@ -280,10 +280,18 @@ function compilerSupportsOpenMP {
     local filename=$OCCA_DIR/scripts/ompTest.cpp
     local binary=$OCCA_DIR/scripts/ompTest
 
-    local output=$($compiler $ompFlag $filename -o $binary 2>&1 > /dev/null)
+    # Test compilation
+    $compiler $ompFlag $filename -o $binary > /dev/null 2>&1
 
-    if [[ $output =~ ^-?[0-9]+$ && $output -eq 1 ]]; then
-        echo 1
+    if [[ $? -eq 0 ]]; then
+        # Test binary
+        $binary
+
+        if [[ $? -eq 0 ]]; then
+            echo 1
+        else
+            echo 0
+        fi
     else
         echo 0
     fi

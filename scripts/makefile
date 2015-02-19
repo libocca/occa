@@ -196,7 +196,10 @@ ifdef OCCA_OPENMP_ENABLED
   openmpEnabled = $(OCCA_OPENMP_ENABLED)
 else
   openmpEnabled = $(call compilerSupportsOpenMP)
-  flags        += $(call compilerOpenMPFlags)
+
+  ifeq ($(openmpEnabled), 1)
+    flags += $(call compilerOpenMPFlags)
+  endif
 endif
 
 ifdef OCCA_OPENCL_ENABLED
