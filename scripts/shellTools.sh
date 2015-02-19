@@ -113,12 +113,14 @@ function dirWithHeader {
     local mergedPaths=""
     local mergedLibPaths=""
 
+    mergedPaths=$mergedPaths:"/usr/local/cuda*/include"
     mergedPaths=$mergedPaths:"/usr/include"
     mergedPaths=$mergedPaths:$OCCA_INCLUDE_PATH
     mergedPaths=$mergedPaths:$CPLUS_INCLUDE_PATH
     mergedPaths=$mergedPaths:$C_INCLUDE_PATH
     mergedPaths=$mergedPaths:$INCLUDEPATH
 
+    mergedLibPaths=$mergedLibPaths:"/usr/local/cuda*/lib*"
     mergedLibPaths=$mergedLibPaths:"/lib:/usr/lib:/usr/lib32:/usr/lib64:"
     mergedLibPaths=$mergedLibPaths:"/usr/lib/*-gnu/"
     mergedLibPaths=$mergedLibPaths:$OCCA_LIBRARY_PATH
