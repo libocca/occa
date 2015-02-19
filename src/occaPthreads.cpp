@@ -1018,13 +1018,7 @@ namespace occa {
     mem->textureInfo.h = dims.y;
     mem->textureInfo.d = dims.z;
 
-#if   (OCCA_OS == LINUX_OS)
-    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, mem->size);
-#elif (OCCA_OS == OSX_OS)
-    mem->handle = ::malloc(mem->size);
-#elif (OCCA_OS == WINDOWS_OS)
-    mem->handle = ::malloc(mem->size);
-#endif
+    mem->handle = cpu::malloc(mem->size);
 
     ::memcpy(mem->handle, src, mem->size);
 

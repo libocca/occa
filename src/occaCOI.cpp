@@ -1144,14 +1144,7 @@ namespace occa {
     mem->textureInfo.dim  = dim;
     mem->textureInfo.dims = dims;
 
-#if   OCCA_OS == LINUX_OS
-    posix_memalign(&mem->handle, OCCA_MEM_ALIGN, mem->size);
-#elif OCCA_OS == OSX_OS
-    mem->handle = ::malloc(mem->size);
-#else
-#  warning "Aligned memory not supported in Windows yet"
-    mem->handle = ::malloc(mem->size);
-#endif
+    mem->handle = cpu::malloc(mem->size);
 
     ::memcpy(mem->handle, src, mem->size);
 
