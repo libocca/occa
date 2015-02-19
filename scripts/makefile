@@ -227,11 +227,21 @@ endif
 
 
 #---[ Variable Dependencies ]---------------------
+openclEnabled = 0
+cudaEnabled   = 0
+coiEnabled    = 0
+
 ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
-else
-  openclFlags =
 
+  ifeq ($(openclEnabled), 1)
+    ifeq ($(OS), OSX)
+      links += -framework OpenCL
+    else ifeq ($(OS), LINUX)
+      links += -lOpenCL
+    endif
+  endif
+else
   ifeq ($(OS), OSX)
     openclFlags = $(call flagsForLibrary,OpenCL)
   else ifeq ($(OS), LINUX)
@@ -239,15 +249,22 @@ else
   endif
 
   ifneq (,$(openclFlags))
-    openclEnabled  = 1
-    compilerFlags += $(openclFlags)
+    openclEnabled = 1
+    links += $(openclFlags)
   endif
 endif
 
 ifdef OCCA_CUDA_ENABLED
   cudaEnabled = $(OCCA_CUDA_ENABLED)
+
+  ifeq ($(cudaEnabled), 1)
+    ifeq ($(OS), OSX)
+      links += -framework CUDA
+    else ifeq ($(OS), LINUX)
+      links += -lcuda
+    endif
+  endif
 else
-  cudaFlags =
 
   ifeq ($(OS), OSX)
     cudaFlags = $(call flagsForLibrary,CUDA)
@@ -256,20 +273,26 @@ else
   endif
 
   ifneq (,$(cudaFlags))
-    cudaEnabled  = 1
-    compilerFlags += $(cudaFlags)
+    cudaEnabled = 1
+    links += $(cudaFlags)
   endif
 endif
 
 ifdef OCCA_COI_ENABLED
   coiEnabled = $(OCCA_COI_ENABLED)
-else ifeq ($(OS), LINUX)
+
+  ifeq ($(coiEnabled), 1)
+    ifeq ($(OS), LINUX)
+      links += -lcoi_host
+    endif
+  endif
+else
   ifeq ($(OS), LINUX)
     coiFlags = $(call flagsForLibrary,coi_host intel-coi/source/COIProcess_source.h)
 
     ifneq (,$(coiFlags))
-      coiEnabled  = 1
-      compilerFlags += $(coiFlags)
+      coiEnabled = 1
+      links += $(coiFlags)
     endif
   endif
 endif
@@ -286,27 +309,9 @@ else
   flags += -DOCCA_CHECK_ENABLED=0
 endif
 
-ifeq ($(openclEnabled), 1)
-  flags += $(openclFlags) -DOCCA_OPENCL_ENABLED=1
-  links += $(openclLinks)
-else
-  flags +=                 -DOCCA_OPENCL_ENABLED=0
-endif
-
-
-ifeq ($(cudaEnabled), 1)
-  flags += $(cudaFlags) -DOCCA_CUDA_ENABLED=1
-  links += $(cudaLinks)
-else
-  flags +=               -DOCCA_CUDA_ENABLED=0
-endif
-
-ifeq ($(coiEnabled), 1)
-  flags += $(coiFlags) -DOCCA_COI_ENABLED=1
-  links += $(coiLinks)
-else
-  flags += -DOCCA_COI_ENABLED=0
-endif
+flags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
+flags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
+flags += -DOCCA_COI_ENABLED=$(coiEnabled)
 
 ifdef COMPILING_WITH_JULIA
   flags += -DOCCA_COMPILED_FOR_JULIA=1
