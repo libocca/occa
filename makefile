@@ -44,6 +44,8 @@ else
 all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
+  LC_ALL=C /usr/bin/lscpu
+  LC_ALL=C /usr/bin/lscpu | /bin/grep '^L2 cache'
 	$(compiler) $(compilerFlags) $(sharedFlag) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 
