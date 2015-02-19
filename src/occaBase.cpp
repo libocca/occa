@@ -1365,12 +1365,11 @@ namespace occa {
     std::string loopyLang = "loopy";
 
     if(useLoopyOrFloopy == occa::useFloopy)
-      loopyLang = "floopy";
+      loopyLang = "fortran";
 
     std::stringstream command;
 
-    command << "floopy --lang=" << loopyLang
-            << " --target=cl:0,0 "
+    command << "loopy --lang=" << loopyLang
             << " --occa-defines=" << defsFile << ' '
             << " --occa-add-dummy-arg "
             << filename << ' ' << clFile;

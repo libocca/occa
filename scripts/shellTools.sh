@@ -333,3 +333,10 @@ function compilerSupportsOpenMP {
     fi
 }
 #=======================================
+
+
+#---[ System Information ]--------------
+# function get
+#     if hash ldconfig 2> /dev/null; then
+# LC_ALL=C lscpu
+#=======================================
