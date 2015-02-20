@@ -97,6 +97,8 @@ namespace occa {
   std::string getOCCADir();
   std::string getCachePath();
 
+  std::string removeSlashes(const std::string &str);
+
   bool fileNeedsParser(const std::string &filename);
 
   std::string getCacheHash(const std::string &content,

@@ -43,6 +43,17 @@ namespace occa {
       static const int HP           = (1 << 6); // aCC
       static const int VisualStudio = (1 << 7); // cl.exe
       static const int Cray         = (1 << 8); // cc     , CC
+
+      static const int b_GNU          = 0;
+      static const int b_LLVM         = 1;
+      static const int b_Intel        = 2;
+      static const int b_Pathscale    = 3;
+      static const int b_IBM          = 4;
+      static const int b_PGI          = 5;
+      static const int b_HP           = 6;
+      static const int b_VisualStudio = 7;
+      static const int b_Cray         = 8;
+      static const int b_max          = 9;
     };
 
     std::string getFieldFrom(const std::string &command,

@@ -36,8 +36,9 @@ namespace occa {
   namespace omp {
     extern std::string notSupported;
 
-    std::string baseCompilerFlag(const std::string &compiler);
-    std::string compilerFlag(const std::string &compiler);
+    std::string baseCompilerFlag(const int vendor_);
+    std::string compilerFlag(const int vendor_,
+                             const std::string &compiler);
   };
   //==================================
 

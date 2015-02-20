@@ -449,6 +449,18 @@ namespace occa {
     return occaCachePath;
   }
 
+  std::string removeSlashes(const std::string &str){
+    std::string ret = str;
+    const size_t chars = str.size();
+
+    for(size_t i = 0; i < chars; ++i){
+      if(ret[i] == '/')
+        ret[i] = '_';
+    }
+
+    return ret;
+  }
+
   bool fileNeedsParser(const std::string &filename){
     std::string ext = getFileExtension(filename);
 

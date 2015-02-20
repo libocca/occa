@@ -10,42 +10,44 @@ namespace occa {
   namespace omp {
     std::string notSupported = "N/A";
 
-    std::string baseCompilerFlag(const std::string &compiler){
-      const int compilerVendor = cpu::compilerVendor(compiler);
-
-      if(compilerVendor & (cpu::vendor::GNU |
+    std::string baseCompilerFlag(const int vendor_){
+      if(vendor_ & (cpu::vendor::GNU |
                            cpu::vendor::LLVM)){
 
         return "-fopenmp";
       }
-      else if(compilerVendor & (cpu::vendor::Intel |
+      else if(vendor_ & (cpu::vendor::Intel |
                                 cpu::vendor::Pathscale)){
 
         return "-openmp";
       }
-      else if(compilerVendor & cpu::vendor::IBM){
+      else if(vendor_ & cpu::vendor::IBM){
         return "-qsmp";
       }
-      else if(compilerVendor & cpu::vendor::PGI){
+      else if(vendor_ & cpu::vendor::PGI){
         return "-mp";
       }
-      else if(compilerVendor & cpu::vendor::HP){
+      else if(vendor_ & cpu::vendor::HP){
         return "+Oopenmp";
       }
-      else if(compilerVendor & cpu::vendor::VisualStudio){
+      else if(vendor_ & cpu::vendor::VisualStudio){
         return "/openmp";
       }
-      else if(compilerVendor & cpu::vendor::Cray){
+      else if(vendor_ & cpu::vendor::Cray){
         return "";
       }
 
       return omp::notSupported;
     }
 
-    std::string compilerFlag(const std::string &compiler){
+    std::string compilerFlag(const int vendor_,
+                             const std::string &compiler){
+
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-      std::string testFilename = (getCachePath() + ".ompTest.cpp");
-      std::string infoFilename = (getCachePath() + std::string(".ompTest_") + compiler);
+      const std::string safeCompiler = removeSlashes(compiler);
+
+      const std::string testFilename = (getCachePath() + ".ompTest.cpp");
+      const std::string infoFilename = (getCachePath() + std::string(".ompTest_") + safeCompiler);
 
       if(!haveFile(testFilename)){
         waitForFile(testFilename);
@@ -65,16 +67,16 @@ namespace occa {
           writeToFile(testFilename, testContent);
         }
 
-        std::string binaryFilename = (getCachePath() + std::string(".ompBinary"));
+        std::string binaryFilename = (getCachePath() + std::string(".ompBinary" + safeCompiler));
 
         if(!fileExists(infoFilename)){
-          std::string flag = baseCompilerFlag(compiler);
+          std::string flag = baseCompilerFlag(vendor_);
           int compileError = 1;
 
           std::string sCommand;
 
           if(flag != omp::notSupported){
-            sCommand += compiler;
+            sCommand += safeCompiler;
             sCommand += ' ';
             sCommand += flag;
             sCommand += ' ';
@@ -656,7 +658,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
     data_.vendor         = cpu::compilerVendor(compiler);
-    data_.OpenMPFlag     = omp::compilerFlag(compiler);
+    data_.OpenMPFlag     = omp::compilerFlag(data_.vendor, compiler);
     data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
 
     cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);

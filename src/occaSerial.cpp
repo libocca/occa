@@ -8,8 +8,6 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS)
       std::stringstream ss;
 
-      const std::string occaDir = getOCCADir();
-
       ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " '" << field << "')\" | bash";
 
       std::string sCommand = ss.str();
@@ -249,6 +247,7 @@ namespace occa {
     }
 
     int compilerVendor(const std::string &compiler){
+#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       if((compiler.find("gcc") != std::string::npos) ||
          (compiler.find("g++") != std::string::npos)){
 
@@ -288,6 +287,34 @@ namespace occa {
 
         return cpu::vendor::Cray;
       }
+
+      const std::string safeCompiler = removeSlashes(compiler);
+
+      const std::string testFilename   = getOCCADir() + std::string("/scripts/compilerVendorTest.cpp");
+      const std::string binaryFilename = getCachePath() + std::string("/compilerTest_") + safeCompiler;
+
+      std::string sCommand;
+
+      sCommand += compiler;
+      sCommand += ' ';
+      sCommand += testFilename;
+      sCommand += " -o ";
+      sCommand += binaryFilename;
+      sCommand += " > /dev/null 2>&1";
+
+      const int compileError = system(sCommand.c_str());
+
+      if(compileError)
+        return cpu::vendor::notFound;
+
+      const int vendorBit = system(binaryFilename.c_str());
+
+      if(vendorBit < cpu::vendor::b_max)
+        return (1 << vendorBit);
+
+#elif (OCCA_OS == WINDOWS_OS)
+      // Missing
+#endif
 
       return cpu::vendor::notFound;
     }
