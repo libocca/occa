@@ -400,7 +400,7 @@ function getLSCPUField {
     local field=$1
 
     if hash lscpu 2> /dev/null && hash grep 2> /dev/null; then
-        command echo $(LC_ALL=C; command lscpu | command grep ^$field)
+        command echo $(LC_ALL=C; command lscpu | command grep ^$field | sed "s/.*:[ \t]*\(.*\)/\1/g")
         return
     fi
 

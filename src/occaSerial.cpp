@@ -23,27 +23,24 @@ namespace occa {
 
       std::cout << "buffer = [" << buffer << "]\n";
 
-      pclose(fp);
+      std::cout << "pclose(fp) = " << pclose(fp) << '\n';
 
-      int begin, end;
-      for(begin = 0; begin < bufferSize; ++begin){
-        if(buffer[begin] == ':')
-          break;
+      std::string ret = "";
+
+      if(('0' <= buffer[0]) && (buffer[0] <= '9')){
+        int end;
+
+        for(end = 0; end < bufferSize; ++end){
+          if(buffer[end] == '\n')
+            break;
+        }
+
+        ret = std::string(buffer, end);
       }
-
-      while(buffer[++begin] == ' ')
-        ; // DO NOTHING;
-
-      for(end = 0; end < bufferSize; ++end){
-        if(buffer[begin + end] == '\n')
-          break;
-      }
-
-      std::string fieldValue(buffer + begin, end);
 
       delete [] buffer;
 
-      return fieldValue;
+      return ret;
 #else
       return "";
 #endif
