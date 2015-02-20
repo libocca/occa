@@ -45,8 +45,8 @@ namespace occa {
       static const int Cray         = (1 << 8); // cc     , CC
     };
 
-    std::string getLSCPUField(const std::string &field);
-    std::string getCPUINFOField(const std::string &field);
+    std::string getFieldFrom(const std::string &command,
+                             const std::string &field);
 
     std::string getProcessorName();
     int getCoreCount();
