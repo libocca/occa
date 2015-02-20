@@ -12,10 +12,10 @@ namespace occa {
 
       ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " " << field << ")\" | bash";
 
-      std::string command = ss.str();
+      std::string sCommand = ss.str();
 
       FILE *fp;
-      fp = popen(command.c_str(), "r");
+      fp = popen(sCommand.c_str(), "r");
 
       const int bufferSize = 4096;
       char *buffer = new char[bufferSize];
