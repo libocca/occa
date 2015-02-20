@@ -3,13 +3,14 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace cpu {
-    std::string getLSCPUField(const std::string &field){
+    std::string getFieldFrom(const std::string &command,
+                             const std::string &field){
 #if (OCCA_OS == LINUX_OS)
       std::stringstream ss;
 
       const std::string occaDir = getOCCADir();
 
-      ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; getLSCPUField " << field << ")\" | bash";
+      ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " " << field << ")\" | bash";
 
       std::string command = ss.str();
 
@@ -21,9 +22,7 @@ namespace occa {
 
       ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
 
-      std::cout << "buffer = [" << buffer << "]\n";
-
-      std::cout << "pclose(fp) = " << pclose(fp) << '\n';
+      pclose(fp);
 
       std::string ret = "";
 
@@ -46,50 +45,9 @@ namespace occa {
 #endif
     }
 
-    std::string getCPUINFOField(const std::string &field){
-#if (OCCA_OS == LINUX_OS)
-      std::stringstream ss;
-
-      ss << "/bin/cat /proc/cpuinfo | /bin/grep '^" << field << "'";
-
-      std::string command = ss.str();
-
-      FILE *fp;
-      fp = popen(command.c_str(), "r");
-
-      const int bufferSize = 4096;
-      char *buffer = new char[bufferSize];
-
-      ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
-
-      int begin, end;
-      for(begin = 0; begin < bufferSize; ++begin){
-        if(buffer[begin] == ':')
-          break;
-      }
-
-      while(buffer[++begin] == ' ')
-        ; // DO NOTHING
-
-      for(end = 0; end < bufferSize; ++end){
-        if(buffer[begin + end] == '\n')
-          break;
-      }
-
-      std::string fieldValue(buffer + begin, end);
-
-      pclose(fp);
-      delete [] buffer;
-
-      return fieldValue;
-#else
-      return "";
-#endif
-    }
-
     std::string getProcessorName(){
 #if   (OCCA_OS == LINUX_OS)
-      return getCPUINFOField("model name");
+      return getFieldFrom("getCPUINFOField", "model name");
 #elif (OCCA_OS == OSX_OS)
       size_t bufferSize = 100;
       char buffer[100];
@@ -150,6 +108,7 @@ namespace occa {
     std::string getProcessorCacheSize(int level){
 #if   (OCCA_OS == LINUX_OS)
       std::stringstream field;
+
       field << 'L' << level;
 
       if(level == 1)
@@ -157,7 +116,7 @@ namespace occa {
 
       field << " cache";
 
-      return getLSCPUField(field.str());
+      return getFieldFrom("getLSCPUField", field.str());
 #elif (OCCA_OS == OSX_OS)
       std::stringstream ss;
       ss << "hw.l" << level;
