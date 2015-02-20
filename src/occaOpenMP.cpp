@@ -12,12 +12,12 @@ namespace occa {
 
     std::string baseCompilerFlag(const int vendor_){
       if(vendor_ & (cpu::vendor::GNU |
-                           cpu::vendor::LLVM)){
+                    cpu::vendor::LLVM)){
 
         return "-fopenmp";
       }
       else if(vendor_ & (cpu::vendor::Intel |
-                                cpu::vendor::Pathscale)){
+                         cpu::vendor::Pathscale)){
 
         return "-openmp";
       }
@@ -45,9 +45,10 @@ namespace occa {
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       const std::string safeCompiler = removeSlashes(compiler);
+      const std::string cacheDir     = getCachePath();
 
-      const std::string testFilename = (getCachePath() + ".ompTest.cpp");
-      const std::string infoFilename = (getCachePath() + std::string(".ompTest_") + safeCompiler);
+      const std::string testFilename = (cacheDir + "/.ompTest.cpp");
+      const std::string infoFilename = (cacheDir + std::string("/.ompTest_") + safeCompiler);
 
       if(!haveFile(testFilename)){
         waitForFile(testFilename);
@@ -67,7 +68,7 @@ namespace occa {
           writeToFile(testFilename, testContent);
         }
 
-        std::string binaryFilename = (getCachePath() + std::string(".ompBinary" + safeCompiler));
+        std::string binaryFilename = (getCachePath() + std::string("/.ompBinary_" + safeCompiler));
 
         if(!fileExists(infoFilename)){
           std::string flag = baseCompilerFlag(vendor_);

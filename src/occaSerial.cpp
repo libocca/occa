@@ -288,29 +288,94 @@ namespace occa {
         return cpu::vendor::Cray;
       }
 
+      // Find the compiler manually
+      std::stringstream ss;
+      int vendor_ = cpu::vendor::notFound;
+
       const std::string safeCompiler = removeSlashes(compiler);
+      const std::string cacheDir     = getCachePath();
 
-      const std::string testFilename   = getOCCADir() + std::string("/scripts/compilerVendorTest.cpp");
-      const std::string binaryFilename = getCachePath() + std::string("/compilerTest_") + safeCompiler;
+      const std::string testFilename = (cacheDir + std::string("/.compilerVendorTest.cpp"));
+      const std::string infoFilename = (cacheDir + std::string("/.compilerVendorTest_") + safeCompiler);
 
-      std::string sCommand;
+      if(!haveFile(testFilename)){
+        waitForFile(testFilename);
+      }
+      else{
+        if(!fileExists(testFilename)){
+          ss << "int main(int argc, char **argv){\n"
+             << "#if defined(__clang__)\n"
+             << "  return " << cpu::vendor::b_LLVM << ";\n"
+             << "\n"
+             << "#elif defined(__ICC) || defined(__INTEL_COMPILER)\n"
+             << "  return " << cpu::vendor::b_Intel << ";\n"
+             << "\n"
+             << "#elif defined(__GNUC__) || defined(__GNUG__)\n"
+             << "  return " << cpu::vendor::b_GNU << ";\n"
+             << "\n"
+             << "#elif defined(__HP_cc) || defined(__HP_aCC)\n"
+             << "  return " << cpu::vendor::b_HP << ";\n"
+             << "\n"
+             << "#elif defined(__IBMC__) || defined(__IBMCPP__)\n"
+             << "  return " << cpu::vendor::b_IBM << ";\n"
+             << "\n"
+             << "#elif defined(__PGI)\n"
+             << "  return " << cpu::vendor::b_PGI << ";\n"
+             << "\n"
+             << "#elif defined(_CRAYC)\n"
+             << "  return " << cpu::vendor::b_Cray << ";\n"
+             << "\n"
+             << "#elif defined(__PATHSCALE__) || defined(__PATHCC__)\n"
+             << "  return " << cpu::vendor::b_Pathscale << ";\n"
+             << "\n"
+             << "#elif defined(_MSC_VER)\n"
+             << "  return " << cpu::vendor::b_VisualStudio << ";\n"
+             << "#endif\n"
+             << "\n"
+             << "  // Missing\n"
+             << "  return " << cpu::vendor::b_max << ";\n"
+             << "}\n";
 
-      sCommand += compiler;
-      sCommand += ' ';
-      sCommand += testFilename;
-      sCommand += " -o ";
-      sCommand += binaryFilename;
-      sCommand += " > /dev/null 2>&1";
+          writeToFile(testFilename, ss.str());
+          ss.str("");
+        }
 
-      const int compileError = system(sCommand.c_str());
+        const std::string binaryFilename = (cacheDir + std::string("/.compilerVendorBinary_") + safeCompiler);
 
-      if(compileError)
-        return cpu::vendor::notFound;
+        if(!fileExists(infoFilename)){
+          ss << compiler
+             << ' '
+             << testFilename
+             << " -o "
+             << binaryFilename
+             << " > /dev/null 2>&1";
 
-      const int vendorBit = system(binaryFilename.c_str());
+          const int compileError = system(ss.str().c_str());
 
-      if(vendorBit < cpu::vendor::b_max)
-        return (1 << vendorBit);
+          if(!compileError){
+            const int vendorBit = system(binaryFilename.c_str());
+
+            if(vendorBit < cpu::vendor::b_max)
+              vendor_ = (1 << vendorBit);
+          }
+
+          ss.str("");
+          ss << vendor_;
+
+          writeToFile(infoFilename, ss.str());
+
+          releaseFile(testFilename);
+
+          return vendor_;
+        }
+        else
+          releaseFile(testFilename);
+      }
+
+      ss << readFile(infoFilename);
+      ss >> vendor_;
+
+      return vendor_;
 
 #elif (OCCA_OS == WINDOWS_OS)
       // Missing
