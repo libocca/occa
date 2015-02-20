@@ -44,7 +44,6 @@ else
 all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
-	@echo $(shell LC_ALL=C; cat /proc/cpuinfo)
 	$(compiler) $(compilerFlags) $(sharedFlag) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
 endif
 

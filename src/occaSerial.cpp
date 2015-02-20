@@ -10,7 +10,7 @@ namespace occa {
 
       const std::string occaDir = getOCCADir();
 
-      ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " " << field << ")\" | bash";
+      ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " '" << field << "')\" | bash";
 
       std::string sCommand = ss.str();
 
