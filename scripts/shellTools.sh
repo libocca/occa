@@ -396,7 +396,14 @@ function compilerSupportsOpenMP {
 
 
 #---[ System Information ]--------------
-# function get
-#     if hash ldconfig 2> /dev/null; then
-# LC_ALL=C lscpu
+function getLSCPUField {
+    local field=$1
+
+    if hash lscpu 2> /dev/null && hash grep 2> /dev/null; then
+        command echo $(LC_ALL=C; command lscpu | command grep ^$field)
+        return
+    fi
+
+    command echo ""
+}
 #=======================================

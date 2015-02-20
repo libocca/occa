@@ -4,11 +4,12 @@ namespace occa {
   //---[ Helper Functions ]-----------
   namespace cpu {
     std::string getLSCPUField(const std::string &field){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS == LINUX_OS)
       std::stringstream ss;
 
-      ss << "LC_ALL=C /usr/bin/lscpu";
-      // ss << "LC_ALL=C /usr/bin/lscpu | /bin/grep '^" << field << "'";
+      const std::string occaDir = getOCCADir();
+
+      ss << "(. " << getOCCADir() << "/scripts/shellTools.sh; getLSCPUField " << field << ")";
 
       std::string command = ss.str();
 
@@ -43,13 +44,13 @@ namespace occa {
       delete [] buffer;
 
       return fieldValue;
-#elif (OCCA_OS == WINDOWS_OS)
+#else
       return "";
 #endif
     }
 
     std::string getCPUINFOField(const std::string &field){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS == LINUX_OS)
       std::stringstream ss;
 
       ss << "/bin/cat /proc/cpuinfo | /bin/grep '^" << field << "'";
@@ -84,7 +85,7 @@ namespace occa {
       delete [] buffer;
 
       return fieldValue;
-#elif (OCCA_OS == WINDOWS_OS)
+#else
       return "";
 #endif
     }
