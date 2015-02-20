@@ -24,18 +24,14 @@ namespace occa {
 
       pclose(fp);
 
-      std::string ret = "";
+      int end;
 
-      if(('0' <= buffer[0]) && (buffer[0] <= '9')){
-        int end;
-
-        for(end = 0; end < bufferSize; ++end){
-          if(buffer[end] == '\n')
-            break;
-        }
-
-        ret = std::string(buffer, end);
+      for(end = 0; end < bufferSize; ++end){
+        if(buffer[end] == '\n')
+          break;
       }
+
+      std::string ret(buffer, end);
 
       delete [] buffer;
 
