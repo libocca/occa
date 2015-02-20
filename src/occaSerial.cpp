@@ -82,7 +82,7 @@ namespace occa {
       std::stringstream ss;
       int freq;
 
-      ss << getCPUINFOField("cpu MHz");
+      ss << getFieldFrom("getCPUINFOField", "cpu MHz");
 
       ss >> freq;
 
@@ -196,10 +196,12 @@ namespace occa {
     }
 
     std::string getDeviceListInfo(){
-      std::stringstream ss;
+      std::stringstream ss, ssFreq;
 
-      std::stringstream ssFreq;
+      ss << getCoreCount();
+
       const int freq = getProcessorFrequency();
+
       if(freq < 1000)
         ssFreq << freq << " MHz";
       else
@@ -212,19 +214,39 @@ namespace occa {
       size_t maxSize = ((l1.size() < l2.size()) ? l2.size() : l1.size());
       maxSize        = ((maxSize   < l3.size()) ? l3.size() : maxSize  );
 
-      l1 = std::string(maxSize - l1.size(), ' ') + l1;
-      l2 = std::string(maxSize - l2.size(), ' ') + l2;
-      l3 = std::string(maxSize - l3.size(), ' ') + l3;
+      if(maxSize){
+        l1 = std::string(maxSize - l1.size(), ' ') + l1;
+        l2 = std::string(maxSize - l2.size(), ' ') + l2;
+        l3 = std::string(maxSize - l3.size(), ' ') + l3;
+      }
+
+      std::string tab[2];
+      tab[0] = "   CPU Info   ";
+      tab[1] = "              ";
+
+      std::string processorName  = getProcessorName();
+      std::string clockFrequency = ssFreq.str();
+      std::string coreCount      = ss.str();
+
+      ss.str("");
+
+      bool ps = false;
 
       // << "==============o=======================o==========================================\n";
-      ss << "   CPU Info   |  Processor Name       | " << getProcessorName()              << '\n'
-         << "              |  Cores                | " << getCoreCount()                  << '\n'
-         << "              |  Clock Frequency      | " << ssFreq.str()                    << '\n'
-         << "              |  SIMD Instruction Set | " << OCCA_VECTOR_SET                 << '\n'
-         << "              |  SIMD Width           | " << (32*OCCA_SIMD_WIDTH) << " bits" << '\n'
-         << "              |  L1 Cache Size (d)    | " << l1                              << '\n'
-         << "              |  L2 Cache Size        | " << l2                              << '\n'
-         << "              |  L3 Cache Size        | " << l3                              << '\n';
+      if(processorName.size())
+        ss << tab[ps]  << "|  Processor Name       | " << processorName                   << '\n'; ps = true;
+      if(coreCount.size())
+        ss << tab[ps]  << "|  Cores                | " << coreCount                       << '\n'; ps = true;
+      if(clockFrequency.size())
+        ss << tab[ps]  << "|  Clock Frequency      | " << clockFrequency                  << '\n'; ps = true;
+      ss   << tab[ps]  << "|  SIMD Instruction Set | " << OCCA_VECTOR_SET                 << '\n'
+           << tab[ps]  << "|  SIMD Width           | " << (32*OCCA_SIMD_WIDTH) << " bits" << '\n'; ps = true;
+      if(l1.size())
+        ss << tab[ps]  << "|  L1 Cache Size (d)    | " << l1                              << '\n';
+      if(l2.size())
+        ss << tab[ps]  << "|  L2 Cache Size        | " << l2                              << '\n';
+      if(l3.size())
+        ss << tab[ps]  << "|  L3 Cache Size        | " << l3                              << '\n';
       // << "==============o=======================o==========================================\n";
 
       return ss.str();

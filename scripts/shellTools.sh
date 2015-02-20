@@ -400,23 +400,33 @@ function getFieldFrom {
     local command_=$1
     local field=$2
 
-    if hash lscpu 2> /dev/null && hash grep 2> /dev/null; then
-        command echo $(LC_ALL=C; $command_ | command grep ^$field | sed "s/.*:[ \t]*\(.*\)/\1/g")
+    if hash grep 2> /dev/null; then
+        command echo $(LC_ALL=C; $command_ | command grep -m 1 "^$field" | sed "s/.*:[ \t]*\(.*\)/\1/g")
         return
     fi
 
-    command echo ""
+    echo ""
 }
 
 function getLSCPUField {
     local field=$1
 
-    getFieldFrom "command lscpu" $field
+    if hash lscpu 2> /dev/null; then
+        getFieldFrom "command lscpu" "$field"
+        return
+    fi
+
+    echo ""
 }
 
 function getCPUINFOField {
     local field=$1
 
-    getFieldFrom "command cat cpuinfo" $field
+    if hash cat 2> /dev/null; then
+        getFieldFrom "command cat /proc/cpuinfo" "$field"
+        return
+    fi
+
+    echo ""
 }
 #=======================================
