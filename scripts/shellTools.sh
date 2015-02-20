@@ -397,8 +397,8 @@ function compilerSupportsOpenMP {
 
 #---[ System Information ]--------------
 function getFieldFrom {
-    local command_=$1
-    local field=$2
+    local command_="$1"
+    local field="$2"
 
     if hash grep 2> /dev/null; then
         command echo $(LC_ALL=C; $command_ | command grep -m 1 "^$field" | sed "s/.*:[ \t]*\(.*\)/\1/g")
@@ -409,7 +409,7 @@ function getFieldFrom {
 }
 
 function getLSCPUField {
-    local field=$1
+    local field="$1"
 
     if hash lscpu 2> /dev/null; then
         getFieldFrom "command lscpu" "$field"
@@ -420,7 +420,7 @@ function getLSCPUField {
 }
 
 function getCPUINFOField {
-    local field=$1
+    local field="$1"
 
     if hash cat 2> /dev/null; then
         getFieldFrom "command cat /proc/cpuinfo" "$field"
