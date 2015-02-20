@@ -7,7 +7,8 @@ namespace occa {
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
       std::stringstream ss;
 
-      ss << "LC_ALL=C /usr/bin/lscpu | /bin/grep '^" << field << "'";
+      ss << "LC_ALL=C /usr/bin/lscpu";
+      // ss << "LC_ALL=C /usr/bin/lscpu | /bin/grep '^" << field << "'";
 
       std::string command = ss.str();
 
