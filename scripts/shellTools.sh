@@ -204,8 +204,20 @@ function headerFlags {
 
 
 #---[ Compiler Information ]------------
+function manualWhich {
+    local input=$1
+
+    local mWhich=$(command type $input | sed "s/.*(\(.*\)).*/\1/g")
+
+    if [ ! -z $mWhich ]; then
+        echo $mWhich
+    else
+        echo $input
+    fi
+}
+
 function realCommand {
-    local a=$1
+    local a=$(manualWhich $1)
     local b
 
     case "$(uname)" in
@@ -219,7 +231,7 @@ function realCommand {
     fi
 
     while [ "$a" != "$b" ]; do
-        a=$b
+        a=$(manualWhich $b)
 
         case "$(uname)" in
             Darwin) b="$(command readlink    $a)";;
