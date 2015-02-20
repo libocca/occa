@@ -236,7 +236,7 @@ function realCommand {
 }
 
 function unaliasCommand {
-    typeOutput=$(command type $1)
+    typeOutput=$(command type $1 2> /dev/null)
 
     aliasedTo=$(command echo $typeOutput | command grep -m 1 "$1 is aliased to" | command sed "s/[^\`]*\`\([^ \t']*\)[ \t']/\1/g")
 

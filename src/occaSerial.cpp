@@ -19,6 +19,10 @@ namespace occa {
 
       ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
 
+      std::cout << "buffer = [" << buffer << "]\n";
+
+      pclose(fp);
+
       int begin, end;
       for(begin = 0; begin < bufferSize; ++begin){
         if(buffer[begin] == ':')
@@ -35,7 +39,6 @@ namespace occa {
 
       std::string fieldValue(buffer + begin, end);
 
-      pclose(fp);
       delete [] buffer;
 
       return fieldValue;
