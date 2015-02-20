@@ -204,6 +204,25 @@ function headerFlags {
 
 
 #---[ Compiler Information ]------------
+function getPath {
+    command echo ${1%/*}
+}
+
+function stripPath {
+    command echo ${1##*/}
+}
+
+function resolveRelativePath {
+    local from=$1
+    local to=$2
+
+    if [[ $to == ../* ]]; then
+        echo $(getPath $1)/$2
+    else
+        echo $2
+    fi
+}
+
 function manualWhich {
     local input=$1
 
@@ -237,6 +256,7 @@ function realCommand {
     fi
 
     while [ "$a" != "$b" ]; do
+        b=$(resolveRelativePath $a $b)
         a=$(manualWhich $b)
 
         case "$(uname)" in
@@ -264,10 +284,6 @@ function unaliasCommand {
     fi
 
     command echo $1
-}
-
-function stripPath {
-    command echo ${1##*/}
 }
 
 function mpiCompilerVendor {
@@ -307,15 +323,25 @@ function compilerVendor {
     local compiler=$(compilerName $1)
 
     case $compiler in
+        # C/C++ Compilers
         g++* | gcc*)       command echo GCC          ;;
         clang*)            command echo LLVM         ;;
         icc* | icpc*)      command echo INTEL        ;;
         xlc*)              command echo IBM          ;;
         pgcc* | pgc++*)    command echo PGI          ;;
         pathcc* | pathCC*) command echo PATHSCALE    ;;
-        aCC*)              command echo HP           ;;
+        aCC*)              command echo HP           ;; # [-] Will fail with cc (Cray's compiler name ...)
         cc* | CC*)         command echo CRAY         ;;
         cl*.exe*)          command echo VISUALSTUDIO ;;
+
+        # Fortran Compilers
+        gfortran*)         command echo GCC          ;;
+        ifort*)            command echo INTEL        ;;
+        ftn*)              command echo CRAY         ;;
+        xlf*)              command echo IBM          ;;
+        pgfortran*)        command echo PGI          ;;
+        pathf9*)           command echo PATHSCALE    ;;
+
         *)                 command echo N/A          ;;
     esac
 }
@@ -326,11 +352,11 @@ function compilerReleaseFlags {
     case $vendor in
         GCC | LLVM) command echo "-O3 -D __extern_always_inline=inline"     ;;
         INTEL)      command echo "-O3 -xHost"                               ;;
-        CRAY)       command echo "-O3 -h intrinsics -fast"                  ;; # [-]
-        IBM)        command echo "-O3 -qhot=simd"                           ;; # [-]
-        PGI)        command echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;; # [-]
-        PATHSCALE)  command echo "-O3 -march=auto"                          ;; # [-]
-        HP)         command echo "+O3"                                      ;; # [-]
+        CRAY)       command echo "-O3 -h intrinsics -fast"                  ;;
+        IBM)        command echo "-O3 -qhot=simd"                           ;;
+        PGI)        command echo "-O3 -fast -Mipa=fast,inline -Msmartalloc" ;;
+        PATHSCALE)  command echo "-O3 -march=auto"                          ;;
+        HP)         command echo "+O3"                                      ;;
         *)          command echo ""                                         ;;
     esac
 }
@@ -339,7 +365,7 @@ function compilerDebugFlags {
     local vendor=$(compilerVendor $1)
 
     case $vendor in
-        N/A)           ;;
+        N/A)                   ;;
         *)   command echo "-g" ;;
     esac
 }
@@ -348,11 +374,9 @@ function compilerPicFlag {
     local vendor=$(compilerVendor $1)
 
     case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE | CRAY) command echo "-fPIC"       ;;
-        IBM)                                   command echo "-qpic=large" ;; # [-]
-        PGI)                                   command echo "-fpic"       ;; # [-]
-        HP)                                    command echo "+z"          ;; # [-]
-        *)                                     command echo ""            ;;
+        GCC | LLVM | INTEL | PATHSCALE | CRAY | IBM | PGI) command echo "-fPIC";;
+        HP) command echo "+z";;
+        *)  command echo ""  ;;
     esac
 }
 
@@ -360,11 +384,9 @@ function compilerSharedFlag {
     local vendor=$(compilerVendor $1)
 
     case $vendor in
-        GCC | LLVM | INTEL | PATHSCALE | CRAY) command echo "-shared"    ;;
-        IBM)                                   command echo "-qmkshrobj" ;; # [-]
-        PGI)                                   command echo "-shlib"     ;; # [-]
-        HP)                                    command echo "-b"         ;; # [-]
-        *)                                     command echo ""           ;;
+        GCC | LLVM | INTEL | PATHSCALE | CRAY | IBM | PGI) command echo "-shared";;
+        HP)                                                command echo "-b"     ;;
+        *)                                                 command echo ""       ;;
     esac
 }
 
@@ -374,11 +396,22 @@ function compilerOpenMPFlags {
     case $vendor in
         GCC   | LLVM)      command echo "-fopenmp" ;;
         INTEL | PATHSCALE) command echo "-openmp"  ;;
-        CRAY)              command echo ""         ;; # [-]
-        IBM)               command echo "-qsmp"    ;; # [-]
-        PGI)               command echo "-mp"      ;; # [-]
-        HP)                command echo "+Oopenmp" ;; # [-]
+        CRAY)              command echo ""         ;;
+        IBM)               command echo "-qsmp"    ;;
+        PGI)               command echo "-mp"      ;;
+        HP)                command echo "+Oopenmp" ;;
         *)                 command echo ""         ;;
+    esac
+}
+
+function fCompilerModuleDirFlag {
+    local vendor=$(compilerVendor $1)
+
+    case $vendor in
+        GCC   | CRAY)            command echo "-J"       ;;
+        INTEL | PGI | PATHSCALE) command echo "-module"  ;;
+        IBM)                     command echo "-qmoddir" ;;
+        *)                       command echo ""         ;;
     esac
 }
 

@@ -7,7 +7,7 @@ include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
 compilerFlags  += $(picFlag)
-fCompilerFlags += -fPIC
+fCompilerFlags += $(picFlag)
 
 # [-L$OCCA_DIR/lib -locca] are kept for applications
 #   using $OCCA_DIR/scripts/makefile
@@ -54,10 +54,10 @@ $(occaOPath)/occaFTypes.mod:$(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.
 	@true
 
 $(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
-	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
+	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ $(fFlags) -c $<
 
 $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
-	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ -c $<
+	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ $(fFlags) -c $<
 
 # Ingore [-Wl,--enable-new-dtags] warnings if COI isn't being compiled
 ifeq (coiEnabled, 1)

@@ -393,18 +393,12 @@ namespace occa {
       if(vendor_ & (cpu::vendor::GNU   |
                     cpu::vendor::LLVM  |
                     cpu::vendor::Intel |
+                    cpu::vendor::IBM   |
+                    cpu::vendor::PGI   |
+                    cpu::vendor::Cray  |
                     cpu::vendor::Pathscale)){
 
         return "-x c++ -fPIC -shared"; // [-] -x c++ for now
-      }
-      else if(vendor_ & cpu::vendor::Cray){
-        return "-h PIC";
-      }
-      else if(vendor_ & cpu::vendor::IBM){
-        return "-qpic=large -qmkshrobj";
-      }
-      else if(vendor_ & cpu::vendor::PGI){
-        return "-fpic -shlib";
       }
       else if(vendor_ & cpu::vendor::HP){
         return "+z -b";

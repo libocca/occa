@@ -122,56 +122,19 @@ compilerDebugFlags   = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerDebu
 compilerPicFlag      = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerPicFlag      $(compiler))
 compilerSharedFlag   = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSharedFlag   $(compiler))
 
+fCompilerModuleDirFlag = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; fCompilerModuleDirFlag $(fCompiler))
+
 compilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(compiler))
 compilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(compiler))
 #=================================================
 
 
-#---[ C++ Compiler Info ]-------------------------
+#---[ Compiler Info ]-----------------------------
 debugFlags   = $(call compilerDebugFlags)
 releaseFlags = $(call compilerReleaseFlags)
 picFlag      = $(call compilerPicFlag)
 sharedFlag   = $(call compilerSharedFlag)
-#=================================================
-
-
-#---[ Fortran Compiler Info ]---------------------
-ifneq (,$(findstring gfortran,$(fCompiler)))
-  fCompilerType = GCC
-else ifneq (,$(findstring ifort,$(fCompiler)))
-  fCompilerType = INTEL
-else ifneq (,$(findstring ftn,$(fCompiler)))
-  fCompilerType = CRAY
-else ifneq (,$(findstring xlf,$(fCompiler)))
-  fCompilerType = IBM
-else ifneq (,$(findstring pgfortran,$(fCompiler)))
-  fCompilerType = PGI
-else ifneq (,$(findstring pathf95,$(fCompiler)))
-  fCompilerType = PATHSCALE
-else
-  fCompilerType = NOT_FOUND
-endif
-
-# Fortran Compiler
-ifneq (,$(filter $(fCompilerType),GCC))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -J
-else ifneq (,$(filter $(fCompilerType),INTEL))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -module
-else ifneq (,$(filter $(fCompilerType),CRAY))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -J
-else ifneq (,$(filter $(fCompilerType),IBM))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -qmoddir
-else ifneq (,$(filter $(fCompilerType),PGI))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -module
-else ifneq (,$(filter $(fCompilerType),PATHSCALE))
-  fCompilerFlags =      # [-] Missing
-  fModDirFlag    = -module
-endif
+fModDirFlag  = $(call fCompilerModuleDirFlag)
 #=================================================
 
 
@@ -291,24 +254,31 @@ else
   endif
 endif
 
+cfFlags =
+
 ifeq ($(debugEnabled), 1)
-  flags += $(debugFlags) -DOCCA_DEBUG_ENABLED=1
+  cflags  += $(debugFlags)
+  cfFlags += -DOCCA_DEBUG_ENABLED=1
 else
-  flags += $(releaseFlags) -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
+  cflags  += $(releaseFlags)
+  cfFlags += -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
 endif
 
 ifeq ($(checkEnabled), 1)
-  flags += -DOCCA_CHECK_ENABLED=1
+  cfFlags  += -DOCCA_CHECK_ENABLED=1
 else
-  flags += -DOCCA_CHECK_ENABLED=0
+  cfFlags  += -DOCCA_CHECK_ENABLED=0
 endif
 
-flags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
-flags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
-flags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
-flags += -DOCCA_COI_ENABLED=$(coiEnabled)
+cfFlags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
+cfFlags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
+cfFlags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
+cfFlags += -DOCCA_COI_ENABLED=$(coiEnabled)
 
 ifdef COMPILING_WITH_JULIA
-  flags += -DOCCA_COMPILED_FOR_JULIA=1
+  cfFlags += -DOCCA_COMPILED_FOR_JULIA=1
 endif
+
+flags  += $(cfFlags)
+fFlags += $(cfFlags)
 #=================================================
