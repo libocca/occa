@@ -22,6 +22,8 @@ namespace occa {
 
       ignoreResult( fread(buffer, sizeof(char), bufferSize, fp) );
 
+      std::cout << "buffer = [" << buffer << "]\n";
+
       pclose(fp);
 
       int end;
