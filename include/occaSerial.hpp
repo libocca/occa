@@ -3,6 +3,7 @@
 
 #if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
 #  include <sys/sysctl.h>
+#  include <sys/wait.h>
 #  include <dlfcn.h>
 #else
 #  include <windows.h>
@@ -34,15 +35,6 @@ namespace occa {
   namespace cpu {
     namespace vendor {
       static const int notFound     = 0;
-      static const int GNU          = (1 << 0); // gcc    , g++
-      static const int LLVM         = (1 << 1); // clang  , clang++
-      static const int Intel        = (1 << 2); // icc    , icpc
-      static const int Pathscale    = (1 << 3); // pathCC
-      static const int IBM          = (1 << 4); // xlc    , xlc++
-      static const int PGI          = (1 << 5); // pgcc   , pgc++
-      static const int HP           = (1 << 6); // aCC
-      static const int VisualStudio = (1 << 7); // cl.exe
-      static const int Cray         = (1 << 8); // cc     , CC
 
       static const int b_GNU          = 0;
       static const int b_LLVM         = 1;
@@ -54,6 +46,16 @@ namespace occa {
       static const int b_VisualStudio = 7;
       static const int b_Cray         = 8;
       static const int b_max          = 9;
+
+      static const int GNU          = (1 << b_GNU);          // gcc    , g++
+      static const int LLVM         = (1 << b_LLVM);         // clang  , clang++
+      static const int Intel        = (1 << b_Intel);        // icc    , icpc
+      static const int Pathscale    = (1 << b_Pathscale);    // pathCC
+      static const int IBM          = (1 << b_IBM);          // xlc    , xlc++
+      static const int PGI          = (1 << b_PGI);          // pgcc   , pgc++
+      static const int HP           = (1 << b_HP);           // aCC
+      static const int VisualStudio = (1 << b_VisualStudio); // cl.exe
+      static const int Cray         = (1 << b_Cray);         // cc     , CC
     };
 
     std::string getFieldFrom(const std::string &command,

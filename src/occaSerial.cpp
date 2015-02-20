@@ -353,7 +353,8 @@ namespace occa {
           const int compileError = system(ss.str().c_str());
 
           if(!compileError){
-            const int vendorBit = system(binaryFilename.c_str());
+            int exitStatus = system(binaryFilename.c_str());
+            int vendorBit  = WEXITSTATUS(exitStatus);
 
             if(vendorBit < cpu::vendor::b_max)
               vendor_ = (1 << vendorBit);
