@@ -207,9 +207,15 @@ function headerFlags {
 function manualWhich {
     local input=$1
 
-    local mWhich=$(command type $input | sed "s/.*(\(.*\)).*/\1/g")
+    local typeOutput=$(command type $input)
 
-    if [ ! -z $mWhich ]; then
+    if [[ $typeOutput == *" is hashed "* ]]; then
+        local mWhich=$(command type $input | sed "s/.*(\(.*\)).*/\1/g")
+    else
+        local mWhich=$(command type $input | sed "s/.* is \(.*\)/\1/g")
+    fi
+
+    if [ ! -z "$mWhich" ]; then
         echo $mWhich
     else
         echo $input
