@@ -802,7 +802,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(OpenMP, Device);
 
     data_.vendor         = cpu::compilerVendor(compiler);
-    data_.OpenMPFlag     = omp::compilerFlag(compiler);
+    data_.OpenMPFlag     = omp::compilerFlag(data_.vendor, compiler);
     data_.supportsOpenMP = (data_.OpenMPFlag != omp::notSupported);
 
     cpu::addSharedBinaryFlagsTo(data_.vendor, compilerFlags);
