@@ -216,10 +216,10 @@ function resolveRelativePath {
     local from=$1
     local to=$2
 
-    if [[ $to == ../* ]]; then
-        echo $(getPath $1)/$2
+    if [[ $to == /* ]]; then
+        echo $to
     else
-        echo $2
+        echo $(getPath $from)/$to
     fi
 }
 
