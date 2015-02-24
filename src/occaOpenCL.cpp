@@ -1649,8 +1649,8 @@ namespace occa {
 
     imageDesc.image_type        = (dim == 1) ? CL_MEM_OBJECT_IMAGE1D : CL_MEM_OBJECT_IMAGE2D;
     imageDesc.image_width       = dims.x;
-    imageDesc.image_height      = (dim < 2) ? 0 : dim.y;
-    imageDesc.image_depth       = (dim < 3) ? 0 : dim.z;
+    imageDesc.image_height      = (dim < 2) ? 0 : dims.y;
+    imageDesc.image_depth       = (dim < 3) ? 0 : dims.z;
     imageDesc.image_array_size  = 1;
     imageDesc.image_row_pitch   = 0;
     imageDesc.image_slice_pitch = 0;

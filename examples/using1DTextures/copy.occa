@@ -14,7 +14,7 @@ occaKernel void copy(occaKernelInfoArg,
         float data;
 
         write_imagef(copyA, 0, (float4) {1, 0, 0, 0});
-        /* occaTexSet1D(copyA, float, 1, 0); */
+        occaTexSet1D(copyA, float, 1, 0);
         /* occaTexSet2D(copyA, float, 1 + occaSamplerIsFake1D(A), 0, 0); */
 
 #if 0

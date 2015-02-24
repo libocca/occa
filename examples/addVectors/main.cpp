@@ -21,15 +21,13 @@ int main(int argc, char **argv){
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
-  device.setup("mode = OpenMP");
-
   //---[ Device setup with string flags ]-------------------
-  //    device.setup("mode = Serial");
-  //    device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
-  //    device.setup("mode = OpenCL  , platformID = 0, deviceID = 0");
-  //    device.setup("mode = CUDA    , deviceID = 0");
-  //    device.setup("mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]");
-  //    device.setup("mode = COI     , deviceID = 0");
+  device.setup("mode = Serial");
+  // device.setup("mode = OpenMP  , schedule = compact, chunk = 10");
+  // device.setup("mode = OpenCL  , platformID = 0, deviceID = 0");
+  // device.setup("mode = CUDA    , deviceID = 0");
+  // device.setup("mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]");
+  // device.setup("mode = COI     , deviceID = 0");
   //========================================================
 
   //---[ Device setup with Python-like arguments ]----------

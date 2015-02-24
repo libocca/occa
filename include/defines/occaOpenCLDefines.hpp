@@ -309,31 +309,31 @@
 #define occaTexGet1D_float4(TEX, X)    read_imagef(TEX, occaSampler(TEX), (int2) {X, 1})
 #define occaTexGet2D_float4(TEX, X, Y) read_imagef(TEX, occaSampler(TEX), (int2) {X, Y})
 
-#define occaTexSet1D_int(TEX, VALUE, X)    write_imagei(TEX, (int2) {X, 1}, (int4) {VALUE, 0, 0, 0})
+#define occaTexSet1D_int(TEX, VALUE, X)    write_imagei(TEX,  X           , (int4) {VALUE, 0, 0, 0})
 #define occaTexSet2D_int(TEX, VALUE, X, Y) write_imagei(TEX, (int2) {X, Y}, (int4) {VALUE, 0, 0, 0})
 
-#define occaTexSet1D_int2(TEX, VALUE, X)    write_imagei(TEX, (int2) {X, 1}, (int4) {VALUE.x, VALUE.y, 0, 0})
+#define occaTexSet1D_int2(TEX, VALUE, X)    write_imagei(TEX,  X           , (int4) {VALUE.x, VALUE.y, 0, 0})
 #define occaTexSet2D_int2(TEX, VALUE, X, Y) write_imagei(TEX, (int2) {X, Y}, (int4) {VALUE.x, VALUE.y, 0, 0})
 
-#define occaTexSet1D_int4(TEX, VALUE, X)    write_imagei(TEX, (int2) {X, 1}, VALUE)
+#define occaTexSet1D_int4(TEX, VALUE, X)    write_imagei(TEX,  X           , VALUE)
 #define occaTexSet2D_int4(TEX, VALUE, X, Y) write_imagei(TEX, (int2) {X, Y}, VALUE)
 
-#define occaTexSet1D_uint(TEX, VALUE, X)    write_imageui(TEX, (int2) {X, 1}, (uint4) {VALUE, 0, 0, 0})
+#define occaTexSet1D_uint(TEX, VALUE, X)    write_imageui(TEX,  X           , (uint4) {VALUE, 0, 0, 0})
 #define occaTexSet2D_uint(TEX, VALUE, X, Y) write_imageui(TEX, (int2) {X, Y}, (uint4) {VALUE, 0, 0, 0})
 
-#define occaTexSet1D_uint2(TEX, VALUE, X)    write_imageui(TEX, (int2) {X, 1}, (uint4) {VALUE.x, VALUE.y, 0, 0})
+#define occaTexSet1D_uint2(TEX, VALUE, X)    write_imageui(TEX,  X           , (uint4) {VALUE.x, VALUE.y, 0, 0})
 #define occaTexSet2D_uint2(TEX, VALUE, X, Y) write_imageui(TEX, (int2) {X, Y}, (uint4) {VALUE.x, VALUE.y, 0, 0})
 
-#define occaTexSet1D_uint4(TEX, VALUE, X)    write_imageui(TEX, (int2) {X, 1}, VALUE)
+#define occaTexSet1D_uint4(TEX, VALUE, X)    write_imageui(TEX,  X           , VALUE)
 #define occaTexSet2D_uint4(TEX, VALUE, X, Y) write_imageui(TEX, (int2) {X, Y}, VALUE)
 
-#define occaTexSet1D_float(TEX, VALUE, X)    write_imagef(TEX, (int2) {X, 1}, (float4) {VALUE, 0, 0, 0})
+#define occaTexSet1D_float(TEX, VALUE, X)    write_imagef(TEX, X            , (float4) {VALUE, 0, 0, 0})
 #define occaTexSet2D_float(TEX, VALUE, X, Y) write_imagef(TEX, (int2) {X, Y}, (float4) {VALUE, 0, 0, 0})
 
-#define occaTexSet1D_float2(TEX, VALUE, X)    write_imagef(TEX, (int2) {X, 1}, (float4) {VALUE.x, VALUE.y, 0, 0})
+#define occaTexSet1D_float2(TEX, VALUE, X)    write_imagef(TEX,  X           , (float4) {VALUE.x, VALUE.y, 0, 0})
 #define occaTexSet2D_float2(TEX, VALUE, X, Y) write_imagef(TEX, (int2) {X, Y}, (float4) {VALUE.x, VALUE.y, 0, 0})
 
-#define occaTexSet1D_float4(TEX, VALUE, X)    write_imagef(TEX, (int2) {X, 1}, VALUE)
+#define occaTexSet1D_float4(TEX, VALUE, X)    write_imagef(TEX,  X           , VALUE)
 #define occaTexSet2D_float4(TEX, VALUE, X, Y) write_imagef(TEX, (int2) {X, Y}, VALUE)
 
 #if __OPENCL_VERSION__ < 120

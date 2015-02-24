@@ -220,14 +220,22 @@ def clOperatorDefinition(N):
 
     int argPos = 0;
 
+    const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                ' + (' ' if (10 <= N) else ''))
+                                                             if (n and ((n % 5) == 0))
+                                                             else '')
+                                                            + "&arg{0}".format(n) for n in xrange(N))) + """};
+
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
                   clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
 
-    """ + '\n\n    '.join(["""OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << argPos << "]",
-                  clSetKernelArg(kernel_, argPos++, arg{0}.size, arg{0}.data()));
-    if(arg{0}.hasTwoArgs)
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for [" << (argPos - 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, sizeof(void*), arg{0}.arg2.void_));""".format(n) for n in xrange(N)]) + """
+    for(int i = 0; i < """ + str(N) + """; ++i){
+      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                    clSetKernelArg(kernel_, argPos++, args[i]->size, args[i]->data()));
+
+      if(args[i]->hasTwoArgs)
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argPos++, sizeof(void*), args[i]->arg2.void_));
+    }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
                   clEnqueueNDRangeKernel(*((cl_command_queue*) dHandle->currentStream),
