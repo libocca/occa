@@ -403,6 +403,76 @@ namespace occa {
 
       return dev;
     }
+
+    bool imageFormatIsSupported(cl_image_format &f,
+                                cl_image_format *fs,
+                                const int formatCount){
+
+      for(int i = 0; i < formatCount; ++i){
+        cl_image_format &f2 = fs[i];
+
+        const bool orderSupported = (f.image_channel_order ==
+                                     (f.image_channel_order &
+                                      f2.image_channel_order));
+
+        const bool typeSupported = (f.image_channel_data_type ==
+                                    (f.image_channel_data_type &
+                                     f2.image_channel_data_type));
+
+        if(orderSupported && typeSupported)
+          return true;
+      }
+
+      return false;
+    }
+
+    void printImageFormat(cl_image_format &imageFormat){
+      std::cout << "---[ OpenCL Image Format ]--------------\n"
+                << "Supported Channel Formats:\n";
+
+#define OCCA_CL_PRINT_CHANNEL_INFO(X) \
+      if(imageFormat.image_channel_order & X) std::cout << "  " #X "\n"
+
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_R);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_Rx);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_A);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_INTENSITY);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_RG);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_RGx);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_RA);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_RGB);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_RGBx);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_RGBA);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_ARGB);
+      OCCA_CL_PRINT_CHANNEL_INFO(CL_BGRA);
+
+#undef OCCA_CL_PRINT_CHANNEL_INFO
+
+      std::cout << "\nSupported Channel Types:\n";
+
+#define OCCA_CL_PRINT_CHANNEL_TYPE(X) \
+      if(imageFormat.image_channel_data_type & X) std::cout << "  " #X "\n"
+
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_SNORM_INT8);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_SNORM_INT16);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNORM_INT8);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNORM_INT16);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNORM_SHORT_565);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNORM_SHORT_555);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNORM_INT_101010);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_SIGNED_INT8);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_SIGNED_INT16);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_SIGNED_INT32);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNSIGNED_INT8);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNSIGNED_INT16);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_UNSIGNED_INT32);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_HALF_FLOAT);
+      OCCA_CL_PRINT_CHANNEL_TYPE(CL_FLOAT);
+
+#undef OCCA_CL_PRINT_CHANNEL_TYPE
+
+      std::cout << "========================================\n";
+    }
   };
 
   const cl_channel_type clFormats[8] = {CL_UNSIGNED_INT8,
@@ -1560,11 +1630,12 @@ namespace occa {
 
     mem->textureInfo.bytesInEntry = type.bytes();
 
-    cl_mem_flags flag = (CL_MEM_COPY_HOST_PTR |
-                         ((permissions == occa::readWrite) ?
-                          CL_MEM_READ_WRITE : CL_MEM_READ_ONLY));
+    cl_mem_flags flag;
     cl_image_format imageFormat;
     cl_image_desc imageDesc;
+
+    flag  = CL_MEM_COPY_HOST_PTR;
+    flag |= ((permissions == occa::readWrite) ? CL_MEM_READ_WRITE : CL_MEM_READ_ONLY);
 
     const int count = type.count();
 
@@ -1578,13 +1649,38 @@ namespace occa {
 
     imageDesc.image_type        = (dim == 1) ? CL_MEM_OBJECT_IMAGE1D : CL_MEM_OBJECT_IMAGE2D;
     imageDesc.image_width       = dims.x;
-    imageDesc.image_height      = dims.y;
+    imageDesc.image_height      = (dim < 2) ? 0 : dim.y;
+    imageDesc.image_depth       = (dim < 3) ? 0 : dim.z;
     imageDesc.image_array_size  = 1;
     imageDesc.image_row_pitch   = 0;
     imageDesc.image_slice_pitch = 0;
     imageDesc.num_mip_levels    = 0;
     imageDesc.num_samples       = 0;
     imageDesc.buffer            = NULL;
+
+    //--------------------------------------------
+    cl_uint imageFormatCount;
+    cl_image_format imageFormats[1024];
+
+    clGetSupportedImageFormats(data_.context,
+                               flag,
+                               imageDesc.image_type,
+                               0, NULL,
+                               &imageFormatCount);
+
+    clGetSupportedImageFormats(data_.context,
+                               flag,
+                               imageDesc.image_type,
+                               imageFormatCount, imageFormats,
+                               NULL);
+
+    bool isCompatible = cl::imageFormatIsSupported(imageFormat,
+                                                   imageFormats,
+                                                   imageFormatCount);
+
+    OCCA_CHECK(isCompatible,
+               "The specified image format is not compatible");
+    //============================================
 
     *((cl_mem*) mem->handle) = clCreateImage(data_.context, flag,
                                              &imageFormat, &imageDesc,

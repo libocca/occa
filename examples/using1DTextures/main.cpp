@@ -30,8 +30,8 @@ int main(int argc, char **argv){
   const int dim = 1;
 
   o_A = device.textureAlloc(dim, occa::dim(width),
-                      A,
-                      occa::floatFormat, occa::readWrite);
+                            A,
+                            occa::floatFormat, occa::readWrite);
 
   A[0] = 100;
 
@@ -42,15 +42,16 @@ int main(int argc, char **argv){
     return 0;
   }
 
-  o_copyA = device.textureAlloc(dim, occa::dim(width),
-			  copyA,
-			  occa::floatFormat, occa::readWrite);
+  o_copyA = device.textureAlloc(dim,
+                                occa::dim(width),
+                                copyA,
+                                occa::floatFormat, occa::readWrite);
 
   occa::memory o_perm = device.malloc(width*sizeof(int), &(perm[0]));
 
   occa::kernel copyKernel
     = device.buildKernelFromSource("copy.occa",
-				   "copy");
+                                   "copy");
 
   const int BX = 16;
 

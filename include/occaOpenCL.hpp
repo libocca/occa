@@ -82,6 +82,12 @@ namespace occa {
 
     void saveProgramBinary(OpenCLKernelData_t &data_,
                            const std::string &cachedBinary);
+
+    bool imageFormatIsSupported(cl_image_format &f,
+                                cl_image_format *fs,
+                                const int formatCount);
+
+    void printImageFormat(cl_image_format &imageFormat);
   };
 
   extern const cl_channel_type clFormats[8];
