@@ -257,10 +257,10 @@ endif
 cfFlags =
 
 ifeq ($(debugEnabled), 1)
-  cflags  += $(debugFlags)
+  cfFlags += $(debugFlags)
   cfFlags += -DOCCA_DEBUG_ENABLED=1
 else
-  cflags  += $(releaseFlags)
+  cfFlags += $(releaseFlags)
   cfFlags += -DOCCA_DEBUG_ENABLED=0 -DNDEBUG=1 -DOCCA_SHOW_WARNINGS=0
 endif
 

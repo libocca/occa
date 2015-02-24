@@ -35,6 +35,8 @@ namespace occa {
       down  = n.down;
 
       value = n.value;
+
+      return *this;
     }
 
     template <class TM>
