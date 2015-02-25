@@ -646,7 +646,7 @@ namespace occa {
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\inc"         // NBN: /inc
+            << " /I"  << occaDir << "\\include"     // NBN: /include
             << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
             << ' '    << iCachedBinary
             << " /link " << occaLib << " /OUT:" << cachedBinary
@@ -1124,9 +1124,9 @@ namespace occa {
     }
 #else
 #  if OCCA_DEBUG_ENABLED
-    compilerFlags = " /Od /openmp";
+    compilerFlags = " /Od";
 #  else
-    compilerFlags = " /O2 /openmp";
+    compilerFlags = " /O2";
 #  endif
 
     std::string byteness;

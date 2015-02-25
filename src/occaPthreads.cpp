@@ -151,7 +151,7 @@ namespace occa {
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\inc"         // NBN: /inc
+            << " /I"  << occaDir << "\\include"     // NBN: /include
             << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
             << ' '    << iCachedBinary
             << " /link " << occaLib << " /OUT:" << cachedBinary
@@ -794,15 +794,9 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::appendAvailableDevices(std::vector<device> &dList){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-    const int coreCount = sysconf(_SC_NPROCESSORS_ONLN);
-#else
-#  warning "Core finding not implemented for this OS"
-    const int coreCount = 1;
-#endif
-
     device d;
-    d.setup("Pthreads", coreCount, occa::compact);
+
+    d.setup("Pthreads", cpu::getCoreCount(), occa::compact);
 
     dList.push_back(d);
   }

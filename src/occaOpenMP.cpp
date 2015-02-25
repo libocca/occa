@@ -268,7 +268,7 @@ namespace occa {
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\inc"         // NBN: /inc
+            << " /I"  << occaDir << "\\include"     // NBN: /include
             << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
             << ' '    << iCachedBinary
             << " /link " << occaLib << " /OUT:" << cachedBinary
