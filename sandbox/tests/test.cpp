@@ -76,6 +76,15 @@ occaKernel void fd2d(tFloat *u1,
 
           int tmpin = *u1;
 
+          switch(y1){
+          case 0 : printf("0\n"); break;
+          case 1 : {printf("1\n");}
+          default: printf("default\n"); break;
+          }
+
+          switch(y2)
+          case 0: printf("0\n");
+
           const int id = ty*w + tx;
 
           float *__u1 = &u1[bDimX];

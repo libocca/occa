@@ -130,7 +130,7 @@ namespace occa {
 
         if((nodeRoot->value == "case") ||
            (nodeRoot->value == "default")){
-          info = expType::case_;
+          info = expType::checkSInfo;
         }
         else if(nodeRoot->value == "return"){
           info = expType::return_;
@@ -164,9 +164,10 @@ namespace occa {
       if(sInfo->info & declareStatementType)
         splitDeclareStatement();
 
-      else if((sInfo->info & (ifStatementType  |
-                              forStatementType |
-                              whileStatementType)) &&
+      else if((sInfo->info & (ifStatementType    |
+                              forStatementType   |
+                              whileStatementType |
+                              switchStatementType)) &&
               (sInfo->info != elseStatementType)){
 
         splitFlowStatement();
@@ -177,6 +178,9 @@ namespace occa {
 
       else if(sInfo->info & structStatementType)
         splitStructStatement();
+
+      else if(sInfo->info & caseStatementType)
+        splitCaseStatement();
 
       else
         organize();
@@ -207,6 +211,9 @@ namespace occa {
 
       else if(sInfo->info & structStatementType)
         splitStructStatement();
+
+      else if(sInfo->info & caseStatementType)
+        splitCaseStatement(parsingFortran);
 
       else
         organize(parsingFortran);
@@ -371,6 +378,18 @@ namespace occa {
       }
 
       expNode::swap(*this, newExp);
+    }
+
+    void expNode::splitCaseStatement(const bool parsingC){
+      // Fortran doesn't have [:] leaf at the end
+      if(parsingC)
+        --leafCount;
+
+      // Remove [case] or [default]
+      for(int i = 1; i < leafCount; ++i)
+        leaves[i - 1] = leaves[i];
+
+      --leafCount;
     }
 
     //  ---[ Fortran ]--------
@@ -2831,19 +2850,6 @@ namespace occa {
         break;
       }
 
-      case (expType::case_):{
-        out << tab << "case ";
-
-        for(int i = 0; i < leafCount; ++i)
-          out << *(leaves[i]);
-
-        if((up == NULL) &&
-           (sInfo->info & simpleStatementType))
-          out << ';';
-
-        break;
-      }
-
       case (expType::return_):{
         out << tab;
 
@@ -2912,6 +2918,17 @@ namespace occa {
           else if(sInfo->info & gotoStatementType){
             out << ":";
           }
+        }
+        else if(sInfo->info & caseStatementType){
+          const size_t tabChars = tab.size();
+
+          if(2 < tabChars)
+            out << tab.substr(0, tabChars - 2);
+
+          if(leafCount)
+            out << "case " << *(leaves[0]) << ':';
+          else
+            out << "default:";
         }
       }
 
@@ -3283,12 +3300,21 @@ namespace occa {
     }
 
     int statement::checkSpecialStatementType(strNode *&nodeRoot, expNode *expPtr){
+      if(nodeRoot == NULL)
+        return blankStatementType;
+
+      const bool isCaseStatement = ((nodeRoot->value == "case") ||
+                                    (nodeRoot->value == "default"));
+
       while(nodeRoot){
         if(nodeRoot->info & endStatement)
           break;
 
         nodeRoot = nodeRoot->right;
       }
+
+      if(isCaseStatement)
+        return caseStatementType;
 
       return blankStatementType;
     }
@@ -3454,6 +3480,13 @@ namespace occa {
                                                        nodeRootEnd,
                                                        parsingC);
       }
+
+      else if(st & caseStatementType)
+        nodeRootEnd = newStatement->loadCaseFromNode(st,
+                                                     nodeRoot,
+                                                     nodeRootEnd,
+                                                     parsingC);
+
       else if(st & blockStatementType)
         nodeRootEnd = newStatement->loadBlockFromNode(st,
                                                       nodeRoot,
@@ -3724,9 +3757,24 @@ namespace occa {
       }
     }
 
-    // [-] Missing
     // [-] Missing Fortran
     strNode* statement::loadSwitchFromNode(const int st,
+                                           strNode *nodeRoot,
+                                           strNode *nodeRootEnd,
+                                           const bool parsingC){
+
+      if(parsingC){
+        return loadOneStatementFromNode(st,
+                                        nodeRoot, nodeRootEnd,
+                                        parsingC);
+      }
+      else {
+        return loadUntilFortranEnd(nodeRootEnd);
+      }
+    }
+
+    // [-] Missing Fortran
+    strNode* statement::loadCaseFromNode(const int st,
                                            strNode *nodeRoot,
                                            strNode *nodeRootEnd,
                                            const bool parsingC){
@@ -5419,6 +5467,10 @@ namespace occa {
         }
 
         return ret;
+      }
+
+      else if(info & caseStatementType){
+        return expRoot.toString(tab) + "\n";
       }
 
       else if(info & functionStatementType){

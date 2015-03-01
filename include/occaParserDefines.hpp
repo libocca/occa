@@ -249,20 +249,21 @@ namespace occa {
     static const int switchStatementType    = (1   << 10);
     static const int gotoStatementType      = (1   << 11);
 
-    static const int blankStatementType     = (1 << 12);
+    static const int caseStatementType      = (1 << 12);
+    static const int blankStatementType     = (1 << 13);
 
-    static const int functionStatementType  = (3 << 13);
-    static const int functionDefinitionType = (1 << 13);
-    static const int functionPrototypeType  = (1 << 14);
-    static const int blockStatementType     = (1 << 15);
-    static const int structStatementType    = (1 << 16);
+    static const int functionStatementType  = (3 << 14);
+    static const int functionDefinitionType = (1 << 14);
+    static const int functionPrototypeType  = (1 << 15);
+    static const int blockStatementType     = (1 << 16);
+    static const int structStatementType    = (1 << 17);
 
-    static const int occaStatementType      = (1 << 17);
+    static const int occaStatementType      = (1 << 18);
     static const int occaForType            = (occaStatementType |
                                                forStatementType);
 
-    static const int macroStatementType     = (1 << 18);
-    static const int skipStatementType      = (1 << 19);
+    static const int macroStatementType     = (1 << 19);
+    static const int skipStatementType      = (1 << 20);
 
     //   ---[ OCCA Fors ]------
     static const int occaOuterForShift = 0;

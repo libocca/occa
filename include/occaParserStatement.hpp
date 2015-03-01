@@ -40,17 +40,16 @@ namespace occa {
       static const int macro_          = (1 << 19);
       static const int goto_           = (1 << 20);
       static const int gotoLabel_      = (1 << 21);
-      static const int case_           = (1 << 22);
-      static const int return_         = (1 << 23);
-      static const int transfer_       = (1 << 24);
-      static const int occaFor         = (1 << 25);
-      static const int checkSInfo      = (1 << 26);
+      static const int return_         = (1 << 22);
+      static const int transfer_       = (1 << 23);
+      static const int occaFor         = (1 << 24);
+      static const int checkSInfo      = (1 << 25);
 
-      static const int varInfo         = (1 << 27);
-      static const int typeInfo        = (1 << 28);
+      static const int varInfo         = (1 << 26);
+      static const int typeInfo        = (1 << 27);
 
-      static const int printValue      = (1 << 29);
-      static const int printLeaves     = (1 << 30);
+      static const int printValue      = (1 << 28);
+      static const int printLeaves     = (1 << 29);
       static const int maxBit          = 30;
     };
 
@@ -137,6 +136,8 @@ namespace occa {
 
       void splitStructStatement(const int flags = (expFlag::addTypeToScope |
                                                    expFlag::addToParent));
+
+      void splitCaseStatement(const bool parsingC = true);
 
       //  ---[ Fortran ]------
       void splitFortranDeclareStatement();
@@ -458,11 +459,15 @@ namespace occa {
                               strNode *nodeRootEnd,
                               const bool parsingC = true);
 
-      // [-] Missing
       strNode* loadSwitchFromNode(const int st,
                                   strNode *nodeRoot,
                                   strNode *nodeRootEnd,
                                   const bool parsingC = true);
+
+      strNode* loadCaseFromNode(const int st,
+                                strNode *nodeRoot,
+                                strNode *nodeRootEnd,
+                                const bool parsingC = true);
 
       strNode* loadGotoFromNode(const int st,
                                 strNode *nodeRoot,
