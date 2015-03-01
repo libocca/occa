@@ -246,7 +246,7 @@ namespace occa {
   void device_t<Serial>::finish();
 
   template <>
-  void device_t<Serial>::waitFor(tag tag_);
+  void device_t<Serial>::waitFor(streamTag tag);
 
   template <>
   stream device_t<Serial>::createStream();
@@ -258,10 +258,10 @@ namespace occa {
   stream device_t<Serial>::wrapStream(void *handle_);
 
   template <>
-  tag device_t<Serial>::tagStream();
+  streamTag device_t<Serial>::tagStream();
 
   template <>
-  double device_t<Serial>::timeBetween(const tag &startTag, const tag &endTag);
+  double device_t<Serial>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
   kernel_v* device_t<Serial>::buildKernelFromSource(const std::string &filename,

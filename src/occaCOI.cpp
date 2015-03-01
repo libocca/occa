@@ -928,7 +928,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<COI>::waitFor(tag tag_){
+  void device_t<COI>::waitFor(streamTag tag){
     finish(); // [-] Not done
   }
 
@@ -969,8 +969,8 @@ namespace occa {
 
   // [-] Event-based timing in COI?
   template <>
-  tag device_t<COI>::tagStream(){
-    tag ret;
+  streamTag device_t<COI>::tagStream(){
+    streamTag ret;
 
     ret.tagTime = 0;
 
@@ -978,7 +978,7 @@ namespace occa {
   }
 
   template <>
-  double device_t<COI>::timeBetween(const tag &startTag, const tag &endTag){
+  double device_t<COI>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return (endTag.tagTime - startTag.tagTime);
   }
 

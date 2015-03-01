@@ -199,7 +199,7 @@ namespace occa {
   void device_t<OpenMP>::finish();
 
   template <>
-  void device_t<OpenMP>::waitFor(tag tag_);
+  void device_t<OpenMP>::waitFor(streamTag tag);
 
   template <>
   stream device_t<OpenMP>::createStream();
@@ -211,10 +211,10 @@ namespace occa {
   stream device_t<OpenMP>::wrapStream(void *handle_);
 
   template <>
-  tag device_t<OpenMP>::tagStream();
+  streamTag device_t<OpenMP>::tagStream();
 
   template <>
-  double device_t<OpenMP>::timeBetween(const tag &startTag, const tag &endTag);
+  double device_t<OpenMP>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromSource(const std::string &filename,

@@ -59,10 +59,10 @@ extern "C" {
 
   typedef void* occaStream;
 
-  typedef union occaTag_t {
+  typedef union occaStreamTag_t {
     double tagTime;
     void* otherStuff;
-  } occaTag;
+  } occaStreamTag;
 
   typedef void* occaDeviceInfo;
   typedef void* occaKernelInfo;
@@ -185,9 +185,9 @@ extern "C" {
   OCCA_LFUNC occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device);
   OCCA_LFUNC void       OCCA_RFUNC occaDeviceSetStream(occaDevice device, occaStream stream);
 
-  OCCA_LFUNC occaTag OCCA_RFUNC occaDeviceTagStream(occaDevice device);
+  OCCA_LFUNC occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device);
   OCCA_LFUNC double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
-                                                         occaTag startTag, occaTag endTag);
+                                                         occaStreamTag startTag, occaStreamTag endTag);
 
   OCCA_LFUNC void OCCA_RFUNC occaDeviceStreamFree(occaDevice device, occaStream stream);
 

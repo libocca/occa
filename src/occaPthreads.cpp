@@ -849,7 +849,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<Pthreads>::waitFor(tag tag_){
+  void device_t<Pthreads>::waitFor(streamTag tag){
     finish(); // [-] Not done
   }
 
@@ -867,8 +867,8 @@ namespace occa {
   }
 
   template <>
-  tag device_t<Pthreads>::tagStream(){
-    tag ret;
+  streamTag device_t<Pthreads>::tagStream(){
+    streamTag ret;
 
     ret.tagTime = currentTime();
 
@@ -876,7 +876,7 @@ namespace occa {
   }
 
   template <>
-  double device_t<Pthreads>::timeBetween(const tag &startTag, const tag &endTag){
+  double device_t<Pthreads>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return (endTag.tagTime - startTag.tagTime);
   }
 

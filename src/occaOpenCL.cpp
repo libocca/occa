@@ -1248,8 +1248,8 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenCL>::waitFor(tag tag_){
-    clWaitForEvents(1, &(tag_.clEvent));
+  void device_t<OpenCL>::waitFor(streamTag tag){
+    clWaitForEvents(1, &(tag.clEvent));
   }
 
   template <>
@@ -1278,10 +1278,10 @@ namespace occa {
   }
 
   template <>
-  tag device_t<OpenCL>::tagStream(){
+  streamTag device_t<OpenCL>::tagStream(){
     cl_command_queue &stream = *((cl_command_queue*) currentStream);
 
-    tag ret;
+    streamTag ret;
 
 #ifdef CL_VERSION_1_2
     clEnqueueMarkerWithWaitList(stream, 0, NULL, &(ret.clEvent));
@@ -1293,7 +1293,7 @@ namespace occa {
   }
 
   template <>
-  double device_t<OpenCL>::timeBetween(const tag &startTag, const tag &endTag){
+  double device_t<OpenCL>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     cl_command_queue &stream = *((cl_command_queue*) currentStream);
     cl_ulong start, end;
 

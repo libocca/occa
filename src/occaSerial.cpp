@@ -1201,7 +1201,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<Serial>::waitFor(tag tag_){}
+  void device_t<Serial>::waitFor(streamTag tag){}
 
   template <>
   stream device_t<Serial>::createStream(){
@@ -1217,8 +1217,8 @@ namespace occa {
   }
 
   template <>
-  tag device_t<Serial>::tagStream(){
-    tag ret;
+  streamTag device_t<Serial>::tagStream(){
+    streamTag ret;
 
     ret.tagTime = currentTime();
 
@@ -1226,7 +1226,7 @@ namespace occa {
   }
 
   template <>
-  double device_t<Serial>::timeBetween(const tag &startTag, const tag &endTag){
+  double device_t<Serial>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return (endTag.tagTime - startTag.tagTime);
   }
 

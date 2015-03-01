@@ -535,7 +535,7 @@ namespace occa {
   OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
 #endif
 
-  union tag {
+  union streamTag {
     double tagTime;
 #if OCCA_OPENCL_ENABLED
     cl_event clEvent;
@@ -1134,14 +1134,14 @@ namespace occa {
     virtual bool fakesUva() = 0;
     virtual bool hasUvaEnabled() = 0;
 
-    virtual void waitFor(tag tag_) = 0;
+    virtual void waitFor(streamTag tag) = 0;
 
     virtual stream createStream() = 0;
     virtual void freeStream(stream s) = 0;
     virtual stream wrapStream(void *handle_) = 0;
 
-    virtual tag tagStream() = 0;
-    virtual double timeBetween(const tag &startTag, const tag &endTag) = 0;
+    virtual streamTag tagStream() = 0;
+    virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) = 0;
 
     virtual kernel_v* buildKernelFromSource(const std::string &filename,
                                             const std::string &functionName_,
@@ -1241,14 +1241,14 @@ namespace occa {
       return uvaEnabled_;
     }
 
-    void waitFor(tag tag_);
+    void waitFor(streamTag tag);
 
     stream createStream();
     void freeStream(stream s);
     stream wrapStream(void *handle_);
 
-    tag tagStream();
-    double timeBetween(const tag &startTag, const tag &endTag);
+    streamTag tagStream();
+    double timeBetween(const streamTag &startTag, const streamTag &endTag);
 
     kernel_v* buildKernelFromSource(const std::string &filename,
                                     const std::string &functionName,
@@ -1365,15 +1365,15 @@ namespace occa {
     void flush();
     void finish();
 
-    void waitFor(tag tag_);
+    void waitFor(streamTag tag);
 
     stream createStream();
     stream getStream();
     void setStream(stream s);
     stream wrapStream(void *handle_);
 
-    tag tagStream();
-    double timeBetween(const tag &startTag, const tag &endTag);
+    streamTag tagStream();
+    double timeBetween(const streamTag &startTag, const streamTag &endTag);
 
     kernel buildKernel(const std::string &str,
                        const std::string &functionName,

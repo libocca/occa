@@ -1554,15 +1554,15 @@ contains
   end function occaDeviceGetStream_func
 
 
-  type(occaTag) function occaDeviceTagStream_func(device) result(tag)
-    type(occaDevice),     intent(inout)  :: device
+  type(occaStreamTag) function occaDeviceTagStream_func(device) result(tag)
+    type(occaDevice), intent(inout)  :: device
 
     interface
       subroutine occaDeviceTagStream_fc(tag, device)
         use occaFTypes_m
         implicit none
-        type(occaTag),     intent(out)   :: tag
-        type(occaDevice),  intent(inout) :: device
+        type(occaStreamTag), intent(out)   :: tag
+        type(occaDevice),    intent(inout) :: device
       end subroutine occaDeviceTagStream_fc
     end interface
 
@@ -1570,18 +1570,18 @@ contains
   end function occaDeviceTagStream_func
 
   real(8) function occaDeviceTimeBetweenTags_func(device, startTag, endTag) result(time)
-    type(occaDevice),     intent(inout) :: device
-    type(occaTag),        intent(in)    :: startTag
-    type(occaTag),        intent(in)    :: endTag
+    type(occaDevice),    intent(inout) :: device
+    type(occaStreamTag), intent(in)    :: startTag
+    type(occaStreamTag), intent(in)    :: endTag
 
     interface
       subroutine occaDeviceTimeBetweenTags_fc(time, device, startTag, endTag)
         use occaFTypes_m
         implicit none
-        real(8),          intent(out)   :: time
-        type(occaDevice), intent(inout) :: device
-        type(occaTag),    intent(in)    :: startTag
-        type(occaTag),    intent(in)    :: endTag
+        real(8),             intent(out)   :: time
+        type(occaDevice),    intent(inout) :: device
+        type(occaStreamTag), intent(in)    :: startTag
+        type(occaStreamTag), intent(in)    :: endTag
       end subroutine occaDeviceTimeBetweenTags_fc
     end interface
 

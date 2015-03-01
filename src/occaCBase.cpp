@@ -450,11 +450,11 @@ extern "C" {
     device_.setStream(stream_);
   }
 
-  occaTag OCCA_RFUNC occaDeviceTagStream(occaDevice device){
+  occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
-    occa::tag oldTag = device_.tagStream();
-    occaTag newTag;
+    occa::streamTag oldTag = device_.tagStream();
+    occaStreamTag newTag;
 
     ::memcpy(&newTag, &oldTag, sizeof(oldTag));
 
@@ -462,10 +462,10 @@ extern "C" {
   }
 
   double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
-                                              occaTag startTag, occaTag endTag){
+                                              occaStreamTag startTag, occaStreamTag endTag){
     occa::device &device_ = *((occa::device*) device);
 
-    occa::tag startTag_, endTag_;
+    occa::streamTag startTag_, endTag_;
 
     ::memcpy(&startTag_, &startTag, sizeof(startTag_));
     ::memcpy(&endTag_  , &endTag  , sizeof(endTag_));

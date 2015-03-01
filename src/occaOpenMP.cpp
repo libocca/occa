@@ -835,7 +835,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenMP>::waitFor(tag tag_){}
+  void device_t<OpenMP>::waitFor(streamTag tag){}
 
   template <>
   stream device_t<OpenMP>::createStream(){
@@ -851,8 +851,8 @@ namespace occa {
   }
 
   template <>
-  tag device_t<OpenMP>::tagStream(){
-    tag ret;
+  streamTag device_t<OpenMP>::tagStream(){
+    streamTag ret;
 
     ret.tagTime = currentTime();
 
@@ -860,7 +860,7 @@ namespace occa {
   }
 
   template <>
-  double device_t<OpenMP>::timeBetween(const tag &startTag, const tag &endTag){
+  double device_t<OpenMP>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return (endTag.tagTime - startTag.tagTime);
   }
 

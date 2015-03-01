@@ -253,7 +253,7 @@ namespace occa {
   void device_t<OpenCL>::finish();
 
   template <>
-  void device_t<OpenCL>::waitFor(tag tag_);
+  void device_t<OpenCL>::waitFor(streamTag tag);
 
   template <>
   stream device_t<OpenCL>::createStream();
@@ -265,10 +265,10 @@ namespace occa {
   stream device_t<OpenCL>::wrapStream(void *handle_);
 
   template <>
-  tag device_t<OpenCL>::tagStream();
+  streamTag device_t<OpenCL>::tagStream();
 
   template <>
-  double device_t<OpenCL>::timeBetween(const tag &startTag, const tag &endTag);
+  double device_t<OpenCL>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromSource(const std::string &filename,

@@ -36,10 +36,10 @@ module occaFTypes_m
      integer, pointer :: p
   end type occaStream
 
-  type :: occaTag
+  type :: occaStreamTag
      private
      integer, pointer :: p
-  end type occaTag
+  end type occaStreamTag
 
   type :: occaDeviceInfo
      private

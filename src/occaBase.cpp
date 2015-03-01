@@ -1136,8 +1136,8 @@ namespace occa {
     dHandle->finish();
   }
 
-  void device::waitFor(tag tag_){
-    dHandle->waitFor(tag_);
+  void device::waitFor(streamTag tag){
+    dHandle->waitFor(tag);
   }
 
   stream device::createStream(){
@@ -1157,11 +1157,11 @@ namespace occa {
     return dHandle->wrapStream(handle_);
   }
 
-  tag device::tagStream(){
+  streamTag device::tagStream(){
     return dHandle->tagStream();
   }
 
-  double device::timeBetween(const tag &startTag, const tag &endTag){
+  double device::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return dHandle->timeBetween(startTag, endTag);
   }
 

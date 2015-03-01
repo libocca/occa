@@ -238,7 +238,7 @@ namespace occa {
   void device_t<Pthreads>::finish();
 
   template <>
-  void device_t<Pthreads>::waitFor(tag tag_);
+  void device_t<Pthreads>::waitFor(streamTag tag);
 
   template <>
   stream device_t<Pthreads>::createStream();
@@ -250,10 +250,10 @@ namespace occa {
   stream device_t<Pthreads>::wrapStream(void *handle_);
 
   template <>
-  tag device_t<Pthreads>::tagStream();
+  streamTag device_t<Pthreads>::tagStream();
 
   template <>
-  double device_t<Pthreads>::timeBetween(const tag &startTag, const tag &endTag);
+  double device_t<Pthreads>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,

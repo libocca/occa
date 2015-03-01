@@ -522,11 +522,11 @@ extern "C" {
     return occaDeviceSetStream(*device, *stream);
   }
 
-  void OCCADEVICETAGSTREAM_FC(occaTag *tag, occaDevice *device){
+  void OCCADEVICETAGSTREAM_FC(occaStreamTag *tag, occaDevice *device){
     *tag = occaDeviceTagStream(*device);
   }
   void OCCADEVICETIMEBETWEENTAGS_FC(double *time, occaDevice *device,
-                                      occaTag *startTag, occaTag *endTag){
+                                    occaStreamTag *startTag, occaStreamTag *endTag){
     *time = occaDeviceTimeBetweenTags(*device, *startTag, *endTag);
   }
 
