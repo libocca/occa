@@ -107,7 +107,7 @@ links = -locca
 
 #---[ Shell Tools ]-------------------------------
 ifneq (,$(findstring bash,$(SHELL)))
-    SHELL := bash
+    SHELL := $(shell which bash)
     $(warning Setting SHELL environment variable to [bash], if [make] fails set SHELL manually with [export SHELL=/path/to/bash])
 endif
 
