@@ -112,6 +112,7 @@ ifneq (,$(findstring bash,$(SHELL)))
 endif
 
 $(warning SHELL = $(SHELL))
+$(warning which bash = $(shell which bash))
 
 libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
 includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
