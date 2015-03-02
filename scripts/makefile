@@ -107,8 +107,8 @@ links = -locca
 
 #---[ Shell Tools ]-------------------------------
 ifeq (,$(findstring bash,${SHELL}))
-  ifneq (,$(wildcard bash))
-    SHELL := bash
+  ifneq (,$(wildcard /bin/bash))
+    SHELL := /bin/bash
   else
     $(error bash not found, set SHELL environment variable to compile [export SHELL=/path/to/bash])
   endif
