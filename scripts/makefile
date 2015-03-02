@@ -107,8 +107,10 @@ links = -locca
 
 #---[ Shell Tools ]-------------------------------
 ifeq (,$(findstring bash,$(SHELL)))
-    SHELL := $(shell which bash)
-    $(warning Setting SHELL environment variable to [bash], if [make] fails set SHELL manually with [export SHELL=/path/to/bash])
+  SHELL := $(shell which bash)
+  ifeq (,$(SHELL))
+    $(error Could not find [bash], set SHELL manually with [export SHELL=/path/to/bash] or compile with [make SHELL=/path/to/bash])
+  endif
 endif
 
 libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
