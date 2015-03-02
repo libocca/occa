@@ -6,12 +6,30 @@
 |         Type "make" to compile libocca
 |
 |   Running Examples:  (After compiling libocca)
-|      Setup your LD_LIBRARY PATH (check (4) below)
+|      Setup your LD_LIBRARY PATH (check (3) below)
 |      cd examples/addVectors
 |      make
 |      ./main (C++), ./main_c (C), python main.py, etc
 |
-|   Further options can be seen in (1)
+|   Further options can be seen in (4-7)
+|
+|   OS Status:
+|      Linux and OSX are fully supported
+|      Windows is partially supported
+|        - Code is up-to-date for windows
+|        - Missing compilation project/scripts
+|        - Visual Studio project is out of date
+|
+|  OKL Status:
+|    Supports most of C (send bugs =))
+|    Preprocessor is missing variadic functions
+|
+|  OFL Status:
+|    Currently only supports a subset of Fortran:
+|       - integer, real, character, logical, double precision
+|       - function, subroutine
+|       - DO, WHILE, IF, IF ELSE, ELSE
+|
 +===========================================================
 
 
@@ -24,26 +42,19 @@
 |            OCCA_CACHE_DIR
 |            OCCA_INCLUDE_PATH
 |            OCCA_LIBRARY_PATH
+|            OCCA_CXX
+|            OCCA_CXXFLAGS
 |
 |    (4) Pthreads Options
-|            OCCA_PTHREADS_ENABLED
-|            OCCA_PTHREADS_COUNT, OCCA_PTHREADS_COMPILER,
-|            OCCA_PTHREADS_COMPILER_FLAGS
+|            OCCA_PTHREADS_COUNT
 |
-|    (5) OpenMP Options
-|            OCCA_OPENMP_ENABLED
-|            OCCA_OPENMP_COMPILER, OCCA_OPENMP_COMPILER_FLAGS
-|
-|    (6) OpenCL Options
-|            OCCA_OPENCL_ENABLED
+|    (5) OpenCL Options
 |            OCCA_OPENCL_COMPILER_FLAGS
 |
-|    (7) CUDA Options
-|            OCCA_CUDA_ENABLED
+|    (6) CUDA Options
 |            OCCA_CUDA_COMPILER, OCCA_CUDA_COMPILER_FLAGS
 |
-|    (8) COI Options
-|            OCCA_COI_ENABLED
+|    (7) COI Options
 |            OCCA_COI_COMPILER, OCCA_COI_COMPILER_FLAGS
 |
 |    (A) Running OCCA on Matlab
@@ -107,38 +118,36 @@
 |     |  Setting it:
 |     |    export OCCA_LIBRARY_PATH="/path/to/libOpenCL:/path/to/libcuda"
 |     +===========================================
+|
+|     +---[ OCCA_CXX ]----------------------------
+|     |  Info:
+|     |    C++ compiler used at runtime
+|     |
+|     |  Setting it:
+|     |    export OCCA_CXX=clang++
+|     +===========================================
+|
+|     +---[ OCCA_CXX_FLAGS ]----------------------
+|     |  Info:
+|     |    C++ compiler flags used at runtime
+|     |
+|     |  Setting it:
+|     |    export OCCA_CXXFLAGS=-g
+|     +===========================================
 +===========================================================
 
 
 +---[ (4) Pthreads Options ]--------------------------------
 |  Info:
-|    OCCA_PTHREAD_ENABLED        : Allow Pthread-mode to be used
-|    OCCA_PTHREAD_COUNT          : Threads spawned at each kernel
-|    OCCA_PTHREADS_COMPILER      : Pthreads Compiler
-|    OCCA_PTHREADS_COMPILER_FLAGS: Pthreads Compiler Flags
+|    OCCA_PTHREAD_COUNT : Threads spawned at each kernel
 |
 |  Setting it:
 |    export OCCA_PTHREAD_COUNT="8"
-|    export OCCA_PTHREADS_COMPILER="clang++"
-|    export OCCA_PTHREADS_COMPILER_FLAGS="-O3"
 +===========================================================
 
 
-+---[ (5) OpenMP Options ]----------------------------------
++---[ (5) OpenCL Options ]----------------------------------
 |  Info:
-|    OCCA_OPENMP_ENABLED       : Allow OpenMP-mode to be used
-|    OCCA_OPENMP_COMPILER      : OpenMP Compiler
-|    OCCA_OPENMP_COMPILER_FLAGS: OpenMP Compiler Flags
-|
-|  Setting it:
-|    export OCCA_OPENMP_COMPILER="clang++"
-|    export OCCA_OPENMP_COMPILER_FLAGS="-O3"
-+===========================================================
-
-
-+---[ (6) OpenCL Options ]----------------------------------
-|  Info:
-|    OCCA_OPENCL_ENABLED       : Allow OpenCL-mode to be used
 |    OCCA_OPENCL_COMPILER_FLAGS: OpenCL Compiler Flags
 |
 |  Setting it:
@@ -146,9 +155,8 @@
 +===========================================================
 
 
-+---[ (7) CUDA Options ]------------------------------------
++---[ (6) CUDA Options ]------------------------------------
 |  Info:
-|    OCCA_CUDA_ENABLED       : Allow CUDA-mode to be used
 |    OCCA_CUDA_COMPILER      : CUDA Compiler
 |    OCCA_CUDA_COMPILER_FLAGS: CUDA Compiler Flags
 |
@@ -158,9 +166,8 @@
 +===========================================================
 
 
-+---[ (8) COI Options ]-------------------------------------
++---[ (7) COI Options ]-------------------------------------
 |  Info:
-|    OCCA_COI_ENABLED       : Allow COI-mode to be used
 |    OCCA_COI_COMPILER      : COI Compiler
 |    OCCA_COI_COMPILER_FLAGS: COI Compiler Flags
 |
