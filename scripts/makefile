@@ -29,7 +29,7 @@ WINDOWS_OS = 4
 
 flags = -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS)
 
-ifdef SystemRoot
+ifeq (,$(filter-out undefined,SystemRoot,SYSTEMROOT))
 	OS = WINDOWS
 else ifeq ($(shell uname -s),Darwin)
 	OS = OSX
