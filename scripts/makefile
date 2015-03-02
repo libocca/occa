@@ -111,6 +111,8 @@ ifneq (,$(findstring bash,$(SHELL)))
     $(warning Setting SHELL environment variable to [bash], if [make] fails set SHELL manually with [export SHELL=/path/to/bash])
 endif
 
+$(warning SHELL = $(SHELL))
+
 libraryFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; libraryFlags $1)
 includeFlagsFor = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; headerFlags  $1)
 
