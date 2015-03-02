@@ -29,12 +29,14 @@ WINDOWS_OS = 4
 
 flags = -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS)
 
-ifeq (,$(filter-out undefined,SystemRoot,SYSTEMROOT))
-	OS = WINDOWS
-else ifeq ($(shell uname -s),Darwin)
+UNAME = $(shell uname)
+
+ifeq ($(UNAME),Linux)
+	OS = LINUX
+else ifeq ($(UNAME),Darwin)
 	OS = OSX
 else
-	OS = LINUX
+	OS = WINDOWS
 endif
 #=================================================
 
@@ -141,10 +143,10 @@ fModDirFlag  = $(call fCompilerModuleDirFlag)
 ifeq ($(OS),OSX)
   flags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
   links += -framework accelerate -framework CoreServices
-else ifeq ($(OS), LINUX)
+else ifeq ($(OS),LINUX)
   flags += -D OCCA_OS=LINUX_OS
   links += -lm -lrt -ldl
-else ifeq ($(OS), WINDOWS)
+else ifeq ($(OS),WINDOWS)
   flags += -D OCCA_OS=WINDOWS_OS
   links +=
 endif
