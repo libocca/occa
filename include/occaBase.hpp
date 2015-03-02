@@ -1569,6 +1569,7 @@ namespace occa {
 
   inline void kernelArg::setupForKernelCall(const bool isConst) const {
     if(mHandle                      &&
+       mHandle->isManaged           &&
        mHandle->dHandle->fakesUva() &&
        mHandle->dHandle->hasUvaEnabled()){
 
