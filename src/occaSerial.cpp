@@ -279,9 +279,6 @@ namespace occa {
       else if(compiler.find("aCC") != std::string::npos){
         return cpu::vendor::HP;
       }
-      else if(compiler.find("cl.exe") != std::string::npos){
-        return cpu::vendor::VisualStudio;
-      }
       else if((compiler.find("cc") != std::string::npos) ||
               (compiler.find("CC") != std::string::npos)){
 
@@ -327,9 +324,6 @@ namespace occa {
              << "\n"
              << "#elif defined(__PATHSCALE__) || defined(__PATHCC__)\n"
              << "  return " << cpu::vendor::b_Pathscale << ";\n"
-             << "\n"
-             << "#elif defined(_MSC_VER)\n"
-             << "  return " << cpu::vendor::b_VisualStudio << ";\n"
              << "#endif\n"
              << "\n"
              << "  // Missing\n"
@@ -379,7 +373,13 @@ namespace occa {
       return vendor_;
 
 #elif (OCCA_OS == WINDOWS_OS)
-      // Missing
+#  if defined(_MSC_VER)
+      return cpu::vendor::VisualStudio;
+#  endif
+
+      if(compiler.find("cl.exe") != std::string::npos){
+        return cpu::vendor::VisualStudio;
+      }
 #endif
 
       return cpu::vendor::notFound;
@@ -405,9 +405,9 @@ namespace occa {
       }
       else if(vendor_ & cpu::vendor::VisualStudio){
 #if OCCA_DEBUG_ENABLED
-        return "/TP /MDd";
+        return "/TP /LD /MDd";
 #else
-        return "/TP /MD";
+        return "/TP /LD /MD";
 #endif
       }
 
@@ -637,19 +637,19 @@ namespace occa {
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = occaDir + "\\lib\\libocca_d.lib";
+    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
 #  else
-    std::string occaLib = occaDir + "\\lib\\libocca.lib";
+    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
 #  endif
+    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " /I"  << occaDir << "\\include"     // NBN: /include
-            << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
             << ' '    << iCachedBinary
-            << " /link " << occaLib << " /OUT:" << cachedBinary
+            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
             << std::endl;
 #endif
 

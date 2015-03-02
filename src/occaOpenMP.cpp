@@ -259,19 +259,20 @@ namespace occa {
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = occaDir + "\\lib\\libocca_d.lib";
+    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
 #  else
-    std::string occaLib = occaDir + "\\lib\\libocca.lib";
+    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
 #  endif
+
+    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << " /I"  << occaDir << "\\include"     // NBN: /include
-            << " /ID:\\VS\\CUDA\\include"           // NBN: OpenCL
             << ' '    << iCachedBinary
-            << " /link " << occaLib << " /OUT:" << cachedBinary
+            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
             << std::endl;
 #endif
 
