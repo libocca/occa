@@ -427,7 +427,7 @@ function compilerSupportsOpenMP {
     # Test compilation
     $compiler $ompFlag $filename -o $binary > /dev/null 2>&1
 
-    if [ -z $binary ]; then
+    if [ ! -a $binary ]; then
         command echo 0
         return
     fi
