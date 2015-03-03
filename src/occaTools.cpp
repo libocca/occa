@@ -13,7 +13,7 @@ namespace occa {
       if(isInitialized)
         return;
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       HOME            = echo("HOME");
       PATH            = echo("PATH");
       LD_LIBRARY_PATH = echo("LD_LIBRARY_PATH");
@@ -34,7 +34,7 @@ namespace occa {
   //==================================
 
   mutex_t::mutex_t(){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     int error = pthread_mutex_init(&mutexHandle, NULL);
 
     OCCA_CHECK(error == 0,
@@ -45,7 +45,7 @@ namespace occa {
   }
 
   void mutex_t::free(){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     int error = pthread_mutex_destroy(&mutexHandle);
 
     OCCA_CHECK(error == 0,
@@ -56,7 +56,7 @@ namespace occa {
   }
 
   void mutex_t::lock(){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     pthread_mutex_lock(&mutexHandle);
 #else
     WaitForSingleObject(mutexHandle, INFINITE);
@@ -64,7 +64,7 @@ namespace occa {
   }
 
   void mutex_t::unlock(){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     pthread_mutex_unlock(&mutexHandle);
 #else
     ReleaseMutex(mutexHandle);
@@ -72,7 +72,7 @@ namespace occa {
   }
 
   double currentTime(){
-#if (OCCA_OS == LINUX_OS)
+#if (OCCA_OS & LINUX_OS)
 
     timespec ct;
     clock_gettime(CLOCK_MONOTONIC, &ct);
@@ -119,7 +119,7 @@ namespace occa {
     int lastSlash = 0;
     const int chars = filename.size();
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     for(int i = 0; i < chars; ++i)
       if(filename[i] == '/')
         lastSlash = i;
@@ -159,7 +159,7 @@ namespace occa {
     int lastSlash = 0;
     const int chars = fullFilename.size();
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     for(int i = 0; i < chars; ++i)
       if(fullFilename[i] == '/')
         lastSlash = i;
@@ -195,7 +195,7 @@ namespace occa {
   bool haveFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     int mkdirStatus = mkdir(lockDir.c_str(), 0755);
 #else
     int mkdirStatus = _mkdir(lockDir.c_str());
@@ -221,7 +221,7 @@ namespace occa {
   void releaseFile(const std::string &filename){
     std::string lockDir = getFileLock(filename);
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     rmdir(lockDir.c_str());
 #else
     _rmdir(lockDir.c_str());
@@ -385,7 +385,7 @@ namespace occa {
       occaCachePath = c_cachePath;
     else{
       std::stringstream ss;
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       char *c_home = getenv("HOME");
       ss << c_home << "/._occa";
 
@@ -410,7 +410,7 @@ namespace occa {
     OCCA_CHECK(0 < chars,
                "OCCA Cache Path is not set");
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     const char slashChar = '/';
 #else
     const char slashChar = '\\';
@@ -435,7 +435,7 @@ namespace occa {
     }
 
     if(!fileExists(occaCachePath)){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       mkdir(occaCachePath.c_str(), 0755);
 #else
       LPCSTR w_occaCachePath = occaCachePath.c_str();

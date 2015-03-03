@@ -43,7 +43,7 @@ namespace occa {
     std::string compilerFlag(const int vendor_,
                              const std::string &compiler){
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       const std::string safeCompiler = removeSlashes(compiler);
       const std::string cacheDir     = getCachePath();
 
@@ -183,7 +183,7 @@ namespace occa {
     std::string cachedBinary = getCachedName(filename,
                                              dHandle->getInfoSalt(info_));
 
-#if (OCCA_OS == WINDOWS_OS)
+#if (OCCA_OS & WINDOWS_OS)
     // Windows requires .dll extension
     cachedBinary = cachedBinary + ".dll";
 #endif
@@ -248,7 +248,7 @@ namespace occa {
     }
     //============================================
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
@@ -281,7 +281,7 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     const int compileError = system(sCommand.c_str());
 #else
     const int compileError = system(("\"" +  sCommand + "\"").c_str());
@@ -350,7 +350,7 @@ namespace occa {
   void kernel_t<OpenMP>::free(){
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     dlclose(data_.dlHandle);
 #else
     FreeLibrary((HMODULE) (data_.dlHandle));
@@ -696,7 +696,7 @@ namespace occa {
 
     dID.mode_ = OpenMP;
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
 #else
     const bool debugEnabled = (compilerFlags.find("/Od") != std::string::npos);
@@ -735,7 +735,7 @@ namespace occa {
         compiler = std::string(c_compiler);
       }
       else{
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
         compiler = "g++";
 #else
         compiler = "cl.exe";
@@ -745,7 +745,7 @@ namespace occa {
 
     char *c_compilerFlags = getenv("OCCA_CXXFLAGS");
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
@@ -772,11 +772,11 @@ namespace occa {
       OCCA_CHECK(false, "sizeof(void*) is not equal to 4 or 8");
 
     // NBN: adjusted path
-#  if      (1800 == _MSC_VER)
+#  if      (OCCA_VS_VERSION == 1800)
     char *visualStudioTools = getenv("VS120COMNTOOLS");   // MSVC++ 12.0 - Visual Studio 2013
-#  elif    (1700 == _MSC_VER)
+#  elif    (OCCA_VS_VERSION == 1700)
     char *visualStudioTools = getenv("VS110COMNTOOLS");   // MSVC++ 11.0 - Visual Studio 2012
-#  else // (1600 == _MSC_VER)
+#  else // (OCCA_VS_VERSION == 1600)
     char *visualStudioTools = getenv("VS100COMNTOOLS");   // MSVC++ 10.0 - Visual Studio 2010
 #  endif
 

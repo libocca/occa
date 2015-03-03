@@ -17,26 +17,22 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#ifdef _MSC_VER
-#  include "occaWinDefines.hpp" // NBN: WINDOWS_OS gets #defined here
-#endif
-
 #include "occaDefines.hpp"
 #include "occaTools.hpp"
 
 #include "occaParserTools.hpp"
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  include <unistd.h>
 #else
 #  include <io.h>
 #endif
 
 #if (OCCA_OPENCL_ENABLED)
-#  if   (OCCA_OS == LINUX_OS)
+#  if   (OCCA_OS & LINUX_OS)
 #    include <CL/cl.h>
 #    include <CL/cl_gl.h>
-#  elif (OCCA_OS == OSX_OS)
+#  elif (OCCA_OS & OSX_OS)
 #    include <OpenCL/OpenCl.h>
 #  else
 #    include "CL/opencl.h"

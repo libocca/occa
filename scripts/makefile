@@ -26,17 +26,29 @@ checkEnabled   = 1
 LINUX_OS   = 1
 OSX_OS     = 2
 WINDOWS_OS = 4
+WINUX_OS   = 5 # (LINUX_OS | WINDOWS_OS)
 
-flags = -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS)
+usingLinux   = 0
+usingOSX     = 0
+usingWinux   = 0
+usingWindows = 0
+
+flags = -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS) -D WINUX_OS=$(WINUX_OS)
 
 UNAME = $(shell uname)
 
 ifeq ($(UNAME),Linux)
-	OS = LINUX
+  usingLinux   = 1
 else ifeq ($(UNAME),Darwin)
-	OS = OSX
+  usingOSX     = 1
+else ifneq (,$(findstring MINGW,$(UNAME)))
+  usingLinux   = 1
+  usingWinux   = 1
+else ifneq (,$(findstring CYGWIN,$(UNAME)))
+  usingLinux   = 1
+  usingWinux   = 1
 else
-	OS = WINDOWS
+  usingWindows = 1
 endif
 #=================================================
 
@@ -140,16 +152,18 @@ fModDirFlag  = $(call fCompilerModuleDirFlag)
 
 
 #---[ Flags and Libraries ]-----------------------
-ifeq ($(OS),OSX)
-  flags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
-  links += -framework accelerate -framework CoreServices
-else ifeq ($(OS),LINUX)
+ifeq ($(usingLinux),1)
   flags += -D OCCA_OS=LINUX_OS
   links += -lm -lrt -ldl
-else ifeq ($(OS),WINDOWS)
+else ifeq ($(usingOSX),1)
+  flags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
+  links += -framework accelerate -framework CoreServices
+else ifeq ($(usingWindows),1)
   flags += -D OCCA_OS=WINDOWS_OS
   links +=
 endif
+
+flags += -D OCCA_USING_VS=$(usingWindows)
 #=================================================
 
 
@@ -173,22 +187,14 @@ ifdef OCCA_OPENCL_ENABLED
   openclEnabled = $(OCCA_OPENCL_ENABLED)
 
   ifeq ($(openclEnabled), 1)
-    ifeq ($(OS), OSX)
-      links += -framework OpenCL
-    else ifeq ($(OS), LINUX)
+    ifeq ($(usingLinux),1)
       links += -lOpenCL
+    else ifeq ($(usingOSX),1)
+      links += -framework OpenCL
     endif
   endif
 else
-  ifeq ($(OS), OSX)
-    # OpenCL includes are embedded in the framework
-    openclLibFlags = $(call libraryFlagsFor,OpenCL)
-
-    ifneq (,$(openclLibFlags))
-      openclEnabled = 1
-      links += $(openclLibFlags)
-    endif
-  else ifeq ($(OS), LINUX)
+  ifeq ($(usingLinux),1)
     openclLibFlags = $(call libraryFlagsFor,OpenCL)
     ifneq (,$(openclLibFlags))
 
@@ -199,6 +205,14 @@ else
         links += $(openclLibFlags)
       endif
     endif
+  else ifeq ($(usingOSX),1)
+    # OpenCL includes are embedded in the framework
+    openclLibFlags = $(call libraryFlagsFor,OpenCL)
+
+    ifneq (,$(openclLibFlags))
+      openclEnabled = 1
+      links += $(openclLibFlags)
+    endif
   endif
 endif
 
@@ -206,10 +220,10 @@ ifdef OCCA_CUDA_ENABLED
   cudaEnabled = $(OCCA_CUDA_ENABLED)
 
   ifeq ($(cudaEnabled), 1)
-    ifeq ($(OS), OSX)
-      links += -framework CUDA
-    else ifeq ($(OS), LINUX)
+    ifeq ($(usingLinux),1)
       links += -lcuda
+    else ifeq ($(usingOSX),1)
+      links += -framework CUDA
     endif
   endif
 else
@@ -218,10 +232,10 @@ else
 
   ifneq (,$(cudaIncFlags))
 
-    ifeq ($(OS), OSX)
-      cudaLibFlags = $(call libraryFlagsFor,CUDA)
-    else ifeq ($(OS), LINUX)
+    ifeq ($(usingLinux),1)
       cudaLibFlags = $(call libraryFlagsFor,cuda)
+    else ifeq ($(usingOSX),1)
+      cudaLibFlags = $(call libraryFlagsFor,CUDA)
     endif
 
     ifneq (,$(cudaLibFlags))
@@ -236,12 +250,12 @@ ifdef OCCA_COI_ENABLED
   coiEnabled = $(OCCA_COI_ENABLED)
 
   ifeq ($(coiEnabled), 1)
-    ifeq ($(OS), LINUX)
+    ifeq ($(usingLinux),1)
       links += -lcoi_host
     endif
   endif
 else
-  ifeq ($(OS), LINUX)
+  ifeq ($(usingLinux),1)
     coiLibFlags = $(call libraryFlagsFor,coi_host)
     ifneq (,$(coiLibFlags))
 

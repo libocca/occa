@@ -5,7 +5,7 @@ namespace occa {
   namespace cpu {
     std::string getFieldFrom(const std::string &command,
                              const std::string &field){
-#if (OCCA_OS == LINUX_OS)
+#if (OCCA_OS & LINUX_OS)
       std::stringstream ss;
 
       ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " '" << field << "')\" | bash";
@@ -40,7 +40,7 @@ namespace occa {
     }
 
     std::string getProcessorName(){
-#if   (OCCA_OS == LINUX_OS)
+#if   (OCCA_OS & LINUX_OS)
       return getFieldFrom("getCPUINFOField", "model name");
 #elif (OCCA_OS == OSX_OS)
       size_t bufferSize = 100;
@@ -62,7 +62,7 @@ namespace occa {
     }
 
     int getCoreCount(){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       return sysconf(_SC_NPROCESSORS_ONLN);
 #elif (OCCA_OS == WINDOWS_OS)
       SYSTEM_INFO sysinfo;
@@ -72,7 +72,7 @@ namespace occa {
     }
 
     int getProcessorFrequency(){
-#if   (OCCA_OS == LINUX_OS)
+#if   (OCCA_OS & LINUX_OS)
       std::stringstream ss;
       int freq;
 
@@ -100,7 +100,7 @@ namespace occa {
     }
 
     std::string getProcessorCacheSize(int level){
-#if   (OCCA_OS == LINUX_OS)
+#if   (OCCA_OS & LINUX_OS)
       std::stringstream field;
 
       field << 'L' << level;
@@ -247,7 +247,7 @@ namespace occa {
     }
 
     int compilerVendor(const std::string &compiler){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       if((compiler.find("gcc") != std::string::npos) ||
          (compiler.find("g++") != std::string::npos)){
 
@@ -373,7 +373,7 @@ namespace occa {
       return vendor_;
 
 #elif (OCCA_OS == WINDOWS_OS)
-#  if defined(_MSC_VER)
+#  if OCCA_USING_VS
       return cpu::vendor::VisualStudio;
 #  endif
 
@@ -431,7 +431,7 @@ namespace occa {
     void* malloc(uintptr_t bytes){
       void* ptr;
 
-#if   (OCCA_OS == LINUX_OS)
+#if   (OCCA_OS & LINUX_OS)
       ignoreResult( posix_memalign(&ptr, OCCA_MEM_ALIGN, bytes) );
 #elif (OCCA_OS == OSX_OS)
       ptr = ::malloc(bytes);
@@ -449,7 +449,7 @@ namespace occa {
     void* dlopen(const std::string &filename,
                  const bool releaseWithError){
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       void *dlHandle = ::dlopen(filename.c_str(), RTLD_NOW);
 
       if((dlHandle == NULL) && releaseWithError){
@@ -476,7 +476,7 @@ namespace occa {
                 const std::string &functionName,
                 const bool releaseWithError){
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
 
       char *dlError;
@@ -573,7 +573,7 @@ namespace occa {
     std::string cachedBinary = getCachedName(filename,
                                              dHandle->getInfoSalt(info_));
 
-#if (OCCA_OS == WINDOWS_OS)
+#if (OCCA_OS & WINDOWS_OS)
     // Windows requires .dll extension
     cachedBinary = cachedBinary + ".dll";
 #endif
@@ -626,7 +626,7 @@ namespace occa {
     if(dHandle->compilerEnvScript.size())
       command << dHandle->compilerEnvScript << " && ";
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
@@ -658,7 +658,7 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << "Compiling [" << functionName << "]\n" << sCommand << "\n";
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     const int compileError = system(sCommand.c_str());
 #else
     const int compileError = system(("\"" +  sCommand + "\"").c_str());
@@ -727,7 +727,7 @@ namespace occa {
   void kernel_t<Serial>::free(){
     OCCA_EXTRACT_DATA(Serial, Kernel);
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     dlclose(data_.dlHandle);
 #else
     FreeLibrary((HMODULE) (data_.dlHandle));
@@ -1063,7 +1063,7 @@ namespace occa {
 
     dID.mode_ = Serial;
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     const bool debugEnabled = (compilerFlags.find("-g") != std::string::npos);
 #else
     const bool debugEnabled = (compilerFlags.find("/Od") != std::string::npos);
@@ -1102,7 +1102,7 @@ namespace occa {
         compiler = std::string(c_compiler);
       }
       else{
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
         compiler = "g++";
 #else
         compiler = "cl.exe";
@@ -1112,7 +1112,7 @@ namespace occa {
 
     char *c_compilerFlags = getenv("OCCA_CXXFLAGS");
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     if(c_compilerFlags != NULL)
       compilerFlags = std::string(c_compilerFlags);
     else{
@@ -1265,7 +1265,7 @@ namespace occa {
 
     std::string cachedBinary = getCachedName(filename, getInfoSalt(info));
 
-#if (OCCA_OS == WINDOWS_OS)
+#if (OCCA_OS & WINDOWS_OS)
     // Windows requires .dll extension
     cachedBinary = cachedBinary + ".dll";
 #endif

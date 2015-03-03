@@ -12,7 +12,7 @@
 
 #include "occaKernelDefines.hpp"
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  include <dlfcn.h>
 #else
 #  include <windows.h>

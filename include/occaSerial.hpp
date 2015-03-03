@@ -1,8 +1,10 @@
 #ifndef OCCA_SERIAL_HEADER
 #define OCCA_SERIAL_HEADER
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-#  include <sys/sysctl.h>
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+#  if (OCCA_OS != WINUX_OS)
+#    include <sys/sysctl.h>
+#  endif
 #  include <sys/wait.h>
 #  include <dlfcn.h>
 #else

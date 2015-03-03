@@ -13,14 +13,35 @@
 #  define WINDOWS_OS 4
 #endif
 
+#ifndef WINUX_OS
+#  define WINUX_OS (LINUX_OS | WINDOWS_OS)
+#endif
+
+#ifndef OCCA_USING_VS
+#  ifdef(_MSC_VER)
+#    define OCCA_USING_VS 1
+#  else
+#    define OCCA_USING_VS 0
+#  endif
+#endif
+
 #ifndef OCCA_OS
 #  if defined(WIN32) || defined(WIN64)
-#    define OCCA_OS WINDOWS_OS
+#    if OCCA_USING_VS
+#      define OCCA_OS WINDOWS_OS
+#    else
+#      define OCCA_OS WINUX_OS
+#    endif
 #  elif __APPLE__
 #    define OCCA_OS OSX_OS
 #  else
 #    define OCCA_OS LINUX_OS
 #  endif
+#endif
+
+#if OCCA_USING_VS
+#  define OCCA_VS_VERSION _MSC_VER
+#  include "vs/defines.hpp"
 #endif
 
 #ifndef __PRETTY_FUNCTION__
@@ -85,7 +106,7 @@
 #  define OCCA_CHECK( _expr , _msg )
 #endif
 
-#if OCCA_OS == OSX_OS
+#if (OCCA_OS & OSX_OS)
 #  define OCCA_MEM_ALIGN 16
 #else
 #  define OCCA_MEM_ALIGN 64

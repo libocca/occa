@@ -250,7 +250,7 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     system(ptxCommand.c_str());
 #else
     system(("\"" +  ptxCommand + "\"").c_str());

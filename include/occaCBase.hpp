@@ -3,12 +3,14 @@
 
 #include "stdlib.h"
 
-#if OCCA_OPENCL_ENABLED
-#  if   OCCA_OS == LINUX_OS
+#if (OCCA_OPENCL_ENABLED)
+#  if   (OCCA_OS & LINUX_OS)
 #    include <CL/cl.h>
 #    include <CL/cl_gl.h>
-#  elif OCCA_OS == OSX_OS
+#  elif (OCCA_OS & OSX_OS)
 #    include <OpenCL/OpenCl.h>
+#  else
+#    include "CL/opencl.h"
 #  endif
 #endif
 
@@ -16,7 +18,7 @@
 #  include <cuda.h>
 #endif
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  define OCCA_RFUNC
 #  define OCCA_LFUNC
 #else

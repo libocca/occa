@@ -13,10 +13,10 @@
 #include "occaDefines.hpp"
 #include "occaParser.hpp"
 
-#if   (OCCA_OS == LINUX_OS)
+#if   (OCCA_OS & LINUX_OS)
 #  include <sys/time.h>
 #  include <unistd.h>
-#elif (OCCA_OS == OSX_OS)
+#elif (OCCA_OS & OSX_OS)
 #  ifdef __clang__
 #    include <CoreServices/CoreServices.h>
 #    include <mach/mach_time.h>

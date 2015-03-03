@@ -246,7 +246,7 @@ namespace occa {
   }
 
   void kernelInfo::addCompilerIncludePath(const std::string &path){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     flags += " -I \"" + path + "\"";
 #else
     flags += " /I \"" + path + "\"";
@@ -1379,7 +1379,7 @@ namespace occa {
     if(verboseCompilation_f)
       std::cout << sCommand << '\n';
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     const int compileError = system(sCommand.c_str());
 #else
     const int compileError = system(("\"" +  sCommand + "\"").c_str());

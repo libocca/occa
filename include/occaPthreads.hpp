@@ -1,9 +1,14 @@
 #ifndef OCCA_PTHREADS_HEADER
 #define OCCA_PTHREADS_HEADER
 
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-#  include <sys/sysctl.h>
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+#  if (OCCA_OS != WINUX_OS)
+#    include <sys/sysctl.h>
+#  endif
+#  include <pthread.h>
 #  include <dlfcn.h>
+#else
+#  include "vs/pthread.h"
 #endif
 
 #include <sys/types.h>
@@ -11,7 +16,6 @@
 #include <string.h>
 #include <fcntl.h>
 
-#include <pthread.h>
 #include <queue>
 
 #include "occaBase.hpp"
@@ -310,7 +314,7 @@ namespace occa {
     PthreadWorkerData_t &data = *((PthreadWorkerData_t*) args);
 
     // Thread affinity
-#if (OCCA_OS == LINUX_OS)
+#if (OCCA_OS == LINUX_OS) // Not WINUX
     cpu_set_t cpuHandle;
     CPU_ZERO(&cpuHandle);
     CPU_SET(data.pinnedCore, &cpuHandle);
@@ -322,7 +326,7 @@ namespace occa {
 
     while(true){
       // Fence local data (incase of out-of-socket updates)
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
       __asm__ __volatile__ ("lfence");
 #else
       __faststorefence(); // NBN: x64 only?
@@ -349,7 +353,7 @@ namespace occa {
         pthread_mutex_unlock(data.pendingJobsMutex);
 
         while((*data.pendingJobs) % data.count){
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
           __asm__ __volatile__ ("lfence");
 #else
           __faststorefence(); // NBN: x64 only?

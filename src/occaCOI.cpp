@@ -273,21 +273,32 @@ namespace occa {
     if(dHandle->compilerEnvScript.size())
       command << dHandle->compilerEnvScript << " && ";
 
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
     command << dHandle->compiler
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
-            << " -x c++ -w -fPIC -shared"
-#else
-            << " /TP /LD /D MC_CL_EXE"
-#endif
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
             << ' '    << iCachedBinary
-#if (OCCA_OS == LINUX_OS) || (OCCA_OS == OSX_OS)
             << " -o " << cachedBinary
-#else
-            << " /link /OUT:" << cachedBinary
-#endif
+            << " -I"  << occaDir << "/include"
+            << " -L"  << occaDir << "/lib -locca"
             << std::endl;
+#else
+#  if (OCCA_DEBUG_ENABLED)
+    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
+#  else
+    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
+#  endif
+    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
+
+    command << dHandle->compiler
+            << " /D MC_CL_EXE"
+            << ' '    << dHandle->compilerFlags
+            << ' '    << info.flags
+            << " /I"  << occaDir << "\\include"     // NBN: /include
+            << ' '    << iCachedBinary
+            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
+            << std::endl;
+#endif
 
     const std::string &sCommand = command.str();
 
