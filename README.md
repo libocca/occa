@@ -9,70 +9,39 @@ See white paper on OCCA 1.0 here: http://arxiv.org/abs/1403.0968
 
 See tutorial slides here: http://github.com/tcew/OCCA2Tutorial
 
+```
 +---[ (0) README ]------------------------------------------
-
 |   Installing:
-
 |      Using a terminal, go to your OCCA directory
-
 |         You should see: this README, include, src, lib
-
 |         Set OCCA_DIR (check (2) below)
-
 |         Type "make" to compile libocca
-
 |
-
 |   Running Examples:  (After compiling libocca)
-
 |      Setup your LD_LIBRARY PATH (check (3) below)
-
 |      cd examples/addVectors
-
 |      make
-
 |      ./main (C++), ./main_c (C), python main.py, etc
-
 |
-
 |   Further options can be seen in (4-7)
-
 |
-
 |   OS Status:
-
 |      Linux and OSX are fully supported
-
 |      Windows is partially supported
-
 |        - Code is up-to-date for windows
-
 |        - Missing compilation project/scripts
-
 |        - Visual Studio project is out of date
-
 |
-
 |  OKL Status:
-
 |    Supports most of C (send bugs =))
-
 |    Preprocessor is missing variadic functions
-
 |
-
 |  OFL Status:
-
 |    Currently only supports a subset of Fortran:
-
 |       - integer, real, character, logical, double precision
-
 |       - function, subroutine
-
 |       - DO, WHILE, IF, IF ELSE, ELSE
-
 |
-
 +===========================================================
 
 
@@ -240,3 +209,4 @@ See tutorial slides here: http://github.com/tcew/OCCA2Tutorial
 |    export FCFLAGS="-O3 -wAll"
 |
 +===========================================================
+```
