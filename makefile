@@ -6,8 +6,12 @@ endif
 include ${OCCA_DIR}/scripts/makefile
 
 #---[ WORKING PATHS ]-----------------------------
-compilerFlags  += $(picFlag)
-fCompilerFlags += $(picFlag)
+ifeq ($(usingWinux),0)
+  compilerFlags  += $(picFlag)
+  fCompilerFlags += $(picFlag)
+else
+  sharedFlag     += $(picFlag)
+endif
 
 # [-L$OCCA_DIR/lib -locca] are kept for applications
 #   using $OCCA_DIR/scripts/makefile

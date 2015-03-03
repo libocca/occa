@@ -153,7 +153,11 @@ fModDirFlag  = $(call fCompilerModuleDirFlag)
 
 #---[ Flags and Libraries ]-----------------------
 ifeq ($(usingLinux),1)
-  flags += -D OCCA_OS=LINUX_OS
+  ifeq ($(usingWinux),0)
+    flags += -D OCCA_OS=LINUX_OS
+  else
+    flags += -D OCCA_OS=WINUX_OS
+  endif
   links += -lm -lrt -ldl
 else ifeq ($(usingOSX),1)
   flags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
