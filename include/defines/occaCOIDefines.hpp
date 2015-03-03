@@ -141,7 +141,7 @@ template <class TM>
 TM occaAtomicAdd(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -158,7 +158,7 @@ template <class TM>
 TM occaAtomicSub(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -175,7 +175,7 @@ template <class TM>
 TM occaAtomicSwap(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -192,7 +192,7 @@ template <class TM>
 TM occaAtomicInc(TM *ptr){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -209,7 +209,7 @@ template <class TM>
 TM occaAtomicDec(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -252,7 +252,7 @@ template <class TM>
 TM occaAtomicAnd(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -269,7 +269,7 @@ template <class TM>
 TM occaAtomicOr(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical
@@ -286,7 +286,7 @@ template <class TM>
 TM occaAtomicXor(TM *ptr, const TM &update){
   TM old;
 
-#ifdef(OPENMP_3_1)
+#ifdef OPENMP_3_1
 #  pragma omp atomic capture
 #else
 #  pragma omp critical

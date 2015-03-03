@@ -18,7 +18,7 @@
 #endif
 
 #ifndef OCCA_USING_VS
-#  ifdef(_MSC_VER)
+#  ifdef _MSC_VER
 #    define OCCA_USING_VS 1
 #  else
 #    define OCCA_USING_VS 0
