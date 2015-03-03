@@ -1,18 +1,15 @@
-#---[ Paths ]-------------------------------------
-oPath = obj
-sPath = src
-iPath = inc
-#=================================================
+ifndef OCCA_DIR
+ERROR:
+	@echo "Error, environment variable [OCCA_DIR] is not set"
+endif
 
-paths = -I${OCCA_DIR}/include -L${OCCA_DIR}/lib -locca
-flags = -D__extern_always_inline=inline -g -Wno-unused-value
+include ${OCCA_DIR}/scripts/makefile
 
+#---[ COMPILATION ]-------------------------------
 main: main.cpp
-	g++ -o main $(flags) $(paths) -lm main.cpp
-
-$(oPath)/%.o:$(sPath)/%.cpp $(iPath)/%.hpp$(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.tpp)))
-	g++ -o $@ $(flags) -c $(paths) $<
+	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
 
 clean:
-	rm -f main
 	rm -f $(oPath)/*;
+	rm -f main
+#=================================================
