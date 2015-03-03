@@ -8,7 +8,6 @@
 #include <fstream>
 #include <vector>
 
-#include <xmmintrin.h>
 #include <string.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -16,6 +15,10 @@
 
 #include <sys/stat.h>
 #include <sys/types.h>
+
+#if OCCA_SSE
+#  include <xmmintrin.h>
+#endif
 
 #include "occaDefines.hpp"
 #include "occaTools.hpp"

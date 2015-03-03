@@ -25,7 +25,9 @@
 #    include <mach/mach.h>
 #  endif
 #else
-#  define NOMINMAX       // NBN: clear min/max macros
+#  ifndef NOMINMAX
+#    define NOMINMAX     // NBN: clear min/max macros
+#  endif
 #  include <windows.h>
 #  include <string>
 #  include <direct.h>    // NBN: rmdir _rmdir

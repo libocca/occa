@@ -41,12 +41,12 @@ ifeq ($(UNAME),Linux)
   usingLinux   = 1
 else ifeq ($(UNAME),Darwin)
   usingOSX     = 1
-else ifneq (,$(findstring MINGW,$(UNAME)))
-  usingLinux   = 1
-  usingWinux   = 1
 else ifneq (,$(findstring CYGWIN,$(UNAME)))
   usingLinux   = 1
   usingWinux   = 1
+else ifneq (,$(findstring MINGW,$(UNAME)))
+  usingWinux   = 1
+  usingWindows = 1
 else
   usingWindows = 1
 endif
@@ -153,21 +153,31 @@ fModDirFlag  = $(call fCompilerModuleDirFlag)
 
 #---[ Flags and Libraries ]-----------------------
 ifeq ($(usingLinux),1)
+
   ifeq ($(usingWinux),0)
     flags += -D OCCA_OS=LINUX_OS
   else
     flags += -D OCCA_OS=WINUX_OS
   endif
+
   links += -lm -lrt -ldl
+
 else ifeq ($(usingOSX),1)
+
   flags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
   links += -framework accelerate -framework CoreServices
-else ifeq ($(usingWindows),1)
-  flags += -D OCCA_OS=WINDOWS_OS
-  links +=
-endif
 
-flags += -D OCCA_USING_VS=$(usingWindows)
+else ifeq ($(usingWindows),1)
+
+  ifeq ($(usingWinux),0)
+    flags += -D OCCA_OS=WINDOWS_OS -D OCCA_USING_VS=1
+  else
+    flags += -D OCCA_OS=WINDOWS_OS -D OCCA_USING_VS=0
+  endif
+
+  links +=
+
+endif
 #=================================================
 
 
