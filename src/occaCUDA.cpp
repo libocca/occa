@@ -251,9 +251,9 @@ namespace occa {
       std::cout << "Compiling [" << functionName << "]\n" << ptxCommand << "\n";
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-    system(ptxCommand.c_str());
+    ignoreResult( system(ptxCommand.c_str()) );
 #else
-    system(("\"" +  ptxCommand + "\"").c_str());
+    ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
 #endif
 
     //---[ Compiling Command ]----------
