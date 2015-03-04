@@ -6,3 +6,6 @@ notes.org
 web/
 
 .DS_Store
+
+# for now
+benchmarks/

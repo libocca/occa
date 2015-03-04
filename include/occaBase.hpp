@@ -255,6 +255,9 @@ namespace occa {
     inline argInfoMap(){}
 
     inline argInfoMap(const std::string &infos){
+      if(infos.size() == 0)
+        return;
+
       parserNS::strNode *n;
 
       n = parserNS::splitContent(infos);
