@@ -39,6 +39,12 @@ namespace occa {
     void init();
 
     std::string getDeviceListInfo();
+
+    void peerToPeerMemcpy(CUdeviceptr *dest,
+                          CUdeviceptr *src,
+                          const uintptr_t bytes,
+                          const uintptr_t destOffset,
+                          const uintptr_t srcOffset);
   };
 
   extern const CUarray_format cudaFormats[8];

@@ -50,6 +50,13 @@ namespace occa {
       return ss.str();
     }
 
+    void peerToPeerMemcpy(CUdeviceptr *dest,
+                          CUdeviceptr *src,
+                          const uintptr_t bytes,
+                          const uintptr_t destOffset,
+                          const uintptr_t srcOffset){
+    }
+
     occa::device wrapDevice(CUdevice device, CUcontext context){
       occa::device dev;
       device_t<CUDA> &dHandle   = *(new device_t<CUDA>());

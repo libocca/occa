@@ -646,7 +646,39 @@ namespace occa {
                         const uintptr_t destOffset,
                         const uintptr_t srcOffset){
 
-    mHandle->copyFrom(src.mHandle, bytes, destOffset, srcOffset);
+    if(mHandle->dHandle == src.mHandle->dHandle){
+      mHandle->copyFrom(src.mHandle, bytes, destOffset, srcOffset);
+    }
+    else{
+      memory_v *srcHandle  = src.mHandle;
+      memory_v *destHandle = mHandle;
+
+      const occa::mode modeS = srcHandle->mode();
+      const occa::mode modeD = destHandle->mode();
+
+      if(modeS & onChipModes){
+        destHandle->copyFrom(srcHandle->getMemoryHandle(),
+                             bytes, destOffset);
+      }
+      else if(modeD & onChipModes){
+        srcHandle->copyTo(destHandle->getMemoryHandle(),
+                          bytes, srcOffset);
+      }
+      else{
+        OCCA_CHECK(((modeS == CUDA) && (modeD == CUDA)),
+                   "Peer-to-peer is not supported between ["
+                   << modeToStr(modeS) << "] and ["
+                   << modeToStr(modeD) << "]");
+
+#if OCCA_CUDA_ENABLED
+        cuda::peerToPeerMemcpy(destHandle->getMemoryHandle(),
+                               srcHandle->getMemoryHandle(),
+                               bytes,
+                               destOffset,
+                               srcOffset);
+#endif
+      }
+    }
   }
 
   void memory::copyTo(void *dest,
@@ -661,7 +693,39 @@ namespace occa {
                       const uintptr_t destOffset,
                       const uintptr_t srcOffset){
 
-    mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
+    if(mHandle->dHandle == dest.mHandle->dHandle){
+      mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
+    }
+    else{
+      memory_v *srcHandle  = mHandle;
+      memory_v *destHandle = dest.mHandle;
+
+      const occa::mode modeS = srcHandle->mode();
+      const occa::mode modeD = destHandle->mode();
+
+      if(modeS & onChipModes){
+        destHandle->copyFrom(srcHandle->getMemoryHandle(),
+                             bytes, srcOffset);
+      }
+      else if(modeD & onChipModes){
+        srcHandle->copyTo(destHandle->getMemoryHandle(),
+                          bytes, destOffset);
+      }
+      else{
+        OCCA_CHECK(((modeS == CUDA) && (modeD == CUDA)),
+                   "Peer-to-peer is not supported between ["
+                   << modeToStr(modeS) << "] and ["
+                   << modeToStr(modeD) << "]");
+
+#if OCCA_CUDA_ENABLED
+        cuda::peerToPeerMemcpy(destHandle->getMemoryHandle(),
+                               srcHandle->getMemoryHandle(),
+                               bytes,
+                               destOffset,
+                               srcOffset);
+#endif
+      }
+    }
   }
 
   void memory::asyncCopyFrom(const void *src,
@@ -676,7 +740,39 @@ namespace occa {
                              const uintptr_t destOffset,
                              const uintptr_t srcOffset){
 
-    mHandle->asyncCopyFrom(src.mHandle, bytes, destOffset, srcOffset);
+    if(mHandle->dHandle == src.mHandle->dHandle){
+      mHandle->asyncCopyFrom(src.mHandle, bytes, destOffset, srcOffset);
+    }
+    else{
+      memory_v *srcHandle  = src.mHandle;
+      memory_v *destHandle = mHandle;
+
+      const occa::mode modeS = srcHandle->mode();
+      const occa::mode modeD = destHandle->mode();
+
+      if(modeS & onChipModes){
+        destHandle->copyFrom(srcHandle->getMemoryHandle(),
+                             bytes, destOffset);
+      }
+      else if(modeD & onChipModes){
+        srcHandle->copyTo(destHandle->getMemoryHandle(),
+                          bytes, srcOffset);
+      }
+      else{
+        OCCA_CHECK(((modeS == CUDA) && (modeD == CUDA)),
+                   "Peer-to-peer is not supported between ["
+                   << modeToStr(modeS) << "] and ["
+                   << modeToStr(modeD) << "]");
+
+#if OCCA_CUDA_ENABLED
+        cuda::peerToPeerMemcpy(destHandle->getMemoryHandle(),
+                               srcHandle->getMemoryHandle(),
+                               bytes,
+                               destOffset,
+                               srcOffset);
+#endif
+      }
+    }
   }
 
   void memory::asyncCopyTo(void *dest,
@@ -691,7 +787,39 @@ namespace occa {
                            const uintptr_t destOffset,
                            const uintptr_t srcOffset){
 
-    mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
+    if(mHandle->dHandle == dest.mHandle->dHandle){
+      mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
+    }
+    else{
+      memory_v *srcHandle  = mHandle;
+      memory_v *destHandle = dest.mHandle;
+
+      const occa::mode modeS = srcHandle->mode();
+      const occa::mode modeD = destHandle->mode();
+
+      if(modeS & onChipModes){
+        destHandle->copyFrom(srcHandle->getMemoryHandle(),
+                             bytes, destOffset);
+      }
+      else if(modeD & onChipModes){
+        srcHandle->copyTo(destHandle->getMemoryHandle(),
+                          bytes, srcOffset);
+      }
+      else{
+        OCCA_CHECK(((modeS == CUDA) && (modeD == CUDA)),
+                   "Peer-to-peer is not supported between ["
+                   << modeToStr(modeS) << "] and ["
+                   << modeToStr(modeD) << "]");
+
+#if OCCA_CUDA_ENABLED
+        cuda::peerToPeerMemcpy(destHandle->getMemoryHandle(),
+                               srcHandle->getMemoryHandle(),
+                               bytes,
+                               destOffset,
+                               srcOffset);
+#endif
+      }
+    }
   }
 
   void memcpy(void *dest, void *src,
@@ -732,7 +860,11 @@ namespace occa {
       srcMem->copyTo(dest, bytes, srcOff);
     }
     else {
-      srcMem->copyTo(destMem, bytes, destOff, srcOff);
+      if(srcMem->dHandle == destMem->dHandle){
+        srcMem->copyTo(destMem, bytes, destOff, srcOff);
+      }
+      else{
+      }
     }
   }
 
