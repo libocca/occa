@@ -12,6 +12,10 @@
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
 
+#ifndef OCCA_MEM_ALIGN
+#  define OCCA_MEM_ALIGN 16
+#endif
+
 #define OCCA_USING_SERIAL   0
 #define OCCA_USING_OPENMP   1
 #define OCCA_USING_OPENCL   0

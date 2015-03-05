@@ -109,7 +109,7 @@
 #if (OCCA_OS & OSX_OS)
 #  define OCCA_MEM_ALIGN 16
 #else
-#  define OCCA_MEM_ALIGN 64
+#  define OCCA_MEM_ALIGN 16
 #endif
 
 //---[ Vectorization ]--------

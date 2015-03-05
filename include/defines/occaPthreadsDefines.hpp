@@ -7,8 +7,14 @@
 #include <cstdio>
 #include <cmath>
 
+#include "occaBase.hpp"
+
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
+
+#ifndef OCCA_MEM_ALIGN
+#  define OCCA_MEM_ALIGN 16
+#endif
 
 #define OCCA_USING_SERIAL   0
 #define OCCA_USING_OPENMP   0
