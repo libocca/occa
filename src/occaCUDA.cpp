@@ -50,11 +50,79 @@ namespace occa {
       return ss.str();
     }
 
-    void peerToPeerMemcpy(CUdeviceptr *dest,
-                          CUdeviceptr *src,
+    void peerToPeerMemcpy(memory_v *dest,
+                          memory_v *src,
                           const uintptr_t bytes,
                           const uintptr_t destOffset,
                           const uintptr_t srcOffset){
+
+      peerToPeerMemcpy(dest, src, bytes, destOffset, srcOffset, false);
+    }
+
+    void asyncPeerToPeerMemcpy(memory_v *dest,
+                               memory_v *src,
+                               const uintptr_t bytes,
+                               const uintptr_t destOffset,
+                               const uintptr_t srcOffset){
+
+      peerToPeerMemcpy(dest, src, bytes, destOffset, srcOffset, true);
+    }
+
+    void peerToPeerMemcpy(memory_v *dest,
+                          memory_v *src,
+                          const uintptr_t bytes,
+                          const uintptr_t destOffset,
+                          const uintptr_t srcOffset,
+                          const bool isAsync){
+
+#if __CUDA_API_VERSION >= 4000
+      CUDADeviceData_t &srcDevData  = *((CUDADeviceData_t*) src->dHandle->data);
+      CUDADeviceData_t &destDevData = *((CUDADeviceData_t*) dest->dHandle->data);
+
+      CUDAMemoryData_t &srcMemData  = *((CUDAMemoryData_t*) src->data);
+      CUDAMemoryData_t &destMemData = *((CUDAMemoryData_t*) dest->data);
+
+      int canAccessPeer;
+
+      OCCA_CUDA_CHECK("Checking Peer-to-Peer Connection",
+                      cuDeviceCanAccessPeer(&canAccessPeer,
+                                            destDevData.device,
+                                            srcDevData.device));
+
+      OCCA_CHECK((canAccessPeer == 1),
+                 "Checking Peer-to-Peer Connection");
+
+      if(!srcDevData.p2pEnabled){
+        OCCA_CUDA_CHECK("Enabling Peer-to-Peer",
+                        cuCtxEnablePeerAccess(srcDevData.context, 0) );
+      }
+
+      if(!destDevData.p2pEnabled){
+        OCCA_CUDA_CHECK("Enabling Peer-to-Peer",
+                        cuCtxEnablePeerAccess(destDevData.context, 0) );
+      }
+
+      if(!isAsync){
+        OCCA_CUDA_CHECK("Peer-to-Peer Memory Copy",
+                        cuMemcpyPeer((destMemData.handle + destOffset), destDevData.context,
+                                     (srcMemData.handle  + srcOffset) , srcDevData.context,
+                                     bytes));
+      }
+      else{
+        OCCA_CUDA_CHECK("Peer-to-Peer Memory Copy",
+                        cuMemcpyPeerAsync((destMemData.handle + destOffset), destDevData.context,
+                                          (srcMemData.handle  + srcOffset) , srcDevData.context,
+                                          bytes,
+                                          (CUstream) (src->dHandle->currentStream)));
+      }
+#else
+      OCCA_CHECK(false,
+                 "CUDA version ["
+                 << ((int) (__CUDA_API_VERSION / 1000))
+                 << '.'
+                 << ((int) ((__CUDA_API_VERSION % 100) / 10))
+                 << "] does not support Peer-to-Peer");
+#endif
     }
 
     occa::device wrapDevice(CUdevice device, CUcontext context){
@@ -68,8 +136,9 @@ namespace occa {
       //---[ Setup ]----------
       dHandle.data = &devData;
 
-      devData.device  = device;
-      devData.context = context;
+      devData.device     = device;
+      devData.context    = context;
+      devData.p2pEnabled = false;
       //======================
 
       dHandle.modelID_ = library::deviceModelID(dHandle.getIdentifier());
@@ -859,6 +928,8 @@ namespace occa {
     data = new CUDADeviceData_t;
 
     OCCA_EXTRACT_DATA(CUDA, Device);
+
+    data_.p2pEnabled = false;
 
     OCCA_CHECK(aim.has("deviceID"),
                "[CUDA] device not given [deviceID]");

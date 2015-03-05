@@ -777,7 +777,16 @@ namespace occa {
   //---[ Memory ]---------------------
   void memcpy(void *dest, void *src,
               const uintptr_t bytes,
+              const int flags,
+              const bool isAsync);
+
+  void memcpy(void *dest, void *src,
+              const uintptr_t bytes,
               const int flags = occa::autoDetect);
+
+  void asyncMemcpy(void *dest, void *src,
+                   const uintptr_t bytes,
+                   const int flags = occa::autoDetect);
 
   void memcpy(memory &dest,
               const void *src,
@@ -851,10 +860,18 @@ namespace occa {
     virtual void* getMemoryHandle() = 0;
     virtual void* getTextureHandle() = 0;
 
-
     friend void memcpy(void *dest, void *src,
                        const uintptr_t bytes,
                        const int flags);
+
+    friend void asyncMemcpy(void *dest, void *src,
+                            const uintptr_t bytes,
+                            const int flags);
+
+    friend void memcpy(void *dest, void *src,
+                       const uintptr_t bytes,
+                       const int flags,
+                       const bool isAsync);
 
     virtual void copyFrom(const void *src,
                           const uintptr_t bytes = 0,

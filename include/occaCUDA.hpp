@@ -23,6 +23,7 @@ namespace occa {
   struct CUDADeviceData_t {
     CUdevice  device;
     CUcontext context;
+    bool p2pEnabled;
   };
 
   struct CUDATextureData_t {
@@ -40,11 +41,24 @@ namespace occa {
 
     std::string getDeviceListInfo();
 
-    void peerToPeerMemcpy(CUdeviceptr *dest,
-                          CUdeviceptr *src,
+    void peerToPeerMemcpy(memory_v *dest,
+                          memory_v *src,
                           const uintptr_t bytes,
                           const uintptr_t destOffset,
                           const uintptr_t srcOffset);
+
+    void asyncPeerToPeerMemcpy(memory_v *dest,
+                               memory_v *src,
+                               const uintptr_t bytes,
+                               const uintptr_t destOffset,
+                               const uintptr_t srcOffset);
+
+    void peerToPeerMemcpy(memory_v *dest,
+                          memory_v *src,
+                          const uintptr_t bytes,
+                          const uintptr_t destOffset,
+                          const uintptr_t srcOffset,
+                          const bool isAsync);
   };
 
   extern const CUarray_format cudaFormats[8];
