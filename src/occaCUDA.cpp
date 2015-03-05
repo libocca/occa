@@ -50,77 +50,103 @@ namespace occa {
       return ss.str();
     }
 
-    void peerToPeerMemcpy(memory_v *dest,
-                          memory_v *src,
-                          const uintptr_t bytes,
-                          const uintptr_t destOffset,
-                          const uintptr_t srcOffset){
-
-      peerToPeerMemcpy(dest, src, bytes, destOffset, srcOffset, false);
+    void enablePeerToPeer(CUcontext context){
+#if CUDA_VERSION >= 4000
+      OCCA_CUDA_CHECK("Enabling Peer-to-Peer",
+                      cuCtxEnablePeerAccess(context, 0) );
+#else
+      OCCA_CHECK(false,
+                 "CUDA version ["
+                 << ((int) (CUDA_VERSION / 1000))
+                 << '.'
+                 << ((int) ((CUDA_VERSION % 100) / 10))
+                 << "] does not support Peer-to-Peer");
+#endif
     }
 
-    void asyncPeerToPeerMemcpy(memory_v *dest,
-                               memory_v *src,
+    void checkPeerToPeer(CUdevice destDevice,
+                         CUdevice srcDevice){
+#if CUDA_VERSION >= 4000
+        int canAccessPeer;
+
+        OCCA_CUDA_CHECK("Checking Peer-to-Peer Connection",
+                        cuDeviceCanAccessPeer(&canAccessPeer,
+                                              destDevice,
+                                              srcDevice));
+
+        OCCA_CHECK((canAccessPeer == 1),
+                   "Checking Peer-to-Peer Connection");
+#else
+      OCCA_CHECK(false,
+                 "CUDA version ["
+                 << ((int) (CUDA_VERSION / 1000))
+                 << '.'
+                 << ((int) ((CUDA_VERSION % 100) / 10))
+                 << "] does not support Peer-to-Peer");
+#endif
+    }
+
+    void peerToPeerMemcpy(CUdevice destDevice,
+                          CUcontext destContext,
+                          CUdeviceptr destMemory,
+                          CUdevice srcDevice,
+                          CUcontext srcContext,
+                          CUdeviceptr srcMemory,
+                          const uintptr_t bytes,
+                          CUstream usingStream){
+
+      peerToPeerMemcpy(destDevice, destContext, destMemory,
+                       srcDevice , srcContext , srcMemory ,
+                       bytes,
+                       usingStream, false);
+    }
+
+
+    void asyncPeerToPeerMemcpy(CUdevice destDevice,
+                               CUcontext destContext,
+                               CUdeviceptr destMemory,
+                               CUdevice srcDevice,
+                               CUcontext srcContext,
+                               CUdeviceptr srcMemory,
                                const uintptr_t bytes,
-                               const uintptr_t destOffset,
-                               const uintptr_t srcOffset){
+                               CUstream usingStream){
 
-      peerToPeerMemcpy(dest, src, bytes, destOffset, srcOffset, true);
+      peerToPeerMemcpy(destDevice, destContext, destMemory,
+                       srcDevice , srcContext , srcMemory ,
+                       bytes,
+                       usingStream, true);
     }
 
-    void peerToPeerMemcpy(memory_v *dest,
-                          memory_v *src,
+    void peerToPeerMemcpy(CUdevice destDevice,
+                          CUcontext destContext,
+                          CUdeviceptr destMemory,
+                          CUdevice srcDevice,
+                          CUcontext srcContext,
+                          CUdeviceptr srcMemory,
                           const uintptr_t bytes,
-                          const uintptr_t destOffset,
-                          const uintptr_t srcOffset,
+                          CUstream usingStream,
                           const bool isAsync){
 
-#if __CUDA_API_VERSION >= 4000
-      CUDADeviceData_t &srcDevData  = *((CUDADeviceData_t*) src->dHandle->data);
-      CUDADeviceData_t &destDevData = *((CUDADeviceData_t*) dest->dHandle->data);
-
-      CUDAMemoryData_t &srcMemData  = *((CUDAMemoryData_t*) src->data);
-      CUDAMemoryData_t &destMemData = *((CUDAMemoryData_t*) dest->data);
-
-      int canAccessPeer;
-
-      OCCA_CUDA_CHECK("Checking Peer-to-Peer Connection",
-                      cuDeviceCanAccessPeer(&canAccessPeer,
-                                            destDevData.device,
-                                            srcDevData.device));
-
-      OCCA_CHECK((canAccessPeer == 1),
-                 "Checking Peer-to-Peer Connection");
-
-      if(!srcDevData.p2pEnabled){
-        OCCA_CUDA_CHECK("Enabling Peer-to-Peer",
-                        cuCtxEnablePeerAccess(srcDevData.context, 0) );
-      }
-
-      if(!destDevData.p2pEnabled){
-        OCCA_CUDA_CHECK("Enabling Peer-to-Peer",
-                        cuCtxEnablePeerAccess(destDevData.context, 0) );
-      }
-
+#if CUDA_VERSION >= 4000
       if(!isAsync){
         OCCA_CUDA_CHECK("Peer-to-Peer Memory Copy",
-                        cuMemcpyPeer((destMemData.handle + destOffset), destDevData.context,
-                                     (srcMemData.handle  + srcOffset) , srcDevData.context,
+                        cuMemcpyPeer(destMemory, destContext,
+                                     srcMemory , srcContext ,
                                      bytes));
       }
       else{
         OCCA_CUDA_CHECK("Peer-to-Peer Memory Copy",
-                        cuMemcpyPeerAsync((destMemData.handle + destOffset), destDevData.context,
-                                          (srcMemData.handle  + srcOffset) , srcDevData.context,
+                        cuMemcpyPeerAsync(destMemory, destContext,
+                                          srcMemory , srcContext ,
                                           bytes,
-                                          (CUstream) (src->dHandle->currentStream)));
+                                          usingStream));
       }
 #else
       OCCA_CHECK(false,
                  "CUDA version ["
-                 << ((int) (__CUDA_API_VERSION / 1000))
+                 << ((int) (CUDA_VERSION / 1000))
                  << '.'
-                 << ((int) ((__CUDA_API_VERSION % 100) / 10))
+                 << ((int) ((CUDA_VERSION % 100) / 10))
                  << "] does not support Peer-to-Peer");
 #endif
     }

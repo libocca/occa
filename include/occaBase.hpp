@@ -860,19 +860,6 @@ namespace occa {
     virtual void* getMemoryHandle() = 0;
     virtual void* getTextureHandle() = 0;
 
-    friend void memcpy(void *dest, void *src,
-                       const uintptr_t bytes,
-                       const int flags);
-
-    friend void asyncMemcpy(void *dest, void *src,
-                            const uintptr_t bytes,
-                            const int flags);
-
-    friend void memcpy(void *dest, void *src,
-                       const uintptr_t bytes,
-                       const int flags,
-                       const bool isAsync);
-
     virtual void copyFrom(const void *src,
                           const uintptr_t bytes = 0,
                           const uintptr_t offset = 0) = 0;
@@ -912,6 +899,21 @@ namespace occa {
     virtual void mappedFree() = 0;
 
     virtual void free() = 0;
+
+
+    // Let [memcpy] use private info
+    friend void memcpy(void *dest, void *src,
+                       const uintptr_t bytes,
+                       const int flags);
+
+    friend void asyncMemcpy(void *dest, void *src,
+                            const uintptr_t bytes,
+                            const int flags);
+
+    friend void memcpy(void *dest, void *src,
+                       const uintptr_t bytes,
+                       const int flags,
+                       const bool isAsync);
   };
 
   template <occa::mode mode_>

@@ -671,11 +671,34 @@ namespace occa {
                    << modeToStr(modeD) << "]");
 
 #if OCCA_CUDA_ENABLED
-        cuda::peerToPeerMemcpy(destHandle,
-                               srcHandle,
+        CUDADeviceData_t &srcDevData  =
+          *((CUDADeviceData_t*) srcHandle->dHandle->data);
+
+        CUDADeviceData_t &destDevData =
+          *((CUDADeviceData_t*) destHandle->dHandle->data);
+
+        CUdeviceptr srcMem  = *(((CUdeviceptr*) srcHandle->handle)  + srcOffset);
+        CUdeviceptr destMem = *(((CUdeviceptr*) destHandle->handle) + destOffset);
+
+        if(!srcDevData.p2pEnabled)
+          cuda::enablePeerToPeer(srcDevData.context);
+
+        if(!destDevData.p2pEnabled)
+          cuda::enablePeerToPeer(destDevData.context);
+
+        cuda::checkPeerToPeer(destDevData.device,
+                              srcDevData.device);
+
+        cuda::peerToPeerMemcpy(destDevData.device,
+                               destDevData.context,
+                               destMem,
+
+                               srcDevData.device,
+                               srcDevData.context,
+                               srcMem,
+
                                bytes,
-                               destOffset,
-                               srcOffset);
+                               (CUstream) srcHandle->dHandle->currentStream);
 #endif
       }
     }
@@ -718,11 +741,25 @@ namespace occa {
                    << modeToStr(modeD) << "]");
 
 #if OCCA_CUDA_ENABLED
-        cuda::peerToPeerMemcpy(destHandle,
-                               srcHandle,
+        CUDADeviceData_t &srcDevData  =
+          *((CUDADeviceData_t*) srcHandle->dHandle->data);
+
+        CUDADeviceData_t &destDevData =
+          *((CUDADeviceData_t*) destHandle->dHandle->data);
+
+        CUdeviceptr srcMem  = *(((CUdeviceptr*) srcHandle->handle)  + srcOffset);
+        CUdeviceptr destMem = *(((CUdeviceptr*) destHandle->handle) + destOffset);
+
+        cuda::peerToPeerMemcpy(destDevData.device,
+                               destDevData.context,
+                               destMem,
+
+                               srcDevData.device,
+                               srcDevData.context,
+                               srcMem,
+
                                bytes,
-                               destOffset,
-                               srcOffset);
+                               (CUstream) srcHandle->dHandle->currentStream);
 #endif
       }
     }
@@ -765,11 +802,25 @@ namespace occa {
                    << modeToStr(modeD) << "]");
 
 #if OCCA_CUDA_ENABLED
-        cuda::asyncPeerToPeerMemcpy(destHandle,
-                                    srcHandle,
+        CUDADeviceData_t &srcDevData  =
+          *((CUDADeviceData_t*) srcHandle->dHandle->data);
+
+        CUDADeviceData_t &destDevData =
+          *((CUDADeviceData_t*) destHandle->dHandle->data);
+
+        CUdeviceptr srcMem  = *(((CUdeviceptr*) srcHandle->handle)  + srcOffset);
+        CUdeviceptr destMem = *(((CUdeviceptr*) destHandle->handle) + destOffset);
+
+        cuda::asyncPeerToPeerMemcpy(destDevData.device,
+                                    destDevData.context,
+                                    destMem,
+
+                                    srcDevData.device,
+                                    srcDevData.context,
+                                    srcMem,
+
                                     bytes,
-                                    destOffset,
-                                    srcOffset);
+                                    (CUstream) srcHandle->dHandle->currentStream);
 #endif
       }
     }
@@ -812,11 +863,25 @@ namespace occa {
                    << modeToStr(modeD) << "]");
 
 #if OCCA_CUDA_ENABLED
-        cuda::asyncPeerToPeerMemcpy(destHandle,
-                                    srcHandle,
+        CUDADeviceData_t &srcDevData  =
+          *((CUDADeviceData_t*) srcHandle->dHandle->data);
+
+        CUDADeviceData_t &destDevData =
+          *((CUDADeviceData_t*) destHandle->dHandle->data);
+
+        CUdeviceptr srcMem  = *(((CUdeviceptr*) srcHandle->handle)  + srcOffset);
+        CUdeviceptr destMem = *(((CUdeviceptr*) destHandle->handle) + destOffset);
+
+        cuda::asyncPeerToPeerMemcpy(destDevData.device,
+                                    destDevData.context,
+                                    destMem,
+
+                                    srcDevData.device,
+                                    srcDevData.context,
+                                    srcMem,
+
                                     bytes,
-                                    destOffset,
-                                    srcOffset);
+                                    (CUstream) srcHandle->dHandle->currentStream);
 #endif
       }
     }

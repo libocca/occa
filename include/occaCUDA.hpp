@@ -41,23 +41,38 @@ namespace occa {
 
     std::string getDeviceListInfo();
 
-    void peerToPeerMemcpy(memory_v *dest,
-                          memory_v *src,
-                          const uintptr_t bytes,
-                          const uintptr_t destOffset,
-                          const uintptr_t srcOffset);
+    void enablePeerToPeer(CUcontext context);
 
-    void asyncPeerToPeerMemcpy(memory_v *dest,
-                               memory_v *src,
+    void checkPeerToPeer(CUdevice destDevice,
+                         CUdevice srcDevice);
+
+    void peerToPeerMemcpy(CUdevice destDevice,
+                          CUcontext destContext,
+                          CUdeviceptr destMemory,
+                          CUdevice srcDevice,
+                          CUcontext srcContext,
+                          CUdeviceptr srcMemory,
+                          const uintptr_t bytes,
+                          CUstream usingStream);
+
+
+    void asyncPeerToPeerMemcpy(CUdevice destDevice,
+                               CUcontext destContext,
+                               CUdeviceptr destMemory,
+                               CUdevice srcDevice,
+                               CUcontext srcContext,
+                               CUdeviceptr srcMemory,
                                const uintptr_t bytes,
-                               const uintptr_t destOffset,
-                               const uintptr_t srcOffset);
+                               CUstream usingStream);
 
-    void peerToPeerMemcpy(memory_v *dest,
-                          memory_v *src,
+    void peerToPeerMemcpy(CUdevice destDevice,
+                          CUcontext destContext,
+                          CUdeviceptr destMemory,
+                          CUdevice srcDevice,
+                          CUcontext srcContext,
+                          CUdeviceptr srcMemory,
                           const uintptr_t bytes,
-                          const uintptr_t destOffset,
-                          const uintptr_t srcOffset,
+                          CUstream usingStream,
                           const bool isAsync);
   };
 
