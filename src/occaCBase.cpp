@@ -277,7 +277,7 @@ extern "C" {
   }
 
   occaKernel OCCA_RFUNC occaBuildKernel(occaDevice device,
-                                        const char *filename,
+                                        const char *str,
                                         const char *functionName,
                                         occaKernelInfo info){
     occa::device &device_  = *((occa::device*) device);
@@ -287,12 +287,12 @@ extern "C" {
     if(info != occaNoKernelInfo){
       occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
 
-      *kernel = device_.buildKernel(filename,
+      *kernel = device_.buildKernel(str,
                                     functionName,
                                     info_);
     }
     else{
-      *kernel = device_.buildKernel(filename,
+      *kernel = device_.buildKernel(str,
                                     functionName);
     }
 
@@ -316,6 +316,29 @@ extern "C" {
     }
     else{
       *kernel = device_.buildKernelFromSource(filename,
+                                              functionName);
+    }
+
+    return (occaKernel) kernel;
+  }
+
+  occaKernel OCCA_RFUNC occaBuildKernelFromString(occaDevice device,
+                                                  const char *str,
+                                                  const char *functionName,
+                                                  occaKernelInfo info){
+    occa::device &device_  = *((occa::device*) device);
+
+    occa::kernel *kernel = new occa::kernel();
+
+    if(info != occaNoKernelInfo){
+      occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
+
+      *kernel = device_.buildKernelFromString(str,
+                                              functionName,
+                                              info_);
+    }
+    else{
+      *kernel = device_.buildKernelFromString(str,
                                               functionName);
     }
 

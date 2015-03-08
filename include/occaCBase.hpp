@@ -138,12 +138,17 @@ extern "C" {
   OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(occaDevice device,
-                                                   const char *filename,
+                                                   const char *str,
                                                    const char *functionName,
                                                    occaKernelInfo info);
 
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromSource(occaDevice device,
                                                              const char *filename,
+                                                             const char *functionName,
+                                                             occaKernelInfo info);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(occaDevice device,
+                                                             const char *str,
                                                              const char *functionName,
                                                              occaKernelInfo info);
 
