@@ -4,12 +4,14 @@ module occa
   implicit none
 
   public ::                        &
-    ! occaType_t,                 &
+    ! occaType_t,                    &
     occaTypeMem_t,                 &
     occaSetVerboseCompilation,     &
+    occaPrintAvailableDevices,     &
     occaDeviceSetCompiler,         &
     occaDeviceSetCompilerFlags,    &
     occaGetDevice,                 &
+    occaDeviceBytesAllocated,      &
     occaBuildKernel,               &
     occaBuildKernelFromSource,     &
     occaBuildKernelFromString,     &
@@ -1097,6 +1099,22 @@ contains
 
     call occaGetDeviceFromArgs_fc(device, mode, arg1, arg2)
   end function occaGetDeviceFromArgs_func
+
+  integer(8) function occaDeviceBytesAllocated(device) result (bytes)
+    type(occaDevice), intent(inout) :: device
+
+    interface
+       subroutine occaDeviceBytesAllocated_fc(device, bytes)
+         use occaFTypes_m
+
+         implicit none
+         type(occaDevice), intent(inout) :: device
+         integer(8),       intent(out)   :: bytes
+       end subroutine occaDeviceBytesAllocated_fc
+    end interface
+
+    call occaDeviceBytesAllocated_fc(device, bytes)
+  end function occaDeviceBytesAllocated
 
   type(occaKernel) function occaBuildKernel_func(device, str, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device

@@ -117,6 +117,7 @@
 #define  OCCAGETDEVICE_FC                OCCA_F2C_GLOBAL_(occagetdevice_fc              , OCCAGETDEVICE_FC)
 #define  OCCAGETDEVICEFROMINFO_FC        OCCA_F2C_GLOBAL_(occagetdevicefrominfo_fc      , OCCAGETDEVICEFROMINFO_FC)
 #define  OCCAGETDEVICEFROMARGS_FC        OCCA_F2C_GLOBAL_(occagetdevicefromargs_fc      , OCCAGETDEVICEFROMARGS_FC)
+#define  OCCADEVICEBYTESALLOCATED_FC     OCCA_F2C_GLOBAL_(occadevicebytesallocated_fc   , OCCADEVICEBYTESALLOCATED_FC)
 #define  OCCABUILDKERNEL_FC              OCCA_F2C_GLOBAL_(occabuildkernel_fc            , OCCABUILDKERNEL_FC)
 #define  OCCABUILDKERNELNOKERNELINFO_FC  OCCA_F2C_GLOBAL_(occabuildkernelnokernelinfo_fc, OCCABUILDKERNELNOKERNELINFO_FC)
 #define  OCCABUILDKERNELFROMSOURCE_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsource_fc  , OCCABUILDKERNELFROMSOURCE_FC)
@@ -340,6 +341,10 @@ extern "C" {
     *device = occaGetDeviceFromArgs(mode_c, *arg1, *arg2);
 
     OCCA_F2C_FREE_STR(mode, mode_c);
+  }
+
+  void OCCADEVICEBYTESALLOCATED_FC(occaDevice *device, int64_t *bytes){
+    *bytes = occaDeviceBytesAllocated(*device);
   }
 
   void OCCABUILDKERNEL_FC(occaKernel *kernel, occaDevice *device,
