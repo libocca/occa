@@ -8,7 +8,9 @@ module occa
     occaTypeMem_t,                 &
     occaSetVerboseCompilation,     &
     occaDeviceSetCompiler,         &
+    occaDeviceSetCompilerFlags,    &
     occaGetDevice,                 &
+    occaBuildKernel,               &
     occaBuildKernelFromSource,     &
     occaBuildKernelFromBinary,     &
     occaBuildKernelFromLoopy,      &
@@ -121,6 +123,11 @@ module occa
     module procedure occaGetDeviceFromArgs_func
     module procedure occaGetDeviceFromInfo_func
   end interface occaGetDevice
+
+  interface occaBuildKernel
+    module procedure occaBuildKernelNoKernelInfo_func
+    module procedure occaBuildKernel_func
+  end interface occaBuildKernel
 
   interface occaBuildKernelFromSource
     module procedure occaBuildKernelFromSourceNoKernelInfo_func
@@ -1085,6 +1092,46 @@ contains
     call occaGetDeviceFromArgs_fc(device, mode, arg1, arg2)
   end function occaGetDeviceFromArgs_func
 
+  type(occaKernel) function occaBuildKernel_func(device, filename, functionName, info) result(kernel)
+    type(occaDevice),     intent(in)  :: device
+    character(len=*),     intent(in)  :: filename
+    character(len=*),     intent(in)  :: functionName
+    type(occaKernelInfo), intent(in)  :: info
+
+    interface
+      subroutine occaBuildKernel_fc(kernel, device, filename, functionName, info)
+        use occaFTypes_m
+        implicit none
+        type(occaKernel),     intent(out) :: kernel
+        type(occaDevice),     intent(in)  :: device
+        character(len=*),     intent(in)  :: filename
+        character(len=*),     intent(in)  :: functionName
+        type(occaKernelInfo), intent(in)  :: info
+      end subroutine occaBuildKernel_fc
+    end interface
+
+    call occaBuildKernel_fc(kernel, device, filename, functionName, info)
+  end function occaBuildKernel_func
+
+  type(occaKernel) function occaBuildKernelNoKernelInfo_func(device, filename, functionName) result(kernel)
+    type(occaDevice),     intent(in)  :: device
+    character(len=*),     intent(in)  :: filename
+    character(len=*),     intent(in)  :: functionName
+
+    interface
+      subroutine occaBuildKernelNoKernelInfo_fc(kernel, device, filename, functionName)
+        use occaFTypes_m
+        implicit none
+        type(occaKernel),     intent(out) :: kernel
+        type(occaDevice),     intent(in)  :: device
+        character(len=*),     intent(in)  :: filename
+        character(len=*),     intent(in)  :: functionName
+      end subroutine occaBuildKernelNoKernelInfo_fc
+    end interface
+
+    call occaBuildKernelNoKernelInfo_fc(kernel, device, filename, functionName)
+  end function occaBuildKernelNoKernelInfo_func
+
   type(occaKernel) function occaBuildKernelFromSource_func(device, filename, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: filename
@@ -1106,19 +1153,6 @@ contains
     call occaBuildKernelFromSource_fc(kernel, device, filename, functionName, info)
   end function occaBuildKernelFromSource_func
 
-  type(occaDeviceInfo) function occaCreateDeviceInfo_func() result(info)
-
-    interface
-      subroutine occaCreateDeviceInfo_fc(info)
-        use occaFTypes_m
-        implicit none
-        type(occaDeviceInfo), intent(out) :: info
-      end subroutine occaCreateDeviceInfo_fc
-    end interface
-
-    call occaCreateDeviceInfo_fc(info)
-  end function occaCreateDeviceInfo_func
-
   type(occaKernel) function occaBuildKernelFromSourceNoKernelInfo_func(device, filename, functionName) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: filename
@@ -1137,8 +1171,6 @@ contains
 
     call occaBuildKernelFromSourceNoKernelInfo_fc(kernel, device, filename, functionName)
   end function occaBuildKernelFromSourceNoKernelInfo_func
-
-
 
   type(occaKernel) function occaBuildKernelFromBinary_func(device, filename, functionName) result(kernel)
     type(occaDevice),     intent(in)  :: device
@@ -1637,6 +1669,19 @@ contains
 
     call occaCreateArgumentList_fc(args)
   end function occaCreateArgumentList_func
+
+  type(occaDeviceInfo) function occaCreateDeviceInfo_func() result(info)
+
+    interface
+      subroutine occaCreateDeviceInfo_fc(info)
+        use occaFTypes_m
+        implicit none
+        type(occaDeviceInfo), intent(out) :: info
+      end subroutine occaCreateDeviceInfo_fc
+    end interface
+
+    call occaCreateDeviceInfo_fc(info)
+  end function occaCreateDeviceInfo_func
 
   type(occaKernelInfo) function occaCreateKernelInfo_func() result(info)
 

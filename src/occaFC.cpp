@@ -117,6 +117,8 @@
 #define  OCCAGETDEVICE_FC                OCCA_F2C_GLOBAL_(occagetdevice_fc              , OCCAGETDEVICE_FC)
 #define  OCCAGETDEVICEFROMINFO_FC        OCCA_F2C_GLOBAL_(occagetdevicefrominfo_fc      , OCCAGETDEVICEFROMINFO_FC)
 #define  OCCAGETDEVICEFROMARGS_FC        OCCA_F2C_GLOBAL_(occagetdevicefromargs_fc      , OCCAGETDEVICEFROMARGS_FC)
+#define  OCCABUILDKERNEL_FC              OCCA_F2C_GLOBAL_(occabuildkernel_fc            , OCCABUILDKERNEL_FC)
+#define  OCCABUILDKERNELNOKERNELINFO_FC  OCCA_F2C_GLOBAL_(occabuildkernelnokernelinfo_fc, OCCABUILDKERNELNOKERNELINFO_FC)
 #define  OCCABUILDKERNELFROMSOURCE_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsource_fc  , OCCABUILDKERNELFROMSOURCE_FC)
 #define  OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsourcenokernelinfo_fc  , OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC)
 #define  OCCABUILDKERNELFROMBINARY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc  , OCCABUILDKERNELFROMBINARY_FC)
@@ -338,6 +340,37 @@ extern "C" {
     OCCA_F2C_FREE_STR(mode, mode_c);
   }
 
+  void OCCABUILDKERNEL_FC(occaKernel *kernel, occaDevice *device,
+                          const char *filename     OCCA_F2C_LSTR(filename_l),
+                          const char *functionName OCCA_F2C_LSTR(functionName_l),
+                          occaKernelInfo *info
+                          OCCA_F2C_RSTR(filename_l)
+                          OCCA_F2C_RSTR(functionName_l)){
+    char *filename_c, *functionName_c;
+    OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
+
+    *kernel = occaBuildKernel(*device, filename_c, functionName_c, *info);
+
+    OCCA_F2C_FREE_STR(filename    , filename_c);
+    OCCA_F2C_FREE_STR(functionName, functionName_c);
+  }
+
+  void OCCABUILDKERNELNOKERNELINFO_FC(occaKernel *kernel, occaDevice *device,
+                                      const char *filename     OCCA_F2C_LSTR(filename_l),
+                                      const char *functionName OCCA_F2C_LSTR(functionName_l)
+                                      OCCA_F2C_RSTR(filename_l)
+                                      OCCA_F2C_RSTR(functionName_l)){
+    char *filename_c, *functionName_c;
+    OCCA_F2C_ALLOC_STR(filename    , filename_l    , filename_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
+
+    *kernel = occaBuildKernel(*device, filename_c, functionName_c, occaNoKernelInfo);
+
+    OCCA_F2C_FREE_STR(filename    , filename_c);
+    OCCA_F2C_FREE_STR(functionName, functionName_c);
+  }
+
   void OCCABUILDKERNELFROMSOURCE_FC(occaKernel *kernel, occaDevice *device,
                                     const char *filename     OCCA_F2C_LSTR(filename_l),
                                     const char *functionName OCCA_F2C_LSTR(functionName_l),
@@ -368,6 +401,7 @@ extern "C" {
     OCCA_F2C_FREE_STR(filename    , filename_c);
     OCCA_F2C_FREE_STR(functionName, functionName_c);
   }
+
   void OCCABUILDKERNELFROMBINARY_FC(occaKernel *kernel, occaDevice *device,
                                     const char *filename     OCCA_F2C_LSTR(filename_l),
                                     const char *functionName OCCA_F2C_LSTR(functionName_l)

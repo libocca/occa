@@ -120,6 +120,13 @@ extern "C" {
 
   OCCA_LFUNC void OCCA_RFUNC occaDeviceInfoFree(occaDeviceInfo info);
 
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDevice(const char *infos);
+
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromInfo(occaDeviceInfo dInfo);
+
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromArgs(const char *mode,
+                                                         int arg1, int arg2);
+
   OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
 
   OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompiler(occaDevice device,
@@ -128,14 +135,12 @@ extern "C" {
   OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompilerFlags(occaDevice device,
                                                         const char *compilerFlags);
 
-  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDevice(const char *infos);
-
-  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromInfo(occaDeviceInfo dInfo);
-
-  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromArgs(const char *mode,
-                                                         int arg1, int arg2);
-
   OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(occaDevice device,
+                                                   const char *filename,
+                                                   const char *functionName,
+                                                   occaKernelInfo info);
 
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromSource(occaDevice device,
                                                              const char *filename,
@@ -290,8 +295,8 @@ extern "C" {
   //---[ Memory ]-----------------------
   OCCA_LFUNC const char* OCCA_RFUNC occaMemoryMode(occaMemory memory);
 
-  OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetMappedPointer(occaMemory mem);
   OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetMemoryHandle(occaMemory mem);
+  OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetMappedPointer(occaMemory mem);
   OCCA_LFUNC void* OCCA_RFUNC occaMemoryGetTextureHandle(occaMemory mem);
 
   OCCA_LFUNC void OCCA_RFUNC occaMemcpy(void *dest, void *src,

@@ -9,3 +9,4 @@ web/
 
 # for now
 benchmarks/
+scripts/occaBenchmark.cpp
