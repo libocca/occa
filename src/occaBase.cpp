@@ -1387,7 +1387,16 @@ namespace occa {
   }
 
   void device::freeStream(stream s){
-    dHandle->freeStream(s);
+    const int streamCount = dHandle->streams.size();
+
+    for(int i = 0; i < streamCount; ++i){
+      if(dHandle->streams[i] == s){
+        dHandle->freeStream(dHandle->streams[i]);
+        dHandle->streams.erase(dHandle->streams.begin() + i);
+
+        break;
+      }
+    }
   }
 
   kernel device::buildKernel(const std::string &str,
