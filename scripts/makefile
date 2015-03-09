@@ -103,6 +103,8 @@ compilerFlags = $(CXXFLAGS)
 
 fCompiler      = $(FC)
 fCompilerFlags = $(FCFLAGS)
+
+links = $(LDFLAGS)
 #=================================================
 
 
@@ -115,7 +117,7 @@ ifneq (,$(wildcard ./$(iPath)/*))
   paths += -I./$(iPath)
 endif
 
-links = -locca
+links += -locca
 #=================================================
 
 
