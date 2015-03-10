@@ -1344,6 +1344,9 @@ namespace occa {
     device();
     device(device_v *dHandle_);
 
+    device(deviceInfo &dInfo);
+    device(const std::string &infos);
+
     device(const device &d);
     device& operator = (const device &d);
 
@@ -1457,22 +1460,22 @@ namespace occa {
     memory wrapMemory(void *handle_,
                       const uintptr_t bytes);
 
-    memory wrapManagedMemory(void *handle_,
-                             const uintptr_t bytes);
+    void* wrapManagedMemory(void *handle_,
+                            const uintptr_t bytes);
 
     memory wrapTexture(void *handle_,
                        const int dim, const occa::dim &dims,
                        occa::formatType type, const int permissions);
 
-    memory wrapManagedTexture(void *handle_,
-                              const int dim, const occa::dim &dims,
-                              occa::formatType type, const int permissions);
+    void* wrapManagedTexture(void *handle_,
+                             const int dim, const occa::dim &dims,
+                             occa::formatType type, const int permissions);
 
     memory malloc(const uintptr_t bytes,
                   void *src = NULL);
 
-    memory managedAlloc(const uintptr_t bytes,
-                        void *src = NULL);
+    void* managedAlloc(const uintptr_t bytes,
+                       void *src = NULL);
 
     void* uvaAlloc(const uintptr_t bytes,
                    void *src = NULL);
@@ -1484,15 +1487,15 @@ namespace occa {
                         void *src,
                         occa::formatType type, const int permissions = readWrite);
 
-    memory managedTextureAlloc(const int dim, const occa::dim &dims,
-                               void *src,
-                               occa::formatType type, const int permissions = readWrite);
+    void* managedTextureAlloc(const int dim, const occa::dim &dims,
+                              void *src,
+                              occa::formatType type, const int permissions = readWrite);
 
     memory mappedAlloc(const uintptr_t bytes,
                        void *src = NULL);
 
-    memory managedMappedAlloc(const uintptr_t bytes,
-                              void *src = NULL);
+    void* managedMappedAlloc(const uintptr_t bytes,
+                             void *src = NULL);
 
     void freeStream(stream s);
 

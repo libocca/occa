@@ -129,18 +129,18 @@
 #define  OCCABUILDKERNELFROMFLOOPY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromfloopy_fc  , OCCABUILDKERNELFROMFLOOPY_FC)
 #define  OCCADEVICEMALLOCNULL_FC         OCCA_F2C_GLOBAL_(occadevicemallocnull_fc       , OCCADEVICEMALLOCNULL_FC)
 #define  OCCADEVICEMALLOC_FC             OCCA_F2C_GLOBAL_(occadevicemalloc_fc           , OCCADEVICEMALLOC_FC)
-#define  OCCADEVICEMANAGEDALLOCNULL_FC   OCCA_F2C_GLOBAL_(occadevicemanagedallocnull_fc , OCCADEVICEMANAGEDALLOCNULL_FC)
-#define  OCCADEVICEMANAGEDALLOC_FC       OCCA_F2C_GLOBAL_(occadevicemanagedalloc_fc     , OCCADEVICEMANAGEDALLOC_FC)
+// #define  OCCADEVICEMANAGEDALLOCNULL_FC   OCCA_F2C_GLOBAL_(occadevicemanagedallocnull_fc , OCCADEVICEMANAGEDALLOCNULL_FC)
+// #define  OCCADEVICEMANAGEDALLOC_FC       OCCA_F2C_GLOBAL_(occadevicemanagedalloc_fc     , OCCADEVICEMANAGEDALLOC_FC)
 // #define  OCCADEVICEUVAALLOCNULL_FC        OCCA_F2C_GLOBAL_(occadeviceuvaallocnull_fc        , OCCADEVICEUVAALLOCNULL_FC)
 // #define  OCCADEVICEUVAALLOC_FC            OCCA_F2C_GLOBAL_(occadeviceuvaalloc_fc            , OCCADEVICEUVAALLOC_FC)
 // #define  OCCADEVICEMANAGEDUVAALLOCNULL_FC OCCA_F2C_GLOBAL_(occadevicemanageduvaallocnull_fc , OCCADEVICEMANAGEDUVAALLOCNULL_FC)
 // #define  OCCADEVICEMANAGEDUVAALLOC_FC      OCCA_F2C_GLOBAL_(occadevicemanageduvaalloc_fc    , OCCADEVICEMANAGEDUVAALLOC_FC)
 #define  OCCADEVICETEXTUREALLOC_FC       OCCA_F2C_GLOBAL_(occadevicetexturealloc_fc     , OCCADEVICETEXTUREALLOC_FC)
-#define  OCCADEVICEMANAGEDTEXTUREALLOC_FC OCCA_F2C_GLOBAL_(occadevicemanagedtexturealloc_fc , OCCADEVICEMANAGEDTEXTUREALLOC_FC)
+// #define  OCCADEVICEMANAGEDTEXTUREALLOC_FC OCCA_F2C_GLOBAL_(occadevicemanagedtexturealloc_fc , OCCADEVICEMANAGEDTEXTUREALLOC_FC)
 #define  OCCADEVICEMAPPEDALLOCNULL_FC    OCCA_F2C_GLOBAL_(occadevicemappedallocnull_fc  , OCCADEVICEMAPPEDALLOCNULL_FC)
 #define  OCCADEVICEMAPPEDALLOC_FC        OCCA_F2C_GLOBAL_(occadevicemappedalloc_fc      , OCCADEVICEMAPPEDALLOC_FC)
-#define  OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC OCCA_F2C_GLOBAL_(occadevicemanagedmappedallocnull_fc , OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC)
-#define  OCCADEVICEMANAGEDMAPPEDALLOC_FC     OCCA_F2C_GLOBAL_(occadevicemanagedmappedalloc_fc     , OCCADEVICEMANAGEDMAPPEDALLOC_FC)
+// #define  OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC OCCA_F2C_GLOBAL_(occadevicemanagedmappedallocnull_fc , OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC)
+// #define  OCCADEVICEMANAGEDMAPPEDALLOC_FC     OCCA_F2C_GLOBAL_(occadevicemanagedmappedalloc_fc     , OCCADEVICEMANAGEDMAPPEDALLOC_FC)
 #define  OCCADEVICEFLUSH_FC              OCCA_F2C_GLOBAL_(occadeviceflush_fc            , OCCADEVICEFLUSH_FC)
 #define  OCCADEVICEFINISH_FC             OCCA_F2C_GLOBAL_(occadevicefinish_fc           , OCCADEVICEFINISH_FC)
 #define  OCCADEVICECREATESTREAM_FC       OCCA_F2C_GLOBAL_(occadevicecreatestream_fc     , OCCADEVICECREATESTREAM_FC)
@@ -501,15 +501,15 @@ extern "C" {
     *mem = occaDeviceMalloc(*device, *bytes, NULL);
   }
 
-  void OCCADEVICEMANAGEDALLOC_FC(occaMemory *mem, occaDevice *device,
-                                 int64_t *bytes, void *source){
-    *mem = occaDeviceManagedAlloc(*device, *bytes, source);
-  }
+  // void OCCADEVICEMANAGEDALLOC_FC(occaMemory *mem, occaDevice *device,
+  //                                int64_t *bytes, void *source){
+  //   *mem = occaDeviceManagedAlloc(*device, *bytes, source);
+  // }
 
-  void OCCADEVICEMANAGEDALLOCNULL_FC(occaMemory *mem, occaDevice *device,
-                                     int64_t *bytes){
-    *mem = occaDeviceManagedAlloc(*device, *bytes, NULL);
-  }
+  // void OCCADEVICEMANAGEDALLOCNULL_FC(occaMemory *mem, occaDevice *device,
+  //                                    int64_t *bytes){
+  //   *mem = occaDeviceManagedAlloc(*device, *bytes, NULL);
+  // }
 
   // void OCCADEVICEUVAALLOC_FC(void **ptr, occaDevice *device,
   //                            int64_t *bytes, void *source){
@@ -544,18 +544,18 @@ extern "C" {
     //                                *type, permissions);
   }
 
-  void OCCADEVICEMANAGEDTEXTUREALLOC_FC(occaMemory *mem,
-                                        int32_t    *dim,
-                                        int64_t    *dimX, int64_t *dimY, int64_t *dimZ,
-                                        void       *source,
-                                        void       *type, // occaFormatType Missing
-                                        int32_t    *permissions){
-    // *mem = occaDeviceManagedTextureAlloc2(*mem,
-    //                                *dim,
-    //                                *dimX, *dimY, *dimZ,
-    //                                source,
-    //                                *type, permissions);
-  }
+  // void OCCADEVICEMANAGEDTEXTUREALLOC_FC(occaMemory *mem,
+  //                                       int32_t    *dim,
+  //                                       int64_t    *dimX, int64_t *dimY, int64_t *dimZ,
+  //                                       void       *source,
+  //                                       void       *type, // occaFormatType Missing
+  //                                       int32_t    *permissions){
+  //   // *mem = occaDeviceManagedTextureAlloc2(*mem,
+  //   //                                *dim,
+  //   //                                *dimX, *dimY, *dimZ,
+  //   //                                source,
+  //   //                                *type, permissions);
+  // }
 
   void OCCADEVICEMAPPEDALLOC_FC(occaMemory *mem, occaDevice *device,
                                 int64_t *bytes, void *source){
@@ -567,15 +567,15 @@ extern "C" {
     *mem = occaDeviceMappedAlloc(*device, *bytes, NULL);
   }
 
-  void OCCADEVICEMANAGEDMAPPEDALLOC_FC(occaMemory *mem, occaDevice *device,
-                                       int64_t *bytes, void *source){
-    *mem = occaDeviceManagedMappedAlloc(*device, *bytes, source);
-  }
+  // void OCCADEVICEMANAGEDMAPPEDALLOC_FC(occaMemory *mem, occaDevice *device,
+  //                                      int64_t *bytes, void *source){
+  //   *mem = occaDeviceManagedMappedAlloc(*device, *bytes, source);
+  // }
 
-  void OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC(occaMemory *mem, occaDevice *device,
-                                           int64_t *bytes){
-    *mem = occaDeviceManagedMappedAlloc(*device, *bytes, NULL);
-  }
+  // void OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC(occaMemory *mem, occaDevice *device,
+  //                                          int64_t *bytes){
+  //   *mem = occaDeviceManagedMappedAlloc(*device, *bytes, NULL);
+  // }
 
   void OCCADEVICEFLUSH_FC(occaDevice *device){
     occaDeviceFlush(*device);

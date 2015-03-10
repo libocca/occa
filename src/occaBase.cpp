@@ -1068,6 +1068,14 @@ namespace occa {
   device::device(device_v *dHandle_) :
     dHandle(dHandle_) {}
 
+  device::device(deviceInfo &dInfo){
+    setup(dInfo);
+  }
+
+  device::device(const std::string &infos){
+    setup(infos);
+  }
+
   device::device(const device &d) :
     dHandle(d.dHandle) {}
 
@@ -1633,13 +1641,13 @@ namespace occa {
     return mem;
   }
 
-  memory device::wrapManagedMemory(void *handle_,
-                                   const uintptr_t bytes){
+  void* device::wrapManagedMemory(void *handle_,
+                                  const uintptr_t bytes){
     memory mem = wrapMemory(handle_, bytes);
 
     mem.manage();
 
-    return mem;
+    return mem.mHandle->uvaPtr;
   }
 
   memory device::wrapTexture(void *handle_,
@@ -1662,15 +1670,15 @@ namespace occa {
     return mem;
   }
 
-  memory device::wrapManagedTexture(void *handle_,
-                                    const int dim, const occa::dim &dims,
-                                    occa::formatType type, const int permissions){
+  void* device::wrapManagedTexture(void *handle_,
+                                   const int dim, const occa::dim &dims,
+                                   occa::formatType type, const int permissions){
 
     memory mem = wrapTexture(handle_, dim, dims, type, permissions);
 
     mem.manage();
 
-    return mem;
+    return mem.mHandle->uvaPtr;
   }
 
   memory device::malloc(const uintptr_t bytes,
@@ -1687,13 +1695,13 @@ namespace occa {
     return mem;
   }
 
-  memory device::managedAlloc(const uintptr_t bytes,
-                               void *src){
+  void* device::managedAlloc(const uintptr_t bytes,
+                             void *src){
     memory mem = malloc(bytes, src);
 
     mem.manage();
 
-    return mem;
+    return mem.mHandle->uvaPtr;
   }
 
   void* device::uvaAlloc(const uintptr_t bytes,
@@ -1739,14 +1747,15 @@ namespace occa {
     return mem;
   }
 
-  memory device::managedTextureAlloc(const int dim, const occa::dim &dims,
-                                     void *src,
-                                     occa::formatType type, const int permissions){
+  void* device::managedTextureAlloc(const int dim, const occa::dim &dims,
+                                    void *src,
+                                    occa::formatType type, const int permissions){
+
     memory mem = textureAlloc(dim, dims, src, type, permissions);
 
     mem.manage();
 
-    return mem;
+    return mem.mHandle->uvaPtr;
   }
 
   memory device::mappedAlloc(const uintptr_t bytes,
@@ -1763,13 +1772,13 @@ namespace occa {
     return mem;
   }
 
-  memory device::managedMappedAlloc(const uintptr_t bytes,
-                                    void *src){
+  void* device::managedMappedAlloc(const uintptr_t bytes,
+                                   void *src){
     memory mem = mappedAlloc(bytes, src);
 
     mem.manage();
 
-    return mem;
+    return mem.mHandle->uvaPtr;
   }
 
   void device::free(){
