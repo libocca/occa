@@ -142,6 +142,8 @@ namespace occa {
     return "N/A";
   }
 
+  static const bool useParser = true;
+
   static const int usingOKL    = (1 << 0);
   static const int usingOFL    = (1 << 1);
   static const int usingNative = (1 << 2);

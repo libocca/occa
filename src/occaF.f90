@@ -1,5 +1,6 @@
 module occa
   use occaFTypes_m
+  use ISO_C_BINDING
 
   implicit none
 
@@ -63,6 +64,10 @@ module occa
     occaAsyncCopyMemToPtr,         &
     occaMemorySwap,                &
     occaMemoryFree
+
+  integer(C_INT), bind(C, name="occaUsingOKL")    :: occaUsingOKL
+  integer(C_INT), bind(C, name="occaUsingOFL")    :: occaUsingOFL
+  integer(C_INT), bind(C, name="occaUsingNative") :: occaUsingNative
 
 ! ---[ TypesCasting ]------------------
   ! interface occaType_t
@@ -138,8 +143,9 @@ module occa
   end interface occaBuildKernelFromSource
 
   interface occaBuildKernelFromString
-    module procedure occaBuildKernelFromStringNoKernelInfo_func
     module procedure occaBuildKernelFromString_func
+    module procedure occaBuildKernelFromStringNoArgs_func
+    module procedure occaBuildKernelFromStringNoKernelInfo_func
   end interface occaBuildKernelFromString
 
   interface occaBuildKernelFromBinary
@@ -1196,14 +1202,15 @@ contains
     call occaBuildKernelFromSourceNoKernelInfo_fc(kernel, device, filename, functionName)
   end function occaBuildKernelFromSourceNoKernelInfo_func
 
-  type(occaKernel) function occaBuildKernelFromString_func(device, str, functionName, info) result(kernel)
+  type(occaKernel) function occaBuildKernelFromString_func(device, str, functionName, info, language) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: str
     character(len=*),     intent(in)  :: functionName
     type(occaKernelInfo), intent(in)  :: info
+    integer             , intent(in)  :: language
 
     interface
-      subroutine occaBuildKernelFromString_fc(kernel, device, str, functionName, info)
+      subroutine occaBuildKernelFromString_fc(kernel, device, str, functionName, info, language)
         use occaFTypes_m
         implicit none
         type(occaKernel),     intent(out) :: kernel
@@ -1211,30 +1218,52 @@ contains
         character(len=*),     intent(in)  :: str
         character(len=*),     intent(in)  :: functionName
         type(occaKernelInfo), intent(in)  :: info
+        integer             , intent(in)  :: language
       end subroutine occaBuildKernelFromString_fc
     end interface
 
-    call occaBuildKernelFromString_fc(kernel, device, str, functionName, info)
+    call occaBuildKernelFromString_fc(kernel, device, str, functionName, info, language)
   end function occaBuildKernelFromString_func
 
-  type(occaKernel) function occaBuildKernelFromStringNoKernelInfo_func(device, str, functionName) result(kernel)
+  type(occaKernel) function occaBuildKernelFromStringNoKernelInfo_func(device, str, functionName, language) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: str
     character(len=*),     intent(in)  :: functionName
+    integer         ,     intent(in)  :: language
 
     interface
-      subroutine occaBuildKernelFromStringNoKernelInfo_fc(kernel, device, str, functionName)
+      subroutine occaBuildKernelFromStringNoKernelInfo_fc(kernel, device, str, functionName, language)
         use occaFTypes_m
         implicit none
         type(occaKernel),     intent(out) :: kernel
         type(occaDevice),     intent(in)  :: device
         character(len=*),     intent(in)  :: str
         character(len=*),     intent(in)  :: functionName
+        integer         ,     intent(in)  :: language
       end subroutine occaBuildKernelFromStringNoKernelInfo_fc
     end interface
 
-    call occaBuildKernelFromStringNoKernelInfo_fc(kernel, device, str, functionName)
+    call occaBuildKernelFromStringNoKernelInfo_fc(kernel, device, str, functionName, language)
   end function occaBuildKernelFromStringNoKernelInfo_func
+
+  type(occaKernel) function occaBuildKernelFromStringNoArgs_func(device, str, functionName) result(kernel)
+    type(occaDevice),     intent(in)  :: device
+    character(len=*),     intent(in)  :: str
+    character(len=*),     intent(in)  :: functionName
+
+    interface
+      subroutine occaBuildKernelFromStringNoArgs_fc(kernel, device, str, functionName)
+        use occaFTypes_m
+        implicit none
+        type(occaKernel),     intent(out) :: kernel
+        type(occaDevice),     intent(in)  :: device
+        character(len=*),     intent(in)  :: str
+        character(len=*),     intent(in)  :: functionName
+      end subroutine occaBuildKernelFromStringNoArgs_fc
+    end interface
+
+    call occaBuildKernelFromStringNoArgs_fc(kernel, device, str, functionName)
+  end function occaBuildKernelFromStringNoArgs_func
 
   type(occaKernel) function occaBuildKernelFromBinary_func(device, filename, functionName) result(kernel)
     type(occaDevice),     intent(in)  :: device

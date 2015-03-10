@@ -124,6 +124,7 @@
 #define  OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromsourcenokernelinfo_fc  , OCCABUILDKERNELFROMSOURCENOKERNELINFO_FC)
 #define  OCCABUILDKERNELFROMSTRING_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromstring_fc  , OCCABUILDKERNELFROMSTRING_FC)
 #define  OCCABUILDKERNELFROMSTRINGNOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromstringnokernelinfo_fc  , OCCABUILDKERNELFROMSTRINGNOKERNELINFO_FC)
+#define  OCCABUILDKERNELFROMSTRINGNOARGS_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromstringnoargs_fc  , OCCABUILDKERNELFROMSTRINGNOARGS_FC)
 #define  OCCABUILDKERNELFROMBINARY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc  , OCCABUILDKERNELFROMBINARY_FC)
 #define  OCCABUILDKERNELFROMLOOPY_FC     OCCA_F2C_GLOBAL_(occabuildkernelfromloopy_fc   , OCCABUILDKERNELFROMLOOPY_FC)
 #define  OCCABUILDKERNELFROMFLOOPY_FC    OCCA_F2C_GLOBAL_(occabuildkernelfromfloopy_fc  , OCCABUILDKERNELFROMFLOOPY_FC)
@@ -412,14 +413,30 @@ extern "C" {
   void OCCABUILDKERNELFROMSTRING_FC(occaKernel *kernel, occaDevice *device,
                                     const char *str          OCCA_F2C_LSTR(str_l),
                                     const char *functionName OCCA_F2C_LSTR(functionName_l),
-                                    occaKernelInfo *info
+                                    occaKernelInfo *info,
+                                    const int *language
                                     OCCA_F2C_RSTR(str_l)
                                     OCCA_F2C_RSTR(functionName_l)){
     char *str_c, *functionName_c;
     OCCA_F2C_ALLOC_STR(str         , str_l         , str_c);
     OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
 
-    *kernel = occaBuildKernelFromString(*device, str_c, functionName_c, *info);
+    *kernel = occaBuildKernelFromString(*device, str_c, functionName_c, *info, *language);
+
+    OCCA_F2C_FREE_STR(str         , str_c);
+    OCCA_F2C_FREE_STR(functionName, functionName_c);
+  }
+
+  void OCCABUILDKERNELFROMSTRINGNOARGS_FC(occaKernel *kernel, occaDevice *device,
+                                          const char *str          OCCA_F2C_LSTR(str_l),
+                                          const char *functionName OCCA_F2C_LSTR(functionName_l)
+                                          OCCA_F2C_RSTR(str_l)
+                                          OCCA_F2C_RSTR(functionName_l)){
+    char *str_c, *functionName_c;
+    OCCA_F2C_ALLOC_STR(str         , str_l         , str_c);
+    OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
+
+    *kernel = occaBuildKernelFromString(*device, str_c, functionName_c, occaNoKernelInfo, occaUsingOKL);
 
     OCCA_F2C_FREE_STR(str         , str_c);
     OCCA_F2C_FREE_STR(functionName, functionName_c);
@@ -427,14 +444,15 @@ extern "C" {
 
   void OCCABUILDKERNELFROMSTRINGNOKERNELINFO_FC(occaKernel *kernel, occaDevice *device,
                                                 const char *str          OCCA_F2C_LSTR(str_l),
-                                                const char *functionName OCCA_F2C_LSTR(functionName_l)
+                                                const char *functionName OCCA_F2C_LSTR(functionName_l),
+                                                const int *language
                                                 OCCA_F2C_RSTR(str_l)
                                                 OCCA_F2C_RSTR(functionName_l)){
     char *str_c, *functionName_c;
     OCCA_F2C_ALLOC_STR(str         , str_l         , str_c);
     OCCA_F2C_ALLOC_STR(functionName, functionName_l, functionName_c);
 
-    *kernel = occaBuildKernelFromString(*device, str_c, functionName_c, occaNoKernelInfo);
+    *kernel = occaBuildKernelFromString(*device, str_c, functionName_c, occaNoKernelInfo, *language);
 
     OCCA_F2C_FREE_STR(str         , str_c);
     OCCA_F2C_FREE_STR(functionName, functionName_c);
