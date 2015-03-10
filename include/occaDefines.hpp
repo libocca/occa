@@ -143,10 +143,12 @@
 #  define OCCA_SSE4_1 0
 #endif
 
-#if OCCA_SSE4_1 || OCCA_SSE4_2
-#  define OCCA_SSE4 1
-#else
-#  define OCCA_SSE4 0
+#ifndef OCCA_SSE4
+#  if OCCA_SSE4_1 || OCCA_SSE4_2
+#    define OCCA_SSE4 1
+#  else
+#    define OCCA_SSE4 0
+#  endif
 #endif
 
 #ifdef __SSSE3__
@@ -155,10 +157,12 @@
 #  define OCCA_SSE3 0
 #endif
 
-#ifdef __SSE3__
-#  define OCCA_SSE3 1
-#else
-#  define OCCA_SSE3 0
+#ifndef OCCA_SSE3
+#  ifdef __SSE3__
+#    define OCCA_SSE3 1
+#  else
+#    define OCCA_SSE3 0
+#  endif
 #endif
 
 #ifdef __SSE2__
