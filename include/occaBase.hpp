@@ -142,7 +142,9 @@ namespace occa {
     return "N/A";
   }
 
-  static const bool useParser = true;
+  static const int usingOKL    = (1 << 0);
+  static const int usingOFL    = (1 << 1);
+  static const int usingNative = (1 << 2);
 
   static const int useLoopy  = (1 << 0);
   static const int useFloopy = (1 << 1);
@@ -1399,12 +1401,12 @@ namespace occa {
 
     kernel buildKernelFromString(const std::string &content,
                                  const std::string &functionName,
-                                 const bool useParser);
+                                 const int language = usingOKL);
 
     kernel buildKernelFromString(const std::string &content,
                                  const std::string &functionName,
                                  const kernelInfo &info_ = defaultKernelInfo,
-                                 const bool useParser    = true);
+                                 const int language = usingOKL);
 
     kernel buildKernelFromSource(const std::string &filename,
                                  const std::string &functionName,

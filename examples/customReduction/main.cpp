@@ -57,7 +57,7 @@ public:
     if(init)
       kernel.free();
 
-    kernel = device.buildKernelFromString(ss.str(), "customReductionKernel");
+    kernel = device.buildKernelFromString(ss.str(), "customReductionKernel", occa::usingOKL);
 
     init = true;
   }

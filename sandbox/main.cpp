@@ -10,15 +10,21 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/test.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/scratch.okl");
   //   std::cout << parsedContent << '\n';
   // }
+
+  {
+    std::string parsedContent = parser.parseFile("tests/scratch.ofl",
+                                                 occa::parserNS::parsingFortran);
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/pwdg.okl");

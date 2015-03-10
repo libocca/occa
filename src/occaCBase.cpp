@@ -31,6 +31,10 @@ extern "C" {
   const uintptr_t occaAutoSize = 0;
   const uintptr_t occaNoOffset = 0;
 
+  const int occaUsingOKL    = occa::usingOKL;
+  const int occaUsingOFL    = occa::usingOFL;
+  const int occaUsingNative = occa::usingNative;
+
   OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const int value){
     occa::setVerboseCompilation((bool) value);
   }
@@ -325,7 +329,9 @@ extern "C" {
   occaKernel OCCA_RFUNC occaBuildKernelFromString(occaDevice device,
                                                   const char *str,
                                                   const char *functionName,
-                                                  occaKernelInfo info){
+                                                  occaKernelInfo info,
+                                                  const int language){
+
     occa::device &device_  = *((occa::device*) device);
 
     occa::kernel *kernel = new occa::kernel();
@@ -335,11 +341,13 @@ extern "C" {
 
       *kernel = device_.buildKernelFromString(str,
                                               functionName,
-                                              info_);
+                                              info_,
+                                              language);
     }
     else{
       *kernel = device_.buildKernelFromString(str,
-                                              functionName);
+                                              functionName,
+                                              language);
     }
 
     return (occaKernel) kernel;

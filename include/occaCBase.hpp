@@ -79,6 +79,10 @@ extern "C" {
   extern OCCA_LFUNC const uintptr_t occaAutoSize;
   extern OCCA_LFUNC const uintptr_t occaNoOffset;
 
+  extern OCCA_LFUNC const int occaUsingOKL;
+  extern OCCA_LFUNC const int occaUsingOFL;
+  extern OCCA_LFUNC const int occaUsingNative;
+
   OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const int value);
   //==================================
 
@@ -150,7 +154,8 @@ extern "C" {
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(occaDevice device,
                                                              const char *str,
                                                              const char *functionName,
-                                                             occaKernelInfo info);
+                                                             occaKernelInfo info,
+                                                             const int language);
 
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(occaDevice device,
                                                              const char *filename,

@@ -1401,15 +1401,15 @@ namespace occa {
 
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &functionName,
-                                       const bool useParser){
+                                       const int language){
 
-    return buildKernelFromString(content, functionName, defaultKernelInfo, useParser);
+    return buildKernelFromString(content, functionName, defaultKernelInfo, language);
   }
 
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &functionName,
                                        const kernelInfo &info_,
-                                       const bool useParser){
+                                       const int language){
 
     kernelInfo info = info_;
 
@@ -1423,8 +1423,10 @@ namespace occa {
 
     std::string h_cacheName = prefix + "h_" + cacheName;
 
-    if(useParser)
+    if(language & occa::usingOKL)
       h_cacheName += ".okl";
+    else if(language & occa::usingOFL)
+      h_cacheName += ".ofl";
     else
       h_cacheName += ".occa";
 
