@@ -536,7 +536,7 @@ namespace occa {
 
   template <>
   void* memory_t<CUDA>::getTextureHandle(){
-    return textureInfo.arg;
+    return (void*) ((CUDATextureData_t*) handle)->array;
   }
 
   template <>
