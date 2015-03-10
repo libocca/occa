@@ -793,12 +793,6 @@ namespace occa {
               const uintptr_t bytes = 0,
               const uintptr_t offset = 0);
 
-  void memcpy(memory &dest,
-              const memory &src,
-              const uintptr_t bytes = 0,
-              const uintptr_t destOffset = 0,
-              const uintptr_t srcOffset = 0);
-
   void memcpy(void *dest,
               memory &src,
               const uintptr_t bytes = 0,
@@ -814,12 +808,6 @@ namespace occa {
                    const void *src,
                    const uintptr_t bytes = 0,
                    const uintptr_t offset = 0);
-
-  void asyncMemcpy(memory &dest,
-                   const memory &src,
-                   const uintptr_t bytes = 0,
-                   const uintptr_t destOffset = 0,
-                   const uintptr_t srcOffset = 0);
 
   void asyncMemcpy(void *dest,
                    memory &src,

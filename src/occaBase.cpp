@@ -965,15 +965,6 @@ namespace occa {
     dest.copyFrom(src, bytes, offset);
   }
 
-  void memcpy(memory &dest,
-              const memory &src,
-              const uintptr_t bytes,
-              const uintptr_t destOffset,
-              const uintptr_t srcOffset){
-
-    dest.copyFrom(src, bytes, destOffset, srcOffset);
-  }
-
   void memcpy(void *dest,
               memory &src,
               const uintptr_t bytes,
@@ -997,15 +988,6 @@ namespace occa {
                    const uintptr_t offset){
 
     dest.asyncCopyFrom(src, bytes, offset);
-  }
-
-  void asyncMemcpy(memory &dest,
-                   const memory &src,
-                   const uintptr_t bytes,
-                   const uintptr_t destOffset,
-                   const uintptr_t srcOffset){
-
-    dest.asyncCopyFrom(src, bytes, destOffset, srcOffset);
   }
 
   void asyncMemcpy(void *dest,
