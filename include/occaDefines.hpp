@@ -151,7 +151,7 @@
 #  endif
 #endif
 
-#ifdef __SSSE3__
+#ifdef __SSE3__
 #  define OCCA_SSE3 1
 #else
 #  define OCCA_SSE3 0
