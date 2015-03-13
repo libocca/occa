@@ -294,7 +294,7 @@ namespace occa {
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\include"     // NBN: /include
+            << " /I"  << occaDir << "\\include"
             << ' '    << iCachedBinary
             << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
             << std::endl;

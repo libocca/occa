@@ -8,7 +8,7 @@
 #  include <pthread.h>
 #  include <dlfcn.h>
 #else
-#  include "vs/pthread.h"
+#  include "vs/pthread.hpp"
 #endif
 
 #include <sys/types.h>

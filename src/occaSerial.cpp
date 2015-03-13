@@ -647,7 +647,7 @@ namespace occa {
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\include"     // NBN: /include
+            << " /I"  << occaDir << "\\include"
             << ' '    << iCachedBinary
             << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
             << std::endl;
@@ -1138,12 +1138,11 @@ namespace occa {
     else
       OCCA_CHECK(false, "sizeof(void*) is not equal to 4 or 8");
 
-    // NBN: adjusted path
-#  if      (1800 == _MSC_VER)
+#  if      (OCCA_VS_VERSION == 1800)
     char *visualStudioTools = getenv("VS120COMNTOOLS");   // MSVC++ 12.0 - Visual Studio 2013
-#  elif    (1700 == _MSC_VER)
+#  elif    (OCCA_VS_VERSION == 1700)
     char *visualStudioTools = getenv("VS110COMNTOOLS");   // MSVC++ 11.0 - Visual Studio 2012
-#  else // (1600 == _MSC_VER)
+#  else // (OCCA_VS_VERSION == 1600)
     char *visualStudioTools = getenv("VS100COMNTOOLS");   // MSVC++ 10.0 - Visual Studio 2010
 #  endif
 

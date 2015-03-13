@@ -18,7 +18,7 @@
 #elif (OCCA_OS == OSX_OS)
 #  include <OpenGL/gl.h>
 #  include <GLUT/glut.h>
-#elif (OCCA_OS == WINDOW_OS)
+#elif (OCCA_OS == WINDOWS_OS)
 #  include <gl/glut.h>
 #endif
 
