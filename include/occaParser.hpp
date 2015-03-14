@@ -7,6 +7,7 @@
 #include "occaParserNodes.hpp"
 #include "occaParserTypes.hpp"
 #include "occaParserStatement.hpp"
+#include "occaParserMagic.hpp"
 #include "occaTools.hpp"
 
 namespace occa {
@@ -36,6 +37,7 @@ namespace occa {
       //---[ Warnings ]-----------------
       bool warnForMissingBarriers;
       bool warnForBarrierConditionals;
+      bool automagicEnabled;
       //================================
 
       parserBase();
