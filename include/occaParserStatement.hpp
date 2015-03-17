@@ -45,6 +45,7 @@ namespace occa {
       static const int occaFor         = (1 << 24);
       static const int checkSInfo      = (1 << 25);
 
+      static const int hasInfo         = (3 << 26);
       static const int varInfo         = (1 << 26);
       static const int typeInfo        = (1 << 27);
 

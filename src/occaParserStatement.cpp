@@ -149,8 +149,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      // print();
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -353,6 +353,11 @@ namespace occa {
           sInfo->up->scopeVarMap.end())){
 
         sInfo->up->addVariable(&var);
+      }
+
+      if(info == (expType::function | expType::declaration)){
+        for(int i = 0; i < var.argumentCount; ++i)
+          sInfo->up->addVariable(var.argumentVarInfos[i], sInfo);
       }
 
       removeNodes(1, leafPos);
@@ -846,9 +851,9 @@ namespace occa {
 
           if(nodeVar){
             if( !(nodeVar->info & varType::functionType) ){
-              leaf->info = expType::variable;
-              // leaf->putVarInfo(*nodeVar);
-              // leaf->info = expType::varInfo;
+              // leaf->info = expType::variable; // Substituted for varInfo storage
+              leaf->putVarInfo(*nodeVar);
+              leaf->info = expType::varInfo;
             }
             else
               leaf->info = expType::function;
@@ -987,8 +992,7 @@ namespace occa {
       // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->leafCount) &&
-           !(leaves[i]->info & (expType::varInfo |
-                                expType::typeInfo))){
+           !(leaves[i]->info & expType::hasInfo)){
 
           leaves[i]->initOrganization();
         }
@@ -1007,15 +1011,13 @@ namespace occa {
     }
 
     void expNode::organizeLeaves(const bool inRoot){
-      if(info & (expType::varInfo |
-                 expType::typeInfo))
+      if(info & expType::hasInfo)
         return;
 
       // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->leafCount) &&
-           !(leaves[i]->info & (expType::varInfo |
-                                expType::typeInfo))){
+           !(leaves[i]->info & expType::hasInfo)){
 
           leaves[i]->organizeLeaves(false);
         }
@@ -1073,15 +1075,13 @@ namespace occa {
     }
 
     void expNode::organizeFortranLeaves(){
-      if(info & (expType::varInfo |
-                 expType::typeInfo))
+      if(info & expType::hasInfo)
         return;
 
       // Organize leaves bottom -> up
       for(int i = 0; i < leafCount; ++i){
         if((leaves[i]->leafCount) &&
-           !(leaves[i]->info & (expType::varInfo |
-                                expType::typeInfo))){
+           !(leaves[i]->info & expType::hasInfo)){
 
           leaves[i]->organizeFortranLeaves();
         }
@@ -1121,9 +1121,12 @@ namespace occa {
 
           // Cases:  1 + [-]1
           //         (+1)
-          if((leaves[leafPos]->value.size() == 1) &&
+          if(!(leaves[leafPos]->info & expType::hasInfo) &&
+             (leaves[leafPos]->value.size() == 1)        &&
              ((leaves[leafPos]->value[0] == '+') ||
-              (leaves[leafPos]->value[0] == '-'))){
+              (leaves[leafPos]->value[0] == '-') ||
+              (leaves[leafPos]->value[0] == '*') ||
+              (leaves[leafPos]->value[0] == '&'))){
 
             if(leafPos &&
                ((leaves[leafPos - 1]->leafCount != 0) ||
@@ -1215,6 +1218,8 @@ namespace occa {
     void expNode::labelReferenceQualifiers(){
       int leafPos = 0;
 
+      bool changed = false;
+
       while(leafPos < leafCount){
         if(leaves[leafPos]->info != (expType::operator_ |
                                      expType::qualifier)){
@@ -1230,6 +1235,9 @@ namespace occa {
           ++leafPos;
           continue;
         }
+
+        // changed = true;
+        // print();
 
         expNode &lLeaf = *(leaves[leafPos - 1]);
 
@@ -1259,6 +1267,9 @@ namespace occa {
 
         ++leafPos;
       }
+
+      if(changed)
+        print();
     }
 
     // [(class)]
@@ -1989,11 +2000,8 @@ namespace occa {
     }
 
     int expNode::nestedLeafCount(){
-      if(info & (expType::varInfo |
-                 expType::typeInfo) ){
-
+      if(info & expType::hasInfo)
         return 0;
-      }
 
       int ret = leafCount;
 
@@ -2029,11 +2037,8 @@ namespace occa {
 
     void expNode::makeFlatHandle(int &offset,
                                  expNode **flatLeaves){
-      if(info & (expType::varInfo |
-                 expType::typeInfo) ){
-
+      if(info & expType::hasInfo)
         return;
-      }
 
       for(int i = 0; i < leafCount; ++i){
         switch(leaves[i]->info){
@@ -2605,15 +2610,9 @@ namespace occa {
 
     // [-] Not properly done for varInfo and typeInfo
     void expNode::free(){
-      if(info & (expType::varInfo | expType::typeInfo)){
-
-        if(info & expType::varInfo)
-          delete (varInfo*) leaves[0];
-        if(info & expType::typeInfo)
-          delete (typeInfo*) leaves[0];
-
+      // Let the parser free all varInfos
+      if(info & expType::hasInfo){
         delete [] leaves;
-
         return;
       }
 
@@ -2627,8 +2626,7 @@ namespace occa {
     }
 
     void expNode::print(const std::string &tab){
-      if( !(info & (expType::varInfo |
-                    expType::typeInfo)) ){
+      if( !(info & expType::hasInfo) ){
 
         std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
@@ -2639,7 +2637,7 @@ namespace occa {
         if(info & expType::type)
           std::cout << tab << "[VT: " << getBits(info) << "] " << getVarInfo() << '\n';
         else
-          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo() << '\n';
+          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo().name << '\n';
       }
       else if(info & expType::typeInfo){
         std::cout << tab << "[T: " << getBits(info) << "]\n" << getTypeInfo().toString(tab + "        ") << '\n';
