@@ -845,8 +845,11 @@ namespace occa {
           varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
 
           if(nodeVar){
-            if( !(nodeVar->info & varType::functionType) )
+            if( !(nodeVar->info & varType::functionType) ){
               leaf->info = expType::variable;
+              // leaf->putVarInfo(*nodeVar);
+              // leaf->info = expType::varInfo;
+            }
             else
               leaf->info = expType::function;
           }
@@ -1241,6 +1244,13 @@ namespace occa {
             leaf.info = expType::operator_;
           else
             leaf.info = expType::qualifier;
+        }
+
+        else if((lLeaf.value == ",") &&
+                (up == NULL)         &&
+                (sInfo->info == declareStatementType)){
+
+          leaf.info = expType::qualifier;
         }
 
         else{
@@ -2162,6 +2172,16 @@ namespace occa {
       return leaves[pos]->addVarInfoNode();
     }
 
+    void expNode::putVarInfo(varInfo &var){
+      addNode(0);
+      leaves[0] = (expNode*) &var;
+    }
+
+    void expNode::putVarInfo(const int pos, varInfo &var){
+      addNode(expType::varInfo, pos);
+      leaves[pos]->putVarInfo(var);
+    }
+
     typeInfo& expNode::addTypeInfoNode(){
       addNode(0);
 
@@ -2607,19 +2627,22 @@ namespace occa {
     }
 
     void expNode::print(const std::string &tab){
-      std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
-
       if( !(info & (expType::varInfo |
                     expType::typeInfo)) ){
+
+        std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
         for(int i = 0; i < leafCount; ++i)
           leaves[i]->print(tab + "    ");
       }
       else if(info & expType::varInfo){
-        std::cout << tab << "    [varInfo] " << getVarInfo() << '\n';
+        if(info & expType::type)
+          std::cout << tab << "[VT: " << getBits(info) << "] " << getVarInfo() << '\n';
+        else
+          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo() << '\n';
       }
       else if(info & expType::typeInfo){
-        std::cout << tab << "    [typeInfo]\n" << getTypeInfo().toString(tab + "        ") << '\n';
+        std::cout << tab << "[T: " << getBits(info) << "]\n" << getTypeInfo().toString(tab + "        ") << '\n';
       }
     }
 

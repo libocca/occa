@@ -15,12 +15,16 @@ int main(int argc, char **argv){
   // stsMap["a"] = "2";
   // stsMap["b"] = "3";
 
-  // parser.parseSource("3.3*(a + b)");
-  // expNode &e = parser.globalScope->statementStart->value->expRoot;
+  // parser.parseSource("int a, b, stride; a = a + b*stride;");
+  // expNode &e = parser.globalScope->statementStart->right->value->expRoot;
 
-  // std::cout << e.valueIsKnown(stsMap) << '\n';
-  // std::cout << e.computeKnownValue(stsMap) << '\n';
+  // // std::cout << e.valueIsKnown(stsMap) << '\n';
+  // // std::cout << e.computeKnownValue(stsMap) << '\n';
 
+  // // return 0;
+
+  // accessInfo ai;
+  // ai.load(e);
   // return 0;
 
   // {
@@ -28,10 +32,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    std::string parsedContent = parser.parseFile("tests/test.cpp");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/scratch.okl");
@@ -96,12 +100,12 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    parser.magicEnabled = true;
+  // {
+  //   parser.magicEnabled = true;
 
-    std::string parsedContent = parser.parseFile("tests/ridgV.oak");
-    std::cout << parsedContent << '\n';
-  }
+  //   std::string parsedContent = parser.parseFile("tests/ridgV.oak");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/PCGpart1.cl");

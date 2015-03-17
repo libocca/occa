@@ -23,6 +23,8 @@ namespace occa {
 
       accessInfo();
 
+      void load(expNode &root);
+
       int dim();
 
       varInfo& var(const int pos);

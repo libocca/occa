@@ -261,6 +261,9 @@ namespace occa {
       varInfo& addVarInfoNode();
       varInfo& addVarInfoNode(const int pos);
 
+      void putVarInfo(varInfo &var);
+      void putVarInfo(const int pos, varInfo &var);
+
       typeInfo& addTypeInfoNode();
       typeInfo& addTypeInfoNode(const int pos);
 

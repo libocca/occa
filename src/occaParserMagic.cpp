@@ -9,6 +9,10 @@ namespace occa {
     accessInfo::accessInfo() :
       isUseful(false) {}
 
+    void accessInfo::load(expNode &root){
+      root.print();
+    }
+
     int accessInfo::dim(){
       return ((int) strides.size());
     }

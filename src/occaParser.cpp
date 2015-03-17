@@ -1115,8 +1115,11 @@ namespace occa {
     }
 
     bool parserBase::statementHasOklFor(statement &s){
-      if(s.info == forStatementType)
-        return (s.getForStatementCount() == 4);
+      if((s.info == forStatementType) &&
+         (s.getForStatementCount() == 4)){
+
+        return true;
+      }
 
       statementNode *statementPos = s.statementStart;
 
