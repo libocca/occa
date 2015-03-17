@@ -11,17 +11,17 @@ int main(int argc, char **argv){
   // typeHolder result = evaluateString("3.3*(1 + 2)");
   // std::cout << result << '\n';
 
-  strToStrMap_t stsMap;
-  stsMap["a"] = "2";
-  stsMap["b"] = "3";
+  // strToStrMap_t stsMap;
+  // stsMap["a"] = "2";
+  // stsMap["b"] = "3";
 
-  parser.parseSource("3.3*(a + b)");
-  expNode &e = parser.globalScope->statementStart->value->expRoot;
+  // parser.parseSource("3.3*(a + b)");
+  // expNode &e = parser.globalScope->statementStart->value->expRoot;
 
-  std::cout << e.valueIsKnown(stsMap) << '\n';
-  std::cout << e.computeKnownValue(stsMap) << '\n';
+  // std::cout << e.valueIsKnown(stsMap) << '\n';
+  // std::cout << e.computeKnownValue(stsMap) << '\n';
 
-  return 0;
+  // return 0;
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/easy.c");

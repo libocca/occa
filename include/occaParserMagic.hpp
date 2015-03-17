@@ -7,16 +7,40 @@ namespace occa {
   namespace parserNS {
     class parserBase;
 
+    class strideInfo {
+    public:
+      bool isConstant;
+      varInfo *varName;
+      expNode stride;
+
+      strideInfo();
+    };
+
+    class accessInfo {
+    public:
+      bool isUseful;
+      std::vector<strideInfo> strides;
+
+      accessInfo();
+
+      int dim();
+
+      varInfo& var(const int pos);
+
+      strideInfo& operator [] (const int pos);
+      strideInfo& operator [] (const std::string &varName);
+    };
+
     class ctInfo {
     public:
       bool hasConstValue;
-      opHolder constValue;
+      typeHolder constValue;
 
       expNode minBound, maxBound;
       expNode stride;
 
-      std::vector<expNode> reads;
-      std::vector<expNode> writes;
+      std::vector<accessInfo> reads;
+      std::vector<accessInfo> writes;
     };
 
     typedef std::map<varInfo*, ctInfo> ctMap_t;

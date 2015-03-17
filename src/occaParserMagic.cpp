@@ -2,6 +2,36 @@
 
 namespace occa {
   namespace parserNS {
+    strideInfo::strideInfo() :
+      isConstant(false),
+      varName(NULL) {}
+
+    accessInfo::accessInfo() :
+      isUseful(false) {}
+
+    int accessInfo::dim(){
+      return ((int) strides.size());
+    }
+
+    varInfo& accessInfo::var(const int pos){
+      return *(strides[pos].varName);
+    }
+
+    strideInfo& accessInfo::operator [] (const int pos){
+      return strides[pos];
+    }
+
+    strideInfo& accessInfo::operator [] (const std::string &varName){
+      const int size_ = ((int) strides.size());
+
+      for(int i = 0; i < size_; ++i){
+        if(strides[i].varName->name == varName)
+          return strides[i];
+      }
+
+      return *((strideInfo*) NULL);
+    }
+
     magician::magician(parserBase &parser_) :
       parser(parser_),
       globalScope( *(parser_.globalScope) ),
