@@ -3,6 +3,7 @@
 
 #include "occaParserDefines.hpp"
 #include "occaParserTools.hpp"
+#include "occaParserNodes.hpp"
 
 namespace occa {
   namespace parserNS {
@@ -58,11 +59,11 @@ namespace occa {
       typeHolder();
       typeHolder(const std::string strValue, int type_ = noType);
 
-      bool isAFloat() const;
+      bool isAFloat();
 
-      bool boolValue() const;
-      long longValue() const;
-      double doubleValue() const;
+      bool boolValue();
+      long longValue();
+      double doubleValue();
 
       void setLongValue(const long &l);
       void setDoubleValue(const double &d);
@@ -72,18 +73,33 @@ namespace occa {
 
     std::ostream& operator << (std::ostream &out, const typeHolder &th);
 
-    int typePrecedence(const typeHolder a, const typeHolder b);
+    int typePrecedence(typeHolder &a, typeHolder &b);
 
-    typeHolder applyOperator(std::string op, const typeHolder a);
+    typeHolder applyOperator(std::string op, const std::string &a_);
+    typeHolder applyOperator(std::string op, typeHolder &a);
 
-    typeHolder applyOperator(const typeHolder a,
+    typeHolder applyOperator(const std::string &a_,
                              std::string op,
-                             const typeHolder b);
+                             const std::string &b_);
 
-    typeHolder applyOperator(const typeHolder a,
+    typeHolder applyOperator(typeHolder &a,
                              std::string op,
-                             const typeHolder b,
-                             const typeHolder c);
+                             typeHolder &b);
+
+    typeHolder applyOperator(const std::string &a_,
+                             std::string op,
+                             const std::string &b_,
+                             const std::string &c_);
+
+    typeHolder applyOperator(typeHolder &a,
+                             std::string op,
+                             typeHolder &b,
+                             typeHolder &c);
+
+    typeHolder evaluateString(const std::string &str);
+    typeHolder evaluateString(const char *c);
+
+    typeHolder evaluateNode(strNode *nodeRoot);
     //==============================================
 
 

@@ -1569,7 +1569,7 @@ namespace occa {
     }
 
     //---[ Custom Type Info ]---------
-    bool expNode::qualifierEndsWithStar() const {
+    bool expNode::qualifierEndsWithStar(){
       if( !(info & expType::qualifier) )
         return false;
 
@@ -1579,7 +1579,7 @@ namespace occa {
         return (value == "*");
     }
 
-    bool expNode::typeEndsWithStar() const {
+    bool expNode::typeEndsWithStar(){
       if( !(info & expType::type) ||
           (leafCount == 0) )
         return false;
@@ -1590,7 +1590,7 @@ namespace occa {
       return false;
     }
 
-    bool expNode::hasAnArrayQualifier(const int pos) const {
+    bool expNode::hasAnArrayQualifier(const int pos){
       if( !(info & expType::qualifier) ||
           (leafCount <= pos) )
         return false;
@@ -2196,20 +2196,9 @@ namespace occa {
       return *((varInfo*) leaves[0]);
     }
 
-    const varInfo& expNode::cGetVarInfo() const {
-      return *((const varInfo*) leaves[0]);
-    }
-
     varInfo& expNode::getVarInfo(const int pos){
       varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
       varInfo *&varLeaf   = varLeaves[0];
-
-      return *varLeaf;
-    }
-
-    const varInfo& expNode::cGetVarInfo(const int pos) const {
-      const varInfo **varLeaves = (const varInfo**) leaves[pos]->leaves;
-      const varInfo *&varLeaf   = varLeaves[0];
 
       return *varLeaf;
     }
@@ -2229,20 +2218,9 @@ namespace occa {
       return *((typeInfo*) leaves[0]);
     }
 
-    const typeInfo& expNode::cGetTypeInfo() const {
-      return *((const typeInfo*) leaves[0]);
-    }
-
     typeInfo& expNode::getTypeInfo(const int pos){
       typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
       typeInfo *&typeLeaf   = typeLeaves[0];
-
-      return *typeLeaf;
-    }
-
-    const typeInfo& expNode::cGetTypeInfo(const int pos) const {
-      const typeInfo **typeLeaves = (const typeInfo**) leaves[pos]->leaves;
-      const typeInfo *&typeLeaf   = typeLeaves[0];
 
       return *typeLeaf;
     }
@@ -2276,7 +2254,7 @@ namespace occa {
       }
     }
 
-    bool expNode::hasQualifier(const std::string &qualifier) const {
+    bool expNode::hasQualifier(const std::string &qualifier){
       if(info & expType::type){
         if(!leafCount ||
            !(leaves[0]->info & expType::qualifier))
@@ -2398,7 +2376,7 @@ namespace occa {
       }
     }
 
-    int expNode::getVariableCount() const {
+    int expNode::getVariableCount(){
       if(info & expType::declaration){
         return leafCount;
       }
@@ -2406,7 +2384,7 @@ namespace occa {
       return 0;
     }
 
-    bool expNode::variableHasInit(const int pos) const {
+    bool expNode::variableHasInit(const int pos){
       if(info & expType::declaration){
         const expNode &varNode = *(getVariableNode(pos));
 
@@ -2417,7 +2395,7 @@ namespace occa {
       return false;
     }
 
-    expNode* expNode::getVariableNode(const int pos) const {
+    expNode* expNode::getVariableNode(const int pos){
       if(info & expType::declaration){
         return leaves[pos];
       }
@@ -2425,7 +2403,7 @@ namespace occa {
       return NULL;
     }
 
-    expNode* expNode::getVariableInfoNode(const int pos) const {
+    expNode* expNode::getVariableInfoNode(const int pos){
       if(info & expType::declaration){
         const expNode &varNode = *(getVariableNode(pos));
 
@@ -2446,7 +2424,7 @@ namespace occa {
       return NULL;
     }
 
-    expNode* expNode::getVariableInitNode(const int pos) const {
+    expNode* expNode::getVariableInitNode(const int pos){
       if(info & expType::declaration){
         if(variableHasInit(pos)){
           const expNode &varNode = *(getVariableNode(pos));
@@ -2463,7 +2441,7 @@ namespace occa {
       return NULL;
     }
 
-    std::string expNode::getVariableName(const int pos) const {
+    std::string expNode::getVariableName(const int pos){
       if(info & expType::declaration){
         expNode &leaf = *(leaves[pos]);
 
@@ -2532,6 +2510,72 @@ namespace occa {
       freeFlatHandle(flatRoot);
     }
     //  ===========================
+    //================================
+
+
+    //---[ Analysis Info ]------------
+    bool expNode::valueIsKnown(const strToStrMap_t &stsMap){
+      bool isKnown = true;
+
+      expNode &flatRoot = *(makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.info & (expType::unknown  |
+                     expType::variable |
+                     expType::function | // [-] Check function later
+                     expType::varInfo)){
+
+          cStrToStrMapIterator it;
+
+          if(n.info & expType::varInfo)
+            it = stsMap.find(n.getVarInfo().name);
+          else
+            it = stsMap.find(n.value);
+
+          if(it == stsMap.end()){
+            isKnown = false;
+            break;
+          }
+        }
+      }
+
+      freeFlatHandle(flatRoot);
+
+      return isKnown;
+    }
+
+    // Assumes (valueIsKnown() == true)
+    typeHolder expNode::computeKnownValue(const strToStrMap_t &stsMap){
+      expNode &this2 = *(clone());
+
+      expNode &flatRoot = *(this2.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &n = flatRoot[i];
+
+        if(n.info & (expType::unknown  |
+                     expType::variable |
+                     expType::function | // [-] Check function later
+                     expType::varInfo)){
+
+          cStrToStrMapIterator it;
+
+          if(n.info & expType::varInfo)
+            it = stsMap.find(n.getVarInfo().name);
+          else
+            it = stsMap.find(n.value);
+
+          n.info  = expType::presetValue;
+          n.value = it->second;
+        }
+      }
+
+      freeFlatHandle(flatRoot);
+
+      return evaluateString(this2.toString());
+    }
     //================================
 
     void expNode::freeLeaf(const int leafPos){
@@ -3077,7 +3121,7 @@ namespace occa {
                            0, this);
     }
 
-    std::string statement::getTab() const {
+    std::string statement::getTab(){
       std::string ret = "";
 
       for(int i = 0; i < depth; ++i)
@@ -3335,7 +3379,7 @@ namespace occa {
       scopeTypeMap[typedefName] = &type;
     }
 
-    bool statement::nodeHasQualifier(strNode *n) const {
+    bool statement::nodeHasQualifier(strNode *n){
       if( !(n->info & qualifierType) )
         return false;
 
@@ -3354,20 +3398,20 @@ namespace occa {
       return true;
     }
 
-    bool statement::nodeHasSpecifier(strNode *n) const {
+    bool statement::nodeHasSpecifier(strNode *n){
       return ((n->info & specifierType) ||
               ((n->info & unknownVariable) &&
                ( hasTypeInScope(n->value) )));
     }
 
-    bool statement::nodeHasDescriptor(strNode *n) const {
+    bool statement::nodeHasDescriptor(strNode *n){
       if(nodeHasSpecifier(n) || nodeHasQualifier(n))
         return true;
 
       return false;
     }
 
-    typeInfo* statement::hasTypeInScope(const std::string &typeName) const {
+    typeInfo* statement::hasTypeInScope(const std::string &typeName){
       cScopeTypeMapIterator it = scopeTypeMap.find(typeName);
 
       if(it != scopeTypeMap.end())
@@ -3379,7 +3423,7 @@ namespace occa {
       return NULL;
     }
 
-    varInfo* statement::hasVariableInScope(const std::string &varName) const {
+    varInfo* statement::hasVariableInScope(const std::string &varName){
       const statement *sPos = this;
 
       while(sPos){
@@ -3394,7 +3438,7 @@ namespace occa {
       return NULL;
     }
 
-    varInfo* statement::hasVariableInLocalScope(const std::string &varName) const {
+    varInfo* statement::hasVariableInLocalScope(const std::string &varName){
       cScopeVarMapIterator it = scopeVarMap.find(varName);
 
       if(it != scopeVarMap.end())
@@ -3403,11 +3447,11 @@ namespace occa {
       return NULL;
     }
 
-    bool statement::hasDescriptorVariable(const std::string descriptor) const {
+    bool statement::hasDescriptorVariable(const std::string descriptor){
       return hasQualifier(descriptor);
     }
 
-    bool statement::hasDescriptorVariableInScope(const std::string descriptor) const {
+    bool statement::hasDescriptorVariableInScope(const std::string descriptor){
       if(hasDescriptorVariable(descriptor))
         return true;
 
@@ -4729,13 +4773,13 @@ namespace occa {
       expNode::swap(expRoot, s.expRoot);
     }
 
-    bool statement::hasQualifier(const std::string &qualifier) const {
+    bool statement::hasQualifier(const std::string &qualifier){
       if(info & declareStatementType){
-        const varInfo &var = cGetDeclarationVarInfo(0);
+        varInfo &var = getDeclarationVarInfo(0);
         return var.hasQualifier(qualifier);
       }
       else if(info & functionStatementType){
-        const varInfo &var = expRoot.cGetVarInfo(0);
+        varInfo &var = expRoot.getVarInfo(0);
         return var.hasQualifier(qualifier);
       }
       else if(info & forStatementType){
@@ -4971,11 +5015,6 @@ namespace occa {
       return varNode->getVarInfo();
     }
 
-    const varInfo& statement::cGetDeclarationVarInfo(const int pos) const {
-      expNode *varNode = expRoot.getVariableInfoNode(pos);
-      return varNode->cGetVarInfo();
-    }
-
     expNode* statement::getDeclarationVarNode(const int pos){
       if(info & declareStatementType)
         return expRoot.leaves[pos];
@@ -4999,7 +5038,7 @@ namespace occa {
       return NULL;
     }
 
-    int statement::getDeclarationVarCount() const {
+    int statement::getDeclarationVarCount(){
       if(info & declareStatementType)
         return expRoot.leafCount;
 
@@ -5136,7 +5175,7 @@ namespace occa {
       return NULL;
     }
 
-    int statement::getForStatementCount() const {
+    int statement::getForStatementCount(){
       if(info & forStatementType)
         return expRoot.leafCount;
 
@@ -5147,7 +5186,7 @@ namespace occa {
     // autoMode: Handles newlines and tabs
     std::string statement::prettyString(strNode *nodeRoot,
                                         const std::string &tab_,
-                                        const bool autoMode) const {
+                                        const bool autoMode){
       return "";
 #if 0
       strNode *nodePos = nodeRoot;

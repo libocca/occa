@@ -7,12 +7,30 @@ namespace occa {
   namespace parserNS {
     class parserBase;
 
+    class ctInfo {
+    public:
+      bool hasConstValue;
+      opHolder constValue;
+
+      expNode minBound, maxBound;
+      expNode stride;
+
+      std::vector<expNode> reads;
+      std::vector<expNode> writes;
+    };
+
+    typedef std::map<varInfo*, ctInfo> ctMap_t;
+    typedef ctMap_t::iterator          ctMapIterator;
+    typedef ctMap_t::const_iterator    cCtMapIterator;
+
     class magician {
     public:
       parserBase &parser;
       statement &globalScope;
       varUsedMap_t &varUpdateMap;
       varUsedMap_t &varUsedMap;
+
+      ctMap_t ctMap;
 
       magician(parserBase &parser_);
 

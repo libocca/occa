@@ -1,4 +1,5 @@
 #include "occaParserMacro.hpp"
+#include "occaParser.hpp"
 
 namespace occa {
   namespace parserNS {
@@ -116,7 +117,7 @@ namespace occa {
       }
     }
 
-    bool typeHolder::isAFloat() const {
+    bool typeHolder::isAFloat(){
       switch(type){
       case intType   : return false; break;
       case boolType  : return false; break;
@@ -132,7 +133,7 @@ namespace occa {
       }
     }
 
-    bool typeHolder::boolValue() const {
+    bool typeHolder::boolValue(){
       switch(type){
       case intType   : return (bool) value.int_;    break;
       case boolType  : return (bool) value.bool_;   break;
@@ -148,7 +149,7 @@ namespace occa {
       }
     }
 
-    long typeHolder::longValue() const {
+    long typeHolder::longValue(){
       switch(type){
       case intType   : return (long) value.int_;    break;
       case boolType  : return (long) value.bool_;   break;
@@ -164,7 +165,7 @@ namespace occa {
       }
     }
 
-    double typeHolder::doubleValue() const {
+    double typeHolder::doubleValue(){
       switch(type){
       case intType   : return (double) value.int_;    break;
       case boolType  : return (double) value.bool_;   break;
@@ -235,11 +236,16 @@ namespace occa {
       return out;
     }
 
-    int typePrecedence(const typeHolder a, const typeHolder b){
+    int typePrecedence(typeHolder &a, typeHolder &b){
       return ((a.type < b.type) ? b.type : a.type);
     }
 
-    typeHolder applyOperator(std::string op, const typeHolder a){
+    typeHolder applyOperator(std::string op, const std::string &a_){
+      typeHolder a(a_);
+      return applyOperator(op, a);
+    }
+
+    typeHolder applyOperator(std::string op, typeHolder &a){
       typeHolder ret;
 
       if(op == "!"){
@@ -271,9 +277,17 @@ namespace occa {
       return ret;
     }
 
-    typeHolder applyOperator(const typeHolder a,
+    typeHolder applyOperator(const std::string &a_,
                              std::string op,
-                             const typeHolder b){
+                             const std::string &b_){
+      typeHolder a(a_), b(b_);
+
+      return applyOperator(a, op, b);
+    }
+
+    typeHolder applyOperator(typeHolder &a,
+                             std::string op,
+                             typeHolder &b){
       typeHolder ret;
       ret.type  = typePrecedence(a,b);
       ret.value = a.value;
@@ -595,10 +609,19 @@ namespace occa {
       return ret;
     }
 
-    typeHolder applyOperator(const typeHolder a,
+    typeHolder applyOperator(const std::string &a_,
                              std::string op,
-                             const typeHolder b,
-                             const typeHolder c){
+                             const std::string &b_,
+                             const std::string &c_){
+      typeHolder a(a_), b(b_), c(c_);
+
+      return applyOperator(a, op, b, c);
+    }
+
+    typeHolder applyOperator(typeHolder &a,
+                             std::string op,
+                             typeHolder &b,
+                             typeHolder &c){
       bool pickC;
 
       if(a.isAFloat())
@@ -610,6 +633,176 @@ namespace occa {
         return c;
       else
         return b;
+    }
+
+    typeHolder evaluateString(const std::string &str){
+      return evaluateString(str.c_str());
+    }
+
+    typeHolder evaluateString(const char *c){
+      skipWhitespace(c);
+
+      if(*c == '\0')
+        return typeHolder("false");
+
+      strNode *lineNode = new strNode(c);
+      strip(lineNode->value);
+
+      strNode *labelNodeRoot = labelCode(lineNode);
+      strNode *labelNodePos  = labelNodeRoot;
+
+      // Check if a variable snuck in
+      while(labelNodePos){
+        if(labelNodePos->info & unknownVariable)
+          return typeHolder("false");
+
+        labelNodePos = labelNodePos->right;
+      }
+
+      return evaluateNode(labelNodeRoot);
+    }
+
+    typeHolder evaluateNode(strNode *nodeRoot){
+      if(nodeRoot == NULL)
+        return typeHolder("0");
+
+      if((nodeRoot->info  & presetValue) &&
+         (nodeRoot->right == NULL)){
+
+        return typeHolder(*nodeRoot);
+      }
+
+      strNode *labelNodePos = nodeRoot;
+
+      while(labelNodePos){
+        if(labelNodePos->down){
+          labelNodePos->value = evaluateNode(labelNodePos->down);
+          labelNodePos->info  = presetValue;
+        }
+
+        if(labelNodePos->right == NULL)
+          break;
+
+        labelNodePos = labelNodePos->right;
+      }
+
+      strNode *minOpNode;
+      int minPrecedence, minOpType;
+
+      labelNodePos = nodeRoot;
+
+      while(true){
+        minOpNode     = NULL;
+        minPrecedence = 100;
+        minOpType     = -1;
+
+        while(labelNodePos){
+          if(labelNodePos->info & operatorType){
+            int opType = (labelNodePos->info & operatorType);
+
+            opType &= ~qualifierType;
+
+            if(opType & unitaryOperatorType){
+              if((opType & binaryOperatorType) && // + and - operators
+                 (labelNodePos->left)          &&
+                 (labelNodePos->left->info & presetValue)){
+
+                opType = binaryOperatorType;
+              }
+              else if((opType & rUnitaryOperatorType) &&
+                      (labelNodePos->left)            &&
+                      (labelNodePos->left->info & presetValue)){
+
+                opType = rUnitaryOperatorType;
+              }
+              else if((opType & lUnitaryOperatorType) &&
+                      (labelNodePos->right)           &&
+                      (labelNodePos->right->info & presetValue)){
+
+                opType = lUnitaryOperatorType;
+              }
+              else
+                opType &= ~unitaryOperatorType;
+            }
+
+            const int opP = opPrecedence[opHolder(labelNodePos->value,
+                                                  opType)];
+
+            if(opP < minPrecedence){
+              minOpType     = opType;
+              minOpNode     = labelNodePos;
+              minPrecedence = opP;
+            }
+          }
+
+          labelNodePos = labelNodePos->right;
+        }
+
+        if(minOpNode == NULL){
+          if(nodeRoot && (nodeRoot->right == NULL))
+            return typeHolder(*nodeRoot);
+
+          OCCA_CHECK(false,
+                     "5. Error on:\n"
+                     << *(nodeRoot));
+        }
+        else{
+          if(minOpType & unitaryOperatorType){
+            if(minOpType & lUnitaryOperatorType){
+              std::string op = minOpNode->value;
+              std::string a  = minOpNode->right->value;
+
+              minOpNode->value = applyOperator(op, a);
+              minOpNode->info  = presetValue;
+
+              minOpNode->right->pop();
+            }
+            else if(minOpType & rUnitaryOperatorType){
+              OCCA_CHECK(false,
+                         "Postfix operator [" << *minOpNode << "] cannot be used in a macro");
+            }
+          }
+          else if(minOpType & binaryOperatorType){
+            minOpNode = minOpNode->left;
+
+            std::string a  = minOpNode->value;
+            std::string op = minOpNode->right->value;
+            std::string b  = minOpNode->right->right->value;
+
+            minOpNode->value = applyOperator(a, op, b);
+            minOpNode->info  = presetValue;
+
+            minOpNode->right->pop();
+            minOpNode->right->pop();
+          }
+          else if(minOpType & ternaryOperatorType){
+            minOpNode = minOpNode->left;
+
+            std::string a  = minOpNode->value;
+            std::string op = minOpNode->right->value;
+            std::string b  = minOpNode->right->right->value;
+            std::string c  = minOpNode->right->right->right->right->value;
+
+            minOpNode->value = applyOperator(a, op, b, c);
+            minOpNode->info  = presetValue;
+
+            minOpNode->right->pop();
+            minOpNode->right->pop();
+            minOpNode->right->pop();
+            minOpNode->right->pop();
+          }
+        }
+
+        if(nodeRoot->right == NULL)
+          return typeHolder(*nodeRoot);
+
+        labelNodePos = nodeRoot;
+      }
+
+      // Shouldn't get here
+      typeHolder th(nodeRoot->value);
+
+      return th;
     }
     //==============================================
 

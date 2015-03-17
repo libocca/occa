@@ -72,11 +72,11 @@ namespace occa {
       void moveLeftOf(strNode *n);
       void moveRightOf(strNode *n);
 
-      strNode* clone() const;
-      strNode* cloneTo(strNode *n) const;
-      strNode* cloneNode() const;
+      strNode* clone();
+      strNode* cloneTo(strNode *n);
+      strNode* cloneNode();
 
-      operator std::string () const;
+      operator std::string ();
 
       strNode* pop();
 

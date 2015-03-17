@@ -8,6 +8,11 @@ namespace occa {
       varUpdateMap(parser_.varUpdateMap),
       varUsedMap(parser_.varUsedMap) {}
 
+    void magician::castMagicOn(parserBase &parser_){
+      magician mickey(parser_);
+      mickey.castMagic();
+    }
+
     void magician::castMagic(){
       statementNode *sn = globalScope.statementStart;
 
@@ -19,11 +24,6 @@ namespace occa {
 
         sn = sn->right;
       }
-    }
-
-    void magician::castMagicOn(parserBase &parser_){
-      magician mickey(parser_);
-      mickey.castMagic();
     }
 
     void magician::castMagicOn(statement &kernel){
