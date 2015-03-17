@@ -37,7 +37,7 @@ namespace occa {
       //---[ Warnings ]-----------------
       bool warnForMissingBarriers;
       bool warnForBarrierConditionals;
-      bool automagicEnabled;
+      bool magicEnabled;
       //================================
 
       parserBase();

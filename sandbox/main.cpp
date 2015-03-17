@@ -20,11 +20,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/scratch.ofl",
-                                                 occa::parserNS::parsingFortran);
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/scratch.ofl",
+  //                                                occa::parserNS::parsingFortran);
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/pwdg.okl");
@@ -77,6 +77,13 @@ int main(int argc, char **argv){
   //                                                occa::parserNS::parsingFortran);
   //   std::cout << parsedContent << '\n';
   // }
+
+  {
+    parser.magicEnabled = true;
+
+    std::string parsedContent = parser.parseFile("tests/ridgV.oak");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/PCGpart1.cl");

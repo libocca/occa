@@ -11,11 +11,15 @@ namespace occa {
     public:
       parserBase &parser;
       statement &globalScope;
+      varUsedMap_t &varUpdateMap;
+      varUsedMap_t &varUsedMap;
 
       magician(parserBase &parser_);
 
-      void castAutomatic();
-      void castAutomaticOn(statement &kernel);
+      static void castMagicOn(parserBase &parser_);
+
+      void castMagic();
+      void castMagicOn(statement &kernel);
     };
   };
 };
@@ -41,10 +45,4 @@ namespace occa {
 
   In  :
     3 -> 4: z is used
-
-
-
-
-
-
  */

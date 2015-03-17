@@ -12,7 +12,7 @@ namespace occa {
 
       warnForMissingBarriers     = true;
       warnForBarrierConditionals = true;
-      automagicEnabled           = false;
+      magicEnabled               = false;
     }
 
     const std::string parserBase::parseFile(const std::string &filename_,
@@ -45,11 +45,8 @@ namespace occa {
       markKernelFunctions(*globalScope);
       labelNativeKernels();
 
-      // if(automagicEnabled){
-      if(true){
-        magician(*this);
-        magician.castAutomagic();
-      }
+      if(magicEnabled)
+        magician::castMagicOn(*this);
 
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
