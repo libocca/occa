@@ -1299,7 +1299,6 @@ namespace occa {
 
   template <>
   double device_t<OpenCL>::timeBetween(const streamTag &startTag, const streamTag &endTag){
-    cl_command_queue &stream = *((cl_command_queue*) currentStream);
     cl_ulong start, end;
 
     finish();
