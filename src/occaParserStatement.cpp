@@ -1324,7 +1324,7 @@ namespace occa {
           }
 
           if(isCast)
-            leaf.info |= expType::cast_;
+            leaf.info = expType::cast_;
         }
 
         ++leafPos;
@@ -1487,6 +1487,28 @@ namespace occa {
 
     // (class) x
     void expNode::mergeClassCasts(){
+      int leafPos = leafCount - 2;
+
+      while(0 <= leafPos){
+        if( !(leaves[leafPos]->info & expType::cast_) ){
+          --leafPos;
+          continue;
+        }
+
+        expNode *leaf  = leaves[leafPos];
+        expNode *sLeaf = leaves[leafPos + 1];
+
+        for(int i = (leafPos + 2); i < leafCount; ++i)
+          leaves[i - 1] = leaves[i];
+
+        --leafCount;
+
+        leaf->addNode(*sLeaf);
+
+        sLeaf->up = leaf;
+
+        --leafPos;
+      }
     }
 
     // sizeof x
@@ -1932,6 +1954,8 @@ namespace occa {
             varInfo &var = getVarInfo();
 
             newExp.putVarInfo(var);
+
+            newExp.info = info;
 
             if((sInfo        != NULL) &&
                (newExp.sInfo != NULL)) {
@@ -2923,12 +2947,13 @@ namespace occa {
         break;
       }
 
-      case (expType::C | expType::cast_):{
-        out << '(';
+      case (expType::cast_):{
+        out << '('
+            << *(leaves[0])
+            << ')';
 
-        out << *(leaves[0]);
-
-        out << ')';
+        if(1 < leafCount)
+          out << ' ' << *(leaves[1]);
 
         break;
       }
