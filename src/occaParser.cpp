@@ -4024,6 +4024,7 @@ namespace occa {
     void occaLoopInfo::getLoopInfo(std::string &ioLoopVar,
                                    std::string &ioLoop,
                                    std::string &loopNest){
+
       std::string arg4 = (std::string) *(sInfo->getForStatement(3));
 
       // [-----][#]
@@ -4036,6 +4037,7 @@ namespace occa {
 
     void occaLoopInfo::getLoopNode1Info(std::string &iter,
                                         std::string &start){
+
       expNode &node1 = *(sInfo->getForStatement(0));
 
       if(parsingC){
@@ -4045,13 +4047,14 @@ namespace occa {
         start = *(node1.getVariableInitNode(0));
       }
       else{
-        iter  = node1[0][0].value;
-        start = node1[0][1].value;
+        iter  = node1[0][0].getVarInfo().name;
+        start = node1[0][1].getVarInfo().name;
       }
     }
 
     void occaLoopInfo::getLoopNode2Info(std::string &bound,
                                         std::string &iterCheck){
+
       expNode &node2 = *(sInfo->getForStatement(1));
 
       iterCheck = node2[0].value;

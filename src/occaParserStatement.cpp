@@ -457,8 +457,11 @@ namespace occa {
         if(var.stackPointerCount)
           var.stackPointersUsed = 1;
 
+        leaf[0].info |= expType::declaration;
+
+        // Make sure the first one prints out the type
         if(i == 0){
-          leaf.leaves[0]->info |= expType::type;
+          leaf[0].info |= expType::type;
           firstVar = &var;
         }
 
@@ -1849,12 +1852,12 @@ namespace occa {
       swapValues(a.leafCount, b.leafCount);
       swapValues(a.leaves   , b.leaves);
 
-      if( !(a.info & expType::varInfo) ){
+      if( !(a.info & expType::hasInfo) ){
         for(int i = 0; i < a.leafCount; ++i)
           a.leaves[i]->up = &a;
       }
 
-      if( !(b.info & expType::varInfo) ){
+      if( !(b.info & expType::hasInfo) ){
         for(int i = 0; i < b.leafCount; ++i)
           b.leaves[i]->up = &b;
       }

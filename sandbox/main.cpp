@@ -32,10 +32,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/test.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/scratch.okl");
@@ -88,11 +88,11 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   std::string parsedContent = parser.parseFile("tests/addVectors.ofl",
-  //                                                occa::parserNS::parsingFortran);
-  //   std::cout << parsedContent << '\n';
-  // }
+  {
+    std::string parsedContent = parser.parseFile("tests/addVectors.ofl",
+                                                 occa::parserNS::parsingFortran);
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/fakeNuma.ofl",
