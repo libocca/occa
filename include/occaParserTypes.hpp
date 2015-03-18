@@ -311,6 +311,21 @@ namespace occa {
     //============================================
 
 
+    //---[ Function Info Class ]------------------
+    class funcInfo {
+    public:
+      varInfo *var;
+
+      int argCount;
+      expNode *args;
+
+      bool usesTemplate;
+      int tArgCount;
+      typeInfo *tArgs;
+    };
+    //============================================
+
+
     //---[ Var Dependency Graph ]-----------------
     class sDep_t {
     public:

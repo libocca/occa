@@ -105,6 +105,8 @@ namespace occa {
       int leafCount;
       expNode **leaves;
 
+      typeInfo *type;
+
       expNode();
       expNode(statement &s);
       expNode(expNode &up_);

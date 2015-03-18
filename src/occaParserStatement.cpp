@@ -13,7 +13,9 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL) {}
+      leaves(NULL),
+
+      type(NULL) {}
 
     expNode::expNode(statement &s) :
       sInfo(&s),
@@ -24,7 +26,9 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL) {}
+      leaves(NULL),
+
+      type(NULL) {}
 
     expNode::expNode(expNode &up_) :
       sInfo(up_.sInfo),
@@ -35,7 +39,9 @@ namespace occa {
       up(&up_),
 
       leafCount(0),
-      leaves(NULL) {}
+      leaves(NULL),
+
+      type(NULL) {}
 
     int expNode::getStatementType(){
       if(info & expType::macro_)
