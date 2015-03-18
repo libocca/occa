@@ -18,6 +18,8 @@
 #  include <cuda.h>
 #endif
 
+#include "occaDefines.hpp"
+
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  define OCCA_RFUNC
 #  define OCCA_LFUNC

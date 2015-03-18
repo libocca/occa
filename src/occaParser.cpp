@@ -33,8 +33,6 @@ namespace occa {
 
     const std::string parserBase::parseSource(const char *cRoot){
       strNode *nodeRoot = splitAndPreprocessContent(cRoot);
-      // nodeRoot->print();
-      // throw 1;
 
       loadLanguageTypes();
 
@@ -211,7 +209,10 @@ namespace occa {
 
       ++c; // ')'
 
-      skipWhitespace(c);
+      if(isWhitespace(*c)){
+        info.parts[partPos] += ' ';
+        skipWhitespace(c);
+      }
 
       while(*c != '\0'){
         const char *cStart = c;
@@ -243,7 +244,10 @@ namespace occa {
         if(cStart != c)
           info.parts[partPos] += std::string(cStart, c - cStart);
 
-        skipWhitespace(c);
+        if(isWhitespace(*c)){
+          info.parts[partPos] += ' ';
+          skipWhitespace(c);
+        }
       }
     }
 

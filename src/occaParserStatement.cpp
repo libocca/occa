@@ -2698,7 +2698,7 @@ namespace occa {
         break;
       }
 
-      case (expType::L | expType::R):{
+      case (expType::LR):{
         if((value != ".") && (value != "->"))
           out << *(leaves[0]) << ' ' << value << ' ' << *(leaves[1]);
         else
@@ -2707,8 +2707,8 @@ namespace occa {
         break;
       }
 
-      case (expType::L | expType::C | expType::R):{
-        out << *(leaves[0]) << '?' << *(leaves[1]) << ':' << *(leaves[2]);
+      case (expType::LCR):{
+        out << *(leaves[0]) << " ? " << *(leaves[1]) << " : " << *(leaves[2]);
 
         break;
       }

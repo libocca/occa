@@ -4,6 +4,14 @@
 /* Testing " '
 */
 
+#define BOXIFY(x)                               \
+  {                                             \
+    if ((x) >= 0.5)                             \
+      x -= 1.0;                                 \
+    else if ((x) < -0.5)                        \
+      x += 1.0;                                 \
+  }
+
 typedef int blah234;
 
 // 0.9899*sqrt(8.0*log(10.0))/(PI*freq);
@@ -40,6 +48,10 @@ occaKernel void fd2d(tFloat *u1,
   const int lDimX = 16 + bDimY;
   int lDimY = lDimX;
   int lDimZ = lDimX + lDimY;
+
+  double2 s[2];
+
+  BOXIFY(s[i].x);
 
   /*
     for(int n = 0; n < bDimX; ++n; tile(lDimX)){
