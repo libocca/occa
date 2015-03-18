@@ -805,6 +805,7 @@ namespace occa {
     int varInfo::loadFrom(expNode &expRoot,
                           int leafPos,
                           varInfo *varHasType){
+
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
@@ -826,6 +827,7 @@ namespace occa {
     int varInfo::loadTypeFrom(expNode &expRoot,
                               int leafPos,
                               varInfo *varHasType){
+
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
@@ -948,9 +950,17 @@ namespace occa {
       }
 
       if(leaf->info & (expType::unknown  |
-                       expType::variable |
+                       expType::varInfo  |
                        expType::function)){
-        name = leaf->value;
+
+        if(leaf->info & expType::varInfo){
+          if(baseType)
+            name = leaf->getVarInfo().name;
+          else
+            return leafPos;
+        }
+        else
+          name = leaf->value;
 
         int sLeafPos = leaf->whichLeafAmI();
 
