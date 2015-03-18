@@ -262,30 +262,30 @@ else
   endif
 endif
 
-ifdef OCCA_HSA_ENABLED
-  hsaEnabled = $(OCCA_HSA_ENABLED)
+# ifdef OCCA_HSA_ENABLED
+#   hsaEnabled = $(OCCA_HSA_ENABLED)
 
-  ifeq ($(hsaEnabled), 1)
-    ifeq ($(usingLinux),1)
-      links += -lhsa                              # ?
-    endif
-  endif
-else
-  hsaIncFlags = $(call includeFlagsFor,hsa.h)     # ?
+#   ifeq ($(hsaEnabled), 1)
+#     ifeq ($(usingLinux),1)
+#       links += -lhsa                              # ?
+#     endif
+#   endif
+# else
+#   hsaIncFlags = $(call includeFlagsFor,hsa.h)     # ?
 
-  ifneq (,$(hsaIncFlags))
+#   ifneq (,$(hsaIncFlags))
 
-    ifeq ($(usingLinux),1)
-      hsaLibFlags = $(call libraryFlagsFor,hsa)   # ?
-    endif
+#     ifeq ($(usingLinux),1)
+#       hsaLibFlags = $(call libraryFlagsFor,hsa)   # ?
+#     endif
 
-    ifneq (,$(hsaLibFlags))
-      hsaEnabled = 1
-      paths += $(hsaIncFlags)
-      links += $(hsaLibFlags)
-    endif
-  endif
-endif
+#     ifneq (,$(hsaLibFlags))
+#       hsaEnabled = 1
+#       paths += $(hsaIncFlags)
+#       links += $(hsaLibFlags)
+#     endif
+#   endif
+# endif
 
 ifdef OCCA_COI_ENABLED
   coiEnabled = $(OCCA_COI_ENABLED)
