@@ -299,8 +299,8 @@ void setupSolver(){
   else
     fdInfo.addDefine("tFloat", "double");
 
-  fd2d = dev.buildKernelFromSource("fd2d.cl", "fd2d", fdInfo);
-  // fd2d = dev.buildKernelFromSource("fd2d.okl", "fd2d", fdInfo);
+  // fd2d = dev.buildKernelFromSource("fd2d.cl", "fd2d", fdInfo);
+  fd2d = dev.buildKernelFromSource("fd2d.okl", "fd2d", fdInfo);
 
   fd2d.setWorkingDims(dims, inner, outer);
 }
@@ -314,8 +314,8 @@ void solve(){
   if(currentTime < 0){
     dt = -dt;
   }
-  occa::tag startTag;
-  occa::tag endTag;
+  occa::streamTag startTag;
+  occa::streamTag endTag;
 
   for(int i = 0; i < iterations; i++){
     currentTime += dt;

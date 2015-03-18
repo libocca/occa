@@ -5,13 +5,13 @@ endif
 
 include ${OCCA_DIR}/scripts/makefile
 
-ifeq ($(OS),OSX)
-  flags += -D OCCA_GL_ENABLED=1 -D GL_GLEXT_PROTOTYPES
-  links += -framework OpenGL -lX11 -lGL -framework OpenGL -framework GLUT
-  paths += -I/opt/X11/include -L/opt/X11/lib
-else ifeq ($(OS),LINUX)
+ifeq ($(usingLinux),1)
   flags += -D OCCA_GL_ENABLED=1 -D GL_GLEXT_PROTOTYPES
   links += -L/usr/lib/fglrx/ -lGL -lX11 -lGLU -lglut -lGL
+  paths += -I/opt/X11/include -L/opt/X11/lib
+else ifeq ($(usingOSX),1)
+  flags += -D OCCA_GL_ENABLED=1 -D GL_GLEXT_PROTOTYPES
+  links += -framework OpenGL -lX11 -lGL -framework OpenGL -framework GLUT
   paths += -I/opt/X11/include -L/opt/X11/lib
 endif
 
