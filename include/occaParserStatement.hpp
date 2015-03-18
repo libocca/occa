@@ -418,6 +418,7 @@ namespace occa {
       bool nodeHasDescriptor(strNode *n);
 
       typeInfo* hasTypeInScope(const std::string &typeName);
+      typeInfo* hasTypeInLocalScope(const std::string &typeName);
 
       varInfo* hasVariableInScope(const std::string &varName);
       varInfo* hasVariableInLocalScope(const std::string &varName);

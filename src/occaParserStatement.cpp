@@ -149,8 +149,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      print();
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -259,9 +259,11 @@ namespace occa {
             sInfo->addVariable(&var);
         }
 
+        leaf[0].info |= expType::declaration;
+
         // Make sure the first one prints out the type
         if(i == 0){
-          leaf.leaves[0]->info |= expType::type;
+          leaf[0].info |= expType::type;
           firstVar = &var;
         }
 
@@ -325,8 +327,25 @@ namespace occa {
 
           if(!(sInfo->info & forStatementType) || (i != 0))
             leaf.organize();
-          else
+          else{
             leaf.splitDeclareStatement(expFlag::addVarToScope);
+
+            expNode &flatRoot = *(makeFlatHandle());
+
+            for(int j = 0; j < flatRoot.leafCount; ++j){
+              expNode &n = flatRoot[j];
+
+              // Variables that were just defined
+              if(n.info & expType::unknown){
+                varInfo *var = sInfo->hasVariableInLocalScope(n.value);
+
+                if(var != NULL)
+                  n.putVarInfo(*var);
+              }
+            }
+
+            freeFlatHandle(flatRoot);
+          }
         }
 
         leafPos = (nextLeafPos + 1);
@@ -853,7 +872,6 @@ namespace occa {
             if( !(nodeVar->info & varType::functionType) ){
               // leaf->info = expType::variable; // Substituted for varInfo storage
               leaf->putVarInfo(*nodeVar);
-              leaf->info = expType::varInfo;
             }
             else
               leaf->info = expType::function;
@@ -1218,8 +1236,6 @@ namespace occa {
     void expNode::labelReferenceQualifiers(){
       int leafPos = 0;
 
-      bool changed = false;
-
       while(leafPos < leafCount){
         if(leaves[leafPos]->info != (expType::operator_ |
                                      expType::qualifier)){
@@ -1235,9 +1251,6 @@ namespace occa {
           ++leafPos;
           continue;
         }
-
-        // changed = true;
-        // print();
 
         expNode &lLeaf = *(leaves[leafPos - 1]);
 
@@ -1267,9 +1280,6 @@ namespace occa {
 
         ++leafPos;
       }
-
-      if(changed)
-        print();
     }
 
     // [(class)]
@@ -1869,6 +1879,10 @@ namespace occa {
     }
 
     void expNode::cloneTo(expNode &newExp){
+      statement *sUp = ((newExp.sInfo != NULL) ?
+                        newExp.sInfo->up       :
+                        NULL);
+
       const bool sChanged = ((newExp.sInfo != NULL) &&
                              (newExp.sInfo != sInfo));
 
@@ -1886,56 +1900,77 @@ namespace occa {
 
       if(isVarInfo | isTypeInfo | isFuncInfo){
         if(isVarInfo){
-          varInfo &var = newExp.addVarInfoNode();
-          var = getVarInfo().clone();
+          // Var is created if it also has [expType::type]
+          if(info & expType::declaration){
+            varInfo &var = newExp.addVarInfoNode();
+            var = getVarInfo().clone();
+
+            // addVarInfoNode() sets info
+            newExp.info = info;
+
+            if(sChanged){
+              if(inForStatement){
+                newExp.sInfo->addVariable(&var);
+              }
+              else if((sUp != NULL) &&
+                      !(sUp->hasVariableInLocalScope(var.name))){
+
+                sUp->addVariable(&var, newExp.sInfo);
+              }
+            }
+          }
+          else{ // (info == expType::varInfo)
+            varInfo &var = getVarInfo();
+
+            newExp.putVarInfo(var);
+
+            if((sInfo        != NULL) &&
+               (newExp.sInfo != NULL)) {
+
+              if((newExp.up != NULL) &&
+                 (!isAnUpdateOperator(newExp.up->value))){
+
+                sInfo->addVariableToUpdateMap(var, newExp.sInfo);
+              }
+              else{
+                sInfo->addVariableToUsedMap(var, newExp.sInfo);
+              }
+            }
+          }
         }
         else if(isTypeInfo){
           typeInfo &type = newExp.addTypeInfoNode();
           type = getTypeInfo().clone();
+
+          if(sChanged      &&
+             (sUp != NULL) &&
+             !(sUp->hasVariableInLocalScope(type.name))){
+
+            sUp->addType(type);
+          }
         }
         else if(isFuncInfo){
           newExp.addVarInfoNode(0);
           newExp.setVarInfo(0, leaves[0]->getVarInfo());
-        }
 
-        // To add a variable, make sure sInfo->up exists
-        if(sChanged && newExp.sInfo->up){
-          statement &sUp = *(newExp.sInfo->up);
+          // Get function variable
+          varInfo &var = leaves[0]->getVarInfo();
 
-          if(isVarInfo && !inForStatement){
-            varInfo &var = newExp.getVarInfo();
+          // Make sure we haven't initialized it
+          //   from the original or an extern
+          if(sChanged      &&
+             (sUp != NULL) &&
+             !(sUp->hasVariableInLocalScope(var.name)) ){
 
-            if(!sUp.hasVariableInLocalScope(var.name))
-              sUp.addVariable(var, newExp.sInfo);
-          }
-          else if(isFuncInfo){
-            // Get function variable
-            varInfo &var = leaves[0]->getVarInfo();
-
-            // Make sure we haven't initialized it
-            //   from the original or an extern
-            if(!sUp.hasVariableInLocalScope(var.name))
-              sUp.addVariable(&var);
-          }
-        }
-
-        // Add local-variables
-        if(sChanged){
-          if(isFuncInfo){
-            // Get function variable
-            varInfo &var = leaves[0]->getVarInfo();
-
-            for(int i = 0; i < var.argumentCount; ++i){
-              varInfo &argVar = *(new varInfo());
-              argVar = var.getArgument(i).clone();
-
-              newExp.sInfo->addVariable(&argVar);
-              var.setArgument(i, argVar);
-            }
+            sUp->addVariable(&var);
           }
 
-          if(inForStatement){
-            newExp.sInfo->addVariable(newExp.getVarInfo());
+          for(int i = 0; i < var.argumentCount; ++i){
+            varInfo &argVar = *(new varInfo());
+            argVar = var.getArgument(i).clone();
+
+            newExp.sInfo->addVariable(&argVar);
+            var.setArgument(i, argVar);
           }
         }
       }
@@ -1943,29 +1978,13 @@ namespace occa {
         newExp.value     = value;
         newExp.leafCount = leafCount;
 
-        if(sChanged && hasVariable()){
-          std::string varName = getMyVariableName();
-          varInfo *pVar       = newExp.sInfo->hasVariableInScope(varName);
-
-          if(pVar == NULL)
-            pVar = sInfo->hasVariableInScope(varName);
-
-          if((newExp.up == NULL) ||
-             (up &&
-              !isAnUpdateOperator(up->value))){
-
-            newExp.sInfo->addVariableToUsedMap(*pVar);
-          }
-          else{
-            newExp.sInfo->addVariableToUpdateMap(*pVar);
-          }
-        }
-
         if(leafCount){
           newExp.leaves = new expNode*[leafCount];
 
-          for(int i = 0; i < leafCount; ++i)
-            newExp.leaves[i] = newExp.clone(leaves[i]);
+          for(int i = 0; i < leafCount; ++i){
+            newExp.leaves[i] = new expNode(newExp);
+            leaves[i]->cloneTo(newExp[i]);
+          }
         }
       }
     }
@@ -2163,6 +2182,8 @@ namespace occa {
     }
 
     varInfo& expNode::addVarInfoNode(){
+      info = expType::varInfo;
+
       addNode(0);
 
       varInfo **varLeaves = (varInfo**) leaves;
@@ -2180,6 +2201,8 @@ namespace occa {
     void expNode::putVarInfo(varInfo &var){
       addNode(0);
       leaves[0] = (expNode*) &var;
+
+      info = expType::varInfo;
     }
 
     void expNode::putVarInfo(const int pos, varInfo &var){
@@ -2265,7 +2288,7 @@ namespace occa {
     }
 
     void expNode::convertTo(const int info_){
-      if(info & expType::declaration){
+      if(info == expType::declaration){
         if(info_ & expType::variable){
           info = expType::variable;
 
@@ -2392,7 +2415,7 @@ namespace occa {
         else
           leaves[1]->value = newType;
       }
-      else if(info & expType::declaration){
+      else if(info == expType::declaration){
         if(leafCount &&
            (leaves[0]->info & expType::type)){
 
@@ -2402,7 +2425,7 @@ namespace occa {
     }
 
     int expNode::getVariableCount(){
-      if(info & expType::declaration){
+      if(info == expType::declaration){
         return leafCount;
       }
 
@@ -2410,7 +2433,7 @@ namespace occa {
     }
 
     bool expNode::variableHasInit(const int pos){
-      if(info & expType::declaration){
+      if(info == expType::declaration){
         const expNode &varNode = *(getVariableNode(pos));
 
         return (varNode.leafCount &&
@@ -2421,7 +2444,7 @@ namespace occa {
     }
 
     expNode* expNode::getVariableNode(const int pos){
-      if(info & expType::declaration){
+      if(info == expType::declaration){
         return leaves[pos];
       }
 
@@ -2429,15 +2452,15 @@ namespace occa {
     }
 
     expNode* expNode::getVariableInfoNode(const int pos){
-      if(info & expType::declaration){
-        const expNode &varNode = *(getVariableNode(pos));
+      if(info == expType::declaration){
+        expNode &varNode = *(getVariableNode(pos));
 
-        const expNode *varLeaf = ((varNode.info & expType::varInfo) ?
-                                  &varNode :
-                                  varNode.leaves[0]);
+        expNode *varLeaf = ((varNode.info & expType::varInfo) ?
+                            &varNode :
+                            varNode.leaves[0]);
 
         if(varLeaf->info & expType::varInfo){
-          return const_cast<expNode*>(varLeaf); // Check later
+          return varLeaf;
         }
         else if(varNode.leafCount &&
                 (varLeaf->value == "=")){
@@ -2450,7 +2473,7 @@ namespace occa {
     }
 
     expNode* expNode::getVariableInitNode(const int pos){
-      if(info & expType::declaration){
+      if(info == expType::declaration){
         if(variableHasInit(pos)){
           const expNode &varNode = *(getVariableNode(pos));
 
@@ -2467,7 +2490,7 @@ namespace occa {
     }
 
     std::string expNode::getVariableName(const int pos){
-      if(info & expType::declaration){
+      if(info == expType::declaration){
         expNode &leaf = *(leaves[pos]);
 
         if(leaf.info & expType::varInfo){
@@ -2868,14 +2891,21 @@ namespace occa {
         break;
       }
 
+      case (expType::varInfo | expType::declaration | expType::type):
       case (expType::varInfo | expType::type):{
         out << getVarInfo();
 
         break;
       }
 
-      case (expType::varInfo):{
+      case (expType::varInfo | expType::declaration):{
         out << getVarInfo().toString(false);
+
+        break;
+      }
+
+      case (expType::varInfo):{
+        out << getVarInfo().name;
 
         break;
       }
@@ -2966,7 +2996,7 @@ namespace occa {
             out << "switch(";
 
           if(leafCount){
-            if(leaves[0]->info & expType::declaration)
+            if(leaves[0]->info == expType::declaration)
               leaves[0]->printOn(out, "", (expFlag::noNewline |
                                            expFlag::noSemicolon));
             else
@@ -3460,7 +3490,7 @@ namespace occa {
     }
 
     varInfo* statement::hasVariableInLocalScope(const std::string &varName){
-      cScopeVarMapIterator it = scopeVarMap.find(varName);
+      scopeVarMapIterator it = scopeVarMap.find(varName);
 
       if(it != scopeVarMap.end())
         return it->second;

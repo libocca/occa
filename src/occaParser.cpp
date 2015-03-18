@@ -2777,10 +2777,9 @@ namespace occa {
         varInfo *sVar = NULL;
 
         // Check for variable
-        if(flatRoot[i].info & expType::variable){
-          sVar = s.hasVariableInScope(flatRoot[i].value);
-        }
-        else if(flatRoot[i].info & expType::varInfo){
+        if((flatRoot[i].info & expType::varInfo) &&
+           (flatRoot[i].info & expType::declaration)){
+
           sVar = &(flatRoot[i].getVarInfo());
         }
 

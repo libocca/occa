@@ -759,8 +759,6 @@ namespace occa {
       v.leftQualifiers  = leftQualifiers.clone();
       v.rightQualifiers = rightQualifiers.clone();
 
-      v.stackPointersUsed = stackPointersUsed;
-
       if(stackPointerCount){
         v.stackExpRoots = new expNode[stackPointerCount];
 
