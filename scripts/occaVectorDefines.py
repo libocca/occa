@@ -8,7 +8,7 @@ types = ['bool',
          'float',
          'double']
 
-Ns = [2, 3, 4, 8, 16]
+Ns = [2, 4, 3, 8, 16]
 
 cudaDefined = { 'char2'   : True,
                 'char3'   : True,
@@ -43,19 +43,31 @@ def varN(n):
 
 def defineTypeN(type_, n):
     typeN = type_ + str(n)
+    TYPEN = (type_ + str(n)).upper();
 
     define = ''
 
+    if n == 3:
+        if typeN in cudaDefined:
+            define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
+
+        define += 'typedef ' + type_ + '4 ' + type_ + '3;\n'
+
+        if typeN in cudaDefined:
+            define += '#endif\n'
+
+        return define
+
     if typeN in cudaDefined:
-        define += '#if (OCCA_USING_CUDA == 0)\n'
-        define += '#  define ' + typeN + '_CONSTRUCTOR(...) '      + typeN + '(__VA_ARGS__)\n'
+        define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
+        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(...) '      + typeN + '(__VA_ARGS__)\n'
         define += '#else\n'
-        define += '#  define ' + typeN + '_CONSTRUCTOR(...) make_' + typeN + '(__VA_ARGS__)\n'
+        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(...) make_' + typeN + '(__VA_ARGS__)\n'
         define += '#endif\n'
 
-        define += '#if (OCCA_USING_CUDA == 0)\n'
+        define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
     else:
-        define += '#  define ' + typeN + '_CONSTRUCTOR(...) ' + typeN + '(__VA_ARGS__)\n'
+        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(...) ' + typeN + '(__VA_ARGS__)\n'
 
     define += 'class ' + type_ + str(n) + '{\n' + \
              'public:\n'
@@ -94,7 +106,7 @@ def defineTypeN(type_, n):
         define += binaryOpDef(type_, n, op)
 
     define += '\n'
-    define += '#if (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS)\n'
+    define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))\n'
     define += 'inline std::ostream& operator << (std::ostream &out, const ' + typeN + '& a){\n'
 
     l = ''; r = '';
@@ -113,6 +125,7 @@ def defineTypeN(type_, n):
 
 def unaryOpDef(type_, n, op):
     typeN = type_ + str(n)
+    TYPEN = (type_ + str(n)).upper();
 
     isBool  =  (type_ == 'bool')
     isFloat = ((type_ == 'float') or (type_ == 'double'))
@@ -132,7 +145,7 @@ def unaryOpDef(type_, n, op):
     indent = ['  ', '  ', '  ']
 
     for d in xrange(1 if isFloat else 2):
-        ret         = '  return ' + typeN + '_CONSTRUCTOR(';
+        ret         = '  return OCCA_' + TYPEN + '_CONSTRUCTOR(';
         indent[d]   = ' ' * len(ret)
         defines[d] += ret;
 
@@ -172,6 +185,7 @@ def unaryOpDef(type_, n, op):
 
 def binaryOpDef(type_, n, op):
     typeN = type_ + str(n)
+    TYPEN = (type_ + str(n)).upper();
 
     a = 'a.'
     b = 'b.'
@@ -188,7 +202,7 @@ def binaryOpDef(type_, n, op):
     a = [[('a.' + varL(i)) if aIsTypeN[define] else 'a' for i in xrange(n)] for define in xrange(5)]
     b = [[('b.' + varL(i)) if bIsTypeN[define] else 'b' for i in xrange(n)] for define in xrange(5)]
 
-    retDef = '  return ' + typeN + '_CONSTRUCTOR('
+    retDef = '  return OCCA_' + TYPEN + '_CONSTRUCTOR('
 
     for d in xrange(5):
         for i in xrange(n):
@@ -232,13 +246,22 @@ def defineType(type_):
     return define
 
 def defineAllTypes():
-    define  = '#if (!OCCA_USING_OPENCL)\n'
-    define += '#  if (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS)\n'
+    define  = '#if (!defined(OCCA_IN_KERNEL) || (!OCCA_USING_OPENCL))\n'
+    define += '#  if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))\n'
     define += '#    include <iostream>\n'
+    define += '#  endif\n\n'
+
+    define += '#  ifndef OCCA_IN_KERNEL\n'
+    define += '#    define occaFunction\n'
+    define += 'namespace occa {\n'
     define += '#  endif\n\n'
 
     for type_ in types:
         define += defineType(type_)
+
+    define += '#  ifndef OCCA_IN_KERNEL\n'
+    define += '};\n'
+    define += '#  endif\n\n'
 
     define += '#endif\n'
 

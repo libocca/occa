@@ -24,6 +24,8 @@
 #  define OCCA_MEM_ALIGN 16
 #endif
 
+#define OCCA_IN_KERNEL      1
+
 #define OCCA_USING_SERIAL   0
 #define OCCA_USING_OPENMP   0
 #define OCCA_USING_OPENCL   0

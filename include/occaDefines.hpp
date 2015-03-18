@@ -254,7 +254,6 @@
 
 //---[ OpenCL ]-------------------------
 #if OCCA_CHECK_ENABLED
-;
 #  define OCCA_CL_CHECK( _str , _statement ) OCCA_CL_CHECK2( _str , _statement , __FILE__ , __LINE__ )
 #  define OCCA_CL_CHECK2( _str , _statement , file , line )             \
   do {                                                                  \
@@ -295,6 +294,28 @@
   } while(0)
 #else
 #  define OCCA_CUDA_CHECK( _str , _statement ) do { _statement; } while(0)
+#endif
+//======================================
+
+
+//---[ HSA ]----------------------------
+#if OCCA_CHECK_ENABLED
+#  define OCCA_HSA_CHECK( _str , _statement ) OCCA_HSA_CHECK2( _str , _statement , __FILE__ , __LINE__ )
+#  define OCCA_HSA_CHECK2( _str , _statement , file , line )            \
+  do {                                                                  \
+    hsa_status_t _error = _statement;                                   \
+    if(_error){                                                         \
+      std::cout << "Error\n"                                            \
+                << "    File    : " << file << '\n'                     \
+                << "    Line    : " << line << '\n'                     \
+                << "    Error   : HSA Error [ " << _error << " ]: " << occa::hsaError(_error) << '\n' \
+                << "    Message : " << _str << '\n';                    \
+      OCCA_THROW;                                                       \
+    }                                                                   \
+  } while(0)
+
+#else
+#  define OCCA_CL_CHECK( _str , _statement ) do { _statement; } while(0)
 #endif
 //======================================
 

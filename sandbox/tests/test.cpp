@@ -80,6 +80,9 @@ occaKernel void fd2d(tFloat *u1,
           const int tx = bx * lDimX + lx;
           const int ty = by * lDimY + ly;
 
+          float2 sj, si;
+          float2 s = sj - si;
+
           Lu[0] = WR_MIN(Lu[tx], Lu[tx+512]);
 
           int y1, y2;

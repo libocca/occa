@@ -13,6 +13,9 @@
 #include "occaSerial.hpp"
 #include "occaOpenCL.hpp"
 #include "occaCUDA.hpp"
+#include "occaHSA.hpp"
 #include "occaCOI.hpp"
+
+#include "defines/occaVectorDefines.hpp"
 
 #endif

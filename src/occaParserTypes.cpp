@@ -2024,7 +2024,6 @@ namespace occa {
 
         for(int v = 0; v < varCount; ++v){
           varInfo &var = sDep[v];
-          std::cout << "var = " << var << '\n';
 
           if(&var != NULL){
             varDepGraph vdg(sDep[v], s, idMap);

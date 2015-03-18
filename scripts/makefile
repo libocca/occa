@@ -187,6 +187,7 @@ endif
 openmpEnabled = 0
 openclEnabled = 0
 cudaEnabled   = 0
+hsaEnabled    = 0
 coiEnabled    = 0
 
 ifdef OCCA_OPENMP_ENABLED
@@ -243,7 +244,6 @@ ifdef OCCA_CUDA_ENABLED
     endif
   endif
 else
-
   cudaIncFlags = $(call includeFlagsFor,cuda.h)
 
   ifneq (,$(cudaIncFlags))
@@ -258,6 +258,31 @@ else
       cudaEnabled = 1
       paths += $(cudaIncFlags)
       links += $(cudaLibFlags)
+    endif
+  endif
+endif
+
+ifdef OCCA_HSA_ENABLED
+  hsaEnabled = $(OCCA_HSA_ENABLED)
+
+  ifeq ($(hsaEnabled), 1)
+    ifeq ($(usingLinux),1)
+      links += -lhsa                              # ?
+    endif
+  endif
+else
+  hsaIncFlags = $(call includeFlagsFor,hsa.h)     # ?
+
+  ifneq (,$(hsaIncFlags))
+
+    ifeq ($(usingLinux),1)
+      hsaLibFlags = $(call libraryFlagsFor,hsa)   # ?
+    endif
+
+    ifneq (,$(hsaLibFlags))
+      hsaEnabled = 1
+      paths += $(hsaIncFlags)
+      links += $(hsaLibFlags)
     endif
   endif
 endif
@@ -304,6 +329,7 @@ endif
 cfFlags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
 cfFlags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
 cfFlags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
+cfFlags += -DOCCA_HSA_ENABLED=$(hsaEnabled)
 cfFlags += -DOCCA_COI_ENABLED=$(coiEnabled)
 
 ifdef COMPILING_WITH_JULIA

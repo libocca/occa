@@ -155,8 +155,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      // print();
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -255,6 +255,7 @@ namespace occa {
         varInfo &var  = leaf.addVarInfoNode(0);
 
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+        std::cout << "nextLeafPos = " << nextLeafPos << '\n';
 
         if(flags & expFlag::addVarToScope){
           if(flags & expFlag::addToParent){
@@ -264,6 +265,12 @@ namespace occa {
           else
             sInfo->addVariable(&var);
         }
+
+        printf("print()\n");
+        newExp.print();
+        printf("leaf.print()\n");
+        leaf.print();
+        std::cout << "var = " << var << '\n';
 
         leaf[0].info |= expType::declaration;
 
