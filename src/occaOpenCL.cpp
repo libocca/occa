@@ -504,9 +504,6 @@ namespace occa {
     nestedKernelCount = 0;
 
     preferredDimSize_ = 0;
-
-    startTime = (void*) new cl_event;
-    endTime   = (void*) new cl_event;
   }
 
   template <>
@@ -530,9 +527,6 @@ namespace occa {
     }
 
     preferredDimSize_ = k.preferredDimSize_;
-
-    startTime = k.startTime;
-    endTime   = k.endTime;
   }
 
   template <>
@@ -556,9 +550,6 @@ namespace occa {
     }
 
     preferredDimSize_ = k.preferredDimSize_;
-
-    *((cl_event*) startTime) = *((cl_event*) k.startTime);
-    *((cl_event*) endTime)   = *((cl_event*) k.endTime);
 
     return *this;
   }
@@ -677,42 +668,6 @@ namespace occa {
   }
 
 #include "operators/occaOpenCLKernelOperators.cpp"
-
-  template <>
-  double kernel_t<OpenCL>::timeTaken(){
-    cl_event &startEvent = *((cl_event*) startTime);
-    cl_event &endEvent   = *((cl_event*) endTime);
-
-    cl_ulong start, end;
-
-    clGetEventProfilingInfo(startEvent, CL_PROFILING_COMMAND_END,
-                            sizeof(cl_ulong), &start,
-                            NULL);
-
-    clGetEventProfilingInfo(endEvent, CL_PROFILING_COMMAND_START,
-                            sizeof(cl_ulong), &end,
-                            NULL);
-
-    return 1.0e-9*(end - start);
-  }
-
-  template <>
-  double kernel_t<OpenCL>::timeTakenBetween(void *start, void *end){
-    cl_event &startEvent = *((cl_event*) start);
-    cl_event &endEvent   = *((cl_event*) end);
-
-    cl_ulong start_, end_;
-
-    clGetEventProfilingInfo(startEvent, CL_PROFILING_COMMAND_END,
-                            sizeof(cl_ulong), &start_,
-                            NULL);
-
-    clGetEventProfilingInfo(endEvent, CL_PROFILING_COMMAND_START,
-                            sizeof(cl_ulong), &end_,
-                            NULL);
-
-    return 1.0e-9*(end_ - start_);
-  }
 
   template <>
   void kernel_t<OpenCL>::free(){

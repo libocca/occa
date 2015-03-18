@@ -579,13 +579,6 @@ extern "C" {
                            occa::dim(groupsX, groupsY, groupsZ));
   }
 
-
-  double OCCA_RFUNC occaKernelTimeTaken(occaKernel kernel){
-    occa::kernel &kernel_ = *((occa::kernel*) kernel);
-
-    return kernel_.timeTaken();
-  }
-
   occaArgumentList OCCA_RFUNC occaCreateArgumentList(){
     occaArgumentList_t *list = new occaArgumentList_t();
     list->argc = 0;

@@ -120,12 +120,6 @@ namespace occa {
   int kernel_t<CUDA>::preferredDimSize();
 
   template <>
-  double kernel_t<CUDA>::timeTaken();
-
-  template <>
-  double kernel_t<CUDA>::timeTakenBetween(void *start, void *end);
-
-  template <>
   void kernel_t<CUDA>::free();
   //==================================
 

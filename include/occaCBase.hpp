@@ -236,8 +236,6 @@ extern "C" {
                                                          uintptr_t itemsX, uintptr_t itemsY, uintptr_t itemsZ,
                                                          uintptr_t groupsX, uintptr_t groupsY, uintptr_t groupsZ);
 
-  OCCA_LFUNC double OCCA_RFUNC occaKernelTimeTaken(occaKernel kernel);
-
   OCCA_LFUNC occaArgumentList OCCA_RFUNC occaCreateArgumentList();
 
   OCCA_LFUNC void OCCA_RFUNC occaArgumentListClear(occaArgumentList list);

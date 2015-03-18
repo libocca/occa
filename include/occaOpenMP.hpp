@@ -77,12 +77,6 @@ namespace occa {
   int kernel_t<OpenMP>::preferredDimSize();
 
   template <>
-  double kernel_t<OpenMP>::timeTaken();
-
-  template <>
-  double kernel_t<OpenMP>::timeTakenBetween(void *start, void *end);
-
-  template <>
   void kernel_t<OpenMP>::free();
   //==================================
 

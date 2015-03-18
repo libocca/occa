@@ -13,9 +13,6 @@ namespace occa {
     outer = occa::dim(1,1,1);
 
     nestedKernelCount = 0;
-
-    startTime = (void*) new double;
-    endTime   = (void*) new double;
   }
 
   template <>
@@ -37,9 +34,6 @@ namespace occa {
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
     }
-
-    startTime = k.startTime;
-    endTime   = k.endTime;
   }
 
   template <>
@@ -61,9 +55,6 @@ namespace occa {
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
     }
-
-    *((double*) startTime) = *((double*) k.startTime);
-    *((double*) endTime)   = *((double*) k.endTime);
 
     return *this;
   }
@@ -236,22 +227,6 @@ namespace occa {
   int kernel_t<Pthreads>::preferredDimSize(){
     preferredDimSize_ = OCCA_SIMD_WIDTH;
     return OCCA_SIMD_WIDTH;
-  }
-
-  template <>
-  double kernel_t<Pthreads>::timeTaken(){
-    const double &start = *((double*) startTime);
-    const double &end   = *((double*) endTime);
-
-    return 1.0e3*(end - start);
-  }
-
-  template <>
-  double kernel_t<Pthreads>::timeTakenBetween(void *start, void *end){
-    const double &start_ = *((double*) start);
-    const double &end_   = *((double*) end);
-
-    return 1.0e3*(end_ - start_);
   }
 
   template <>

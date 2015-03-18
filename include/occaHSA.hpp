@@ -93,12 +93,6 @@ namespace occa {
   int kernel_t<HSA>::preferredDimSize();
 
   template <>
-  double kernel_t<HSA>::timeTaken();
-
-  template <>
-  double kernel_t<HSA>::timeTakenBetween(void *start, void *end);
-
-  template <>
   void kernel_t<HSA>::free();
   //==================================
 

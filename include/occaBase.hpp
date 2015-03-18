@@ -635,8 +635,6 @@ namespace occa {
 
     int preferredDimSize_;
 
-    void *startTime, *endTime;
-
     int dims;
     dim inner, outer;
 
@@ -664,9 +662,6 @@ namespace occa {
     virtual int preferredDimSize() = 0;
 
 #include "operators/occaVirtualOperatorDeclarations.hpp"
-
-    virtual double timeTaken() = 0;
-    virtual double timeTakenBetween(void *start, void *end) = 0;
 
     virtual void free() = 0;
   };
@@ -704,9 +699,6 @@ namespace occa {
     int preferredDimSize();
 
 #include "operators/occaOperatorDeclarations.hpp"
-
-    double timeTaken();
-    double timeTakenBetween(void *start, void *end);
 
     void free();
   };
@@ -753,9 +745,6 @@ namespace occa {
     void runFromArguments();
 
 #include "operators/occaOperatorDeclarations.hpp"
-
-    double timeTaken();
-    double timeTakenBetween(void *start, void *end);
 
     void free();
   };

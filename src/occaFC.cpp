@@ -155,7 +155,6 @@
 #define  OCCAKERNELPREFERREDDIMSIZE_FC   OCCA_F2C_GLOBAL_(occakernelpreferreddimsize_fc , OCCAKERNELPREFERREDDIMSIZE_FC)
 // #define  OCCAKERNELSETWORKINGDIMS_FC     OCCA_F2C_GLOBAL_(occakernelsetworkingdims_fc   , OCCAKERNELSETWORKINGDIMS_FC)
 #define  OCCAKERNELSETALLWORKINGDIMS_FC  OCCA_F2C_GLOBAL_(occakernelsetallworkingdims_fc, OCCAKERNELSETALLWORKINGDIMS_FC)
-#define  OCCAKERNELTIMETAKEN_FC          OCCA_F2C_GLOBAL_(occakerneltimetaken_fc        , OCCAKERNELTIMETAKEN_FC)
 #define  OCCACREATEARGUMENTLIST_FC       OCCA_F2C_GLOBAL_(occacreateargumentlist_fc     , OCCACREATEARGUMENTLIST_FC)
 #define  OCCAARGUMENTLISTCLEAR_FC        OCCA_F2C_GLOBAL_(occaargumentlistclear_fc      , OCCAARGUMENTLISTCLEAR_FC)
 #define  OCCAARGUMENTLISTFREE_FC         OCCA_F2C_GLOBAL_(occaargumentlistfree_fc       , OCCAARGUMENTLISTFREE_FC)
@@ -654,10 +653,6 @@ extern "C" {
                                 *dims,
                                 *itemsX, *itemsY, *itemsZ,
                                 *groupsX, *groupsY, *groupsZ);
-  }
-
-  void OCCAKERNELTIMETAKEN_FC(double *time, occaKernel *kernel){
-    *time = occaKernelTimeTaken(kernel);
   }
 
   void OCCACREATEARGUMENTLIST_FC(occaArgumentList *args){

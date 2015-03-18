@@ -131,12 +131,6 @@ namespace occa {
   int kernel_t<OpenCL>::preferredDimSize();
 
   template <>
-  double kernel_t<OpenCL>::timeTaken();
-
-  template <>
-  double kernel_t<OpenCL>::timeTakenBetween(void *start, void *end);
-
-  template <>
   void kernel_t<OpenCL>::free();
   //==================================
 

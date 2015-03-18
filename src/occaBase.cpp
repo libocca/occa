@@ -460,21 +460,6 @@ namespace occa {
 
 #include "operators/occaOperatorDefinitions.cpp"
 
-  double kernel::timeTaken(){
-    if(kHandle->nestedKernelCount == 0){
-      return kHandle->timeTaken();
-    }
-    else{
-      kernel &k1 = kHandle->nestedKernels[0];
-      kernel &k2 = kHandle->nestedKernels[kHandle->nestedKernelCount - 1];
-
-      void *start = k1.kHandle->startTime;
-      void *end   = k2.kHandle->endTime;
-
-      return k1.kHandle->timeTakenBetween(start, end);
-    }
-  }
-
   void kernel::free(){
     if(kHandle->nestedKernelCount){
       for(int k = 0; k < kHandle->nestedKernelCount; ++k)

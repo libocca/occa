@@ -126,12 +126,6 @@ namespace occa {
   int kernel_t<Serial>::preferredDimSize();
 
   template <>
-  double kernel_t<Serial>::timeTaken();
-
-  template <>
-  double kernel_t<Serial>::timeTakenBetween(void *start, void *end);
-
-  template <>
   void kernel_t<Serial>::free();
   //==================================
 

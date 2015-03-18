@@ -100,12 +100,6 @@ namespace occa {
   int kernel_t<COI>::preferredDimSize();
 
   template <>
-  double kernel_t<COI>::timeTaken();
-
-  template <>
-  double kernel_t<COI>::timeTakenBetween(void *start, void *end);
-
-  template <>
   void kernel_t<COI>::free();
   //==================================
 

@@ -208,9 +208,6 @@ namespace occa {
     nestedKernelCount = 0;
 
     preferredDimSize_ = 0;
-
-    startTime = (void*) new CUevent;
-    endTime   = (void*) new CUevent;
   }
 
   template <>
@@ -234,9 +231,6 @@ namespace occa {
     }
 
     preferredDimSize_ = k.preferredDimSize_;
-
-    startTime = k.startTime;
-    endTime   = k.endTime;
   }
 
   template <>
@@ -258,9 +252,6 @@ namespace occa {
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
     }
-
-    *((CUevent*) startTime) = *((CUevent*) k.startTime);
-    *((CUevent*) endTime)   = *((CUevent*) k.endTime);
 
     return *this;
   }
@@ -440,32 +431,6 @@ namespace occa {
   }
 
 #include "operators/occaCUDAKernelOperators.cpp"
-
-  template <>
-  double kernel_t<CUDA>::timeTaken(){
-    CUevent &startEvent = *((CUevent*) startTime);
-    CUevent &endEvent   = *((CUevent*) endTime);
-
-    cuEventSynchronize(endEvent);
-
-    float msTimeTaken;
-    cuEventElapsedTime(&msTimeTaken, startEvent, endEvent);
-
-    return (1.0e-3 * msTimeTaken);
-  }
-
-  template <>
-  double kernel_t<CUDA>::timeTakenBetween(void *start, void *end){
-    CUevent &startEvent = *((CUevent*) start);
-    CUevent &endEvent   = *((CUevent*) end);
-
-    cuEventSynchronize(endEvent);
-
-    float msTimeTaken;
-    cuEventElapsedTime(&msTimeTaken, startEvent, endEvent);
-
-    return (1.0e-3 * msTimeTaken);
-  }
 
   template <>
   void kernel_t<CUDA>::free(){
@@ -1092,7 +1057,8 @@ namespace occa {
 
   template <>
   void device_t<CUDA>::waitFor(streamTag tag){
-    cuEventSynchronize(tag.cuEvent);
+    OCCA_CUDA_CHECK("Device: Waiting For Tag",
+                    cuEventSynchronize(tag.cuEvent));
   }
 
   template <>
@@ -1121,18 +1087,23 @@ namespace occa {
   streamTag device_t<CUDA>::tagStream(){
     streamTag ret;
 
-    cuEventCreate(&(ret.cuEvent), CU_EVENT_DEFAULT);
-    cuEventRecord(ret.cuEvent, 0);
+    OCCA_CUDA_CHECK("Device: Tagging Stream (Creating Tag)",
+                    cuEventCreate(&(ret.cuEvent), CU_EVENT_DEFAULT));
+
+    OCCA_CUDA_CHECK("Device: Tagging Stream",
+                    cuEventRecord(ret.cuEvent, 0));
 
     return ret;
   }
 
   template <>
   double device_t<CUDA>::timeBetween(const streamTag &startTag, const streamTag &endTag){
-    cuEventSynchronize(endTag.cuEvent);
+    OCCA_CUDA_CHECK("Device: Waiting for endTag",
+                    cuEventSynchronize(endTag.cuEvent));
 
     float msTimeTaken;
-    cuEventElapsedTime(&msTimeTaken, startTag.cuEvent, endTag.cuEvent);
+    OCCA_CUDA_CHECK("Device: Timing Between Tags",
+                    cuEventElapsedTime(&msTimeTaken, startTag.cuEvent, endTag.cuEvent));
 
     return (double) (1.0e-3 * (double) msTimeTaken);
   }

@@ -154,9 +154,6 @@ namespace occa {
     nestedKernelCount = 0;
 
     preferredDimSize_ = 0;
-
-    startTime = (void*) new double;
-    endTime   = (void*) new double;
   }
 
   template <>
@@ -180,9 +177,6 @@ namespace occa {
     }
 
     preferredDimSize_ = k.preferredDimSize_;
-
-    startTime = k.startTime;
-    endTime   = k.endTime;
   }
 
   template <>
@@ -206,9 +200,6 @@ namespace occa {
     }
 
     preferredDimSize_ = k.preferredDimSize_;
-
-    *((double*) startTime) = *((double*) k.startTime);
-    *((double*) endTime)   = *((double*) k.endTime);
 
     return *this;
   }
@@ -391,22 +382,6 @@ namespace occa {
   }
 
 #include "operators/occaCOIKernelOperators.cpp"
-
-  template <>
-  double kernel_t<COI>::timeTaken(){
-    const double &start = *((double*) startTime);
-    const double &end   = *((double*) endTime);
-
-    return 1.0e3*(end - start);
-  }
-
-  template <>
-  double kernel_t<COI>::timeTakenBetween(void *start, void *end){
-    const double &start_ = *((double*) start);
-    const double &end_   = *((double*) end);
-
-    return 1.0e3*(end_ - start_);
-  }
 
   template <>
   void kernel_t<COI>::free(){

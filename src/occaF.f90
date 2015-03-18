@@ -39,7 +39,6 @@ module occa
     occaKernelPreferredDimSize,    &
     ! occaKernelSetWorkingDims,   &
     occaKernelSetAllWorkingDims,   &
-    occaKernelTimeTaken,           &
     occaCreateArgumentList,        &
     occaArgumentListClear,         &
     occaArgumentListFree,          &
@@ -328,10 +327,6 @@ module occa
       integer(8),       intent(in)    :: groupsX, groupsY, groupsZ
     end subroutine occaKernelSetAllWorkingDims_fc
   end interface occaKernelSetAllWorkingDims
-
-  interface occaKernelTimeTaken
-    module procedure occaKernelTimeTaken_func
-  end interface occaKernelTimeTaken
 
   interface occaCreateArgumentList
     module procedure occaCreateArgumentList_func
@@ -1733,21 +1728,6 @@ contains
 
     call occaKernelPreferredDimSize_fc(sz, kernel)
   end function occaKernelPreferredDimSize_func
-
-  real(8) function occaKernelTimeTaken_func(kernel) result(time)
-    type(occaKernel),     intent(in) :: kernel
-
-    interface
-      subroutine occaKernelTimeTaken_fc(time, kernel)
-        use occaFTypes_m
-        implicit none
-        real(8),          intent(out) :: time
-        type(occaKernel), intent(in)  :: kernel
-      end subroutine occaKernelTimeTaken_fc
-    end interface
-
-    call occaKernelTimeTaken_fc(time, kernel)
-  end function occaKernelTimeTaken_func
 
 
   type(occaArgumentList) function occaCreateArgumentList_func() result(args)

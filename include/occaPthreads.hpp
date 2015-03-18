@@ -121,12 +121,6 @@ namespace occa {
 
   template <>
   int kernel_t<Pthreads>::preferredDimSize();
-
-  template <>
-  double kernel_t<Pthreads>::timeTaken();
-
-  template <>
-  void kernel_t<Pthreads>::free();
   //==================================
 
 
