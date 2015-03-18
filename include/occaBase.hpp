@@ -262,14 +262,14 @@ namespace occa {
     }
   };
 
-  static const argInfo platformID("platformID");
-  static const argInfo deviceID("deviceID");
+  extern const argInfo platformID;
+  extern const argInfo deviceID;
 
-  static const argInfo schedule("schedule");
-  static const argInfo chunk("chunk");
+  extern const argInfo schedule;
+  extern const argInfo chunk;
 
-  static const argInfo threadCount("threadCount");
-  static const argInfo pinnedCores("pinnedCores");
+  extern const argInfo threadCount;
+  extern const argInfo pinnedCores;
 
   class argInfoMap {
   public:

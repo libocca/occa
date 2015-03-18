@@ -38,8 +38,8 @@ namespace occa {
       bool hasConstValue;
       typeHolder constValue;
 
-      expNode minBound, maxBound;
-      expNode stride;
+      expNode loopBounds[2];
+      expNode loopStride;
 
       std::vector<accessInfo> reads;
       std::vector<accessInfo> writes;

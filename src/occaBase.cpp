@@ -355,6 +355,15 @@ namespace occa {
                    const std::string &value_) :
     info(info_),
     value(value_) {}
+
+  const argInfo platformID("platformID");
+  const argInfo deviceID("deviceID");
+
+  const argInfo schedule("schedule");
+  const argInfo chunk("chunk");
+
+  const argInfo threadCount("threadCount");
+  const argInfo pinnedCores("pinnedCores");
   //==========================
   //==================================
 
