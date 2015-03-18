@@ -42,8 +42,15 @@
 #  endif
 #endif
 
-#if OCCA_CUDA_ENABLED
+#if (OCCA_CUDA_ENABLED)
 #  include <cuda.h>
+#endif
+
+#if (OCCA_HSA_ENABLED)
+#  if   (OCCA_OS & LINUX_OS)
+#  elif (OCCA_OS & OSX_OS)
+#  else
+#  endif
 #endif
 
 namespace occa {
@@ -157,29 +164,33 @@ namespace occa {
   static const occa::mode OpenMP   = (1 << 21);
   static const occa::mode OpenCL   = (1 << 22);
   static const occa::mode CUDA     = (1 << 23);
-  static const occa::mode Pthreads = (1 << 24);
-  static const occa::mode COI      = (1 << 25);
+  static const occa::mode HSA      = (1 << 24);
+  static const occa::mode Pthreads = (1 << 25);
+  static const occa::mode COI      = (1 << 26);
 
   static const int onChipModes = (Serial |
                                   OpenMP |
                                   Pthreads);
 
   static const int offChipModes = (OpenCL |
-                                   CUDA);
+                                   CUDA   |
+                                   HSA);
 
   static const occa::mode SerialIndex   = 0;
   static const occa::mode OpenMPIndex   = 1;
   static const occa::mode OpenCLIndex   = 2;
   static const occa::mode CUDAIndex     = 3;
-  static const occa::mode PthreadsIndex = 4;
-  static const occa::mode COIIndex      = 5;
-  static const int modeCount = 5;
+  static const occa::mode HSAIndex      = 4;
+  static const occa::mode PthreadsIndex = 5;
+  static const occa::mode COIIndex      = 6;
+  static const int modeCount = 6;
 
   inline std::string modeToStr(const occa::mode &m){
     if(m & Serial)   return "Serial";
     if(m & OpenMP)   return "OpenMP";
     if(m & OpenCL)   return "OpenCL";
     if(m & CUDA)     return "CUDA";
+    if(m & HSA)      return "HSA";
     if(m & Pthreads) return "Pthreads";
     if(m & COI)      return "COI";
 
@@ -195,6 +206,7 @@ namespace occa {
     if(upStr == "OPENMP")   return OpenMP;
     if(upStr == "OPENCL")   return OpenCL;
     if(upStr == "CUDA")     return CUDA;
+    if(upStr == "HSA")      return HSA;
     if(upStr == "PTHREADS") return Pthreads;
     if(upStr == "COI")      return COI;
 
@@ -218,6 +230,7 @@ namespace occa {
     if(info_ & OpenMP)   ret += std::string(count++ ? ", " : "") + "OpenMP";
     if(info_ & OpenCL)   ret += std::string(count++ ? ", " : "") + "OpenCL";
     if(info_ & CUDA)     ret += std::string(count++ ? ", " : "") + "CUDA";
+    if(info_ & HSA)      ret += std::string(count++ ? ", " : "") + "HSA";
     if(info_ & Pthreads) ret += std::string(count++ ? ", " : "") + "Pthreads";
     if(info_ & COI)      ret += std::string(count++ ? ", " : "") + "COI";
 
@@ -554,6 +567,8 @@ namespace occa {
 #endif
 #if OCCA_CUDA_ENABLED
     CUevent cuEvent;
+#endif
+#if OCCA_HSA_ENABLED
 #endif
   };
 
@@ -1094,6 +1109,12 @@ namespace occa {
   };
 #endif
 
+#if OCCA_HSA_ENABLED
+  namespace hsa {
+    occa::device wrapDevice();
+  };
+#endif
+
 #if OCCA_COI_ENABLED
   namespace coi {
     occa::device wrapDevice(COIENGINE coiDevice);
@@ -1184,6 +1205,10 @@ namespace occa {
 
 #if OCCA_CUDA_ENABLED
     friend occa::device cuda::wrapDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_HSA_ENABLED
+    friend occa::device hsa::wrapDevice(CUdevice device, CUcontext context);
 #endif
 
 #if OCCA_COI_ENABLED
@@ -1291,6 +1316,10 @@ namespace occa {
 
 #if OCCA_CUDA_ENABLED
     friend occa::device cuda::wrapDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_HSA_ENABLED
+    friend occa::device hsa::wrapDevice(CUdevice device, CUcontext context);
 #endif
 
 #if OCCA_COI_ENABLED
@@ -1443,6 +1472,10 @@ namespace occa {
 
 #if OCCA_CUDA_ENABLED
     friend occa::device cuda::wrapDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_HSA_ENABLED
+    friend occa::device hsa::wrapDevice(CUdevice device, CUcontext context);
 #endif
 
 #if OCCA_COI_ENABLED

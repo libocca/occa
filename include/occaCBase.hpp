@@ -18,6 +18,13 @@
 #  include <cuda.h>
 #endif
 
+#if (OCCA_HSA_ENABLED)
+#  if   (OCCA_OS & LINUX_OS)
+#  elif (OCCA_OS & OSX_OS)
+#  else
+#  endif
+#endif
+
 #include "occaDefines.hpp"
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
@@ -290,6 +297,10 @@ extern "C" {
 
 #if OCCA_CUDA_ENABLED
   OCCA_LFUNC occaDevice OCCA_RFUNC occaWrapCudaDevice(CUdevice device, CUcontext context);
+#endif
+
+#if OCCA_HSA_ENABLED
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaWrapHSADevice();
 #endif
 
 #if OCCA_COI_ENABLED

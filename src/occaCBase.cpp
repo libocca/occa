@@ -725,6 +725,16 @@ extern "C" {
   }
 #endif
 
+#if OCCA_HSA_ENABLED
+  occaDevice OCCA_RFUNC occaWrapHSADevice(){
+    occa::device *device_ = new occa::device();
+
+    *device_ = occa::hsa::wrapDevice();
+
+    return (occaDevice) device_;
+  }
+#endif
+
 #if OCCA_COI_ENABLED
   occaDevice OCCA_RFUNC occaWrapCoiDevice(COIENGINE coiDevice){
     occa::device *device = new occa::device();
