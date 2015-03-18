@@ -13,18 +13,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 1; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -50,18 +50,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 2; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -87,18 +87,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 3; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -125,18 +125,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 4; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -163,18 +163,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 5; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -202,18 +202,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 6; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -242,18 +242,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 7; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -282,18 +282,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 8; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -322,18 +322,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 9; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -363,18 +363,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 10; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -405,18 +405,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 11; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -447,18 +447,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 12; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -490,18 +490,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 13; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -533,18 +533,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 14; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -576,18 +576,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 15; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -621,18 +621,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 16; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -666,18 +666,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 17; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -711,18 +711,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 18; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -757,18 +757,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 19; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -803,18 +803,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 20; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -850,18 +850,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 21; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -898,18 +898,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 22; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -946,18 +946,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 23; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -994,18 +994,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 24; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1043,18 +1043,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 25; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1093,18 +1093,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 26; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1143,18 +1143,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 27; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1194,18 +1194,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 28; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1245,18 +1245,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 29; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1296,18 +1296,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 30; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1349,18 +1349,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 31; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1402,18 +1402,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 32; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1455,18 +1455,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 33; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1509,18 +1509,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 34; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1563,18 +1563,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 35; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1618,18 +1618,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 36; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1674,18 +1674,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 37; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1730,18 +1730,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 38; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1786,18 +1786,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 39; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1843,18 +1843,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 40; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1901,18 +1901,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 41; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -1959,18 +1959,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 42; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2018,18 +2018,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 43; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2077,18 +2077,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 44; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2136,18 +2136,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 45; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2197,18 +2197,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 46; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2258,18 +2258,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 47; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2319,18 +2319,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 48; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2381,18 +2381,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 49; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -2443,18 +2443,18 @@
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < 50; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",

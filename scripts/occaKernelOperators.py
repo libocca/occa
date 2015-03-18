@@ -264,18 +264,18 @@ def cudaOperatorDefinition(N):
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < """ + str(N) + """; ++i){
-      if(kArgs[i].pointer){
-        if(kArgs[i].hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+      if(kArgs[i]->pointer){
+        if(kArgs[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i].arg.void_;
+          args[argCount++] = kArgs[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i].arg;
+        args[argCount++] = (void*) &kArgs[i]->arg;
       }
 
-      if(kArgs[i].hasTwoArgs)
-        args[argCount++] = kArgs[i].arg2.void_;
+      if(kArgs[i]->hasTwoArgs)
+        args[argCount++] = kArgs[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
