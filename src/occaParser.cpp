@@ -4094,7 +4094,7 @@ namespace occa {
         stride = "1";
       }
       else{
-        if(node3[0][0].value == iter)
+        if(node3[0][0].getVarInfo().name == iter)
           stride = (std::string) node3[0][1];
         else
           stride = (std::string) node3[0][0];
