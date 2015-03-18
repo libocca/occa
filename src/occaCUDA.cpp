@@ -5,15 +5,15 @@
 namespace occa {
   //---[ Helper Functions ]-----------
   namespace cuda {
-    bool isNotInitialized = true;
+    bool isInitialized = false;
 
     void init(){
-      if(!isNotInitialized)
+      if(isInitialized)
         return;
 
       cuInit(0);
 
-      isNotInitialized = false;
+      isInitialized = true;
     }
 
     std::string getDeviceListInfo(){

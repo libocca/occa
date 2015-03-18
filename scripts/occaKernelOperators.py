@@ -220,7 +220,7 @@ def clOperatorDefinition(N):
 
     int argPos = 0;
 
-    const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                ' + (' ' if (10 <= N) else ''))
+    const kernelArg *kArgs[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
                                                              if (n and ((n % 5) == 0))
                                                              else '')
                                                             + "&arg{0}".format(n) for n in xrange(N))) + """};
@@ -230,11 +230,11 @@ def clOperatorDefinition(N):
 
     for(int i = 0; i < """ + str(N) + """; ++i){
       OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, args[i]->size, args[i]->data()));
+                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
 
-      if(args[i]->hasTwoArgs)
+      if(kArgs[i]->hasTwoArgs)
         OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), args[i]->arg2.void_));
+                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -256,17 +256,34 @@ def cudaOperatorDefinition(N):
 
     void *args[""" + str(2 * N) + """];
 
+    const kernelArg *kArgs[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
+                                                             if (n and ((n % 5) == 0))
+                                                             else '')
+                                                            + "&arg{0}".format(n) for n in xrange(N))) + """};
+
     args[argCount++] = &occaKernelInfoArgs;
 
-    """ + '\n    '.join([('args[argCount++] = arg{0}.pointer ? (arg{0}.hasTwoArgs ? (void*) &(((CUDATextureData_t*) arg{0}.arg.void_)->surface) : arg{0}.arg.void_) : (void*) &arg{0}.arg;\n    ' + \
-                          'if(arg{0}.hasTwoArgs)\n    '             + \
-                          '  args[argCount++] = arg{0}.arg2.void_;').format(n) for n in xrange(N)]) + """
+    for(int i = 0; i < """ + str(N) + """; ++i){
+      if(kArgs[i].pointer){
+        if(kArgs[i].hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i].arg.void_)->surface);
+        else
+          args[argCount++] = kArgs[i].arg.void_;
+      }
+      else {
+        args[argCount++] = (void*) &kArgs[i].arg;
+      }
 
-    cuLaunchKernel(function_,
-                   outer.x, outer.y, outer.z,
-                   inner.x, inner.y, inner.z,
-                   0, *((CUstream*) dHandle->currentStream),
-                   args, 0);"""
+      if(kArgs[i].hasTwoArgs)
+        args[argCount++] = kArgs[i].arg2.void_;
+    }
+
+    OCCA_CUDA_CHECK("Launching Kernel",
+                    cuLaunchKernel(function_,
+                                   outer.x, outer.y, outer.z,
+                                   inner.x, inner.y, inner.z,
+                                   0, *((CUstream*) dHandle->currentStream),
+                                   args, 0));"""
 
 def coiOperatorDefinition(N):
     return """
