@@ -117,7 +117,31 @@ namespace occa {
       }
     }
 
-    bool typeHolder::isAFloat(){
+    bool typeHolder::operator == (const typeHolder &th) const {
+      int maxType = ((type > th.type) ?
+                     th.type          :
+                     type);
+
+      switch(maxType){
+      case intType   : return (longValue()   == th.longValue()  ); break;
+      case boolType  : return (boolValue()   == th.boolValue()  ); break;
+      case charType  : return (longValue()   == th.longValue()  ); break;
+      case longType  : return (longValue()   == th.longValue()  ); break;
+      case shortType : return (longValue()   == th.longValue()  ); break;
+      case floatType : return (doubleValue() == th.doubleValue()); break;
+      case doubleType: return (doubleValue() == th.doubleValue()); break;
+      default:
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return false;
+      }
+    }
+
+    bool typeHolder::operator != (const typeHolder &th) const {
+      return !(*this == th);
+    }
+
+    bool typeHolder::isAFloat() const {
       switch(type){
       case intType   : return false; break;
       case boolType  : return false; break;
@@ -133,7 +157,7 @@ namespace occa {
       }
     }
 
-    bool typeHolder::boolValue(){
+    bool typeHolder::boolValue() const {
       switch(type){
       case intType   : return (bool) value.int_;    break;
       case boolType  : return (bool) value.bool_;   break;
@@ -149,7 +173,7 @@ namespace occa {
       }
     }
 
-    long typeHolder::longValue(){
+    long typeHolder::longValue() const {
       switch(type){
       case intType   : return (long) value.int_;    break;
       case boolType  : return (long) value.bool_;   break;
@@ -165,7 +189,7 @@ namespace occa {
       }
     }
 
-    double typeHolder::doubleValue(){
+    double typeHolder::doubleValue() const {
       switch(type){
       case intType   : return (double) value.int_;    break;
       case boolType  : return (double) value.bool_;   break;

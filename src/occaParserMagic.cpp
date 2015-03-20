@@ -95,15 +95,13 @@ namespace occa {
         viInfoMap_t *viMap = currentViInfoMap();
 
         for(int i = 0; i < varCount; ++i){
-          expNode &varNode = *(s.expRoot.getVariableNode(i));
-
           // Add variable to the varInfo map
           if(s.info & declareStatementType){
             varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
             viMap->addVariable(var);
           }
 
-          analyzeUpdateExpression(varNode);
+          analyzeUpdateExpression(s.expRoot, i);
         }
       }
 
@@ -131,11 +129,11 @@ namespace occa {
           snEnd = snEnd->right;
         }
 
-        analyzeEmbedded = false;
+        analyzeEmbedded = true;//false;
         analyzeIfStatement(snStart, snEnd);
       }
       else if(s.info & switchStatementType){
-        analyzeEmbedded = false;
+        analyzeEmbedded = true;//false;
         analyzeSwitchStatement(s);
       }
 
@@ -159,7 +157,11 @@ namespace occa {
       }
     }
 
-    void magician::analyzeUpdateExpression(expNode &expRoot){
+    void magician::analyzeUpdateExpression(expNode &e, const int pos){
+      if(e.variableHasInit(pos)){
+        addExpressionRead( *(e.getVariableInfoNode(pos)) );
+        addExpressionWrite( *(e.getVariableInitNode(pos)) );
+      }
     }
 
     bool magician::analyzeForStatement(statement &s){
@@ -167,13 +169,94 @@ namespace occa {
     }
 
     bool magician::analyzeWhileStatement(statement &s){
+      typeHolder th = s.expRoot[0].calculateValue();
+
+      if( !(th.type & noType) &&
+          (th.boolValue() == false) ){
+
+        return false;
+      }
+
       return true;
     }
 
     void magician::analyzeIfStatement(statementNode *snStart, statementNode *snEnd){
+      statementNode *sn = snStart;
+
+      while(sn != snEnd){
+        statement &s  = *(sn->value);
+        typeHolder th = s.expRoot[0].calculateValue();
+
+        if( !(th.type & noType) &&
+            (th.boolValue() == true) ){
+
+          analyzeEmbeddedStatements(s);
+
+          return;
+        }
+
+        sn = sn->right;
+      }
+
+      sn = snStart;
+
+      while(sn != snEnd){
+        statement &s = *(sn->value);
+
+        analyzeEmbeddedStatements(s);
+
+        sn = sn->right;
+      }
     }
 
     void magician::analyzeSwitchStatement(statement &s){
+      typeHolder th = s.expRoot[0].calculateValue();
+
+      if(th.type & noType){
+        analyzeEmbeddedStatements(s);
+        return;
+      }
+
+      statementNode *sn = s.statementStart;
+      statementNode *calculateSN;
+
+      while(sn){
+        statement &s2 = *(sn->value);
+
+        if(s2.info & caseStatementType){
+          if(s2.expRoot.leafCount){ // Not default
+            if(th == s2.expRoot[0].calculateValue()){
+              calculateSN = sn;
+              break;
+            }
+          }
+          else {                    // Default case
+            calculateSN = sn;
+          }
+        }
+
+        sn = sn->right;
+      }
+
+      sn = calculateSN;
+
+      // Analyize until break
+      while(sn){
+        statement &s2 = *(sn->value);
+
+        analyzeEmbeddedStatements(s2);
+
+        if(s2.guaranteesBreak())
+          break;
+
+        sn = sn->right;
+      }
+    }
+
+    void magician::addExpressionRead(expNode &e){
+    }
+
+    void magician::addExpressionWrite(expNode &e){
     }
   };
 };

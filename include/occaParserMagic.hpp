@@ -58,11 +58,14 @@ namespace occa {
 
       void analyzeEmbeddedStatements(statement &s);
 
-      void analyzeUpdateExpression(expNode &expRoot);
+      void analyzeUpdateExpression(expNode &e, const int pos);
       bool analyzeForStatement(statement &s);
       bool analyzeWhileStatement(statement &s);
       void analyzeIfStatement(statementNode *snStart, statementNode *snEnd);
       void analyzeSwitchStatement(statement &s);
+
+      void addExpressionRead(expNode &e);
+      void addExpressionWrite(expNode &e);
     };
   };
 };

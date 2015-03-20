@@ -318,7 +318,7 @@ namespace occa {
 
       //---[ Analysis Info ]------------
       bool valueIsKnown(const strToStrMap_t &stsMap = strToStrMap_t());
-      typeHolder computeKnownValue(const strToStrMap_t &stsMap = strToStrMap_t()); // Assumes (valueIsKnown() == true)
+      typeHolder calculateValue(const strToStrMap_t &stsMap = strToStrMap_t());
       //================================
 
       void freeLeaf(const int leafPos);
@@ -553,6 +553,8 @@ namespace occa {
       //---[ Misc ]---------------------
       bool hasBarrier();
       bool hasStatementWithBarrier();
+
+      bool guaranteesBreak();
 
       unsigned int distToForLoop();
       unsigned int distToOccaForLoop();

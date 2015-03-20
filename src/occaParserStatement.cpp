@@ -2679,8 +2679,10 @@ namespace occa {
       return isKnown;
     }
 
-    // Assumes (valueIsKnown() == true)
-    typeHolder expNode::computeKnownValue(const strToStrMap_t &stsMap){
+    typeHolder expNode::calculateValue(const strToStrMap_t &stsMap){
+      if(valueIsKnown() == false)
+        return typeHolder();
+
       expNode &this2 = *(clone());
 
       expNode &flatRoot = *(this2.makeFlatHandle());
@@ -4513,6 +4515,10 @@ namespace occa {
         statementPos = statementPos->right;
       }
 
+      return false;
+    }
+
+    bool statement::guaranteesBreak(){
       return false;
     }
 
