@@ -2498,7 +2498,10 @@ namespace occa {
     }
 
     int expNode::getVariableCount(){
-      if(info == expType::declaration){
+      if((info == expType::declaration)   ||
+         ((info & expType::checkSInfo) &&
+          (sInfo->info & updateStatementType))){
+
         return leafCount;
       }
 
@@ -2506,7 +2509,10 @@ namespace occa {
     }
 
     bool expNode::variableHasInit(const int pos){
-      if(info == expType::declaration){
+      if((info == expType::declaration)   ||
+         ((info & expType::checkSInfo) &&
+          (sInfo->info & updateStatementType))){
+
         const expNode &varNode = *(getVariableNode(pos));
 
         return (varNode.leafCount &&
@@ -2517,7 +2523,10 @@ namespace occa {
     }
 
     expNode* expNode::getVariableNode(const int pos){
-      if(info == expType::declaration){
+      if((info == expType::declaration)   ||
+         ((info & expType::checkSInfo) &&
+          (sInfo->info & updateStatementType))){
+
         return leaves[pos];
       }
 
@@ -2546,7 +2555,10 @@ namespace occa {
     }
 
     expNode* expNode::getVariableInitNode(const int pos){
-      if(info == expType::declaration){
+      if((info == expType::declaration)   ||
+         ((info & expType::checkSInfo) &&
+          (sInfo->info & updateStatementType))){
+
         if(variableHasInit(pos)){
           const expNode &varNode = *(getVariableNode(pos));
 

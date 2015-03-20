@@ -88,11 +88,22 @@ namespace occa {
         // Ignore this statement
       }
 
-      else if(s.info & declareStatementType){
-        analyzeDeclareStatement(s);
-      }
-      else if(s.info & updateStatementType){
-        analyzeUpdateStatement(s);
+      else if(s.info & (declareStatementType |
+                        updateStatementType)){
+
+        const int varCount = s.expRoot.getVariableCount();
+        viInfoMap_t *viMap = currentViInfoMap();
+
+        for(int i = 0; i < varCount; ++i){
+          expNode &varNode = *(s.expRoot.getVariableNode(i));
+
+          if(s.info & declareStatementType){
+            varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
+            viMap->addVariable(var);
+          }
+
+          analyzeUpdateExpression(varNode);
+        }
       }
 
       else if(s.info & forStatementType){
@@ -147,10 +158,7 @@ namespace occa {
       }
     }
 
-    void magician::analyzeDeclareStatement(statement &s){
-    }
-
-    void magician::analyzeUpdateStatement(statement &s){
+    void magician::analyzeUpdateExpression(expNode &expRoot){
     }
 
     bool magician::analyzeForStatement(statement &s){
