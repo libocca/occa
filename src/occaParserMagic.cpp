@@ -74,8 +74,8 @@ namespace occa {
     void magician::analyzeStatement(statement &s){
       bool analyzeEmbedded = true;
 
-      if(s.info & gotoStatementType){
-        printf("Magic Analyzer: Goto statements are not allowed\n");
+      if(s.expRoot.info & expType::goto_){
+        printf("[Magic Analyzer] Goto statements are not allowed\n");
       }
 
       else if(s.info & (typedefStatementType   |
@@ -97,6 +97,7 @@ namespace occa {
         for(int i = 0; i < varCount; ++i){
           expNode &varNode = *(s.expRoot.getVariableNode(i));
 
+          // Add variable to the varInfo map
           if(s.info & declareStatementType){
             varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
             viMap->addVariable(var);

@@ -2970,7 +2970,7 @@ namespace occa {
       case (expType::struct_):{
         if(leafCount){
           typeInfo &type = *((typeInfo*) leaves[0]->leaves[0]);
-          out << type.toString(tab) << ";\n";
+          out << type.toString(tab) << ';';
         }
 
         break;
@@ -3022,7 +3022,7 @@ namespace occa {
       }
 
       case (expType::goto_):{
-        out << tab << "goto " << value << ';';
+        out << tab << "goto " << value << ";\n";
         break;
       }
 

@@ -13,6 +13,7 @@
   }
 
 typedef int blah234;
+typedef struct struct_a { int a; } struct_a ;
 
 // 0.9899*sqrt(8.0*log(10.0))/(PI*freq);
 const tFloat hat_t0 = 1.3523661426929/freq; /* Testing 3 */
