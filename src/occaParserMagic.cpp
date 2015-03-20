@@ -75,7 +75,7 @@ namespace occa {
       bool analyzeEmbedded = true;
 
       if(s.expRoot.info & expType::goto_){
-        printf("[Magic Analyzer] Goto statements are not allowed\n");
+        printf("[Magic Analyzer] Goto statements are not supported\n");
       }
 
       else if(s.info & (typedefStatementType   |
@@ -165,6 +165,13 @@ namespace occa {
     }
 
     bool magician::analyzeForStatement(statement &s){
+      if(s.getForStatementCount() != 3){
+        printf("[Magic Analyzer] For-loops without 3 statements are not supported\n");
+        return true;
+      }
+
+      occaLoopInfo loopInfo(s, parser.parsingC);
+
       return true;
     }
 
