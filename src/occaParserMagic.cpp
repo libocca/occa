@@ -165,6 +165,9 @@ namespace occa {
     }
 
     bool magician::analyzeForStatement(statement &s){
+      // Check variable (startBound < endBound)
+      // or             (var.value  < endBound)
+
       return true;
     }
 

@@ -141,6 +141,54 @@ namespace occa {
       return !(*this == th);
     }
 
+    bool typeHolder::operator < (const typeHolder &th) const {
+      int maxType = ((type > th.type) ?
+                     th.type          :
+                     type);
+
+      switch(maxType){
+      case intType   : return (longValue()   < th.longValue()  ); break;
+      case boolType  : return (boolValue()   < th.boolValue()  ); break;
+      case charType  : return (longValue()   < th.longValue()  ); break;
+      case longType  : return (longValue()   < th.longValue()  ); break;
+      case shortType : return (longValue()   < th.longValue()  ); break;
+      case floatType : return (doubleValue() < th.doubleValue()); break;
+      case doubleType: return (doubleValue() < th.doubleValue()); break;
+      default:
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return false;
+      }
+    }
+
+    bool typeHolder::operator <= (const typeHolder &th) const {
+      int maxType = ((type > th.type) ?
+                     th.type          :
+                     type);
+
+      switch(maxType){
+      case intType   : return (longValue()   <= th.longValue()  ); break;
+      case boolType  : return (boolValue()   <= th.boolValue()  ); break;
+      case charType  : return (longValue()   <= th.longValue()  ); break;
+      case longType  : return (longValue()   <= th.longValue()  ); break;
+      case shortType : return (longValue()   <= th.longValue()  ); break;
+      case floatType : return (doubleValue() <= th.doubleValue()); break;
+      case doubleType: return (doubleValue() <= th.doubleValue()); break;
+      default:
+        OCCA_CHECK(false,
+                   "Value not set\n");
+        return false;
+      }
+    }
+
+    bool typeHolder::operator >= (const typeHolder &th) const {
+      return !(*this < th);
+    }
+
+    bool typeHolder::operator > (const typeHolder &th) const {
+      return !(*this <= th);
+    }
+
     bool typeHolder::isAFloat() const {
       switch(type){
       case intType   : return false; break;

@@ -62,6 +62,11 @@ namespace occa {
       bool operator == (const typeHolder &th) const;
       bool operator != (const typeHolder &th) const;
 
+      bool operator <  (const typeHolder &th) const;
+      bool operator <= (const typeHolder &th) const;
+      bool operator >= (const typeHolder &th) const;
+      bool operator >  (const typeHolder &th) const;
+
       bool isAFloat() const;
 
       bool boolValue() const;
