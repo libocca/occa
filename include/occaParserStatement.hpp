@@ -132,6 +132,8 @@ namespace occa {
       void splitDeclareStatement(const int flags = (expFlag::addVarToScope |
                                                     expFlag::addToParent));
 
+      void splitUpdateStatement();
+
       void splitFlowStatement();
 
       void splitFunctionStatement(const int flags = (expFlag::addVarToScope |

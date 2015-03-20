@@ -89,6 +89,7 @@ occaKernel void fd2d(tFloat *u1,
 
           {
             y1 = y2 = 0;
+            y1 = 0, y2 = 0;
           }
 
           int tmpin = *u1;

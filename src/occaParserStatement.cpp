@@ -170,6 +170,9 @@ namespace occa {
       if(sInfo->info & declareStatementType)
         splitDeclareStatement();
 
+      else if(sInfo->info & updateStatementType)
+        splitUpdateStatement();
+
       else if((sInfo->info & (ifStatementType    |
                               forStatementType   |
                               whileStatementType |
@@ -298,6 +301,45 @@ namespace occa {
 
         if(leafPos < leafCount)
           removeNode(leafPos);
+      }
+
+      expNode::swap(*this, newExp);
+    }
+
+    void expNode::splitUpdateStatement(){
+      info = expType::checkSInfo;
+
+      int updateCount = 1 + typeInfo::delimiterCount(*this, ",");
+      int leafPos     = 0;
+
+      // Store variables and stuff
+      expNode newExp(*sInfo);
+      newExp.info = info;
+      newExp.addNodes(expType::root, 0, updateCount);
+
+      for(int i = 0; i < updateCount; ++i){
+        expNode &leaf = newExp[i];
+
+        int sExpStart = leafPos;
+        int sExpEnd   = typeInfo::nextDelimiter(*this, leafPos, ",");
+
+        leafPos = (sExpEnd + 1);
+
+        // Don't put the [;]
+        if((sExpEnd == leafCount) &&
+           (leaves[sExpEnd - 1]->value == ";")){
+
+          --sExpEnd;
+        }
+
+        if(sExpStart < sExpEnd){
+          leaf.addNodes(0, 0, sExpEnd - sExpStart);
+
+          for(int j = sExpStart; j < sExpEnd; ++j)
+            expNode::swap(*(leaf.leaves[j - sExpStart]), *leaves[j]);
+
+          leaf.organizeLeaves();
+        }
       }
 
       expNode::swap(*this, newExp);
@@ -3009,7 +3051,25 @@ namespace occa {
       }
 
       case (expType::checkSInfo):{
-        if(sInfo->info & flowStatementType){
+        if(sInfo->info & updateStatementType){
+          if(leafCount){
+            leaves[0]->printOn(out, tab, (expFlag::noNewline |
+                                          expFlag::noSemicolon));
+
+            for(int i = 1; i < leafCount; ++i){
+              out << ", ";
+
+              leaves[i]->printOn(out, "", (expFlag::noNewline |
+                                           expFlag::noSemicolon));
+            }
+
+            out << ";";
+          }
+
+          break;
+        }
+
+        else if(sInfo->info & flowStatementType){
           out << tab;
 
           if(sInfo->info & forStatementType)
