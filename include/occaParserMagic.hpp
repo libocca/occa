@@ -64,8 +64,9 @@ namespace occa {
       void analyzeIfStatement(statementNode *snStart, statementNode *snEnd);
       void analyzeSwitchStatement(statement &s);
 
+      void addVariableWrite(expNode &varNode);
+      void addVariableRead(expNode &varNode);
       void addExpressionRead(expNode &e);
-      void addExpressionWrite(expNode &e);
     };
   };
 };

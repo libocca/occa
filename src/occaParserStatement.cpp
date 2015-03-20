@@ -2545,11 +2545,17 @@ namespace occa {
           return varLeaf;
         }
         else if(varNode.leafCount &&
-                (varLeaf->value == "=")){
+                (varLeaf->info == expType::LR)){
 
-          return varLeaf->leaves[0];
+          return varLeaf->leaves[0]->getVariableInfoNode(0);
         }
       }
+      else if(info & expType::varInfo){
+        return this;
+      }
+      // else if(info & expType::variable){
+      //   return this;
+      // }
 
       return NULL;
     }
@@ -2574,19 +2580,31 @@ namespace occa {
       return NULL;
     }
 
-    std::string expNode::getVariableName(const int pos){
-      if(info == expType::declaration){
-        expNode &leaf = *(leaves[pos]);
+    expNode* expNode::getVariableRhsNode(const int pos){
+      if((info == expType::declaration)   ||
+         ((info & expType::checkSInfo) &&
+          (sInfo->info & updateStatementType))){
 
-        if(leaf.info & expType::varInfo){
-          return leaf.getVarInfo().name;
-        }
-        else if(leaf.leafCount &&
-                (leaf[0].value == "=")){
+        if(variableHasInit(pos)){
+          const expNode &varNode = *(getVariableNode(pos));
 
-          return leaf[0].getVarInfo(0).name;
+          const expNode *varLeaf = ((varNode.info & expType::varInfo) ?
+                                    &varNode :
+                                    varNode.leaves[0]);
+
+          if(varLeaf->info == expType::LR)
+            return varLeaf->leaves[1];
         }
       }
+
+      return NULL;
+    }
+
+    std::string expNode::getVariableName(const int pos){
+      expNode *varNode = getVariableInfoNode(pos);
+
+      if(varNode != NULL)
+        return varNode->getVarInfo().name;
 
       return "";
     }
@@ -5105,9 +5123,9 @@ namespace occa {
           varInfo *nVar        = hasVariableInScope(nVarName);
 
           // [-] Missing up-checks
-          if((nVar != &var) || // Checking our variable update
-             (n.up == NULL) || // Update needs an assignment operator
-             (n.up->value != "=") ||
+          if((nVar != &var)                || // Checking our variable update
+             (n.up == NULL)                || // Update needs an assignment operator
+             !isAnAssOperator(n.up->value) ||
              (n.up->leaves[0]->getMyVariableName() != var.name)){
 
             continue;

@@ -303,6 +303,7 @@ namespace occa {
       expNode* getVariableNode(const int pos);
       expNode* getVariableInfoNode(const int pos);
       expNode* getVariableInitNode(const int pos);
+      expNode* getVariableRhsNode(const int pos);
 
       std::string getVariableName(const int pos = 0);
 

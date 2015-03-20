@@ -159,15 +159,12 @@ namespace occa {
 
     void magician::analyzeUpdateExpression(expNode &e, const int pos){
       if(e.variableHasInit(pos)){
-        addExpressionRead( *(e.getVariableInfoNode(pos)) );
-        addExpressionWrite( *(e.getVariableInitNode(pos)) );
+        addVariableWrite( *(e.getVariableInfoNode(pos)) );
+        addExpressionRead( *(e.getVariableInitNode(pos)) );
       }
     }
 
     bool magician::analyzeForStatement(statement &s){
-      // Check variable (startBound < endBound)
-      // or             (var.value  < endBound)
-
       return true;
     }
 
@@ -256,10 +253,13 @@ namespace occa {
       }
     }
 
-    void magician::addExpressionRead(expNode &e){
+    void magician::addVariableWrite(expNode &varNode){
     }
 
-    void magician::addExpressionWrite(expNode &e){
+    void magician::addVariableRead(expNode &varNode){
+    }
+
+    void magician::addExpressionRead(expNode &e){
     }
   };
 };
