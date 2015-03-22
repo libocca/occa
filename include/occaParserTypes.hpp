@@ -174,6 +174,10 @@ namespace occa {
       int stackPointerCount, stackPointersUsed;
       expNode *stackExpRoots;
 
+      bool usesTemplate;
+      int tArgCount;
+      typeInfo **tArgs;
+
       int argumentCount;
       varInfo **argumentVarInfos;
 
@@ -315,13 +319,6 @@ namespace occa {
     class funcInfo {
     public:
       varInfo *var;
-
-      int argCount;
-      expNode *args;
-
-      bool usesTemplate;
-      int tArgCount;
-      typeInfo *tArgs;
     };
     //============================================
 

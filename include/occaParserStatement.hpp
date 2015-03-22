@@ -29,29 +29,29 @@ namespace occa {
       static const int operator_       = (1 <<  7);
       static const int unknown         = (1 <<  8);
       static const int variable        = (1 <<  9);
-      static const int function        = (1 << 11);
-      static const int functionPointer = (1 << 12);
-      static const int typedef_        = (1 << 13);
-      static const int prototype       = (1 << 14);
-      static const int declaration     = (1 << 15);
-      static const int struct_         = (1 << 16);
-      static const int namespace_      = (1 << 17);
-      static const int cast_           = (1 << 18);
-      static const int macro_          = (1 << 19);
-      static const int goto_           = (1 << 20);
-      static const int gotoLabel_      = (1 << 21);
-      static const int return_         = (1 << 22);
-      static const int transfer_       = (1 << 23);
-      static const int occaFor         = (1 << 24);
-      static const int checkSInfo      = (1 << 25);
+      static const int functionPointer = (1 << 10);
+      static const int typedef_        = (1 << 11);
+      static const int prototype       = (1 << 12);
+      static const int declaration     = (1 << 13);
+      static const int struct_         = (1 << 14);
+      static const int namespace_      = (1 << 15);
+      static const int cast_           = (1 << 16);
+      static const int macro_          = (1 << 17);
+      static const int goto_           = (1 << 18);
+      static const int gotoLabel_      = (1 << 19);
+      static const int return_         = (1 << 20);
+      static const int transfer_       = (1 << 21);
+      static const int occaFor         = (1 << 22);
+      static const int checkSInfo      = (1 << 23);
 
-      static const int hasInfo         = (3 << 26);
-      static const int varInfo         = (1 << 26);
-      static const int typeInfo        = (1 << 27);
+      static const int hasInfo         = (3 << 24);
+      static const int varInfo         = (1 << 24);
+      static const int typeInfo        = (1 << 25);
+      static const int funcInfo        = (1 << 26);
 
-      static const int printValue      = (1 << 28);
-      static const int printLeaves     = (1 << 29);
-      static const int maxBit          = 30;
+      static const int printValue      = (1 << 27);
+      static const int printLeaves     = (1 << 28);
+      static const int maxBit          = 29;
     };
 
     namespace expFlag {
@@ -261,6 +261,7 @@ namespace occa {
 
       void addNode(expNode &node_, const int pos_ = -1);
 
+      int insertExpAfter(expNode &exp, int pos);
       void reserveAndShift(const int pos, const int count = 1);
 
       varInfo& addVarInfoNode();

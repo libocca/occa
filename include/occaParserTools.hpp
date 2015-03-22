@@ -79,6 +79,8 @@ namespace occa {
   char segmentPair(const char c);
   void skipPair(const char *&c);
 
+  int countDelimiters(const char *c, const char delimiter);
+
   void skipTo(const char *&c, const char delimiter);
   void skipTo(const char *&c, std::string delimiters);
   void skipToWord(const char *&c, std::string word);

@@ -32,13 +32,13 @@ namespace occa {
     }
 
     const std::string parserBase::parseSource(const char *cRoot){
-      strNode *nodeRoot = splitAndPreprocessContent(cRoot);
+      expNode expRoot = splitAndPreprocessContent(cRoot);
 
       loadLanguageTypes();
 
-      globalScope->loadAllFromNode(nodeRoot, parsingC);
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
+      globalScope->loadAllFromNode(expRoot, parsingC);
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       markKernelFunctions(*globalScope);
       labelNativeKernels();
@@ -253,18 +253,20 @@ namespace occa {
       }
     }
 
-    int parserBase::loadMacro(strNode *nodePos, const int state){
-      return loadMacro(nodePos, nodePos->value, state);
+    int parserBase::loadMacro(expNode &expRoot, int leafPos, const int state){
+      return loadMacro(expRoot, leafPos, expRoot[leafPos].value, state);
     }
 
     int parserBase::loadMacro(const std::string &line, const int state){
-      return loadMacro(NULL, line, state);
+      expNode &dummyExpRoot;
+
+      return loadMacro(dummyExpRoot, -1, line, state);
     }
 
-    int parserBase::loadMacro(strNode *nodePos,
+    int parserBase::loadMacro(expNode &expRoot, int leafPos,
                               const std::string &line, const int state){
 
-      const char *c = (line.c_str() + 1); // 1 = #
+      const char *c = (line.c_str() + 1); // line[0] = #
 
       while(*c != '\0'){
         skipWhitespace(c);
@@ -365,7 +367,7 @@ namespace occa {
             return state;
 
           // Nothing to edit, just keep the #include for the compiler
-          if(nodePos == NULL)
+          if(leafPos == -1)
             return (state | keepMacro);
 
           std::string includeFile = getMacroIncludeFile(c);
@@ -389,22 +391,17 @@ namespace occa {
 
           const char *cRoot = cReadFile(includeFile);
 
-          strNode *includeNodeRoot = splitContent(cRoot, parsingC);
+          expNode includeExpRoot = splitContent(cRoot, parsingC);
 
           delete [] cRoot;
 
           // Empty include file
-          if(includeNodeRoot == NULL)
+          if(includeNodeRoot.leafCount == 0)
             return (state | forceLineRemoval);
 
-          strNode *nr = nodePos->right;
-          strNode *ir = lastNode(includeNodeRoot);
+          leafPos = expRoot.insertExpAfter(includeExpRoot, leafPos);
 
-          nodePos->right        = includeNodeRoot;
-          includeNodeRoot->left = nodePos;
-
-          nr->left  = ir;
-          ir->right = nr;
+          delete includeExpRoot.leaves;
 
           return (state | forceLineRemoval);
         }
@@ -565,31 +562,28 @@ namespace occa {
         applyMacros(line);
     }
 
-    strNode* parserBase::preprocessMacros(strNode *nodeRoot){
-      strNode *nodePos  = nodeRoot;
-
+    void parserBase::preprocessMacros(expNode &expRoot){
       std::stack<int> statusStack;
+      std::vector<int> linesIgnored;
 
       int currentState = doNothing;
 
-      while(nodePos){
-        std::string &line = nodePos->value;
+      for(int linePos = 0; linePos < (expRoot.leafCount); ++linePos){
+        std::string &line = expRoot[linePos].value;
         bool ignoreLine = false;
 
         if(line[0] == '#'){
           const int oldState = currentState;
 
-          currentState = loadMacro(nodePos, currentState);
+          currentState = loadMacro(expRoot, i, currentState);
 
-          if(currentState & keepMacro)
+          if(currentState & keepMacro){
             currentState &= ~keepMacro;
+          }
           else if(currentState & forceLineRemoval){
             currentState &= ~forceLineRemoval;
-            ignoreLine = true;
+            ignoreLine = false;
           }
-          // // Let's keep all the macros for now
-          // else
-          //   ignoreLine = true;
 
           // Nested #if's
           if(currentState & startHash){
@@ -613,39 +607,51 @@ namespace occa {
             ignoreLine = true;
         }
 
-        if(ignoreLine){
-          if(nodeRoot == nodePos)
-            nodeRoot = nodePos->right;
-
-          popAndGoRight(nodePos);
-        }
-        else{
-          nodePos->info = macroKeywordType;
-          nodePos       = nodePos->right;
-        }
+        if(ignoreLine)
+          linesIgnored.push_back(linePos);
       }
 
-      return nodeRoot;
+      if(linesIgnored.size() == 0)
+        return;
+
+      if(linesIgnored.back() != (lineCount - 1))
+        linesIgnored.push_back(lineCount - 1);
+
+      const size_t ignoreCount = linesIgnored.size();
+
+      int start = (linesIgnored[0] + 1);
+      int pos   = linesIgnored[0];
+
+      for(int linePos = 1; linePos < ignoreCount; ++linePos){
+        int end = linesIgnored[linePos];
+
+        for(int i = start; i < end; ++i)
+          expRoot[pos++].value = expRoot[i].value;
+
+        start = (end + 1);
+      }
+
+      expRoot.leafCount = pos;
     }
 
-    strNode* parserBase::splitAndPreprocessContent(const std::string &s){
+    expNode parserBase::splitAndPreprocessContent(const std::string &s){
       return splitAndPreprocessContent(s.c_str());
     }
 
-    strNode* parserBase::splitAndPreprocessContent(const char *cRoot){
-      strNode *nodeRoot;
+    expNode parserBase::splitAndPreprocessContent(const char *cRoot){
+      expNode expRoot;
 
       initKeywords(parsingC);
 
-      nodeRoot = splitContent(cRoot, parsingC);
+      expRoot = splitContent(cRoot, parsingC);
 
       initMacros(parsingC);
 
-      nodeRoot = preprocessMacros(nodeRoot);
+      preprocessMacros(expRoot);
 
-      nodeRoot = labelCode(nodeRoot, parsingC);
+      labelCode(expRoot, parsingC);
 
-      return nodeRoot;
+      return expRoot;
     }
     //====================================
 
@@ -3024,21 +3030,24 @@ namespace occa {
 
     //==============================================
 
-    strNode* splitContent(const std::string &str, const bool parsingC){
+    expNode splitContent(const std::string &str, const bool parsingC){
       return splitContent(str.c_str(), parsingC);
     }
 
-    strNode* splitContent(const char *cRoot, const bool parsingC){
+    expNode splitContent(const char *cRoot, const bool parsingC){
       initKeywords(parsingC);
+
+      const bool parsingFortran = !parsingC;
 
       const char *c = cRoot;
 
-      strNode *nodeRoot = new strNode();
-      strNode *nodePos  = nodeRoot;
+      int lineCount = countDelimiters(c, '\n');
 
       int status = readingCode;
 
-      int lineCount = 0;
+      expNode expRoot;
+      expRoot.addNodes(0, 0, lineCount);
+      int expPos = 0;
 
       while(*c != '\0'){
         const char *cEnd = readLine(c, parsingC);
@@ -3046,7 +3055,7 @@ namespace occa {
         std::string line = strip(c, cEnd - c, parsingC);
 
         if(line.size()){
-          if(!parsingC &&
+          if(parsingFortran &&
              (*c == 'c')){
             c = cEnd;
             continue;
@@ -3058,8 +3067,8 @@ namespace occa {
             strip(line, parsingC);
 
             if(line.size()){
-              nodePos->originalLine = lineCount;
-              nodePos = nodePos->push(line);
+              expRoot[expPos].value = line;
+              ++expPos;
             }
           }
           else{
@@ -3068,31 +3077,24 @@ namespace occa {
             strip(line, parsingC);
 
             if((status == finishedCommentBlock) && line.size()){
-              nodePos->originalLine = lineCount;
-              nodePos = nodePos->push(line);
+              expRoot[expPos].value = line;
+              ++expPos;
             }
           }
         }
 
         c = cEnd;
-        ++lineCount;
       }
 
-      popAndGoRight(nodeRoot);
-
-      return nodeRoot;
+      return expRoot;
     }
 
-    strNode* labelCode(strNode *lineNodeRoot, const bool parsingC){
+    void labelCode(expNode &lineExpRoot, const bool parsingC){
       initKeywords(parsingC);
 
-      strNode *nodeRoot = new strNode();
-      strNode *nodePos  = nodeRoot;
+      const bool parsingFortran = !parsingC;
 
-      strNode *lineNodePos = lineNodeRoot;
-
-      int depth = 0;
-      bool firstSectionNode = false;
+      expNode expRoot;
 
       while(lineNodePos){
         const std::string &line = lineNodePos->value;
@@ -3145,7 +3147,7 @@ namespace occa {
             if(delimiterChars){ //-----------------------------[ 3.1 ]
               strNode *newNode;
 
-              if(!parsingC){ //------------------------------[ 3.1.1 ]
+              if(parsingFortran){ //------------------------------[ 3.1.1 ]
                 // Translate Fortran keywords
                 std::string op(cLeft, delimiterChars);
                 std::string upOp = upString(op);
@@ -3231,7 +3233,7 @@ namespace occa {
               std::string nodeValue(cLeft, (cRight - cLeft));
               keywordTypeMapIterator it;
 
-              if(!parsingC){
+              if(parsingFortran){
                 std::string upNodeValue = upString(nodeValue);
 
                 it = keywordType.find(upNodeValue);
@@ -3304,7 +3306,7 @@ namespace occa {
           } //===================================================[ 3 ]
         }
 
-        if(!parsingC){
+        if(parsingFortran){
           nodePos       = nodePos->push("\\n");
           nodePos->info = endStatement;
         }

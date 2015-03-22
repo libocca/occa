@@ -155,8 +155,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      // print();
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -404,9 +404,9 @@ namespace occa {
 
     void expNode::splitFunctionStatement(const int flags){
       if(sInfo->info & functionDefinitionType)
-        info = (expType::function | expType::declaration);
+        info = (expType::funcInfo | expType::declaration);
       else
-        info = (expType::function | expType::prototype);
+        info = (expType::funcInfo | expType::prototype);
 
       if(leafCount == 0)
         return;
@@ -422,7 +422,7 @@ namespace occa {
         sInfo->up->addVariable(&var);
       }
 
-      if(info == (expType::function | expType::declaration)){
+      if(info == (expType::funcInfo | expType::declaration)){
         for(int i = 0; i < var.argumentCount; ++i)
           sInfo->addVariable(var.argumentVarInfos[i]);
       }
@@ -639,7 +639,7 @@ namespace occa {
         if(sInfo->hasVariableInScope(leaves[1]->value)){
           removeNode(0);
 
-          leaves[0]->info = expType::function;
+          leaves[0]->info = expType::funcInfo;
 
           mergeFunctionCalls();
 
@@ -854,7 +854,7 @@ namespace occa {
     }
 
     void expNode::splitFortranFunctionStatement(){
-      info = (expType::function | expType::declaration);
+      info = (expType::funcInfo | expType::declaration);
 
       if(leafCount == 0)
         return;
@@ -925,7 +925,7 @@ namespace occa {
               leaf->putVarInfo(*nodeVar);
             }
             else
-              leaf->info = expType::function;
+              leaf->info = expType::funcInfo;
           }
           else{
             typeInfo *nodeType = sInfo->hasTypeInScope(nodePos->value);
@@ -1432,7 +1432,7 @@ namespace occa {
            (leaves[leafPos]->value == "(")){
 
           if((leafPos) &&
-             (leaves[leafPos - 1]->info & expType::function)){
+             (leaves[leafPos - 1]->info & expType::funcInfo)){
             expNode &fNode    = *(leaves[leafPos - 1]);
             expNode &argsNode = *(leaves[leafPos    ]);
 
@@ -1886,7 +1886,7 @@ namespace occa {
           expNode &y = n[1];
 
           n.value     = "occaPow";
-          n.info      = expType::function;
+          n.info      = expType::funcInfo;
           n.leafCount = 0;
 
           n.addNode(expType::C, "(");
@@ -1963,9 +1963,9 @@ namespace occa {
 
       const bool isVarInfo  = (info & expType::varInfo);
       const bool isTypeInfo = (info & expType::typeInfo);
-      const bool isFuncInfo = ((info == (expType::function |
+      const bool isFuncInfo = ((info == (expType::funcInfo |
                                          expType::declaration)) ||
-                               (info == (expType::function |
+                               (info == (expType::funcInfo |
                                          expType::prototype)));
 
       const bool inForStatement = ((newExp.sInfo != NULL) &&
@@ -2235,6 +2235,15 @@ namespace occa {
       node_.up = this;
     }
 
+    int expNode::insertExpAfter(expNode &exp, int pos){
+      reserveAndShift(pos, exp.leafCount);
+
+      for(int i = pos; i < (pos + exp.leafCount); ++i)
+        leaves[i] = exp.leaves[i - pos];
+
+      return (pos + exp.leafCount);
+    }
+
     void expNode::reserveAndShift(const int pos,
                                   const int count){
 
@@ -2301,7 +2310,7 @@ namespace occa {
     bool expNode::hasVariable(){
       if(info & (expType::variable |
                  expType::varInfo  |
-                 expType::function)){
+                 expType::funcInfo)){
 
         if( (info & expType::varInfo) ||
             (value.size() != 0) ){
@@ -2620,7 +2629,7 @@ namespace occa {
       else if(info & expType::varInfo){
         return getVarInfo().name;
       }
-      else if(info & expType::function){
+      else if(info & expType::funcInfo){
         return value;
       }
 
@@ -2675,7 +2684,7 @@ namespace occa {
 
         if(n.info & (expType::unknown  |
                      expType::variable |
-                     expType::function | // [-] Check function later
+                     expType::funcInfo | // [-] Check function later
                      expType::varInfo)){
 
           cStrToStrMapIterator it;
@@ -2710,7 +2719,7 @@ namespace occa {
 
         if(n.info & (expType::unknown  |
                      expType::variable |
-                     expType::function | // [-] Check function later
+                     expType::funcInfo | // [-] Check function later
                      expType::varInfo)){
 
           cStrToStrMapIterator it;
@@ -2929,21 +2938,21 @@ namespace occa {
         break;
       }
 
-      case (expType::function | expType::prototype):{
+      case (expType::funcInfo | expType::prototype):{
         if(leafCount)
           out << tab << getVarInfo(0) << ";\n";
 
         break;
       }
 
-      case (expType::function | expType::declaration):{
+      case (expType::funcInfo | expType::declaration):{
         if(leafCount)
           out << tab << getVarInfo(0);
 
         break;
       }
 
-      case (expType::function):{
+      case (expType::funcInfo):{
         out << value;
 
         if(leafCount)

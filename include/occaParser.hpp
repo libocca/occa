@@ -58,17 +58,16 @@ namespace occa {
 
       void loadMacroInfo(macroInfo &info, const char *&c);
 
-      int loadMacro(strNode *nodePos, const int state = doNothing);
+      int loadMacro(expNode &expRoot, int leafPos, const int state = doNothing);
       int loadMacro(const std::string &line, const int state = doNothing);
-      int loadMacro(strNode *nodePos, const std::string &line, const int state = doNothing);
+      int loadMacro(expNode &expRoot, int leafPos, const std::string &line, const int state = doNothing);
 
       void applyMacros(std::string &line);
 
-      strNode* preprocessMacros(strNode *nodeRoot);
+      void preprocessMacros(expNode &expRoot);
 
-      strNode* splitAndPreprocessContent(const std::string &s);
-      strNode* splitAndPreprocessContent(const char *cRoot);
-      strNode* splitAndPreprocessFortranContent(const char *cRoot);
+      expNode splitAndPreprocessContent(const std::string &s);
+      expNode splitAndPreprocessContent(const char *cRoot);
       //====================================
 
       void initMacros(const bool parsingC = true);
@@ -223,8 +222,8 @@ namespace occa {
     bool isAnOccaOuterDim(const std::string &s);
     bool isAnOccaGlobalDim(const std::string &s);
 
-    strNode* splitContent(const std::string &str, const bool parsingC = true);
-    strNode* splitContent(const char *cRoot, const bool parsingC = true);
+    expNode splitContent(const std::string &str, const bool parsingC = true);
+    expNode splitContent(const char *cRoot, const bool parsingC = true);
 
     bool checkWithLeft(strNode *nodePos,
                        const std::string &leftValue,
@@ -235,7 +234,7 @@ namespace occa {
                            const bool addSpace = true,
                            const bool parsingC = true);
 
-    strNode* labelCode(strNode *lineNodeRoot, const bool parsingC = true);
+    void labelCode(expNode &lineExpRoot, const bool parsingC = true);
 
     void initKeywords(const bool parsingC = true);
     void initFortranKeywords();

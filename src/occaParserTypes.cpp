@@ -700,6 +700,10 @@ namespace occa {
       stackPointersUsed(0),
       stackExpRoots(NULL),
 
+      usesTemplate(false),
+      tArgCount(0),
+      tArgs(NULL),
+
       argumentCount(0),
       argumentVarInfos(NULL),
 
@@ -721,6 +725,10 @@ namespace occa {
       stackPointerCount(var.stackPointerCount),
       stackPointersUsed(var.stackPointersUsed),
       stackExpRoots(var.stackExpRoots),
+
+      usesTemplate(var.usesTemplate),
+      tArgCount(var.tArgCount),
+      tArgs(var.tArgs),
 
       argumentCount(var.argumentCount),
       argumentVarInfos(var.argumentVarInfos),
@@ -744,6 +752,10 @@ namespace occa {
       stackPointersUsed  = var.stackPointersUsed;
       stackExpRoots      = var.stackExpRoots;
 
+      usesTemplate = var.usesTemplate;
+      tArgCount    = var.tArgCount;
+      tArgs        = var.tArgs;
+
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
 
@@ -764,6 +776,13 @@ namespace occa {
 
         for(int i = 0; i < stackPointerCount; ++i)
           stackExpRoots[i].cloneTo(v.stackExpRoots[i]);
+      }
+
+      if(tArgCount){
+        v.tArgs = new typeInfo*[tArgCount];
+
+        for(int i = 0; i < tArgCount; ++i)
+          v.tArgs[i] = new typeInfo(tArgs[i]->clone());
       }
 
       if(argumentCount){
@@ -951,7 +970,7 @@ namespace occa {
 
       if(leaf->info & (expType::unknown  |
                        expType::varInfo  |
-                       expType::function)){
+                       expType::funcInfo)){
 
         if(leaf->info & expType::varInfo){
           if(baseType)

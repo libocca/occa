@@ -129,11 +129,11 @@ namespace occa {
           snEnd = snEnd->right;
         }
 
-        analyzeEmbedded = true;//false;
+        analyzeEmbedded = false;
         analyzeIfStatement(snStart, snEnd);
       }
       else if(s.info & switchStatementType){
-        analyzeEmbedded = true;//false;
+        analyzeEmbedded = false;
         analyzeSwitchStatement(s);
       }
 
@@ -169,8 +169,6 @@ namespace occa {
         printf("[Magic Analyzer] For-loops without 3 statements are not supported\n");
         return true;
       }
-
-      occaLoopInfo loopInfo(s, parser.parsingC);
 
       return true;
     }
@@ -267,6 +265,7 @@ namespace occa {
     }
 
     void magician::addExpressionRead(expNode &e){
+
     }
   };
 };

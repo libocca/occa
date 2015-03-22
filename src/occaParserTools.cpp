@@ -626,6 +626,19 @@ namespace occa {
       ++c;
   }
 
+  int countDelimiters(const char *&c, const char delimiter){
+    int count = 0;
+
+    while(*c != '\0'){
+      if(*c == delimiter)
+        ++count;
+
+      ++c;
+    }
+
+    return count;
+  }
+
   void skipTo(const char *&c, const char delimiter){
     while(*c != '\0'){
       if(*c == delimiter)
