@@ -3492,12 +3492,13 @@ namespace occa {
       cKeywordType["shared"]    = (qualifierType | occaKeywordType);
       cKeywordType["exclusive"] = (qualifierType | occaKeywordType);
 
-      cKeywordType["occaKernel"]   = (qualifierType | occaKeywordType);
-      cKeywordType["occaFunction"] = (qualifierType | occaKeywordType);
+      cKeywordType["occaKernel"]         = (qualifierType | occaKeywordType);
+      cKeywordType["occaFunction"]       = (qualifierType | occaKeywordType);
       cKeywordType["occaDeviceFunction"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaPointer"]  = (qualifierType | occaKeywordType);
-      cKeywordType["occaVariable"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaShared"]   = (qualifierType | occaKeywordType);
+      cKeywordType["occaPointer"]        = (qualifierType | occaKeywordType);
+      cKeywordType["occaVariable"]       = (qualifierType | occaKeywordType);
+      cKeywordType["occaShared"]         = (qualifierType | occaKeywordType);
+      cKeywordType["occaFunctionShared"] = (qualifierType | occaKeywordType);
 
       cKeywordType["occaKernelInfoArg"] = (presetValue | occaKeywordType);
       cKeywordType["occaKernelInfo"]    = (presetValue | occaKeywordType);
