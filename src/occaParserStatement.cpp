@@ -217,6 +217,7 @@ namespace occa {
 
     void expNode::splitAndOrganizeNode(){
       changeExpTypes();
+      initOrganization();
 
       if(sInfo == NULL)
         organize();
