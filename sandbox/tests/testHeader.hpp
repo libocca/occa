@@ -34,7 +34,7 @@ int *c = 0,  d = 1;
 #define THREE 3
 #define FOUR THREE
 #define FOUR 4
-#define PI_##THREE #<PI / 3.0#>           // PI/3
+#define PI_##THREE #<PI / 3.0#>          // PI/3
 #define PI_#<THREE + 1#> 0.78539816339   // PI/4
 
 #define FD_STENCIL_1(D)                         \
