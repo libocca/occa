@@ -222,11 +222,12 @@ namespace occa {
 
     void expNode::splitAndOrganizeNode(){
       changeExpTypes();
-      printf("Printing after changeExpTypes()\n");
-      print();
       initOrganization();
 
-      if(sInfo->info & smntType::declareStatement)
+      if(sInfo == NULL)
+        organize();
+
+      else if(sInfo->info & smntType::declareStatement)
         splitDeclareStatement();
 
       else if(sInfo->info & smntType::updateStatement)
@@ -260,10 +261,13 @@ namespace occa {
       if(leaves[leafCount - 1]->value == "\\n")
         --leafCount;
 
-      if(sInfo->info & smntType::declareStatement)
+      if(sInfo == NULL)
+        organize();
+
+      else if(sInfo->info & smntType::declareStatement)
         splitFortranDeclareStatement();
 
-      if(sInfo->info & smntType::updateStatement)
+      else if(sInfo->info & smntType::updateStatement)
         splitFortranUpdateStatement();
 
       else if((sInfo->info & (smntType::ifStatement  |
@@ -1361,8 +1365,11 @@ namespace occa {
     void expNode::labelCasts(){
       // Don't mistake:
       //   int main(int) -> int main[(int)]
-      if(sInfo->info & smntType::functionStatement)
+      if((sInfo == NULL) ||
+         (sInfo->info & smntType::functionStatement)){
+
         return;
+      }
 
       int leafPos = 0;
 
@@ -1420,6 +1427,9 @@ namespace occa {
 
     // <const int,float>
     void expNode::mergeTypes(){
+      if(sInfo == NULL)
+        return;
+
       int leafPos = 0;
 
       while(leafPos < leafCount){
@@ -1729,6 +1739,9 @@ namespace occa {
     }
 
     void expNode::mergeFortranArrays(){
+      if(sInfo == NULL)
+        return;
+
       int leafPos = 0;
 
       while(leafPos < leafCount){
@@ -2256,7 +2269,7 @@ namespace occa {
       node_.up = this;
     }
 
-    int expNode::insertExpAfter(expNode &exp, int pos){
+    int expNode::insertExpAt(expNode &exp, int pos){
       reserveAndShift(pos, exp.leafCount);
 
       for(int i = pos; i < (pos + exp.leafCount); ++i)

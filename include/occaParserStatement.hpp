@@ -298,7 +298,7 @@ namespace occa {
 
       void addNode(expNode &node_, const int pos_ = -1);
 
-      int insertExpAfter(expNode &exp, int pos);
+      int insertExpAt(expNode &exp, int pos);
       void useExpLeaves(expNode &exp, const int pos, const int count);
       void reserveAndShift(const int pos, const int count = 1);
 

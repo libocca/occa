@@ -91,6 +91,11 @@ namespace occa {
       type = noType;
     }
 
+    typeHolder::typeHolder(const typeHolder &th){
+      type = th.type;
+      value.double_ = th.value.double_;
+    }
+
     typeHolder::typeHolder(const std::string strValue, int type_){
       if(type_ == noType){
         if( occa::isAnInt(strValue.c_str()) )
@@ -115,6 +120,13 @@ namespace occa {
         OCCA_CHECK(false,
                    "Value not set\n");
       }
+    }
+
+    typeHolder& typeHolder::operator = (const typeHolder &th){
+      type = th.type;
+      value.double_ = th.value.double_;
+
+      return *this;
     }
 
     bool typeHolder::operator == (const typeHolder &th) const {
@@ -253,6 +265,41 @@ namespace occa {
       }
     }
 
+    void typeHolder::convertTo(int type_){
+      if(isAFloat()){
+        double oldValue = doubleValue();
+
+        switch(type_){
+        case intType   : value.int_    = (int)    oldValue; break;
+        case boolType  : value.bool_   = (bool)   oldValue; break;
+        case charType  : value.char_   = (char)   oldValue; break;
+        case longType  : value.long_   = (long)   oldValue; break;
+        case shortType : value.short_  = (short)  oldValue; break;
+        case floatType : value.float_  = (float)  oldValue; break;
+        case doubleType: value.double_ = (double) oldValue; break;
+        default:
+          OCCA_CHECK(false,
+                     "Value not set\n");
+        }
+      }
+      else{
+        long oldValue = longValue();
+
+        switch(type_){
+        case intType   : value.int_    = (int)    oldValue; break;
+        case boolType  : value.bool_   = (bool)   oldValue; break;
+        case charType  : value.char_   = (char)   oldValue; break;
+        case longType  : value.long_   = (long)   oldValue; break;
+        case shortType : value.short_  = (short)  oldValue; break;
+        case floatType : value.float_  = (float)  oldValue; break;
+        case doubleType: value.double_ = (double) oldValue; break;
+        default:
+          OCCA_CHECK(false,
+                     "Value not set\n");
+        }
+      }
+    }
+
     void typeHolder::setLongValue(const long &l){
       switch(type){
       case intType   : value.int_    = (int)    l; break;
@@ -360,51 +407,51 @@ namespace occa {
     typeHolder applyOperator(typeHolder &a,
                              std::string op,
                              typeHolder &b){
+
       typeHolder ret;
-      ret.type  = typePrecedence(a,b);
-      ret.value = a.value;
+      ret.type = typePrecedence(a,b);
 
       const bool aIsFloat = a.isAFloat();
       const bool bIsFloat = b.isAFloat();
 
       if(op == "+"){
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() + b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() + b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() + b.longValue());
+            ret.setDoubleValue(a.doubleValue() + b.longValue());
           else
-            ret.setLongValue(ret.longValue() + b.longValue());
+            ret.setLongValue(a.longValue() + b.longValue());
         }
       }
       else if(op == "-"){
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() - b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() - b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() - b.longValue());
+            ret.setDoubleValue(a.doubleValue() - b.longValue());
           else
-            ret.setLongValue(ret.longValue() - b.longValue());
+            ret.setLongValue(a.longValue() - b.longValue());
         }
       }
       else if(op == "*"){
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() * b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() * b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() * b.longValue());
+            ret.setDoubleValue(a.doubleValue() * b.longValue());
           else
-            ret.setLongValue(ret.longValue() * b.longValue());
+            ret.setLongValue(a.longValue() * b.longValue());
         }
       }
       else if(op == "/"){
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() / b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() / b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() / b.longValue());
+            ret.setDoubleValue(a.doubleValue() / b.longValue());
           else
-            ret.setLongValue(ret.longValue() / b.longValue());
+            ret.setLongValue(a.longValue() / b.longValue());
         }
       }
 
@@ -412,48 +459,48 @@ namespace occa {
         ret.type = a.type;
 
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() + b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() + b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() + b.longValue());
+            ret.setDoubleValue(a.doubleValue() + b.longValue());
           else
-            ret.setLongValue(ret.longValue() + b.longValue());
+            ret.setLongValue(a.longValue() + b.longValue());
         }
       }
       else if(op == "-="){
         ret.type = a.type;
 
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() - b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() - b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() - b.longValue());
+            ret.setDoubleValue(a.doubleValue() - b.longValue());
           else
-            ret.setLongValue(ret.longValue() - b.longValue());
+            ret.setLongValue(a.longValue() - b.longValue());
         }
       }
       else if(op == "*="){
         ret.type = a.type;
 
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() * b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() * b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() * b.longValue());
+            ret.setDoubleValue(a.doubleValue() * b.longValue());
           else
-            ret.setLongValue(ret.longValue() * b.longValue());
+            ret.setLongValue(a.longValue() * b.longValue());
         }
       }
       else if(op == "/="){
         ret.type = a.type;
 
         if(bIsFloat)
-          ret.setDoubleValue(ret.doubleValue() / b.doubleValue());
+          ret.setDoubleValue(a.doubleValue() / b.doubleValue());
         else{
           if(aIsFloat)
-            ret.setDoubleValue(ret.doubleValue() / b.longValue());
+            ret.setDoubleValue(a.doubleValue() / b.longValue());
           else
-            ret.setLongValue(ret.longValue() / b.longValue());
+            ret.setLongValue(a.longValue() / b.longValue());
         }
       }
 
@@ -570,7 +617,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " << " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() << b.longValue());
+        ret.setLongValue(a.longValue() << b.longValue());
       }
       else if(op == ">>"){
         OCCA_CHECK(!bIsFloat,
@@ -579,7 +626,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " >> " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() >> b.longValue());
+        ret.setLongValue(a.longValue() >> b.longValue());
       }
       else if(op == "^"){
         OCCA_CHECK(!bIsFloat,
@@ -588,7 +635,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " ^ " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() ^ b.longValue());
+        ret.setLongValue(a.longValue() ^ b.longValue());
       }
       else if(op == "|"){
         OCCA_CHECK(!bIsFloat,
@@ -597,7 +644,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " | " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() | b.longValue());
+        ret.setLongValue(a.longValue() | b.longValue());
       }
       else if(op == "&"){
         OCCA_CHECK(!bIsFloat,
@@ -606,7 +653,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " & " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() & b.longValue());
+        ret.setLongValue(a.longValue() & b.longValue());
       }
       else if(op == "%"){
         OCCA_CHECK(!bIsFloat,
@@ -615,7 +662,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " % " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() % b.longValue());
+        ret.setLongValue(a.longValue() % b.longValue());
       }
 
       else if(op == "&&")
@@ -630,7 +677,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " %= " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() % b.longValue());
+        ret.setLongValue(a.longValue() % b.longValue());
       }
       else if(op == "&="){
         OCCA_CHECK(!bIsFloat,
@@ -639,7 +686,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " &= " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() & b.longValue());
+        ret.setLongValue(a.longValue() & b.longValue());
       }
       else if(op == "^="){
         OCCA_CHECK(!bIsFloat,
@@ -648,7 +695,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " ^= " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() ^ b.longValue());
+        ret.setLongValue(a.longValue() ^ b.longValue());
       }
       else if(op == "|="){
         OCCA_CHECK(!bIsFloat,
@@ -657,7 +704,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " |= " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() | b.longValue());
+        ret.setLongValue(a.longValue() | b.longValue());
       }
       else if(op == ">>="){
         OCCA_CHECK(!bIsFloat,
@@ -666,7 +713,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " >>= " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() >> b.longValue());
+        ret.setLongValue(a.longValue() >> b.longValue());
       }
       else if(op == "<<="){
         OCCA_CHECK(!bIsFloat,
@@ -675,7 +722,7 @@ namespace occa {
         OCCA_CHECK(!aIsFloat,
                    "Cannot apply [" << a << " <<= " << b << "] where " << a << " is [float]");
 
-        ret.setLongValue(ret.longValue() << b.longValue());
+        ret.setLongValue(a.longValue() << b.longValue());
       }
 
       return ret;
@@ -726,7 +773,6 @@ namespace occa {
 
       labelCode(lineExpNode);
       lineExpNode.splitAndOrganizeNode();
-      lineExpNode.print();
 
       expNode &flatRoot = *(lineExpNode.makeFlatHandle());
 
@@ -744,38 +790,35 @@ namespace occa {
     }
 
     typeHolder evaluateExpression(expNode &expRoot){
-      expNode expClone = expRoot.clone();
-      typeHolder th;
+      if(expRoot.info & expType::presetValue)
+        return typeHolder(expRoot.value);
 
-      if(expClone.leafCount == 0)
-        return typeHolder("0");
-
-      if((expClone[0].info & expType::presetValue) &&
-         (expClone.leafCount == 1)){
-
-        return typeHolder(expClone[0].value);
+      if(expRoot.info == expType::C){
+        return evaluateExpression(expRoot[0]);
       }
+      else if((expRoot.info == expType::L) ||
+              (expRoot.info == expType::R)){
 
-      if(expClone.info == expType::C){
-        return evaluateExpression(expClone[0]);
+        return applyOperator(expRoot.value,
+                             evaluateExpression(expRoot[0]));
       }
-      else if((expClone.info == expType::L) ||
-              (expClone.info == expType::R)){
+      else if(expRoot.info == expType::LR){
 
-        // Ignore right unary [++], [--]
-        return applyOperator(expClone.value,
-                             evaluateExpression(expClone[0]));
+        return applyOperator(evaluateExpression(expRoot[0]),
+                             expRoot.value,
+                             evaluateExpression(expRoot[1]));
       }
-      else if(expClone.info == expType::LR){
-        return applyOperator(evaluateExpression(expClone[0]),
-                             expClone.value,
-                             evaluateExpression(expClone[1]));
+      else if(expRoot.info == expType::LCR){
+
+        return applyOperator(evaluateExpression(expRoot[0]),
+                             expRoot.value,
+                             evaluateExpression(expRoot[1]),
+                             evaluateExpression(expRoot[2]));
       }
-      else if(expClone.info == expType::LCR){
-        return applyOperator(evaluateExpression(expClone[0]),
-                             expClone.value,
-                             evaluateExpression(expClone[1]),
-                             evaluateExpression(expClone[2]));
+      else if((expRoot.info == expType::root) &&
+              (0 < expRoot.leafCount)){
+
+        return evaluateExpression(expRoot[0]);
       }
 
       return typeHolder("0");

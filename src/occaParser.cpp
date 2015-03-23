@@ -101,8 +101,6 @@ namespace occa {
 
       std::string name(cStart, c - cStart);
 
-      std::cout << "Getting macro name: " << name << '\n';
-
       if(macroMap.find(name) == macroMap.end())
         applyMacros(name);
 
@@ -313,14 +311,8 @@ namespace occa {
           if(state & ignoring)
             return state;
 
-          std::cout << "Macro line = " << c << '\n';
-
           std::string name = getMacroName(c);
           int pos;
-
-          std::cout << "name = " << name << '\n';
-          if(name == "0")
-            throw 1;
 
           if(macroMap.find(name) == macroMap.end()){
             pos = macros.size();
@@ -335,9 +327,7 @@ namespace occa {
 
           loadMacroInfo(info, c);
 
-          std::cout << "Adding macro: " << info << '\n';
-
-          return state;
+          return (state);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
@@ -389,7 +379,7 @@ namespace occa {
           if(includeExpRoot.leafCount == 0)
             return (state | forceLineRemoval);
 
-          leafPos = allExp.insertExpAfter(includeExpRoot, leafPos);
+          leafPos = allExp.insertExpAt(includeExpRoot, leafPos + 1);
 
           delete includeExpRoot.leaves;
 
@@ -420,9 +410,7 @@ namespace occa {
         if(isAString(c)){
           skipString(c, parsingC);
 
-          std::cout << "1.1: newLine = " << newLine << '\n';
           newLine += std::string(cStart, (c - cStart));
-          std::cout << "1.2: newLine = " << newLine << '\n';
           continue;
         }
 
@@ -447,11 +435,7 @@ namespace occa {
             std::string expr(cStart, c - cStart);
             const char *c_expr = expr.c_str();
 
-            std::cout << "expr = " << expr << '\n';
-
             std::string expr2 = (std::string) evaluateMacroStatement(c_expr);
-
-            std::cout << "expr2 = " << expr2 << '\n';
 
             while(expr != expr2){
               expr = expr2;
@@ -493,17 +477,10 @@ namespace occa {
         if(it != macroMap.end()){
           foundMacro = true;
 
-          std::cout << "it->first = " << it->first << '\n'
-                    << "it->second = " << it->second << '\n';
-
           macroInfo &info = macros[it->second];
 
-          std::cout << "macro = " << info << '\n';
-
           if(!info.isAFunction || (*c != '(')){
-            std::cout << "2.1: newLine = " << newLine << '\n';
             newLine += info.parts[0];
-            std::cout << "2.2: newLine = " << newLine << '\n';
           }
           else{
             std::vector<std::string> args;
@@ -541,30 +518,21 @@ namespace occa {
             if(cStart < (cEnd - 1))
               args.push_back( std::string(cStart, cEnd - cStart - 1) );
 
-            std::cout << "3.1: newLine = " << newLine << '\n';
             newLine += info.applyArgs(args);
-            std::cout << "3.2: newLine = " << newLine << '\n';
           }
         }
         else{
-          std::cout << "4.1: newLine = " << newLine << '\n';
           newLine += word;
-          std::cout << "4.2: newLine = " << newLine << '\n';
         }
 
         cStart = c;
         c += delimiterChars;
 
-        if(cStart != c){
-          std::cout << "5.1: newLine = " << newLine << '\n';
+        if(cStart != c)
           newLine += std::string(cStart, c - cStart);
-          std::cout << "5.2: newLine = " << newLine << '\n';
-        }
 
         if(isWhitespace(*c)){
-          std::cout << "6.1: newLine = " << newLine << '\n';
           newLine += ' ';
-          std::cout << "6.2: newLine = " << newLine << '\n';
           skipWhitespace(c);
         }
       }
@@ -595,8 +563,10 @@ namespace occa {
           }
           else if(currentState & forceLineRemoval){
             currentState &= ~forceLineRemoval;
-            ignoreLine = false;
+            ignoreLine = true;
           }
+          else
+            ignoreLine = false; // Keep macros for now
 
           // Nested #if's
           if(currentState & startHash){

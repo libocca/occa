@@ -127,7 +127,7 @@ namespace occa {
     skipToWhitespace(cEnd);
 
     while(c < cEnd){
-      if(('0' > *c) || (*c > '9'))
+      if((*c < '0') || ('9' < *c))
         return false;
 
       ++c;

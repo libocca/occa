@@ -1,3 +1,6 @@
+#ifndef TEST_HEADER
+#define TEST_HEADER
+
 #if
 #  define sr     1
 #  define tFloat bool
@@ -88,3 +91,5 @@ const double pi_4 = PI_4;
 */
 
 gotoTest:
+
+#endif

@@ -59,7 +59,10 @@ namespace occa {
       int type;
 
       typeHolder();
+      typeHolder(const typeHolder &th);
       typeHolder(const std::string strValue, int type_ = noType);
+
+      typeHolder& operator = (const typeHolder &th);
 
       bool operator == (const typeHolder &th) const;
       bool operator != (const typeHolder &th) const;
@@ -74,6 +77,8 @@ namespace occa {
       bool boolValue() const;
       long longValue() const;
       double doubleValue() const;
+
+      void convertTo(int type_);
 
       void setLongValue(const long &l);
       void setDoubleValue(const double &d);
