@@ -43,8 +43,19 @@ namespace occa {
       return q;
     }
 
-    int qualifierInfo::loadFrom(expNode expRoot,
+    int qualifierInfo::loadFrom(expNode &expRoot,
                                 int leafPos){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
+    }
+
+    int qualifierInfo::loadFrom(statement &s,
+                                expNode &expRoot,
+                                int leafPos){
+
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
@@ -68,14 +79,15 @@ namespace occa {
       return leafPos;
     }
 
-    int qualifierInfo::loadFromFortran(varInfo &var,
+    int qualifierInfo::loadFromFortran(statement &s,
+                                       varInfo &var,
                                        expNode &expRoot,
                                        int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
       while(true){
-        int newLeafPos = updateFortranVar(var, expRoot, leafPos);
+        int newLeafPos = updateFortranVar(s, var, expRoot, leafPos);
 
         if(newLeafPos == leafPos)
           break;
@@ -96,8 +108,8 @@ namespace occa {
       return leafPos;
     }
 
-    bool qualifierInfo::updateFortranVar(varInfo &var,
-                                         const std::string &fortranQualifier){
+    bool qualifierInfo::fortranVarNeedsUpdate(varInfo &var,
+                                              const std::string &fortranQualifier){
       // Normal Fortran
       if(fortranQualifier == "POINTER"){
         ++(var.pointerCount);
@@ -132,17 +144,18 @@ namespace occa {
       return false;
     }
 
-    int qualifierInfo::updateFortranVar(varInfo &var,
+    int qualifierInfo::updateFortranVar(statement &s,
+                                        varInfo &var,
                                         expNode &expPos,
                                         const int leafPos){
-      if(updateFortranVar(var, expPos[leafPos]))
+      if(fortranVarNeedsUpdate(var, expPos[leafPos]))
         return (leafPos + 1);
 
       if(expPos[leafPos].info & expType::type){
         int nextLeafPos = leafPos;
 
         std::string typeName = varInfo::getFullFortranType(expPos, nextLeafPos);
-        var.baseType = expPos.sInfo->hasTypeInScope(typeName);
+        var.baseType = s.hasTypeInScope(typeName);
 
         return nextLeafPos;
       }
@@ -347,15 +360,26 @@ namespace occa {
     }
 
     //---[ Load Info ]------------------
-    int typeInfo::loadFrom(expNode expRoot,
+    int typeInfo::loadFrom(expNode &expRoot,
                            int leafPos){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
+    }
+
+    int typeInfo::loadFrom(statement &s,
+                           expNode &expRoot,
+                           int leafPos){
+
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+      leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
 
       if(leftQualifiers.has("typedef"))
-        return loadTypedefFrom(expRoot, leafPos);
+        return loadTypedefFrom(s, expRoot, leafPos);
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].info & expType::unknown)){
@@ -381,7 +405,7 @@ namespace occa {
 
           // Empty statements
           if(sNextLeafPos != sLeafPos){
-            const bool loadType = typeInfo::statementIsATypeInfo(leaf, sLeafPos);
+            const bool loadType = typeInfo::statementIsATypeInfo(s, leaf, sLeafPos);
 
             sNextLeafPos = leaf.mergeRange(expType::root,
                                            sLeafPos,
@@ -409,36 +433,14 @@ namespace occa {
       return leafPos;
     }
 
-    int typeInfo::delimiterCount(expNode &expRoot,
-                                 const char *delimiter){
-      int count = 0;
-
-      for(int i = 0; i < expRoot.leafCount; ++i){
-        if(expRoot[i].value == delimiter)
-          ++count;
-      }
-
-      return count;
-    }
-
-    int typeInfo::nextDelimiter(expNode &expRoot,
-                                int leafPos,
-                                const char *delimiter){
-      for(int i = leafPos; i < expRoot.leafCount; ++i){
-        if(expRoot[i].value == delimiter)
-          return i;
-      }
-
-      return expRoot.leafCount;
-    }
-
-    int typeInfo::loadTypedefFrom(expNode &expRoot,
+    int typeInfo::loadTypedefFrom(statement &s,
+                                  expNode &expRoot,
                                   int leafPos){
       leftQualifiers.remove("typedef");
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value != "{")){
-        typeInfo *tmp = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+        typeInfo *tmp = s.hasTypeInScope(expRoot[leafPos].value);
 
         if(tmp){
           typedefing = tmp;
@@ -460,7 +462,7 @@ namespace occa {
           typedefing->baseType = typedefing;
         }
 
-        typedefing->loadFrom(expRoot, leafPos);
+        typedefing->loadFrom(s, expRoot, leafPos);
         ++leafPos;
 
         typedefHasDefinition = true;
@@ -472,7 +474,7 @@ namespace occa {
       typedefVarInfo.baseType = typedefing;
 
       typedefVar = new varInfo;
-      leafPos = typedefVar->loadFrom(expRoot, leafPos, &typedefVarInfo);
+      leafPos = typedefVar->loadFrom(s, expRoot, leafPos, &typedefVarInfo);
 
       name = typedefVar->name;
 
@@ -481,19 +483,29 @@ namespace occa {
 
     bool typeInfo::statementIsATypeInfo(expNode &expRoot,
                                         int leafPos){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return statementIsATypeInfo(*(expRoot.sInfo), expRoot, leafPos);
+    }
+
+    bool typeInfo::statementIsATypeInfo(statement &s,
+                                        expNode &expRoot,
+                                        int leafPos){
       if(expRoot.leafCount == 0)
         return false;
 
       qualifierInfo qualifiers;
 
-      leafPos = qualifiers.loadFrom(expRoot, leafPos);
+      leafPos = qualifiers.loadFrom(s, expRoot, leafPos);
 
       if(qualifiers.has("typedef"))
         return true;
 
       if(leafPos < expRoot.leafCount){
         if((expRoot[leafPos].info & expType::unknown) &&
-           (!expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value))){
+           (!s.hasTypeInScope(expRoot[leafPos].value))){
 
           return true;
         }
@@ -503,6 +515,29 @@ namespace occa {
       }
 
       return false;
+    }
+
+    int typeInfo::delimiterCount(expNode &expRoot,
+                                 const char *delimiter){
+      int count = 0;
+
+      for(int i = 0; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          ++count;
+      }
+
+      return count;
+    }
+
+    int typeInfo::nextDelimiter(expNode &expRoot,
+                                int leafPos,
+                                const char *delimiter){
+      for(int i = leafPos; i < expRoot.leafCount; ++i){
+        if(expRoot[i].value == delimiter)
+          return i;
+      }
+
+      return expRoot.leafCount;
     }
     //==================================
 
@@ -701,29 +736,41 @@ namespace occa {
     }
 
     //---[ Load Info ]------------------
-    int varInfo::loadFrom(expNode expRoot,
+    int varInfo::loadFrom(expNode &expRoot,
+                          int leafPos,
+                          varInfo *varHasType){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFrom(*(expRoot.sInfo), expRoot, leafPos, varHasType);
+    }
+
+    int varInfo::loadFrom(statement &s,
+                          expNode &expRoot,
                           int leafPos,
                           varInfo *varHasType){
 
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      leafPos = loadTypeFrom(expRoot, leafPos, varHasType);
+      leafPos = loadTypeFrom(s, expRoot, leafPos, varHasType);
 
-      info = getVarInfoFrom(expRoot, leafPos);
+      info = getVarInfoFrom(s, expRoot, leafPos);
 
       if(info & varType::functionPointer){
         functionNestCount = getNestCountFrom(expRoot, leafPos);
         functionNests     = new varInfo[functionNestCount];
       }
 
-      leafPos = loadNameFrom(expRoot, leafPos);
-      leafPos = loadArgsFrom(expRoot, leafPos);
+      leafPos = loadNameFrom(s, expRoot, leafPos);
+      leafPos = loadArgsFrom(s, expRoot, leafPos);
 
       return leafPos;
     }
 
-    int varInfo::loadTypeFrom(expNode &expRoot,
+    int varInfo::loadTypeFrom(statement &s,
+                              expNode &expRoot,
                               int leafPos,
                               varInfo *varHasType){
 
@@ -731,10 +778,10 @@ namespace occa {
         return leafPos;
 
       if(varHasType == NULL){
-        leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+        leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
 
         if(leafPos < expRoot.leafCount){
-          baseType = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+          baseType = s.hasTypeInScope(expRoot[leafPos].value);
 
           if(baseType)
             ++leafPos;
@@ -745,7 +792,7 @@ namespace occa {
         baseType       = varHasType->baseType;
       }
 
-      leafPos = rightQualifiers.loadFrom(expRoot, leafPos);
+      leafPos = rightQualifiers.loadFrom(s, expRoot, leafPos);
 
       for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
         if(rightQualifiers[i] == "*")
@@ -755,7 +802,8 @@ namespace occa {
       return leafPos;
     }
 
-    int varInfo::getVarInfoFrom(expNode &expRoot,
+    int varInfo::getVarInfoFrom(statement &s,
+                                expNode &expRoot,
                                 int leafPos){
       // No name var (argument for function)
       if(expRoot.leafCount <= leafPos)
@@ -813,7 +861,8 @@ namespace occa {
       return nestCount;
     }
 
-    int varInfo::loadNameFrom(expNode &expRoot,
+    int varInfo::loadNameFrom(statement &s,
+                              expNode &expRoot,
                               int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
@@ -836,7 +885,7 @@ namespace occa {
                (leaf->leaves[2]->value == "(")){
 
               functionNests[nestPos - 1].info = varType::function;
-              functionNests[nestPos - 1].loadArgsFrom(*leaf, 2);
+              functionNests[nestPos - 1].loadArgsFrom(s, *leaf, 2);
             }
 
             leaf = leaf->leaves[1];
@@ -866,8 +915,9 @@ namespace occa {
         if(leaf->up == &expRoot){
           return loadStackPointersFrom(expRoot, sLeafPos + 1);
         }
-        else
+        else{
           loadStackPointersFrom(*leaf, sLeafPos + 1);
+        }
       }
 
       return leafPos;
@@ -897,7 +947,8 @@ namespace occa {
       return (leafPos + stackPointerCount);
     }
 
-    int varInfo::loadArgsFrom(expNode &expRoot,
+    int varInfo::loadArgsFrom(statement &s,
+                              expNode &expRoot,
                               int leafPos){
       if( !(info & varType::functionType) )
         return leafPos;
@@ -914,7 +965,7 @@ namespace occa {
 
         for(int i = 0; i < argumentCount; ++i){
           argumentVarInfos[i] = new varInfo();
-          sLeafPos = argumentVarInfos[i]->loadFrom(leaf, sLeafPos);
+          sLeafPos = argumentVarInfos[i]->loadFrom(s, leaf, sLeafPos);
           sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
         }
       }
@@ -926,8 +977,19 @@ namespace occa {
     int varInfo::loadFromFortran(expNode &expRoot,
                                  int leafPos,
                                  varInfo *varHasType){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
+    }
+
+    int varInfo::loadFromFortran(statement &s,
+                                 expNode &expRoot,
+                                 int leafPos,
+                                 varInfo *varHasType){
       // Load Type
-      leafPos = loadTypeFromFortran(expRoot, leafPos, varHasType);
+      leafPos = loadTypeFromFortran(s, expRoot, leafPos, varHasType);
 
       // Load Name
       if(expRoot.leafCount <= leafPos)
@@ -966,15 +1028,26 @@ namespace occa {
     int varInfo::loadTypeFromFortran(expNode &expRoot,
                                      int leafPos,
                                      varInfo *varHasType){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadTypeFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
+    }
+
+    int varInfo::loadTypeFromFortran(statement &s,
+                                     expNode &expRoot,
+                                     int leafPos,
+                                     varInfo *varHasType){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
       if(varHasType == NULL){
-        leafPos = leftQualifiers.loadFromFortran(*this, expRoot, leafPos);
+        leafPos = leftQualifiers.loadFromFortran(s, *this, expRoot, leafPos);
 
         if(leafPos < expRoot.leafCount){
           if(expRoot[leafPos].value == "SUBROUTINE"){
-            baseType = expRoot.sInfo->hasTypeInScope("void");
+            baseType = s.hasTypeInScope("void");
             info    |= varType::functionDec;
             ++leafPos;
           }

@@ -187,7 +187,7 @@ namespace occa {
       void splitFortranFunctionStatement();
       //  ====================
 
-      static void translateOccaKeyword(expNode &exp, const bool parsingC);
+      static void translateOccaKeyword(expNode &exp, int preInfo, const bool parsingC);
 
       void changeExpTypes();
       void changeFortranExpTypes();

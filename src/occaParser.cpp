@@ -2193,7 +2193,8 @@ namespace occa {
     void parserBase::setupHostKernelArgsFromLoops(statement &sKernel){
       // Add nestedKernels argument
       varInfo &arg = *(new varInfo());
-      arg.loadFrom(splitAndLabelContent("int *nestedKernels"));
+      expNode nkNode = splitAndLabelContent("int *nestedKernels");
+      arg.loadFrom(nkNode);
 
       typeInfo &type = *(new typeInfo);
       type.name = "occa::kernel";

@@ -46,7 +46,11 @@ namespace occa {
       up(e.up),
 
       leafCount(e.leafCount),
-      leaves(e.leaves) {}
+      leaves(e.leaves) {
+
+      for(int i = 0; i < leafCount; ++i)
+        leaves[i]->up = this;
+    }
 
     expNode::expNode(statement &s) :
       sInfo(&s),
@@ -69,6 +73,9 @@ namespace occa {
 
       leafCount = e.leafCount;
       leaves    = e.leaves;
+
+      for(int i = 0; i < leafCount; ++i)
+        leaves[i]->up = this;
 
       return *this;
     }
@@ -145,7 +152,6 @@ namespace occa {
 
       // [<>] Make sure expPos returns the guy after our last leaf
       useExpLeaves(allExp, expStart, (expPos - expStart));
-      print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -205,19 +211,19 @@ namespace occa {
       else
         splitAndOrganizeFortranNode();
 
-      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      print();
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // print();
     }
 
     void expNode::splitAndOrganizeNode(){
       changeExpTypes();
-      initOrganization();
 
       if(sInfo == NULL)
         organize();
 
-      else if(sInfo->info & smntType::declareStatement)
+      else if(sInfo->info & smntType::declareStatement){
         splitDeclareStatement();
+      }
 
       else if(sInfo->info & smntType::updateStatement)
         splitUpdateStatement();
@@ -309,7 +315,9 @@ namespace occa {
         expNode &leaf = newExp[i];
         varInfo &var  = leaf.addVarInfoNode(0);
 
+        print();
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
+        std::cout << "var = " << var << '\n';
 
         if(flags & expFlag::addVarToScope){
           if(flags & expFlag::addToParent){
@@ -336,7 +344,7 @@ namespace occa {
         leafPos = sExpEnd;
 
         // Don't put the [;]
-        if((sExpEnd == leafCount) &&
+        if((sExpEnd == (leafCount - 1)) &&
            (leaves[sExpEnd - 1]->value == ";")){
 
           --sExpEnd;
@@ -929,8 +937,8 @@ namespace occa {
     }
     //  ======================
 
-    void expNode::translateOccaKeyword(expNode &exp, const bool parsingC){
-      if(exp.info & preExpType::occaKeyword){
+    void expNode::translateOccaKeyword(expNode &exp, int preInfo, const bool parsingC){
+      if(preInfo & preExpType::occaKeyword){
 
         if(((parsingC)  &&
             (exp.value == "directLoad")) ||
@@ -949,11 +957,12 @@ namespace occa {
 
       for(int leafPos = 0; leafPos < leafCount; ++leafPos){
         expNode &leaf = *(leaves[leafPos]);
+        int preInfo = leaf.info;
 
-        if(leaf.info & preExpType::occaKeyword)
-          translateOccaKeyword(leaf, true);
+        if(preInfo & preExpType::occaKeyword)
+          translateOccaKeyword(leaf, preInfo, true);
 
-        if(leaf.info & preExpType::unknownVariable){
+        if(preInfo & preExpType::unknownVariable){
           varInfo *nodeVar = sInfo->hasVariableInScope(leaf.value);
 
           if(nodeVar){
@@ -964,9 +973,7 @@ namespace occa {
               leaf.info = expType::funcInfo; // [<>] Change to funcInfo
           }
           else{
-            typeInfo *nodeType = ((sInfo != NULL)                   ?
-                                  sInfo->hasTypeInScope(leaf.value) :
-                                  NULL);
+            typeInfo *nodeType = sInfo->hasTypeInScope(leaf.value);
 
             if(!nodeType)
               leaf.info = expType::unknown;
@@ -975,12 +982,12 @@ namespace occa {
           }
         }
 
-        else if(leaf.info & preExpType::presetValue){
+        else if(preInfo & preExpType::presetValue){
           leaf.info = expType::presetValue;
         }
 
-        else if(leaf.info & preExpType::descriptor){
-          if(leaf.info == keywordType["long"]){
+        else if(preInfo & preExpType::descriptor){
+          if(preInfo == keywordType["long"]){
             if(((leafPos + 1) < leafCount) &&
                (sInfo->hasTypeInScope(leaves[leafPos + 1]->value))){
 
@@ -989,25 +996,25 @@ namespace occa {
             else
               leaf.info = expType::type;
           }
-          else if(leaf.info & (preExpType::qualifier | preExpType::struct_))
+          else if(preInfo & (preExpType::qualifier | preExpType::struct_))
             leaf.info = expType::qualifier;
           else
             leaf.info = expType::type;
 
           // For [*] and [&]
-          if(leaf.info & preExpType::operator_)
+          if(preInfo & preExpType::operator_)
             leaf.info |= expType::operator_;
         }
 
-        else if(leaf.info & preExpType::struct_){
+        else if(preInfo & preExpType::struct_){
           leaf.info = expType::qualifier;
         }
 
-        else if(leaf.info & preExpType::operator_){
+        else if(preInfo & preExpType::operator_){
           leaf.info = expType::operator_;
         }
 
-        else if(leaf.info & preExpType::startSection){
+        else if(preInfo & preExpType::startSection){
           leaf.info = expType::C;
 
           if(leaf.leafCount)
@@ -1424,6 +1431,11 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
+        if(leaves[leafPos]->info & expType::hasInfo){
+          ++leafPos;
+          continue;
+        }
+
         if(sInfo->hasTypeInScope(leaves[leafPos]->value) ||
            (leaves[leafPos]->info == expType::qualifier)){
 
@@ -3509,11 +3521,11 @@ namespace occa {
     }
 
     int statement::checkDescriptorStatementType(expNode &allExp, int &expPos){
-      if(typeInfo::statementIsATypeInfo(allExp, expPos))
+      if(typeInfo::statementIsATypeInfo(*this, allExp, expPos))
         return checkStructStatementType(allExp, expPos);
 
       varInfo var;
-      expPos = var.loadFrom(allExp, expPos);
+      expPos = var.loadFrom(*this, allExp, expPos);
 
       if( !(var.info & varType::functionDef) ){
         while((expPos < allExp.leafCount) &&
@@ -3825,8 +3837,7 @@ namespace occa {
 
       ret.setNestedSInfo(*this);
 
-      ret.changeExpTypes();
-      ret.initOrganization();
+      ret.splitAndOrganizeNode();
 
       return ret;
     }

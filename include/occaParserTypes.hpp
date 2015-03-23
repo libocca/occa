@@ -40,17 +40,23 @@ namespace occa {
 
       qualifierInfo clone();
 
-      int loadFrom(expNode expRoot,
+      int loadFrom(expNode &expRoot,
                    int leafPos = 0);
 
-      int loadFromFortran(varInfo &var,
+      int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0);
+
+      int loadFromFortran(statement &s,
+                          varInfo &var,
                           expNode &expRoot,
                           int leafPos);
 
-      bool updateFortranVar(varInfo &var,
-                            const std::string &fortranQualifier);
+      bool fortranVarNeedsUpdate(varInfo &var,
+                                 const std::string &fortranQualifier);
 
-      int updateFortranVar(varInfo &var,
+      int updateFortranVar(statement &s,
+                           varInfo &var,
                            expNode &expPos,
                            const int leafPos);
 
@@ -98,11 +104,23 @@ namespace occa {
       typeInfo clone();
 
       //---[ Load Info ]----------------
-      int loadFrom(expNode expRoot,
+      int loadFrom(expNode &expRoot,
                    int leafPos = 0);
 
-      int loadTypedefFrom(expNode &expRoot,
+      int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0);
+
+      int loadTypedefFrom(statement &s,
+                          expNode &expRoot,
                           int leafPos = 0);
+
+      static bool statementIsATypeInfo(expNode &expRoot,
+                                       int leafPos);
+
+      static bool statementIsATypeInfo(statement &s,
+                                       expNode &expRoot,
+                                       int leafPos);
 
       static int delimiterCount(expNode &expRoot,
                                 const char *delimiter);
@@ -110,9 +128,6 @@ namespace occa {
       static int nextDelimiter(expNode &expRoot,
                                int leafPos,
                                const char *delimiter);
-
-      static bool statementIsATypeInfo(expNode &expRoot,
-                                       int leafPos);
       //======================
 
       //---[ Type Info ]----------------
@@ -178,18 +193,26 @@ namespace occa {
       static int variablesInStatement(expNode &expRoot);
 
       //---[ Load Info ]----------------
-      int loadFrom(expNode expRoot,
+      int loadFrom(expNode &expRoot,
                    int leafPos = 0,
                    varInfo *varHasType = NULL);
 
-      int loadTypeFrom(expNode &expRoot,
+      int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0,
+                   varInfo *varHasType = NULL);
+
+      int loadTypeFrom(statement &s,
+                       expNode &expRoot,
                        int leafPos,
                        varInfo *varHasType = NULL);
 
-      int loadNameFrom(expNode &expRoot,
+      int loadNameFrom(statement &s,
+                       expNode &expRoot,
                        int leafPos);
 
-      int getVarInfoFrom(expNode &expRoot,
+      int getVarInfoFrom(statement &s,
+                         expNode &expRoot,
                          int leafPos);
 
       int getNestCountFrom(expNode &expRoot,
@@ -198,7 +221,8 @@ namespace occa {
       int loadStackPointersFrom(expNode &expRoot,
                                 int leafPos);
 
-      int loadArgsFrom(expNode &expRoot,
+      int loadArgsFrom(statement &s,
+                       expNode &expRoot,
                        int leafPos);
 
       //   ---[ Fortran ]-----
@@ -206,7 +230,17 @@ namespace occa {
                           int leafPos,
                           varInfo *varHasType = NULL);
 
+      int loadFromFortran(statement &s,
+                          expNode &expRoot,
+                          int leafPos,
+                          varInfo *varHasType = NULL);
+
       int loadTypeFromFortran(expNode &expRoot,
+                              int leafPos,
+                              varInfo *varHasType = NULL);
+
+      int loadTypeFromFortran(statement &s,
+                              expNode &expRoot,
                               int leafPos,
                               varInfo *varHasType = NULL);
 
