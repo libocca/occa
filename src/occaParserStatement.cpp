@@ -477,6 +477,7 @@ namespace occa {
 
       varInfo &var = addVarInfoNode(0);
       int leafPos  = var.loadFrom(*this, 1);
+      std::cout << "SSvar = " << var << '\n';
 
       if((flags & expFlag::addVarToScope) &&
          (sInfo->up != NULL)              &&
@@ -2289,11 +2290,12 @@ namespace occa {
       reserveAndShift(0, count);
 
       for(int i = pos; i < (pos + count); ++i){
-        leaves[i - pos] = exp.leaves[i];
-
-        leaves[i - pos]->sInfo = sInfo;
-        leaves[i - pos]->up    = this;
+        leaves[i - pos]     = exp.leaves[i];
+        leaves[i - pos]->up = this;
       }
+
+      if(sInfo)
+        setNestedSInfo(*sInfo);
     }
 
     void expNode::reserveAndShift(const int pos,
@@ -3407,7 +3409,7 @@ namespace occa {
         return checkStructStatementType(allExp, expPos);
 
       else if(allExp[expPos].info & (preExpType::operator_ |
-                                      preExpType::presetValue))
+                                     preExpType::presetValue))
         return checkUpdateStatementType(allExp, expPos);
 
       else if(expHasDescriptor(allExp, expPos))
