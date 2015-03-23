@@ -52,18 +52,18 @@ namespace occa {
       std::string getMacroName(const char *&c);
       std::string getMacroIncludeFile(const char *&c);
 
-      typeHolder evaluateMacroStatement(const char *&c);
-      bool evaluateMacroBoolStatement(const char *&c);
+      typeHolder evaluateMacroStatement(const char *c);
+      bool evaluateMacroBoolStatement(const char *c);
 
       void loadMacroInfo(macroInfo &info, const char *&c);
 
-      int loadMacro(expNode &expRoot, int leafPos, const int state = doNothing);
+      int loadMacro(expNode &allExp, int leafPos, const int state = doNothing);
       int loadMacro(const std::string &line, const int state = doNothing);
-      int loadMacro(expNode &expRoot, int leafPos, const std::string &line, const int state = doNothing);
+      int loadMacro(expNode &allExp, int leafPos, const std::string &line, const int state = doNothing);
 
       void applyMacros(std::string &line);
 
-      void preprocessMacros(expNode &expRoot);
+      void preprocessMacros(expNode &allExp);
 
       expNode splitAndPreprocessContent(const std::string &s);
       expNode splitAndPreprocessContent(const char *cRoot);
@@ -229,7 +229,7 @@ namespace occa {
                            const bool addSpace = true,
                            const bool parsingC = true);
 
-    expNode& labelCode(expNode &expRoot, const bool parsingC = true);
+    expNode& labelCode(expNode &allExp, const bool parsingC = true);
 
     expNode splitAndLabelContent(const std::string &str, const bool parsingC = true);
     expNode splitAndLabelContent(const char *cRoot, const bool parsingC = true);

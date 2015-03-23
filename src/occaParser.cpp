@@ -32,11 +32,11 @@ namespace occa {
     }
 
     const std::string parserBase::parseSource(const char *cRoot){
-      expNode expRoot = splitAndPreprocessContent(cRoot);
+      expNode allExp = splitAndPreprocessContent(cRoot);
 
       loadLanguageTypes();
 
-      globalScope->loadAllFromNode(expRoot, parsingC);
+      globalScope->loadAllFromNode(allExp, parsingC);
       std::cout << (std::string) *globalScope;
       throw 1;
 
@@ -131,11 +131,11 @@ namespace occa {
       return iFilename.substr(skipFirst, chars - (skipFirst + skipLast));
     }
 
-    typeHolder parserBase::evaluateMacroStatement(const char *&c){
+    typeHolder parserBase::evaluateMacroStatement(const char *c){
       return evaluateString(c, this);
     }
 
-    bool parserBase::evaluateMacroBoolStatement(const char *&c){
+    bool parserBase::evaluateMacroBoolStatement(const char *c){
       typeHolder th = evaluateMacroStatement(c);
 
       return (th.doubleValue() != 0);
@@ -233,8 +233,8 @@ namespace occa {
       }
     }
 
-    int parserBase::loadMacro(expNode &expRoot, int leafPos, const int state){
-      return loadMacro(expRoot, leafPos, expRoot[leafPos].value, state);
+    int parserBase::loadMacro(expNode &allExp, int leafPos, const int state){
+      return loadMacro(allExp, leafPos, allExp[leafPos].value, state);
     }
 
     int parserBase::loadMacro(const std::string &line, const int state){
@@ -243,7 +243,7 @@ namespace occa {
       return loadMacro(dummyExpRoot, -1, line, state);
     }
 
-    int parserBase::loadMacro(expNode &expRoot, int leafPos,
+    int parserBase::loadMacro(expNode &allExp, int leafPos,
                               const std::string &line, const int state){
 
       const char *c = (line.c_str() + 1); // line[0] = #
@@ -379,7 +379,7 @@ namespace occa {
           if(includeExpRoot.leafCount == 0)
             return (state | forceLineRemoval);
 
-          leafPos = expRoot.insertExpAfter(includeExpRoot, leafPos);
+          leafPos = allExp.insertExpAfter(includeExpRoot, leafPos);
 
           delete includeExpRoot.leaves;
 
@@ -542,20 +542,20 @@ namespace occa {
         applyMacros(line);
     }
 
-    void parserBase::preprocessMacros(expNode &expRoot){
+    void parserBase::preprocessMacros(expNode &allExp){
       std::stack<int> statusStack;
       std::vector<int> linesIgnored;
 
       int currentState = doNothing;
 
-      for(int linePos = 0; linePos < (expRoot.leafCount); ++linePos){
-        std::string &line = expRoot[linePos].value;
+      for(int linePos = 0; linePos < (allExp.leafCount); ++linePos){
+        std::string &line = allExp[linePos].value;
         bool ignoreLine = false;
 
         if(line[0] == '#'){
           const int oldState = currentState;
 
-          currentState = loadMacro(expRoot, linePos, currentState);
+          currentState = loadMacro(allExp, linePos, currentState);
 
           if(currentState & keepMacro){
             currentState &= ~keepMacro;
@@ -594,8 +594,8 @@ namespace occa {
       if(linesIgnored.size() == 0)
         return;
 
-      if(linesIgnored.back() != (expRoot.leafCount - 1))
-        linesIgnored.push_back(expRoot.leafCount - 1);
+      if(linesIgnored.back() != (allExp.leafCount - 1))
+        linesIgnored.push_back(allExp.leafCount - 1);
 
       const size_t ignoreCount = linesIgnored.size();
 
@@ -606,12 +606,12 @@ namespace occa {
         int end = linesIgnored[linePos];
 
         for(int i = start; i < end; ++i)
-          expRoot[pos++].value = expRoot[i].value;
+          allExp[pos++].value = allExp[i].value;
 
         start = (end + 1);
       }
 
-      expRoot.leafCount = pos;
+      allExp.leafCount = pos;
     }
 
     expNode parserBase::splitAndPreprocessContent(const std::string &s){
@@ -619,19 +619,21 @@ namespace occa {
     }
 
     expNode parserBase::splitAndPreprocessContent(const char *cRoot){
-      expNode expRoot;
+      expNode allExp;
 
       initKeywords(parsingC);
 
-      expRoot = splitContent(cRoot, parsingC);
+      allExp = splitContent(cRoot, parsingC);
 
       initMacros(parsingC);
 
-      preprocessMacros(expRoot);
+      preprocessMacros(allExp);
+      allExp.print();
+      throw 1;
 
-      labelCode(expRoot, parsingC);
+      labelCode(allExp, parsingC);
 
-      return expRoot;
+      return allExp;
     }
     //====================================
 
@@ -2966,8 +2968,8 @@ namespace occa {
 
       int status = readingCode;
 
-      expNode expRoot;
-      expRoot.addNodes(0, 0, lineCount);
+      expNode allExp;
+      allExp.addNodes(0, 0, lineCount);
       int expPos = 0;
 
       while(*c != '\0'){
@@ -2978,6 +2980,7 @@ namespace occa {
         if(line.size()){
           if(parsingFortran &&
              (*c == 'c')){
+
             c = cEnd;
             continue;
           }
@@ -2988,7 +2991,7 @@ namespace occa {
             strip(line, parsingC);
 
             if(line.size()){
-              expRoot[expPos].value = line;
+              allExp[expPos].value = line;
               ++expPos;
             }
           }
@@ -2998,7 +3001,7 @@ namespace occa {
             strip(line, parsingC);
 
             if((status == finishedCommentBlock) && line.size()){
-              expRoot[expPos].value = line;
+              allExp[expPos].value = line;
               ++expPos;
             }
           }
@@ -3007,7 +3010,9 @@ namespace occa {
         c = cEnd;
       }
 
-      return expRoot;
+      allExp.leafCount = expPos;
+
+      return allExp;
     }
 
     expNode splitAndLabelContent(const std::string &str, const bool parsingC){
@@ -3015,22 +3020,22 @@ namespace occa {
     }
 
     expNode splitAndLabelContent(const char *cRoot, const bool parsingC){
-      expNode expRoot = splitContent(cRoot, parsingC);
-      return labelCode(expRoot);
+      expNode allExp = splitContent(cRoot, parsingC);
+      return labelCode(allExp);
     }
 
-    expNode& labelCode(expNode &expRoot, const bool parsingC){
+    expNode& labelCode(expNode &allExp, const bool parsingC){
       initKeywords(parsingC);
 
       const bool parsingFortran = !parsingC;
 
-      const int lineCount = expRoot.leafCount;
+      const int lineCount = allExp.leafCount;
 
       const bool addSpace = true; // For readability
       bool firstSectionNode = false;
 
       for(int linePos = 0; linePos < lineCount; ++linePos){
-        expNode &lineNode = expRoot[linePos];
+        expNode &lineNode = allExp[linePos];
         expNode node, *cNode = &node;
 
         const std::string &line = lineNode.value;
@@ -3223,7 +3228,7 @@ namespace occa {
         expNode::swap(lineNode, node);
       }
 
-      return expRoot;
+      return allExp;
     }
 
     bool checkLastTwoNodes(expNode &node,

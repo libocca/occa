@@ -191,6 +191,9 @@ namespace occa {
 
       static void translateOccaKeyword(expNode &exp, const bool parsingC);
 
+      void changeExpTypes();
+      void changeFortranExpTypes();
+
       void initOrganization();
 
       void organizeLeaves(const bool inRoot = true);

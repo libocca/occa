@@ -191,9 +191,8 @@ namespace occa {
 
         // [-] Doesn't support GCC's twisted [Labels as Values]
         if((*this)[0].value == "goto"){
-          // [<>] Needs to print *this
           OCCA_CHECK(1 < leafCount,
-                     "Goto check needs label");
+                     "Goto check [" << toString() << "] needs label");
 
           value = allExp[expStart + 1];
           info  = expType::goto_;
@@ -222,7 +221,7 @@ namespace occa {
     }
 
     void expNode::splitAndOrganizeNode(){
-      // initLoadFromNode();
+      changeExpTypes();
       initOrganization();
 
       if(sInfo->info & smntType::declareStatement)
@@ -254,7 +253,7 @@ namespace occa {
     }
 
     void expNode::splitAndOrganizeFortranNode(){
-      // initLoadFromFortranNode();
+      changeFortranExpTypes();
 
       if(leaves[leafCount - 1]->value == "\\n")
         --leafCount;
@@ -949,169 +948,132 @@ namespace occa {
       }
     }
 
-#if 0
-    void expNode::initLoadFromNode(strNode *nodeRoot){
-      strNode *nodePos = nodeRoot;
-
-      while(nodePos){
-        ++leafCount;
-        nodePos = nodePos->right;
-      }
-
+    void expNode::changeExpTypes(){
       if(leafCount == 0)
         return;
 
-      nodePos = nodeRoot;
+      for(int leafPos = 0; leafPos < leafCount; ++leafPos){
+        expNode &leaf = *(leaves[leafPos]);
 
-      leaves = new expNode*[leafCount];
-      int leafPos = 0;
+        if(leaf.info & preExpType::occaKeyword)
+          translateOccaKeyword(leaf, true);
 
-      while(nodePos){
-        if(nodePos->info & preExpType::occaKeyword)
-          translateOccaKeyword(nodePos, true); // [<>]
-
-        expNode *&leaf = leaves[leafPos++];
-
-        leaf        = new expNode( makeFloatingLeaf() );
-        leaf->value = nodePos->value;
-
-        if(nodePos->info & preExpType::unknownVariable){
-          varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
+        if(leaf.info & preExpType::unknownVariable){
+          varInfo *nodeVar = sInfo->hasVariableInScope(leaf.value);
 
           if(nodeVar){
             if( !(nodeVar->info & varType::functionType) ){
-              // leaf->info = expType::variable; // Substituted for varInfo storage
-              leaf->putVarInfo(*nodeVar);
+              leaf.putVarInfo(*nodeVar);
             }
             else
-              leaf->info = expType::funcInfo;
+              leaf.info = expType::funcInfo; // [<>] Change to funcInfo
           }
           else{
-            typeInfo *nodeType = sInfo->hasTypeInScope(nodePos->value);
+            typeInfo *nodeType = sInfo->hasTypeInScope(leaf.value);
 
             if(!nodeType)
-              leaf->info = expType::unknown;
+              leaf.info = expType::unknown;
             else
-              leaf->info = expType::type;
+              leaf.info = expType::type;
           }
         }
 
-        else if(nodePos->info & preExpType::presetValue){
-          leaf->info = expType::presetValue;
+        else if(leaf.info & preExpType::presetValue){
+          leaf.info = expType::presetValue;
         }
 
-        else if(nodePos->info & preExpType::descriptor){
-          if(nodePos->info == keywordType["long"]){
-            if((nodePos->right) &&
-               (sInfo->hasTypeInScope(nodePos->right->value))){
+        else if(leaf.info & preExpType::descriptor){
+          if(leaf.info == keywordType["long"]){
+            if(((leafPos + 1) < leafCount) &&
+               (sInfo->hasTypeInScope(leaves[leafPos + 1]->value))){
 
-              leaf->info = expType::qualifier;
+              leaf.info = expType::qualifier;
             }
             else
-              leaf->info = expType::type;
+              leaf.info = expType::type;
           }
-          else if(nodePos->info & (preExpType::qualifier | preExpType::struct_))
-            leaf->info = expType::qualifier;
+          else if(leaf.info & (preExpType::qualifier | preExpType::struct_))
+            leaf.info = expType::qualifier;
           else
-            leaf->info = expType::type;
+            leaf.info = expType::type;
 
           // For [*] and [&]
-          if(nodePos->info & preExpType::operator_)
-            leaf->info |= expType::operator_;
+          if(leaf.info & preExpType::operator_)
+            leaf.info |= expType::operator_;
         }
 
-        else if(nodePos->info & preExpType::struct_){
-          leaf->info = expType::qualifier;
+        else if(leaf.info & preExpType::struct_){
+          leaf.info = expType::qualifier;
         }
 
-        else if(nodePos->info & preExpType::operator_){
-          leaf->info = expType::operator_;
+        else if(leaf.info & preExpType::operator_){
+          leaf.info = expType::operator_;
         }
 
-        else if(nodePos->info & preExpType::startSection){
-          leaf->info  = expType::C;
+        else if(leaf.info & preExpType::startSection){
+          leaf.info = expType::C;
 
-          if(nodePos->down)
-            leaf->initLoadFromNode(nodePos->down);
+          if(leaf.leafCount)
+            leaf.changeExpTypes();
         }
 
         else
-          leaf->info = expType::printValue;
+          leaf.info = expType::printValue;
 
-        if(nodePos->info == 0){
-          delete leaf;
+        if(leaf.info == 0){
+          removeNode(leafPos);
           --leafPos;
         }
-
-        nodePos = nodePos->right;
       }
     }
 
-    void expNode::initLoadFromFortranNode(strNode *nodeRoot){
-      strNode *nodePos = nodeRoot;
-
-      while(nodePos){
-        ++leafCount;
-        nodePos = nodePos->right;
-      }
-
+    void expNode::changeFortranExpTypes(){
       if(leafCount == 0)
         return;
 
-      nodePos = nodeRoot;
+      for(int leafPos = 0; leafPos < leafCount; ++leafPos){
+        expNode &leaf = *(leaves[leafPos]);
 
-      leaves = new expNode*[leafCount];
-      int leafPos = 0;
-
-      while(nodePos){
-        expNode *&leaf = leaves[leafPos++];
-
-        leaf        = new expNode( makeFloatingLeaf() );
-        leaf->value = nodePos->value;
-
-        if(nodePos->info & preExpType::unknownVariable){
-          varInfo *nodeVar = sInfo->hasVariableInScope(nodePos->value);
+        if(leaf.info & preExpType::unknownVariable){
+          varInfo *nodeVar = sInfo->hasVariableInScope(leaf.value);
 
           if(nodeVar)
-            leaf->info = expType::variable;
+            leaf.info = expType::variable;
           else
-            leaf->info = expType::unknown;
+            leaf.info = expType::unknown;
         }
 
-        else if(nodePos->info & preExpType::presetValue){
-          leaf->info = expType::presetValue;
+        else if(leaf.info & preExpType::presetValue){
+          leaf.info = expType::presetValue;
         }
 
-        else if(nodePos->info & preExpType::descriptor){
-          if(nodePos->info & preExpType::qualifier)
-            leaf->info = expType::qualifier;
+        else if(leaf.info & preExpType::descriptor){
+          if(leaf.info & preExpType::qualifier)
+            leaf.info = expType::qualifier;
           else
-            leaf->info  = expType::type;
+            leaf.info  = expType::type;
         }
 
-        else if(nodePos->info & preExpType::operator_){
-          leaf->info = expType::operator_;
+        else if(leaf.info & preExpType::operator_){
+          leaf.info = expType::operator_;
         }
 
-        else if(nodePos->info & preExpType::startSection){
-          leaf->info  = expType::C;
+        else if(leaf.info & preExpType::startSection){
+          leaf.info  = expType::C;
 
-          if(nodePos->down)
-            leaf->initLoadFromNode(nodePos->down);
+          if(leaf.leafCount)
+            leaf.changeFortranExpTypes();
         }
 
         else
-          leaf->info = expType::printValue;
+          leaf.info = expType::printValue;
 
-        if(nodePos->info == 0){
-          delete leaf;
+        if(leaf.info == 0){
+          removeNode(leafPos);
           --leafPos;
         }
-
-        nodePos = nodePos->right;
       }
     }
-#endif
 
     void expNode::initOrganization(){
       if(leafCount == 0)
@@ -3838,12 +3800,11 @@ namespace occa {
       return ret;
     }
 
-    // [<>]
     expNode statement::createPlainExpNodeFrom(const std::string &source){
       expNode ret = parserNS::splitAndLabelContent(source);
       ret.sInfo = this;
 
-      // ret.initLoadFromNode(nodeRoot);
+      ret.changeExpTypes();
       ret.initOrganization();
 
       return ret;
@@ -3925,7 +3886,6 @@ namespace occa {
       statement *newStatement = statementEnd->value;
 
       if(parsingC){
-        // [<>]
         newStatement->loadOneStatementFromNode(st_,
                                                allExp,
                                                expPos,
@@ -3953,7 +3913,6 @@ namespace occa {
 
             addStatement(newStatement);
 
-            // [<>]
             newStatement->loadOneStatementFromNode(st,
                                                    allExp,
                                                    expPos,
