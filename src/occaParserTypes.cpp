@@ -414,9 +414,9 @@ namespace occa {
             expNode::swap(nestedExps[i], leaf[sLeafPos]);
 
             if(!loadType)
-              nestedExps[i].splitDeclareStatement(parsingFortran);
+              nestedExps[i].splitDeclareStatement();
             else
-              nestedExps[i].splitStructStatement(parsingFortran);
+              nestedExps[i].splitStructStatement();
 
             leaf.leaves[sLeafPos] = &(nestedExps[i]);
           }

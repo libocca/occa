@@ -33,6 +33,7 @@ namespace occa {
 
     const std::string parserBase::parseSource(const char *cRoot){
       expNode allExp = splitAndPreprocessContent(cRoot);
+      // allExp.print();
 
       loadLanguageTypes();
 
@@ -782,8 +783,8 @@ namespace occa {
             ss << "};";
 
             expNode typeExp = globalScope->createPlainExpNodeFrom(ss.str());
-            type.loadFrom(typeExp);
-            typeExp.free();
+            type.loadFrom(*globalScope, typeExp);
+            // typeExp.free(); [<>] Errors out
 
             globalScope->scopeTypeMap[type.name] = &type;
 

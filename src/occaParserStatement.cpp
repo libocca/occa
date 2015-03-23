@@ -152,6 +152,10 @@ namespace occa {
 
       // [<>] Make sure expPos returns the guy after our last leaf
       useExpLeaves(allExp, expStart, (expPos - expStart));
+      std::cout << "expStart = " << expStart << '\n'
+                << "expPos = " << expPos << '\n';
+      print();
+      std::cout << "[" << getBits(sInfo->info) << "]\n";
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -316,9 +320,7 @@ namespace occa {
         expNode &leaf = newExp[i];
         varInfo &var  = leaf.addVarInfoNode(0);
 
-        print();
         int nextLeafPos = var.loadFrom(*this, leafPos, firstVar);
-        std::cout << "var = " << var << '\n';
 
         if(flags & expFlag::addVarToScope){
           if(flags & expFlag::addToParent){
@@ -345,7 +347,8 @@ namespace occa {
         leafPos = sExpEnd;
 
         // Don't put the [;]
-        if((sExpEnd == (leafCount - 1)) &&
+        if(leafCount              &&
+           (sExpEnd == leafCount) &&
            (leaves[sExpEnd - 1]->value == ";")){
 
           --sExpEnd;
@@ -3499,7 +3502,7 @@ namespace occa {
     }
 
     int statement::checkStructStatementType(expNode &allExp, int &expPos){
-      if(!typeInfo::statementIsATypeInfo(allExp, expPos))
+      if(!typeInfo::statementIsATypeInfo(*this, allExp, expPos))
         return checkDescriptorStatementType(allExp, expPos);
 
       while((expPos < allExp.leafCount) &&
@@ -3547,7 +3550,7 @@ namespace occa {
     int statement::checkGotoStatementType(expNode &allExp, int &expPos){
       if(expPos < allExp.leafCount){
         allExp[expPos].info = expType::gotoLabel_;
-        ++expPos;
+        expPos += 2;
       }
 
       return smntType::gotoStatement;
@@ -3838,7 +3841,7 @@ namespace occa {
 
       ret.setNestedSInfo(*this);
 
-      ret.splitAndOrganizeNode();
+      ret.changeExpTypes();
 
       return ret;
     }
@@ -3998,7 +4001,6 @@ namespace occa {
                                      int &expPos,
                                      const bool parsingC){
 
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4007,7 +4009,6 @@ namespace occa {
                                      int &expPos,
                                      const bool parsingC){
 
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     void statement::loadFunctionDefinitionFromNode(const int st,
