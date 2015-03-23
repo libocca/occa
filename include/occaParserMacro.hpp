@@ -7,6 +7,8 @@
 
 namespace occa {
   namespace parserNS {
+    class parserBase;
+
     //---[ Op(erator) Holder ]----------------------
     class opHolder {
     public:
@@ -104,10 +106,10 @@ namespace occa {
                              typeHolder &b,
                              typeHolder &c);
 
-    typeHolder evaluateString(const std::string &str);
-    typeHolder evaluateString(const char *c);
+    typeHolder evaluateString(const std::string &str, parserBase *parser_ = NULL);
+    typeHolder evaluateString(const char *c, parserBase *parser_ = NULL);
 
-    typeHolder evaluateNode(strNode *nodeRoot);
+    typeHolder evaluateExpression(expNode &expRoot);
     //==============================================
 
 

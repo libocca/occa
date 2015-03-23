@@ -281,16 +281,11 @@ namespace occa {
       if(infos.size() == 0)
         return;
 
-      parserNS::strNode *n;
+      parserNS::expNode n = parserNS::splitAndLabelContent(infos);
 
-      n = parserNS::splitContent(infos);
-      n = parserNS::labelCode(n);
-
-      while(n){
-        std::string &info = n->value;
+      for(int leafPos = 0; leafPos < n.leafCount; ++leafPos){
+        std::string &info = n[leafPos].value;
         std::string value;
-
-        n = n->right;
 
         if((info != "mode")        &&
            (info != "UVA")         &&
@@ -304,23 +299,23 @@ namespace occa {
 
           std::cout << "Flag [" << info << "] is not available, skipping it\n";
 
-          while(n && (n->value != ","))
-            n = n->right;
+          while((leafPos < n.leafCount) &&
+                (n[leafPos].value != ",")){
+            ++leafPos;
+          }
 
-          if(n)
-            n = n->right;
+          ++leafPos;
 
           continue;
         }
 
-        if(n == NULL)
-          break;
+        if(n[leafPos].value == "=")
+          ++leafPos;
 
-        if(n->value == "=")
-          n = n->right;
+        while((leafPos < n.leafCount) &&
+              (n[leafPos].value != ",")){
 
-        while(n && (n->value != ",")){
-          std::string &v = n->value;
+          std::string &v = n[leafPos].value;
 
           occa::strip(v);
 
@@ -329,8 +324,8 @@ namespace occa {
               value += v;
               value += ' ';
             }
-            else if(n->down){
-              std::string dv = n->down->toString();
+            else if(n[leafPos].leafCount){
+              std::string dv = n[leafPos].toString();
               occa::strip(dv);
 
               value += dv;
@@ -338,11 +333,8 @@ namespace occa {
             }
           }
 
-          n = n->right;
+          ++leafPos;
         }
-
-        if(n)
-          n = n->right;
 
         occa::strip(value);
 

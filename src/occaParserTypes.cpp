@@ -43,7 +43,7 @@ namespace occa {
       return q;
     }
 
-    int qualifierInfo::loadFrom(expNode &expRoot,
+    int qualifierInfo::loadFrom(expNode expRoot,
                                 int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
@@ -94,57 +94,6 @@ namespace occa {
       }
 
       return leafPos;
-    }
-
-    strNode* qualifierInfo::loadFrom(statement &s,
-                                      strNode *nodePos){
-      strNode *nodeRoot = nodePos;
-
-      while(nodePos &&
-            s.nodeHasQualifier(nodePos)){
-        ++qualifierCount;
-        nodePos = nodePos->right;
-      }
-
-      if(qualifierCount){
-        qualifiers = new std::string[qualifierCount];
-        nodePos = nodeRoot;
-
-        for(int i = 0; i < qualifierCount; ++i){
-          qualifiers[i] = nodePos->value;
-          nodePos = nodePos->right;
-        }
-      }
-
-      return nodePos;
-    }
-
-    strNode* qualifierInfo::loadFromFortran(varInfo &var,
-                                            statement &s,
-                                            strNode *nodePos){
-      if(nodePos == NULL)
-        return NULL;
-
-      while(true){
-        strNode *nNodePos = updateFortranVar(var, s, nodePos);
-
-        if(nNodePos == nodePos)
-          break;
-
-        if(nNodePos){
-          if(nNodePos->value == ","){
-            nNodePos = nNodePos->right;
-          }
-          else if(nNodePos->value == "::"){
-            nNodePos = nNodePos->right;
-            break;
-          }
-        }
-
-        nodePos = nNodePos;
-      }
-
-      return nodePos;
     }
 
     bool qualifierInfo::updateFortranVar(varInfo &var,
@@ -224,41 +173,6 @@ namespace occa {
       }
 
       return leafPos;
-    }
-
-    strNode* qualifierInfo::updateFortranVar(varInfo &var,
-                                             statement &s,
-                                             strNode *nodePos){
-      if(updateFortranVar(var, nodePos->value))
-        return (nodePos->right);
-
-      if(nodePos->info & specifierType){
-        std::string typeName = varInfo::getFullFortranType(nodePos);
-        var.baseType = s.hasTypeInScope(typeName);
-      }
-      else{
-        const std::string &value = nodePos->value;
-
-        if(value == "INTENT"){
-          nodePos = nodePos->right;
-
-          if(nodePos && nodePos->down){
-            strNode *downNode = nodePos->down;
-
-            var.leftQualifiers.add("INTENT" + upString(downNode->value));
-            var.rightQualifiers.add("&", 0);
-
-            if(upStringCheck(downNode->value, "IN"))
-              add("const", 0);
-
-            return nodePos->right;
-          }
-
-          return nodePos;
-        }
-      }
-
-      return nodePos;
     }
 
     //---[ Qualifier Info ]-------------
@@ -432,8 +346,8 @@ namespace occa {
       return c;
     }
 
-    //---[ NEW ]--------------
-    int typeInfo::loadFrom(expNode &expRoot,
+    //---[ Load Info ]------------------
+    int typeInfo::loadFrom(expNode expRoot,
                            int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
@@ -564,40 +478,6 @@ namespace occa {
 
       return leafPos;
     }
-    //========================
-
-    bool typeInfo::statementIsATypeInfo(statement &s,
-                                        strNode *nodePos){
-      if(nodePos == NULL)
-        return false;
-
-      qualifierInfo qualifiers;
-
-      nodePos = qualifiers.loadFrom(s, nodePos);
-
-      if(qualifiers.has("typedef")){
-        qualifiers.free();
-        return true;
-      }
-
-      if(nodePos                           &&
-         (nodePos->info & unknownVariable) &&
-         (!s.hasTypeInScope(nodePos->value))){
-
-        qualifiers.free();
-        return true;
-      }
-
-      if(nodePos &&
-         (nodePos->info == startBrace)){
-
-        qualifiers.free();
-        return true;
-      }
-
-      qualifiers.free();
-      return false;
-    }
 
     bool typeInfo::statementIsATypeInfo(expNode &expRoot,
                                         int leafPos){
@@ -624,6 +504,8 @@ namespace occa {
 
       return false;
     }
+    //==================================
+
 
     //---[ Type Info ]------------------
     void typeInfo::addQualifier(const std::string &qName,
@@ -802,26 +684,24 @@ namespace occa {
       return v;
     }
 
-    int varInfo::variablesInStatement(strNode *nodePos){
+    int varInfo::variablesInStatement(expNode &expRoot){
       int argc = 0;
 
-      while(nodePos){
-        if((nodePos->value == ",") ||
-           (nodePos->value == ";")){
+      for(int i = 0; i < expRoot.leafCount; ++i){
+        if((expRoot[i].value == ",") ||
+           (expRoot[i].value == ";")){
 
           ++argc;
         }
-        else if((nodePos->right) == NULL)
+        else if(i == (expRoot.leafCount - 1))
           ++argc;
-
-        nodePos = nodePos->right;
       }
 
       return argc;
     }
 
-    //---[ NEW ]------------------------
-    int varInfo::loadFrom(expNode &expRoot,
+    //---[ Load Info ]------------------
+    int varInfo::loadFrom(expNode expRoot,
                           int leafPos,
                           varInfo *varHasType){
 
@@ -1228,441 +1108,6 @@ namespace occa {
     //   =====================
     //==================================
 
-    //---[ OLD ]------------------------
-    strNode* varInfo::loadFrom(statement &s,
-                               strNode *nodePos,
-                               varInfo *varHasType){
-      nodePos = loadTypeFrom(s, nodePos, varHasType);
-
-      info = getVarInfoFrom(s, nodePos);
-
-      if(info & varType::functionPointer){
-        functionNestCount = getNestCountFrom(s, nodePos);
-        functionNests     = new varInfo[functionNestCount];
-      }
-
-      nodePos = loadNameFrom(s, nodePos);
-      nodePos = loadArgsFrom(s, nodePos);
-
-      if(nodePos &&
-         (nodePos->value == ","))
-        nodePos = nodePos->right;
-
-      return nodePos;
-    }
-
-    strNode* varInfo::loadTypeFrom(statement &s,
-                                   strNode *nodePos,
-                                   varInfo *varHasType){
-      if(varHasType == NULL){
-        nodePos = leftQualifiers.loadFrom(s, nodePos);
-
-        baseType = s.hasTypeInScope(nodePos->value);
-
-        if(baseType)
-          nodePos = nodePos->right;
-      }
-      else{
-        leftQualifiers = varHasType->leftQualifiers.clone();
-        baseType       = varHasType->baseType;
-      }
-
-      nodePos = rightQualifiers.loadFrom(s, nodePos);
-
-      for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
-        if(rightQualifiers[i] == "*")
-          ++pointerCount;
-      }
-
-      return nodePos;
-    }
-
-    int varInfo::getVarInfoFrom(statement &s,
-                                strNode *nodePos){
-      // No name var (argument for function)
-      if(nodePos == NULL)
-        return varType::var;
-
-      strNode *nextNode = nodePos->right;
-
-      const int nestCount = getNestCountFrom(s, nodePos);
-
-      if(nestCount)
-        return varType::functionPointer;
-
-      if(nextNode &&
-         (nextNode->info == startParentheses)){
-
-        if((nextNode->right)       &&
-           (nextNode->right->info == startBrace)){
-
-          return varType::functionDef;
-        }
-        else{
-          return varType::functionDec;
-        }
-      }
-
-      return varType::var;
-    }
-
-    int varInfo::getNestCountFrom(statement &s,
-                                  strNode *nodePos){
-      int nestCount = 0;
-
-      while(nodePos &&
-            (nodePos->info == startParentheses)){
-
-        nodePos = nodePos->down;
-
-        if(nodePos &&
-           nodePos->value == "*"){
-
-          ++nestCount;
-          nodePos = nodePos->right;
-        }
-      }
-
-      return nestCount;
-    }
-
-    strNode* varInfo::loadNameFrom(statement &s,
-                                   strNode *nodePos){
-      if(nodePos == NULL)
-        return NULL;
-
-      strNode *nextNode = nodePos->right;
-
-      int nestPos = 0;
-
-      while(nodePos &&
-            (nodePos->info == startParentheses)){
-
-        nodePos = nodePos->down;
-
-        if(nodePos &&
-           nodePos->value == "*"){
-
-          nodePos = nodePos->right;
-
-          if(nodePos        &&
-             nodePos->right &&
-             (nodePos->right->info == startParentheses)){
-
-            functionNests[nestPos].info = varType::function;
-            functionNests[nestPos].loadArgsFrom(s, nodePos->right);
-          }
-
-          ++nestPos;
-        }
-      }
-
-      if(nodePos &&
-         (nodePos->info & unknownVariable)){
-
-        name    = nodePos->value;
-        nodePos = nodePos->right;
-
-        if(nodePos == nextNode)
-          nextNode = loadStackPointersFrom(s, nextNode);
-        else
-          nodePos = loadStackPointersFrom(s, nodePos);
-      }
-
-      return nextNode;
-    }
-
-    strNode* varInfo::loadStackPointersFrom(statement &s,
-                                            strNode *nodePos){
-      strNode *nodeRoot = nodePos;
-
-      if(nodePos &&
-         (nodePos->value == "[") &&
-         (nodePos->down)){
-
-        ++stackPointerCount;
-        nodePos = nodePos->right;
-      }
-
-      if(stackPointerCount){
-        nodePos = nodeRoot;
-
-        stackExpRoots = new expNode[stackPointerCount];
-
-        for(int i = 0; i < stackPointerCount; ++i){
-          stackExpRoots[i].sInfo = &s;
-
-          if(nodePos->down)
-            s.setExpNodeFromStrNode(stackExpRoots[i], nodePos->down);
-
-          nodePos = nodePos->right;
-        }
-      }
-
-      stackPointersUsed = stackPointerCount;
-
-      return nodePos;
-    }
-
-    strNode* varInfo::loadArgsFrom(statement &s,
-                                   strNode *nodePos){
-      if( !(info & varType::functionType) )
-        return nodePos;
-
-      OCCA_CHECK(nodePos != NULL,
-                 "Missing arguments from function variable");
-
-      strNode *nextNode = nodePos->right;
-
-      if(nodePos->down){
-        nodePos = nodePos->down;
-
-        argumentCount    = variablesInStatement(nodePos);
-        argumentVarInfos = new varInfo*[argumentCount];
-
-        for(int i = 0; i < argumentCount; ++i){
-          argumentVarInfos[i] = new varInfo();
-          nodePos = argumentVarInfos[i]->loadFrom(s, nodePos);
-        }
-      }
-
-      return nextNode;
-    }
-
-    //   ---[ Fortran ]-------
-    strNode* varInfo::loadFromFortran(statement &s,
-                                      strNode *nodePos,
-                                      varInfo *varHasType){
-      // Load Type
-      nodePos = loadTypeFromFortran(s, nodePos, varHasType);
-
-      // Load Name
-      if(nodePos == NULL)
-        return NULL;
-
-      name = nodePos->value;
-      nodePos = nodePos->right;
-
-      // Load Args
-      if(nodePos == NULL)
-        return NULL;
-
-      if((info & varType::functionType) &&
-         (nodePos->down)){
-
-        strNode *downNode = nodePos->down;
-
-        argumentCount = variablesInStatement(downNode);
-
-        if(argumentCount)
-          argumentVarInfos = new varInfo*[argumentCount];
-
-        for(int i = 0; i < argumentCount; ++i){
-          argumentVarInfos[i] = new varInfo();
-          argumentVarInfos[i]->name = downNode->value;
-
-          if((i + 1) < argumentCount)
-            downNode = downNode->right->right;
-        }
-      }
-
-      return nodePos;
-    }
-
-    strNode* varInfo::loadTypeFromFortran(statement &s,
-                                          strNode *nodePos,
-                                          varInfo *varHasType){
-      if(varHasType == NULL){
-        nodePos = leftQualifiers.loadFromFortran(*this, s, nodePos);
-
-        if(nodePos){
-          if(nodePos->value == "SUBROUTINE"){
-            baseType = s.hasTypeInScope("void");
-            info    |= varType::functionDec;
-            nodePos  = nodePos->right;
-          }
-          else if(nodePos->value == "FUNCTION"){
-            info |= varType::functionDec;
-            nodePos = nodePos->right;
-          }
-        }
-      }
-      else{
-        leftQualifiers  = varHasType->leftQualifiers.clone();
-        rightQualifiers = varHasType->rightQualifiers.clone();
-        baseType        = varHasType->baseType;
-      }
-
-      if( !(info & varType::functionDec) )
-        info |= varType::var;
-
-      return nodePos;
-    }
-
-    std::string varInfo::getFullFortranType(strNode *&nodePos){
-      if( !(nodePos->info & specifierType) )
-        return "";
-
-      strNode *nextNode = nodePos->right;
-
-      std::string typeNode = nodePos->value;
-
-      if(nextNode){
-        int bytes = -1;
-
-        // [-] Ignoring complex case
-        const bool isFloat = ((typeNode.find("REAL") != std::string::npos) ||
-                              (typeNode == "PRECISION")                    ||
-                              (typeNode == "COMPLEX"));
-
-        const int typeNodeChars = typeNode.size();
-        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
-
-        std::string suffix = "";
-
-        if(typeHasSuffix){
-          for(int i = 0; i < typeNodeChars; ++i){
-            if(isANumber(typeNode[i]))
-              suffix += typeNode[i];
-          }
-        }
-
-        if(isFloat){
-          if(typeNode.find("REAL") != std::string::npos)
-            bytes = 4;
-          else if(typeNode == "PRECISION")
-            bytes = 8;
-        }
-        else {
-          if(typeNode.find("INTEGER") != std::string::npos)
-            bytes = 4;
-          else if((typeNode == "LOGICAL") ||
-                  (typeNode == "CHARACTER"))
-            bytes = 1;
-        }
-
-        if(nextNode->value == "*"){
-          nextNode = nextNode->right;
-          bytes    = atoi(nextNode->value.c_str());
-          nextNode = nextNode->right;
-        }
-        else if((nextNode->value == "(") &&
-                (nextNode->down)){
-          bytes = atoi(nextNode->down->value.c_str());
-          nextNode = nextNode->right;
-        }
-
-        switch(bytes){
-        case 1:
-          typeNode = "char" + suffix; break;
-        case 2:
-          typeNode = "short" + suffix; break;
-        case 4:
-          if(isFloat)
-            typeNode = "float" + suffix;
-          else
-            typeNode = "int" + suffix;
-          break;
-        case 8:
-          if(isFloat)
-            typeNode = "double" + suffix;
-          else
-            typeNode = "long long" + suffix;
-          break;
-        default:
-          OCCA_CHECK(false,
-                     "Error loading " << typeNode << "(" << bytes << ")");
-        };
-      }
-
-      nodePos = nextNode;
-
-      return typeNode;
-    }
-
-    std::string varInfo::getFullFortranType(expNode &expRoot,
-                                            int &leafPos){
-      if( !(expRoot[leafPos].info & expType::type) )
-        return "";
-
-      std::string typeNode = expRoot[leafPos++].value;
-
-      if(leafPos < expRoot.leafCount){
-        int bytes = -1;
-
-        // [-] Ignoring complex case
-        const bool isFloat = ((typeNode.find("REAL") != std::string::npos) ||
-                              (typeNode == "PRECISION")                    ||
-                              (typeNode == "COMPLEX"));
-
-        const int typeNodeChars = typeNode.size();
-        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
-
-        std::string suffix = "";
-
-        if(typeHasSuffix){
-          for(int i = 0; i < typeNodeChars; ++i){
-            if(isANumber(typeNode[i]))
-              suffix += typeNode[i];
-          }
-        }
-
-        if(isFloat){
-          if(typeNode.find("REAL") != std::string::npos)
-            bytes = 4;
-          else if(typeNode == "PRECISION")
-            bytes = 8;
-        }
-        else {
-          if(typeNode.find("INTEGER") != std::string::npos)
-            bytes = 4;
-          else if((typeNode == "LOGICAL") ||
-                  (typeNode == "CHARACTER"))
-            bytes = 1;
-        }
-
-        if(leafPos < expRoot.leafCount){
-          if(expRoot[leafPos].value == "*"){
-            ++leafPos;
-            bytes    = atoi(expRoot[leafPos].value.c_str());
-            ++leafPos;
-          }
-          else if((expRoot[leafPos].value == "(") &&
-                  (expRoot[leafPos].leafCount)){
-
-            bytes = atoi(expRoot[leafPos][0].value.c_str());
-            ++leafPos;
-          }
-        }
-
-        switch(bytes){
-        case 1:
-          typeNode = "char" + suffix; break;
-        case 2:
-          typeNode = "short" + suffix; break;
-        case 4:
-          if(isFloat)
-            typeNode = "float" + suffix;
-          else
-            typeNode = "int" + suffix;
-          break;
-        case 8:
-          if(isFloat)
-            typeNode = "double" + suffix;
-          else
-            typeNode = "long long" + suffix;
-          break;
-        default:
-          OCCA_CHECK(false,
-                     "Error loading " << typeNode << "(" << bytes << ")");
-        };
-      }
-
-      return typeNode;
-    }
-    //   =====================
-    //==================================
-
 
     //---[ Variable Info ]------------
     int varInfo::leftQualifierCount(){
@@ -1978,7 +1423,7 @@ namespace occa {
       const bool stop      = false;
 
       if((idMap.find(&s) == idMap.end()) ||  // Skip if statement is not in the map
-         (s.info & functionStatementType)){ // Functions don't have dependencies
+         (s.info & smntType::functionStatement)){ // Functions don't have dependencies
 
         return keepGoing;
       }

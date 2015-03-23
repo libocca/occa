@@ -78,25 +78,25 @@ namespace occa {
         printf("[Magic Analyzer] Goto statements are not supported\n");
       }
 
-      else if(s.info & (typedefStatementType   |
-                        blankStatementType     |
-                        blockStatementType     |
-                        structStatementType    |
-                        functionStatementType  |
-                        functionDefinitionType |
-                        functionPrototypeType)){
+      else if(s.info & (smntType::typedefStatement   |
+                        smntType::blankStatement     |
+                        smntType::blockStatement     |
+                        smntType::structStatement    |
+                        smntType::functionStatement  |
+                        smntType::functionDefinition |
+                        smntType::functionPrototype)){
         // Ignore this statement
       }
 
-      else if(s.info & (declareStatementType |
-                        updateStatementType)){
+      else if(s.info & (smntType::declareStatement |
+                        smntType::updateStatement)){
 
         const int varCount = s.expRoot.getVariableCount();
         viInfoMap_t *viMap = currentViInfoMap();
 
         for(int i = 0; i < varCount; ++i){
           // Add variable to the varInfo map
-          if(s.info & declareStatementType){
+          if(s.info & smntType::declareStatement){
             varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
             viMap->addVariable(var);
           }
@@ -105,26 +105,26 @@ namespace occa {
         }
       }
 
-      else if(s.info & forStatementType){
+      else if(s.info & smntType::forStatement){
         analyzeEmbedded = analyzeForStatement(s);
       }
-      else if(s.info & whileStatementType){
+      else if(s.info & smntType::whileStatement){
         analyzeEmbedded = analyzeWhileStatement(s);
       }
-      else if(s.info & doWhileStatementType){
+      else if(s.info & smntType::doWhileStatement){
         analyzeEmbedded = false;
 
         // do-while guarantees at least one run
         analyzeEmbeddedStatements(s);
         analyzeWhileStatement(s);
       }
-      else if(s.info & ifStatementType){
+      else if(s.info & smntType::ifStatement){
         statementNode *snStart = s.getStatementNode();
         statementNode *snEnd   = snStart->right;
 
         while(snEnd                                   &&
-              (snEnd->value->info & ifStatementType)  &&
-              (snEnd->value->info != ifStatementType)){
+              (snEnd->value->info & smntType::ifStatement)  &&
+              (snEnd->value->info != smntType::ifStatement)){
 
           snEnd = snEnd->right;
         }
@@ -132,7 +132,7 @@ namespace occa {
         analyzeEmbedded = false;
         analyzeIfStatement(snStart, snEnd);
       }
-      else if(s.info & switchStatementType){
+      else if(s.info & smntType::switchStatement){
         analyzeEmbedded = false;
         analyzeSwitchStatement(s);
       }
@@ -228,7 +228,7 @@ namespace occa {
       while(sn){
         statement &s2 = *(sn->value);
 
-        if(s2.info & caseStatementType){
+        if(s2.info & smntType::caseStatement){
           if(s2.expRoot.leafCount){ // Not default
             if(th == s2.expRoot[0].calculateValue()){
               calculateSN = sn;

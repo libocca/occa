@@ -132,27 +132,7 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateMacroStatement(const char *&c){
-      skipWhitespace(c);
-
-      if(*c == '\0')
-        return typeHolder("false");
-
-      strNode *lineNode = new strNode(c);
-      applyMacros(lineNode->value);
-      strip(lineNode->value);
-
-      strNode *labelNodeRoot = labelCode(lineNode);
-      strNode *labelNodePos  = labelNodeRoot;
-
-      // Check if a variable snuck in
-      while(labelNodePos){
-        if(labelNodePos->info & unknownVariable)
-          return typeHolder("false");
-
-        labelNodePos = labelNodePos->right;
-      }
-
-      return evaluateNode(labelNodeRoot);
+      return evaluateString(c, this);
     }
 
     bool parserBase::evaluateMacroBoolStatement(const char *&c){
@@ -258,7 +238,7 @@ namespace occa {
     }
 
     int parserBase::loadMacro(const std::string &line, const int state){
-      expNode &dummyExpRoot;
+      expNode dummyExpRoot;
 
       return loadMacro(dummyExpRoot, -1, line, state);
     }
@@ -396,7 +376,7 @@ namespace occa {
           delete [] cRoot;
 
           // Empty include file
-          if(includeNodeRoot.leafCount == 0)
+          if(includeExpRoot.leafCount == 0)
             return (state | forceLineRemoval);
 
           leafPos = expRoot.insertExpAfter(includeExpRoot, leafPos);
@@ -575,7 +555,7 @@ namespace occa {
         if(line[0] == '#'){
           const int oldState = currentState;
 
-          currentState = loadMacro(expRoot, i, currentState);
+          currentState = loadMacro(expRoot, linePos, currentState);
 
           if(currentState & keepMacro){
             currentState &= ~keepMacro;
@@ -614,8 +594,8 @@ namespace occa {
       if(linesIgnored.size() == 0)
         return;
 
-      if(linesIgnored.back() != (lineCount - 1))
-        linesIgnored.push_back(lineCount - 1);
+      if(linesIgnored.back() != (expRoot.leafCount - 1))
+        linesIgnored.push_back(expRoot.leafCount - 1);
 
       const size_t ignoreCount = linesIgnored.size();
 
@@ -798,8 +778,9 @@ namespace occa {
 
             ss << "};";
 
-            expNode &typeExp = *(globalScope->createPlainExpNodeFrom(ss.str()));
+            expNode typeExp = globalScope->createPlainExpNodeFrom(ss.str());
             type.loadFrom(typeExp);
+            typeExp.free();
 
             globalScope->scopeTypeMap[type.name] = &type;
 
@@ -862,7 +843,7 @@ namespace occa {
     }
 
     bool parserBase::statementIsAKernel(statement &s){
-      if(s.info & functionStatementType){
+      if(s.info & smntType::functionStatement){
         if(s.hasQualifier("occaKernel"))
           return true;
       }
@@ -886,12 +867,12 @@ namespace occa {
       return sUp;
     }
     statement* parserBase::getStatementOuterMostLoop(statement &s){
-      statement *ret = ((s.info == occaForType) ? &s : NULL);
+      statement *ret = ((s.info == smntType::occaFor) ? &s : NULL);
 
       statement *sUp = &s;
 
       while(sUp){
-        if(sUp->info == occaForType)
+        if(sUp->info == smntType::occaFor)
           ret = sUp;
 
         sUp = sUp->up;
@@ -981,7 +962,7 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if( !(s.info & forStatementType) ||
+      if( !(s.info & smntType::forStatement) ||
           (s.getForStatementCount() <= 3) ){
 
         return;
@@ -1059,11 +1040,11 @@ namespace occa {
       s.expRoot.value = occaForName;
       s.expRoot.free();
 
-      s.info = occaForType;
+      s.info = smntType::occaFor;
     }
 
     bool parserBase::statementIsOccaOuterFor(statement &s){
-      if(s.info == occaForType){
+      if(s.info == smntType::occaFor){
         std::string &forName = s.expRoot.value;
 
         if((forName.find("occaOuterFor") != std::string::npos) &&
@@ -1079,7 +1060,7 @@ namespace occa {
     }
 
     bool parserBase::statementIsOccaInnerFor(statement &s){
-      if(s.info == occaForType){
+      if(s.info == smntType::occaFor){
         std::string &forName = s.expRoot.value;
 
         if((forName.find("occaInnerFor") != std::string::npos) &&
@@ -1111,7 +1092,7 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaFor(statement &s){
-      if(s.info == occaForType)
+      if(s.info == smntType::occaFor)
         return true;
 
       statementNode *statementPos = s.statementStart;
@@ -1127,7 +1108,7 @@ namespace occa {
     }
 
     bool parserBase::statementHasOklFor(statement &s){
-      if((s.info == forStatementType) &&
+      if((s.info == smntType::forStatement) &&
          (s.getForStatementCount() == 4)){
 
         return true;
@@ -1170,7 +1151,7 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if( !(s2.info & functionStatementType) ||
+        if( !(s2.info & smntType::functionStatement) ||
             statementIsAKernel(s2) ){
 
           snPos = snPos->right;
@@ -1218,11 +1199,11 @@ namespace occa {
     }
 
     void parserBase::setupCudaVariables(statement &s){
-      if((!(s.info & simpleStatementType)    &&
-          !(s.info & forStatementType)       &&
-          !(s.info & functionStatementType)) ||
+      if((!(s.info & smntType::simpleStatement)    &&
+          !(s.info & smntType::forStatement)       &&
+          !(s.info & smntType::functionStatement)) ||
          // OCCA for's don't have arguments
-         (s.info == occaForType))
+         (s.info == smntType::occaFor))
         return;
 
       if(getStatementKernel(s) == NULL)
@@ -1279,7 +1260,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if(s.info & functionPrototypeType)
+        if(s.info & smntType::functionPrototype)
           prototypes[s.getFunctionName()] = true;
 
         statementPos = statementPos->right;
@@ -1290,7 +1271,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if(s.info & functionStatementType){
+        if(s.info & smntType::functionStatement){
           if(s.hasQualifier("occaKernel")){
             statementPos = statementPos->right;
             continue;
@@ -1299,7 +1280,7 @@ namespace occa {
           if(!s.hasQualifier("occaFunction"))
             s.addQualifier("occaFunction");
 
-          if( !(s.info & functionDefinitionType) ){
+          if( !(s.info & smntType::functionDefinition) ){
             statementPos = statementPos->right;
             continue;
           }
@@ -1315,7 +1296,7 @@ namespace occa {
     }
 
     int parserBase::statementOccaForNest(statement &s){
-      if((s.info != forStatementType) ||
+      if((s.info != smntType::forStatement) ||
          (s.getForStatementCount() != 4)){
 
         return notAnOccaFor;
@@ -1349,7 +1330,7 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        if(s2.info & ifStatementType){
+        if(s2.info & smntType::ifStatement){
           if(s2.hasStatementWithBarrier()){
             OCCA_CHECK(false,
                        "Barriers are not allowed in conditional statements:\n" << s2);
@@ -1439,7 +1420,7 @@ namespace occa {
       while(snPos){
         statement &s = *(snPos->value);
 
-        if((s.info & declareStatementType) &&
+        if((s.info & smntType::declareStatement) &&
            (s.hasQualifier("occaConst"))){
 
           s.removeQualifier("occaConst");
@@ -1450,73 +1431,13 @@ namespace occa {
       }
     }
 
-    strNode* parserBase::occaExclusiveStrNode(varInfo &var,
-                                              const int depth,
-                                              const int sideDepth){
-      strNode *nodeRoot;
-
-      if(var.stackPointerCount)
-        nodeRoot = new strNode("occaPrivateArray");
-      else
-        nodeRoot = new strNode("occaPrivate");
-
-      nodeRoot->info      = presetValue;
-      nodeRoot->depth     = depth;
-      nodeRoot->sideDepth = sideDepth;
-
-      strNode *nodePos = nodeRoot->pushDown("(");
-
-      nodePos->info  = keywordType["("];
-      nodePos->depth = depth + 1;
-
-      var.removeQualifier("exclusive");
-
-      for(int i = 0; i < var.leftQualifiers.qualifierCount; ++i){
-        nodePos       = nodePos->push(var.leftQualifiers.qualifiers[i]);
-        nodePos->info = qualifierType;
-      }
-
-      nodePos       = nodePos->push(var.baseType->name);
-      nodePos->info = specifierType;
-
-      for(int i = 0; i < var.rightQualifiers.qualifierCount; ++i){
-        nodePos       = nodePos->push(var.rightQualifiers.qualifiers[i]);
-        nodePos->info = keywordType[var.rightQualifiers.qualifiers[i]];
-      }
-
-      nodePos       = nodePos->push(",");
-      nodePos->info = keywordType[","];
-
-      nodePos       = nodePos->push(var.name);
-      nodePos->info = unknownVariable;
-
-      if(var.stackPointerCount){
-        OCCA_CHECK(var.stackPointerCount < 2,
-                   "Only 1D exclusive variables are currently supported [" << var << "]");
-
-        nodePos       = nodePos->push(",");
-        nodePos->info = keywordType[","];
-
-        nodePos       = nodePos->push((std::string) var.stackExpRoots[0]);
-        nodePos->info = presetValue;
-      }
-
-      nodePos       = nodePos->push(")");
-      nodePos->info = keywordType[")"];
-
-      nodePos       = nodePos->push(";");
-      nodePos->info = keywordType[";"];
-
-      return nodeRoot;
-    }
-
     void parserBase::addArgQualifiers(){
       statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if((s.info & functionDefinitionType) &&
+        if((s.info & smntType::functionDefinition) &&
            (s.functionHasQualifier("occaKernel"))){
 
           const int argc = s.getFunctionArgCount();
@@ -1572,7 +1493,7 @@ namespace occa {
 
         // Find inner-most outer-for loop
         while(sUp){
-          if((sUp->info == occaForType) &&
+          if((sUp->info == smntType::occaFor) &&
              statementIsOccaOuterFor(*sUp)){
 
             break;
@@ -1588,7 +1509,7 @@ namespace occa {
           while(sn3){
             statement &s3 = *(sn3->value);
 
-            if((!(s3.info & declareStatementType)) ||
+            if((!(s3.info & smntType::declareStatement)) ||
                (!s3.hasQualifier("exclusive") &&
                 !s3.hasQualifier("occaShared"))){
 
@@ -1632,7 +1553,7 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        if((s2.info & declareStatementType)){
+        if((s2.info & smntType::declareStatement)){
           if(isAppending &&
              (s2.hasQualifier("exclusive") ||
               s2.hasQualifier("occaShared"))){
@@ -1654,7 +1575,7 @@ namespace occa {
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
-      if( !(s.info & declareStatementType)   ||
+      if( !(s.info & smntType::declareStatement)   ||
           (getStatementKernel(s) == NULL)    ||
           (statementKernelUsesNativeOCCA(s)) ||
           (!s.hasQualifier("exclusive")) ){
@@ -1667,7 +1588,7 @@ namespace occa {
       const int argc = s.getDeclarationVarCount();
 
       //---[ Setup update statement ]---
-      expNode &newRoot = *(s.expRoot.clone());
+      expNode newRoot = s.expRoot.clone();
       varInfo &newVar0 = newRoot.getVariableInfoNode(0)->getVarInfo();
 
       newVar0.leftQualifiers.clear();
@@ -1741,7 +1662,7 @@ namespace occa {
 
         ss << ");";
 
-        s.loadFromNode(labelCode( splitContent(ss.str()) ));
+        s.loadFromNode( splitAndLabelContent(ss.str()) );
 
         s.statementEnd->value->up    = s.up;
         s.statementEnd->value->depth = s.depth;
@@ -2006,7 +1927,7 @@ namespace occa {
 
         if(loopPos == loopOffsets[kID]){
           blockStatement = new statement(ls.depth - 1,
-                                         blockStatementType,
+                                         smntType::blockStatement,
                                          &sKernel);
 
           newSNPos = newSNPos->push(blockStatement);
@@ -2074,11 +1995,11 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if(s2.info == occaForType)
+        if(s2.info == smntType::occaFor)
           tail = tail->push(new statementNode(&s2));
 
         if(getNestedLoops ||
-           (s2.info != occaForType)){
+           (s2.info != smntType::occaFor)){
 
           tail->right = getOccaLoopsInStatement(s2, getNestedLoops);
 
@@ -2269,7 +2190,7 @@ namespace occa {
     void parserBase::setupHostKernelArgsFromLoops(statement &sKernel){
       // Add nestedKernels argument
       varInfo &arg = *(new varInfo());
-      arg.loadFrom(sKernel, labelCode( splitContent("int *nestedKernels") ));
+      arg.loadFrom(splitAndLabelContent("int *nestedKernels"));
 
       typeInfo &type = *(new typeInfo);
       type.name = "occa::kernel";
@@ -2331,7 +2252,7 @@ namespace occa {
       statement *currentS = &s;
 
       while(currentS){
-        if(currentS->info == occaForType)
+        if(currentS->info == smntType::occaFor)
           break;
 
         currentS = currentS->up;
@@ -2507,7 +2428,7 @@ namespace occa {
       statement &origin = *(varUpdateMap[&var].value);
 
       // Ignore kernel arguments
-      if(origin.info & functionStatementType)
+      if(origin.info & smntType::functionStatement)
         return;
 
       int argc   = origin.getDeclarationVarCount();
@@ -2523,7 +2444,7 @@ namespace occa {
       }
 
       if(argPos){
-        statement &s        = origin.pushNewStatementLeft(declareStatementType);
+        statement &s        = origin.pushNewStatementLeft(smntType::declareStatement);
         s.expRoot.info      = origin.expRoot.info;
         s.expRoot.leaves    = new expNode*[argPos];
         s.expRoot.leafCount = argPos;
@@ -2539,7 +2460,7 @@ namespace occa {
       if((argPos + 1) < argc){
         const int newLeafCount = (argc - (argPos + 1));
 
-        statement &s        = origin.pushNewStatementRight(declareStatementType);
+        statement &s        = origin.pushNewStatementRight(smntType::declareStatement);
         s.expRoot.info      = origin.expRoot.info;
         s.expRoot.leaves    = new expNode*[newLeafCount];
         s.expRoot.leafCount = newLeafCount;
@@ -2567,7 +2488,7 @@ namespace occa {
       statement &origin = *(varUpdateMap[&var].value);
 
       // Ignore kernel arguments
-      if(origin.info & functionStatementType)
+      if(origin.info & smntType::functionStatement)
         return;
 
       int argc = origin.getDeclarationVarCount();
@@ -2580,7 +2501,7 @@ namespace occa {
       if(!origin.expRoot.variableHasInit(0))
         return;
 
-      statement &s = origin.pushNewStatementRight(updateStatementType);
+      statement &s = origin.pushNewStatementRight(smntType::updateStatement);
 
       //---[ Swap Variables ]----------
       expNode &varNode = *(origin.expRoot.getVariableInfoNode(0));
@@ -2647,8 +2568,8 @@ namespace occa {
         statement &s2 = *(statementPos->value);
 
         // Add inner-for inside the for/while loop
-        if(s2.info & (forStatementType |
-                      whileStatementType)){
+        if(s2.info & (smntType::forStatement |
+                      smntType::whileStatement)){
 
           addInnerForsTo(s2, varInfoIdMap, currentInnerID, innerDim);
           sBreaks.push_back(&s2);
@@ -2715,7 +2636,7 @@ namespace occa {
           const int innerID = (innerDim - i);
 
           statement *newInnerS = new statement(s.depth + i + 1,
-                                               occaForType,
+                                               smntType::occaFor,
                                                (outerInnerS ? outerInnerS : &s));
 
           if(outerInnerS == NULL){
@@ -2830,7 +2751,7 @@ namespace occa {
 
       for(int o = outerDim; 0 <= o; --o){
         statement *newStatement = new statement(sPos->depth + 1,
-                                                occaForType, &s);
+                                                smntType::occaFor, &s);
 
         newStatement->expRoot.info   = expType::printValue;
         newStatement->expRoot.value  = "occaOuterFor";
@@ -2870,7 +2791,7 @@ namespace occa {
       while(sPos->statementCount == 1){
         statement *sDown = sPos->statementStart->value;
 
-        if(sDown->info == blockStatementType){
+        if(sDown->info == smntType::blockStatement){
           sPos->scopeVarMap.insert(sDown->scopeVarMap.begin(),
                                    sDown->scopeVarMap.end());
 
@@ -3089,15 +3010,30 @@ namespace occa {
       return expRoot;
     }
 
-    void labelCode(expNode &lineExpRoot, const bool parsingC){
+    expNode splitAndLabelContent(const std::string &str, const bool parsingC){
+      return splitAndLabelContent(str.c_str(), parsingC);
+    }
+
+    expNode splitAndLabelContent(const char *cRoot, const bool parsingC){
+      expNode expRoot = splitContent(cRoot, parsingC);
+      return labelCode(expRoot);
+    }
+
+    expNode& labelCode(expNode &expRoot, const bool parsingC){
       initKeywords(parsingC);
 
       const bool parsingFortran = !parsingC;
 
-      expNode expRoot;
+      const int lineCount = expRoot.leafCount;
 
-      while(lineNodePos){
-        const std::string &line = lineNodePos->value;
+      const bool addSpace = true; // For readability
+      bool firstSectionNode = false;
+
+      for(int linePos = 0; linePos < lineCount; ++linePos){
+        expNode &lineNode = expRoot[linePos];
+        expNode node, *cNode = &node;
+
+        const std::string &line = lineNode.value;
         const char *cLeft = line.c_str();
 
         while(*cLeft != '\0'){
@@ -3112,41 +3048,45 @@ namespace occa {
           if(loadString){ //-------------------------------------[ 1 ]
             skipString(cRight, parsingC);
 
-            if(!firstSectionNode){
-              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-            }
-            else{
-              nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
+            if(firstSectionNode){
+              cNode = &(cNode->lastNode());
               firstSectionNode = false;
             }
 
-            nodePos->info  = presetValue;
-            nodePos->depth = depth;
+            cNode->addNode(expType::presetValue);
+            cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
 
             cLeft = cRight;
           }
           else if(loadNumber){ //--------------------------------[ 2 ]
             skipNumber(cRight, parsingC);
 
-            if(!firstSectionNode){
-              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-            }
-            else{
-              nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
+            if(firstSectionNode){
+              cNode = &(cNode->lastNode());
               firstSectionNode = false;
             }
 
-            nodePos->info  = presetValue;
-            nodePos->depth = depth;
+            cNode->addNode(expType::presetValue);
+
+            cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
+            cNode->lastNode().info  = preExpType::presetValue;
 
             cLeft = cRight;
           }
           else{ //-----------------------------------------------[ 3 ]
             const int delimiterChars = isAWordDelimiter(cLeft, parsingC);
 
-            if(delimiterChars){ //-----------------------------[ 3.1 ]
-              strNode *newNode;
+            if(firstSectionNode){
+              cNode = &(cNode->lastNode());
+              firstSectionNode = false;
+            }
 
+            cNode->addNode();
+
+            expNode &lastExpNode     = cNode->lastNode();
+            std::string &lastNodeStr = lastExpNode.value;
+
+            if(delimiterChars){ //-----------------------------[ 3.1 ]
               if(parsingFortran){ //------------------------------[ 3.1.1 ]
                 // Translate Fortran keywords
                 std::string op(cLeft, delimiterChars);
@@ -3168,138 +3108,101 @@ namespace occa {
                   else if(upOp == ".EQV.")   upOp = "==";
                   else if(upOp == ".NEQV.")  upOp = "!=";
 
-                  newNode = new strNode(upOp);
+                  lastNodeStr = upOp;
                 }
                 else if(upOp == "/="){
-                  newNode = new strNode("!=");
+                  lastNodeStr = "!=";
                 }
                 else {
-                  newNode = new strNode(op);
+                  lastNodeStr = op;
                 }
               }  //==========================================[ 3.1.1 ]
               else { //--------------------------------------[ 3.1.2 ]
-                newNode = new strNode(std::string(cLeft, delimiterChars));
+                lastNodeStr = std::string(cLeft, delimiterChars);
               } //===========================================[ 3.1.2 ]
 
-              newNode->info  = keywordType[newNode->value];
-              newNode->depth = depth;
+              lastExpNode.info = keywordType[lastExpNode.value];
 
-              if(newNode->info & startSection){ //-----------[ 3.1.3 ]
-                if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
-                else
-                  nodePos = nodePos->pushDown(newNode);
-
-                ++depth;
-
+              if(lastExpNode.info & preExpType::startSection){ //-----------[ 3.1.3 ]
                 firstSectionNode = true;
-              } //===========================================[ 3.1.3 ]
-              else if(newNode->info & endSection){ //--------[ 3.1.4 ]
-                if(!firstSectionNode)
-                  nodePos = nodePos->up;
-
-                delete newNode;
-
-                --depth;
+              } //==============================================[ 3.1.3 ]
+              else if(lastExpNode.info & preExpType::endSection){ //--------[ 3.1.4 ]
+                cNode = cNode->up;
 
                 firstSectionNode = false;
-              } //===========================================[ 3.1.4 ]
-              else if(newNode->info & macroKeywordType){ //--[ 3.1.5 ]
-                newNode->value = line;
-
-                if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
-                else{
-                  nodePos = nodePos->pushDown(newNode);
-                  firstSectionNode = false;
-                }
+              } //==============================================[ 3.1.4 ]
+              else if(lastExpNode.info & preExpType::macroKeyword){ //--[ 3.1.5 ]
+                lastNodeStr = line;
 
                 cLeft = line.c_str() + strlen(line.c_str()) - delimiterChars;
-              } //===========================================[ 3.1.5 ]
-              else{ //---------------------------------------[ 3.1.6 ]
-                if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
-                else{
-                  nodePos = nodePos->pushDown(newNode);
-                  firstSectionNode = false;
-                }
-              } //===========================================[ 3.1.6 ]
+              } //==============================================[ 3.1.5 ]
 
               cLeft += delimiterChars;
             } //===============================================[ 3.1 ]
             else{ //-------------------------------------------[ 3.2 ]
               skipWord(cRight, parsingC);
 
-              std::string nodeValue(cLeft, (cRight - cLeft));
+              std::string str(cLeft, (cRight - cLeft));
               keywordTypeMapIterator it;
 
               if(parsingFortran){
-                std::string upNodeValue = upString(nodeValue);
+                std::string upStr = upString(str);
 
-                it = keywordType.find(upNodeValue);
+                it = keywordType.find(upStr);
 
                 if(it != keywordType.end())
-                  nodeValue = upNodeValue;
+                  str = upStr;
               }
               else{
-                it = keywordType.find(nodeValue);
+                it = keywordType.find(str);
               }
 
-              if(!firstSectionNode){
-                nodePos = nodePos->push(nodeValue);
-              }
-              else{
-                nodePos = nodePos->pushDown(nodeValue);
+              if(firstSectionNode){
+                cNode = &(cNode->lastNode());
                 firstSectionNode = false;
               }
 
+              cNode->addNode();
+
+              expNode &lastExpNode = cNode->lastNode();
+
               if(it == keywordType.end())
-                nodePos->info = unknownVariable;
+                lastExpNode.info = preExpType::unknownVariable;
               else{
-                nodePos->info = it->second;
+                lastExpNode.info = it->second;
 
                 if(parsingC){
-                  if(checkWithLeft(nodePos, "else", "if")){
-                    mergeNodeWithLeft(nodePos);
+                  if(checkLastTwoNodes(*cNode, "else", "if")){
+                    mergeLastTwoNodes(*cNode);
                   }
-                  else if((nodePos->info & specialKeywordType) &&
-                          (nodePos->value == "__attribute__")){
+                  else if((lastExpNode.info & preExpType::specialKeyword) &&
+                          (lastExpNode.value == "__attribute__")){
 
                     skipWhitespace(cRight);
                     skipPair(cRight);
 
                     // [-] Early fix
-                    if(nodePos->left){
-                      nodePos = nodePos->left;
-
-                      delete nodePos->right;
-                      nodePos->right = NULL;
-                    }
-                    else if(nodePos->up){
-                      nodePos = nodePos->up;
-
-                      delete nodePos->down;
-                      nodePos->down = NULL;
-                    }
+                    if(cNode->leafCount)
+                      cNode->removeNode(-1);
+                    else if(cNode->up)
+                      cNode = cNode->up;
                   }
                 }
                 else{
-                  if(checkWithLeft(nodePos, "else", "if"   , parsingC) ||
-                     checkWithLeft(nodePos, "do"  , "while", parsingC)){
+                  if(checkLastTwoNodes(*cNode, "else", "if"   , parsingC) ||
+                     checkLastTwoNodes(*cNode, "do"  , "while", parsingC)){
 
-                    mergeNodeWithLeft(nodePos, true, parsingC);
+                    mergeLastTwoNodes(*cNode, addSpace, parsingC);
                   }
-                  else if(checkWithLeft(nodePos, "end" , "do"        , parsingC) ||
-                          checkWithLeft(nodePos, "end" , "if"        , parsingC) ||
-                          checkWithLeft(nodePos, "end" , "function"  , parsingC) ||
-                          checkWithLeft(nodePos, "end" , "subroutine", parsingC)){
+                  else if(checkLastTwoNodes(*cNode, "end" , "do"        , parsingC) ||
+                          checkLastTwoNodes(*cNode, "end" , "if"        , parsingC) ||
+                          checkLastTwoNodes(*cNode, "end" , "function"  , parsingC) ||
+                          checkLastTwoNodes(*cNode, "end" , "subroutine", parsingC)){
 
-                    mergeNodeWithLeft(nodePos, false, parsingC);
+                    mergeLastTwoNodes(*cNode, !addSpace, parsingC);
                   }
                 }
               }
-
-              nodePos->depth = depth;
 
               cLeft = cRight;
             } //===============================================[ 3.2 ]
@@ -3307,64 +3210,54 @@ namespace occa {
         }
 
         if(parsingFortran){
-          nodePos       = nodePos->push("\\n");
-          nodePos->info = endStatement;
+          if(firstSectionNode){
+            cNode = &(cNode->lastNode());
+            firstSectionNode = false;
+          }
+
+          cNode->addNode();
+          cNode->lastNode().value = "\\n";
+          cNode->lastNode().info  = preExpType::endStatement;
         }
 
-        lineNodePos = lineNodePos->right;
+        expNode::swap(lineNode, node);
       }
 
-      if(nodePos != nodeRoot)
-        popAndGoRight(nodeRoot);
-
-      free(lineNodeRoot);
-
-      return nodeRoot;
+      return expRoot;
     }
 
-    bool checkWithLeft(strNode *nodePos,
-                       const std::string &leftValue,
-                       const std::string &rightValue,
-                       const bool parsingC){
+    bool checkLastTwoNodes(expNode &node,
+                           const std::string &leftValue,
+                           const std::string &rightValue,
+                           const bool parsingC){
 
       if(parsingC){
-        return ((nodePos->left)                      &&
-                (nodePos->value       == rightValue) &&
-                (nodePos->left->value == leftValue));
+        return ((2 <= node.leafCount)   &&
+                (node[-2].value == leftValue) &&
+                (node[-1].value == rightValue));
       }
 
-      return ((nodePos->left)                                 &&
-              upStringCheck(nodePos->value      , rightValue) &&
-              upStringCheck(nodePos->left->value, leftValue));
+      return ((2 <= node.leafCount)              &&
+              upStringCheck(node[-2].value, leftValue) &&
+              upStringCheck(node[-1].value, rightValue));
     }
 
-    void mergeNodeWithLeft(strNode *&nodePos,
+    void mergeLastTwoNodes(expNode &node,
                            const bool addSpace,
                            const bool parsingC){
 
-      if((nodePos->left) == NULL)
+      if(node.leafCount < 2)
         return;
 
-      strNode *leftNode = nodePos->left;
+      if(addSpace)
+        node[-2].value += ' ';
 
-      if(addSpace){
-        leftNode->value += " ";
-        leftNode->value += (nodePos->value);
-        nodePos->value   = (leftNode->value);
-      }
-      else{
-        nodePos->value = ((leftNode->value) + (nodePos->value));
-      }
+      node[-2].value += node[-1].value;
 
       if(!parsingC)
-        nodePos->value = upString(nodePos->value);
+        node[-2].value = upString(node[-2].value);
 
-      nodePos->left = nodePos->left->left;
-
-      if(nodePos->left)
-        nodePos->left->right = nodePos;
-
-      delete leftNode->pop();
+      node.removeNode(-1);
     }
 
     void initKeywords(const bool parsingC){
@@ -3382,197 +3275,197 @@ namespace occa {
       cKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
-      cKeywordType["!"]  = lUnitaryOperatorType;
-      cKeywordType["%"]  = binaryOperatorType;
-      cKeywordType["&"]  = (lUnitaryOperatorType | binaryOperatorType | qualifierType);
-      cKeywordType["("]  = startParentheses;
-      cKeywordType[")"]  = endParentheses;
-      cKeywordType["*"]  = (lUnitaryOperatorType | binaryOperatorType | qualifierType);
-      cKeywordType["+"]  = (lUnitaryOperatorType | binaryOperatorType);
-      cKeywordType[","]  = binaryOperatorType;
-      cKeywordType["-"]  = (lUnitaryOperatorType | binaryOperatorType);
-      cKeywordType["."]  = binaryOperatorType;
-      cKeywordType["/"]  = binaryOperatorType;
-      cKeywordType[":"]  = endStatement;
-      cKeywordType[";"]  = endStatement;
-      cKeywordType["<"]  = binaryOperatorType;
-      cKeywordType["="]  = binaryOperatorType;
-      cKeywordType[">"]  = binaryOperatorType;
-      cKeywordType["?"]  = ternaryOperatorType;
-      cKeywordType["["]  = startBracket;
-      cKeywordType["]"]  = endBracket;
-      cKeywordType["^"]  = (binaryOperatorType | qualifierType);
-      cKeywordType["{"]  = startBrace;
-      cKeywordType["|"]  = binaryOperatorType;
-      cKeywordType["}"]  = endBrace;
-      cKeywordType["~"]  = lUnitaryOperatorType;
-      cKeywordType["!="] = assOperatorType;
-      cKeywordType["%="] = assOperatorType;
-      cKeywordType["&&"] = binaryOperatorType;
-      cKeywordType["&="] = assOperatorType;
-      cKeywordType["*="] = assOperatorType;
-      cKeywordType["+="] = assOperatorType;
-      cKeywordType["++"] = unitaryOperatorType;
-      cKeywordType["-="] = assOperatorType;
-      cKeywordType["--"] = unitaryOperatorType;
-      cKeywordType["->"] = binaryOperatorType;
-      cKeywordType["/="] = assOperatorType;
-      cKeywordType["::"] = binaryOperatorType;
-      cKeywordType["<<"] = binaryOperatorType;
-      cKeywordType["<="] = binaryOperatorType;
-      cKeywordType["=="] = binaryOperatorType;
-      cKeywordType[">="] = binaryOperatorType;
-      cKeywordType[">>"] = binaryOperatorType;
-      cKeywordType["^="] = assOperatorType;
-      cKeywordType["|="] = assOperatorType;
-      cKeywordType["||"] = binaryOperatorType;
+      cKeywordType["!"]  = preExpType::lUnitaryOperator;
+      cKeywordType["%"]  = preExpType::binaryOperator;
+      cKeywordType["&"]  = (preExpType::lUnitaryOperator | preExpType::binaryOperator | preExpType::qualifier);
+      cKeywordType["("]  = preExpType::startParentheses;
+      cKeywordType[")"]  = preExpType::endParentheses;
+      cKeywordType["*"]  = (preExpType::lUnitaryOperator | preExpType::binaryOperator | preExpType::qualifier);
+      cKeywordType["+"]  = (preExpType::lUnitaryOperator | preExpType::binaryOperator);
+      cKeywordType[","]  = preExpType::binaryOperator;
+      cKeywordType["-"]  = (preExpType::lUnitaryOperator | preExpType::binaryOperator);
+      cKeywordType["."]  = preExpType::binaryOperator;
+      cKeywordType["/"]  = preExpType::binaryOperator;
+      cKeywordType[":"]  = preExpType::endStatement;
+      cKeywordType[";"]  = preExpType::endStatement;
+      cKeywordType["<"]  = preExpType::binaryOperator;
+      cKeywordType["="]  = preExpType::binaryOperator;
+      cKeywordType[">"]  = preExpType::binaryOperator;
+      cKeywordType["?"]  = preExpType::ternaryOperator;
+      cKeywordType["["]  = preExpType::startBracket;
+      cKeywordType["]"]  = preExpType::endBracket;
+      cKeywordType["^"]  = (preExpType::binaryOperator | preExpType::qualifier);
+      cKeywordType["{"]  = preExpType::startBrace;
+      cKeywordType["|"]  = preExpType::binaryOperator;
+      cKeywordType["}"]  = preExpType::endBrace;
+      cKeywordType["~"]  = preExpType::lUnitaryOperator;
+      cKeywordType["!="] = preExpType::assOperator;
+      cKeywordType["%="] = preExpType::assOperator;
+      cKeywordType["&&"] = preExpType::binaryOperator;
+      cKeywordType["&="] = preExpType::assOperator;
+      cKeywordType["*="] = preExpType::assOperator;
+      cKeywordType["+="] = preExpType::assOperator;
+      cKeywordType["++"] = preExpType::unitaryOperator;
+      cKeywordType["-="] = preExpType::assOperator;
+      cKeywordType["--"] = preExpType::unitaryOperator;
+      cKeywordType["->"] = preExpType::binaryOperator;
+      cKeywordType["/="] = preExpType::assOperator;
+      cKeywordType["::"] = preExpType::binaryOperator;
+      cKeywordType["<<"] = preExpType::binaryOperator;
+      cKeywordType["<="] = preExpType::binaryOperator;
+      cKeywordType["=="] = preExpType::binaryOperator;
+      cKeywordType[">="] = preExpType::binaryOperator;
+      cKeywordType[">>"] = preExpType::binaryOperator;
+      cKeywordType["^="] = preExpType::assOperator;
+      cKeywordType["|="] = preExpType::assOperator;
+      cKeywordType["||"] = preExpType::binaryOperator;
 
-      cKeywordType["#"] = macroKeywordType;
+      cKeywordType["#"] = preExpType::macroKeyword;
 
-      cKeywordType["void"]          = specifierType;
-      cKeywordType["__attribute__"] = specifierType; // [--]
+      cKeywordType["void"]          = preExpType::specifier;
+      cKeywordType["__attribute__"] = preExpType::specifier; // [--]
 
-      cKeywordType["long"]     = (qualifierType | specifierType);
-      cKeywordType["short"]    = (qualifierType | specifierType);
-      cKeywordType["signed"]   = (qualifierType | specifierType);
-      cKeywordType["unsigned"] = (qualifierType | specifierType);
+      cKeywordType["long"]     = (preExpType::qualifier | preExpType::specifier);
+      cKeywordType["short"]    = (preExpType::qualifier | preExpType::specifier);
+      cKeywordType["signed"]   = (preExpType::qualifier | preExpType::specifier);
+      cKeywordType["unsigned"] = (preExpType::qualifier | preExpType::specifier);
 
-      cKeywordType["inline"] = qualifierType;
-      cKeywordType["static"] = qualifierType;
-      cKeywordType["extern"] = qualifierType;
+      cKeywordType["inline"] = preExpType::qualifier;
+      cKeywordType["static"] = preExpType::qualifier;
+      cKeywordType["extern"] = preExpType::qualifier;
 
-      cKeywordType["const"]    = (qualifierType | occaKeywordType);
-      cKeywordType["restrict"] = (qualifierType | occaKeywordType);
-      cKeywordType["volatile"] = (qualifierType | occaKeywordType);
-      cKeywordType["aligned"]  = (qualifierType | occaKeywordType);
-      cKeywordType["register"] = qualifierType;
+      cKeywordType["const"]    = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["restrict"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["volatile"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["aligned"]  = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["register"] = preExpType::qualifier;
 
-      cKeywordType["occaConst"]    = (qualifierType | occaKeywordType);
-      cKeywordType["occaRestrict"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaVolatile"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaAligned"]  = (qualifierType | occaKeywordType);
-      cKeywordType["occaConstant"] = (qualifierType | occaKeywordType);
+      cKeywordType["occaConst"]    = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaRestrict"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaVolatile"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaAligned"]  = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaConstant"] = (preExpType::qualifier | preExpType::occaKeyword);
 
-      cKeywordType["class"]   = (structType);
-      cKeywordType["enum"]    = (structType | qualifierType);
-      cKeywordType["union"]   = (structType | qualifierType);
-      cKeywordType["struct"]  = (structType | qualifierType);
-      cKeywordType["typedef"] = (typedefType | qualifierType);
+      cKeywordType["class"]   = (preExpType::struct_);
+      cKeywordType["enum"]    = (preExpType::struct_ | preExpType::qualifier);
+      cKeywordType["union"]   = (preExpType::struct_ | preExpType::qualifier);
+      cKeywordType["struct"]  = (preExpType::struct_ | preExpType::qualifier);
+      cKeywordType["typedef"] = (preExpType::typedef_ | preExpType::qualifier);
 
       //---[ Non-standard ]-------------
-      cKeywordType["__attribute__"] = (qualifierType | specialKeywordType);
+      cKeywordType["__attribute__"] = (preExpType::qualifier | preExpType::specialKeyword);
 
       //---[ C++ ]----------------------
-      cKeywordType["virtual"]   = qualifierType;
+      cKeywordType["virtual"]   = preExpType::qualifier;
 
-      cKeywordType["namespace"] = (specifierType | structType);
+      cKeywordType["namespace"] = (preExpType::specifier | preExpType::struct_);
 
       //---[ Constants ]------------------
-      cKeywordType["..."]   = presetValue;
-      cKeywordType["true"]  = presetValue;
-      cKeywordType["false"] = presetValue;
+      cKeywordType["..."]   = preExpType::presetValue;
+      cKeywordType["true"]  = preExpType::presetValue;
+      cKeywordType["false"] = preExpType::presetValue;
 
       //---[ Flow Control ]---------------
-      cKeywordType["if"]   = flowControlType;
-      cKeywordType["else"] = flowControlType;
+      cKeywordType["if"]   = preExpType::flowControl;
+      cKeywordType["else"] = preExpType::flowControl;
 
-      cKeywordType["for"] = flowControlType;
+      cKeywordType["for"] = preExpType::flowControl;
 
-      cKeywordType["do"]    = flowControlType;
-      cKeywordType["while"] = flowControlType;
+      cKeywordType["do"]    = preExpType::flowControl;
+      cKeywordType["while"] = preExpType::flowControl;
 
-      cKeywordType["switch"]  = flowControlType;
-      cKeywordType["case"]    = specialKeywordType;
-      cKeywordType["default"] = specialKeywordType;
+      cKeywordType["switch"]  = preExpType::flowControl;
+      cKeywordType["case"]    = preExpType::specialKeyword;
+      cKeywordType["default"] = preExpType::specialKeyword;
 
-      cKeywordType["break"]    = specialKeywordType;
-      cKeywordType["continue"] = specialKeywordType;
-      cKeywordType["return"]   = specialKeywordType;
-      cKeywordType["goto"]     = specialKeywordType;
+      cKeywordType["break"]    = preExpType::specialKeyword;
+      cKeywordType["continue"] = preExpType::specialKeyword;
+      cKeywordType["return"]   = preExpType::specialKeyword;
+      cKeywordType["goto"]     = preExpType::specialKeyword;
 
       //---[ OCCA Keywords ]--------------
-      cKeywordType["kernel"]    = (qualifierType | occaKeywordType);
-      cKeywordType["texture"]   = (qualifierType | occaKeywordType);
-      cKeywordType["shared"]    = (qualifierType | occaKeywordType);
-      cKeywordType["exclusive"] = (qualifierType | occaKeywordType);
+      cKeywordType["kernel"]    = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["texture"]   = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["shared"]    = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["exclusive"] = (preExpType::qualifier | preExpType::occaKeyword);
 
-      cKeywordType["occaKernel"]   = (qualifierType | occaKeywordType);
-      cKeywordType["occaFunction"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaDeviceFunction"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaPointer"]  = (qualifierType | occaKeywordType);
-      cKeywordType["occaVariable"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaShared"]   = (qualifierType | occaKeywordType);
+      cKeywordType["occaKernel"]   = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaFunction"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaDeviceFunction"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaPointer"]  = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaVariable"] = (preExpType::qualifier | preExpType::occaKeyword);
+      cKeywordType["occaShared"]   = (preExpType::qualifier | preExpType::occaKeyword);
 
-      cKeywordType["occaKernelInfoArg"] = (presetValue | occaKeywordType);
-      cKeywordType["occaKernelInfo"]    = (presetValue | occaKeywordType);
+      cKeywordType["occaKernelInfoArg"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaKernelInfo"]    = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaPrivate"]      = (presetValue | occaKeywordType);
-      cKeywordType["occaPrivateArray"] = (presetValue | occaKeywordType);
+      cKeywordType["occaPrivate"]      = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaPrivateArray"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["barrier"]        = (presetValue | occaKeywordType);
-      cKeywordType["localMemFence"]  = (presetValue | occaKeywordType);
-      cKeywordType["globalMemFence"] = (presetValue | occaKeywordType);
+      cKeywordType["barrier"]        = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["localMemFence"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["globalMemFence"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaBarrier"]        = (presetValue | occaKeywordType);
-      cKeywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
+      cKeywordType["occaBarrier"]        = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaLocalMemFence"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaGlobalMemFence"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["directLoad"]  = (presetValue | occaKeywordType);
+      cKeywordType["directLoad"]  = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["atomicAdd"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSub"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSwap"] = (presetValue | occaKeywordType);
-      cKeywordType["atomicInc"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicDec"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicMin"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicMax"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicAnd"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicOr"]   = (presetValue | occaKeywordType);
-      cKeywordType["atomicXor"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicAdd"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicSub"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicSwap"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicInc"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicDec"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicMin"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicMax"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicAnd"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicOr"]   = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicXor"]  = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["atomicAdd64"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSub64"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSwap64"] = (presetValue | occaKeywordType);
-      cKeywordType["atomicInc64"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicDec64"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicAdd64"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicSub64"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicSwap64"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicInc64"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["atomicDec64"]  = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaInnerFor0"] = occaForType;
-      cKeywordType["occaInnerFor1"] = occaForType;
-      cKeywordType["occaInnerFor2"] = occaForType;
+      cKeywordType["occaInnerFor0"] = smntType::occaFor;
+      cKeywordType["occaInnerFor1"] = smntType::occaFor;
+      cKeywordType["occaInnerFor2"] = smntType::occaFor;
 
-      cKeywordType["occaOuterFor0"] = occaForType;
-      cKeywordType["occaOuterFor1"] = occaForType;
-      cKeywordType["occaOuterFor2"] = occaForType;
+      cKeywordType["occaOuterFor0"] = smntType::occaFor;
+      cKeywordType["occaOuterFor1"] = smntType::occaFor;
+      cKeywordType["occaOuterFor2"] = smntType::occaFor;
 
-      cKeywordType["occaInnerId0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerId1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerId2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaInnerId0"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaInnerId1"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaInnerId2"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaOuterId0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterId1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterId2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaOuterId0"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaOuterId1"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaOuterId2"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaGlobalId0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalId1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalId2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaGlobalId0"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaGlobalId1"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaGlobalId2"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaInnerDim0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerDim1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerDim2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaInnerDim0"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaInnerDim1"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaInnerDim2"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaOuterDim0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterDim1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterDim2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaOuterDim0"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaOuterDim1"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaOuterDim2"] = (preExpType::presetValue | preExpType::occaKeyword);
 
-      cKeywordType["occaGlobalDim0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalDim1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalDim2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaGlobalDim0"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaGlobalDim1"] = (preExpType::presetValue | preExpType::occaKeyword);
+      cKeywordType["occaGlobalDim2"] = (preExpType::presetValue | preExpType::occaKeyword);
 
       //---[ CUDA Keywords ]--------------
-      cKeywordType["threadIdx"] = (unknownVariable | cudaKeywordType);
-      cKeywordType["blockDim"]  = (unknownVariable | cudaKeywordType);
-      cKeywordType["blockIdx"]  = (unknownVariable | cudaKeywordType);
-      cKeywordType["gridDim"]   = (unknownVariable | cudaKeywordType);
+      cKeywordType["threadIdx"] = (preExpType::unknownVariable | preExpType::cudaKeyword);
+      cKeywordType["blockDim"]  = (preExpType::unknownVariable | preExpType::cudaKeyword);
+      cKeywordType["blockIdx"]  = (preExpType::unknownVariable | preExpType::cudaKeyword);
+      cKeywordType["gridDim"]   = (preExpType::unknownVariable | preExpType::cudaKeyword);
 
       std::string mathFunctions[16] = {
         "sqrt", "sin"  , "asin" ,
@@ -3588,124 +3481,124 @@ namespace occa {
         std::string cmf = mf;
         cmf[0] += ('A' - 'a');
 
-        cKeywordType["occa"       + cmf] = presetValue;
-        cKeywordType["occaFast"   + cmf] = presetValue;
-        cKeywordType["occaNative" + cmf] = presetValue;
+        cKeywordType["occa"       + cmf] = preExpType::presetValue;
+        cKeywordType["occaFast"   + cmf] = preExpType::presetValue;
+        cKeywordType["occaNative" + cmf] = preExpType::presetValue;
       }
 
       //---[ Operator Precedence ]--------
-      opPrecedence[opHolder("::", binaryOperatorType)]   = 0;
+      opPrecedence[opHolder("::", preExpType::binaryOperator)]   = 0;
 
       // class(...), class{1,2,3}, static_cast<>(), func(), arr[]
-      opPrecedence[opHolder("++", rUnitaryOperatorType)] = 1;
-      opPrecedence[opHolder("--", rUnitaryOperatorType)] = 1;
-      opPrecedence[opHolder("." , binaryOperatorType)]   = 1;
-      opPrecedence[opHolder("->", binaryOperatorType)]   = 1;
+      opPrecedence[opHolder("++", preExpType::rUnitaryOperator)] = 1;
+      opPrecedence[opHolder("--", preExpType::rUnitaryOperator)] = 1;
+      opPrecedence[opHolder("." , preExpType::binaryOperator)]   = 1;
+      opPrecedence[opHolder("->", preExpType::binaryOperator)]   = 1;
 
       // (int) x, sizeof, new, new [], delete, delete []
-      opPrecedence[opHolder("++", lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("--", lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("+" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("-" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("!" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("~" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("*" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("&" , lUnitaryOperatorType)] = 2;
+      opPrecedence[opHolder("++", preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("--", preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("+" , preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("-" , preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("!" , preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("~" , preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("*" , preExpType::lUnitaryOperator)] = 2;
+      opPrecedence[opHolder("&" , preExpType::lUnitaryOperator)] = 2;
 
-      opPrecedence[opHolder(".*" , binaryOperatorType)]  = 3;
-      opPrecedence[opHolder("->*", binaryOperatorType)]  = 3;
+      opPrecedence[opHolder(".*" , preExpType::binaryOperator)]  = 3;
+      opPrecedence[opHolder("->*", preExpType::binaryOperator)]  = 3;
 
-      opPrecedence[opHolder("*" , binaryOperatorType)]   = 4;
-      opPrecedence[opHolder("/" , binaryOperatorType)]   = 4;
-      opPrecedence[opHolder("%" , binaryOperatorType)]   = 4;
+      opPrecedence[opHolder("*" , preExpType::binaryOperator)]   = 4;
+      opPrecedence[opHolder("/" , preExpType::binaryOperator)]   = 4;
+      opPrecedence[opHolder("%" , preExpType::binaryOperator)]   = 4;
 
-      opPrecedence[opHolder("+" , binaryOperatorType)]   = 5;
-      opPrecedence[opHolder("-" , binaryOperatorType)]   = 5;
+      opPrecedence[opHolder("+" , preExpType::binaryOperator)]   = 5;
+      opPrecedence[opHolder("-" , preExpType::binaryOperator)]   = 5;
 
-      opPrecedence[opHolder("<<", binaryOperatorType)]   = 6;
-      opPrecedence[opHolder(">>", binaryOperatorType)]   = 6;
+      opPrecedence[opHolder("<<", preExpType::binaryOperator)]   = 6;
+      opPrecedence[opHolder(">>", preExpType::binaryOperator)]   = 6;
 
-      opPrecedence[opHolder("<" , binaryOperatorType)]   = 7;
-      opPrecedence[opHolder("<=", binaryOperatorType)]   = 7;
-      opPrecedence[opHolder(">=", binaryOperatorType)]   = 7;
-      opPrecedence[opHolder(">" , binaryOperatorType)]   = 7;
+      opPrecedence[opHolder("<" , preExpType::binaryOperator)]   = 7;
+      opPrecedence[opHolder("<=", preExpType::binaryOperator)]   = 7;
+      opPrecedence[opHolder(">=", preExpType::binaryOperator)]   = 7;
+      opPrecedence[opHolder(">" , preExpType::binaryOperator)]   = 7;
 
-      opPrecedence[opHolder("==", binaryOperatorType)]   = 8;
-      opPrecedence[opHolder("!=", binaryOperatorType)]   = 8;
+      opPrecedence[opHolder("==", preExpType::binaryOperator)]   = 8;
+      opPrecedence[opHolder("!=", preExpType::binaryOperator)]   = 8;
 
-      opPrecedence[opHolder("&" , binaryOperatorType)]   = 9;
+      opPrecedence[opHolder("&" , preExpType::binaryOperator)]   = 9;
 
-      opPrecedence[opHolder("^" , binaryOperatorType)]   = 10;
+      opPrecedence[opHolder("^" , preExpType::binaryOperator)]   = 10;
 
-      opPrecedence[opHolder("|" , binaryOperatorType)]   = 11;
+      opPrecedence[opHolder("|" , preExpType::binaryOperator)]   = 11;
 
-      opPrecedence[opHolder("&&", binaryOperatorType)]   = 12;
+      opPrecedence[opHolder("&&", preExpType::binaryOperator)]   = 12;
 
-      opPrecedence[opHolder("||", binaryOperatorType)]   = 13;
+      opPrecedence[opHolder("||", preExpType::binaryOperator)]   = 13;
 
-      opPrecedence[opHolder("?" , ternaryOperatorType)]  = 14;
-      opPrecedence[opHolder("=" , assOperatorType)]      = 14;
-      opPrecedence[opHolder("+=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("-=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("*=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("/=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("%=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("<<=", assOperatorType)]     = 14;
-      opPrecedence[opHolder(">>=", assOperatorType)]     = 14;
-      opPrecedence[opHolder("&=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("^=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("|=", assOperatorType)]      = 14;
+      opPrecedence[opHolder("?" , preExpType::ternaryOperator)]  = 14;
+      opPrecedence[opHolder("=" , preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("+=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("-=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("*=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("/=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("%=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("<<=", preExpType::assOperator)]     = 14;
+      opPrecedence[opHolder(">>=", preExpType::assOperator)]     = 14;
+      opPrecedence[opHolder("&=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("^=", preExpType::assOperator)]      = 14;
+      opPrecedence[opHolder("|=", preExpType::assOperator)]      = 14;
 
       // 15: throw x
 
-      opPrecedence[opHolder("," , binaryOperatorType)]   = 16;
+      opPrecedence[opHolder("," , preExpType::binaryOperator)]   = 16;
 
-      opLevelMap[ 0]["::"]  = binaryOperatorType;
-      opLevelMap[ 1]["++"]  = rUnitaryOperatorType;
-      opLevelMap[ 1]["--"]  = rUnitaryOperatorType;
-      opLevelMap[ 1]["." ]  = binaryOperatorType;
-      opLevelMap[ 1]["->"]  = binaryOperatorType;
-      opLevelMap[ 2]["++"]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["--"]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["+" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["-" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["!" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["~" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["*" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["&" ]  = lUnitaryOperatorType;
-      opLevelMap[ 3][".*" ] = binaryOperatorType;
-      opLevelMap[ 3]["->*"] = binaryOperatorType;
-      opLevelMap[ 4]["*" ]  = binaryOperatorType;
-      opLevelMap[ 4]["/" ]  = binaryOperatorType;
-      opLevelMap[ 4]["%" ]  = binaryOperatorType;
-      opLevelMap[ 5]["+" ]  = binaryOperatorType;
-      opLevelMap[ 5]["-" ]  = binaryOperatorType;
-      opLevelMap[ 6]["<<"]  = binaryOperatorType;
-      opLevelMap[ 6][">>"]  = binaryOperatorType;
-      opLevelMap[ 7]["<" ]  = binaryOperatorType;
-      opLevelMap[ 7]["<="]  = binaryOperatorType;
-      opLevelMap[ 7][">="]  = binaryOperatorType;
-      opLevelMap[ 7][">" ]  = binaryOperatorType;
-      opLevelMap[ 8]["=="]  = binaryOperatorType;
-      opLevelMap[ 8]["!="]  = binaryOperatorType;
-      opLevelMap[ 9]["&" ]  = binaryOperatorType;
-      opLevelMap[10]["^" ]  = binaryOperatorType;
-      opLevelMap[11]["|" ]  = binaryOperatorType;
-      opLevelMap[12]["&&"]  = binaryOperatorType;
-      opLevelMap[13]["||"]  = binaryOperatorType;
-      opLevelMap[14]["?" ]  = ternaryOperatorType;
-      opLevelMap[14]["=" ]  = assOperatorType;
-      opLevelMap[14]["+="]  = assOperatorType;
-      opLevelMap[14]["-="]  = assOperatorType;
-      opLevelMap[14]["*="]  = assOperatorType;
-      opLevelMap[14]["/="]  = assOperatorType;
-      opLevelMap[14]["%="]  = assOperatorType;
-      opLevelMap[14]["<<="] = assOperatorType;
-      opLevelMap[14][">>="] = assOperatorType;
-      opLevelMap[14]["&="]  = assOperatorType;
-      opLevelMap[14]["^="]  = assOperatorType;
-      opLevelMap[14]["|="]  = assOperatorType;
-      opLevelMap[16][","]   = binaryOperatorType;
+      opLevelMap[ 0]["::"]  = preExpType::binaryOperator;
+      opLevelMap[ 1]["++"]  = preExpType::rUnitaryOperator;
+      opLevelMap[ 1]["--"]  = preExpType::rUnitaryOperator;
+      opLevelMap[ 1]["." ]  = preExpType::binaryOperator;
+      opLevelMap[ 1]["->"]  = preExpType::binaryOperator;
+      opLevelMap[ 2]["++"]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["--"]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["+" ]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["-" ]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["!" ]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["~" ]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["*" ]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 2]["&" ]  = preExpType::lUnitaryOperator;
+      opLevelMap[ 3][".*" ] = preExpType::binaryOperator;
+      opLevelMap[ 3]["->*"] = preExpType::binaryOperator;
+      opLevelMap[ 4]["*" ]  = preExpType::binaryOperator;
+      opLevelMap[ 4]["/" ]  = preExpType::binaryOperator;
+      opLevelMap[ 4]["%" ]  = preExpType::binaryOperator;
+      opLevelMap[ 5]["+" ]  = preExpType::binaryOperator;
+      opLevelMap[ 5]["-" ]  = preExpType::binaryOperator;
+      opLevelMap[ 6]["<<"]  = preExpType::binaryOperator;
+      opLevelMap[ 6][">>"]  = preExpType::binaryOperator;
+      opLevelMap[ 7]["<" ]  = preExpType::binaryOperator;
+      opLevelMap[ 7]["<="]  = preExpType::binaryOperator;
+      opLevelMap[ 7][">="]  = preExpType::binaryOperator;
+      opLevelMap[ 7][">" ]  = preExpType::binaryOperator;
+      opLevelMap[ 8]["=="]  = preExpType::binaryOperator;
+      opLevelMap[ 8]["!="]  = preExpType::binaryOperator;
+      opLevelMap[ 9]["&" ]  = preExpType::binaryOperator;
+      opLevelMap[10]["^" ]  = preExpType::binaryOperator;
+      opLevelMap[11]["|" ]  = preExpType::binaryOperator;
+      opLevelMap[12]["&&"]  = preExpType::binaryOperator;
+      opLevelMap[13]["||"]  = preExpType::binaryOperator;
+      opLevelMap[14]["?" ]  = preExpType::ternaryOperator;
+      opLevelMap[14]["=" ]  = preExpType::assOperator;
+      opLevelMap[14]["+="]  = preExpType::assOperator;
+      opLevelMap[14]["-="]  = preExpType::assOperator;
+      opLevelMap[14]["*="]  = preExpType::assOperator;
+      opLevelMap[14]["/="]  = preExpType::assOperator;
+      opLevelMap[14]["%="]  = preExpType::assOperator;
+      opLevelMap[14]["<<="] = preExpType::assOperator;
+      opLevelMap[14][">>="] = preExpType::assOperator;
+      opLevelMap[14]["&="]  = preExpType::assOperator;
+      opLevelMap[14]["^="]  = preExpType::assOperator;
+      opLevelMap[14]["|="]  = preExpType::assOperator;
+      opLevelMap[16][","]   = preExpType::binaryOperator;
 
       /*---[ Future Ones ]----------------
         cKeywordType["using"] = ;
@@ -3725,127 +3618,127 @@ namespace occa {
       fortranKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
-      fortranKeywordType["%"]  = binaryOperatorType;
-      fortranKeywordType["("]  = startParentheses;
-      fortranKeywordType[")"]  = endParentheses;
-      fortranKeywordType["(/"] = startParentheses;
-      fortranKeywordType["/)"] = endParentheses;
-      fortranKeywordType["**"] = (binaryOperatorType);
-      fortranKeywordType["*"]  = (binaryOperatorType);
-      fortranKeywordType["+"]  = (lUnitaryOperatorType | binaryOperatorType);
-      fortranKeywordType[","]  = binaryOperatorType;
-      fortranKeywordType["-"]  = (lUnitaryOperatorType | binaryOperatorType);
-      fortranKeywordType["/"]  = binaryOperatorType;
-      fortranKeywordType[";"]  = endStatement;
-      fortranKeywordType["<"]  = binaryOperatorType;
-      fortranKeywordType["="]  = binaryOperatorType;
-      fortranKeywordType[">"]  = binaryOperatorType;
-      fortranKeywordType["=>"] = binaryOperatorType;
-      fortranKeywordType["::"] = binaryOperatorType;
-      fortranKeywordType["<="] = binaryOperatorType;
-      fortranKeywordType["=="] = binaryOperatorType;
-      fortranKeywordType["/="] = binaryOperatorType;
-      fortranKeywordType[">="] = binaryOperatorType;
+      fortranKeywordType["%"]  = preExpType::binaryOperator;
+      fortranKeywordType["("]  = preExpType::startParentheses;
+      fortranKeywordType[")"]  = preExpType::endParentheses;
+      fortranKeywordType["(/"] = preExpType::startParentheses;
+      fortranKeywordType["/)"] = preExpType::endParentheses;
+      fortranKeywordType["**"] = (preExpType::binaryOperator);
+      fortranKeywordType["*"]  = (preExpType::binaryOperator);
+      fortranKeywordType["+"]  = (preExpType::lUnitaryOperator | preExpType::binaryOperator);
+      fortranKeywordType[","]  = preExpType::binaryOperator;
+      fortranKeywordType["-"]  = (preExpType::lUnitaryOperator | preExpType::binaryOperator);
+      fortranKeywordType["/"]  = preExpType::binaryOperator;
+      fortranKeywordType[";"]  = preExpType::endStatement;
+      fortranKeywordType["<"]  = preExpType::binaryOperator;
+      fortranKeywordType["="]  = preExpType::binaryOperator;
+      fortranKeywordType[">"]  = preExpType::binaryOperator;
+      fortranKeywordType["=>"] = preExpType::binaryOperator;
+      fortranKeywordType["::"] = preExpType::binaryOperator;
+      fortranKeywordType["<="] = preExpType::binaryOperator;
+      fortranKeywordType["=="] = preExpType::binaryOperator;
+      fortranKeywordType["/="] = preExpType::binaryOperator;
+      fortranKeywordType[">="] = preExpType::binaryOperator;
 
-      fortranKeywordType["#"]  = macroKeywordType;
+      fortranKeywordType["#"]  = preExpType::macroKeyword;
 
       //---[ Types & Specifiers ]---------
-      fortranKeywordType["int"]    = specifierType;
-      fortranKeywordType["bool"]   = specifierType;
-      fortranKeywordType["char"]   = specifierType;
-      fortranKeywordType["long"]   = specifierType;
-      fortranKeywordType["short"]  = specifierType;
-      fortranKeywordType["float"]  = specifierType;
-      fortranKeywordType["double"] = specifierType;
+      fortranKeywordType["int"]    = preExpType::specifier;
+      fortranKeywordType["bool"]   = preExpType::specifier;
+      fortranKeywordType["char"]   = preExpType::specifier;
+      fortranKeywordType["long"]   = preExpType::specifier;
+      fortranKeywordType["short"]  = preExpType::specifier;
+      fortranKeywordType["float"]  = preExpType::specifier;
+      fortranKeywordType["double"] = preExpType::specifier;
 
-      fortranKeywordType["void"]   = specifierType;
+      fortranKeywordType["void"]   = preExpType::specifier;
 
-      fortranKeywordType["true"]  = presetValue;
-      fortranKeywordType["false"] = presetValue;
+      fortranKeywordType["true"]  = preExpType::presetValue;
+      fortranKeywordType["false"] = preExpType::presetValue;
 
       //---[ Types and Specifiers ]-----
-      fortranKeywordType["INTEGER"]   = specifierType;
-      fortranKeywordType["LOGICAL"]   = specifierType;
-      fortranKeywordType["REAL"]      = specifierType;
-      fortranKeywordType["PRECISION"] = specifierType;
-      fortranKeywordType["COMPLEX"]   = specifierType;
-      fortranKeywordType["CHARACTER"] = specifierType;
+      fortranKeywordType["INTEGER"]   = preExpType::specifier;
+      fortranKeywordType["LOGICAL"]   = preExpType::specifier;
+      fortranKeywordType["REAL"]      = preExpType::specifier;
+      fortranKeywordType["PRECISION"] = preExpType::specifier;
+      fortranKeywordType["COMPLEX"]   = preExpType::specifier;
+      fortranKeywordType["CHARACTER"] = preExpType::specifier;
 
       std::string suffix[5] = {"2", "3", "4", "8", "16"};
 
       for(int i = 0; i < 5; ++i){
-        fortranKeywordType[std::string("INTEGER") + suffix[i]] = specifierType;
-        fortranKeywordType[std::string("REAL")    + suffix[i]] = specifierType;
+        fortranKeywordType[std::string("INTEGER") + suffix[i]] = preExpType::specifier;
+        fortranKeywordType[std::string("REAL")    + suffix[i]] = preExpType::specifier;
       }
 
-      fortranKeywordType["FUNCTION"]   = specialKeywordType;
-      fortranKeywordType["SUBROUTINE"] = specialKeywordType;
-      fortranKeywordType["CALL"]       = specialKeywordType;
+      fortranKeywordType["FUNCTION"]   = preExpType::specialKeyword;
+      fortranKeywordType["SUBROUTINE"] = preExpType::specialKeyword;
+      fortranKeywordType["CALL"]       = preExpType::specialKeyword;
 
-      fortranKeywordType["DOUBLE"] = qualifierType;
+      fortranKeywordType["DOUBLE"] = preExpType::qualifier;
 
-      fortranKeywordType["ALLOCATABLE"] = qualifierType;
-      fortranKeywordType["AUTOMATIC"]   = qualifierType;
-      fortranKeywordType["DIMENSION"]   = qualifierType;
-      fortranKeywordType["EXTERNAL"]    = qualifierType;
-      fortranKeywordType["IMPLICIT"]    = qualifierType;
-      fortranKeywordType["INTENT"]      = qualifierType;
-      fortranKeywordType["INTRINSIC"]   = qualifierType;
-      fortranKeywordType["OPTIONAL"]    = qualifierType;
-      fortranKeywordType["PARAMETER"]   = qualifierType;
-      fortranKeywordType["POINTER"]     = qualifierType;
-      fortranKeywordType["PRIVATE"]     = qualifierType;
-      fortranKeywordType["PUBLIC"]      = qualifierType;
-      fortranKeywordType["RECURSIVE"]   = qualifierType;
-      fortranKeywordType["SAVE"]        = qualifierType;
-      fortranKeywordType["STATIC"]      = qualifierType;
-      fortranKeywordType["TARGET"]      = qualifierType;
-      fortranKeywordType["VOLATILE"]    = qualifierType;
+      fortranKeywordType["ALLOCATABLE"] = preExpType::qualifier;
+      fortranKeywordType["AUTOMATIC"]   = preExpType::qualifier;
+      fortranKeywordType["DIMENSION"]   = preExpType::qualifier;
+      fortranKeywordType["EXTERNAL"]    = preExpType::qualifier;
+      fortranKeywordType["IMPLICIT"]    = preExpType::qualifier;
+      fortranKeywordType["INTENT"]      = preExpType::qualifier;
+      fortranKeywordType["INTRINSIC"]   = preExpType::qualifier;
+      fortranKeywordType["OPTIONAL"]    = preExpType::qualifier;
+      fortranKeywordType["PARAMETER"]   = preExpType::qualifier;
+      fortranKeywordType["POINTER"]     = preExpType::qualifier;
+      fortranKeywordType["PRIVATE"]     = preExpType::qualifier;
+      fortranKeywordType["PUBLIC"]      = preExpType::qualifier;
+      fortranKeywordType["RECURSIVE"]   = preExpType::qualifier;
+      fortranKeywordType["SAVE"]        = preExpType::qualifier;
+      fortranKeywordType["STATIC"]      = preExpType::qualifier;
+      fortranKeywordType["TARGET"]      = preExpType::qualifier;
+      fortranKeywordType["VOLATILE"]    = preExpType::qualifier;
 
-      fortranKeywordType["NONE"] = specialKeywordType;
+      fortranKeywordType["NONE"] = preExpType::specialKeyword;
 
-      fortranKeywordType["KERNEL"]    = qualifierType;
-      fortranKeywordType["DEVICE"]    = qualifierType;
-      fortranKeywordType["SHARED"]    = qualifierType;
-      fortranKeywordType["EXCLUSIVE"] = qualifierType;
+      fortranKeywordType["KERNEL"]    = preExpType::qualifier;
+      fortranKeywordType["DEVICE"]    = preExpType::qualifier;
+      fortranKeywordType["SHARED"]    = preExpType::qualifier;
+      fortranKeywordType["EXCLUSIVE"] = preExpType::qualifier;
 
-      fortranKeywordType["DIRECTLOAD"] = (presetValue | occaKeywordType);
+      fortranKeywordType["DIRECTLOAD"] = (preExpType::presetValue | preExpType::occaKeyword);
 
       //---[ Atomics ]--------------------
-      fortranKeywordType["ATOMICADD"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSUB"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSWAP"] = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICINC"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICDEC"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICMIN"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICMAX"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICAND"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICOR"]   = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICXOR"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICADD"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICSUB"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICSWAP"] = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICINC"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICDEC"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICMIN"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICMAX"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICAND"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICOR"]   = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICXOR"]  = (preExpType::presetValue | preExpType::occaKeyword);
 
-      fortranKeywordType["ATOMICADD64"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSUB64"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSWAP64"] = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICINC64"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICDEC64"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICADD64"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICSUB64"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICSWAP64"] = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICINC64"]  = (preExpType::presetValue | preExpType::occaKeyword);
+      fortranKeywordType["ATOMICDEC64"]  = (preExpType::presetValue | preExpType::occaKeyword);
 
       //---[ Constants ]------------------
-      fortranKeywordType[":"]       = presetValue;
+      fortranKeywordType[":"]       = preExpType::presetValue;
 
       //---[ Flow Control ]---------------
-      fortranKeywordType["DO"]       = flowControlType;
-      fortranKeywordType["WHILE"]    = flowControlType;
-      fortranKeywordType["DO WHILE"] = flowControlType;
+      fortranKeywordType["DO"]       = preExpType::flowControl;
+      fortranKeywordType["WHILE"]    = preExpType::flowControl;
+      fortranKeywordType["DO WHILE"] = preExpType::flowControl;
 
-      fortranKeywordType["IF"]       = flowControlType;
-      fortranKeywordType["THEN"]     = flowControlType;
-      fortranKeywordType["ELSE IF"]  = flowControlType;
-      fortranKeywordType["ELSE"]     = flowControlType;
+      fortranKeywordType["IF"]       = preExpType::flowControl;
+      fortranKeywordType["THEN"]     = preExpType::flowControl;
+      fortranKeywordType["ELSE IF"]  = preExpType::flowControl;
+      fortranKeywordType["ELSE"]     = preExpType::flowControl;
 
-      fortranKeywordType["ENDDO"]         = endStatement;
-      fortranKeywordType["ENDIF"]         = endStatement;
-      fortranKeywordType["ENDFUNCTION"]   = endStatement;
-      fortranKeywordType["ENDSUBROUTINE"] = endStatement;
+      fortranKeywordType["ENDDO"]         = preExpType::endStatement;
+      fortranKeywordType["ENDIF"]         = preExpType::endStatement;
+      fortranKeywordType["ENDFUNCTION"]   = preExpType::endStatement;
+      fortranKeywordType["ENDSUBROUTINE"] = preExpType::endStatement;
 
       std::string mathFunctions[16] = {
         "SQRT", "SIN"  , "ASIN" ,
@@ -3857,61 +3750,61 @@ namespace occa {
       };
 
       for(int i = 0; i < 16; ++i)
-        fortranKeywordType[ mathFunctions[i] ] = presetValue;
+        fortranKeywordType[ mathFunctions[i] ] = preExpType::presetValue;
 
       //---[ Operator Precedence ]--------
-      opPrecedence[opHolder("%" , binaryOperatorType)]     = 0;
-      opPrecedence[opHolder("=>", binaryOperatorType)]     = 0;
+      opPrecedence[opHolder("%" , preExpType::binaryOperator)]     = 0;
+      opPrecedence[opHolder("=>", preExpType::binaryOperator)]     = 0;
 
-      opPrecedence[opHolder("**", binaryOperatorType)]     = 1;
-      opPrecedence[opHolder("//", binaryOperatorType)]     = 1;
+      opPrecedence[opHolder("**", preExpType::binaryOperator)]     = 1;
+      opPrecedence[opHolder("//", preExpType::binaryOperator)]     = 1;
 
-      opPrecedence[opHolder("+", lUnitaryOperatorType)]    = 2;
-      opPrecedence[opHolder("-", lUnitaryOperatorType)]    = 2;
+      opPrecedence[opHolder("+", preExpType::lUnitaryOperator)]    = 2;
+      opPrecedence[opHolder("-", preExpType::lUnitaryOperator)]    = 2;
 
-      opPrecedence[opHolder("*", binaryOperatorType)]      = 3;
-      opPrecedence[opHolder("/", binaryOperatorType)]      = 3;
+      opPrecedence[opHolder("*", preExpType::binaryOperator)]      = 3;
+      opPrecedence[opHolder("/", preExpType::binaryOperator)]      = 3;
 
-      opPrecedence[opHolder("+", binaryOperatorType)]      = 4;
-      opPrecedence[opHolder("-", binaryOperatorType)]      = 4;
+      opPrecedence[opHolder("+", preExpType::binaryOperator)]      = 4;
+      opPrecedence[opHolder("-", preExpType::binaryOperator)]      = 4;
 
-      opPrecedence[opHolder("<" , binaryOperatorType)]     = 5;
-      opPrecedence[opHolder("<=", binaryOperatorType)]     = 5;
-      opPrecedence[opHolder(">=", binaryOperatorType)]     = 5;
-      opPrecedence[opHolder(">" , binaryOperatorType)]     = 5;
+      opPrecedence[opHolder("<" , preExpType::binaryOperator)]     = 5;
+      opPrecedence[opHolder("<=", preExpType::binaryOperator)]     = 5;
+      opPrecedence[opHolder(">=", preExpType::binaryOperator)]     = 5;
+      opPrecedence[opHolder(">" , preExpType::binaryOperator)]     = 5;
 
-      opPrecedence[opHolder("!", binaryOperatorType)]      = 6;
-      opPrecedence[opHolder("&&", binaryOperatorType)]     = 7;
-      opPrecedence[opHolder("||", binaryOperatorType)]     = 8;
+      opPrecedence[opHolder("!", preExpType::binaryOperator)]      = 6;
+      opPrecedence[opHolder("&&", preExpType::binaryOperator)]     = 7;
+      opPrecedence[opHolder("||", preExpType::binaryOperator)]     = 8;
 
-      opPrecedence[opHolder("==" , binaryOperatorType)]    = 9;
-      opPrecedence[opHolder("!=", binaryOperatorType)]     = 9;
+      opPrecedence[opHolder("==" , preExpType::binaryOperator)]    = 9;
+      opPrecedence[opHolder("!=", preExpType::binaryOperator)]     = 9;
 
-      opPrecedence[opHolder("=" , binaryOperatorType)]     = 10;
+      opPrecedence[opHolder("=" , preExpType::binaryOperator)]     = 10;
 
-      opPrecedence[opHolder("," , binaryOperatorType)]     = 11;
+      opPrecedence[opHolder("," , preExpType::binaryOperator)]     = 11;
 
-      opLevelMap[0]["%"]   = binaryOperatorType;
-      opLevelMap[0]["=>"]  = binaryOperatorType;
-      opLevelMap[1]["**"]  = binaryOperatorType;
-      opLevelMap[1]["//"]  = binaryOperatorType;
-      opLevelMap[2]["+"]   = lUnitaryOperatorType;
-      opLevelMap[2]["-"]   = lUnitaryOperatorType;
-      opLevelMap[3]["*"]   = binaryOperatorType;
-      opLevelMap[3]["/"]   = binaryOperatorType;
-      opLevelMap[4]["+"]   = binaryOperatorType;
-      opLevelMap[4]["-"]   = binaryOperatorType;
-      opLevelMap[5]["<"]   = binaryOperatorType;
-      opLevelMap[5]["<="]  = binaryOperatorType;
-      opLevelMap[5][">="]  = binaryOperatorType;
-      opLevelMap[5][">"]   = binaryOperatorType;
-      opLevelMap[6]["!"]   = binaryOperatorType;
-      opLevelMap[7]["&&"]  = binaryOperatorType;
-      opLevelMap[8]["||"]  = binaryOperatorType;
-      opLevelMap[9]["=="]  = binaryOperatorType;
-      opLevelMap[9]["!="]  = binaryOperatorType;
-      opLevelMap[10]["="]  = binaryOperatorType;
-      opLevelMap[11][","]  = binaryOperatorType;
+      opLevelMap[0]["%"]   = preExpType::binaryOperator;
+      opLevelMap[0]["=>"]  = preExpType::binaryOperator;
+      opLevelMap[1]["**"]  = preExpType::binaryOperator;
+      opLevelMap[1]["//"]  = preExpType::binaryOperator;
+      opLevelMap[2]["+"]   = preExpType::lUnitaryOperator;
+      opLevelMap[2]["-"]   = preExpType::lUnitaryOperator;
+      opLevelMap[3]["*"]   = preExpType::binaryOperator;
+      opLevelMap[3]["/"]   = preExpType::binaryOperator;
+      opLevelMap[4]["+"]   = preExpType::binaryOperator;
+      opLevelMap[4]["-"]   = preExpType::binaryOperator;
+      opLevelMap[5]["<"]   = preExpType::binaryOperator;
+      opLevelMap[5]["<="]  = preExpType::binaryOperator;
+      opLevelMap[5][">="]  = preExpType::binaryOperator;
+      opLevelMap[5][">"]   = preExpType::binaryOperator;
+      opLevelMap[6]["!"]   = preExpType::binaryOperator;
+      opLevelMap[7]["&&"]  = preExpType::binaryOperator;
+      opLevelMap[8]["||"]  = preExpType::binaryOperator;
+      opLevelMap[9]["=="]  = preExpType::binaryOperator;
+      opLevelMap[9]["!="]  = preExpType::binaryOperator;
+      opLevelMap[10]["="]  = preExpType::binaryOperator;
+      opLevelMap[11][","]  = preExpType::binaryOperator;
 
       keywordType = fortranKeywordType;
     }
@@ -3930,7 +3823,7 @@ namespace occa {
       sInfo = &s;
 
       while(sInfo){
-        if((sInfo->info & forStatementType) &&
+        if((sInfo->info & smntType::forStatement) &&
            (sInfo->getForStatementCount() > 3)){
 
           OCCA_CHECK(sInfo->getForStatementCount() <= 4,
@@ -3952,7 +3845,7 @@ namespace occa {
       //---[ Overload iter vars ]---
       setIterDefaultValues();
 
-      sInfo->info = occaForType;
+      sInfo->info = smntType::occaFor;
 
       expNode &node1   = *(sInfo->getForStatement(0));
       expNode &node2   = *(sInfo->getForStatement(1));

@@ -54,7 +54,6 @@ namespace occa {
 
       typeHolder evaluateMacroStatement(const char *&c);
       bool evaluateMacroBoolStatement(const char *&c);
-      static typeHolder evaluateLabelNode(strNode *labelNodeRoot);
 
       void loadMacroInfo(macroInfo &info, const char *&c);
 
@@ -134,10 +133,6 @@ namespace occa {
       void addParallelFors(statement &s);
 
       void updateConstToConstant();
-
-      strNode* occaExclusiveStrNode(varInfo &info,
-                                    const int depth,
-                                    const int sideDepth);
 
       void addArgQualifiers();
 
@@ -225,16 +220,19 @@ namespace occa {
     expNode splitContent(const std::string &str, const bool parsingC = true);
     expNode splitContent(const char *cRoot, const bool parsingC = true);
 
-    bool checkWithLeft(strNode *nodePos,
-                       const std::string &leftValue,
-                       const std::string &rightValue,
-                       const bool parsingC = true);
+    bool checkLastTwoNodes(expNode &node,
+                           const std::string &leftValue,
+                           const std::string &rightValue,
+                           const bool parsingC = true);
 
-    void mergeNodeWithLeft(strNode *&nodePos,
+    void mergeLastTwoNodes(expNode &node,
                            const bool addSpace = true,
                            const bool parsingC = true);
 
-    void labelCode(expNode &lineExpRoot, const bool parsingC = true);
+    expNode& labelCode(expNode &expRoot, const bool parsingC = true);
+
+    expNode splitAndLabelContent(const std::string &str, const bool parsingC = true);
+    expNode splitAndLabelContent(const char *cRoot, const bool parsingC = true);
 
     void initKeywords(const bool parsingC = true);
     void initFortranKeywords();

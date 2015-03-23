@@ -707,174 +707,76 @@ namespace occa {
         return b;
     }
 
-    typeHolder evaluateString(const std::string &str){
-      return evaluateString(str.c_str());
+    typeHolder evaluateString(const std::string &str, parserBase *parser){
+      return evaluateString(str.c_str(), parser);
     }
 
-    typeHolder evaluateString(const char *c){
+    typeHolder evaluateMacroStatement(const char *&c, parserBase *parser){
       skipWhitespace(c);
 
       if(*c == '\0')
         return typeHolder("false");
 
-      strNode *lineNode = new strNode(c);
-      strip(lineNode->value);
+      expNode lineExpNode(c);
 
-      strNode *labelNodeRoot = labelCode(lineNode);
-      strNode *labelNodePos  = labelNodeRoot;
+      if(parser != NULL)
+        parser->applyMacros(lineExpNode.value);
 
-      // Check if a variable snuck in
-      while(labelNodePos){
-        if(labelNodePos->info & unknownVariable)
+      strip(lineExpNode.value);
+
+      labelCode(lineExpNode);
+
+      expNode &flatRoot = *(lineExpNode.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if( !(flatRoot[i].info & (expType::LCR |
+                                  expType::presetValue)) ){
+
           return typeHolder("false");
-
-        labelNodePos = labelNodePos->right;
+        }
       }
 
-      return evaluateNode(labelNodeRoot);
+      expNode::freeFlatHandle(flatRoot);
+
+      return evaluateExpression(lineExpNode);
     }
 
-    typeHolder evaluateNode(strNode *nodeRoot){
-      if(nodeRoot == NULL)
+    typeHolder evaluateExpression(expNode &expRoot){
+      expNode expClone = expRoot.clone();
+      typeHolder th;
+
+      if(expClone.leafCount == 0)
         return typeHolder("0");
 
-      if((nodeRoot->info  & presetValue) &&
-         (nodeRoot->right == NULL)){
+      if((expClone[0].info & expType::presetValue) &&
+         (expClone.leafCount == 1)){
 
-        return typeHolder(*nodeRoot);
+        return typeHolder(expClone[0].value);
       }
 
-      strNode *labelNodePos = nodeRoot;
+      if(expClone.info == expType::C){
+        return evaluateExpression(expClone[0]);
+      }
+      else if((expClone.info == expType::L) ||
+              (expClone.info == expType::R)){
 
-      while(labelNodePos){
-        if(labelNodePos->down){
-          labelNodePos->value = evaluateNode(labelNodePos->down);
-          labelNodePos->info  = presetValue;
-        }
-
-        if(labelNodePos->right == NULL)
-          break;
-
-        labelNodePos = labelNodePos->right;
+        // Ignore right unary [++], [--]
+        return applyOperator(expClone.value,
+                             evaluateExpression(expClone[0]));
+      }
+      else if(expClone.info == expType::LR){
+        return applyOperator(evaluateExpression(expClone[0]),
+                             expClone.value,
+                             evaluateExpression(expClone[1]));
+      }
+      else if(expClone.info == expType::LCR){
+        return applyOperator(evaluateExpression(expClone[0]),
+                             expClone.value,
+                             evaluateExpression(expClone[1]),
+                             evaluateExpression(expClone[2]));
       }
 
-      strNode *minOpNode;
-      int minPrecedence, minOpType;
-
-      labelNodePos = nodeRoot;
-
-      while(true){
-        minOpNode     = NULL;
-        minPrecedence = 100;
-        minOpType     = -1;
-
-        while(labelNodePos){
-          if(labelNodePos->info & operatorType){
-            int opType = (labelNodePos->info & operatorType);
-
-            opType &= ~qualifierType;
-
-            if(opType & unitaryOperatorType){
-              if((opType & binaryOperatorType) && // + and - operators
-                 (labelNodePos->left)          &&
-                 (labelNodePos->left->info & presetValue)){
-
-                opType = binaryOperatorType;
-              }
-              else if((opType & rUnitaryOperatorType) &&
-                      (labelNodePos->left)            &&
-                      (labelNodePos->left->info & presetValue)){
-
-                opType = rUnitaryOperatorType;
-              }
-              else if((opType & lUnitaryOperatorType) &&
-                      (labelNodePos->right)           &&
-                      (labelNodePos->right->info & presetValue)){
-
-                opType = lUnitaryOperatorType;
-              }
-              else
-                opType &= ~unitaryOperatorType;
-            }
-
-            const int opP = opPrecedence[opHolder(labelNodePos->value,
-                                                  opType)];
-
-            if(opP < minPrecedence){
-              minOpType     = opType;
-              minOpNode     = labelNodePos;
-              minPrecedence = opP;
-            }
-          }
-
-          labelNodePos = labelNodePos->right;
-        }
-
-        if(minOpNode == NULL){
-          if(nodeRoot && (nodeRoot->right == NULL))
-            return typeHolder(*nodeRoot);
-
-          OCCA_CHECK(false,
-                     "5. Error on:\n"
-                     << *(nodeRoot));
-        }
-        else{
-          if(minOpType & unitaryOperatorType){
-            if(minOpType & lUnitaryOperatorType){
-              std::string op = minOpNode->value;
-              std::string a  = minOpNode->right->value;
-
-              minOpNode->value = applyOperator(op, a);
-              minOpNode->info  = presetValue;
-
-              minOpNode->right->pop();
-            }
-            else if(minOpType & rUnitaryOperatorType){
-              OCCA_CHECK(false,
-                         "Postfix operator [" << *minOpNode << "] cannot be used in a macro");
-            }
-          }
-          else if(minOpType & binaryOperatorType){
-            minOpNode = minOpNode->left;
-
-            std::string a  = minOpNode->value;
-            std::string op = minOpNode->right->value;
-            std::string b  = minOpNode->right->right->value;
-
-            minOpNode->value = applyOperator(a, op, b);
-            minOpNode->info  = presetValue;
-
-            minOpNode->right->pop();
-            minOpNode->right->pop();
-          }
-          else if(minOpType & ternaryOperatorType){
-            minOpNode = minOpNode->left;
-
-            std::string a  = minOpNode->value;
-            std::string op = minOpNode->right->value;
-            std::string b  = minOpNode->right->right->value;
-            std::string c  = minOpNode->right->right->right->right->value;
-
-            minOpNode->value = applyOperator(a, op, b, c);
-            minOpNode->info  = presetValue;
-
-            minOpNode->right->pop();
-            minOpNode->right->pop();
-            minOpNode->right->pop();
-            minOpNode->right->pop();
-          }
-        }
-
-        if(nodeRoot->right == NULL)
-          return typeHolder(*nodeRoot);
-
-        labelNodePos = nodeRoot;
-      }
-
-      // Shouldn't get here
-      typeHolder th(nodeRoot->value);
-
-      return th;
+      return typeHolder("0");
     }
     //==============================================
 

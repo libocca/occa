@@ -13,8 +13,6 @@ namespace occa {
     class typeInfo;
     class varInfo;
 
-    class varLeaf_t;
-
     //---[ Qualifier Info Class ]-----------------
     class qualifierInfo {
     public:
@@ -42,19 +40,12 @@ namespace occa {
 
       qualifierInfo clone();
 
-      int loadFrom(expNode &expRoot,
-                   int leafPos);
+      int loadFrom(expNode expRoot,
+                   int leafPos = 0);
 
       int loadFromFortran(varInfo &var,
                           expNode &expRoot,
                           int leafPos);
-
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos);
-
-      strNode* loadFromFortran(varInfo &var,
-                               statement &s,
-                               strNode *nodePos);
 
       bool updateFortranVar(varInfo &var,
                             const std::string &fortranQualifier);
@@ -62,10 +53,6 @@ namespace occa {
       int updateFortranVar(varInfo &var,
                            expNode &expPos,
                            const int leafPos);
-
-      strNode* updateFortranVar(varInfo &var,
-                                statement &s,
-                                strNode *nodePos);
 
       //---[ Qualifier Info ]-----------
       bool has(const std::string &qName);
@@ -110,8 +97,8 @@ namespace occa {
 
       typeInfo clone();
 
-      //---[ NEW ]------------
-      int loadFrom(expNode &expRoot,
+      //---[ Load Info ]----------------
+      int loadFrom(expNode expRoot,
                    int leafPos = 0);
 
       int loadTypedefFrom(expNode &expRoot,
@@ -127,9 +114,6 @@ namespace occa {
       static bool statementIsATypeInfo(expNode &expRoot,
                                        int leafPos);
       //======================
-
-      static bool statementIsATypeInfo(statement &s,
-                                       strNode *nodePos);
 
       //---[ Type Info ]----------------
       void addQualifier(const std::string &qName,
@@ -191,11 +175,11 @@ namespace occa {
 
       varInfo clone();
 
-      static int variablesInStatement(strNode *nodePos);
+      static int variablesInStatement(expNode &expRoot);
 
-      //---[ NEW ]----------------------
-      int loadFrom(expNode &expRoot,
-                   int leafPos,
+      //---[ Load Info ]----------------
+      int loadFrom(expNode expRoot,
+                   int leafPos = 0,
                    varInfo *varHasType = NULL);
 
       int loadTypeFrom(expNode &expRoot,
@@ -234,43 +218,6 @@ namespace occa {
 
       void setupFortranStackExp(expNode &stackExp,
                                 expNode &valueExp);
-      //   ===================
-      //================================
-
-      //---[ OLD ]----------------------
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos,
-                        varInfo *varHasType = NULL);
-
-      strNode* loadTypeFrom(statement &s,
-                            strNode *nodePos,
-                            varInfo *varHasType);
-
-      strNode* loadNameFrom(statement &s,
-                            strNode *nodePos);
-
-      int getVarInfoFrom(statement &s,
-                         strNode *nodePos);
-
-      int getNestCountFrom(statement &s,
-                           strNode *nodePos);
-
-      strNode* loadStackPointersFrom(statement &s,
-                                     strNode *nodePos);
-
-      strNode* loadArgsFrom(statement &s,
-                            strNode *nodePos);
-
-      //   ---[ Fortran ]-----
-      strNode* loadFromFortran(statement &s,
-                               strNode *nodePos,
-                               varInfo *varHasType = NULL);
-
-      strNode* loadTypeFromFortran(statement &s,
-                                   strNode *nodePos,
-                                   varInfo *varHasType);
-
-      static std::string getFullFortranType(strNode *&nodePos);
       //   ===================
       //================================
 
