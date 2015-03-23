@@ -151,11 +151,12 @@ namespace occa {
       sInfo->labelStatement(allExp, expPos, parsingC);
 
       // [<>] Make sure expPos returns the guy after our last leaf
-      useExpLeaves(allExp, expStart, (expPos - expStart));
-      std::cout << "expStart = " << expStart << '\n'
-                << "expPos = " << expPos << '\n';
-      print();
-      std::cout << "[" << getBits(sInfo->info) << "]\n";
+      if(1 < (expPos - expStart))
+        useExpLeaves(allExp, expStart, (expPos - expStart));
+      else{
+        info  = allExp[expPos].info;
+        value = allExp[expPos].value;
+      }
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
