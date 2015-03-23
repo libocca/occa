@@ -13,9 +13,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     expNode::expNode(const std::string &str) :
       sInfo(NULL),
@@ -26,9 +24,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     expNode::expNode(const char *c) :
       sInfo(NULL),
@@ -39,9 +35,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     expNode::expNode(const expNode &e) :
       sInfo(e.sInfo),
@@ -52,9 +46,7 @@ namespace occa {
       up(e.up),
 
       leafCount(e.leafCount),
-      leaves(e.leaves),
-
-      type(e.type) {}
+      leaves(e.leaves) {}
 
     expNode::expNode(statement &s) :
       sInfo(&s),
@@ -65,9 +57,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     expNode& expNode::operator = (const expNode &e){
       sInfo = e.sInfo;
@@ -79,8 +69,6 @@ namespace occa {
 
       leafCount = e.leafCount;
       leaves    = e.leaves;
-
-      type = e.type;
 
       return *this;
     }
@@ -157,6 +145,7 @@ namespace occa {
 
       // [<>] Make sure expPos returns the guy after our last leaf
       useExpLeaves(allExp, expStart, (expPos - expStart));
+      print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -2283,8 +2272,12 @@ namespace occa {
     void expNode::useExpLeaves(expNode &exp, const int pos, const int count){
       reserveAndShift(0, count);
 
-      for(int i = pos; i < (pos + count); ++i)
-        leaves[i] = exp.leaves[i - pos];
+      for(int i = pos; i < (pos + count); ++i){
+        leaves[i - pos] = exp.leaves[i];
+
+        leaves[i - pos]->sInfo = sInfo;
+        leaves[i - pos]->up    = this;
+      }
     }
 
     void expNode::reserveAndShift(const int pos,
@@ -3706,8 +3699,10 @@ namespace occa {
 
     //---[ Loading ]--------------------
     void statement::loadAllFromNode(expNode allExp, const bool parsingC){
-      while(allExp.leafCount)
-        loadFromNode(allExp, parsingC);
+      int expPos = 0;
+
+      while(expPos < allExp.leafCount)
+        loadFromNode(allExp, expPos, parsingC);
     }
 
     void statement::loadFromNode(expNode allExp, const bool parsingC){
@@ -4020,8 +4015,6 @@ namespace occa {
                                                   expNode &allExp,
                                                   int &expPos,
                                                   const bool parsingC){
-
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4029,8 +4022,6 @@ namespace occa {
                                       expNode &allExp,
                                       int &expPos,
                                       const bool parsingC){
-
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4038,8 +4029,6 @@ namespace occa {
                                        expNode &allExp,
                                        int &expPos,
                                        const bool parsingC){
-
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing
@@ -4047,8 +4036,6 @@ namespace occa {
                                       expNode &allExp,
                                       int &expPos,
                                       const bool parsingC){
-
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing
@@ -4056,8 +4043,6 @@ namespace occa {
                                       expNode &allExp,
                                       int &expPos,
                                       const bool parsingC){
-
-      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     //  ---[ Fortran ]--------

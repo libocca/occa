@@ -135,8 +135,6 @@ namespace occa {
       int leafCount;
       expNode **leaves;
 
-      typeInfo *type;
-
       expNode();
       expNode(const char *c);
       expNode(const std::string &str);
