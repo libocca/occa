@@ -631,8 +631,6 @@ namespace occa {
       initMacros(parsingC);
 
       preprocessMacros(allExp);
-      allExp.print();
-      throw 1;
 
       labelCode(allExp, parsingC);
 
@@ -3038,11 +3036,11 @@ namespace occa {
                                 1);
 
       const bool addSpace = true; // For readability
-      bool firstSectionNode = false;
+
+      expNode node, *cNode = &node;
 
       for(int linePos = 0; linePos < lineCount; ++linePos){
         expNode &lineNode = (usingLeaves ? allExp[linePos] : allExp);
-        expNode node, *cNode = &node;
 
         const std::string &line = lineNode.value;
         const char *cLeft = line.c_str();
@@ -3059,11 +3057,6 @@ namespace occa {
           if(loadString){ //-------------------------------------[ 1 ]
             skipString(cRight, parsingC);
 
-            if(firstSectionNode){
-              cNode = &(cNode->lastNode());
-              firstSectionNode = false;
-            }
-
             cNode->addNode(preExpType::presetValue);
             cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
 
@@ -3071,11 +3064,6 @@ namespace occa {
           }
           else if(loadNumber){ //--------------------------------[ 2 ]
             skipNumber(cRight, parsingC);
-
-            if(firstSectionNode){
-              cNode = &(cNode->lastNode());
-              firstSectionNode = false;
-            }
 
             cNode->addNode(preExpType::presetValue);
 
@@ -3086,11 +3074,6 @@ namespace occa {
           }
           else{ //-----------------------------------------------[ 3 ]
             const int delimiterChars = isAWordDelimiter(cLeft, parsingC);
-
-            if(firstSectionNode){
-              cNode = &(cNode->lastNode());
-              firstSectionNode = false;
-            }
 
             cNode->addNode();
 
@@ -3135,13 +3118,11 @@ namespace occa {
               lastExpNode.info = keywordType[lastExpNode.value];
 
               if(lastExpNode.info & preExpType::startSection){ //-----------[ 3.1.3 ]
-                firstSectionNode = true;
+                cNode = &(cNode->lastNode());
               } //==============================================[ 3.1.3 ]
               else if(lastExpNode.info & preExpType::endSection){ //--------[ 3.1.4 ]
                 cNode->removeNode(-1);
                 cNode = cNode->up;
-
-                firstSectionNode = false;
               } //==============================================[ 3.1.4 ]
               else if(lastExpNode.info & preExpType::macroKeyword){ //--[ 3.1.5 ]
                 lastNodeStr = line;
@@ -3215,18 +3196,15 @@ namespace occa {
         }
 
         if(parsingFortran){
-          if(firstSectionNode){
-            cNode = &(cNode->lastNode());
-            firstSectionNode = false;
-          }
-
           cNode->addNode();
           cNode->lastNode().value = "\\n";
           cNode->lastNode().info  = preExpType::endStatement;
         }
-
-        expNode::swap(lineNode, node);
       }
+
+      expNode::swap(allExp, node);
+
+      node.free();
 
       return allExp;
     }
