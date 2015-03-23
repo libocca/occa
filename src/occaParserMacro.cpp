@@ -725,6 +725,8 @@ namespace occa {
       strip(lineExpNode.value);
 
       labelCode(lineExpNode);
+      lineExpNode.splitAndOrganizeNode();
+      lineExpNode.print();
 
       expNode &flatRoot = *(lineExpNode.makeFlatHandle());
 

@@ -101,6 +101,8 @@ namespace occa {
 
       std::string name(cStart, c - cStart);
 
+      std::cout << "Getting macro name: " << name << '\n';
+
       if(macroMap.find(name) == macroMap.end())
         applyMacros(name);
 
@@ -311,8 +313,14 @@ namespace occa {
           if(state & ignoring)
             return state;
 
+          std::cout << "Macro line = " << c << '\n';
+
           std::string name = getMacroName(c);
           int pos;
+
+          std::cout << "name = " << name << '\n';
+          if(name == "0")
+            throw 1;
 
           if(macroMap.find(name) == macroMap.end()){
             pos = macros.size();
@@ -326,6 +334,8 @@ namespace occa {
           info.name = name;
 
           loadMacroInfo(info, c);
+
+          std::cout << "Adding macro: " << info << '\n';
 
           return state;
         }
@@ -410,7 +420,9 @@ namespace occa {
         if(isAString(c)){
           skipString(c, parsingC);
 
+          std::cout << "1.1: newLine = " << newLine << '\n';
           newLine += std::string(cStart, (c - cStart));
+          std::cout << "1.2: newLine = " << newLine << '\n';
           continue;
         }
 
@@ -435,7 +447,11 @@ namespace occa {
             std::string expr(cStart, c - cStart);
             const char *c_expr = expr.c_str();
 
+            std::cout << "expr = " << expr << '\n';
+
             std::string expr2 = (std::string) evaluateMacroStatement(c_expr);
+
+            std::cout << "expr2 = " << expr2 << '\n';
 
             while(expr != expr2){
               expr = expr2;
@@ -477,10 +493,17 @@ namespace occa {
         if(it != macroMap.end()){
           foundMacro = true;
 
+          std::cout << "it->first = " << it->first << '\n'
+                    << "it->second = " << it->second << '\n';
+
           macroInfo &info = macros[it->second];
 
+          std::cout << "macro = " << info << '\n';
+
           if(!info.isAFunction || (*c != '(')){
+            std::cout << "2.1: newLine = " << newLine << '\n';
             newLine += info.parts[0];
+            std::cout << "2.2: newLine = " << newLine << '\n';
           }
           else{
             std::vector<std::string> args;
@@ -518,20 +541,30 @@ namespace occa {
             if(cStart < (cEnd - 1))
               args.push_back( std::string(cStart, cEnd - cStart - 1) );
 
+            std::cout << "3.1: newLine = " << newLine << '\n';
             newLine += info.applyArgs(args);
+            std::cout << "3.2: newLine = " << newLine << '\n';
           }
         }
-        else
+        else{
+          std::cout << "4.1: newLine = " << newLine << '\n';
           newLine += word;
+          std::cout << "4.2: newLine = " << newLine << '\n';
+        }
 
         cStart = c;
         c += delimiterChars;
 
-        if(cStart != c)
+        if(cStart != c){
+          std::cout << "5.1: newLine = " << newLine << '\n';
           newLine += std::string(cStart, c - cStart);
+          std::cout << "5.2: newLine = " << newLine << '\n';
+        }
 
         if(isWhitespace(*c)){
+          std::cout << "6.1: newLine = " << newLine << '\n';
           newLine += ' ';
+          std::cout << "6.2: newLine = " << newLine << '\n';
           skipWhitespace(c);
         }
       }
@@ -3029,13 +3062,16 @@ namespace occa {
 
       const bool parsingFortran = !parsingC;
 
-      const int lineCount = allExp.leafCount;
+      const bool usingLeaves = (allExp.leafCount != 0);
+      const int lineCount    = (usingLeaves      ?
+                                allExp.leafCount :
+                                1);
 
       const bool addSpace = true; // For readability
       bool firstSectionNode = false;
 
       for(int linePos = 0; linePos < lineCount; ++linePos){
-        expNode &lineNode = allExp[linePos];
+        expNode &lineNode = (usingLeaves ? allExp[linePos] : allExp);
         expNode node, *cNode = &node;
 
         const std::string &line = lineNode.value;
@@ -3058,7 +3094,7 @@ namespace occa {
               firstSectionNode = false;
             }
 
-            cNode->addNode(expType::presetValue);
+            cNode->addNode(preExpType::presetValue);
             cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
 
             cLeft = cRight;
@@ -3071,7 +3107,7 @@ namespace occa {
               firstSectionNode = false;
             }
 
-            cNode->addNode(expType::presetValue);
+            cNode->addNode(preExpType::presetValue);
 
             cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
             cNode->lastNode().info  = preExpType::presetValue;
@@ -3132,6 +3168,7 @@ namespace occa {
                 firstSectionNode = true;
               } //==============================================[ 3.1.3 ]
               else if(lastExpNode.info & preExpType::endSection){ //--------[ 3.1.4 ]
+                cNode->removeNode(-1);
                 cNode = cNode->up;
 
                 firstSectionNode = false;
@@ -3162,14 +3199,7 @@ namespace occa {
                 it = keywordType.find(str);
               }
 
-              if(firstSectionNode){
-                cNode = &(cNode->lastNode());
-                firstSectionNode = false;
-              }
-
-              cNode->addNode();
-
-              expNode &lastExpNode = cNode->lastNode();
+              lastNodeStr = str;
 
               if(it == keywordType.end())
                 lastExpNode.info = preExpType::unknownVariable;

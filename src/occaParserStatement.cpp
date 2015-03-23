@@ -222,6 +222,8 @@ namespace occa {
 
     void expNode::splitAndOrganizeNode(){
       changeExpTypes();
+      printf("Printing after changeExpTypes()\n");
+      print();
       initOrganization();
 
       if(sInfo->info & smntType::declareStatement)
@@ -2382,15 +2384,13 @@ namespace occa {
     }
 
     void expNode::removeNodes(int pos, const int count){
+      if(pos < 0)
+        pos += leafCount;
+
       int removed = (((pos + count) <= leafCount) ?
                      count : (leafCount - pos));
 
-      if(pos < 0){
-        removed = ((count <= leafCount) ? (leafCount - count) : 0);
-        pos = (leafCount - removed);
-      }
-
-      for(int i = (pos + count); i < leafCount; ++i)
+      for(int i = (pos + removed); i < leafCount; ++i)
         leaves[i - count] = leaves[i];
 
       leafCount -= removed;
