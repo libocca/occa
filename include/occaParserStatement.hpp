@@ -14,26 +14,29 @@ namespace occa {
 
     //---[ Exp Node ]-------------------------------
     namespace preExpType {
-      static const int descriptor       = (15 << 0);
-      static const int typedef_         = (1  << 0); // typedef
-      static const int struct_          = (1  << 1); // struct, class (Same as [ s ])
-      static const int specifier        = (1  << 2); // void, char, short, int
-      static const int qualifier        = (1  << 3); // const, restrict, volatile
+      static const int presetValue      = (1 << 0);
+      static const int unknownVariable  = (1 << 1);
 
-      static const int operator_        = (0x1F << 4);
-      static const int unitaryOperator  = (3    << 4);
-      static const int lUnitaryOperator = (1    << 4);
-      static const int rUnitaryOperator = (1    << 5);
-      static const int binaryOperator   = (3    << 6);
-      static const int assOperator      = (1    << 7); // hehe
-      static const int ternaryOperator  = (1    << 8);
+      static const int descriptor       = (15 << 2);
+      static const int typedef_         = (1  << 2); // typedef
+      static const int struct_          = (1  << 3); // struct, class (Same as [ s ])
+      static const int qualifier        = (1  << 4); // const, restrict, volatile (Same as [ expType ]!!!)
+      static const int specifier        = (1  << 5); // void, char, short, int
 
-      static const int parentheses      = (1 <<  9);
-      static const int brace            = (1 << 10);
-      static const int bracket          = (1 << 11);
+      static const int operator_        = (0x1F <<  6);
+      static const int unitaryOperator  = (3    <<  6);
+      static const int lUnitaryOperator = (1    <<  6);
+      static const int rUnitaryOperator = (1    <<  7);
+      static const int binaryOperator   = (3    <<  8);
+      static const int assOperator      = (1    <<  9); // hehe
+      static const int ternaryOperator  = (1    << 10);
 
-      static const int startSection     = (1 << 12);
-      static const int endSection       = (1 << 13);
+      static const int parentheses      = (1 << 11);
+      static const int brace            = (1 << 12);
+      static const int bracket          = (1 << 13);
+
+      static const int startSection     = (1 << 14);
+      static const int endSection       = (1 << 15);
 
       static const int startParentheses = (parentheses | startSection);
       static const int endParentheses   = (parentheses | endSection);
@@ -44,12 +47,9 @@ namespace occa {
       static const int startBracket     = (bracket | startSection);
       static const int endBracket       = (bracket | endSection);
 
-      static const int endStatement     = (1 << 14);
+      static const int endStatement     = (1 << 16);
 
-      static const int flowControl      = (1 << 15);
-
-      static const int presetValue      = (1 << 16);
-      static const int unknownVariable  = (1 << 17);
+      static const int flowControl      = (1 << 17);
 
       static const int specialKeyword   = (1 << 18);
 
@@ -151,10 +151,6 @@ namespace occa {
         else
           return *leaves[leafCount + i];
       }
-
-      //---[ Find Statement ]-----------
-      int getStatementType();
-      //================================
 
       void loadFromNode(expNode &allExp, const bool parsingC = true);
       void loadFromNode(expNode &allExp, int &expPos, const bool parsingC = true);
@@ -483,8 +479,6 @@ namespace occa {
       int checkFortranDescriptorStatementType(expNode &allExp, int &expPos);
       int checkFortranFlowStatementType(expNode &allExp, int &expPos);
       int checkFortranSpecialStatementType(expNode &allExp, int &expPos);
-
-      int getStatementType();
       //================================
 
       void addType(typeInfo &type);

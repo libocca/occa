@@ -89,47 +89,6 @@ namespace occa {
       return fLeaf;
     }
 
-    int expNode::getStatementType(){
-      if(info & expType::macro_)
-        return smntType::macroStatement;
-
-      else if(info & expType::occaFor)
-        return keywordType["occaOuterFor0"];
-
-      else if(info & (expType::qualifier |
-                      expType::type)){
-
-        if(typeInfo::statementIsATypeInfo(*this, 0))
-          return smntType::structStatement;
-
-        varInfo var;
-        var.loadFrom(*this, 0);
-
-        if(var.info & varType::var)
-          return smntType::declareStatement;
-        else if(var.info & varType::functionDec)
-          return smntType::functionPrototype;
-        else
-          return smntType::functionDefinition;
-      }
-
-      else if((info & (expType::unknown |
-                       expType::variable)) &&
-              (1 < leafCount) &&
-              (leaves[1]->value == ":")){
-
-        return smntType::gotoStatement;
-      }
-
-      else if((info == expType::C) &&
-              (leaves[0]->value == "{")){
-
-        return smntType::blockStatement;
-      }
-
-      return smntType::updateStatement;
-    }
-
     void expNode::loadFromNode(expNode &allExp,
                                const bool parsingC){
       int expPos = 0;
@@ -150,9 +109,13 @@ namespace occa {
 
       sInfo->labelStatement(allExp, expPos, parsingC);
 
+      expNode *firstNode = this;
+
       // [<>] Make sure expPos returns the guy after our last leaf
-      if(1 < (expPos - expStart))
+      if(1 < (expPos - expStart)){
         useExpLeaves(allExp, expStart, (expPos - expStart));
+        firstNode = leaves[0];
+      }
       else{
         info  = allExp[expPos].info;
         value = allExp[expPos].value;
@@ -171,18 +134,18 @@ namespace occa {
       }
 
       //---[ Special Type ]---
-      if((*this)[0].info & preExpType::specialKeyword){
-        if(((*this)[0].value == "break")    ||
-           ((*this)[0].value == "continue")){
+      if(firstNode->info & preExpType::specialKeyword){
+        if((firstNode->value == "break")    ||
+           (firstNode->value == "continue")){
 
-          if(((*this)[0].value == "continue") &&
+          if((firstNode->value == "continue") &&
              (sInfo->distToOccaForLoop() <= sInfo->distToForLoop())){
 
             value = "occaContinue";
             info  = expType::transfer_;
           }
           else{
-            value = (*this)[0].value;
+            value = firstNode->value;
             info  = expType::transfer_;
           }
 
@@ -190,7 +153,7 @@ namespace occa {
         }
 
         // [-] Doesn't support GCC's twisted [Labels as Values]
-        if((*this)[0].value == "goto"){
+        if(firstNode->value == "goto"){
           OCCA_CHECK(1 < leafCount,
                      "Goto check [" << toString() << "] needs label");
 
@@ -201,11 +164,11 @@ namespace occa {
 
         // Case where nodeRoot = [case, return]
 
-        if(((*this)[0].value == "case") ||
-           ((*this)[0].value == "default")){
+        if((firstNode->value == "case") ||
+           (firstNode->value == "default")){
           info = expType::checkSInfo;
         }
-        else if((*this)[0].value == "return"){
+        else if(firstNode->value == "return"){
           info = expType::return_;
         }
       }
@@ -216,8 +179,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode();
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      // print();
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      print();
     }
 
     void expNode::splitAndOrganizeNode(){
@@ -3531,8 +3494,18 @@ namespace occa {
       if(typeInfo::statementIsATypeInfo(*this, allExp, expPos))
         return checkStructStatementType(allExp, expPos);
 
+      std::cout << "expPos = " << expPos << '\n';
+
       varInfo var;
       expPos = var.loadFrom(*this, allExp, expPos);
+
+      std::cout << "expPos = " << expPos << '\n';
+
+      std::cout << "var = " << var << '\n';
+
+      std::cout << "allExp[expPos + 0] = " << allExp[expPos + 0].value << '\n'
+                << "allExp[expPos + 1] = " << allExp[expPos + 1].value << '\n';
+
 
       if( !(var.info & varType::functionDef) ){
         while((expPos < allExp.leafCount) &&

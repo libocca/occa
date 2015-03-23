@@ -115,9 +115,6 @@ namespace occa {
                           expNode &expRoot,
                           int leafPos = 0);
 
-      static bool statementIsATypeInfo(expNode &expRoot,
-                                       int leafPos);
-
       static bool statementIsATypeInfo(statement &s,
                                        expNode &expRoot,
                                        int leafPos);

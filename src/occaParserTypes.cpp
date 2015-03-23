@@ -481,15 +481,6 @@ namespace occa {
       return leafPos;
     }
 
-    bool typeInfo::statementIsATypeInfo(expNode &expRoot,
-                                        int leafPos){
-
-      if(expRoot.sInfo == NULL)
-        throw 1;
-
-      return statementIsATypeInfo(*(expRoot.sInfo), expRoot, leafPos);
-    }
-
     bool typeInfo::statementIsATypeInfo(statement &s,
                                         expNode &expRoot,
                                         int leafPos){
