@@ -351,6 +351,7 @@ namespace occa {
       //  =========================
 
       //  ---[ Statement-based ]---
+      void setNestedSInfo(statement &sInfo_);
       void switchBaseStatement(statement &s1, statement &s2);
       //  =========================
       //================================

@@ -975,7 +975,9 @@ namespace occa {
               leaf.info = expType::funcInfo; // [<>] Change to funcInfo
           }
           else{
-            typeInfo *nodeType = sInfo->hasTypeInScope(leaf.value);
+            typeInfo *nodeType = ((sInfo != NULL)                   ?
+                                  sInfo->hasTypeInScope(leaf.value) :
+                                  NULL);
 
             if(!nodeType)
               leaf.info = expType::unknown;
@@ -2682,6 +2684,16 @@ namespace occa {
     //  ===========================
 
     //  ---[ Statement-based ]-----
+    void expNode::setNestedSInfo(statement &sInfo_){
+      sInfo = &sInfo_;
+
+      if(info & expType::hasInfo)
+        return;
+
+      for(int i = 0; i < leafCount; ++i)
+        leaves[i]->setNestedSInfo(sInfo_);
+    }
+
     void expNode::switchBaseStatement(statement &s1, statement &s2){
       expNode &flatRoot = *(makeFlatHandle());
 
@@ -3815,7 +3827,8 @@ namespace occa {
 
     expNode statement::createPlainExpNodeFrom(const std::string &source){
       expNode ret = parserNS::splitAndLabelContent(source);
-      ret.sInfo = this;
+
+      ret.setNestedSInfo(*this);
 
       ret.changeExpTypes();
       ret.initOrganization();

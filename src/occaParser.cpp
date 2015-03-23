@@ -2965,7 +2965,7 @@ namespace occa {
 
       const char *c = cRoot;
 
-      int lineCount = countDelimiters(c, '\n');
+      int lineCount = 1 + countDelimiters(c, '\n');
 
       int status = readingCode;
 
