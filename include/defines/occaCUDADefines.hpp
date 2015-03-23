@@ -118,16 +118,16 @@
 
 
 //---[ Atomics ]----------------------------------
-#define occaAtomicAdd(PTR, UPDATE)  atomicAdd
-#define occaAtomicSub(PTR, UPDATE)  atomicSub
-#define occaAtomicSwap(PTR, UPDATE) atomicExch
-#define occaAtomicInc(PTR, UPDATE)  atomicInc
-#define occaAtomicDec(PTR, UPDATE)  atomicDec
-#define occaAtomicMin(PTR, UPDATE)  atomicMin
-#define occaAtomicMax(PTR, UPDATE)  atomicMax
-#define occaAtomicAnd(PTR, UPDATE)  atomicAnd
-#define occaAtomicOr(PTR, UPDATE)   atomicOr
-#define occaAtomicXor(PTR, UPDATE)  atomicXor
+#define occaAtomicAdd(PTR, UPDATE)  atomicAdd(PTR, UPDATE)
+#define occaAtomicSub(PTR, UPDATE)  atomicSub(PTR, UPDATE)
+#define occaAtomicSwap(PTR, UPDATE) atomicExch(PTR, UPDATE)
+#define occaAtomicInc(PTR, UPDATE)  atomicInc(PTR, UPDATE)
+#define occaAtomicDec(PTR, UPDATE)  atomicDec(PTR, UPDATE)
+#define occaAtomicMin(PTR, UPDATE)  atomicMin(PTR, UPDATE)
+#define occaAtomicMax(PTR, UPDATE)  atomicMax(PTR, UPDATE)
+#define occaAtomicAnd(PTR, UPDATE)  atomicAnd(PTR, UPDATE)
+#define occaAtomicOr(PTR, UPDATE)   atomicOr(PTR, UPDATE)
+#define occaAtomicXor(PTR, UPDATE)  atomicXor(PTR, UPDATE)
 
 #define occaAtomicAdd64  occaAtomicAdd
 #define occaAtomicSub64  occaAtomicSub
