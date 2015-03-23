@@ -711,7 +711,7 @@ namespace occa {
       return evaluateString(str.c_str(), parser);
     }
 
-    typeHolder evaluateMacroStatement(const char *&c, parserBase *parser){
+    typeHolder evaluateString(const char *c, parserBase *parser){
       skipWhitespace(c);
 
       if(*c == '\0')

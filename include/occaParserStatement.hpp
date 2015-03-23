@@ -502,7 +502,7 @@ namespace occa {
       bool hasDescriptorVariableInScope(const std::string descriptor);
 
       //---[ Loading ]------------------
-      void loadAllFromNode(expNode &allExp, const bool parsingC = true);
+      void loadAllFromNode(expNode allExp, const bool parsingC = true);
 
       void loadFromNode(expNode allExp,
                         const bool parsingC = true);
@@ -587,7 +587,7 @@ namespace occa {
                              int &expPos,
                              const bool parsingC = true);
 
-      bool isFortranEnd(expNode &exp);
+      bool isFortranEnd(expNode &allExp, int &expPos);
 
       void loadUntilFortranEnd(expNode &allExp, int &expPos);
 

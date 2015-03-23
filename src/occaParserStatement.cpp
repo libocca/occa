@@ -3564,28 +3564,28 @@ namespace occa {
       if(expPos < allExp.leafCount){
         allExp[expPos].info = expType::checkSInfo;
 
-        std::string &nodeValue = allExp[expPos].value;
+        std::string &expValue = allExp[expPos].value;
         ++expPos;
 
-        if((nodeValue != "else") &&
-           (nodeValue != "do")){
+        if((expValue != "else") &&
+           (expValue != "do")){
 
           ++expPos;
         }
 
-        if(nodeValue == "for")
+        if(expValue == "for")
           return smntType::forStatement;
-        else if(nodeValue == "while")
+        else if(expValue == "while")
           return smntType::whileStatement;
-        else if(nodeValue == "do")
+        else if(expValue == "do")
           return smntType::doWhileStatement;
-        else if(nodeValue == "if")
+        else if(expValue == "if")
           return smntType::ifStatement;
-        else if(nodeValue == "else if")
+        else if(expValue == "else if")
           return smntType::elseIfStatement;
-        else if(nodeValue == "else")
+        else if(expValue == "else")
           return smntType::elseStatement;
-        else if(nodeValue == "switch")
+        else if(expValue == "switch")
           return smntType::switchStatement;
       }
 
@@ -3718,7 +3718,7 @@ namespace occa {
     }
 
     //---[ Loading ]--------------------
-    void statement::loadAllFromNode(expNode &allExp, const bool parsingC){
+    void statement::loadAllFromNode(expNode allExp, const bool parsingC){
       while(allExp.leafCount)
         loadFromNode(allExp, parsingC);
     }
@@ -3970,15 +3970,16 @@ namespace occa {
           return;
         }
 
-        while(nodePos != nodeRootEnd){
-          if(nodePos->value == "THEN"){
+        while(expPos < allExp.leafCount){
+          if(allExp[expPos].value == "THEN"){
             newStatement->loadUntilFortranEnd(allExp, expPos);
             return;
           }
         }
 
         // [IF][(...)][load this]
-        newStatement->loadFromNode(allExp, expPos + 2, parsingFortran);
+        expPos += 2;
+        newStatement->loadFromNode(allExp, expPos, parsingFortran);
       }
     }
 
@@ -4005,7 +4006,7 @@ namespace occa {
                                      int &expPos,
                                      const bool parsingC){
 
-      loadUntilFortranEnd(allExp, expPos);
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4014,29 +4015,19 @@ namespace occa {
                                      int &expPos,
                                      const bool parsingC){
 
-      loadUntilFortranEnd(allExp, expPos);
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     void statement::loadFunctionDefinitionFromNode(const int st,
                                                    expNode &allExp,
                                                    int &expPos,
                                                    const bool parsingC){
-
-      strNode *nextNode = nodeRootEnd ? nodeRootEnd->right : NULL;
-
-      if(nodeRoot)
-        allExp[expPos].left = NULL;
-      if(nodeRootEnd)
-        nodeRootEnd->right = NULL;
-
       if(parsingC){
-        if(nodeRootEnd)
-          loadAllFromNode(nodeRootEnd->down);
-
-        return nextNode;
+        if(expPos < allExp.leafCount)
+          loadAllFromNode(allExp[expPos], parsingC);
       }
       else
-        return loadUntilFortranEnd(nextNode);
+        return loadUntilFortranEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4045,8 +4036,7 @@ namespace occa {
                                                   int &expPos,
                                                   const bool parsingC){
 
-      if(allExp.leafCount)
-        allExp.removeNode(0);
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4055,12 +4045,7 @@ namespace occa {
                                       int &expPos,
                                       const bool parsingC){
 
-      strNode *nextNode = allExp[expPos].right;
-
-      if(allExp[expPos].down)
-        loadAllFromNode(allExp[expPos].down);
-
-      return nextNode;
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing Fortran
@@ -4069,8 +4054,7 @@ namespace occa {
                                        int &expPos,
                                        const bool parsingC){
 
-      if(allExp.leafCount)
-        allExp.removeNode(0);
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing
@@ -4079,8 +4063,7 @@ namespace occa {
                                       int &expPos,
                                       const bool parsingC){
 
-      if(allExp.leafCount)
-        allExp.removeNode(0);
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     // [-] Missing
@@ -4089,39 +4072,38 @@ namespace occa {
                                       int &expPos,
                                       const bool parsingC){
 
-      if(allExp.leafCount)
-        allExp.removeNode(0);
+      skipUntilFortranStatementEnd(allExp, expPos);
     }
 
     //  ---[ Fortran ]--------
     // [+] Missing
-    int statement::checkFortranStructStatementType(expNode &expRoot, int &expPos){
-      nodeRoot = skipUntilFortranStatementEnd(expRoot, expPos);
+    int statement::checkFortranStructStatementType(expNode &allExp, int &expPos){
+      skipUntilFortranStatementEnd(allExp, expPos);
 
       return smntType::structStatement;
     }
 
-    int statement::checkFortranUpdateStatementType(expNode &expRoot, int &expPos){
-      nodeRoot = skipUntilFortranStatementEnd(expRoot, expPos);
+    int statement::checkFortranUpdateStatementType(expNode &allExp, int &expPos){
+      skipUntilFortranStatementEnd(allExp, expPos);
 
       return smntType::updateStatement;
     }
 
-    int statement::checkFortranDescriptorStatementType(expNode &expRoot, int &expPos){
-      if((nodeRoot        && (allExp[expPos].value        == "IMPLICIT")) &&
-         (allExp[expPos].right && (allExp[expPos].right->value == "NONE"))){
+    int statement::checkFortranDescriptorStatementType(expNode &allExp, int &expPos){
+      if(((expPos + 1) < allExp.leafCount)        &&
+         (allExp[expPos].value     == "IMPLICIT") &&
+         (allExp[expPos + 1].value == "NONE")){
 
-        nodeRoot = skipUntilFortranStatementEnd(expRoot, expPos);
+        skipUntilFortranStatementEnd(allExp, expPos);
 
         return smntType::skipStatement;
       }
 
       varInfo var;
-      nodeRoot = var.loadFromFortran(*this, nodeRoot);
+      var.loadFromFortran(allExp, expPos);
 
-      if( !(var.info & varType::functionDef) ){
-        nodeRoot = skipUntilFortranStatementEnd(expRoot, expPos);
-      }
+      if( !(var.info & varType::functionDef) )
+        skipUntilFortranStatementEnd(allExp, expPos);
 
       if(var.info & varType::var)
         return smntType::declareStatement;
@@ -4129,37 +4111,37 @@ namespace occa {
         return smntType::functionDefinition;
     }
 
-    int statement::checkFortranFlowStatementType(expNode &expRoot, int &expPos){
+    int statement::checkFortranFlowStatementType(expNode &allExp, int &expPos){
       if(expPos < allExp.leafCount)
-        expRoot[expPos].info  = expType::checkSInfo;
+        expRoot[expPos].info = expType::checkSInfo;
 
-      std::string &nodeValue = allExp[expPos].value;
+      std::string &expValue = allExp[expPos].value;
 
       int st = 0;
 
-      if(nodeValue == "DO")
+      if(expValue == "DO")
         st = smntType::forStatement;
-      else if(nodeValue == "DO WHILE")
+      else if(expValue == "DO WHILE")
         st = smntType::whileStatement;
-      else if(nodeValue == "IF")
+      else if(expValue == "IF")
         st = smntType::ifStatement;
-      else if(nodeValue == "ELSE IF")
+      else if(expValue == "ELSE IF")
         st = smntType::elseIfStatement;
-      else if(nodeValue == "ELSE")
+      else if(expValue == "ELSE")
         st = smntType::elseStatement;
-      else if(nodeValue == "SWITCH")
+      else if(expValue == "SWITCH")
         st = smntType::switchStatement;
 
       // [-] Missing one-line case
-      while(nodeRoot &&
+      while((expPos < allExp.leafCount)     &&
             (allExp[expPos].value != "\\n") &&
             (allExp[expPos].value != ";")){
 
-        nodeRoot = allExp[expPos].right;
+        ++expPos;
       }
 
-      if(nodeRoot)
-        nodeRoot = allExp[expPos].right;
+      if(expPos < allExp.leafCount)
+        ++expPos;
 
       if(st)
         return st;
@@ -4171,102 +4153,96 @@ namespace occa {
       return 0;
     }
 
-    int statement::checkFortranSpecialStatementType(expNode &expRoot, int &expPos){
-      strNode *nextNode = skipUntilFortranStatementEnd(expRoot, expPos);
+    int statement::checkFortranSpecialStatementType(expNode &allExp, int &expPos){
+      skipUntilFortranStatementEnd(allExp, expPos);
 
-      if(allExp[expPos].value == "CALL"){
-        nodeRoot = nextNode;
+      if(expPos < allExp.leafCount){
+        if(allExp[expPos].value == "CALL"){
+          return smntType::updateStatement;
+        }
+        else if((allExp[expPos].value == "FUNCTION") ||
+                (allExp[expPos].value == "SUBROUTINE")){
 
-        return smntType::updateStatement;
+          return checkFortranDescriptorStatementType(allExp, expPos);
+        }
       }
-      else if((allExp[expPos].value == "FUNCTION") ||
-              (allExp[expPos].value == "SUBROUTINE")){
-
-        return checkFortranDescriptorStatementType(nodeRoot, expPtr);
-      }
-
-      nodeRoot = nextNode;
 
       return smntType::blankStatement;
     }
 
-    bool statement::isFortranEnd(expNode &exp){
-      if(exp.leafCount == 0)
+    bool statement::isFortranEnd(expNode &allExp, int &expPos){
+      if(allExp.leafCount <= expPos)
         return true;
+
+      std::string expValue = allExp[expPos].value;
 
       if(info & smntType::functionDefinition){
         const std::string &typeName = (getFunctionVar()->baseType->name);
 
         if(typeName == "void")
-          return (exp[0].value == "ENDSUBROUTINE");
+          return (expValue == "ENDSUBROUTINE");
         else
-          return (exp[0].value == "ENDFUNCTION");
+          return (expValue == "ENDFUNCTION");
       }
       else if(info & (smntType::forStatement |
                       smntType::whileStatement)){
 
-        return (exp[0].value == "ENDDO");
+        return (expValue == "ENDDO");
       }
       else if(info & smntType::ifStatement){
         if(info != smntType::elseStatement){
 
-          if((exp[0].value == "ENDIF")   ||
-             (exp[0].value == "ELSE IF") ||
-             (exp[0].value == "ELSE")){
+          if((expValue == "ENDIF")   ||
+             (expValue == "ELSE IF") ||
+             (expValue == "ELSE")){
 
             return true;
           }
         }
         else
-          return (exp[0].value == "ENDIF");
+          return (expValue == "ENDIF");
       }
 
       return false;
     }
 
-    void statement::loadUntilFortranEnd(expNode &allExp){
-      while(!isFortranEnd(allExp))
-        loadFromNode(allExp, parsingFortran);
+    void statement::loadUntilFortranEnd(expNode &allExp, int &expPos){
+      while(!isFortranEnd(allExp, expPos))
+        loadFromNode(allExp, expPos, parsingFortran);
 
       // Don't skip [ELSE IF] and [ELSE]
-      if((0 < allExp.leafCount) &&
-         (allExp[0].value.substr(0,3) == "END")){
+      if((expPos < allExp.leafCount) &&
+         (allExp[expPos].value.substr(0,3) == "END")){
 
-        skipAfterStatement(expRoot, expPos);
+        skipAfterStatement(allExp, expPos);
       }
     }
 
-    void statement::skipAfterStatement(expNode &allExp){
-      skipUntilStatementEnd(expRoot, expPos);
+    void statement::skipAfterStatement(expNode &allExp, int &expPos){
+      skipUntilStatementEnd(allExp, expPos);
 
-      if(allExp.leafCount)
-        allExp.removeNode(0);
-
-      return nodePos;
+      if(expPos < allExp.leafCount)
+        ++expPos;
     }
 
-    void statement::skipUntilStatementEnd(expNode &allExp){
-      while((expPos < expRoot.leafCount) &&
-            !(expRoot[expPos].info & preExpType::endStatement)){
+    void statement::skipUntilStatementEnd(expNode &allExp, int &expPos){
+      while((expPos < allExp.leafCount) &&
+            !(allExp[expPos].info & preExpType::endStatement)){
 
         ++expPos;
       }
-
-      return nodePos;
     }
 
-    void statement::skipUntilFortranStatementEnd(expNode &allExp){
-      while(nodePos){
-        nodePos = nodePos->right;
-
-        if((nodePos->value == "\\n") ||
-           (nodePos->value == ";")){
+    void statement::skipUntilFortranStatementEnd(expNode &allExp, int &expPos){
+      while(expPos < allExp.leafCount){
+        if((allExp[expPos].value == "\\n") ||
+           (allExp[expPos].value == ";")){
 
           break;
         }
-      }
 
-      return nodePos;
+        ++expPos;
+      }
     }
     //==================================
 

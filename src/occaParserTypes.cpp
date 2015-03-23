@@ -996,6 +996,87 @@ namespace occa {
       return leafPos;
     }
 
+    std::string varInfo::getFullFortranType(expNode &expRoot,
+                                            int &leafPos){
+      if( !(expRoot[leafPos].info & expType::type) )
+        return "";
+
+      std::string typeNode = expRoot[leafPos++].value;
+
+      if(leafPos < expRoot.leafCount){
+        int bytes = -1;
+
+        // [-] Ignoring complex case
+        const bool isFloat = ((typeNode.find("REAL") != std::string::npos) ||
+                              (typeNode == "PRECISION")                    ||
+                              (typeNode == "COMPLEX"));
+
+        const int typeNodeChars = typeNode.size();
+        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
+
+        std::string suffix = "";
+
+        if(typeHasSuffix){
+          for(int i = 0; i < typeNodeChars; ++i){
+            if(isANumber(typeNode[i]))
+              suffix += typeNode[i];
+          }
+        }
+
+        if(isFloat){
+          if(typeNode.find("REAL") != std::string::npos)
+            bytes = 4;
+          else if(typeNode == "PRECISION")
+            bytes = 8;
+        }
+        else {
+          if(typeNode.find("INTEGER") != std::string::npos)
+            bytes = 4;
+          else if((typeNode == "LOGICAL") ||
+                  (typeNode == "CHARACTER"))
+            bytes = 1;
+        }
+
+        if(leafPos < expRoot.leafCount){
+          if(expRoot[leafPos].value == "*"){
+            ++leafPos;
+            bytes    = atoi(expRoot[leafPos].value.c_str());
+            ++leafPos;
+          }
+          else if((expRoot[leafPos].value == "(") &&
+                  (expRoot[leafPos].leafCount)){
+
+            bytes = atoi(expRoot[leafPos][0].value.c_str());
+            ++leafPos;
+          }
+        }
+
+        switch(bytes){
+        case 1:
+          typeNode = "char" + suffix; break;
+        case 2:
+          typeNode = "short" + suffix; break;
+        case 4:
+          if(isFloat)
+            typeNode = "float" + suffix;
+          else
+            typeNode = "int" + suffix;
+          break;
+        case 8:
+          if(isFloat)
+            typeNode = "double" + suffix;
+          else
+            typeNode = "long long" + suffix;
+          break;
+        default:
+          OCCA_CHECK(false,
+                     "Error loading " << typeNode << "(" << bytes << ")");
+        };
+      }
+
+      return typeNode;
+    }
+
     int varInfo::loadStackPointersFromFortran(expNode &expRoot,
                                               int leafPos){
       if(expRoot.leafCount <= leafPos)
