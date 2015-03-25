@@ -41,10 +41,13 @@ namespace occa {
       // throw 1;
 
       markKernelFunctions(*globalScope);
-      labelNativeKernels();
 
       if(magicEnabled)
         magician::castMagicOn(*this);
+
+      throw 1;
+
+      labelNativeKernels();
 
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);

@@ -7,47 +7,35 @@ namespace occa {
   namespace parserNS {
     class parserBase;
 
-    class strideInfo {
+    class expInfo {
     public:
       bool isConstant;
-      varInfo *varName;
-      expNode stride;
-
-      strideInfo();
+      expNode exp;
     };
 
-    class accessInfo {
+    class iteratorInfo {
     public:
-      bool isUseful;
-      std::vector<strideInfo> strides;
-
-      accessInfo();
-
-      void load(expNode &root);
-
-      int dim();
-
-      varInfo& var(const int pos);
-
-      strideInfo& operator [] (const int pos);
-      strideInfo& operator [] (const std::string &varName);
+      expInfo bounds[2], stride;
     };
 
-    class ctInfo {
+    class viInfo {
     public:
-      bool hasConstValue;
-      typeHolder constValue;
-
-      expNode loopBounds[2];
-      expNode loopStride;
-
-      std::vector<accessInfo> reads;
-      std::vector<accessInfo> writes;
+      bool isAnIterator, isConstant, isUseless;
     };
 
-    typedef std::map<varInfo*, ctInfo> ctMap_t;
-    typedef ctMap_t::iterator          ctMapIterator;
-    typedef ctMap_t::const_iterator    cCtMapIterator;
+    typedef std::map<varInfo*, viInfo*> viInfoMap_t_;
+    typedef viInfoMap_t_::iterator     viInfoIterator;
+
+    class viInfoMap_t {
+    public:
+      viInfoMap_t_ viMap;
+      viInfo *anonVar; // Stores non-restrict variables
+
+      viInfoMap_t();
+      void free();
+
+      void addVariable(varInfo &var);
+    };
 
     class magician {
     public:
@@ -56,14 +44,43 @@ namespace occa {
       varUsedMap_t &varUpdateMap;
       varUsedMap_t &varUsedMap;
 
-      ctMap_t ctMap;
+      std::stack<viInfoMap_t> viInfoMapStack;
+
+      static const bool analyzeEmbeddedStatements_f = true;
 
       magician(parserBase &parser_);
+
+      viInfoMap_t* currentViInfoMap();
+      void pushMapStack();
+      void popMapStack();
 
       static void castMagicOn(parserBase &parser_);
 
       void castMagic();
-      void castMagicOn(statement &kernel);
+      void analyzeFunction(statement &fs);
+      void analyzeStatement(statement &s);
+
+      void analyzeEmbeddedStatements(statement &s);
+
+      void analyzeUpdateExpression(expNode &e, const int pos);
+      bool analyzeForStatement(statement &s);
+      bool analyzeWhileStatement(statement &s);
+      void analyzeIfStatement(statementNode *snStart, statementNode *snEnd);
+      void analyzeSwitchStatement(statement &s);
+
+      bool statementGuaranteesBreak(statement &s);
+
+      void addVariableWrite(expNode &varNode);
+      void addVariableWrite(expNode &varNode,
+                            const int brackets,
+                            expNode *bracketNode);
+
+      void addVariableRead(expNode &varNode);
+      void addVariableRead(expNode &varNode,
+                           const int brackets,
+                           expNode *bracketNode);
+
+      void addExpressionRead(expNode &e);
     };
   };
 };

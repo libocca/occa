@@ -284,12 +284,7 @@ namespace occa {
       void removeNodes(const int pos, const int count = 1);
       void removeNode(const int pos = 0);
 
-      void convertTo(const int info_ = 0);
-
       bool hasQualifier(const std::string &qualifier);
-
-      void addQualifier(const std::string &qualifier, const int pos = 0);
-      void addPostQualifier(const std::string &qualifier, const int pos = 0);
 
       void removeQualifier(const std::string &qualifier);
 
@@ -304,6 +299,9 @@ namespace occa {
 
       std::string getVariableName(const int pos = 0);
 
+      int getVariableBracketCount();
+      expNode* getVariableBracket(const int pos);
+
       //  ---[ Node-based ]--------
       std::string getMyVariableName();
       //  =========================
@@ -316,7 +314,7 @@ namespace occa {
 
       //---[ Analysis Info ]------------
       bool valueIsKnown(const strToStrMap_t &stsMap = strToStrMap_t());
-      typeHolder computeKnownValue(const strToStrMap_t &stsMap = strToStrMap_t()); // Assumes (valueIsKnown() == true)
+      typeHolder calculateValue(const strToStrMap_t &stsMap = strToStrMap_t()); // Assumes (valueIsKnown() == true)
       //================================
 
       void freeLeaf(const int leafPos);
