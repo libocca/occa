@@ -2,6 +2,9 @@
 
 namespace occa {
   namespace parserNS {
+    viInfo_t::viInfo_t() :
+      info(0) {}
+
     viInfoMap_t::viInfoMap_t() :
       anonVar(NULL) {}
 
@@ -30,13 +33,13 @@ namespace occa {
 
       if(it == viMap.end()){
         if(var.hasQualifier("restrict")){
-          viMap[&var] = new viInfo;
+          viMap[&var] = new viInfo_t;
         }
         else{
           if(anonVar != NULL)
             viMap[&var] = anonVar;
           else
-            viMap[&var] = new viInfo;
+            viMap[&var] = new viInfo_t;
         }
       }
     }
@@ -110,6 +113,8 @@ namespace occa {
 
       if(s.info & (declareStatementType |
                    updateStatementType)){
+
+        s.expRoot.print();
 
         const int varCount = s.expRoot.getVariableCount();
         viInfoMap_t *viMap = currentViInfoMap();
@@ -296,7 +301,31 @@ namespace occa {
       return false;
     }
 
+    bool magician::variableIsUpdated(expNode &varNode){
+      if(!(varNode.info & (expType::varInfo |
+                           expType::variable))){
+
+        return false;
+      }
+
+      expNode *up = varNode.up;
+
+      if((up != NULL) &&
+         (up->info & expType::variable)){
+
+        up = up->up;
+      }
+
+      if(up == NULL)
+        return false;
+
+      return ((up->info & expType::operator_) &&
+              isAnUpdateOperator(up->value));
+    }
+
     void magician::addVariableWrite(expNode &varNode){
+      const bool isUpdated = variableIsUpdated(varNode);
+
       if(varNode.info & expType::variable){
         const int brackets = varNode.getVariableBracketCount();
 
@@ -306,6 +335,9 @@ namespace occa {
         return;
       }
 
+      if(isUpdated)
+        addVariableRead(varNode);
+
       printf("addVariableWrite\n");
       varNode.print();
     }
@@ -313,6 +345,11 @@ namespace occa {
     void magician::addVariableWrite(expNode &varNode,
                                     const int brackets,
                                     expNode *bracketNode){
+      const bool isUpdated = variableIsUpdated(varNode);
+
+      if(isUpdated)
+        addVariableRead(varNode, brackets, bracketNode);
+
       printf("addVariableWrite []\n");
       varNode.print();
     }

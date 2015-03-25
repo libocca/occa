@@ -6,30 +6,42 @@
 namespace occa {
   namespace parserNS {
     class parserBase;
+    class viInfo_t;
 
-    class expInfo {
+    typedef std::map<varInfo*, viInfo_t*> viInfoMap_t_;
+    typedef viInfoMap_t_::iterator        viInfoIterator;
+
+    namespace viType {
+      static const int isAnIterator = (1 << 0);
+      static const int isAnConstant = (1 << 1);
+      static const int isUseless    = (1 << 2);
+    };
+
+    class expInfo_t {
     public:
-      bool isConstant;
+      int info;
+      typeHolder constValue;
       expNode exp;
     };
 
-    class iteratorInfo {
+    class iteratorInfo_t {
     public:
-      expInfo bounds[2], stride;
+      expInfo_t bounds[2], stride;
     };
 
-    class viInfo {
+    class viInfo_t {
     public:
-      bool isAnIterator, isConstant, isUseless;
-    };
+      int info;
+      iteratorInfo_t iteratorInfo;
+      expInfo_t      expInfo;
 
-    typedef std::map<varInfo*, viInfo*> viInfoMap_t_;
-    typedef viInfoMap_t_::iterator     viInfoIterator;
+      viInfo_t();
+    };
 
     class viInfoMap_t {
     public:
       viInfoMap_t_ viMap;
-      viInfo *anonVar; // Stores non-restrict variables
+      viInfo_t *anonVar; // Stores non-restrict variables
 
       viInfoMap_t();
       void free();
@@ -69,6 +81,8 @@ namespace occa {
       void analyzeSwitchStatement(statement &s);
 
       bool statementGuaranteesBreak(statement &s);
+
+      bool variableIsUpdated(expNode &varNode);
 
       void addVariableWrite(expNode &varNode);
       void addVariableWrite(expNode &varNode,

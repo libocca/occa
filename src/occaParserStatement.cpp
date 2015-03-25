@@ -155,8 +155,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      print();
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -1143,12 +1143,28 @@ namespace occa {
         const int levelType = it->second;
 
         if(levelType & unitaryOperatorType){
-          int target = leafPos + ((levelType & lUnitaryOperatorType) ?
-                                  1 : -1);
+          bool updateNow = true;
+
+          const int target = leafPos + ((levelType & lUnitaryOperatorType) ?
+                                        1 : -1);
 
           if(((target < 0) || (leafCount <= target)) ||
              (leaves[target]->info & expType::operator_)){
 
+            updateNow = false;
+          }
+
+          if(keywordType[leaves[leafPos]->value] & binaryOperatorType){
+            const int invTarget = leafPos + ((target == 1) ? -1 : 1);
+
+            if(((invTarget < 0) || (leafCount <= invTarget)) ||
+               !(leaves[invTarget]->info & expType::operator_)){
+
+              updateNow = false;
+            }
+          }
+
+          if(!updateNow){
             ++leafPos;
           }
           else{
