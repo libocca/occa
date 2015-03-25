@@ -111,23 +111,23 @@ namespace occa {
     void magician::analyzeStatement(statement &s){
       bool analyzeEmbedded = true;
 
-      if(s.info & (declareStatementType |
-                   updateStatementType)){
+      std::cout << "s = " << s << '\n';
+      s.expRoot.print();
 
-        s.expRoot.print();
-
+      if(s.info & declareStatementType){
         const int varCount = s.expRoot.getVariableCount();
         viInfoMap_t *viMap = currentViInfoMap();
 
         for(int i = 0; i < varCount; ++i){
           // Add variable to the varInfo map
-          if(s.info & declareStatementType){
-            varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
-            viMap->addVariable(var);
-          }
+          varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
+          viMap->addVariable(var);
 
           analyzeUpdateExpression(s.expRoot, i);
         }
+      }
+
+      else if(s.info & updateStatementType){
       }
 
       else if(s.info & forStatementType){

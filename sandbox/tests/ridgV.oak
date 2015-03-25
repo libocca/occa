@@ -49,7 +49,7 @@ kernel void acousticsVolumeKernelNew(const int  K,
                                                      // kx.bound <= ky.stride -> k is different for kx, ky
         active = (k < Klev);                         // Different for kx, ky
 
-        k = ++k + -1;
+        k = ++k + -1, k = ++k + -1, k = ++k + -1;
 
         if(active){                                  // Different for kx, ky
           if(Klev != K)                              // Independent

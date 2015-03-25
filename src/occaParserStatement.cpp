@@ -1153,12 +1153,11 @@ namespace occa {
 
             updateNow = false;
           }
-
-          if(keywordType[leaves[leafPos]->value] & binaryOperatorType){
+          else if(keywordType[leaves[leafPos]->value] & binaryOperatorType){
             const int invTarget = leafPos + ((target == 1) ? -1 : 1);
 
             if(((invTarget < 0) || (leafCount <= invTarget)) ||
-               !(leaves[invTarget]->info & expType::operator_)){
+               (leaves[invTarget]->info & expType::operator_)){
 
               updateNow = false;
             }
@@ -2694,8 +2693,10 @@ namespace occa {
       }
 
       case (expType::LR):{
-        if((value != ".") && (value != "->"))
+        if((value != ".") && (value != "->") && (value != ","))
           out << *(leaves[0]) << ' ' << value << ' ' << *(leaves[1]);
+        else if(value == ",")
+          out << *(leaves[0]) << value << ' ' << *(leaves[1]);
         else
           out << *(leaves[0]) << value << *(leaves[1]);
 
