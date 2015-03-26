@@ -3594,55 +3594,70 @@ namespace occa {
       }
 
       //---[ Operator Precedence ]--------
+      opLevelL2R[0] = true;
       opPrecedence[opHolder("::", binaryOperatorType)]   = 0;
 
       // class(...), class{1,2,3}, static_cast<>(), func(), arr[]
+      opLevelL2R[1] = true;
       opPrecedence[opHolder("++", rUnitaryOperatorType)] = 1;
       opPrecedence[opHolder("--", rUnitaryOperatorType)] = 1;
       opPrecedence[opHolder("." , binaryOperatorType)]   = 1;
       opPrecedence[opHolder("->", binaryOperatorType)]   = 1;
 
       // (int) x, sizeof, new, new [], delete, delete []
+      opLevelL2R[2] = false;
       opPrecedence[opHolder("++", lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("--", lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("+" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("-" , lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("!" , lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("~" , lUnitaryOperatorType)] = 2;
+      opPrecedence[opHolder("+" , lUnitaryOperatorType)] = 2;
+      opPrecedence[opHolder("-" , lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("*" , lUnitaryOperatorType)] = 2;
       opPrecedence[opHolder("&" , lUnitaryOperatorType)] = 2;
 
+      opLevelL2R[3] = true;
       opPrecedence[opHolder(".*" , binaryOperatorType)]  = 3;
       opPrecedence[opHolder("->*", binaryOperatorType)]  = 3;
 
+      opLevelL2R[4] = true;
       opPrecedence[opHolder("*" , binaryOperatorType)]   = 4;
       opPrecedence[opHolder("/" , binaryOperatorType)]   = 4;
       opPrecedence[opHolder("%" , binaryOperatorType)]   = 4;
 
+      opLevelL2R[5] = true;
       opPrecedence[opHolder("+" , binaryOperatorType)]   = 5;
       opPrecedence[opHolder("-" , binaryOperatorType)]   = 5;
 
+      opLevelL2R[6] = true;
       opPrecedence[opHolder("<<", binaryOperatorType)]   = 6;
       opPrecedence[opHolder(">>", binaryOperatorType)]   = 6;
 
+      opLevelL2R[7] = true;
       opPrecedence[opHolder("<" , binaryOperatorType)]   = 7;
       opPrecedence[opHolder("<=", binaryOperatorType)]   = 7;
       opPrecedence[opHolder(">=", binaryOperatorType)]   = 7;
       opPrecedence[opHolder(">" , binaryOperatorType)]   = 7;
 
+      opLevelL2R[8] = true;
       opPrecedence[opHolder("==", binaryOperatorType)]   = 8;
       opPrecedence[opHolder("!=", binaryOperatorType)]   = 8;
 
+      opLevelL2R[9] = true;
       opPrecedence[opHolder("&" , binaryOperatorType)]   = 9;
 
+      opLevelL2R[10] = true;
       opPrecedence[opHolder("^" , binaryOperatorType)]   = 10;
 
+      opLevelL2R[11] = true;
       opPrecedence[opHolder("|" , binaryOperatorType)]   = 11;
 
+      opLevelL2R[12] = true;
       opPrecedence[opHolder("&&", binaryOperatorType)]   = 12;
 
+      opLevelL2R[13] = true;
       opPrecedence[opHolder("||", binaryOperatorType)]   = 13;
 
+      opLevelL2R[14] = true;
       opPrecedence[opHolder("?" , ternaryOperatorType)]  = 14;
       opPrecedence[opHolder("=" , assOperatorType)]      = 14;
       opPrecedence[opHolder("+=", assOperatorType)]      = 14;
@@ -3658,6 +3673,7 @@ namespace occa {
 
       // 15: throw x
 
+      opLevelL2R[16] = true;
       opPrecedence[opHolder("," , binaryOperatorType)]   = 16;
 
       opLevelMap[ 0]["::"]  = binaryOperatorType;

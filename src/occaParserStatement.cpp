@@ -1122,21 +1122,29 @@ namespace occa {
     }
 
     void expNode::organizeLeaves(const int level){
-      int leafPos = 0;
+      bool leftToRight = opLevelL2R[level];
 
-      while(leafPos < leafCount){
+      int leafPos  = (leftToRight ? 0 : (leafCount - 1));
+      const int ls = (leftToRight ? 1 : -1);
+
+      while(true){
+        if(( (leftToRight) && (leafCount <= leafPos)) ||
+           ((!leftToRight) && (leafPos < 0)))
+          break;
+
         if((leaves[leafPos]->leafCount)                  ||
            (leaves[leafPos]->info &  expType::hasInfo)   ||
            (leaves[leafPos]->info == expType::qualifier)){
 
-          ++leafPos;
+          leafPos += ls;
           continue;
         }
 
-        opLevelMapIterator it = opLevelMap[level].find(leaves[leafPos]->value);
+        std::string &lStr = leaves[leafPos]->value;
+        opLevelMapIterator it = opLevelMap[level].find(lStr);
 
         if(it == opLevelMap[level].end()){
-          ++leafPos;
+          leafPos += ls;
           continue;
         }
 
@@ -1145,40 +1153,46 @@ namespace occa {
         if(levelType & unitaryOperatorType){
           bool updateNow = true;
 
-          const int target = leafPos + ((levelType & lUnitaryOperatorType) ?
-                                        1 : -1);
+          const int targetOff = ((levelType & lUnitaryOperatorType) ? 1 : -1);
+          const int target    = leafPos + targetOff;
 
-          if(((target < 0) || (leafCount <= target)) ||
-             (leaves[target]->info & expType::operator_)){
-
+          if((target < 0) || (leafCount <= target)){
             updateNow = false;
           }
-          else if(keywordType[leaves[leafPos]->value] & binaryOperatorType){
-            const int invTarget = leafPos + ((target == 1) ? -1 : 1);
-
-            if(((invTarget < 0) || (leafCount <= invTarget)) ||
-               (leaves[invTarget]->info & expType::operator_)){
+          else{
+            if(leaves[target]->info & expType::operator_)
+              updateNow = false;
+            // Cases: & * + -
+            else if(keywordType[lStr] & binaryOperatorType){
+              const int invTarget = leafPos + ((targetOff == 1) ?
+                                               -1 : 1);
 
               updateNow = false;
+
+              if((invTarget < 0) || (leafCount <= invTarget) ||
+                 (leaves[invTarget]->info & expType::operator_)){
+
+                updateNow = true;
+              }
             }
           }
 
           if(!updateNow){
-            ++leafPos;
+            leafPos += ls;
           }
           else{
             if(levelType & lUnitaryOperatorType)
-              leafPos = mergeLeftUnary(leafPos);
+              leafPos = mergeLeftUnary(leafPos, leftToRight);
             else
-              leafPos = mergeRightUnary(leafPos);
+              leafPos = mergeRightUnary(leafPos, leftToRight);
           }
         }
         else if(levelType & binaryOperatorType)
-          leafPos = mergeBinary(leafPos);
+          leafPos = mergeBinary(leafPos, leftToRight);
         else if(levelType & ternaryOperatorType)
-          leafPos = mergeTernary(leafPos);
+          leafPos = mergeTernary(leafPos, leftToRight);
         else
-          ++leafPos;
+          leafPos += ls;
       }
     }
 
@@ -1521,9 +1535,11 @@ namespace occa {
     }
 
     // [++]i
-    int expNode::mergeLeftUnary(const int leafPos){
+    int expNode::mergeLeftUnary(const int leafPos, const bool leftToRight){
+      const int retPos = (leftToRight ? (leafPos + 1) : (leafPos - 1));
+
       if(leafCount <= (leafPos + 1))
-        return leafPos + 1;
+        return retPos;
 
       expNode *leaf  = leaves[leafPos];
       expNode *sLeaf = leaves[leafPos + 1];
@@ -1540,13 +1556,15 @@ namespace occa {
 
       sLeaf->up = leaf;
 
-      return (leafPos + 1);
+      return retPos;
     }
 
     // i[++]
-    int expNode::mergeRightUnary(const int leafPos){
+    int expNode::mergeRightUnary(const int leafPos, const bool leftToRight){
+      const int retPos = (leftToRight ? (leafPos + 1) : (leafPos - 1));
+
       if(0 == leafPos)
-        return leafPos + 1;
+        return retPos;
 
       expNode *leaf  = leaves[leafPos];
       expNode *sLeaf = leaves[leafPos - 1];
@@ -1565,13 +1583,15 @@ namespace occa {
 
       sLeaf->up = leaf;
 
-      return (leafPos + 1);
+      return retPos;
     }
 
     // a [+] b
-    int expNode::mergeBinary(const int leafPos){
+    int expNode::mergeBinary(const int leafPos, const bool leftToRight){
+      const int retPos = (leftToRight ? (leafPos + 1) : (leafPos - 1));
+
       if((0 == leafPos) || (leafCount <= (leafPos + 1)))
-        return leafPos + 1;
+        return retPos;
 
       expNode *leaf   = leaves[leafPos];
       expNode *sLeafL = leaves[leafPos - 1];
@@ -1593,13 +1613,15 @@ namespace occa {
       sLeafL->up = leaf;
       sLeafR->up = leaf;
 
-      return leafPos;
+      return (leftToRight ? leafPos : leafPos - 2);
     }
 
     // a [?] b : c
-    int expNode::mergeTernary(const int leafPos){
+    int expNode::mergeTernary(const int leafPos, const bool leftToRight){
+      const int retPos = (leftToRight ? (leafPos + 1) : (leafPos - 1));
+
       if((0 == leafPos) || (leafCount <= (leafPos + 3)))
-        return leafPos + 1;
+        return retPos;
 
       expNode *leaf   = leaves[leafPos];
       expNode *sLeafL = leaves[leafPos - 1];
@@ -1624,7 +1646,7 @@ namespace occa {
       sLeafC->up = leaf;
       sLeafR->up = leaf;
 
-      return leafPos;
+      return (leftToRight ? leafPos : leafPos - 2);
     }
 
     //---[ Custom Type Info ]---------
@@ -2461,6 +2483,87 @@ namespace occa {
       }
 
       return NULL;
+    }
+
+    int expNode::getUpdatedVariableCount(){
+      if(leafCount == 0)
+        return 0;
+
+      if(sInfo &&
+         (sInfo->info & updateStatementType)){
+
+        int count = 0;
+        expNode *cNode = leaves[0];
+
+        while(cNode &&
+              (cNode->value == ",")){
+
+          if(2 <= leafCount)
+            count += (isAnAssOperator(leaves[1]->value));
+
+          cNode = cNode->leaves[0];
+        }
+
+        return count;
+      }
+
+      return 0;
+    }
+
+    bool expNode::updatedVariableHasInit(const int pos){
+      expNode *n = getUpdatedNode(pos);
+
+      if(n == NULL)
+        return false;
+
+      return ((n->info & expType::operator_) &&
+              isAnAssOperator(n->value));
+    }
+
+    expNode* expNode::getUpdatedNode(const int pos){
+      if(leafCount == 0)
+        return NULL;
+
+      if(sInfo &&
+         (sInfo->info & updateStatementType)){
+
+        int count = 0;
+        expNode *cNode = leaves[0];
+
+        while(cNode &&
+              (cNode->value == ",")){
+
+          if(2 <= leafCount)
+            count += (isAnAssOperator(leaves[1]->value));
+
+          if(count == pos)
+            return cNode->leaves[1];
+
+          cNode = cNode->leaves[0];
+        }
+
+        return NULL;
+      }
+
+      return NULL;
+    }
+
+    expNode* expNode::getUpdatedVariableInfoNode(const int pos){
+      expNode *n = getUpdatedNode(pos);
+
+      if(n == NULL)
+        return NULL;
+
+      return n->leaves[0];
+    }
+
+    expNode* expNode::getUpdatedVariableInitNode(const int pos){
+      expNode *n = getUpdatedNode(pos);
+
+      if(n == NULL)
+        return NULL;
+
+      return n->leaves[1];
     }
 
     std::string expNode::getVariableName(const int pos){

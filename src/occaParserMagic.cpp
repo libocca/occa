@@ -123,11 +123,15 @@ namespace occa {
           varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
           viMap->addVariable(var);
 
-          analyzeUpdateExpression(s.expRoot, i);
+          analyzeDeclareExpression(s.expRoot, i);
         }
       }
 
       else if(s.info & updateStatementType){
+        const int upCount = s.expRoot.getUpdatedVariableCount();
+
+        for(int i = 0; i < upCount; ++i)
+          analyzeUpdateExpression(s.expRoot, i);
       }
 
       else if(s.info & forStatementType){
@@ -196,11 +200,20 @@ namespace occa {
       }
     }
 
-    void magician::analyzeUpdateExpression(expNode &e, const int pos){
+    void magician::analyzeDeclareExpression(expNode &e, const int pos){
       if(e.variableHasInit(pos)){
         addVariableWrite( *(e.getVariableInfoNode(pos)) );
         addExpressionRead( *(e.getVariableInitNode(pos)) );
       }
+    }
+
+    void magician::analyzeUpdateExpression(expNode &e, const int pos){
+      if(e.updatedVariableHasInit(pos)){
+        addVariableWrite( *(e.getUpdatedVariableInfoNode(pos)) );
+        addExpressionRead( *(e.getUpdatedVariableInitNode(pos)) );
+      }
+      else
+        addExpressionRead(e);
     }
 
     bool magician::analyzeForStatement(statement &s){

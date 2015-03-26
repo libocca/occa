@@ -74,6 +74,7 @@ namespace occa {
 
       void analyzeEmbeddedStatements(statement &s);
 
+      void analyzeDeclareExpression(expNode &e, const int pos);
       void analyzeUpdateExpression(expNode &e, const int pos);
       bool analyzeForStatement(statement &s);
       bool analyzeWhileStatement(statement &s);

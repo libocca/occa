@@ -208,16 +208,16 @@ namespace occa {
       void mergeThrows();
 
       // [++]i
-      int mergeLeftUnary(const int leafPos);
+      int mergeLeftUnary(const int leafPos, const bool leftToRight);
 
       // i[++]
-      int mergeRightUnary(const int leafPos);
+      int mergeRightUnary(const int leafPos, const bool leftToRight);
 
       // a [+] b
-      int mergeBinary(const int leafPos);
+      int mergeBinary(const int leafPos, const bool leftToRight);
 
       // a [?] b : c
-      int mergeTernary(const int leafPos);
+      int mergeTernary(const int leafPos, const bool leftToRight);
 
       //---[ Custom Type Info ]---------
       bool qualifierEndsWithStar();
@@ -298,6 +298,13 @@ namespace occa {
       expNode* getVariableInitNode(const int pos);
 
       std::string getVariableName(const int pos = 0);
+
+      int getUpdatedVariableCount();
+      bool updatedVariableHasInit(const int pos);
+
+      expNode* getUpdatedNode(const int pos);
+      expNode* getUpdatedVariableInfoNode(const int pos);
+      expNode* getUpdatedVariableInitNode(const int pos);
 
       int getVariableBracketCount();
       expNode* getVariableBracket(const int pos);

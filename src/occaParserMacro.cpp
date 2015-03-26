@@ -21,6 +21,7 @@ namespace occa {
 
     opTypeMap_t opPrecedence;
     opLevelMap_t opLevelMap[17];
+    bool opLevelL2R[17];
     //==============================================
 
 
