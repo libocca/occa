@@ -2485,6 +2485,23 @@ namespace occa {
       return NULL;
     }
 
+    std::string expNode::getVariableName(const int pos){
+      if(info == expType::declaration){
+        expNode &leaf = *(leaves[pos]);
+
+        if(leaf.info & expType::varInfo){
+          return leaf.getVarInfo().name;
+        }
+        else if(leaf.leafCount &&
+                (leaf[0].value == "=")){
+
+          return leaf[0].getVarInfo(0).name;
+        }
+      }
+
+      return "";
+    }
+
     int expNode::getUpdatedVariableCount(){
       if(leafCount == 0)
         return 0;
@@ -2564,23 +2581,6 @@ namespace occa {
         return NULL;
 
       return n->leaves[1];
-    }
-
-    std::string expNode::getVariableName(const int pos){
-      if(info == expType::declaration){
-        expNode &leaf = *(leaves[pos]);
-
-        if(leaf.info & expType::varInfo){
-          return leaf.getVarInfo().name;
-        }
-        else if(leaf.leafCount &&
-                (leaf[0].value == "=")){
-
-          return leaf[0].getVarInfo(0).name;
-        }
-      }
-
-      return "";
     }
 
     int expNode::getVariableBracketCount(){
