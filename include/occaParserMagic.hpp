@@ -8,6 +8,9 @@ namespace occa {
     class parserBase;
     class viInfo_t;
 
+    typedef std::map<statement*, int> smntInfoMap_t;
+    typedef smntInfoMap_t::iterator   smntInfoIterator;
+
     typedef std::map<varInfo*, viInfo_t*> viInfoMap_t_;
     typedef viInfoMap_t_::iterator        viInfoIterator;
 
@@ -19,7 +22,9 @@ namespace occa {
     };
 
     namespace analyzeInfo {
-      static const int analyzeEmbedded = (1 << 0);
+      static const int isExecuted      = (1 << 1);
+      static const int isIgnored       = (1 << 2);
+      static const int schrodinger     = (isExecuted | isIgnored); // hehe
     };
 
     class atomInfo_t {
@@ -131,6 +136,7 @@ namespace occa {
     class viInfoDB_t {
     public:
       viInfoMap_t viInfoMap;
+      smntInfoMap_t smntInfoMap;
 
       void add(varInfo &var);
       viInfo_t* has(varInfo &var);
@@ -149,8 +155,6 @@ namespace occa {
       varUsedMap_t &varUsedMap;
 
       viInfoDB_t viInfoDB;
-
-      static const bool analyzeEmbeddedStatements_f = true;
 
       magician(parserBase &parser_);
 

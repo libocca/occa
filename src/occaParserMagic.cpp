@@ -385,7 +385,7 @@ namespace occa {
     }
 
     void magician::analyzeStatement(statement &s){
-      int smntInfo = analyzeInfo::analyzeEmbedded;
+      int smntInfo = analyzeInfo::isExecuted;
 
       if(s.info & declareStatementType){
         analyzeDeclareStatement(smntInfo, s.expRoot);
@@ -411,7 +411,7 @@ namespace occa {
         analyzeEmbeddedStatements(s);
         analyzeWhileStatement(smntInfo, s);
 
-        smntInfo &= ~analyzeInfo::analyzeEmbedded;
+        smntInfo &= ~analyzeInfo::isExecuted;
       }
 
       else if(s.info & ifStatementType){
@@ -446,7 +446,7 @@ namespace occa {
         printf("[Magic Analyzer] Goto statements are not supported\n");
       }
 
-      if(smntInfo & analyzeInfo::analyzeEmbedded)
+      if(smntInfo & analyzeInfo::isExecuted)
         analyzeEmbeddedStatements(s);
     }
 
@@ -516,7 +516,7 @@ namespace occa {
     void magician::analyzeForStatement(int &smntInfo, statement &s){
       if(s.getForStatementCount() < 3){
         printf("[Magic Analyzer] For-loops without 3 statements (4 for okl/ofl loops) are not supported\n");
-        smntInfo &= ~analyzeInfo::analyzeEmbedded;
+        smntInfo &= ~analyzeInfo::isExecuted;
         return;
       }
 
@@ -612,7 +612,7 @@ namespace occa {
       if( !(th.type & noType) &&
           (th.boolValue() == false) ){
 
-        smntInfo &= ~analyzeInfo::analyzeEmbedded;
+        smntInfo &= ~analyzeInfo::isExecuted;
         return;
       }
     }
