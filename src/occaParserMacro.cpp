@@ -130,6 +130,62 @@ namespace occa {
       return *this;
     }
 
+    typeHolder& typeHolder::operator = (const std::string &str){
+      *this = typeHolder(str);
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const int int__){
+      value.int_ = int__;
+      type       = intType;
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const bool bool__){
+      value.bool_ = bool__;
+      type       = boolType;
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const char char__){
+      value.char_ = char__;
+      type       = charType;
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const long long__){
+      value.long_ = long__;
+      type       = longType;
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const short short__){
+      value.short_ = short__;
+      type       = shortType;
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const float float__){
+      value.float_ = float__;
+      type       = floatType;
+
+      return *this;
+    }
+
+    typeHolder& typeHolder::operator = (const double double__){
+      value.double_ = double__;
+      type       = doubleType;
+
+      return *this;
+    }
+
+
     bool typeHolder::operator == (const typeHolder &th) const {
       int maxType = ((type > th.type) ?
                      th.type          :

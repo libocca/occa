@@ -12,28 +12,69 @@ namespace occa {
     typedef viInfoMap_t_::iterator        viInfoIterator;
 
     namespace viType {
-      static const int isAnIterator = (1 << 0);
-      static const int isAnConstant = (1 << 1);
-      static const int isUseless    = (1 << 2);
+      static const int isUseless        = (1 << 0);
+      static const int isAVariable      = (1 << 1);
+      static const int isAnIterator     = (1 << 2);
+      static const int isConstant       = (1 << 3);
     };
 
-    class expInfo_t {
+    namespace analyzeInfo {
+      static const int analyzeEmbedded = (1 << 0);
+    };
+
+    class atomInfo_t {
     public:
       int info;
       typeHolder constValue;
       expNode exp;
+      varInfo *var;
+
+      atomInfo_t();
+
+      void load(expNode &e);
+      void load(const std::string &s);
+    };
+
+    class valueInfo_t {
+    public:
+      int indices;
+      atomInfo_t *vars, *strides;
+
+      valueInfo_t();
+
+      bool isUseless();
+
+      void load(expNode &e);
+      void loadVS(expNode &e, const int pos);
+
+      void allocVS(const int count);
+      varInfo& var(const int pos);
+      atomInfo_t& stride(const int pos);
+    };
+
+    class accessInfo_t {
+    public:
+      int dim;
+      valueInfo_t *dimIndices;
+
+      accessInfo_t();
+
+      void load(const int brackets, expNode &bracketNode);
     };
 
     class iteratorInfo_t {
     public:
-      expInfo_t bounds[2], stride;
+      valueInfo_t start, end, stride;
+
+      iteratorInfo_t();
     };
 
     class viInfo_t {
     public:
       int info;
+      valueInfo_t    valueInfo;
+      accessInfo_t   dimInfo;
       iteratorInfo_t iteratorInfo;
-      expInfo_t      expInfo;
 
       viInfo_t();
     };
@@ -49,6 +90,15 @@ namespace occa {
       void addVariable(varInfo &var);
     };
 
+    class viInfoDB_t {
+    public:
+      std::stack<viInfoMap_t> viInfoMapStack;
+
+      viInfoMap_t* map();
+      void enteringStatement();
+      void leavingStatement();
+    };
+
     class magician {
     public:
       parserBase &parser;
@@ -56,7 +106,7 @@ namespace occa {
       varUsedMap_t &varUpdateMap;
       varUsedMap_t &varUsedMap;
 
-      std::stack<viInfoMap_t> viInfoMapStack;
+      viInfoDB_t viInfoDB;
 
       static const bool analyzeEmbeddedStatements_f = true;
 
@@ -74,26 +124,27 @@ namespace occa {
 
       void analyzeEmbeddedStatements(statement &s);
 
-      void analyzeDeclareExpression(expNode &e, const int pos);
-      void analyzeUpdateExpression(expNode &e, const int pos);
-      bool analyzeForStatement(statement &s);
-      bool analyzeWhileStatement(statement &s);
-      void analyzeIfStatement(statementNode *snStart, statementNode *snEnd);
-      void analyzeSwitchStatement(statement &s);
+      void analyzeDeclareExpression(int &smntInfo, expNode &e, const int pos);
+      void analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos);
+      void analyzeForStatement(int &smntInfo, statement &s);
+      void analyzeWhileStatement(int &smntInfo, statement &s);
+      void analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd);
+      void analyzeSwitchStatement(int &smntInfo, statement &s);
 
       bool statementGuaranteesBreak(statement &s);
 
       bool variableIsUpdated(expNode &varNode);
 
-      void addVariableWrite(expNode &varNode);
+      void addVariableWrite(expNode &varNode, expNode &setNode);
       void addVariableWrite(expNode &varNode,
+                            expNode &setNode,
                             const int brackets,
-                            expNode *bracketNode);
+                            expNode &bracketNode);
 
       void addVariableRead(expNode &varNode);
       void addVariableRead(expNode &varNode,
                            const int brackets,
-                           expNode *bracketNode);
+                           expNode &bracketNode);
 
       void addExpressionRead(expNode &e);
     };

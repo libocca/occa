@@ -2,8 +2,138 @@
 
 namespace occa {
   namespace parserNS {
+    atomInfo_t::atomInfo_t() :
+      info(viType::isUseless),
+      var(NULL) {}
+
+    void atomInfo_t::load(expNode &e){
+      info = viType::isUseless;
+
+      if(e.info & expType::varInfo){
+        info = viType::isAVariable;
+        var  = &(e.getVarInfo());
+      }
+      else{
+        constValue = e.calculateValue();
+
+        if(constValue.type & noType)
+          exp = e;
+        else
+          info = viType::isConstant;
+      }
+    }
+
+    void atomInfo_t::load(const std::string &s){
+      info       = viType::isConstant;
+      constValue = s;
+    }
+
+    valueInfo_t::valueInfo_t() :
+      indices(0),
+      vars(NULL),
+      strides(NULL) {}
+
+    bool valueInfo_t::isUseless(){
+      for(int i = 0; i < indices; ++i){
+        if(vars[i].info & viType::isUseless)
+          return true;
+      }
+
+      return false;
+    }
+
+    void valueInfo_t::load(expNode &e){
+      expNode *cNode = &e;
+      indices = 1;
+
+      // Needs to warn about negative indices
+      while((cNode        != NULL)        &&
+            (cNode->info  == expType::LR) &&
+            (cNode->value == "+")){
+
+        ++indices;
+        cNode = cNode->leaves[0];
+      }
+
+      allocVS(indices);
+
+      if(indices == 1){
+        loadVS(e, 0);
+      }
+      else {
+        cNode = &e;
+
+        for(int i = 0; i < (indices - 1); ++i){
+          const int invI = (indices - i - 1);
+          loadVS((*cNode)[1], invI);
+
+          if(invI == 1)
+            loadVS((*cNode)[0], 0);
+
+          cNode = cNode->leaves[0];
+        }
+      }
+    }
+
+    void valueInfo_t::loadVS(expNode &e, const int pos){
+      if((e.info  == expType::LR) &&
+         (e.value == "*")){
+
+        const bool varIn0 = (e[0].info & expType::varInfo);
+        const bool varIn1 = (e[1].info & expType::varInfo);
+
+        if(varIn0 || varIn1){
+          vars[pos].load(e[varIn1]);
+          strides[pos].load(e[!varIn1]);
+          return;
+        }
+      }
+      else if(e.info == expType::varInfo){
+        vars[pos].load(e);
+        strides[pos].load("1");
+        return;
+      }
+      else if(e.info == expType::presetValue){
+        vars[pos].load(e.value);
+        strides[pos].load("1");
+        return;
+      }
+
+      std::cout << "useless e = " << e << '\n';
+
+      vars[pos].info    = viType::isUseless;
+      strides[pos].info = viType::isUseless;
+    }
+
+    void valueInfo_t::allocVS(const int count){
+      vars    = new atomInfo_t[count];
+      strides = new atomInfo_t[count];
+    }
+
+    varInfo& valueInfo_t::var(const int pos){
+      return *(vars[pos].var);
+    }
+
+    atomInfo_t& valueInfo_t::stride(const int pos){
+      return strides[pos];
+    }
+
+    accessInfo_t::accessInfo_t() :
+      dim(0),
+      dimIndices(NULL) {}
+
+    void accessInfo_t::load(const int brackets, expNode &bracketNode){
+      dim = brackets;
+      dimIndices = new valueInfo_t[dim];
+
+      for(int i = 0; i < dim; ++i)
+        dimIndices[i].load(bracketNode[i][0]);
+    }
+
+    iteratorInfo_t::iteratorInfo_t(){}
+
     viInfo_t::viInfo_t() :
-      info(0) {}
+      info(viType::isUseless) {}
 
     viInfoMap_t::viInfoMap_t() :
       anonVar(NULL) {}
@@ -26,6 +156,9 @@ namespace occa {
 
         ++it;
       }
+
+      viMap.clear();
+      anonVar = NULL;
     }
 
     void viInfoMap_t::addVariable(varInfo &var){
@@ -44,24 +177,24 @@ namespace occa {
       }
     }
 
+    viInfoMap_t* viInfoDB_t::map(){
+      return &(viInfoMapStack.top());
+    }
+
+    void viInfoDB_t::enteringStatement(){
+      viInfoMapStack.push( viInfoMap_t() );
+    }
+
+    void viInfoDB_t::leavingStatement(){
+      viInfoMapStack.top().free();
+      viInfoMapStack.pop();
+    }
+
     magician::magician(parserBase &parser_) :
       parser(parser_),
       globalScope( *(parser_.globalScope) ),
       varUpdateMap(parser_.varUpdateMap),
       varUsedMap(parser_.varUsedMap) {}
-
-    viInfoMap_t* magician::currentViInfoMap(){
-      return &(viInfoMapStack.top());
-    }
-
-    void magician::pushMapStack(){
-      viInfoMapStack.push( viInfoMap_t() );
-    }
-
-    void magician::popMapStack(){
-      viInfoMapStack.top().free();
-      viInfoMapStack.pop();
-    }
 
     void magician::castMagicOn(parserBase &parser_){
       magician mickey(parser_);
@@ -84,9 +217,9 @@ namespace occa {
     void magician::analyzeFunction(statement &fs){
       varInfo &func = *(fs.getFunctionVar());
 
-      pushMapStack();
+      viInfoDB.enteringStatement();
 
-      viInfoMap_t *viMap = currentViInfoMap();
+      viInfoMap_t *viMap = viInfoDB.map();
 
       // Place function arguments (if any)
       if(func.argumentCount){
@@ -105,22 +238,22 @@ namespace occa {
         statementPos = statementPos->right;
       }
 
-      popMapStack();
+      viInfoDB.leavingStatement();
     }
 
     void magician::analyzeStatement(statement &s){
-      bool analyzeEmbedded = true;
+      int smntInfo = analyzeInfo::analyzeEmbedded;
 
       if(s.info & declareStatementType){
         const int varCount = s.expRoot.getVariableCount();
-        viInfoMap_t *viMap = currentViInfoMap();
+        viInfoMap_t *viMap = viInfoDB.map();
 
         for(int i = 0; i < varCount; ++i){
           // Add variable to the varInfo map
           varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
           viMap->addVariable(var);
 
-          analyzeDeclareExpression(s.expRoot, i);
+          analyzeDeclareExpression(smntInfo, s.expRoot, i);
         }
       }
 
@@ -128,23 +261,23 @@ namespace occa {
         const int upCount = s.expRoot.getUpdatedVariableCount();
 
         for(int i = 0; i < upCount; ++i)
-            analyzeUpdateExpression(s.expRoot, i);
+          analyzeUpdateExpression(smntInfo, s.expRoot, i);
       }
 
       else if(s.info & forStatementType){
-        analyzeEmbedded = analyzeForStatement(s);
+        analyzeForStatement(smntInfo, s);
       }
 
       else if(s.info & whileStatementType){
-        analyzeEmbedded = analyzeWhileStatement(s);
+        analyzeWhileStatement(smntInfo, s);
       }
 
       else if(s.info & doWhileStatementType){
-        analyzeEmbedded = false;
-
         // do-while guarantees at least one run
         analyzeEmbeddedStatements(s);
-        analyzeWhileStatement(s);
+        analyzeWhileStatement(smntInfo, s);
+
+        smntInfo &= ~analyzeInfo::analyzeEmbedded;
       }
 
       else if(s.info & ifStatementType){
@@ -158,13 +291,11 @@ namespace occa {
           snEnd = snEnd->right;
         }
 
-        analyzeEmbedded = false;
-        analyzeIfStatement(snStart, snEnd);
+        analyzeIfStatement(smntInfo, snStart, snEnd);
       }
 
       else if(s.info & switchStatementType){
-        analyzeEmbedded = false;
-        analyzeSwitchStatement(s);
+        analyzeSwitchStatement(smntInfo, s);
       }
 
       else if(s.info & (typedefStatementType   |
@@ -181,13 +312,13 @@ namespace occa {
         printf("[Magic Analyzer] Goto statements are not supported\n");
       }
 
-      if(analyzeEmbedded)
+      if(smntInfo & analyzeInfo::analyzeEmbedded)
         analyzeEmbeddedStatements(s);
     }
 
     void magician::analyzeEmbeddedStatements(statement &s){
       if(s.statementStart != NULL){
-        pushMapStack();
+        viInfoDB.enteringStatement();
 
         statementNode *statementPos = s.statementStart;
 
@@ -197,48 +328,62 @@ namespace occa {
           statementPos = statementPos->right;
         }
 
-        popMapStack();
+        viInfoDB.leavingStatement();
       }
     }
 
-    void magician::analyzeDeclareExpression(expNode &e, const int pos){
+    void magician::analyzeDeclareExpression(int &smntInfo, expNode &e, const int pos){
       if(e.variableHasInit(pos)){
-        addVariableWrite( *(e.getVariableInfoNode(pos)) );
-        addExpressionRead( *(e.getVariableInitNode(pos)) );
+        expNode &varNode  = *(e.getVariableInfoNode(pos));
+        expNode &initNode = *(e.getVariableInitNode(pos));
+
+        addVariableWrite(varNode, initNode);
+        addExpressionRead(initNode);
       }
     }
 
-    void magician::analyzeUpdateExpression(expNode &e, const int pos){
+    void magician::analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos){
       if(e.updatedVariableIsSet(pos)){
-        addVariableWrite( *(e.getUpdatedVariableInfoNode(pos)) );
-        addExpressionRead( *(e.getUpdatedVariableSetNode(pos)) );
+        expNode &varNode = *(e.getUpdatedVariableInfoNode(pos));
+        expNode &setNode = *(e.getUpdatedVariableSetNode(pos));
+
+        addVariableWrite(varNode, setNode);
+        addExpressionRead(setNode);
       }
       else
         addExpressionRead(e);
     }
 
-    bool magician::analyzeForStatement(statement &s){
+    void magician::analyzeForStatement(int &smntInfo, statement &s){
       if(s.getForStatementCount() < 3){
         printf("[Magic Analyzer] For-loops without 3 statements (4 for okl/ofl loops) are not supported\n");
-        return analyzeEmbeddedStatements_f;
+        smntInfo &= ~analyzeInfo::analyzeEmbedded;
+        return;
       }
 
-      return analyzeEmbeddedStatements_f;
+      expNode &updateNode = s.expRoot[2];
+
+      if(updateNode.leafCount == 0){
+        printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n  X op Y where op can be [+=] or [-=]\n  ++X, X++, --X, X--\n");
+        smntInfo &= ~analyzeInfo::analyzeEmbedded;
+        return;
+      }
+
+      // updateNode.print();
     }
 
-    bool magician::analyzeWhileStatement(statement &s){
+    void magician::analyzeWhileStatement(int &smntInfo, statement &s){
       typeHolder th = s.expRoot[0].calculateValue();
 
       if( !(th.type & noType) &&
           (th.boolValue() == false) ){
 
-        return !analyzeEmbeddedStatements_f;
+        smntInfo &= ~analyzeInfo::analyzeEmbedded;
+        return;
       }
-
-      return analyzeEmbeddedStatements_f;
     }
 
-    void magician::analyzeIfStatement(statementNode *snStart, statementNode *snEnd){
+    void magician::analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd){
       statementNode *sn = snStart;
 
       while(sn != snEnd){
@@ -267,7 +412,7 @@ namespace occa {
       }
     }
 
-    void magician::analyzeSwitchStatement(statement &s){
+    void magician::analyzeSwitchStatement(int &smntInfo, statement &s){
       typeHolder th = s.expRoot[0].calculateValue();
 
       if(th.type & noType){
@@ -337,33 +482,30 @@ namespace occa {
               isAnUpdateOperator(up->value));
     }
 
-    void magician::addVariableWrite(expNode &varNode){
+    void magician::addVariableWrite(expNode &varNode, expNode &setNode){
       const bool isUpdated = variableIsUpdated(varNode);
 
       if(varNode.info & expType::variable){
         const int brackets = varNode.getVariableBracketCount();
 
         if(brackets)
-          addVariableWrite(varNode, brackets, varNode.getVariableBracket(0)->up);
+          addVariableWrite(varNode, setNode, brackets, *(varNode.getVariableBracket(0)->up));
 
         return;
       }
 
       if(isUpdated)
         addVariableRead(varNode);
-
-      varNode.print();
     }
 
     void magician::addVariableWrite(expNode &varNode,
+                                    expNode &setNode,
                                     const int brackets,
-                                    expNode *bracketNode){
+                                    expNode &bracketNode){
       const bool isUpdated = variableIsUpdated(varNode);
 
       if(isUpdated)
         addVariableRead(varNode, brackets, bracketNode);
-
-      varNode.print();
     }
 
     void magician::addVariableRead(expNode &varNode){
@@ -371,18 +513,17 @@ namespace occa {
         const int brackets = varNode.getVariableBracketCount();
 
         if(brackets)
-          addVariableRead(varNode, brackets, varNode.getVariableBracket(0)->up);
+          addVariableRead(varNode, brackets, *(varNode.getVariableBracket(0)->up));
 
         return;
       }
-
-      varNode.print();
     }
 
     void magician::addVariableRead(expNode &varNode,
                                    const int brackets,
-                                   expNode *bracketNode){
-      varNode.print();
+                                   expNode &bracketNode){
+      accessInfo_t access;
+      access.load(brackets, bracketNode);
     }
 
     void magician::addExpressionRead(expNode &e){
@@ -390,7 +531,7 @@ namespace occa {
         const int brackets = e.getVariableBracketCount();
 
         if(brackets)
-          addVariableRead(e, brackets, e.getVariableBracket(0)->up);
+          addVariableRead(e, brackets, *(e.getVariableBracket(0)->up));
       }
       else if((e.info & expType::varInfo) &&
               ((e.up == NULL) ||
