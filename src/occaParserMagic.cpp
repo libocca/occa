@@ -198,13 +198,73 @@ namespace occa {
         dimIndices[i].load(bracketNode[i][0]);
     }
 
+    bool accessInfo_t::conflictsWith(accessInfo_t &ai){
+      return false;
+    }
+
     iteratorInfo_t::iteratorInfo_t(){}
 
     viInfo_t::viInfo_t() :
       info(viType::isUseless) {}
 
-    viInfoMap_t::viInfoMap_t(statement &s_) :
-      s(s_),
+    accessInfo_t& viInfo_t::addWrite(expNode &varNode){
+      writes.push_back( accessInfo_t() );
+
+      accessInfo_t &ai = writes.back();
+      ai.load(varNode);
+
+      checkLastInput(ai, writeValue);
+
+      return ai;
+    }
+
+    accessInfo_t& viInfo_t::addWrite(const int brackets, expNode &bracketNode){
+      writes.push_back( accessInfo_t() );
+
+      accessInfo_t &ai = writes.back();
+      ai.load(brackets, bracketNode);
+
+      checkLastInput(ai, writeValue);
+
+      return ai;
+    }
+
+    accessInfo_t& viInfo_t::addRead(expNode &varNode){
+      reads.push_back( accessInfo_t() );
+
+      accessInfo_t &ai = reads.back();
+      ai.load(varNode);
+
+      checkLastInput(ai, readValue);
+
+      return ai;
+    }
+
+    accessInfo_t& viInfo_t::addRead(const int brackets, expNode &bracketNode){
+      reads.push_back( accessInfo_t() );
+
+      accessInfo_t &ai = reads.back();
+      ai.load(brackets, bracketNode);
+
+      checkLastInput(ai, readValue);
+
+      return ai;
+    }
+
+    void viInfo_t::checkLastInput(accessInfo_t &ai, const int inputType){
+      std::vector<accessInfo_t> &inputs = ((inputType & readValue) ? writes : reads);
+
+      const int inputCount = (int) inputs.size();
+
+      for(int i = 0; i < inputCount; ++i){
+        if(inputs[i].conflictsWith(ai)){
+
+          break;
+        }
+      }
+    }
+
+    viInfoMap_t::viInfoMap_t() :
       anonVar(NULL) {}
 
     void viInfoMap_t::free(){
@@ -258,68 +318,21 @@ namespace occa {
     }
 
     void viInfoDB_t::add(varInfo &var){
-      viInfoMapStack.back().add(var);
+      viInfoMap.add(var);
     }
 
     viInfo_t* viInfoDB_t::has(varInfo &var){
-      const int levels = (int) viInfoMapStack.size();
-
-      for(int i = (levels - 1); 0 <= i; --i){
-        viInfo_t *vii = viInfoMapStack.back().has(var);
-
-        if(vii)
-          return vii;
-      }
-
-      return NULL;
-    }
-
-    viInfo_t* viInfoDB_t::locallyHas(varInfo &var){
-      return viInfoMapStack.back().has(var);
-    }
-
-    viInfoMap_t* viInfoDB_t::map(){
-      return &(viInfoMapStack.back());
+      return viInfoMap.has(var);
     }
 
     void viInfoDB_t::enteringStatement(statement &s){
-      viInfoMapStack.push_back( viInfoMap_t(s) );
     }
 
     void viInfoDB_t::leavingStatement(){
-      viInfoMapStack.back().free();
-      viInfoMapStack.pop_back();
     }
 
     viInfo_t& viInfoDB_t::operator [] (varInfo &var){
-      const int levels = (int) viInfoMapStack.size();
-
-      for(int i = (levels - 1); 0 <= i; --i){
-        viInfoMap_t &map = viInfoMapStack[i];
-
-        viInfo_t *viInfo = map.has(var);
-
-        if(viInfo != NULL)
-          return *viInfo;
-      }
-
-      // Shouldn't get here
-      return *((viInfo_t*) NULL);
-    }
-
-    viInfo_t& viInfoDB_t::operator [] (const std::string &varName){
-      const int levels = (int) viInfoMapStack.size();
-
-      for(int i = (levels - 1); 0 <= i; --i){
-        viInfoMap_t &map = viInfoMapStack[i];
-        varInfo *var = map.s.hasVariableInLocalScope(varName);
-
-        if(var != NULL)
-          return map[*var];
-      }
-
-      // Shouldn't get here
-      return *((viInfo_t*) NULL);
+      return *(viInfoMap.has(var));
     }
 
     magician::magician(parserBase &parser_) :
@@ -756,6 +769,10 @@ namespace occa {
 
       if(isUpdated)
         addVariableRead(varNode);
+
+      viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+
+      viInfo.addWrite(varNode);
     }
 
     void magician::addVariableWrite(expNode &varNode,
@@ -766,6 +783,10 @@ namespace occa {
 
       if(isUpdated)
         addVariableRead(varNode, brackets, bracketNode);
+
+      viInfo_t &viInfo = viInfoDB[ varNode[0].getVarInfo() ];
+
+      viInfo.addWrite(brackets, bracketNode);
     }
 
     void magician::addVariableRead(expNode &varNode){
@@ -777,6 +798,10 @@ namespace occa {
 
         return;
       }
+
+      viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+
+      viInfo.addRead(varNode);
     }
 
     void magician::addVariableRead(expNode &varNode,
@@ -785,7 +810,7 @@ namespace occa {
 
       viInfo_t &viInfo = viInfoDB[ varNode[0].getVarInfo() ];
 
-      viInfo.dimInfo.load(brackets, bracketNode);
+      viInfo.addRead(brackets, bracketNode);
     }
 
     void magician::addExpressionRead(expNode &e){

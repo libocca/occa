@@ -79,6 +79,8 @@ namespace occa {
 
       void load(expNode &varNode);
       void load(const int brackets, expNode &bracketNode);
+
+      bool conflictsWith(accessInfo_t &ai);
     };
 
     class iteratorInfo_t {
@@ -97,16 +99,27 @@ namespace occa {
 
       std::vector<accessInfo_t> reads, writes;
 
+      static const int writeValue = (1 << 0);
+      static const int readValue  = (1 << 1);
+
       viInfo_t();
+
+      accessInfo_t& addWrite(expNode &varNode);
+      accessInfo_t& addWrite(const int brackets, expNode &bracketNode);
+
+      accessInfo_t& addRead(expNode &varNode);
+      accessInfo_t& addRead(const int brackets, expNode &bracketNode);
+
+      void checkLastInput(accessInfo_t &ai, const int inputType);
     };
 
     class viInfoMap_t {
     public:
-      statement &s;
       viInfoMap_t_ viMap;
       viInfo_t *anonVar; // Stores non-restrict variables
 
-      viInfoMap_t(statement &s_);
+      viInfoMap_t();
+
       void free();
 
       void add(varInfo &var);
@@ -117,19 +130,15 @@ namespace occa {
 
     class viInfoDB_t {
     public:
-      std::vector<viInfoMap_t> viInfoMapStack;
-      std::vector<viInfoMap_t> viInfoStack;
+      viInfoMap_t viInfoMap;
 
       void add(varInfo &var);
       viInfo_t* has(varInfo &var);
-      viInfo_t* locallyHas(varInfo &var);
 
-      viInfoMap_t* map();
       void enteringStatement(statement &s);
       void leavingStatement();
 
       viInfo_t& operator [] (varInfo &var);
-      viInfo_t& operator [] (const std::string &varName);
     };
 
     class magician {
