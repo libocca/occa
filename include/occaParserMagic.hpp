@@ -104,6 +104,7 @@ namespace occa {
     class viInfoDB_t {
     public:
       std::vector<viInfoMap_t> viInfoMapStack;
+      std::vector<viInfoMap_t> viInfoStack;
 
       viInfoMap_t* map();
       void enteringStatement(statement &s);

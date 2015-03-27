@@ -135,8 +135,8 @@ namespace occa {
       if(op.value == "="){
         *this = evi;
       }
-      else{
-
+      else {
+        // [-] Missing merge
       }
     }
 
@@ -442,13 +442,71 @@ namespace occa {
 
       expNode &updateNode = s.expRoot[2];
 
-      if(updateNode.leafCount == 0){
+      bool wrongFormat = false;
+
+      for(int i = 0; i < updateNode.leafCount; ++i){
+        expNode &leaf = updateNode[i];
+
+        if(!(leaf.info & expType::LR)){
+          wrongFormat = true;
+          break;
+        }
+        else if(leaf.info == expType::LR){
+          if((leaf.value != "+=") && (leaf.value != "-=")){
+            wrongFormat = true;
+            break;
+          }
+        }
+        else{ // (leaf.info & expType::LR)
+          if((leaf.value != "++") && (leaf.value != "--")){
+            wrongFormat = true;
+            break;
+          }
+        }
+      }
+
+      if(wrongFormat){
         printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n  X op Y where op can be [+=] or [-=]\n  ++X, X++, --X, X--\n");
-        smntInfo &= ~analyzeInfo::analyzeEmbedded;
         return;
       }
 
-      // updateNode.print();
+      varInfo *var    = NULL;
+      expNode *stride = NULL;
+      std::string str;
+
+      updateNode.print();
+
+      for(int i = 0; i < updateNode.leafCount; ++i){
+        expNode &leaf = updateNode[i];
+
+        if(leaf.info == expType::LR){
+          if((leaf.value == "+=") ||
+             (leaf.value == "-=")){
+
+            const bool varIn0 = (leaf[0].info & expType::varInfo);
+            const bool varIn1 = (leaf[1].info & expType::varInfo);
+
+            if(varIn0 ^ varIn1){
+              var = (varIn0 ?
+                     &(leaf[0].getVarInfo()) :
+                     &(leaf[1].getVarInfo()));
+
+              stride = (varIn0 ? &(leaf[0]) : &(leaf[1]));
+            }
+          }
+        }
+        else if(leaf.info & expType::LR){
+          if((leaf.value == "++") ||
+             (leaf.value == "--")){
+
+            var = &(leaf[0].getVarInfo());
+
+            str = ((leaf.value == "++") ? "1" : "-1");
+          }
+        }
+
+        std::cout << "var = " << *var << '\n';
+      }
     }
 
     void magician::analyzeWhileStatement(int &smntInfo, statement &s){
