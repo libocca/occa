@@ -4567,6 +4567,31 @@ namespace occa {
       return false;
     }
 
+    // Guaranteed to work with statements under a globalScope
+    statement& statement::greatestCommonStatement(statement &s){
+      std::vector<statement*> path[2];
+
+      for(int pass = 0; pass < 2; ++pass){
+        statement *cs = ((pass == 0) ? this : &s);
+
+        while(cs){
+          path[pass].push_back(cs);
+          cs = cs->up;
+        }
+      }
+
+      const int dist0   = (int) path[0].size();
+      const int dist1   = (int) path[1].size();
+      const int minDist = ((dist0 < dist1) ? dist0 : dist1);
+
+      for(int i = 1; i <= minDist; ++i){
+        if(path[0][dist0 - i] != path[1][dist1 - i])
+          return *(path[0][dist0 - i + 1]);
+      }
+
+      return *(path[0][dist0 - minDist]);
+    }
+
     unsigned int statement::distToForLoop(){
       return distToStatementType(forStatementType);
     }
@@ -4607,7 +4632,18 @@ namespace occa {
       return -1; // Maximum distance
     }
 
+    bool statement::insideOf(statement &s){
+      statement *up_ = up;
 
+      while(up_){
+        if(up_ == &s)
+          return true;
+
+        up_ = up_->up;
+      }
+
+      return false;
+    }
 
     void statement::setStatementIdMap(statementIdMap_t &idMap){
       int startID = 0;

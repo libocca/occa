@@ -69,11 +69,15 @@ namespace occa {
 
     class accessInfo_t {
     public:
+      statement *s;
+
       int dim;
+      valueInfo_t value;
       valueInfo_t *dimIndices;
 
       accessInfo_t();
 
+      void load(expNode &varNode);
       void load(const int brackets, expNode &bracketNode);
     };
 
@@ -90,6 +94,8 @@ namespace occa {
       valueInfo_t    valueInfo;
       accessInfo_t   dimInfo;
       iteratorInfo_t iteratorInfo;
+
+      std::vector<accessInfo_t> reads, writes;
 
       viInfo_t();
     };

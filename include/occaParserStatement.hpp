@@ -556,9 +556,14 @@ namespace occa {
       bool hasBarrier();
       bool hasStatementWithBarrier();
 
+      // Guaranteed to work with statements under a globalScope
+      statement& greatestCommonStatement(statement &s);
+
       unsigned int distToForLoop();
       unsigned int distToOccaForLoop();
       unsigned int distToStatementType(const int info_);
+
+      bool insideOf(statement &s);
 
       void setStatementIdMap(statementIdMap_t &idMap);
 

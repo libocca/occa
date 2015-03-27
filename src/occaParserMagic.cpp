@@ -177,10 +177,20 @@ namespace occa {
     }
 
     accessInfo_t::accessInfo_t() :
+      s(NULL),
       dim(0),
       dimIndices(NULL) {}
 
+    void accessInfo_t::load(expNode &varNode){
+      s = varNode.sInfo;
+
+      dim = 0;
+      value.load(varNode);
+    }
+
     void accessInfo_t::load(const int brackets, expNode &bracketNode){
+      s = bracketNode.sInfo;
+
       dim = brackets;
       dimIndices = new valueInfo_t[dim];
 
