@@ -41,13 +41,20 @@ namespace occa {
       atomInfo_t *vars, *strides;
 
       valueInfo_t();
+      valueInfo_t(const valueInfo_t &vi);
+      valueInfo_t(expNode &e);
+
+      valueInfo_t& operator = (const valueInfo_t &vi);
+
+      void allocVS(const int count);
 
       bool isUseless();
 
       void load(expNode &e);
       void loadVS(expNode &e, const int pos);
 
-      void allocVS(const int count);
+      void merge(expNode &op, expNode &e);
+
       varInfo& var(const int pos);
       atomInfo_t& stride(const int pos);
     };
@@ -81,22 +88,29 @@ namespace occa {
 
     class viInfoMap_t {
     public:
+      statement &s;
       viInfoMap_t_ viMap;
       viInfo_t *anonVar; // Stores non-restrict variables
 
-      viInfoMap_t();
+      viInfoMap_t(statement &s_);
       void free();
 
-      void addVariable(varInfo &var);
+      void add(varInfo &var);
+      viInfo_t* has(varInfo &var);
+
+      viInfo_t& operator [] (varInfo &var);
     };
 
     class viInfoDB_t {
     public:
-      std::stack<viInfoMap_t> viInfoMapStack;
+      std::vector<viInfoMap_t> viInfoMapStack;
 
       viInfoMap_t* map();
-      void enteringStatement();
+      void enteringStatement(statement &s);
       void leavingStatement();
+
+      viInfo_t& operator [] (varInfo &var);
+      viInfo_t& operator [] (const std::string &varName);
     };
 
     class magician {

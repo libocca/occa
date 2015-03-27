@@ -657,7 +657,7 @@ namespace occa {
 
     salt << "OpenMP"
          << info_.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;

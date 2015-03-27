@@ -3,7 +3,6 @@
 
 #include "occaParserDefines.hpp"
 #include "occaParserNodes.hpp"
-#include "occaParserStatement.hpp"
 
 namespace occa {
   class parsedKernelInfo;

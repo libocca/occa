@@ -16,8 +16,6 @@ namespace occa {
 
     class parserBase {
     public:
-      static const int version = 100;
-
       std::string filename;
 
       bool parsingC;

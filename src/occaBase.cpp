@@ -1,9 +1,12 @@
 #include "occa.hpp"
+#include "occaParser.hpp"
 
 // Use events for timing!
 
 namespace occa {
   //---[ Globals & Flags ]------------
+  const int parserVersion = 100;
+
   kernelInfo defaultKernelInfo;
 
   const int autoDetect = (1 << 0);
@@ -164,6 +167,96 @@ namespace occa {
   const occa::formatType floatFormat(floatFormatIndex  , 1);
   const occa::formatType floatx2Format(floatFormatIndex, 2);
   const occa::formatType floatx4Format(floatFormatIndex, 4);
+
+  //---[ Arg Info Map ]-------
+  argInfoMap::argInfoMap(){}
+
+  argInfoMap::argInfoMap(const std::string &infos){
+    if(infos.size() == 0)
+      return;
+
+    parserNS::strNode *n;
+
+    n = parserNS::splitContent(infos);
+    n = parserNS::labelCode(n);
+
+    while(n){
+      std::string &info = n->value;
+      std::string value;
+
+      n = n->right;
+
+      if((info != "mode")        &&
+         (info != "UVA")         &&
+         (info != "platformID")  &&
+         (info != "deviceID")    &&
+         (info != "schedule")    &&
+         (info != "chunk")       &&
+         (info != "threadCount") &&
+         (info != "schedule")    &&
+         (info != "pinnedCores")){
+
+        std::cout << "Flag [" << info << "] is not available, skipping it\n";
+
+        while(n && (n->value != ","))
+          n = n->right;
+
+        if(n)
+          n = n->right;
+
+        continue;
+      }
+
+      if(n == NULL)
+        break;
+
+      if(n->value == "=")
+        n = n->right;
+
+      while(n && (n->value != ",")){
+        std::string &v = n->value;
+
+        occa::strip(v);
+
+        if(v.size()){
+          if(segmentPair(v[0]) == 0){
+            value += v;
+            value += ' ';
+          }
+          else if(n->down){
+            std::string dv = n->down->toString();
+            occa::strip(dv);
+
+            value += dv;
+            value += ' ';
+          }
+        }
+
+        n = n->right;
+      }
+
+      if(n)
+        n = n->right;
+
+      occa::strip(value);
+
+      iMap[info] = value;
+
+      info  = "";
+      value = "";
+    }
+  }
+
+  std::ostream& operator << (std::ostream &out, const argInfoMap &m){
+    std::map<std::string,std::string>::const_iterator it = m.iMap.begin();
+
+    while(it != m.iMap.end()){
+      out << it->first << " = " << it->second << '\n';
+      ++it;
+    }
+
+    return out;
+  }
 
   //---[ Kernel Info ]--------
   kernelInfo::kernelInfo() :

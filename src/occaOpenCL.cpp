@@ -1125,7 +1125,7 @@ namespace occa {
     salt << "OpenCL"
          << data_.platform << '-' << data_.device
          << info_.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;

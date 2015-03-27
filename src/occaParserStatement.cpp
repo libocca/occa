@@ -1,6 +1,8 @@
 #include "occaParserStatement.hpp"
 #include "occaParser.hpp"
 
+#include "occaTools.hpp"
+
 namespace occa {
   namespace parserNS {
     //---[ Exp Node ]-------------------------------
@@ -43,45 +45,67 @@ namespace occa {
 
       type(NULL) {}
 
-    int expNode::getStatementType(){
-      if(info & expType::macro_)
-        return macroStatementType;
+    fnvOutput_t expNode::hash(){
+      if(info & expType::hasInfo)
+        return fnv(leaves[0]);
 
-      else if(info & expType::occaFor)
-        return keywordType["occaOuterFor0"];
+      fnvOutput_t fo = fnv(value);
 
-      else if(info & (expType::qualifier |
-                      expType::type)){
+      for(int i = 0; i < leafCount; ++i)
+        fo.mergeWith(leaves[i]->hash());
 
-        if(typeInfo::statementIsATypeInfo(*this, 0))
-          return structStatementType;
+      return fo;
+    }
 
-        varInfo var;
-        var.loadFrom(*this, 0);
+    bool expNode::sameAs(expNode &e, const bool nestedSearch){
+      if(info != e.info)
+        return false;
 
-        if(var.info & varType::var)
-          return declareStatementType;
-        else if(var.info & varType::functionDec)
-          return functionPrototypeType;
-        else
-          return functionDefinitionType;
+      if(info & expType::hasInfo)
+        return (leaves[0] == e.leaves[0]);
+
+      if(value != e.value)
+        return false;
+
+      if(!nestedSearch)
+        return true;
+
+      if(leafCount != e.leafCount)
+        return false;
+
+      if(hash() != e.hash())
+        return false;
+
+      bool *found = new bool[leafCount];
+
+      for(int i = 0; i < leafCount; ++i)
+        found[i] = false;
+
+      // [-] Ugh, N^2
+      for(int i = 0; i < leafCount; ++i){
+        expNode &l1 = *(leaves[i]);
+        bool iFound = false;
+
+        for(int j = 0; j < leafCount; ++j){
+          if(found[j])
+            continue;
+
+          expNode &l2 = *(e.leaves[j]);
+
+          if(l1.sameAs(l2, !nestedSearch) &&
+             l1.sameAs(l2,  nestedSearch)){
+
+            iFound   = true;
+            found[j] = true;
+            break;
+          }
+        }
+
+        if(!iFound)
+          return false;
       }
 
-      else if((info & (expType::unknown |
-                       expType::variable)) &&
-              (1 < leafCount) &&
-              (leaves[1]->value == ":")){
-
-        return gotoStatementType;
-      }
-
-      else if((info == expType::C) &&
-              (leaves[0]->value == "{")){
-
-        return blockStatementType;
-      }
-
-      return updateStatementType;
+      return true;
     }
 
     void expNode::loadFromNode(strNode *&nodePos, const bool parsingC){
@@ -2291,6 +2315,9 @@ namespace occa {
     }
 
     varInfo& expNode::getVarInfo(){
+      if(info & expType::variable)
+        return leaves[0]->getVarInfo();
+
       return *((varInfo*) leaves[0]);
     }
 

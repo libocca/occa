@@ -945,7 +945,7 @@ namespace occa {
 
     salt << "CUDA"
          << info_.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;

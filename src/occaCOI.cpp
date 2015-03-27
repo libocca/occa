@@ -810,7 +810,7 @@ namespace occa {
 
     salt << "COI"
          << info.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;

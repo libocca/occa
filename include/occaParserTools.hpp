@@ -2,6 +2,7 @@
 #define OCCA_PARSER_TOOLS_HEADER
 
 #include "occaParserDefines.hpp"
+#include "occaTools.hpp"
 
 namespace occa {
   //---[ Helper Functions ]-----------------------

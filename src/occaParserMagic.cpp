@@ -33,6 +33,32 @@ namespace occa {
       vars(NULL),
       strides(NULL) {}
 
+    valueInfo_t::valueInfo_t(const valueInfo_t &vi) :
+      indices(vi.indices),
+      vars(vi.vars),
+      strides(vi.strides) {}
+
+    valueInfo_t::valueInfo_t(expNode &e) :
+      indices(0),
+      vars(NULL),
+      strides(NULL) {
+
+      load(e);
+    }
+
+    valueInfo_t& valueInfo_t::operator = (const valueInfo_t &vi){
+      indices = vi.indices;
+      vars    = vi.vars;
+      strides = vi.strides;
+
+      return *this;
+    }
+
+    void valueInfo_t::allocVS(const int count){
+      vars    = new atomInfo_t[count];
+      strides = new atomInfo_t[count];
+    }
+
     bool valueInfo_t::isUseless(){
       for(int i = 0; i < indices; ++i){
         if(vars[i].info & viType::isUseless)
@@ -99,15 +125,19 @@ namespace occa {
         return;
       }
 
-      std::cout << "useless e = " << e << '\n';
-
       vars[pos].info    = viType::isUseless;
       strides[pos].info = viType::isUseless;
     }
 
-    void valueInfo_t::allocVS(const int count){
-      vars    = new atomInfo_t[count];
-      strides = new atomInfo_t[count];
+    void valueInfo_t::merge(expNode &op, expNode &e){
+      valueInfo_t evi(e);
+
+      if(op.value == "="){
+        *this = evi;
+      }
+      else{
+
+      }
     }
 
     varInfo& valueInfo_t::var(const int pos){
@@ -135,7 +165,8 @@ namespace occa {
     viInfo_t::viInfo_t() :
       info(viType::isUseless) {}
 
-    viInfoMap_t::viInfoMap_t() :
+    viInfoMap_t::viInfoMap_t(statement &s_) :
+      s(s_),
       anonVar(NULL) {}
 
     void viInfoMap_t::free(){
@@ -161,7 +192,7 @@ namespace occa {
       anonVar = NULL;
     }
 
-    void viInfoMap_t::addVariable(varInfo &var){
+    void viInfoMap_t::add(varInfo &var){
       viInfoIterator it = viMap.find(&var);
 
       if(it == viMap.end()){
@@ -177,17 +208,59 @@ namespace occa {
       }
     }
 
-    viInfoMap_t* viInfoDB_t::map(){
-      return &(viInfoMapStack.top());
+    viInfo_t* viInfoMap_t::has(varInfo &var){
+      viInfoIterator it = viMap.find(&var);
+
+      return ((it == viMap.end()) ?
+              NULL : it->second);
     }
 
-    void viInfoDB_t::enteringStatement(){
-      viInfoMapStack.push( viInfoMap_t() );
+    viInfo_t& viInfoMap_t::operator [] (varInfo &var){
+      return *(viMap[&var]);
+    }
+
+    viInfoMap_t* viInfoDB_t::map(){
+      return &(viInfoMapStack.back());
+    }
+
+    void viInfoDB_t::enteringStatement(statement &s){
+      viInfoMapStack.push_back( viInfoMap_t(s) );
     }
 
     void viInfoDB_t::leavingStatement(){
-      viInfoMapStack.top().free();
-      viInfoMapStack.pop();
+      viInfoMapStack.back().free();
+      viInfoMapStack.pop_back();
+    }
+
+    viInfo_t& viInfoDB_t::operator [] (varInfo &var){
+      const int levels = (int) viInfoMapStack.size();
+
+      for(int i = (levels - 1); 0 <= i; --i){
+        viInfoMap_t &map = viInfoMapStack[i];
+
+        viInfo_t *viInfo = map.has(var);
+
+        if(viInfo != NULL)
+          return *viInfo;
+      }
+
+      // Shouldn't get here
+      return *((viInfo_t*) NULL);
+    }
+
+    viInfo_t& viInfoDB_t::operator [] (const std::string &varName){
+      const int levels = (int) viInfoMapStack.size();
+
+      for(int i = (levels - 1); 0 <= i; --i){
+        viInfoMap_t &map = viInfoMapStack[i];
+        varInfo *var = map.s.hasVariableInLocalScope(varName);
+
+        if(var != NULL)
+          return map[*var];
+      }
+
+      // Shouldn't get here
+      return *((viInfo_t*) NULL);
     }
 
     magician::magician(parserBase &parser_) :
@@ -217,7 +290,7 @@ namespace occa {
     void magician::analyzeFunction(statement &fs){
       varInfo &func = *(fs.getFunctionVar());
 
-      viInfoDB.enteringStatement();
+      viInfoDB.enteringStatement(fs);
 
       viInfoMap_t *viMap = viInfoDB.map();
 
@@ -226,7 +299,7 @@ namespace occa {
         for(int arg = 0; arg < func.argumentCount; ++arg){
           varInfo &varg = *(func.argumentVarInfos[arg]);
 
-          viMap->addVariable(varg);
+          viMap->add(varg);
         }
       }
 
@@ -251,7 +324,7 @@ namespace occa {
         for(int i = 0; i < varCount; ++i){
           // Add variable to the varInfo map
           varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
-          viMap->addVariable(var);
+          viMap->add(var);
 
           analyzeDeclareExpression(smntInfo, s.expRoot, i);
         }
@@ -318,7 +391,7 @@ namespace occa {
 
     void magician::analyzeEmbeddedStatements(statement &s){
       if(s.statementStart != NULL){
-        viInfoDB.enteringStatement();
+        viInfoDB.enteringStatement(s);
 
         statementNode *statementPos = s.statementStart;
 
@@ -339,6 +412,9 @@ namespace occa {
 
         addVariableWrite(varNode, initNode);
         addExpressionRead(initNode);
+
+        viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+        viInfo.valueInfo.load(initNode);
       }
     }
 
@@ -349,6 +425,9 @@ namespace occa {
 
         addVariableWrite(varNode, setNode);
         addExpressionRead(setNode);
+
+        viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+        viInfo.valueInfo.merge(e, setNode);
       }
       else
         addExpressionRead(e);
@@ -522,8 +601,10 @@ namespace occa {
     void magician::addVariableRead(expNode &varNode,
                                    const int brackets,
                                    expNode &bracketNode){
-      accessInfo_t access;
-      access.load(brackets, bracketNode);
+
+      viInfo_t &viInfo = viInfoDB[ varNode[0].getVarInfo() ];
+
+      viInfo.dimInfo.load(brackets, bracketNode);
     }
 
     void magician::addExpressionRead(expNode &e){

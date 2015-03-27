@@ -111,16 +111,15 @@ namespace occa {
       expNode(statement &s);
       expNode(expNode &up_);
 
+      fnvOutput_t hash();
+      bool sameAs(expNode &e, const bool nestedSearch = true);
+
       inline expNode& operator [] (const int i){
         if(0 <= i)
           return *leaves[i];
         else
           return *leaves[leafCount + i];
       }
-
-      //---[ Find Statement ]-----------
-      int getStatementType();
-      //================================
 
       void loadFromNode(strNode *&nodePos, const bool parsingC = true);
 
