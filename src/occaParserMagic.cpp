@@ -23,6 +23,11 @@ namespace occa {
       }
     }
 
+    void atomInfo_t::load(varInfo &var_){
+      info = viType::isAVariable;
+      var  = &var_;
+    }
+
     void atomInfo_t::load(const std::string &s){
       info       = viType::isConstant;
       constValue = s;
@@ -108,8 +113,12 @@ namespace occa {
       }
     }
 
+    void valueInfo_t::load(varInfo &var){
+      value.load(var);
+    }
+
     void valueInfo_t::load(const std::string &s){
-      constValue.load(s);
+      value.load(s);
     }
 
     void valueInfo_t::loadVS(expNode &e, const int pos){
@@ -151,8 +160,12 @@ namespace occa {
       }
     }
 
-    typeHolder valueInfo_t::value(){
-      return constValue.constValue;
+    typeHolder valueInfo_t::constValue(){
+      return value.constValue;
+    }
+
+    varInfo& valueInfo_t::varValue(){
+      return *(value.var);
     }
 
     varInfo& valueInfo_t::var(const int pos){
@@ -360,7 +373,10 @@ namespace occa {
       }
 
       else if(s.info & forStatementType){
-        analyzeForStatement(smntInfo, s);
+        if(parser.parsingC)
+          analyzeForStatement(smntInfo, s);
+        else
+          analyzeFortranForStatement(smntInfo, s);
       }
 
       else if(s.info & whileStatementType){
@@ -560,6 +576,11 @@ namespace occa {
         else
           viInfo.iteratorInfo.stride.load(str);
       }
+
+      if(wrongFormat){
+        printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n  X op Y where op can be [+=] or [-=]\n  ++X, X++, --X, X--\n");
+        return;
+      }
     }
 
     void magician::analyzeWhileStatement(int &smntInfo, statement &s){
@@ -571,6 +592,42 @@ namespace occa {
         smntInfo &= ~analyzeInfo::analyzeEmbedded;
         return;
       }
+    }
+
+    void magician::analyzeFortranForStatement(int &smntInfo, statement &s){
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+
+      expNode &e0 = s.expRoot[0][0];
+
+      //      [0] root
+      //       [0] =
+      // [0] iter    [1] doStart
+      varInfo &iterVar = e0[0].getVarInfo();
+      viInfo_t &viInfo = viInfoDB[iterVar];
+
+      varInfo *start  = &(e0[1].getVarInfo());
+      varInfo *end    = NULL;
+      varInfo *stride = NULL;
+
+      for(int j = 0; j < flatRoot.leafCount; ++j){
+        expNode &n = flatRoot[j];
+
+        if(n.info & expType::varInfo){
+          varInfo &var = n.getVarInfo();
+
+          if(var.name.find("doEnd") != std::string::npos)
+            end = &var;
+          else if(var.name.find("doStride") != std::string::npos)
+            stride = &var;
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      if(stride == NULL)
+        viInfo.iteratorInfo.stride.load("1");
+      else
+        viInfo.iteratorInfo.stride.load("1");
     }
 
     void magician::analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd){

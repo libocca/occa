@@ -32,6 +32,7 @@ namespace occa {
       atomInfo_t();
 
       void load(expNode &e);
+      void load(varInfo &var_);
       void load(const std::string &s);
     };
 
@@ -39,7 +40,7 @@ namespace occa {
     public:
       int info;
       int indices;
-      atomInfo_t constValue;
+      atomInfo_t value;
       atomInfo_t *vars, *strides;
 
       valueInfo_t();
@@ -53,13 +54,15 @@ namespace occa {
       bool isUseless();
 
       void load(expNode &e);
+      void load(varInfo &var);
       void load(const std::string &s);
 
       void loadVS(expNode &e, const int pos);
 
       void merge(expNode &op, expNode &e);
 
-      typeHolder value();
+      typeHolder constValue();
+      varInfo& varValue();
       varInfo& var(const int pos);
       atomInfo_t& stride(const int pos);
     };
@@ -155,6 +158,7 @@ namespace occa {
       void analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos);
 
       void analyzeForStatement(int &smntInfo, statement &s);
+      void analyzeFortranForStatement(int &smntInfo, statement &s);
 
       void analyzeWhileStatement(int &smntInfo, statement &s);
 
