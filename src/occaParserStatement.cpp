@@ -2509,17 +2509,20 @@ namespace occa {
       if(sInfo &&
          (sInfo->info & updateStatementType)){
 
-        int count = 0;
         expNode *cNode = leaves[0];
+        int count = 0;
 
         while(cNode &&
               (cNode->value == ",")){
 
-          if(2 <= leafCount)
-            count += (isAnAssOperator(leaves[1]->value));
+          if(2 <= cNode->leafCount)
+            count += (isAnAssOperator((*cNode)[1].value));
 
           cNode = cNode->leaves[0];
         }
+
+        if(cNode)
+          count += isAnAssOperator(cNode->value);
 
         return count;
       }
@@ -2527,13 +2530,13 @@ namespace occa {
       return 0;
     }
 
-    bool expNode::updatedVariableHasInit(const int pos){
+    bool expNode::updatedVariableIsSet(const int pos){
       expNode *n = getUpdatedNode(pos);
 
       if(n == NULL)
         return false;
 
-      return ((n->info & expType::operator_) &&
+      return ((n->info & expType::LR) &&
               isAnAssOperator(n->value));
     }
 
@@ -2544,22 +2547,29 @@ namespace occa {
       if(sInfo &&
          (sInfo->info & updateStatementType)){
 
-        int count = 0;
         expNode *cNode = leaves[0];
+        int count = getUpdatedVariableCount();
 
         while(cNode &&
               (cNode->value == ",")){
 
-          if(2 <= leafCount)
-            count += (isAnAssOperator(leaves[1]->value));
+          if(2 <= cNode->leafCount)
+            count -= (isAnAssOperator((*cNode)[1].value));
 
-          if(count == pos)
+          if(pos == count)
             return cNode->leaves[1];
 
           cNode = cNode->leaves[0];
         }
 
-        return NULL;
+        if(cNode){
+          count -= isAnAssOperator(cNode->value);
+
+          if(pos == count)
+            return cNode;
+        }
+
+        return cNode;
       }
 
       return NULL;
@@ -2574,7 +2584,7 @@ namespace occa {
       return n->leaves[0];
     }
 
-    expNode* expNode::getUpdatedVariableInitNode(const int pos){
+    expNode* expNode::getUpdatedVariableSetNode(const int pos){
       expNode *n = getUpdatedNode(pos);
 
       if(n == NULL)
@@ -5042,9 +5052,9 @@ namespace occa {
 
           // [-] Missing up-checks
           //    Example: var->x = 3
-          //              =
-          //        ->        3
-          //      var  x
+          //                    =
+          //              ->        3
+          //            var  x
           if((nVar != &var) || // Checking our variable update
              (n.up == NULL) || // Update needs an assignment operator
              !isAnAssOperator(n.up->value) ||

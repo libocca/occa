@@ -300,11 +300,11 @@ namespace occa {
       std::string getVariableName(const int pos = 0);
 
       int getUpdatedVariableCount();
-      bool updatedVariableHasInit(const int pos);
+      bool updatedVariableIsSet(const int pos);
 
       expNode* getUpdatedNode(const int pos);
       expNode* getUpdatedVariableInfoNode(const int pos);
-      expNode* getUpdatedVariableInitNode(const int pos);
+      expNode* getUpdatedVariableSetNode(const int pos);
 
       int getVariableBracketCount();
       expNode* getVariableBracket(const int pos);

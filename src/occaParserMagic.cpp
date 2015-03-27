@@ -111,9 +111,6 @@ namespace occa {
     void magician::analyzeStatement(statement &s){
       bool analyzeEmbedded = true;
 
-      std::cout << "s = " << s << '\n';
-      s.expRoot.print();
-
       if(s.info & declareStatementType){
         const int varCount = s.expRoot.getVariableCount();
         viInfoMap_t *viMap = currentViInfoMap();
@@ -131,15 +128,17 @@ namespace occa {
         const int upCount = s.expRoot.getUpdatedVariableCount();
 
         for(int i = 0; i < upCount; ++i)
-          analyzeUpdateExpression(s.expRoot, i);
+            analyzeUpdateExpression(s.expRoot, i);
       }
 
       else if(s.info & forStatementType){
         analyzeEmbedded = analyzeForStatement(s);
       }
+
       else if(s.info & whileStatementType){
         analyzeEmbedded = analyzeWhileStatement(s);
       }
+
       else if(s.info & doWhileStatementType){
         analyzeEmbedded = false;
 
@@ -147,6 +146,7 @@ namespace occa {
         analyzeEmbeddedStatements(s);
         analyzeWhileStatement(s);
       }
+
       else if(s.info & ifStatementType){
         statementNode *snStart = s.getStatementNode();
         statementNode *snEnd   = snStart->right;
@@ -161,6 +161,7 @@ namespace occa {
         analyzeEmbedded = false;
         analyzeIfStatement(snStart, snEnd);
       }
+
       else if(s.info & switchStatementType){
         analyzeEmbedded = false;
         analyzeSwitchStatement(s);
@@ -208,9 +209,9 @@ namespace occa {
     }
 
     void magician::analyzeUpdateExpression(expNode &e, const int pos){
-      if(e.updatedVariableHasInit(pos)){
+      if(e.updatedVariableIsSet(pos)){
         addVariableWrite( *(e.getUpdatedVariableInfoNode(pos)) );
-        addExpressionRead( *(e.getUpdatedVariableInitNode(pos)) );
+        addExpressionRead( *(e.getUpdatedVariableSetNode(pos)) );
       }
       else
         addExpressionRead(e);
@@ -351,7 +352,6 @@ namespace occa {
       if(isUpdated)
         addVariableRead(varNode);
 
-      printf("addVariableWrite\n");
       varNode.print();
     }
 
@@ -363,7 +363,6 @@ namespace occa {
       if(isUpdated)
         addVariableRead(varNode, brackets, bracketNode);
 
-      printf("addVariableWrite []\n");
       varNode.print();
     }
 
@@ -377,14 +376,12 @@ namespace occa {
         return;
       }
 
-      printf("addVariableRead\n");
       varNode.print();
     }
 
     void magician::addVariableRead(expNode &varNode,
                                    const int brackets,
                                    expNode *bracketNode){
-      printf("addVariableRead []\n");
       varNode.print();
     }
 
@@ -402,9 +399,8 @@ namespace occa {
         addVariableRead(e);
       }
       else {
-        for(int i = 0; i < e.leafCount; ++i){
+        for(int i = 0; i < e.leafCount; ++i)
           addExpressionRead(e[i]);
-        }
       }
     }
   };
