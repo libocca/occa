@@ -624,10 +624,13 @@ namespace occa {
 
       expNode::freeFlatHandle(flatRoot);
 
+      viInfo.iteratorInfo.start.load(*start);
+      viInfo.iteratorInfo.end.load(*end);
+
       if(stride == NULL)
         viInfo.iteratorInfo.stride.load("1");
       else
-        viInfo.iteratorInfo.stride.load("1");
+        viInfo.iteratorInfo.stride.load(*stride);
     }
 
     void magician::analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd){
