@@ -37,7 +37,9 @@ namespace occa {
 
     class valueInfo_t {
     public:
+      int info;
       int indices;
+      atomInfo_t constValue;
       atomInfo_t *vars, *strides;
 
       valueInfo_t();
@@ -51,10 +53,13 @@ namespace occa {
       bool isUseless();
 
       void load(expNode &e);
+      void load(const std::string &s);
+
       void loadVS(expNode &e, const int pos);
 
       void merge(expNode &op, expNode &e);
 
+      typeHolder value();
       varInfo& var(const int pos);
       atomInfo_t& stride(const int pos);
     };
@@ -106,6 +111,10 @@ namespace occa {
       std::vector<viInfoMap_t> viInfoMapStack;
       std::vector<viInfoMap_t> viInfoStack;
 
+      void add(varInfo &var);
+      viInfo_t* has(varInfo &var);
+      viInfo_t* locallyHas(varInfo &var);
+
       viInfoMap_t* map();
       void enteringStatement(statement &s);
       void leavingStatement();
@@ -139,11 +148,18 @@ namespace occa {
 
       void analyzeEmbeddedStatements(statement &s);
 
+      void analyzeDeclareStatement(int &smntInfo, expNode &e);
       void analyzeDeclareExpression(int &smntInfo, expNode &e, const int pos);
+
+      void analyzeUpdateStatement(int &smntInfo, expNode &e);
       void analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos);
+
       void analyzeForStatement(int &smntInfo, statement &s);
+
       void analyzeWhileStatement(int &smntInfo, statement &s);
+
       void analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd);
+
       void analyzeSwitchStatement(int &smntInfo, statement &s);
 
       bool statementGuaranteesBreak(statement &s);

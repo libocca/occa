@@ -355,8 +355,20 @@ namespace occa {
             leaf.leaves[j]->up = &leaf;
           }
 
-          if(!(sInfo->info & forStatementType) || (i != 0))
+          bool hasDeclare = ((sInfo->info & forStatementType) && (i == 0));
+
+          if(hasDeclare &&
+             ((leaf.leafCount == 0) ||
+              !(leaf[0].info & (expType::qualifier |
+                                expType::type      |
+                                expType::typeInfo)))){
+
+            hasDeclare = false;
+          }
+
+          if(!hasDeclare){
             leaf.organize();
+          }
           else{
             leaf.splitDeclareStatement(expFlag::addVarToScope);
 

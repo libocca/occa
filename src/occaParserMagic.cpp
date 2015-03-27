@@ -29,16 +29,19 @@ namespace occa {
     }
 
     valueInfo_t::valueInfo_t() :
+      info(0),
       indices(0),
       vars(NULL),
       strides(NULL) {}
 
     valueInfo_t::valueInfo_t(const valueInfo_t &vi) :
+      info(vi.info),
       indices(vi.indices),
       vars(vi.vars),
       strides(vi.strides) {}
 
     valueInfo_t::valueInfo_t(expNode &e) :
+      info(0),
       indices(0),
       vars(NULL),
       strides(NULL) {
@@ -47,6 +50,7 @@ namespace occa {
     }
 
     valueInfo_t& valueInfo_t::operator = (const valueInfo_t &vi){
+      info    = vi.info;
       indices = vi.indices;
       vars    = vi.vars;
       strides = vi.strides;
@@ -60,6 +64,9 @@ namespace occa {
     }
 
     bool valueInfo_t::isUseless(){
+      if(info & viType::isConstant)
+        return false;
+
       for(int i = 0; i < indices; ++i){
         if(vars[i].info & viType::isUseless)
           return true;
@@ -101,6 +108,10 @@ namespace occa {
       }
     }
 
+    void valueInfo_t::load(const std::string &s){
+      constValue.load(s);
+    }
+
     void valueInfo_t::loadVS(expNode &e, const int pos){
       if((e.info  == expType::LR) &&
          (e.value == "*")){
@@ -138,6 +149,10 @@ namespace occa {
       else {
         // [-] Missing merge
       }
+    }
+
+    typeHolder valueInfo_t::value(){
+      return constValue.constValue;
     }
 
     varInfo& valueInfo_t::var(const int pos){
@@ -219,6 +234,27 @@ namespace occa {
       return *(viMap[&var]);
     }
 
+    void viInfoDB_t::add(varInfo &var){
+      viInfoMapStack.back().add(var);
+    }
+
+    viInfo_t* viInfoDB_t::has(varInfo &var){
+      const int levels = (int) viInfoMapStack.size();
+
+      for(int i = (levels - 1); 0 <= i; --i){
+        viInfo_t *vii = viInfoMapStack.back().has(var);
+
+        if(vii)
+          return vii;
+      }
+
+      return NULL;
+    }
+
+    viInfo_t* viInfoDB_t::locallyHas(varInfo &var){
+      return viInfoMapStack.back().has(var);
+    }
+
     viInfoMap_t* viInfoDB_t::map(){
       return &(viInfoMapStack.back());
     }
@@ -292,14 +328,12 @@ namespace occa {
 
       viInfoDB.enteringStatement(fs);
 
-      viInfoMap_t *viMap = viInfoDB.map();
-
       // Place function arguments (if any)
       if(func.argumentCount){
         for(int arg = 0; arg < func.argumentCount; ++arg){
           varInfo &varg = *(func.argumentVarInfos[arg]);
 
-          viMap->add(varg);
+          viInfoDB.add(varg);
         }
       }
 
@@ -318,23 +352,11 @@ namespace occa {
       int smntInfo = analyzeInfo::analyzeEmbedded;
 
       if(s.info & declareStatementType){
-        const int varCount = s.expRoot.getVariableCount();
-        viInfoMap_t *viMap = viInfoDB.map();
-
-        for(int i = 0; i < varCount; ++i){
-          // Add variable to the varInfo map
-          varInfo &var = s.expRoot.getVariableInfoNode(i)->getVarInfo();
-          viMap->add(var);
-
-          analyzeDeclareExpression(smntInfo, s.expRoot, i);
-        }
+        analyzeDeclareStatement(smntInfo, s.expRoot);
       }
 
       else if(s.info & updateStatementType){
-        const int upCount = s.expRoot.getUpdatedVariableCount();
-
-        for(int i = 0; i < upCount; ++i)
-          analyzeUpdateExpression(smntInfo, s.expRoot, i);
+        analyzeUpdateStatement(smntInfo, s.expRoot);
       }
 
       else if(s.info & forStatementType){
@@ -405,6 +427,18 @@ namespace occa {
       }
     }
 
+    void magician::analyzeDeclareStatement(int &smntInfo, expNode &e){
+      const int varCount = e.getVariableCount();
+
+      for(int i = 0; i < varCount; ++i){
+        // Add variable to the varInfo map
+        varInfo &var = e.getVariableInfoNode(i)->getVarInfo();
+        viInfoDB.add(var);
+
+        analyzeDeclareExpression(smntInfo, e, i);
+      }
+    }
+
     void magician::analyzeDeclareExpression(int &smntInfo, expNode &e, const int pos){
       if(e.variableHasInit(pos)){
         expNode &varNode  = *(e.getVariableInfoNode(pos));
@@ -416,6 +450,13 @@ namespace occa {
         viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
         viInfo.valueInfo.load(initNode);
       }
+    }
+
+    void magician::analyzeUpdateStatement(int &smntInfo, expNode &e){
+      const int upCount = e.getUpdatedVariableCount();
+
+      for(int i = 0; i < upCount; ++i)
+        analyzeUpdateExpression(smntInfo, e, i);
     }
 
     void magician::analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos){
@@ -439,6 +480,11 @@ namespace occa {
         smntInfo &= ~analyzeInfo::analyzeEmbedded;
         return;
       }
+
+      if(s.expRoot[0].info == expType::declaration)
+        analyzeDeclareStatement(smntInfo, s.expRoot[0]);
+      else
+        analyzeUpdateStatement(smntInfo, s.expRoot[0]);
 
       expNode &updateNode = s.expRoot[2];
 
@@ -505,7 +551,14 @@ namespace occa {
           }
         }
 
-        std::cout << "var = " << *var << '\n';
+        viInfo_t &viInfo = viInfoDB[*var];
+
+        viInfo.info |= viType::isAnIterator;
+
+        if(stride)
+          viInfo.iteratorInfo.stride.load(*stride);
+        else
+          viInfo.iteratorInfo.stride.load(str);
       }
     }
 
