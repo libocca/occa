@@ -20,7 +20,7 @@ namespace occa {
       var(NULL) {}
 
     void atomInfo_t::load(expNode &e){
-      std::cout << "void atomInfo_t::load(expNode &e)\n";
+      // std::cout << "void atomInfo_t::load(expNode &e)\n";
       info = viType::isUseless;
 
       if(e.info & expType::varInfo){
@@ -38,13 +38,13 @@ namespace occa {
     }
 
     void atomInfo_t::load(varInfo &var_){
-      std::cout << "void atomInfo_t::load(varInfo &var_)\n";
+      // std::cout << "void atomInfo_t::load(varInfo &var_)\n";
       info = viType::isAVariable;
       var  = &var_;
     }
 
     void atomInfo_t::load(const std::string &s){
-      std::cout << "void atomInfo_t::load(const std::string &s)\n";
+      // std::cout << "void atomInfo_t::load(const std::string &s)\n";
       info       = viType::isConstant;
       constValue = s;
     }
@@ -110,7 +110,7 @@ namespace occa {
     }
 
     void valueInfo_t::load(expNode &e){
-      std::cout << "void valueInfo_t::load(expNode &e)\n";
+      // std::cout << "void valueInfo_t::load(expNode &e)\n";
       expNode *cNode = &e;
       indices = 1;
 
@@ -144,17 +144,17 @@ namespace occa {
     }
 
     void valueInfo_t::load(varInfo &var){
-      std::cout << "void valueInfo_t::load(varInfo &var)\n";
+      // std::cout << "void valueInfo_t::load(varInfo &var)\n";
       value.load(var);
     }
 
     void valueInfo_t::load(const std::string &s){
-      std::cout << "void valueInfo_t::load(const std::string &s)\n";
+      // std::cout << "void valueInfo_t::load(const std::string &s)\n";
       value.load(s);
     }
 
     void valueInfo_t::loadVS(expNode &e, const int pos){
-      std::cout << "void valueInfo_t::loadVS(expNode &e, const int pos)\n";
+      // std::cout << "void valueInfo_t::loadVS(expNode &e, const int pos)\n";
       if((e.info  == expType::LR) &&
          (e.value == "*")){
 
@@ -167,7 +167,7 @@ namespace occa {
           return;
         }
       }
-      else if(e.info == expType::varInfo){
+      else if(e.info & expType::varInfo){
         vars[pos].load(e);
         strides[pos].load("1");
         return;
@@ -180,6 +180,8 @@ namespace occa {
 
       vars[pos].info    = viType::isUseless;
       strides[pos].info = viType::isUseless;
+
+      vars[pos].exp = e;
     }
 
     void valueInfo_t::merge(expNode &op, expNode &e){
@@ -214,9 +216,15 @@ namespace occa {
         out << info.value;
       }
       else{
-        out << info.vars[0] << " (" << info.strides[0] << ')';
-        for(int i = 1; i < info.indices; ++i)
-          out << " + " << info.vars[i] << " (" << info.strides[i] << ')';
+        for(int i = 0; i < info.indices; ++i){
+          if(i != 0)
+            out << " + ";
+
+          out << info.vars[i];
+
+          if( !(info.vars[i].info & viType::isUseless) )
+            out << " (" << info.strides[i] << ')';
+        }
       }
 
       return out;
@@ -228,7 +236,7 @@ namespace occa {
       dimIndices(NULL) {}
 
     void accessInfo_t::load(expNode &varNode){
-      std::cout << "void accessInfo_t::load(expNode &varNode)\n";
+      // std::cout << "void accessInfo_t::load(expNode &varNode)\n";
       s = varNode.sInfo;
 
       dim = 0;
@@ -236,7 +244,7 @@ namespace occa {
     }
 
     void accessInfo_t::load(const int brackets, expNode &bracketNode){
-      std::cout << "void accessInfo_t::load(const int brackets, expNode &bracketNode)\n";
+      // std::cout << "void accessInfo_t::load(const int brackets, expNode &bracketNode)\n";
       s = bracketNode.sInfo;
 
       dim = brackets;
@@ -281,7 +289,7 @@ namespace occa {
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
-      std::cout << "ai = " << ai << '\n';
+      std::cout << "W1. ai = " << ai << '\n';
 
       checkLastInput(ai, writeValue);
 
@@ -293,6 +301,7 @@ namespace occa {
 
       accessInfo_t &ai = writes.back();
       ai.load(brackets, bracketNode);
+      std::cout << "W2. ai = " << ai << '\n';
 
       checkLastInput(ai, writeValue);
 
@@ -304,6 +313,7 @@ namespace occa {
 
       accessInfo_t &ai = reads.back();
       ai.load(varNode);
+      std::cout << "R1. ai = " << ai << '\n';
 
       checkLastInput(ai, readValue);
 
@@ -315,6 +325,7 @@ namespace occa {
 
       accessInfo_t &ai = reads.back();
       ai.load(brackets, bracketNode);
+      std::cout << "R2. ai = " << ai << '\n';
 
       checkLastInput(ai, readValue);
 
