@@ -2,11 +2,25 @@
 
 namespace occa {
   namespace parserNS {
+    namespace viType {
+      std::string infoToStr(const int info){
+        std::string tag;
+
+        if(info & viType::isUseless)    tag += 'U';
+        if(info & viType::isAVariable)  tag += 'V';
+        if(info & viType::isAnIterator) tag += 'I';
+        if(info & viType::isConstant)   tag += 'C';
+
+        return tag;
+      }
+    };
+
     atomInfo_t::atomInfo_t() :
       info(viType::isUseless),
       var(NULL) {}
 
     void atomInfo_t::load(expNode &e){
+      std::cout << "void atomInfo_t::load(expNode &e)\n";
       info = viType::isUseless;
 
       if(e.info & expType::varInfo){
@@ -24,13 +38,28 @@ namespace occa {
     }
 
     void atomInfo_t::load(varInfo &var_){
+      std::cout << "void atomInfo_t::load(varInfo &var_)\n";
       info = viType::isAVariable;
       var  = &var_;
     }
 
     void atomInfo_t::load(const std::string &s){
+      std::cout << "void atomInfo_t::load(const std::string &s)\n";
       info       = viType::isConstant;
       constValue = s;
+    }
+
+    std::ostream& operator << (std::ostream &out, atomInfo_t &info){
+      out << viType::infoToStr(info.info) << ": ";
+
+      if(info.info & viType::isConstant)
+        out << info.constValue;
+      else if(info.info & viType::isAVariable)
+        out << info.var->name;
+      else
+        out << info.exp;
+
+      return out;
     }
 
     valueInfo_t::valueInfo_t() :
@@ -81,10 +110,11 @@ namespace occa {
     }
 
     void valueInfo_t::load(expNode &e){
+      std::cout << "void valueInfo_t::load(expNode &e)\n";
       expNode *cNode = &e;
       indices = 1;
 
-      // Needs to warn about negative indices
+      // [-] Needs to warn about negative indices
       while((cNode        != NULL)        &&
             (cNode->info  == expType::LR) &&
             (cNode->value == "+")){
@@ -114,14 +144,17 @@ namespace occa {
     }
 
     void valueInfo_t::load(varInfo &var){
+      std::cout << "void valueInfo_t::load(varInfo &var)\n";
       value.load(var);
     }
 
     void valueInfo_t::load(const std::string &s){
+      std::cout << "void valueInfo_t::load(const std::string &s)\n";
       value.load(s);
     }
 
     void valueInfo_t::loadVS(expNode &e, const int pos){
+      std::cout << "void valueInfo_t::loadVS(expNode &e, const int pos)\n";
       if((e.info  == expType::LR) &&
          (e.value == "*")){
 
@@ -176,12 +209,26 @@ namespace occa {
       return strides[pos];
     }
 
+    std::ostream& operator << (std::ostream &out, valueInfo_t &info){
+      if(info.indices == 0){
+        out << info.value;
+      }
+      else{
+        out << info.vars[0] << " (" << info.strides[0] << ')';
+        for(int i = 1; i < info.indices; ++i)
+          out << " + " << info.vars[i] << " (" << info.strides[i] << ')';
+      }
+
+      return out;
+    }
+
     accessInfo_t::accessInfo_t() :
       s(NULL),
       dim(0),
       dimIndices(NULL) {}
 
     void accessInfo_t::load(expNode &varNode){
+      std::cout << "void accessInfo_t::load(expNode &varNode)\n";
       s = varNode.sInfo;
 
       dim = 0;
@@ -189,6 +236,7 @@ namespace occa {
     }
 
     void accessInfo_t::load(const int brackets, expNode &bracketNode){
+      std::cout << "void accessInfo_t::load(const int brackets, expNode &bracketNode)\n";
       s = bracketNode.sInfo;
 
       dim = brackets;
@@ -202,7 +250,28 @@ namespace occa {
       return false;
     }
 
+    std::ostream& operator << (std::ostream &out, accessInfo_t &info){
+      if(info.dim == 0){
+        out << '[' << info.value << ']';
+      }
+      else{
+        for(int i = 0; i < info.dim; ++i)
+          out << '[' << info.dimIndices[i] << ']';
+      }
+
+      return out;
+    }
+
     iteratorInfo_t::iteratorInfo_t(){}
+
+    std::ostream& operator << (std::ostream &out, iteratorInfo_t &info){
+      out << "[Bounds: ["
+          << info.start  << ", "
+          << info.end    << "], Stride: "
+          << info.stride << ']';
+
+      return out;
+    }
 
     viInfo_t::viInfo_t() :
       info(viType::isUseless) {}
@@ -212,6 +281,7 @@ namespace occa {
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
+      std::cout << "ai = " << ai << '\n';
 
       checkLastInput(ai, writeValue);
 
@@ -262,6 +332,10 @@ namespace occa {
           break;
         }
       }
+    }
+
+    std::ostream& operator << (std::ostream &out, viInfo_t &info){
+      return out;
     }
 
     viInfoMap_t::viInfoMap_t() :

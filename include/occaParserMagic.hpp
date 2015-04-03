@@ -19,6 +19,8 @@ namespace occa {
       static const int isAVariable      = (1 << 1);
       static const int isAnIterator     = (1 << 2);
       static const int isConstant       = (1 << 3);
+
+      std::string infoToStr(const int info);
     };
 
     namespace analyzeInfo {
@@ -39,6 +41,8 @@ namespace occa {
       void load(expNode &e);
       void load(varInfo &var_);
       void load(const std::string &s);
+
+      friend std::ostream& operator << (std::ostream &out, atomInfo_t &info);
     };
 
     class valueInfo_t {
@@ -70,6 +74,8 @@ namespace occa {
       varInfo& varValue();
       varInfo& var(const int pos);
       atomInfo_t& stride(const int pos);
+
+      friend std::ostream& operator << (std::ostream &out, valueInfo_t &info);
     };
 
     class accessInfo_t {
@@ -86,6 +92,8 @@ namespace occa {
       void load(const int brackets, expNode &bracketNode);
 
       bool conflictsWith(accessInfo_t &ai);
+
+      friend std::ostream& operator << (std::ostream &out, accessInfo_t &info);
     };
 
     class iteratorInfo_t {
@@ -93,6 +101,8 @@ namespace occa {
       valueInfo_t start, end, stride;
 
       iteratorInfo_t();
+
+      friend std::ostream& operator << (std::ostream &out, iteratorInfo_t &info);
     };
 
     class viInfo_t {
@@ -116,6 +126,8 @@ namespace occa {
       accessInfo_t& addRead(const int brackets, expNode &bracketNode);
 
       void checkLastInput(accessInfo_t &ai, const int inputType);
+
+      friend std::ostream& operator << (std::ostream &out, viInfo_t &info);
     };
 
     class viInfoMap_t {
