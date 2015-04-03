@@ -20,7 +20,6 @@ namespace occa {
       var(NULL) {}
 
     void atomInfo_t::load(expNode &e){
-      // std::cout << "void atomInfo_t::load(expNode &e)\n";
       info = viType::isUseless;
 
       if(e.info & expType::varInfo){
@@ -38,13 +37,11 @@ namespace occa {
     }
 
     void atomInfo_t::load(varInfo &var_){
-      // std::cout << "void atomInfo_t::load(varInfo &var_)\n";
       info = viType::isAVariable;
       var  = &var_;
     }
 
     void atomInfo_t::load(const std::string &s){
-      // std::cout << "void atomInfo_t::load(const std::string &s)\n";
       info       = viType::isConstant;
       constValue = s;
     }
@@ -110,7 +107,6 @@ namespace occa {
     }
 
     void valueInfo_t::load(expNode &e){
-      // std::cout << "void valueInfo_t::load(expNode &e)\n";
       expNode *cNode = &e;
       indices = 1;
 
@@ -141,20 +137,19 @@ namespace occa {
           cNode = cNode->leaves[0];
         }
       }
+
+      sortIndices();
     }
 
     void valueInfo_t::load(varInfo &var){
-      // std::cout << "void valueInfo_t::load(varInfo &var)\n";
       value.load(var);
     }
 
     void valueInfo_t::load(const std::string &s){
-      // std::cout << "void valueInfo_t::load(const std::string &s)\n";
       value.load(s);
     }
 
     void valueInfo_t::loadVS(expNode &e, const int pos){
-      // std::cout << "void valueInfo_t::loadVS(expNode &e, const int pos)\n";
       if((e.info  == expType::LR) &&
          (e.value == "*")){
 
@@ -182,6 +177,13 @@ namespace occa {
       strides[pos].info = viType::isUseless;
 
       vars[pos].exp = e;
+    }
+
+    void valueInfo_t::sortIndices(){
+      if(indices <= 1)
+        return;
+
+      std::cout << "SI: " << *this << '\n';
     }
 
     void valueInfo_t::merge(expNode &op, expNode &e){
@@ -236,7 +238,6 @@ namespace occa {
       dimIndices(NULL) {}
 
     void accessInfo_t::load(expNode &varNode){
-      // std::cout << "void accessInfo_t::load(expNode &varNode)\n";
       s = varNode.sInfo;
 
       dim = 0;
@@ -244,7 +245,7 @@ namespace occa {
     }
 
     void accessInfo_t::load(const int brackets, expNode &bracketNode){
-      // std::cout << "void accessInfo_t::load(const int brackets, expNode &bracketNode)\n";
+      // s
       s = bracketNode.sInfo;
 
       dim = brackets;
@@ -255,7 +256,7 @@ namespace occa {
     }
 
     bool accessInfo_t::conflictsWith(accessInfo_t &ai){
-      return false;
+      return true;
     }
 
     std::ostream& operator << (std::ostream &out, accessInfo_t &info){
@@ -480,6 +481,8 @@ namespace occa {
     }
 
     void magician::analyzeStatement(statement &s){
+      db.enteringStatement(s);
+
       if(s.info & declareStatementType){
         analyzeDeclareStatement(s.expRoot);
       }
@@ -537,14 +540,16 @@ namespace occa {
         printf("[Magic Analyzer] Goto statements are not supported\n");
       }
 
+      db.smntInfoMap[&s] = db.getSmntInfo();
+
       if(db.getSmntInfo() & analyzeInfo::isExecuted)
         analyzeEmbeddedStatements(s);
+
+      db.leavingStatement();
     }
 
     void magician::analyzeEmbeddedStatements(statement &s){
       if(s.statementStart != NULL){
-        db.enteringStatement(s);
-
         statementNode *statementPos = s.statementStart;
 
         while(statementPos){
@@ -552,8 +557,6 @@ namespace occa {
 
           statementPos = statementPos->right;
         }
-
-        db.leavingStatement();
       }
     }
 

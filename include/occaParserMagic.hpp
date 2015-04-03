@@ -7,6 +7,7 @@ namespace occa {
   namespace parserNS {
     class parserBase;
     class viInfo_t;
+    class infoDB_t;
 
     typedef std::map<statement*, int> smntInfoMap_t;
     typedef smntInfoMap_t::iterator   smntInfoIterator;
@@ -67,6 +68,8 @@ namespace occa {
       void load(const std::string &s);
 
       void loadVS(expNode &e, const int pos);
+
+      void sortIndices();
 
       void merge(expNode &op, expNode &e);
 
