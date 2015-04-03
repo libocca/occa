@@ -133,10 +133,15 @@ namespace occa {
       viInfo_t& operator [] (varInfo &var);
     };
 
-    class viInfoDB_t {
+    class infoDB_t {
     public:
       viInfoMap_t viInfoMap;
       smntInfoMap_t smntInfoMap;
+      std::stack<int> smntInfoStack;
+
+      infoDB_t();
+
+      int& getSmntInfo();
 
       void add(varInfo &var);
       viInfo_t* has(varInfo &var);
@@ -154,7 +159,7 @@ namespace occa {
       varUsedMap_t &varUpdateMap;
       varUsedMap_t &varUsedMap;
 
-      viInfoDB_t viInfoDB;
+      infoDB_t db;
 
       magician(parserBase &parser_);
 
@@ -170,20 +175,20 @@ namespace occa {
 
       void analyzeEmbeddedStatements(statement &s);
 
-      void analyzeDeclareStatement(int &smntInfo, expNode &e);
-      void analyzeDeclareExpression(int &smntInfo, expNode &e, const int pos);
+      void analyzeDeclareStatement(expNode &e);
+      void analyzeDeclareExpression(expNode &e, const int pos);
 
-      void analyzeUpdateStatement(int &smntInfo, expNode &e);
-      void analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos);
+      void analyzeUpdateStatement(expNode &e);
+      void analyzeUpdateExpression(expNode &e, const int pos);
 
-      void analyzeForStatement(int &smntInfo, statement &s);
-      void analyzeFortranForStatement(int &smntInfo, statement &s);
+      void analyzeForStatement(statement &s);
+      void analyzeFortranForStatement(statement &s);
 
-      void analyzeWhileStatement(int &smntInfo, statement &s);
+      void analyzeWhileStatement(statement &s);
 
-      void analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd);
+      void analyzeIfStatement(statementNode *snStart, statementNode *snEnd);
 
-      void analyzeSwitchStatement(int &smntInfo, statement &s);
+      void analyzeSwitchStatement(statement &s);
 
       bool statementGuaranteesBreak(statement &s);
 

@@ -317,21 +317,31 @@ namespace occa {
       return *(viMap[&var]);
     }
 
-    void viInfoDB_t::add(varInfo &var){
+    infoDB_t::infoDB_t(){
+      smntInfoStack.push(analyzeInfo::isExecuted);
+    }
+
+    int& infoDB_t::getSmntInfo(){
+      return smntInfoStack.top();
+    }
+
+    void infoDB_t::add(varInfo &var){
       viInfoMap.add(var);
     }
 
-    viInfo_t* viInfoDB_t::has(varInfo &var){
+    viInfo_t* infoDB_t::has(varInfo &var){
       return viInfoMap.has(var);
     }
 
-    void viInfoDB_t::enteringStatement(statement &s){
+    void infoDB_t::enteringStatement(statement &s){
+      smntInfoStack.push(getSmntInfo());
     }
 
-    void viInfoDB_t::leavingStatement(){
+    void infoDB_t::leavingStatement(){
+      smntInfoStack.pop();
     }
 
-    viInfo_t& viInfoDB_t::operator [] (varInfo &var){
+    viInfo_t& infoDB_t::operator [] (varInfo &var){
       return *(viInfoMap.has(var));
     }
 
@@ -362,14 +372,14 @@ namespace occa {
     void magician::analyzeFunction(statement &fs){
       varInfo &func = *(fs.getFunctionVar());
 
-      viInfoDB.enteringStatement(fs);
+      db.enteringStatement(fs);
 
       // Place function arguments (if any)
       if(func.argumentCount){
         for(int arg = 0; arg < func.argumentCount; ++arg){
           varInfo &varg = *(func.argumentVarInfos[arg]);
 
-          viInfoDB.add(varg);
+          db.add(varg);
         }
       }
 
@@ -381,37 +391,33 @@ namespace occa {
         statementPos = statementPos->right;
       }
 
-      viInfoDB.leavingStatement();
+      db.leavingStatement();
     }
 
     void magician::analyzeStatement(statement &s){
-      int smntInfo = analyzeInfo::isExecuted;
-
       if(s.info & declareStatementType){
-        analyzeDeclareStatement(smntInfo, s.expRoot);
+        analyzeDeclareStatement(s.expRoot);
       }
 
       else if(s.info & updateStatementType){
-        analyzeUpdateStatement(smntInfo, s.expRoot);
+        analyzeUpdateStatement(s.expRoot);
       }
 
       else if(s.info & forStatementType){
         if(parser.parsingC)
-          analyzeForStatement(smntInfo, s);
+          analyzeForStatement(s);
         else
-          analyzeFortranForStatement(smntInfo, s);
+          analyzeFortranForStatement(s);
       }
 
       else if(s.info & whileStatementType){
-        analyzeWhileStatement(smntInfo, s);
+        analyzeWhileStatement(s);
       }
 
       else if(s.info & doWhileStatementType){
         // do-while guarantees at least one run
         analyzeEmbeddedStatements(s);
-        analyzeWhileStatement(smntInfo, s);
-
-        smntInfo &= ~analyzeInfo::isExecuted;
+        analyzeWhileStatement(s);
       }
 
       else if(s.info & ifStatementType){
@@ -425,11 +431,11 @@ namespace occa {
           snEnd = snEnd->right;
         }
 
-        analyzeIfStatement(smntInfo, snStart, snEnd);
+        analyzeIfStatement(snStart, snEnd);
       }
 
       else if(s.info & switchStatementType){
-        analyzeSwitchStatement(smntInfo, s);
+        analyzeSwitchStatement(s);
       }
 
       else if(s.info & (typedefStatementType   |
@@ -446,13 +452,13 @@ namespace occa {
         printf("[Magic Analyzer] Goto statements are not supported\n");
       }
 
-      if(smntInfo & analyzeInfo::isExecuted)
+      if(db.getSmntInfo() & analyzeInfo::isExecuted)
         analyzeEmbeddedStatements(s);
     }
 
     void magician::analyzeEmbeddedStatements(statement &s){
       if(s.statementStart != NULL){
-        viInfoDB.enteringStatement(s);
+        db.enteringStatement(s);
 
         statementNode *statementPos = s.statementStart;
 
@@ -462,23 +468,23 @@ namespace occa {
           statementPos = statementPos->right;
         }
 
-        viInfoDB.leavingStatement();
+        db.leavingStatement();
       }
     }
 
-    void magician::analyzeDeclareStatement(int &smntInfo, expNode &e){
+    void magician::analyzeDeclareStatement(expNode &e){
       const int varCount = e.getVariableCount();
 
       for(int i = 0; i < varCount; ++i){
         // Add variable to the varInfo map
         varInfo &var = e.getVariableInfoNode(i)->getVarInfo();
-        viInfoDB.add(var);
+        db.add(var);
 
-        analyzeDeclareExpression(smntInfo, e, i);
+        analyzeDeclareExpression(e, i);
       }
     }
 
-    void magician::analyzeDeclareExpression(int &smntInfo, expNode &e, const int pos){
+    void magician::analyzeDeclareExpression(expNode &e, const int pos){
       if(e.variableHasInit(pos)){
         expNode &varNode  = *(e.getVariableInfoNode(pos));
         expNode &initNode = *(e.getVariableInitNode(pos));
@@ -486,19 +492,19 @@ namespace occa {
         addVariableWrite(varNode, initNode);
         addExpressionRead(initNode);
 
-        viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+        viInfo_t &viInfo = db[ varNode.getVarInfo() ];
         viInfo.valueInfo.load(initNode);
       }
     }
 
-    void magician::analyzeUpdateStatement(int &smntInfo, expNode &e){
+    void magician::analyzeUpdateStatement(expNode &e){
       const int upCount = e.getUpdatedVariableCount();
 
       for(int i = 0; i < upCount; ++i)
-        analyzeUpdateExpression(smntInfo, e, i);
+        analyzeUpdateExpression(e, i);
     }
 
-    void magician::analyzeUpdateExpression(int &smntInfo, expNode &e, const int pos){
+    void magician::analyzeUpdateExpression(expNode &e, const int pos){
       if(e.updatedVariableIsSet(pos)){
         expNode &varNode = *(e.getUpdatedVariableInfoNode(pos));
         expNode &setNode = *(e.getUpdatedVariableSetNode(pos));
@@ -506,25 +512,27 @@ namespace occa {
         addVariableWrite(varNode, setNode);
         addExpressionRead(setNode);
 
-        viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+        viInfo_t &viInfo = db[ varNode.getVarInfo() ];
         viInfo.valueInfo.merge(e, setNode);
       }
       else
         addExpressionRead(e);
     }
 
-    void magician::analyzeForStatement(int &smntInfo, statement &s){
+    void magician::analyzeForStatement(statement &s){
       if(s.getForStatementCount() < 3){
         printf("[Magic Analyzer] For-loops without 3 statements (4 for okl/ofl loops) are not supported\n");
-        smntInfo &= ~analyzeInfo::isExecuted;
+        db.getSmntInfo() = analyzeInfo::schrodinger;
         return;
       }
 
+      // [1] Add first node
       if(s.expRoot[0].info == expType::declaration)
-        analyzeDeclareStatement(smntInfo, s.expRoot[0]);
+        analyzeDeclareStatement(s.expRoot[0]);
       else
-        analyzeUpdateStatement(smntInfo, s.expRoot[0]);
+        analyzeUpdateStatement(s.expRoot[0]);
 
+      // [3] Check update node
       expNode &updateNode = s.expRoot[2];
 
       bool wrongFormat = false;
@@ -559,8 +567,6 @@ namespace occa {
       expNode *stride = NULL;
       std::string str;
 
-      updateNode.print();
-
       for(int i = 0; i < updateNode.leafCount; ++i){
         expNode &leaf = updateNode[i];
 
@@ -590,7 +596,7 @@ namespace occa {
           }
         }
 
-        viInfo_t &viInfo = viInfoDB[*var];
+        viInfo_t &viInfo = db[*var];
 
         viInfo.info |= viType::isAnIterator;
 
@@ -606,18 +612,18 @@ namespace occa {
       }
     }
 
-    void magician::analyzeWhileStatement(int &smntInfo, statement &s){
+    void magician::analyzeWhileStatement(statement &s){
       typeHolder th = s.expRoot[0].calculateValue();
 
       if( !(th.type & noType) &&
           (th.boolValue() == false) ){
 
-        smntInfo &= ~analyzeInfo::isExecuted;
+        db.getSmntInfo() &= ~analyzeInfo::isExecuted;
         return;
       }
     }
 
-    void magician::analyzeFortranForStatement(int &smntInfo, statement &s){
+    void magician::analyzeFortranForStatement(statement &s){
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
       expNode &e0 = s.expRoot[0][0];
@@ -626,7 +632,7 @@ namespace occa {
       //       [0] =
       // [0] iter    [1] doStart
       varInfo &iterVar = e0[0].getVarInfo();
-      viInfo_t &viInfo = viInfoDB[iterVar];
+      viInfo_t &viInfo = db[iterVar];
 
       varInfo *start  = &(e0[1].getVarInfo());
       varInfo *end    = NULL;
@@ -656,7 +662,7 @@ namespace occa {
         viInfo.iteratorInfo.stride.load(*stride);
     }
 
-    void magician::analyzeIfStatement(int &smntInfo, statementNode *snStart, statementNode *snEnd){
+    void magician::analyzeIfStatement(statementNode *snStart, statementNode *snEnd){
       statementNode *sn = snStart;
 
       while(sn != snEnd){
@@ -685,7 +691,7 @@ namespace occa {
       }
     }
 
-    void magician::analyzeSwitchStatement(int &smntInfo, statement &s){
+    void magician::analyzeSwitchStatement(statement &s){
       typeHolder th = s.expRoot[0].calculateValue();
 
       if(th.type & noType){
@@ -770,7 +776,7 @@ namespace occa {
       if(isUpdated)
         addVariableRead(varNode);
 
-      viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+      viInfo_t &viInfo = db[ varNode.getVarInfo() ];
 
       viInfo.addWrite(varNode);
     }
@@ -784,7 +790,7 @@ namespace occa {
       if(isUpdated)
         addVariableRead(varNode, brackets, bracketNode);
 
-      viInfo_t &viInfo = viInfoDB[ varNode[0].getVarInfo() ];
+      viInfo_t &viInfo = db[ varNode[0].getVarInfo() ];
 
       viInfo.addWrite(brackets, bracketNode);
     }
@@ -799,7 +805,7 @@ namespace occa {
         return;
       }
 
-      viInfo_t &viInfo = viInfoDB[ varNode.getVarInfo() ];
+      viInfo_t &viInfo = db[ varNode.getVarInfo() ];
 
       viInfo.addRead(varNode);
     }
@@ -808,7 +814,7 @@ namespace occa {
                                    const int brackets,
                                    expNode &bracketNode){
 
-      viInfo_t &viInfo = viInfoDB[ varNode[0].getVarInfo() ];
+      viInfo_t &viInfo = db[ varNode[0].getVarInfo() ];
 
       viInfo.addRead(brackets, bracketNode);
     }
