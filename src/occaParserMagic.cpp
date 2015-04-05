@@ -15,9 +15,21 @@ namespace occa {
       }
     };
 
-    atomInfo_t::atomInfo_t() :
+    atomInfo_t::atomInfo_t(infoDB_t *db_) :
+      db(db_),
       info(viType::isUseless),
       var(NULL) {}
+
+    atomInfo_t::atomInfo_t(const atomInfo_t &ai) :
+      db(ai.db),
+      info(ai.info),
+      constValue(ai.constValue),
+      // exp(ai.exp), [<>] Missing, needs to be added after refactor
+      var(ai.var) {}
+
+    void atomInfo_t::setDB(infoDB_t *db_){
+      db = db_;
+    }
 
     void atomInfo_t::load(expNode &e){
       info = viType::isUseless;
@@ -59,25 +71,42 @@ namespace occa {
       return out;
     }
 
-    valueInfo_t::valueInfo_t() :
+    valueInfo_t::valueInfo_t(infoDB_t *db_) :
+      db(db_),
       info(0),
       indices(0),
+      value(db_),
       vars(NULL),
       strides(NULL) {}
 
-    valueInfo_t::valueInfo_t(const valueInfo_t &vi) :
+    valueInfo_t::valueInfo_t(const valueInfo_t &vi, infoDB_t *db_) :
+      db(db_),
       info(vi.info),
       indices(vi.indices),
+      value(db_),
       vars(vi.vars),
       strides(vi.strides) {}
 
-    valueInfo_t::valueInfo_t(expNode &e) :
+    valueInfo_t::valueInfo_t(expNode &e, infoDB_t *db_) :
+      db(db_),
       info(0),
       indices(0),
+      value(db_),
       vars(NULL),
       strides(NULL) {
 
       load(e);
+    }
+
+    void valueInfo_t::setDB(infoDB_t *db_){
+      db = db_;
+
+      value.setDB(db);
+
+      for(int i = 0; i < indices; ++i){
+        vars[i].setDB(db);
+        strides[i].setDB(db);
+      }
     }
 
     valueInfo_t& valueInfo_t::operator = (const valueInfo_t &vi){
@@ -90,8 +119,16 @@ namespace occa {
     }
 
     void valueInfo_t::allocVS(const int count){
+      if(count <= 0)
+        return;
+
       vars    = new atomInfo_t[count];
       strides = new atomInfo_t[count];
+
+      for(int i = 0; i < count; ++i){
+        vars[i].setDB(db);
+        strides[i].setDB(db);
+      }
     }
 
     bool valueInfo_t::isUseless(){
@@ -183,11 +220,28 @@ namespace occa {
       if(indices <= 1)
         return;
 
-      std::cout << "SI: " << *this << '\n';
+      std::cout << "SI 1: " << *this << '\n';
+
+      int *vi = new int[2*indices];
+
+      for(int i = 0; i < indices; ++i){
+        vi[2*i + 0] = 0; // Value
+        vi[2*i + 1] = i; // Index
+      }
+
+      qsort(vi, indices, 2*sizeof(int), valueInfo_t::qSortIndices);
+
+
+
+      std::cout << "SI 2: " << *this << '\n';
+    }
+
+    int valueInfo_t::qSortIndices(const void *a, const void *b){
+      return ((*((int*) a)) - (*((int*) b)));
     }
 
     void valueInfo_t::merge(expNode &op, expNode &e){
-      valueInfo_t evi(e);
+      valueInfo_t evi(e, db);
 
       if(op.value == "="){
         *this = evi;
@@ -232,10 +286,21 @@ namespace occa {
       return out;
     }
 
-    accessInfo_t::accessInfo_t() :
+    accessInfo_t::accessInfo_t(infoDB_t *db_) :
+      db(db_),
       s(NULL),
       dim(0),
+      value(db_),
       dimIndices(NULL) {}
+
+    void accessInfo_t::setDB(infoDB_t *db_){
+      db = db_;
+
+      value.setDB(db_);
+
+      for(int i = 0; i < dim; ++i)
+        dimIndices[i].setDB(db_);
+    }
 
     void accessInfo_t::load(expNode &varNode){
       s = varNode.sInfo;
@@ -245,14 +310,15 @@ namespace occa {
     }
 
     void accessInfo_t::load(const int brackets, expNode &bracketNode){
-      // s
       s = bracketNode.sInfo;
 
-      dim = brackets;
+      dim        = brackets;
       dimIndices = new valueInfo_t[dim];
 
-      for(int i = 0; i < dim; ++i)
+      for(int i = 0; i < dim; ++i){
+        dimIndices[i].setDB(db);
         dimIndices[i].load(bracketNode[i][0]);
+      }
     }
 
     bool accessInfo_t::conflictsWith(accessInfo_t &ai){
@@ -271,7 +337,19 @@ namespace occa {
       return out;
     }
 
-    iteratorInfo_t::iteratorInfo_t(){}
+    iteratorInfo_t::iteratorInfo_t(infoDB_t *db_) :
+      db(db_),
+      start(db_),
+      end(db_),
+      stride(db_) {}
+
+    void iteratorInfo_t::setDB(infoDB_t *db_){
+      db = db_;
+
+      start.setDB(db);
+      end.setDB(db);
+      stride.setDB(db);
+    }
 
     std::ostream& operator << (std::ostream &out, iteratorInfo_t &info){
       out << "[Bounds: ["
@@ -282,11 +360,23 @@ namespace occa {
       return out;
     }
 
-    viInfo_t::viInfo_t() :
-      info(viType::isUseless) {}
+    viInfo_t::viInfo_t(infoDB_t *db_) :
+      db(db_),
+      info(viType::isUseless),
+      valueInfo(db_),
+      dimInfo(db_),
+      iteratorInfo(db_) {}
+
+    void viInfo_t::setDB(infoDB_t *db_){
+      db = db_;
+
+      valueInfo.setDB(db);
+      dimInfo.setDB(db);
+      iteratorInfo.setDB(db);
+    }
 
     accessInfo_t& viInfo_t::addWrite(expNode &varNode){
-      writes.push_back( accessInfo_t() );
+      writes.push_back( accessInfo_t(db) );
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
@@ -298,7 +388,7 @@ namespace occa {
     }
 
     accessInfo_t& viInfo_t::addWrite(const int brackets, expNode &bracketNode){
-      writes.push_back( accessInfo_t() );
+      writes.push_back( accessInfo_t(db) );
 
       accessInfo_t &ai = writes.back();
       ai.load(brackets, bracketNode);
@@ -310,7 +400,7 @@ namespace occa {
     }
 
     accessInfo_t& viInfo_t::addRead(expNode &varNode){
-      reads.push_back( accessInfo_t() );
+      reads.push_back( accessInfo_t(db) );
 
       accessInfo_t &ai = reads.back();
       ai.load(varNode);
@@ -322,7 +412,7 @@ namespace occa {
     }
 
     accessInfo_t& viInfo_t::addRead(const int brackets, expNode &bracketNode){
-      reads.push_back( accessInfo_t() );
+      reads.push_back( accessInfo_t(db) );
 
       accessInfo_t &ai = reads.back();
       ai.load(brackets, bracketNode);
@@ -350,8 +440,13 @@ namespace occa {
       return out;
     }
 
-    viInfoMap_t::viInfoMap_t() :
+    viInfoMap_t::viInfoMap_t(infoDB_t *db_) :
+      db(db_),
       anonVar(NULL) {}
+
+    void viInfoMap_t::setDB(infoDB_t *db_){
+      db = db_;
+    }
 
     void viInfoMap_t::free(){
       viInfoIterator it = viMap.begin();
@@ -381,13 +476,13 @@ namespace occa {
 
       if(it == viMap.end()){
         if(var.hasQualifier("restrict")){
-          viMap[&var] = new viInfo_t;
+          viMap[&var] = new viInfo_t(db);
         }
         else{
           if(anonVar != NULL)
             viMap[&var] = anonVar;
           else
-            viMap[&var] = new viInfo_t;
+            viMap[&var] = new viInfo_t(db);
         }
       }
     }
@@ -403,7 +498,9 @@ namespace occa {
       return *(viMap[&var]);
     }
 
-    infoDB_t::infoDB_t(){
+    infoDB_t::infoDB_t() :
+      viInfoMap(this) {
+
       smntInfoStack.push(analyzeInfo::isExecuted);
     }
 

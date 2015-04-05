@@ -32,12 +32,19 @@ namespace occa {
 
     class atomInfo_t {
     public:
+      infoDB_t *db;
+
       int info;
       typeHolder constValue;
       expNode exp;
       varInfo *var;
 
-      atomInfo_t();
+      atomInfo_t(infoDB_t *db_ = NULL);
+      atomInfo_t(const atomInfo_t &ai);
+
+      atomInfo_t& operator = (const atomInfo_t &ai);
+
+      void setDB(infoDB_t *db_);
 
       void load(expNode &e);
       void load(varInfo &var_);
@@ -48,14 +55,18 @@ namespace occa {
 
     class valueInfo_t {
     public:
+      infoDB_t *db;
+
       int info;
       int indices;
       atomInfo_t value;
       atomInfo_t *vars, *strides;
 
-      valueInfo_t();
-      valueInfo_t(const valueInfo_t &vi);
-      valueInfo_t(expNode &e);
+      valueInfo_t(infoDB_t *db_ = NULL);
+      valueInfo_t(const valueInfo_t &vi, infoDB_t *db_ = NULL);
+      valueInfo_t(expNode &e, infoDB_t *db_ = NULL);
+
+      void setDB(infoDB_t *db_);
 
       valueInfo_t& operator = (const valueInfo_t &vi);
 
@@ -70,6 +81,7 @@ namespace occa {
       void loadVS(expNode &e, const int pos);
 
       void sortIndices();
+      static int qSortIndices(const void *a, const void *b);
 
       void merge(expNode &op, expNode &e);
 
@@ -83,13 +95,17 @@ namespace occa {
 
     class accessInfo_t {
     public:
+      infoDB_t *db;
+
       statement *s;
 
       int dim;
       valueInfo_t value;
       valueInfo_t *dimIndices;
 
-      accessInfo_t();
+      accessInfo_t(infoDB_t *db_ = NULL);
+
+      void setDB(infoDB_t *db_);
 
       void load(expNode &varNode);
       void load(const int brackets, expNode &bracketNode);
@@ -101,15 +117,21 @@ namespace occa {
 
     class iteratorInfo_t {
     public:
+      infoDB_t *db;
+
       valueInfo_t start, end, stride;
 
-      iteratorInfo_t();
+      iteratorInfo_t(infoDB_t *db_ = NULL);
+
+      void setDB(infoDB_t *db_);
 
       friend std::ostream& operator << (std::ostream &out, iteratorInfo_t &info);
     };
 
     class viInfo_t {
     public:
+      infoDB_t *db;
+
       int info;
       valueInfo_t    valueInfo;
       accessInfo_t   dimInfo;
@@ -120,7 +142,9 @@ namespace occa {
       static const int writeValue = (1 << 0);
       static const int readValue  = (1 << 1);
 
-      viInfo_t();
+      viInfo_t(infoDB_t *db_ = NULL);
+
+      void setDB(infoDB_t *db_);
 
       accessInfo_t& addWrite(expNode &varNode);
       accessInfo_t& addWrite(const int brackets, expNode &bracketNode);
@@ -135,10 +159,14 @@ namespace occa {
 
     class viInfoMap_t {
     public:
+      infoDB_t *db;
+
       viInfoMap_t_ viMap;
       viInfo_t *anonVar; // Stores non-restrict variables
 
-      viInfoMap_t();
+      viInfoMap_t(infoDB_t *db_);
+
+      void setDB(infoDB_t *db_);
 
       void free();
 
