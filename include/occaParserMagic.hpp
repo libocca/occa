@@ -63,12 +63,12 @@ namespace occa {
       atomInfo_t *vars, *strides;
 
       valueInfo_t(infoDB_t *db_ = NULL);
-      valueInfo_t(const valueInfo_t &vi, infoDB_t *db_ = NULL);
       valueInfo_t(expNode &e, infoDB_t *db_ = NULL);
 
-      void setDB(infoDB_t *db_);
-
+      valueInfo_t(const valueInfo_t &vi);
       valueInfo_t& operator = (const valueInfo_t &vi);
+
+      void setDB(infoDB_t *db_);
 
       void allocVS(const int count);
 
@@ -96,7 +96,6 @@ namespace occa {
     class accessInfo_t {
     public:
       infoDB_t *db;
-
       statement *s;
 
       int dim;
@@ -104,6 +103,9 @@ namespace occa {
       valueInfo_t *dimIndices;
 
       accessInfo_t(infoDB_t *db_ = NULL);
+      accessInfo_t(const accessInfo_t &ai);
+
+      accessInfo_t& operator = (const accessInfo_t &ai);
 
       void setDB(infoDB_t *db_);
 

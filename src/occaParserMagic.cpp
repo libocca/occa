@@ -27,6 +27,17 @@ namespace occa {
       // exp(ai.exp), [<>] Missing, needs to be added after refactor
       var(ai.var) {}
 
+    atomInfo_t& atomInfo_t::operator = (const atomInfo_t &ai){
+      db = ai.db;
+
+      info       = ai.info;
+      constValue = ai.constValue;
+      // exp        = ai.exp; [<>] Missing, needs to be added after refactor
+      var        = ai.var;
+
+      return *this;
+    }
+
     void atomInfo_t::setDB(infoDB_t *db_){
       db = db_;
     }
@@ -79,14 +90,6 @@ namespace occa {
       vars(NULL),
       strides(NULL) {}
 
-    valueInfo_t::valueInfo_t(const valueInfo_t &vi, infoDB_t *db_) :
-      db(db_),
-      info(vi.info),
-      indices(vi.indices),
-      value(db_),
-      vars(vi.vars),
-      strides(vi.strides) {}
-
     valueInfo_t::valueInfo_t(expNode &e, infoDB_t *db_) :
       db(db_),
       info(0),
@@ -98,6 +101,26 @@ namespace occa {
       load(e);
     }
 
+    valueInfo_t::valueInfo_t(const valueInfo_t &vi) :
+      db(vi.db),
+      info(vi.info),
+      indices(vi.indices),
+      value(vi.value),
+      vars(vi.vars),
+      strides(vi.strides) {}
+
+    valueInfo_t& valueInfo_t::operator = (const valueInfo_t &vi){
+      db = vi.db;
+
+      info    = vi.info;
+      indices = vi.indices;
+      value   = vi.value;
+      vars    = vi.vars;
+      strides = vi.strides;
+
+      return *this;
+    }
+
     void valueInfo_t::setDB(infoDB_t *db_){
       db = db_;
 
@@ -107,15 +130,6 @@ namespace occa {
         vars[i].setDB(db);
         strides[i].setDB(db);
       }
-    }
-
-    valueInfo_t& valueInfo_t::operator = (const valueInfo_t &vi){
-      info    = vi.info;
-      indices = vi.indices;
-      vars    = vi.vars;
-      strides = vi.strides;
-
-      return *this;
     }
 
     void valueInfo_t::allocVS(const int count){
@@ -293,6 +307,24 @@ namespace occa {
       value(db_),
       dimIndices(NULL) {}
 
+    accessInfo_t::accessInfo_t(const accessInfo_t &ai) :
+      db(ai.db),
+      s(ai.s),
+      dim(ai.dim),
+      value(ai.value),
+      dimIndices(ai.dimIndices) {}
+
+    accessInfo_t& accessInfo_t::operator = (const accessInfo_t &ai){
+      db = ai.db;
+      s  = ai.s;
+
+      dim        = ai.dim;
+      value      = ai.value;
+      dimIndices = ai.dimIndices;
+
+      return *this;
+    }
+
     void accessInfo_t::setDB(infoDB_t *db_){
       db = db_;
 
@@ -377,6 +409,7 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addWrite(expNode &varNode){
       writes.push_back( accessInfo_t(db) );
+      std::cout << "1. writes.back().db = " << writes.back().db << '\n';
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
@@ -389,6 +422,7 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addWrite(const int brackets, expNode &bracketNode){
       writes.push_back( accessInfo_t(db) );
+      std::cout << "2. writes.back().db = " << writes.back().db << '\n';
 
       accessInfo_t &ai = writes.back();
       ai.load(brackets, bracketNode);
@@ -401,6 +435,7 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addRead(expNode &varNode){
       reads.push_back( accessInfo_t(db) );
+      std::cout << "3. reads.back().db = " << reads.back().db << '\n';
 
       accessInfo_t &ai = reads.back();
       ai.load(varNode);
@@ -413,6 +448,7 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addRead(const int brackets, expNode &bracketNode){
       reads.push_back( accessInfo_t(db) );
+      std::cout << "4. reads.back().db = " << reads.back().db << '\n';
 
       accessInfo_t &ai = reads.back();
       ai.load(brackets, bracketNode);
@@ -495,7 +531,16 @@ namespace occa {
     }
 
     viInfo_t& viInfoMap_t::operator [] (varInfo &var){
-      return *(viMap[&var]);
+      viInfoIterator it = viMap.find(&var);
+
+      if(it != viMap.end())
+        return *(it->second);
+
+
+      viInfo_t &vi = *(viMap[&var]);
+      vi.setDB(db);
+
+      return vi;
     }
 
     infoDB_t::infoDB_t() :
