@@ -46,6 +46,9 @@ namespace occa {
 
       atomInfo_t& operator = (const atomInfo_t &ai);
 
+      bool operator == (const std::string &str);
+      bool operator == (expNode &e);
+
       void setDB(infoDB_t *db_);
 
       void load(expNode &e);
@@ -85,7 +88,18 @@ namespace occa {
       void sortIndices();
       static int qSortIndices(const void *a, const void *b);
 
-      void merge(expNode &op, expNode &e);
+      void mergeIndices();
+
+      void update(expNode &op, expNode &e);
+
+      int hasStride(const std::string &str);
+      int hasStride(expNode &e);
+
+      void add(const std::string &str);
+      void add(expNode &e);
+
+      void sub(const std::string &str);
+      void sub(expNode &e);
 
       typeHolder constValue();
       varInfo& varValue();
@@ -156,7 +170,7 @@ namespace occa {
       accessInfo_t& addRead(expNode &varNode);
       accessInfo_t& addRead(const int brackets, expNode &bracketNode);
 
-      void setValue(expNode &setNode);
+      void updateValue(expNode &opNode, expNode &setNode);
 
       void checkLastInput(accessInfo_t &ai, const int inputType);
 
@@ -243,8 +257,9 @@ namespace occa {
 
       bool variableIsUpdated(expNode &varNode);
 
-      void addVariableWrite(expNode &varNode, expNode &setNode);
+      void addVariableWrite(expNode &varNode, expNode &opNode, expNode &setNode);
       void addVariableWrite(expNode &varNode,
+                            expNode &opNode,
                             expNode &setNode,
                             const int brackets,
                             expNode &bracketNode);

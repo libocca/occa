@@ -45,6 +45,10 @@ namespace occa {
 
       type(NULL) {}
 
+    bool expNode::operator == (expNode &e){
+      return sameAs(e);
+    }
+
     fnvOutput_t expNode::hash(){
       if(info & expType::hasInfo)
         return fnv(leaves[0]);
@@ -2507,6 +2511,20 @@ namespace occa {
       return NULL;
     }
 
+    expNode* expNode::getVariableOpNode(const int pos){
+      if(info == expType::declaration){
+        expNode &varNode = *(getVariableNode(pos));
+
+        if(varNode.leafCount &&
+           (varNode[0].info == expType::LR)){
+
+          return &(varNode[0]);
+        }
+      }
+
+      return NULL;
+    }
+
     expNode* expNode::getVariableInitNode(const int pos){
       if(info == expType::declaration){
         if(variableHasInit(pos)){
@@ -2604,6 +2622,10 @@ namespace occa {
       }
 
       return cNode;
+    }
+
+    expNode* expNode::getUpdatedVariableOpNode(const int pos){
+      return getUpdatedNode(pos);
     }
 
     expNode* expNode::getUpdatedVariableInfoNode(const int pos){

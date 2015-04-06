@@ -114,6 +114,8 @@ namespace occa {
       expNode(statement &s);
       expNode(expNode &up_);
 
+      bool operator == (expNode &e);
+
       fnvOutput_t hash();
       bool sameAs(expNode &e, const bool nestedSearch = true);
 
@@ -297,6 +299,7 @@ namespace occa {
 
       expNode* getVariableNode(const int pos);
       expNode* getVariableInfoNode(const int pos);
+      expNode* getVariableOpNode(const int pos);
       expNode* getVariableInitNode(const int pos);
 
       std::string getVariableName(const int pos = 0);
@@ -306,6 +309,7 @@ namespace occa {
 
       expNode* getUpdatedNode(const int pos);
       expNode* getUpdatedVariableInfoNode(const int pos);
+      expNode* getUpdatedVariableOpNode(const int pos);
       expNode* getUpdatedVariableSetNode(const int pos);
 
       int getVariableBracketCount();

@@ -41,6 +41,31 @@ namespace occa {
       return *this;
     }
 
+    bool atomInfo_t::operator == (const std::string &str){
+      if( !(info & viType::isConstant) )
+        return false;
+
+      return (constValue == typeHolder(str));
+    }
+
+    bool atomInfo_t::operator == (expNode &e){
+      if(info & viType::isConstant){
+        if(e.valueIsKnown())
+          return (constValue == e.calculateValue());
+
+        return false;
+      }
+
+      if(info & viType::isAVariable){
+        if(e.info & expType::varInfo)
+          return (var == &(e.getVarInfo()));
+
+        return false;
+      }
+
+      return (exp == e);
+    }
+
     void atomInfo_t::setDB(infoDB_t *db_){
       db = db_;
     }
@@ -207,14 +232,39 @@ namespace occa {
       if((e.info  == expType::LR) &&
          (e.value == "*")){
 
-        const bool varIn0 = (e[0].info & expType::varInfo);
-        const bool varIn1 = (e[1].info & expType::varInfo);
+        expNode *cNode   = e.clone();
+        expNode *iterNode = NULL;
 
-        if(varIn0 || varIn1){
-          vars[pos].load(e[varIn1]);
-          strides[pos].load(e[!varIn1]);
-          return;
+        while(cNode                        &&
+              (cNode->info == expType::LR) &&
+              (cNode->value == "*")){
+
+          expNode &e2 = *cNode;
+
+          const bool varIn0 = (e2[0].info & expType::varInfo);
+          const bool varIn1 = (e2[1].info & expType::varInfo);
+
+          viInfo_t *vi0 = (varIn0 ? db.has(e2[0].getVarInfo()) : NULL);
+          viInfo_t *vi1 = (varIn1 ? db.has(e2[1].getVarInfo()) : NULL);
+
+          const bool isIter0 = (vi0 && (vi0->info & viType::isAnIterator));
+          const bool isIter1 = (vi1 && (vi1->info & viType::isAnIterator));
+
+          if(isIter0 ^ isIter1){
+            // Unknown
+            if(iterNode){
+              iterNode = NULL;
+              break;
+            }
+
+            iterNode = (isIter0 ? &(e2[0]) : &(e2[1]));
+          }
         }
+
+        if(
+
+        vars[pos].load(e2[varIn1]);
+        strides[pos].load(e2[!varIn1]);
       }
       else if(e.info & expType::varInfo){
         vars[pos].load(e);
@@ -279,15 +329,73 @@ namespace occa {
       return ((*((int*) a)) - (*((int*) b)));
     }
 
-    void valueInfo_t::merge(expNode &op, expNode &e){
-      valueInfo_t evi(e, db);
-
+    void valueInfo_t::update(expNode &op, expNode &e){
       if(op.value == "="){
-        *this = evi;
+        load(e);
+        return;
+      }
+
+      if(info & viType::isUseless)
+        return;
+
+      if(op.value == "++"){
+        add("1");
+      }
+      else if(op.value == "--"){
+        sub("1");
+      }
+      else if(op.value == "+="){
+        add(e);
+      }
+      else if(op.value == "-="){
+        sub(e);
       }
       else {
-        // [-] Missing merge
+        info = viType::isUseless;
       }
+    }
+
+    int valueInfo_t::hasStride(const std::string &str){
+      for(int i = 0; i < indices; ++i){
+        std::cout << "  strides[i] = " << strides[i] << '\n'
+                  << "  str        = " << str << '\n';
+
+        if(strides[i] == str)
+          return i;
+      }
+
+      return -1;
+    }
+
+    int valueInfo_t::hasStride(expNode &e){
+      for(int i = 0; i < indices; ++i){
+        std::cout << "  strides[i] = " << strides[i] << '\n'
+                  << "  e          = " << e.toString() << '\n';
+        if(strides[i] == e)
+          return i;
+      }
+
+      return -1;
+    }
+
+    void valueInfo_t::add(const std::string &str){
+      const int index = hasStride(str);
+      std::cout << "index = " << index << '\n';
+    }
+
+    void valueInfo_t::add(expNode &e){
+      const int index = hasStride(e);
+      std::cout << "index = " << index << '\n';
+    }
+
+    void valueInfo_t::sub(const std::string &str){
+      const int index = hasStride(str);
+      std::cout << "index = " << index << '\n';
+    }
+
+    void valueInfo_t::sub(expNode &e){
+      const int index = hasStride(e);
+      std::cout << "index = " << index << '\n';
     }
 
     typeHolder valueInfo_t::constValue(){
@@ -485,8 +593,11 @@ namespace occa {
       return ai;
     }
 
-    void viInfo_t::setValue(expNode &setNode){
-      valueInfo.load(setNode);
+    void viInfo_t::updateValue(expNode &opNode, expNode &setNode){
+      if(opNode.value == "=")
+        valueInfo.load(setNode);
+      else
+        valueInfo.update(opNode, setNode);
     }
 
     void viInfo_t::checkLastInput(accessInfo_t &ai, const int inputType){
@@ -752,9 +863,10 @@ namespace occa {
     void magician::analyzeDeclareExpression(expNode &e, const int pos){
       if(e.variableHasInit(pos)){
         expNode &varNode  = *(e.getVariableInfoNode(pos));
+        expNode &opNode   = *(e.getVariableOpNode(pos));
         expNode &initNode = *(e.getVariableInitNode(pos));
 
-        addVariableWrite(varNode, initNode);
+        addVariableWrite(varNode, opNode, initNode);
         addExpressionRead(initNode);
 
         viInfo_t &viInfo = db[ varNode.getVarInfo() ];
@@ -772,13 +884,14 @@ namespace occa {
     void magician::analyzeUpdateExpression(expNode &e, const int pos){
       if(e.updatedVariableIsSet(pos)){
         expNode &varNode = *(e.getUpdatedVariableInfoNode(pos));
+        expNode &opNode  = *(e.getUpdatedVariableOpNode(pos));
         expNode &setNode = *(e.getUpdatedVariableSetNode(pos));
 
-        addVariableWrite(varNode, setNode);
+        addVariableWrite(varNode, opNode, setNode);
         addExpressionRead(setNode);
 
         viInfo_t &viInfo = db[ varNode.getVarInfo() ];
-        viInfo.valueInfo.merge(e, setNode);
+        viInfo.valueInfo.update(opNode, setNode);
       }
       else
         addExpressionRead(e);
@@ -866,6 +979,7 @@ namespace occa {
         viInfo_t &iter = db[*var];
 
         iter.info |= viType::isAnIterator;
+        iter.iteratorInfo.s = &s;
 
         if(stride)
           iter.iteratorInfo.stride.load(*stride);
@@ -1106,14 +1220,15 @@ namespace occa {
               isAnUpdateOperator(up->value));
     }
 
-    void magician::addVariableWrite(expNode &varNode, expNode &setNode){
+    void magician::addVariableWrite(expNode &varNode, expNode &opNode, expNode &setNode){
       const bool isUpdated = variableIsUpdated(varNode);
 
       if(varNode.info & expType::variable){
         const int brackets = varNode.getVariableBracketCount();
 
         if(brackets)
-          addVariableWrite(varNode, setNode, brackets, *(varNode.getVariableBracket(0)->up));
+          addVariableWrite(varNode, opNode, setNode,
+                           brackets, *(varNode.getVariableBracket(0)->up));
 
         return;
       }
@@ -1124,11 +1239,12 @@ namespace occa {
       viInfo_t &viInfo = db[ varNode.getVarInfo() ];
 
       viInfo.addWrite(varNode);
-      viInfo.setValue(setNode);
+      viInfo.updateValue(opNode, setNode);
     }
 
     void magician::addVariableWrite(expNode &varNode,
                                     expNode &setNode,
+                                    expNode &opNode,
                                     const int brackets,
                                     expNode &bracketNode){
       const bool isUpdated = variableIsUpdated(varNode);
