@@ -24,15 +24,18 @@ namespace occa {
       db(ai.db),
       info(ai.info),
       constValue(ai.constValue),
-      // exp(ai.exp), [<>] Missing, needs to be added after refactor
-      var(ai.var) {}
+      // exp(ai.exp), [<>] Change after restructure
+      var(ai.var) {
+
+      exp = ai.exp;
+    }
 
     atomInfo_t& atomInfo_t::operator = (const atomInfo_t &ai){
       db = ai.db;
 
       info       = ai.info;
       constValue = ai.constValue;
-      // exp        = ai.exp; [<>] Missing, needs to be added after refactor
+      exp        = ai.exp;
       var        = ai.var;
 
       return *this;
@@ -243,9 +246,31 @@ namespace occa {
         vi[2*i + 1] = i; // Index
       }
 
+      // Add values
+
+
+      // Sort based by value
       qsort(vi, indices, 2*sizeof(int), valueInfo_t::qSortIndices);
 
+      // Re-order
+      for(int i = 0; i < indices; ++i){
+        int i2 = vi[2*i + 1];
 
+        if(i == i2)
+          continue;
+
+        if(i2 < i)
+          i2 = vi[2*i2 + 1];
+
+        atomInfo_t tmpV = vars[i];
+        atomInfo_t tmpS = strides[i];
+
+        vars[i]    = vars[i2];
+        strides[i] = strides[i2];
+
+        vars[i2]    = tmpV;
+        strides[i2] = tmpS;
+      }
 
       std::cout << "SI 2: " << *this << '\n';
     }
@@ -371,6 +396,7 @@ namespace occa {
 
     iteratorInfo_t::iteratorInfo_t(infoDB_t *db_) :
       db(db_),
+      s(NULL),
       start(db_),
       end(db_),
       stride(db_) {}
@@ -387,7 +413,13 @@ namespace occa {
       out << "[Bounds: ["
           << info.start  << ", "
           << info.end    << "], Stride: "
-          << info.stride << ']';
+          << info.stride;
+
+      if(info.s)
+        out << ", From: " << info.s->toString(statementFlag::printEverything &
+                                              ~statementFlag::printSubStatements);
+
+      out << ']';
 
       return out;
     }
@@ -396,20 +428,17 @@ namespace occa {
       db(db_),
       info(viType::isUseless),
       valueInfo(db_),
-      dimInfo(db_),
       iteratorInfo(db_) {}
 
     void viInfo_t::setDB(infoDB_t *db_){
       db = db_;
 
       valueInfo.setDB(db);
-      dimInfo.setDB(db);
       iteratorInfo.setDB(db);
     }
 
     accessInfo_t& viInfo_t::addWrite(expNode &varNode){
       writes.push_back( accessInfo_t(db) );
-      std::cout << "1. writes.back().db = " << writes.back().db << '\n';
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
@@ -422,7 +451,6 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addWrite(const int brackets, expNode &bracketNode){
       writes.push_back( accessInfo_t(db) );
-      std::cout << "2. writes.back().db = " << writes.back().db << '\n';
 
       accessInfo_t &ai = writes.back();
       ai.load(brackets, bracketNode);
@@ -435,7 +463,6 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addRead(expNode &varNode){
       reads.push_back( accessInfo_t(db) );
-      std::cout << "3. reads.back().db = " << reads.back().db << '\n';
 
       accessInfo_t &ai = reads.back();
       ai.load(varNode);
@@ -448,7 +475,6 @@ namespace occa {
 
     accessInfo_t& viInfo_t::addRead(const int brackets, expNode &bracketNode){
       reads.push_back( accessInfo_t(db) );
-      std::cout << "4. reads.back().db = " << reads.back().db << '\n';
 
       accessInfo_t &ai = reads.back();
       ai.load(brackets, bracketNode);
@@ -473,6 +499,11 @@ namespace occa {
     }
 
     std::ostream& operator << (std::ostream &out, viInfo_t &info){
+      if(info.info & viType::isAnIterator)
+        out << info.iteratorInfo;
+      else if(info.info & viType::isAVariable)
+        out << info.valueInfo;
+
       return out;
     }
 
@@ -834,6 +865,8 @@ namespace occa {
           viInfo.iteratorInfo.stride.load(*stride);
         else
           viInfo.iteratorInfo.stride.load(str);
+
+        std::cout << "viInfo = " << viInfo << '\n';
       }
 
       if(wrongFormat){

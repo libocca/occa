@@ -5685,13 +5685,19 @@ namespace occa {
 #endif
     }
 
-    statement::operator std::string(){
-      const std::string tab = getTab();
+    std::string statement::toString(const int flags){
+      std::string tab;
+
+      if(flags & statementFlag::printSubStatements)
+        tab = getTab();
 
       statementNode *statementPos = statementStart;
 
       // OCCA For's
       if(info == occaForType){
+        if( !(flags & statementFlag::printSubStatements) )
+          return expRoot.toString();
+
         std::string ret = tab + expRoot.toString() + "{\n";
 
         while(statementPos){
@@ -5709,10 +5715,16 @@ namespace occa {
       }
 
       else if(info & (simpleStatementType | gotoStatementType)){
-        return expRoot.toString(tab) + "\n";
+        if(flags & statementFlag::printSubStatements)
+          return expRoot.toString(tab) + "\n";
+        else
+          return expRoot.toString();
       }
 
       else if(info & flowStatementType){
+        if( !(flags & statementFlag::printSubStatements) )
+          return expRoot.toString();
+
         std::string ret;
 
         if(info != doWhileStatementType){
@@ -5751,11 +5763,17 @@ namespace occa {
       }
 
       else if(info & caseStatementType){
-        return expRoot.toString(tab) + "\n";
+        if(flags & statementFlag::printSubStatements)
+          return expRoot.toString(tab) + "\n";
+        else
+          return expRoot.toString();
       }
 
       else if(info & functionStatementType){
         if(info & functionDefinitionType){
+          if( !(flags & statementFlag::printSubStatements) )
+            return expRoot.toString();
+
           std::string ret = expRoot.toString(tab);
 
           ret += " {\n";
@@ -5776,6 +5794,9 @@ namespace occa {
           return expRoot.toString(tab);
       }
       else if(info & blockStatementType){
+        if( !(flags & statementFlag::printSubStatements) )
+          return "{}";
+
         std::string ret = "";
 
         if(0 <= depth)
@@ -5796,13 +5817,23 @@ namespace occa {
         return ret;
       }
       else if(info & structStatementType){
-        return expRoot.toString(tab) + "\n";
+        if(flags & statementFlag::printSubStatements)
+          return expRoot.toString(tab) + "\n";
+        else
+          return expRoot.toString();
       }
       else if(info & macroStatementType){
-        return tab + expRoot.value + "\n";
+        if(flags & statementFlag::printSubStatements)
+          return tab + expRoot.value + "\n";
+        else
+          return expRoot.value;
       }
 
       return expRoot.toString(tab);
+    }
+
+    statement::operator std::string() {
+      return toString();
     }
 
     std::ostream& operator << (std::ostream &out, statement &s){

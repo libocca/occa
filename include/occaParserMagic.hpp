@@ -121,6 +121,7 @@ namespace occa {
     public:
       infoDB_t *db;
 
+      statement *s;
       valueInfo_t start, end, stride;
 
       iteratorInfo_t(infoDB_t *db_ = NULL);
@@ -136,7 +137,6 @@ namespace occa {
 
       int info;
       valueInfo_t    valueInfo;
-      accessInfo_t   dimInfo;
       iteratorInfo_t iteratorInfo;
 
       std::vector<accessInfo_t> reads, writes;

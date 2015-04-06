@@ -73,6 +73,9 @@ namespace occa {
     namespace statementFlag {
       static const int updateByNumber     = (1 << 0);
       static const int updateByUnderscore = (1 << 1);
+
+      static const int printEverything    = (int) -1;
+      static const int printSubStatements = (1 << 0);
     };
 
     class varInfo;
@@ -685,6 +688,8 @@ namespace occa {
       std::string prettyString(strNode *nodeRoot,
                                const std::string &tab_ = "",
                                const bool autoMode = true);
+
+      std::string toString(const int flags = (statementFlag::printSubStatements));
 
       operator std::string();
     };
