@@ -63,6 +63,7 @@ namespace occa {
 
   bool isAnUpdateOperator(const std::string &s, const bool parsingC = true);
   bool isAnAssOperator(const std::string &s, const bool parsingC = true); // hehe
+  bool isAnInequalityOperator(const std::string &s, const bool parsingC = true);
 
   const char* readLine(const char *c, const bool parsingC = true);
   const char* readFortranLine(const char *c);

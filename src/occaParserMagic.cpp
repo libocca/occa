@@ -485,6 +485,10 @@ namespace occa {
       return ai;
     }
 
+    void viInfo_t::setValue(expNode &setNode){
+      valueInfo.load(setNode);
+    }
+
     void viInfo_t::checkLastInput(accessInfo_t &ai, const int inputType){
       std::vector<accessInfo_t> &inputs = ((inputType & readValue) ? writes : reads);
 
@@ -787,15 +791,17 @@ namespace occa {
         return;
       }
 
-      // [1] Add first node
-      if(s.expRoot[0].info == expType::declaration)
-        analyzeDeclareStatement(s.expRoot[0]);
-      else
-        analyzeUpdateStatement(s.expRoot[0]);
-
-      // [3] Check update node
+      expNode &initNode   = s.expRoot[0];
+      expNode &checkNode  = s.expRoot[1];
       expNode &updateNode = s.expRoot[2];
 
+      // [1] Add first node
+      if(s.expRoot[0].info == expType::declaration)
+        analyzeDeclareStatement(initNode);
+      else
+        analyzeUpdateStatement(initNode);
+
+      // [3] Check update node
       bool wrongFormat = false;
 
       for(int i = 0; i < updateNode.leafCount; ++i){
@@ -857,22 +863,98 @@ namespace occa {
           }
         }
 
-        viInfo_t &viInfo = db[*var];
+        viInfo_t &iter = db[*var];
 
-        viInfo.info |= viType::isAnIterator;
+        iter.info |= viType::isAnIterator;
 
         if(stride)
-          viInfo.iteratorInfo.stride.load(*stride);
+          iter.iteratorInfo.stride.load(*stride);
         else
-          viInfo.iteratorInfo.stride.load(str);
-
-        std::cout << "viInfo = " << viInfo << '\n';
+          iter.iteratorInfo.stride.load(str);
       }
 
       if(wrongFormat){
-        printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n  X op Y where op can be [+=] or [-=]\n  ++X, X++, --X, X--\n");
+        printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n"
+               "  X op Y where op can be [+=] or [-=]\n"
+               "  ++X, X++, --X, X--\n");
         return;
       }
+
+      // [2] Find bounds
+      wrongFormat = true;
+
+      if((checkNode.leafCount == 1) &&
+         isAnInequalityOperator(checkNode[0].value)){
+
+        const bool varIn0 = (checkNode[0][0].info & expType::varInfo);
+        const bool varIn1 = (checkNode[0][1].info & expType::varInfo);
+
+        viInfo_t *vi0 = (varIn0 ? db.has(checkNode[0][0].getVarInfo()) : NULL);
+        viInfo_t *vi1 = (varIn1 ? db.has(checkNode[0][1].getVarInfo()) : NULL);
+
+        const bool isIter0 = (vi0 && (vi0->info & viType::isAnIterator));
+        const bool isIter1 = (vi1 && (vi1->info & viType::isAnIterator));
+
+        if(isIter0 ^ isIter1){
+          viInfo_t &vi  = (isIter0 ? *vi0 : *vi1);
+          expNode  &exp = (isIter0 ? checkNode[0][1] : checkNode[0][0]);
+
+          if(isIter0){
+            vi.iteratorInfo.start = vi.valueInfo;
+            vi.iteratorInfo.end.load(exp);
+          }
+          else{
+            vi.iteratorInfo.start.load(exp);
+            vi.iteratorInfo.end = vi.valueInfo;
+          }
+
+          wrongFormat = false;
+        }
+      }
+
+      if(wrongFormat){
+        printf("[Magic Analyzer] For-loop update statement (2nd statement) is not standard, for example:\n"
+               "  X op Y where:\n"
+               "  X or Y is an iterator and op can be [<], [<=], [>=], or [>]\n");
+        return;
+      }
+
+      expNode &flatRoot = *(checkNode.makeFlatHandle());
+      viInfo_t *iter = NULL;
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if(leaf.info & expType::varInfo){
+          varInfo &var = leaf.getVarInfo();
+
+          viInfo_t *iter2 = db.has(var);
+
+          if(iter2 &&
+             (iter2->info & viType::isAnIterator)){
+
+            if(iter == NULL){
+              iter = iter2;
+            }
+            else{
+              expNode::freeFlatHandle(flatRoot);
+              printf("[Magic Analyzer] For-loop update statement (2rd statement) is not standard:\n"
+                     "  Multiple iterators were used\n");
+              return;
+            }
+          }
+        }
+      }
+
+      if(iter == NULL){
+        expNode::freeFlatHandle(flatRoot);
+        printf("[Magic Analyzer] For-loop update statement (2rd statement) is not standard:\n"
+               "  No iterator\n");
+        return;
+      }
+      std::cout << "iter = " << *iter << '\n';
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     void magician::analyzeWhileStatement(statement &s){
@@ -1042,6 +1124,7 @@ namespace occa {
       viInfo_t &viInfo = db[ varNode.getVarInfo() ];
 
       viInfo.addWrite(varNode);
+      viInfo.setValue(setNode);
     }
 
     void magician::addVariableWrite(expNode &varNode,

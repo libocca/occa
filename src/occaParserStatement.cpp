@@ -2545,28 +2545,22 @@ namespace occa {
       if(leafCount == 0)
         return 0;
 
-      if(sInfo &&
-         (sInfo->info & updateStatementType)){
+      expNode *cNode = leaves[0];
+      int count = 0;
 
-        expNode *cNode = leaves[0];
-        int count = 0;
+      while(cNode &&
+            (cNode->value == ",")){
 
-        while(cNode &&
-              (cNode->value == ",")){
+        if(2 <= cNode->leafCount)
+          count += (isAnAssOperator((*cNode)[1].value));
 
-          if(2 <= cNode->leafCount)
-            count += (isAnAssOperator((*cNode)[1].value));
-
-          cNode = cNode->leaves[0];
-        }
-
-        if(cNode)
-          count += isAnAssOperator(cNode->value);
-
-        return count;
+        cNode = cNode->leaves[0];
       }
 
-      return 0;
+      if(cNode)
+        count += isAnAssOperator(cNode->value);
+
+      return count;
     }
 
     bool expNode::updatedVariableIsSet(const int pos){
@@ -2583,35 +2577,33 @@ namespace occa {
       if(leafCount == 0)
         return NULL;
 
-      if(sInfo &&
-         (sInfo->info & updateStatementType)){
+      int count = getUpdatedVariableCount();
 
-        expNode *cNode = leaves[0];
-        int count = getUpdatedVariableCount();
+      if(count <= pos)
+        return NULL;
 
-        while(cNode &&
-              (cNode->value == ",")){
+      expNode *cNode = leaves[0];
 
-          if(2 <= cNode->leafCount)
-            count -= (isAnAssOperator((*cNode)[1].value));
+      while(cNode &&
+            (cNode->value == ",")){
 
-          if(pos == count)
-            return cNode->leaves[1];
+        if(2 <= cNode->leafCount)
+          count -= (isAnAssOperator((*cNode)[1].value));
 
-          cNode = cNode->leaves[0];
-        }
+        if(pos == count)
+          return cNode->leaves[1];
 
-        if(cNode){
-          count -= isAnAssOperator(cNode->value);
-
-          if(pos == count)
-            return cNode;
-        }
-
-        return cNode;
+        cNode = cNode->leaves[0];
       }
 
-      return NULL;
+      if(cNode){
+        count -= isAnAssOperator(cNode->value);
+
+        if(pos == count)
+          return cNode;
+      }
+
+      return cNode;
     }
 
     expNode* expNode::getUpdatedVariableInfoNode(const int pos){

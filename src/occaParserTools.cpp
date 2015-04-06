@@ -339,6 +339,23 @@ namespace occa {
     return false;
   }
 
+  bool isAnInequalityOperator(const std::string &s, const bool parsingC){
+    const size_t chars = s.size();
+    const char *c      = s.c_str();
+
+    const bool hasEQ = ((c[0] == '<') || (c[0] == '>'));
+
+    if(!hasEQ)
+      return false;
+
+    if(chars == 1)
+      return hasEQ;
+    else if(chars == 2)
+      return (c[1] == '=');
+
+    return false;
+  }
+
   const char* readLine(const char *c, const bool parsingC){
     if(!parsingC)
       return readFortranLine(c);

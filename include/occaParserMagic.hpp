@@ -25,9 +25,11 @@ namespace occa {
     };
 
     namespace analyzeInfo {
-      static const int isExecuted      = (1 << 1);
-      static const int isIgnored       = (1 << 2);
-      static const int schrodinger     = (isExecuted | isIgnored); // hehe
+      static const int isExecuted  = (1 << 1);
+      static const int isIgnored   = (1 << 2);
+      static const int schrodinger = (isExecuted | isIgnored); // hehe
+
+      static const int noLCD       = (1 << 3);
     };
 
     class atomInfo_t {
@@ -153,6 +155,8 @@ namespace occa {
 
       accessInfo_t& addRead(expNode &varNode);
       accessInfo_t& addRead(const int brackets, expNode &bracketNode);
+
+      void setValue(expNode &setNode);
 
       void checkLastInput(accessInfo_t &ai, const int inputType);
 
