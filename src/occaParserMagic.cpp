@@ -232,39 +232,14 @@ namespace occa {
       if((e.info  == expType::LR) &&
          (e.value == "*")){
 
-        expNode *cNode   = e.clone();
-        expNode *iterNode = NULL;
+        const bool varIn0 = (e[0].info & expType::varInfo);
+        const bool varIn1 = (e[1].info & expType::varInfo);
 
-        while(cNode                        &&
-              (cNode->info == expType::LR) &&
-              (cNode->value == "*")){
-
-          expNode &e2 = *cNode;
-
-          const bool varIn0 = (e2[0].info & expType::varInfo);
-          const bool varIn1 = (e2[1].info & expType::varInfo);
-
-          viInfo_t *vi0 = (varIn0 ? db.has(e2[0].getVarInfo()) : NULL);
-          viInfo_t *vi1 = (varIn1 ? db.has(e2[1].getVarInfo()) : NULL);
-
-          const bool isIter0 = (vi0 && (vi0->info & viType::isAnIterator));
-          const bool isIter1 = (vi1 && (vi1->info & viType::isAnIterator));
-
-          if(isIter0 ^ isIter1){
-            // Unknown
-            if(iterNode){
-              iterNode = NULL;
-              break;
-            }
-
-            iterNode = (isIter0 ? &(e2[0]) : &(e2[1]));
-          }
+        if(varIn0 || varIn1){
+          vars[pos].load(e[varIn1]);
+          strides[pos].load(e[!varIn1]);
+          return;
         }
-
-        if(
-
-        vars[pos].load(e2[varIn1]);
-        strides[pos].load(e2[!varIn1]);
       }
       else if(e.info & expType::varInfo){
         vars[pos].load(e);
@@ -332,7 +307,6 @@ namespace occa {
     void valueInfo_t::update(expNode &op, expNode &e){
       if(op.value == "="){
         load(e);
-        return;
       }
 
       if(info & viType::isUseless)
@@ -1243,8 +1217,8 @@ namespace occa {
     }
 
     void magician::addVariableWrite(expNode &varNode,
-                                    expNode &setNode,
                                     expNode &opNode,
+                                    expNode &setNode,
                                     const int brackets,
                                     expNode &bracketNode){
       const bool isUpdated = variableIsUpdated(varNode);
