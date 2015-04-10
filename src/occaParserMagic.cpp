@@ -18,17 +18,15 @@ namespace occa {
     atomInfo_t::atomInfo_t(infoDB_t *db_) :
       db(db_),
       info(viType::isUseless),
+      exp(NULL),
       var(NULL) {}
 
     atomInfo_t::atomInfo_t(const atomInfo_t &ai) :
       db(ai.db),
       info(ai.info),
       constValue(ai.constValue),
-      // exp(ai.exp), [<>] Change after restructure
-      var(ai.var) {
-
-      exp = ai.exp;
-    }
+      exp(ai.exp),
+      var(ai.var) {}
 
     atomInfo_t& atomInfo_t::operator = (const atomInfo_t &ai){
       db = ai.db;
@@ -63,7 +61,7 @@ namespace occa {
         return false;
       }
 
-      return (exp == e);
+      return (exp && (*exp == e));
     }
 
     void atomInfo_t::setDB(infoDB_t *db_){
@@ -80,8 +78,9 @@ namespace occa {
       else{
         constValue = e.calculateValue();
 
-        if(constValue.type & noType)
-          exp = e;
+        if(constValue.type & noType){
+          exp = e.clone();
+        }
         else
           info = viType::isConstant;
       }
@@ -97,15 +96,123 @@ namespace occa {
       constValue = s;
     }
 
+    void atomInfo_t::expandValue(){
+      if(info & viType::isConstant)
+        return;
+
+      if(info & viType::isAVariable)
+        expandValue(exp, *var);
+      else
+        expandValue(*exp);
+    }
+
+    void atomInfo_t::expandValue(expNode &e){
+      while(true){
+        bool updated = false;
+
+        expNode &flatRoot = *(e.makeFlatHandle());
+
+        for(int i = 0; i < flatRoot.leafCount; ++i){
+          expNode &leaf = flatRoot[i];
+
+          if(leaf.info & expType::varInfo){
+            expNode *l = &leaf;
+            varInfo &v = leaf.getVarInfo();
+
+            expandValue(l, v);
+
+            if(!(leaf.info & expType::varInfo) ||
+               &(leaf.getVarInfo()) != &v){
+
+              updated = true;
+            }
+          }
+        }
+
+        expNode::freeFlatHandle(flatRoot);
+
+        if(!updated)
+          break;
+      }
+    }
+
+    void atomInfo_t::expandValue(expNode *&expRoot, varInfo &v){
+      viInfo_t *vi = db->has(v);
+
+      if(vi == NULL)
+        return;
+
+      const bool expRootWasNull = (expRoot == NULL);
+
+      if(expRoot == NULL)
+        expRoot = new expNode();
+
+      expNode &e = *expRoot;
+
+      vi->valueInfo.saveTo(e);
+
+      if(expRootWasNull){
+        if((  e[0].info           & expType::varInfo) &&
+           (&(e[0].getVarInfo()) != &v)){
+
+          var = &(e[0].getVarInfo());
+
+          e.free();
+          expRoot = NULL;
+        }
+        else {
+          info &= ~(viType::isAVariable |
+                    viType::isAnIterator);
+        }
+      }
+    }
+
+    void atomInfo_t::saveTo(expNode &e, const int leafPos){
+      if((e.leafCount <= leafPos) &&
+         !(info & viType::isAVariable)){
+
+        e.addNode(leafPos);
+      }
+
+      if(viType::isConstant){
+        expNode &leaf = e[leafPos];
+
+        leaf.free();
+        leaf.info  = expType::presetValue;
+        leaf.value = (std::string) constValue;
+      }
+      else if(viType::isAVariable){
+        e[leafPos].putVarInfo(*var);
+      }
+      else if(exp &&
+              (0 < exp->leafCount)){
+
+        e[leafPos].free();
+        e.leaves[leafPos] = exp->leaves[0];
+      }
+    }
+
+    std::string atomInfo_t::getInfoStr(){
+      viInfo_t *vi;
+
+      if((info & viType::isAVariable) &&
+         (vi = db->has(*var))){
+
+        return viType::infoToStr(info | (vi->info & viType::isAnIterator));
+      }
+
+      return viType::infoToStr(info);
+    }
+
     std::ostream& operator << (std::ostream &out, atomInfo_t &info){
-      out << viType::infoToStr(info.info) << ": ";
+      out << info.getInfoStr() << ": ";
 
       if(info.info & viType::isConstant)
         out << info.constValue;
       else if(info.info & viType::isAVariable)
         out << info.var->name;
-      else
-        out << info.exp;
+      else if(info.exp != NULL)
+        out << *(info.exp);
 
       return out;
     }
@@ -255,7 +362,7 @@ namespace occa {
       vars[pos].info    = viType::isUseless;
       strides[pos].info = viType::isUseless;
 
-      vars[pos].exp = e;
+      vars[pos].exp = e.clone();
     }
 
     void valueInfo_t::sortIndices(){
@@ -302,6 +409,35 @@ namespace occa {
 
     int valueInfo_t::qSortIndices(const void *a, const void *b){
       return ((*((int*) a)) - (*((int*) b)));
+    }
+
+    void valueInfo_t::mergeIndices(){
+    }
+
+    void valueInfo_t::expandValues(){
+      if(indices == 0){
+        value.expandValue();
+      }
+      else{
+        for(int i = 0; i < indices; ++i){
+          vars[i].expandValue();
+          strides[i].expandValue();
+        }
+      }
+    }
+
+    void valueInfo_t::saveTo(expNode &e, const int leafPos){
+      if(indices == 0){ // Adding value
+        // value.saveTo(e, leafPos);
+      }
+      else {            // Merging vars and strides
+        if(leafPos < 0)
+          e.addNode();
+
+        // expNode *cNode =
+        // for(int i = 0; i < (indices - 1); ++i)
+        //   e.addL
+      }
     }
 
     void valueInfo_t::update(expNode &op, expNode &e){

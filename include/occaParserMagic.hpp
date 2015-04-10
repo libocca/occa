@@ -38,7 +38,7 @@ namespace occa {
 
       int info;
       typeHolder constValue;
-      expNode exp;
+      expNode *exp;
       varInfo *var;
 
       atomInfo_t(infoDB_t *db_ = NULL);
@@ -54,6 +54,14 @@ namespace occa {
       void load(expNode &e);
       void load(varInfo &var_);
       void load(const std::string &s);
+
+      void expandValue();
+      void expandValue(expNode &e);
+      void expandValue(expNode *&expRoot, varInfo &v);
+
+      void saveTo(expNode &e, const int leafPos = 0);
+
+      std::string getInfoStr();
 
       friend std::ostream& operator << (std::ostream &out, atomInfo_t &info);
     };
@@ -89,6 +97,10 @@ namespace occa {
       static int qSortIndices(const void *a, const void *b);
 
       void mergeIndices();
+
+      void expandValues();
+
+      void saveTo(expNode &e, const int leafPos = 0);
 
       void update(expNode &op, expNode &e);
 

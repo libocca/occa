@@ -266,7 +266,7 @@ namespace occa {
       void reserveAndShift(const int pos, const int count = 1);
 
       varInfo& addVarInfoNode();
-      varInfo& addVarInfoNode(const int pos);
+      varInfo& addVarInfoNode(const int pos_);
 
       void putVarInfo(varInfo &var);
       void putVarInfo(const int pos, varInfo &var);
@@ -277,10 +277,10 @@ namespace occa {
       bool hasVariable();
 
       varInfo& getVarInfo();
-      varInfo& getVarInfo(const int pos);
+      varInfo& getVarInfo(const int pos_);
 
       void setVarInfo(varInfo &var);
-      void setVarInfo(const int pos, varInfo &var);
+      void setVarInfo(const int pos_, varInfo &var);
 
       typeInfo& getTypeInfo();
       typeInfo& getTypeInfo(const int pos);

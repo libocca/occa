@@ -2283,8 +2283,11 @@ namespace occa {
       return *varLeaf;
     }
 
-    varInfo& expNode::addVarInfoNode(const int pos){
+    varInfo& expNode::addVarInfoNode(const int pos_){
+      const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
       addNode(expType::varInfo, pos);
+
       return leaves[pos]->addVarInfoNode();
     }
 
@@ -2337,7 +2340,9 @@ namespace occa {
       return *((varInfo*) leaves[0]);
     }
 
-    varInfo& expNode::getVarInfo(const int pos){
+    varInfo& expNode::getVarInfo(const int pos_){
+      const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
       varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
       varInfo *&varLeaf   = varLeaves[0];
 
@@ -2348,7 +2353,9 @@ namespace occa {
       leaves[0] = (expNode*) &var;
     }
 
-    void expNode::setVarInfo(const int pos, varInfo &var){
+    void expNode::setVarInfo(const int pos_, varInfo &var){
+      const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
       varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
       varInfo *&varLeaf   = varLeaves[0];
 
