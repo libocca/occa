@@ -25,11 +25,16 @@ namespace occa {
     };
 
     namespace analyzeInfo {
-      static const int isExecuted  = (1 << 1);
-      static const int isIgnored   = (1 << 2);
+      // Statement Info
+      static const int isExecuted  = (1 << 0);
+      static const int isIgnored   = (1 << 1);
       static const int schrodinger = (isExecuted | isIgnored); // hehe
 
-      static const int noLCD       = (1 << 3);
+      static const int noLCD       = (1 << 2);
+
+      // Return info
+      static const int didntChange = 0;
+      static const int changed     = 1;
     };
 
     class atomInfo_t {
@@ -55,9 +60,9 @@ namespace occa {
       void load(varInfo &var_);
       void load(const std::string &s);
 
-      void expandValue();
-      void expandValue(expNode &e);
-      void expandValue(expNode *&expRoot, varInfo &v);
+      bool expandValue();
+      bool expandValue(expNode &e);
+      bool expandValue(expNode *&expRoot, varInfo &v);
 
       void saveTo(expNode &e, const int leafPos = 0);
 
@@ -98,9 +103,10 @@ namespace occa {
 
       void mergeIndices();
 
-      void expandValues();
+      bool expandValues();
 
       void saveTo(expNode &e, const int leafPos = 0);
+      void saveIndexTo(const int index, expNode &e, const int leafPos = 0);
 
       void update(expNode &op, expNode &e);
 

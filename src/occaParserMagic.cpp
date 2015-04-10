@@ -96,17 +96,19 @@ namespace occa {
       constValue = s;
     }
 
-    void atomInfo_t::expandValue(){
+    bool atomInfo_t::expandValue(){
       if(info & viType::isConstant)
-        return;
+        return !analyzeInfo::changed;
 
       if(info & viType::isAVariable)
-        expandValue(exp, *var);
+        return expandValue(exp, *var);
       else
-        expandValue(*exp);
+        return expandValue(*exp);
     }
 
-    void atomInfo_t::expandValue(expNode &e){
+    bool atomInfo_t::expandValue(expNode &e){
+      int iterations = 0;
+
       while(true){
         bool updated = false;
 
@@ -133,14 +135,21 @@ namespace occa {
 
         if(!updated)
           break;
+
+        ++iterations;
       }
+
+      if(iterations == 0)
+        return !analyzeInfo::changed;
+
+      return analyzeInfo::changed;
     }
 
-    void atomInfo_t::expandValue(expNode *&expRoot, varInfo &v){
+    bool atomInfo_t::expandValue(expNode *&expRoot, varInfo &v){
       viInfo_t *vi = db->has(v);
 
       if(vi == NULL)
-        return;
+        return !analyzeInfo::changed;
 
       const bool expRootWasNull = (expRoot == NULL);
 
@@ -151,9 +160,11 @@ namespace occa {
 
       vi->valueInfo.saveTo(e);
 
+      // We're operating on our exp (which was NULL)
       if(expRootWasNull){
-        if((  e[0].info           & expType::varInfo) &&
-           (&(e[0].getVarInfo()) != &v)){
+        if(e[0].info & expType::varInfo){
+          if(&(e[0].getVarInfo()) == &v)
+            return !analyzeInfo::changed;
 
           var = &(e[0].getVarInfo());
 
@@ -165,6 +176,8 @@ namespace occa {
                     viType::isAnIterator);
         }
       }
+
+      return analyzeInfo::changed;
     }
 
     void atomInfo_t::saveTo(expNode &e, const int leafPos){
@@ -414,29 +427,74 @@ namespace occa {
     void valueInfo_t::mergeIndices(){
     }
 
-    void valueInfo_t::expandValues(){
+    bool valueInfo_t::expandValues(){
       if(indices == 0){
-        value.expandValue();
+        return value.expandValue();
       }
       else{
+        bool changed = false;
+
         for(int i = 0; i < indices; ++i){
-          vars[i].expandValue();
-          strides[i].expandValue();
+          changed |= vars[i].expandValue();
+          changed |= strides[i].expandValue();
         }
+
+        if(!changed)
+          return !analyzeInfo::changed;
+
+        // [<>] Memory leak
+        expNode e;
+        saveTo(e);
+        load(e);
+
+        return analyzeInfo::changed;
       }
     }
 
     void valueInfo_t::saveTo(expNode &e, const int leafPos){
       if(indices == 0){ // Adding value
-        // value.saveTo(e, leafPos);
+        value.saveTo(e, leafPos);
       }
       else {            // Merging vars and strides
-        if(leafPos < 0)
-          e.addNode();
+        if(e.leafCount <= leafPos)
+          e.addNode(leafPos);
 
-        // expNode *cNode =
-        // for(int i = 0; i < (indices - 1); ++i)
-        //   e.addL
+        if(1 < indices){
+          expNode *cNode = &(e[leafPos]);
+
+          for(int i = 0; i < (indices - 1); ++i){
+            cNode->info  = expType::LR;
+            cNode->value = "+";
+
+            cNode->addNodes(expType::root, 0, 2);
+
+            saveIndexTo(i, *cNode, 0);
+
+            if(i == (indices - 2))
+              saveIndexTo(i + 1, *cNode, 1);
+
+            cNode = cNode->leaves[1];
+          }
+        }
+      }
+    }
+
+    void valueInfo_t::saveIndexTo(const int index,
+                                  expNode &e, const int leafPos){
+
+      if(strides[index] == "1"){
+        vars[index].saveTo(e, leafPos);
+      }
+      else {
+        expNode &leaf = e[leafPos];
+
+        leaf.info  = expType::LR;
+        leaf.value = "*";
+
+        leaf.addNodes(expType::root, 0, 2);
+
+        vars[index].saveTo(leaf, 0);
+        strides[index].saveTo(leaf, 1);
       }
     }
 
