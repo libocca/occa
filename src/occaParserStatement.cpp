@@ -2816,7 +2816,9 @@ namespace occa {
 
       info      = 0;
       leafCount = 0;
-      delete [] leaves;
+
+      if(leaves)
+        delete [] leaves;
     }
 
     void expNode::print(const std::string &tab){

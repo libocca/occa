@@ -1,5 +1,8 @@
 #include "occaParserMagic.hpp"
 
+#define DBP0 0 // Read/Write/Expand
+#define DBP1 1 // Index Sorting/Updating
+
 namespace occa {
   namespace parserNS {
     namespace viType {
@@ -402,7 +405,9 @@ namespace occa {
       if(indices <= 1)
         return;
 
+#if DBP1
       std::cout << "SI 1: " << *this << '\n';
+#endif
 
       int *vi = new int[2*indices];
 
@@ -437,7 +442,9 @@ namespace occa {
         strides[i2] = tmpS;
       }
 
+#if DBP1
       std::cout << "SI 2: " << *this << '\n';
+#endif
     }
 
     int valueInfo_t::qSortIndices(const void *a, const void *b){
@@ -462,10 +469,10 @@ namespace occa {
         if(!changed)
           return !analyzeInfo::changed;
 
-        // [<>] Memory leak
+        // [<>] Memory Leak
         expNode e;
         saveTo(e);
-        load(e);
+        load(e[0]); // Ignore root?
 
         return analyzeInfo::changed;
       }
@@ -553,8 +560,10 @@ namespace occa {
 
     int valueInfo_t::hasStride(const std::string &str){
       for(int i = 0; i < indices; ++i){
+#if DBP1
         std::cout << "  strides[i] = " << strides[i] << '\n'
                   << "  str        = " << str << '\n';
+#endif
 
         if(strides[i] == str)
           return i;
@@ -565,8 +574,10 @@ namespace occa {
 
     int valueInfo_t::hasStride(expNode &e){
       for(int i = 0; i < indices; ++i){
+#if DBP1
         std::cout << "  strides[i] = " << strides[i] << '\n'
                   << "  e          = " << e.toString() << '\n';
+#endif
         if(strides[i] == e)
           return i;
       }
@@ -576,22 +587,30 @@ namespace occa {
 
     void valueInfo_t::add(const std::string &str){
       const int index = hasStride(str);
+#if DBP1
       std::cout << "index = " << index << '\n';
+#endif
     }
 
     void valueInfo_t::add(expNode &e){
       const int index = hasStride(e);
+#if DBP1
       std::cout << "index = " << index << '\n';
+#endif
     }
 
     void valueInfo_t::sub(const std::string &str){
       const int index = hasStride(str);
+#if DBP1
       std::cout << "index = " << index << '\n';
+#endif
     }
 
     void valueInfo_t::sub(expNode &e){
       const int index = hasStride(e);
+#if DBP1
       std::cout << "index = " << index << '\n';
+#endif
     }
 
     typeHolder valueInfo_t::constValue(){
@@ -750,7 +769,9 @@ namespace occa {
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
+#if DBP0
       std::cout << "W1. ai = " << ai << '\n';
+#endif
 
       checkLastInput(ai, writeValue);
 
@@ -762,7 +783,9 @@ namespace occa {
 
       accessInfo_t &ai = writes.back();
       ai.load(brackets, bracketNode);
+#if DBP0
       std::cout << "W2. ai = " << ai << '\n';
+#endif
 
       checkLastInput(ai, writeValue);
 
@@ -774,7 +797,9 @@ namespace occa {
 
       accessInfo_t &ai = reads.back();
       ai.load(varNode);
+#if DBP0
       std::cout << "R1. ai = " << ai << '\n';
+#endif
 
       checkLastInput(ai, readValue);
 
@@ -786,7 +811,9 @@ namespace occa {
 
       accessInfo_t &ai = reads.back();
       ai.load(brackets, bracketNode);
+#if DBP0
       std::cout << "R2. ai = " << ai << '\n';
+#endif
 
       checkLastInput(ai, readValue);
 
@@ -796,9 +823,13 @@ namespace occa {
     void viInfo_t::updateValue(expNode &opNode, expNode &setNode){
       if(opNode.value == "="){
         valueInfo.load(setNode);
+#if DBP0
         std::cout << "X1. valueInfo = " << valueInfo << '\n';
+#endif
         valueInfo.expandValues(); // [<>] Recursive x = a[x];
+#if DBP0
         std::cout << "X2. valueInfo = " << valueInfo << '\n';
+#endif
       }
       else
         valueInfo.update(opNode, setNode);
@@ -1271,7 +1302,9 @@ namespace occa {
                "  No iterator\n");
         return;
       }
+#if DBP0
       std::cout << "iter = " << *iter << '\n';
+#endif
 
       expNode::freeFlatHandle(flatRoot);
     }
