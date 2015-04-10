@@ -20,6 +20,7 @@ namespace occa {
       static const int isAVariable      = (1 << 1);
       static const int isAnIterator     = (1 << 2);
       static const int isConstant       = (1 << 3);
+      static const int isComplex        = (1 << 4);
 
       std::string infoToStr(const int info);
     };
@@ -66,6 +67,8 @@ namespace occa {
 
       void saveTo(expNode &e, const int leafPos = 0);
 
+      bool isComplex();
+
       std::string getInfoStr();
 
       friend std::ostream& operator << (std::ostream &out, atomInfo_t &info);
@@ -91,6 +94,7 @@ namespace occa {
       void allocVS(const int count);
 
       bool isUseless();
+      bool isComplex();
 
       void load(expNode &e);
       void load(varInfo &var);
@@ -191,6 +195,8 @@ namespace occa {
       accessInfo_t& addRead(const int brackets, expNode &bracketNode);
 
       void updateValue(expNode &opNode, expNode &setNode);
+
+      void checkComplexity();
 
       void checkLastInput(accessInfo_t &ai, const int inputType);
 

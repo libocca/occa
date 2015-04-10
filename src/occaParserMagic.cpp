@@ -1,6 +1,6 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 0 // Read/Write/Expand
+#define DBP0 1 // Read/Write/Expand
 #define DBP1 1 // Index Sorting/Updating
 
 namespace occa {
@@ -13,6 +13,7 @@ namespace occa {
         if(info & viType::isAVariable)  tag += 'V';
         if(info & viType::isAnIterator) tag += 'I';
         if(info & viType::isConstant)   tag += 'C';
+        if(info & viType::isComplex)    tag += '@';
 
         return tag;
       }
@@ -103,10 +104,16 @@ namespace occa {
       if(info & viType::isConstant)
         return !analyzeInfo::changed;
 
-      if(info & viType::isAVariable)
+      std::cout << "info = " << *this << '\n';
+
+      if(info & viType::isAVariable){
+        printf("var\n");
         return expandValue(exp, *var);
-      else
+      }
+      else{
+        printf("exp\n");
         return expandValue(*exp);
+      }
     }
 
     bool atomInfo_t::expandValue(expNode &e){
@@ -149,7 +156,7 @@ namespace occa {
     }
 
     bool atomInfo_t::expandValue(expNode *&expRoot, varInfo &v){
-      if((0 < v.pointerCount) ||
+      if((0 < v.pointerDepth()) ||
          (v.info & varType::functionType)){
 
         return !analyzeInfo::changed;
@@ -161,7 +168,8 @@ namespace occa {
       //   and don't want to replace iterator values
       if((vi == NULL)                ||
          !(vi->hasBeenInitialized()) ||
-         (vi->info & viType::isAnIterator)){
+         (vi->info & (viType::isComplex |
+                      viType::isAnIterator))){
 
         return !analyzeInfo::changed;
       }
@@ -174,6 +182,8 @@ namespace occa {
       expNode &e = *expRoot;
 
       vi->valueInfo.saveTo(e);
+
+      std::cout << "e = " << e << '\n';
 
       // We're operating on our exp (which was NULL)
       if(expRootWasNull){
@@ -227,13 +237,39 @@ namespace occa {
       }
     }
 
+    bool atomInfo_t::isComplex(){
+      if((info & (viType::isConstant |
+                  viType::isAVariable)) ||
+         (exp == NULL)){
+
+        return false;
+      }
+      else {
+        expNode &flatRoot = *(exp->makeFlatHandle());
+
+        for(int i = 0; i < flatRoot.leafCount; ++i){
+          expNode &leaf = flatRoot[i];
+
+          if((leaf.info & expType::varInfo) &&
+             (0 < leaf.getVarInfo().pointerDepth())){
+
+            return true;
+          }
+        }
+
+        expNode::freeFlatHandle(flatRoot);
+      }
+
+      return false;
+    }
+
     std::string atomInfo_t::getInfoStr(){
       viInfo_t *vi;
 
       if((info & viType::isAVariable) &&
          (vi = db->has(*var))){
 
-        return viType::infoToStr(info | (vi->info & viType::isAnIterator));
+        return viType::infoToStr(info | (vi->info & ~viType::isUseless));
       }
 
       return viType::infoToStr(info);
@@ -325,6 +361,20 @@ namespace occa {
       }
 
       return false;
+    }
+
+    bool valueInfo_t::isComplex(){
+      if(indices == 0){
+        return value.isComplex();
+      }
+      else {
+        for(int i = 0; i < indices; ++i){
+          if(vars[i].isComplex() || strides[i].isComplex())
+            return true;
+        }
+
+        return false;
+      }
     }
 
     void valueInfo_t::load(expNode &e){
@@ -831,8 +881,21 @@ namespace occa {
         std::cout << "X2. valueInfo = " << valueInfo << '\n';
 #endif
       }
-      else
+      else {
         valueInfo.update(opNode, setNode);
+      }
+
+      checkComplexity();
+    }
+
+    void viInfo_t::checkComplexity(){
+      if(info & viType::isAnIterator)
+        return;
+
+      if(valueInfo.isComplex())
+        info |= viType::isComplex;
+      else
+        info &= ~viType::isComplex;
     }
 
     void viInfo_t::checkLastInput(accessInfo_t &ai, const int inputType){

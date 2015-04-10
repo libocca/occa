@@ -1694,6 +1694,10 @@ namespace occa {
       return rightQualifiers.get(rightQualifiers.qualifierCount - 1);
     }
 
+    int varInfo::pointerDepth(){
+      return (pointerCount + stackPointerCount);
+    }
+
     expNode& varInfo::stackSizeExpNode(const int pos){
       return stackExpRoots[pos][0];
     }
