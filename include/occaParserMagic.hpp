@@ -182,6 +182,8 @@ namespace occa {
 
       void setDB(infoDB_t *db_);
 
+      bool hasBeenInitialized();
+
       accessInfo_t& addWrite(expNode &varNode);
       accessInfo_t& addWrite(const int brackets, expNode &bracketNode);
 

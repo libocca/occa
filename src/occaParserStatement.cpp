@@ -2807,16 +2807,14 @@ namespace occa {
     // [-] Not properly done for varInfo and typeInfo
     void expNode::free(){
       // Let the parser free all varInfos
-      if(info & expType::hasInfo){
-        delete [] leaves;
-        return;
+      if( !(info & expType::hasInfo) ){
+        for(int i = 0; i < leafCount; ++i){
+          leaves[i]->free();
+          delete leaves[i];
+        }
       }
 
-      for(int i = 0; i < leafCount; ++i){
-        leaves[i]->free();
-        delete leaves[i];
-      }
-
+      info      = 0;
       leafCount = 0;
       delete [] leaves;
     }

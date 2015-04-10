@@ -146,10 +146,22 @@ namespace occa {
     }
 
     bool atomInfo_t::expandValue(expNode *&expRoot, varInfo &v){
+      if((0 < v.pointerCount) ||
+         (v.info & varType::functionType)){
+
+        return !analyzeInfo::changed;
+      }
+
       viInfo_t *vi = db->has(v);
 
-      if(vi == NULL)
+      // Can't do anything about variables outside db's scope
+      //   and don't want to replace iterator values
+      if((vi == NULL)                ||
+         !(vi->hasBeenInitialized()) ||
+         (vi->info & viType::isAnIterator)){
+
         return !analyzeInfo::changed;
+      }
 
       const bool expRootWasNull = (expRoot == NULL);
 
@@ -176,32 +188,39 @@ namespace occa {
                     viType::isAnIterator);
         }
       }
+      else { // Root node -> ()
+        e.info  = expType::C;
+        e.value = "(";
+      }
 
       return analyzeInfo::changed;
     }
 
     void atomInfo_t::saveTo(expNode &e, const int leafPos){
+      if(e.info & expType::hasInfo)
+        e.free();
+
       if((e.leafCount <= leafPos) &&
          !(info & viType::isAVariable)){
 
         e.addNode(leafPos);
       }
 
-      if(viType::isConstant){
+      if(info & viType::isConstant){
         expNode &leaf = e[leafPos];
 
         leaf.free();
         leaf.info  = expType::presetValue;
         leaf.value = (std::string) constValue;
       }
-      else if(viType::isAVariable){
+      else if(info & viType::isAVariable){
         e[leafPos].putVarInfo(*var);
       }
       else if(exp &&
               (0 < exp->leafCount)){
 
         e[leafPos].free();
-        e.leaves[leafPos] = exp->leaves[0];
+        e.leaves[leafPos] = ((exp->info == 0) ? exp->leaves[0] : exp); // [<>] Find why root info is not 0
       }
     }
 
@@ -376,6 +395,7 @@ namespace occa {
       strides[pos].info = viType::isUseless;
 
       vars[pos].exp = e.clone();
+      strides[pos].load("1");
     }
 
     void valueInfo_t::sortIndices(){
@@ -456,10 +476,16 @@ namespace occa {
         value.saveTo(e, leafPos);
       }
       else {            // Merging vars and strides
+        if(e.info & expType::hasInfo)
+          e.free();
+
         if(e.leafCount <= leafPos)
           e.addNode(leafPos);
 
-        if(1 < indices){
+        if(indices == 1){
+          saveIndexTo(0, e, leafPos);
+        }
+        else if(1 < indices){
           expNode *cNode = &(e[leafPos]);
 
           for(int i = 0; i < (indices - 1); ++i){
@@ -486,6 +512,8 @@ namespace occa {
         vars[index].saveTo(e, leafPos);
       }
       else {
+        e[leafPos].free();
+
         expNode &leaf = e[leafPos];
 
         leaf.info  = expType::LR;
@@ -713,6 +741,10 @@ namespace occa {
       iteratorInfo.setDB(db);
     }
 
+    bool viInfo_t::hasBeenInitialized(){
+      return (writes.size() != 0);
+    }
+
     accessInfo_t& viInfo_t::addWrite(expNode &varNode){
       writes.push_back( accessInfo_t(db) );
 
@@ -762,8 +794,12 @@ namespace occa {
     }
 
     void viInfo_t::updateValue(expNode &opNode, expNode &setNode){
-      if(opNode.value == "=")
+      if(opNode.value == "="){
         valueInfo.load(setNode);
+        std::cout << "X1. valueInfo = " << valueInfo << '\n';
+        valueInfo.expandValues(); // [<>] Recursive x = a[x];
+        std::cout << "X2. valueInfo = " << valueInfo << '\n';
+      }
       else
         valueInfo.update(opNode, setNode);
     }
@@ -1146,7 +1182,8 @@ namespace occa {
 
         viInfo_t &iter = db[*var];
 
-        iter.info |= viType::isAnIterator;
+        iter.info |=  viType::isAnIterator;
+        iter.info &= ~viType::isUseless;
         iter.iteratorInfo.s = &s;
 
         if(stride)
