@@ -311,7 +311,14 @@ namespace occa {
       static void placeAddedExps(infoDB_t &db, expNode &e, expVec_t &sumNodes);
 
       static void simplify(infoDB_t &db, expNode &e);
-      static void explandMultDiv(infoDB_t &db, expNode &e);
+
+      static void turnMinusIntoNegatives(infoDB_t &db, expNode &e);
+
+      static void mergeConstants(infoDB_t &db, expNode &e);
+      static void applyConstantsIn(infoDB_t &db, expNode &e);
+
+      static void expandExp(infoDB_t &db, expNode &e);
+      static void explandMult(infoDB_t &db, expNode &e);
       static void removeParentheses(infoDB_t &db, expNode &e);
     };
   };

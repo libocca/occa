@@ -60,6 +60,13 @@ namespace occa {
       typeHolder();
       typeHolder(const typeHolder &th);
       typeHolder(const std::string strValue, int type_ = noType);
+      typeHolder(const int int__);
+      typeHolder(const bool bool__);
+      typeHolder(const char char__);
+      typeHolder(const long long__);
+      typeHolder(const short short__);
+      typeHolder(const float float__);
+      typeHolder(const double double__);
 
       typeHolder& operator = (const typeHolder &th);
       typeHolder& operator = (const std::string &str);

@@ -123,6 +123,34 @@ namespace occa {
       }
     }
 
+    typeHolder::typeHolder(const int int__){
+      *this = int__;
+    }
+
+    typeHolder::typeHolder(const bool bool__){
+      *this = bool__;
+    }
+
+    typeHolder::typeHolder(const char char__){
+      *this = char__;
+    }
+
+    typeHolder::typeHolder(const long long__){
+      *this = long__;
+    }
+
+    typeHolder::typeHolder(const short short__){
+      *this = short__;
+    }
+
+    typeHolder::typeHolder(const float float__){
+      *this = float__;
+    }
+
+    typeHolder::typeHolder(const double double__){
+      *this = double__;
+    }
+
     typeHolder& typeHolder::operator = (const typeHolder &th){
       type = th.type;
       value.double_ = th.value.double_;
@@ -145,42 +173,42 @@ namespace occa {
 
     typeHolder& typeHolder::operator = (const bool bool__){
       value.bool_ = bool__;
-      type       = boolType;
+      type        = boolType;
 
       return *this;
     }
 
     typeHolder& typeHolder::operator = (const char char__){
       value.char_ = char__;
-      type       = charType;
+      type        = charType;
 
       return *this;
     }
 
     typeHolder& typeHolder::operator = (const long long__){
       value.long_ = long__;
-      type       = longType;
+      type        = longType;
 
       return *this;
     }
 
     typeHolder& typeHolder::operator = (const short short__){
       value.short_ = short__;
-      type       = shortType;
+      type        = shortType;
 
       return *this;
     }
 
     typeHolder& typeHolder::operator = (const float float__){
       value.float_ = float__;
-      type       = floatType;
+      type        = floatType;
 
       return *this;
     }
 
     typeHolder& typeHolder::operator = (const double double__){
       value.double_ = double__;
-      type       = doubleType;
+      type          = doubleType;
 
       return *this;
     }

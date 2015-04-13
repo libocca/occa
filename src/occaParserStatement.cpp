@@ -2273,6 +2273,11 @@ namespace occa {
       leafCount += count;
     }
 
+    void expNode::setLeaf(expNode &leaf, const int pos){
+      leaves[pos] = &leaf;
+      leaf.up     = this;
+    }
+
     varInfo& expNode::addVarInfoNode(){
       addNode(0);
 

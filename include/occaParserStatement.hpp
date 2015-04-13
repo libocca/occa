@@ -264,6 +264,8 @@ namespace occa {
       void reserve(const int count);
       void reserveAndShift(const int pos, const int count = 1);
 
+      void setLeaf(expNode &leaf, const int pos);
+
       varInfo& addVarInfoNode();
       varInfo& addVarInfoNode(const int pos_);
 

@@ -189,6 +189,9 @@ namespace occa {
           expRoot = NULL;
         }
         else {
+          if(e.leafCount)
+            expNode::swap(e, e[0]);
+
           info &= ~(viType::isAVariable |
                     viType::isAnIterator);
         }
@@ -196,6 +199,9 @@ namespace occa {
       else { // Root node -> ()
         e.info  = expType::C;
         e.value = "(";
+
+        if(e.leafCount)
+          expNode::swap(e, e[0]);
       }
 
       return analyzeInfo::changed;
@@ -375,8 +381,10 @@ namespace occa {
       expNode &e2 = *(e.clone());
 
       std::cout << "SIMP1: e2 = " << e2 << '\n';
+      e2.print();
       magician::simplify(*db, e2);
       std::cout << "SIMP2: e2 = " << e2 << '\n';
+      e2.print();
 
       expVec_t strideNodes;
       magician::placeAddedExps(*db, e2, strideNodes);
@@ -530,7 +538,7 @@ namespace occa {
         // [<>] Memory Leak
         expNode e;
         saveTo(e);
-        load(e[0]); // Ignore root?
+        load(e[0]); // Skip [0] root
 
         return analyzeInfo::changed;
       }
@@ -549,9 +557,13 @@ namespace occa {
 
         if( hasAnIterator(*(vars[i].exp)) ){
           valueInfo_t value2(db);
-          std::cout << "vars[i].exp = " << *(vars[i].exp) << '\n';
+
+          std::cout << "vars[i].exp\n";
+          vars[i].exp->print();
+
           value2.load( *(vars[i].exp) );
-          std::cout << "value2      = " << value2 << '\n';
+
+          std::cout << "value2 = " << value2 << '\n';
         }
       }
     }
@@ -1723,20 +1735,140 @@ namespace occa {
         }
 
         sumNodes.swap(sumNodes2);
+        sumNodes2.clear();
       }
     }
 
     void magician::simplify(infoDB_t &db, expNode &e){
+      turnMinusIntoNegatives(db, e);
+      expandExp(db, e);
+      mergeConstants(db, e);
+    }
+
+    void magician::turnMinusIntoNegatives(infoDB_t &db, expNode &e){
       expNode &flatRoot = *(e.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &leaf = flatRoot[i];
 
-        if( (leaf.info  == expType::LR) &&
-            ((leaf.value == "*") ||
-             (leaf.value == "/")) ){
+        if((leaf.info  == expType::LR) &&
+           (leaf.value == "-")){
 
-          explandMultDiv(db, leaf);
+          leaf.value = "+";
+
+          expNode &minus = *(new expNode(leaf));
+
+          minus.info  = expType::L;
+          minus.value = "-";
+
+          minus.reserve(1);
+          minus.setLeaf(leaf[1], 0);
+
+          leaf.setLeaf(minus, 1);
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
+
+    void magician::mergeConstants(infoDB_t &db, expNode &e){
+      typeHolder constValue = 0;
+      expVec_t sums, sums2;
+
+      placeAddedExps(db, e, sums);
+
+      const int sumCount = (int) sums.size();
+
+      for(int i = 0; i < sumCount; ++i){
+        expNode &leaf = *(sums[i]);
+
+        typeHolder th = leaf.calculateValue();
+
+        if( !(th.type & noType) )
+          constValue = applyOperator(constValue, "+", th);
+        else {
+          applyConstantsIn(db, leaf);
+          sums2.push_back(&leaf);
+        }
+      }
+
+      if(constValue != typeHolder((int) 0)){
+        expNode &leaf = *(new expNode(e));
+
+        leaf.info  = expType::presetValue;
+        leaf.value = (std::string) constValue;
+
+        sums2.push_back(&leaf);
+      }
+    }
+
+    void magician::applyConstantsIn(infoDB_t &db, expNode &e){
+      if(e.info != expType::LR)
+        return;
+
+      expVec_t v, v2, constValues;
+
+      v.push_back(&e);
+
+      while(v.size()){
+        const int vCount = (int) v.size();
+
+        for(int i = 0; i < vCount; ++i){
+          expNode &leaf = *(v[i]);
+
+          if((leaf.info  == expType::LR) &&
+             (leaf.value == "*")){
+
+            for(int j = 0; j < 2; ++j){
+              if((leaf[j].info  == expType::LR) &&
+                 (leaf[j].value == "*")){
+
+                v2.push_back( &(leaf[j]) );
+              }
+              else if(leaf[j].info & expType::presetValue){
+                constValues.push_back( &(leaf[j]) );
+              }
+            }
+          }
+        }
+
+        v.swap(v2);
+        v2.clear();
+      }
+
+      const int constCount = (int) constValues.size();
+
+      if(constCount <= 1)
+        return;
+
+      typeHolder constValue(constValues[0]->value);
+
+      for(int i = 1; i < constCount; ++i){
+        expNode &leaf   = *(constValues[i]);
+        expNode &leafUp = *(leaf.up);
+        expNode &leaf2  = leafUp[!leaf.whichLeafAmI()];
+
+        constValue = applyOperator(constValue, "*", leaf.value);
+
+        expNode::swap(leafUp, leaf2);
+
+        leaf2.freeThis();
+        delete &leaf2;
+      }
+
+      constValues[0]->value = (std::string) constValue;
+    }
+
+    void magician::expandExp(infoDB_t &db, expNode &e){
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if((leaf.info  == expType::LR) &&
+           (leaf.value == "*")){
+
+          explandMult(db, leaf);
         }
         else if((leaf.info  == expType::C) &&
                 (leaf.value == "(")){
@@ -1748,7 +1880,7 @@ namespace occa {
       expNode::freeFlatHandle(flatRoot);
     }
 
-    void magician::explandMultDiv(infoDB_t &db, expNode &e){
+    void magician::explandMult(infoDB_t &db, expNode &e){
       const std::string op = e.value;
 
       expVec_t a, b;
@@ -1778,16 +1910,10 @@ namespace occa {
 
           leaf.value = "+";
 
-          leaf.addNodes(0, 0, 2);
+          leaf.reserve(2);
 
-          leaf.freeLeaf(0);
-          leaf.freeLeaf(1);
-
-          leaf.leaves[0] = a[i]->clone();
-          leaf.leaves[1] = b[j]->clone();
-
-          leaf.leaves[0]->up = &leaf;
-          leaf.leaves[1]->up = &leaf;
+          leaf.setLeaf(*(a[i]->clone()), 0);
+          leaf.setLeaf(*(b[j]->clone()), 1);
         }
       }
 
