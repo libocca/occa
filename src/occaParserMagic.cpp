@@ -104,16 +104,10 @@ namespace occa {
       if(info & viType::isConstant)
         return !analyzeInfo::changed;
 
-      std::cout << "info = " << *this << '\n';
-
-      if(info & viType::isAVariable){
-        printf("var\n");
+      if(info & viType::isAVariable)
         return expandValue(exp, *var);
-      }
-      else{
-        printf("exp\n");
+      else
         return expandValue(*exp);
-      }
     }
 
     bool atomInfo_t::expandValue(expNode &e){
@@ -182,8 +176,6 @@ namespace occa {
       expNode &e = *expRoot;
 
       vi->valueInfo.saveTo(e);
-
-      std::cout << "e = " << e << '\n';
 
       // We're operating on our exp (which was NULL)
       if(expRootWasNull){
@@ -378,38 +370,64 @@ namespace occa {
     }
 
     void valueInfo_t::load(expNode &e){
-      expNode *cNode = &e;
-      indices = 1;
+      info = 0;
 
-      // [-] Needs to warn about negative indices
-      while((cNode        != NULL)        &&
-            (cNode->info  == expType::LR) &&
-            (cNode->value == "+")){
+      std::vector<expNode*> strideNodes, sumNodes;
+      expNode &e2 = *(e.clone());
 
-        ++indices;
-        cNode = cNode->leaves[0];
+      std::cout << "SIMP1: e2 = " << e2 << '\n';
+      magician::simplify(*db, e2);
+      std::cout << "SIMP2: e2 = " << e2 << '\n';
+
+      if((e2.info != expType::LR) ||
+         (e2.value != "+")){
+
+        strideNodes.push_back(&e2);
       }
+      else {
+        sumNodes.push_back(&e2);
+      }
+
+      while(sumNodes.size()){
+        std::vector<expNode*> sumNodes2;
+        const int snc = sumNodes.size();
+
+        for(int i = 0; i < snc; ++i){
+          expNode &se = *(sumNodes[i]);
+
+          for(int j = 0; j < 2; ++j){
+            if((se[j].info == expType::LR) &&
+               (se[j].value == "+")){
+
+              sumNodes2.push_back( &(se[j]) );
+            }
+            else {
+              strideNodes.push_back( &(se[j]) );
+            }
+          }
+        }
+
+        sumNodes.swap(sumNodes2);
+      }
+
+      indices = strideNodes.size();
 
       allocVS(indices);
 
-      if(indices == 1){
-        loadVS(e, 0);
-      }
-      else {
-        cNode = &e;
+      const int snc = strideNodes.size();
 
-        for(int i = 0; i < (indices - 1); ++i){
-          const int invI = (indices - i - 1);
-          loadVS((*cNode)[1], invI);
+      for(int i = 0; i < snc; ++i)
+        loadVS(*(strideNodes[i]), i);
 
-          if(invI == 1)
-            loadVS((*cNode)[0], 0);
-
-          cNode = cNode->leaves[0];
-        }
-      }
-
+      std::cout << "1. this = " << *this << '\n';
+      const bool changed = expandValues();
+      std::cout << "2. this = " << *this << '\n';
+      if(changed)
+        reEvaluateStrides();
+      std::cout << "3. this = " << *this << '\n';
       sortIndices();
+
+      e2.free();
     }
 
     void valueInfo_t::load(varInfo &var){
@@ -421,7 +439,17 @@ namespace occa {
     }
 
     void valueInfo_t::loadVS(expNode &e, const int pos){
-      if((e.info  == expType::LR) &&
+      if(e.info & expType::varInfo){
+        vars[pos].load(e);
+        strides[pos].load("1");
+        return;
+      }
+      else if(e.info == expType::presetValue){
+        vars[pos].load(e.value);
+        strides[pos].load("1");
+        return;
+      }
+      else if((e.info  == expType::LR) &&
          (e.value == "*")){
 
         const bool varIn0 = (e[0].info & expType::varInfo);
@@ -433,22 +461,128 @@ namespace occa {
           return;
         }
       }
-      else if(e.info & expType::varInfo){
-        vars[pos].load(e);
-        strides[pos].load("1");
-        return;
+      /*
+      else if(iteratorsExprIn(e)){ // Wrong
+        const bool hasIter0 = isAnIteratorExp(e[0]);
+        const bool hasIter1 = isAnIteratorExp(e[1]);
+
+        if(hasIter0 ^ hasIter1){
+          vars[pos].load(e[hasIter1]);
+          strides[pos].load(e[!hasIter1]);
+          return;
+        }
       }
-      else if(e.info == expType::presetValue){
-        vars[pos].load(e.value);
-        strides[pos].load("1");
-        return;
-      }
+      */
 
       vars[pos].info    = viType::isUseless;
       strides[pos].info = viType::isUseless;
 
       vars[pos].exp = e.clone();
       strides[pos].load("1");
+    }
+
+    int valueInfo_t::iteratorsIn(expNode &e){
+      if(e.info & expType::varInfo)
+        return db->varIsAnIterator(e.getVarInfo());
+
+      int count = 0;
+
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if( (leaf.info & expType::varInfo) &&
+            db->varIsAnIterator(leaf.getVarInfo()) ){
+
+          ++count;
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      return count;
+    }
+
+    bool valueInfo_t::hasAnIterator(expNode &e){
+      return (0 < iteratorsIn(e));
+    }
+
+    bool valueInfo_t::isAnIteratorExp(expNode &e){
+      if(e.info & expType::varInfo){
+          return db->varIsAnIterator(e.getVarInfo());
+      }
+
+      int iterCount = 0;
+      bool ret      = true;
+
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if(leaf.info & expType::varInfo){
+          ret = db->varIsAnIterator(leaf.getVarInfo());
+
+          if(ret)
+            ++iterCount;
+        }
+
+        if(ret == false)
+          break;
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      return (ret && (0 < iterCount));
+    }
+
+    int valueInfo_t::iteratorExpsIn(expNode &e){
+      return 0;
+    }
+
+    bool valueInfo_t::expandValues(){
+      if(indices == 0){
+        return value.expandValue();
+      }
+      else{
+        bool changed = false;
+
+        for(int i = 0; i < indices; ++i){
+          changed |= vars[i].expandValue();
+          changed |= strides[i].expandValue();
+        }
+
+        if(!changed)
+          return !analyzeInfo::changed;
+
+        // [<>] Memory Leak
+        expNode e;
+        saveTo(e);
+        load(e[0]); // Ignore root?
+
+        return analyzeInfo::changed;
+      }
+    }
+
+    void valueInfo_t::reEvaluateStrides(){
+      if(indices == 0)
+        return;
+
+      for(int i = 0; i < indices; ++i){
+        if( !(vars[i].info & viType::isUseless) ||
+            (vars[i].exp == NULL) ){
+
+          continue;
+        }
+
+        if( hasAnIterator(*(vars[i].exp)) ){
+          valueInfo_t value2(db);
+          std::cout << "vars[i].exp = " << *(vars[i].exp) << '\n';
+          value2.load( *(vars[i].exp) );
+          std::cout << "value2      = " << value2 << '\n';
+        }
+      }
     }
 
     void valueInfo_t::sortIndices(){
@@ -502,30 +636,6 @@ namespace occa {
     }
 
     void valueInfo_t::mergeIndices(){
-    }
-
-    bool valueInfo_t::expandValues(){
-      if(indices == 0){
-        return value.expandValue();
-      }
-      else{
-        bool changed = false;
-
-        for(int i = 0; i < indices; ++i){
-          changed |= vars[i].expandValue();
-          changed |= strides[i].expandValue();
-        }
-
-        if(!changed)
-          return !analyzeInfo::changed;
-
-        // [<>] Memory Leak
-        expNode e;
-        saveTo(e);
-        load(e[0]); // Ignore root?
-
-        return analyzeInfo::changed;
-      }
     }
 
     void valueInfo_t::saveTo(expNode &e, const int leafPos){
@@ -586,6 +696,7 @@ namespace occa {
     void valueInfo_t::update(expNode &op, expNode &e){
       if(op.value == "="){
         load(e);
+        return;
       }
 
       if(info & viType::isUseless)
@@ -890,9 +1001,8 @@ namespace occa {
 
     void viInfo_t::checkComplexity(){
       if(info & viType::isAnIterator)
-        return;
-
-      if(valueInfo.isComplex())
+        info &= ~viType::isComplex;
+      else if(valueInfo.isComplex())
         info |= viType::isComplex;
       else
         info &= ~viType::isComplex;
@@ -1015,6 +1125,12 @@ namespace occa {
 
     viInfo_t& infoDB_t::operator [] (varInfo &var){
       return *(viInfoMap.has(var));
+    }
+
+    bool infoDB_t::varIsAnIterator(varInfo &var){
+      viInfo_t *vi = viInfoMap.has(var);
+
+      return ((vi != NULL) && (vi->info & viType::isAnIterator));
     }
 
     magician::magician(parserBase &parser_) :
@@ -1599,6 +1715,16 @@ namespace occa {
         for(int i = 0; i < e.leafCount; ++i)
           addExpressionRead(e[i]);
       }
+    }
+
+    void magician::simplify(infoDB_t &db, expNode &e){
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
   };
 };

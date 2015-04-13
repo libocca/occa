@@ -2154,45 +2154,44 @@ namespace occa {
       for(int i = 0; i < leafCount; ++i){
         switch(leaves[i]->info){
         case (expType::L):{
+          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
           flatLeaves[offset++] = leaves[i];
           flatLeaves[offset++] = leaves[i]->leaves[0];
-          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
 
           break;
         }
 
         case (expType::R):{
-          flatLeaves[offset++] = leaves[i]->leaves[0];
           leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i]->leaves[0];
           flatLeaves[offset++] = leaves[i];
 
           break;
         }
 
         case (expType::L | expType::R):{
-          flatLeaves[offset++] = leaves[i]->leaves[0];
           leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
+          leaves[i]->leaves[1]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i]->leaves[0];
           flatLeaves[offset++] = leaves[i];
           flatLeaves[offset++] = leaves[i]->leaves[1];
-          leaves[i]->leaves[1]->makeFlatHandle(offset, flatLeaves);
 
           break;
         }
 
         case (expType::L | expType::C | expType::R):{
-          flatLeaves[offset++] = leaves[i]->leaves[0];
           leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
-          flatLeaves[offset++] = leaves[i]->leaves[1];
           leaves[i]->leaves[1]->makeFlatHandle(offset, flatLeaves);
-          flatLeaves[offset++] = leaves[i]->leaves[2];
           leaves[i]->leaves[2]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i]->leaves[0];
+          flatLeaves[offset++] = leaves[i]->leaves[1];
+          flatLeaves[offset++] = leaves[i]->leaves[2];
 
           break;
         }
         default:
-          flatLeaves[offset++] = leaves[i];
-
           leaves[i]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i];
 
           break;
         }

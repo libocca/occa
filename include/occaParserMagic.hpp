@@ -102,12 +102,20 @@ namespace occa {
 
       void loadVS(expNode &e, const int pos);
 
+      int iteratorsIn(expNode &e);
+      bool hasAnIterator(expNode &e);
+
+      bool isAnIteratorExp(expNode &e);
+      int iteratorExpsIn(expNode &e);
+      bool hasAnIteratorExp(expNode &e);
+
+      bool expandValues();
+      void reEvaluateStrides();
+
       void sortIndices();
       static int qSortIndices(const void *a, const void *b);
 
       void mergeIndices();
-
-      bool expandValues();
 
       void saveTo(expNode &e, const int leafPos = 0);
       void saveIndexTo(const int index, expNode &e, const int leafPos = 0);
@@ -239,6 +247,8 @@ namespace occa {
       void leavingStatement();
 
       viInfo_t& operator [] (varInfo &var);
+
+      bool varIsAnIterator(varInfo &var);
     };
 
     class magician {
@@ -296,6 +306,9 @@ namespace occa {
                            expNode &bracketNode);
 
       void addExpressionRead(expNode &e);
+
+      //---[ Helper Functions ]---------
+      static void simplify(infoDB_t &db, expNode &e);
     };
   };
 };
