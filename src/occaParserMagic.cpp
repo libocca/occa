@@ -372,43 +372,14 @@ namespace occa {
     void valueInfo_t::load(expNode &e){
       info = 0;
 
-      std::vector<expNode*> strideNodes, sumNodes;
       expNode &e2 = *(e.clone());
 
       std::cout << "SIMP1: e2 = " << e2 << '\n';
       magician::simplify(*db, e2);
       std::cout << "SIMP2: e2 = " << e2 << '\n';
 
-      if((e2.info != expType::LR) ||
-         (e2.value != "+")){
-
-        strideNodes.push_back(&e2);
-      }
-      else {
-        sumNodes.push_back(&e2);
-      }
-
-      while(sumNodes.size()){
-        std::vector<expNode*> sumNodes2;
-        const int snc = sumNodes.size();
-
-        for(int i = 0; i < snc; ++i){
-          expNode &se = *(sumNodes[i]);
-
-          for(int j = 0; j < 2; ++j){
-            if((se[j].info == expType::LR) &&
-               (se[j].value == "+")){
-
-              sumNodes2.push_back( &(se[j]) );
-            }
-            else {
-              strideNodes.push_back( &(se[j]) );
-            }
-          }
-        }
-
-        sumNodes.swap(sumNodes2);
-      }
+      expVec_t strideNodes;
+      magician::placeAddedExps(*db, e2, strideNodes);
 
       indices = strideNodes.size();
 
@@ -427,7 +398,7 @@ namespace occa {
       std::cout << "3. this = " << *this << '\n';
       sortIndices();
 
-      e2.free();
+      // e2.free();
     }
 
     void valueInfo_t::load(varInfo &var){
@@ -1717,14 +1688,149 @@ namespace occa {
       }
     }
 
+    //---[ Helper Functions ]---------
+    void magician::placeAddedExps(infoDB_t &db, expNode &e, expVec_t &addedExps){
+      expVec_t sumNodes;
+
+      if( (e.info != expType::LR) ||
+          ((e.value != "+") &&
+           (e.value != "-")) ){
+
+        addedExps.push_back(&e);
+      }
+      else {
+        sumNodes.push_back(&e);
+      }
+
+      while(sumNodes.size()){
+        expVec_t sumNodes2;
+        const int snc = sumNodes.size();
+
+        for(int i = 0; i < snc; ++i){
+          expNode &se = *(sumNodes[i]);
+
+          for(int j = 0; j < 2; ++j){
+            if( (se[j].info == expType::LR) &&
+                ((se[j].value == "+") ||
+                 (se[j].value == "-")) ){
+
+              sumNodes2.push_back( &(se[j]) );
+            }
+            else {
+              addedExps.push_back( &(se[j]) );
+            }
+          }
+        }
+
+        sumNodes.swap(sumNodes2);
+      }
+    }
+
     void magician::simplify(infoDB_t &db, expNode &e){
       expNode &flatRoot = *(e.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &leaf = flatRoot[i];
+
+        if( (leaf.info  == expType::LR) &&
+            ((leaf.value == "*") ||
+             (leaf.value == "/")) ){
+
+          explandMultDiv(db, leaf);
+        }
+        else if((leaf.info  == expType::C) &&
+                (leaf.value == "(")){
+
+          removeParentheses(db, leaf);
+        }
       }
 
       expNode::freeFlatHandle(flatRoot);
+    }
+
+    void magician::explandMultDiv(infoDB_t &db, expNode &e){
+      const std::string op = e.value;
+
+      expVec_t a, b;
+      expNode tmp;
+
+      placeAddedExps(db, e[0], a);
+
+      if(op == "*")
+        placeAddedExps(db, e[1], b);
+      else // (op == "/")
+        b.push_back( &(e[1]) );
+
+      const int aCount  = (int) a.size();
+      const int bCount  = (int) b.size();
+      const int abCount = (aCount * bCount);
+
+      if(abCount == 1)
+        return;
+
+      tmp.addNodes(expType::LR, 0, abCount);
+
+      int pos = 0;
+
+      for(int i = 0; i < aCount; ++i){
+        for(int j = 0; j < bCount; ++j){
+          expNode &leaf = tmp[pos++];
+
+          leaf.value = "+";
+
+          leaf.addNodes(0, 0, 2);
+
+          leaf.freeLeaf(0);
+          leaf.freeLeaf(1);
+
+          leaf.leaves[0] = a[i]->clone();
+          leaf.leaves[1] = b[j]->clone();
+
+          leaf.leaves[0]->up = &leaf;
+          leaf.leaves[1]->up = &leaf;
+        }
+      }
+
+      expNode *cNode = &e;
+      e.freeThis();
+
+      for(int i = 0; i < abCount; ++i){
+        const bool lastI = (i == (abCount - 1));
+
+        expNode &e2   = *cNode;
+        expNode &leaf = tmp[i];
+
+        if(!lastI){
+          expNode &nextLeaf = tmp[i + 1];
+
+          e2.info  = nextLeaf.info;
+          e2.value = nextLeaf.value;
+
+          e2.addNodes(0, 0, 2);
+        }
+
+        e2[lastI].info  = expType::LR;
+        e2[lastI].value = op;
+
+        e2[lastI].addNodes(0, 0, 2);
+
+        expNode::swap(e2[lastI][0], leaf[0]);
+        expNode::swap(e2[lastI][1], leaf[1]);
+
+        if(i < (abCount - 2))
+          cNode = &(e2[1]);
+
+        leaf.free();
+      }
+
+      tmp.freeThis();
+    }
+
+    void magician::removeParentheses(infoDB_t &db, expNode &e){
+      expNode &leaf = e[0];
+      e.freeThis();
+
+      expNode::swap(e, leaf);
     }
   };
 };

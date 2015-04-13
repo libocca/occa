@@ -108,8 +108,6 @@ namespace occa {
       int leafCount;
       expNode **leaves;
 
-      typeInfo *type;
-
       expNode();
       expNode(statement &s);
       expNode(expNode &up_);
@@ -263,6 +261,7 @@ namespace occa {
 
       void addNode(expNode &node_, const int pos_ = -1);
 
+      void reserve(const int count);
       void reserveAndShift(const int pos, const int count = 1);
 
       varInfo& addVarInfoNode();
@@ -332,6 +331,7 @@ namespace occa {
 
       void freeLeaf(const int leafPos);
       void free();
+      void freeThis();
 
       void print(const std::string &tab = "");
       void printOn(std::ostream &out,

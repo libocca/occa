@@ -15,9 +15,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     expNode::expNode(statement &s) :
       sInfo(&s),
@@ -28,9 +26,7 @@ namespace occa {
       up(NULL),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     expNode::expNode(expNode &up_) :
       sInfo(up_.sInfo),
@@ -41,9 +37,7 @@ namespace occa {
       up(&up_),
 
       leafCount(0),
-      leaves(NULL),
-
-      type(NULL) {}
+      leaves(NULL) {}
 
     bool expNode::operator == (expNode &e){
       return sameAs(e);
@@ -2090,10 +2084,13 @@ namespace occa {
 
     //---[ Exp Info ]-----------------
     int expNode::depth(){
-      int depth_ = 0;
+      expNode *up_ = up;
+      int depth_   = 0;
 
-      while(up)
+      while(up_){
         ++depth_;
+        up_ = up_->up;
+      }
 
       return depth_;
     }
@@ -2249,6 +2246,10 @@ namespace occa {
       leaves[pos] = &node_;
 
       node_.up = this;
+    }
+
+    void expNode::reserve(const int count){
+      reserveAndShift(0, count);
     }
 
     void expNode::reserveAndShift(const int pos,
@@ -2803,7 +2804,6 @@ namespace occa {
       delete leaves[leafPos];
     }
 
-    // [-] Not properly done for varInfo and typeInfo
     void expNode::free(){
       // Let the parser free all varInfos
       if( !(info & expType::hasInfo) ){
@@ -2811,13 +2811,22 @@ namespace occa {
           leaves[i]->free();
           delete leaves[i];
         }
+
+        if(leaves)
+          delete [] leaves;
       }
 
       info      = 0;
       leafCount = 0;
+    }
+
+    void expNode::freeThis(){
+      leafCount = 0;
 
       if(leaves)
         delete [] leaves;
+
+      leaves = NULL;
     }
 
     void expNode::print(const std::string &tab){
