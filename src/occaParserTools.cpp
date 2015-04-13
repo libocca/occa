@@ -126,6 +126,12 @@ namespace occa {
     const char *cEnd = c;
     skipToWhitespace(cEnd);
 
+    if((*c == '-') ||
+       (*c == '+')){
+
+      ++c;
+    }
+
     while(c < cEnd){
       if(('0' > *c) || (*c > '9'))
         return false;
@@ -137,6 +143,12 @@ namespace occa {
   }
 
   bool isAFloat(const char *c){
+    if((*c == '-') ||
+       (*c == '+')){
+
+      ++c;
+    }
+
     if(('0' <= *c) && (*c <= '9'))
       return true;
 

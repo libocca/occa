@@ -319,7 +319,7 @@ namespace occa {
       static void applyConstantsIn(infoDB_t &db, expNode &e);
 
       static void expandExp(infoDB_t &db, expNode &e);
-      static void explandMult(infoDB_t &db, expNode &e);
+      static void expandMult(infoDB_t &db, expNode &e);
       static void removeParentheses(infoDB_t &db, expNode &e);
     };
   };

@@ -2840,22 +2840,25 @@ namespace occa {
       leaves = NULL;
     }
 
+#define PRINTUP << '(' << up << " -> " << this << ')'
+// #define PRINTUP
+
     void expNode::print(const std::string &tab){
       if( !(info & expType::hasInfo) ){
 
-        std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
+        std::cout << tab << "[" << getBits(info) << "] " << value PRINTUP << '\n';
 
         for(int i = 0; i < leafCount; ++i)
           leaves[i]->print(tab + "    ");
       }
       else if(info & expType::varInfo){
         if(info & expType::type)
-          std::cout << tab << "[VT: " << getBits(info) << "] " << getVarInfo() << '\n';
+          std::cout << tab << "[VT: " << getBits(info) << "] " << getVarInfo() PRINTUP << '\n';
         else
-          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo().name << '\n';
+          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo().name PRINTUP << '\n';
       }
       else if(info & expType::typeInfo){
-        std::cout << tab << "[T: " << getBits(info) << "]\n" << getTypeInfo().toString(tab + "        ") << '\n';
+        std::cout << tab << "[T: " << getBits(info) << "]\n" << getTypeInfo().toString(tab + "        ") PRINTUP << '\n';
       }
     }
 
