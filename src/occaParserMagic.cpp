@@ -1,7 +1,8 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 1 // Read/Write/Expand
-#define DBP1 1 // Index Sorting/Updating
+#define DBP0 0 // Read/Write/Expand
+#define DBP1 0 // Index Sorting/Updating
+#define DBP2 1 // Expression simplification
 
 namespace occa {
   namespace parserNS {
@@ -189,8 +190,11 @@ namespace occa {
           expRoot = NULL;
         }
         else {
-          if(e.leafCount)
-            expNode::swap(e, e[0]);
+          if(e.leafCount){
+            expNode *e0 = &(e[0]);
+            e.freeThis();
+            expRoot = e0;
+          }
 
           info &= ~(viType::isAVariable |
                     viType::isAnIterator);
@@ -199,9 +203,6 @@ namespace occa {
       else { // Root node -> ()
         e.info  = expType::C;
         e.value = "(";
-
-        if(e.leafCount)
-          expNode::swap(e, e[0]);
       }
 
       return analyzeInfo::changed;
@@ -380,11 +381,15 @@ namespace occa {
 
       expNode &e2 = *(e.clone());
 
+#if DBP2
       std::cout << "SIMP1: e2 = " << e2 << '\n';
       e2.print();
+#endif
       magician::simplify(*db, e2);
+#if DBP2
       std::cout << "SIMP2: e2 = " << e2 << '\n';
       e2.print();
+#endif
 
       expVec_t strideNodes;
       magician::placeAddedExps(*db, e2, strideNodes);
@@ -398,12 +403,11 @@ namespace occa {
       for(int i = 0; i < snc; ++i)
         loadVS(*(strideNodes[i]), i);
 
-      std::cout << "1. this = " << *this << '\n';
       const bool changed = expandValues();
-      std::cout << "2. this = " << *this << '\n';
+
       if(changed)
         reEvaluateStrides();
-      std::cout << "3. this = " << *this << '\n';
+
       sortIndices();
 
       // e2.free();
@@ -557,13 +561,7 @@ namespace occa {
 
         if( hasAnIterator(*(vars[i].exp)) ){
           valueInfo_t value2(db);
-
-          std::cout << "vars[i].exp\n";
-          vars[i].exp->print();
-
           value2.load( *(vars[i].exp) );
-
-          std::cout << "value2 = " << value2 << '\n';
         }
       }
     }
@@ -1772,6 +1770,18 @@ namespace occa {
     }
 
     void magician::mergeConstants(infoDB_t &db, expNode &e){
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        mergeConstantsIn(db, leaf);
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
+
+    void magician::mergeConstantsIn(infoDB_t &db, expNode &e){
       typeHolder constValue = 0;
       expVec_t sums, sums2;
 
@@ -1784,9 +1794,11 @@ namespace occa {
 
         typeHolder th = leaf.calculateValue();
 
-        if( !(th.type & noType) )
+        if( !(th.type & noType) ){
           constValue = applyOperator(constValue, "+", th);
+        }
         else {
+          std::cout << "applyConstantsIn " << leaf << '\n';
           applyConstantsIn(db, leaf);
           sums2.push_back(&leaf);
         }

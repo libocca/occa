@@ -2762,6 +2762,12 @@ namespace occa {
             break;
           }
         }
+        else if((n.info  == expType::C) && // [-] Don't load constant arrays yet
+                (n.value == "[")){
+
+          isKnown = false;
+          break;
+        }
       }
 
       freeFlatHandle(flatRoot);

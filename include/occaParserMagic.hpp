@@ -315,6 +315,7 @@ namespace occa {
       static void turnMinusIntoNegatives(infoDB_t &db, expNode &e);
 
       static void mergeConstants(infoDB_t &db, expNode &e);
+      static void mergeConstantsIn(infoDB_t &db, expNode &e);
       static void applyConstantsIn(infoDB_t &db, expNode &e);
 
       static void expandExp(infoDB_t &db, expNode &e);
