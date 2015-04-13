@@ -42,10 +42,10 @@ namespace occa {
 
       markKernelFunctions(*globalScope);
 
-      if(magicEnabled)
+      if(magicEnabled){
         magician::castMagicOn(*this);
-
-      throw 1;
+        throw 1;
+      }
 
       labelNativeKernels();
 

@@ -1782,6 +1782,9 @@ namespace occa {
     }
 
     void magician::mergeConstantsIn(infoDB_t &db, expNode &e){
+      if(e.leafCount <= 1)
+        return;
+
       expVec_t sums, sums2;
 
       typeHolder constValue = 0;
@@ -1797,14 +1800,19 @@ namespace occa {
         typeHolder th = leaf.calculateValue();
 
         if( !(th.type & noType) ){
-          if(hasConst)
+          // leaf.free(); // [<>]
+
+          if(hasConst) {
             constValue = applyOperator(constValue, "+", th);
-          else
+          }
+          else {
             constValue = th;
+            hasConst   = true;
+          }
         }
         else {
           applyConstantsIn(db, leaf);
-          sums2.push_back(&leaf);
+          sums2.push_back(leaf.clone());
         }
       }
 
@@ -1815,6 +1823,44 @@ namespace occa {
         leaf.value = (std::string) constValue;
 
         sums2.push_back(&leaf);
+      }
+
+      const int sumCount2 = (int) sums2.size();
+
+      if(sumCount2 == 1){
+        e.freeThis();
+        expNode::swap(e, *(sums2[0]));
+        return;
+      }
+
+      expNode *cNode = &e;
+      e.freeThis();
+
+      for(int i = 0; i < sumCount2; ++i){
+        const bool lastI = (i == (sumCount2 - 1));
+
+        expNode &leaf = *cNode;
+
+        if((sums2[i]->info & expType::presetValue) &&
+           (sums2[i]->value == "0")){
+
+          if(lastI)
+            expNode::swap(leaf, leaf[0]);
+
+          continue;
+        }
+
+        if(!lastI){
+          leaf.info  = expType::LR;
+          leaf.value = "+";
+
+          leaf.addNodes(0, 0, 2);
+        }
+
+        leaf.leaves[lastI] = sums2[i];
+
+        if(i < (sumCount2 - 2))
+          cNode = &(leaf[1]);
       }
     }
 

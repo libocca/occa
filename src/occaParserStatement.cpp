@@ -2129,14 +2129,19 @@ namespace occa {
       else
         flatNode = new expNode(*this);
 
-      if(leafCount == 0)
+      const bool addMe = (info != 0);
+
+      if((leafCount == 0) && !addMe)
         return flatNode;
 
       flatNode->info   = expType::printLeaves;
-      flatNode->leaves = new expNode*[nestedLeafCount()];
+      flatNode->leaves = new expNode*[addMe + nestedLeafCount()];
 
       int offset = 0;
       makeFlatHandle(offset, flatNode->leaves);
+
+      if(addMe)
+        flatNode->setLeaf(*this, offset++);
 
       flatNode->leafCount = offset;
 
@@ -2745,10 +2750,10 @@ namespace occa {
       for(int i = 0; i < flatRoot.leafCount; ++i){
         expNode &n = flatRoot[i];
 
-        if(n.info & (expType::unknown  |
-                     expType::variable |
-                     expType::function | // [-] Check function later
-                     expType::varInfo)){
+        if(n.info & (expType::varInfo   |
+                     expType::unknown   |
+                     expType::variable  |
+                     expType::function)){ // [-] Check function later
 
           cStrToStrMapIterator it;
 
@@ -2775,7 +2780,6 @@ namespace occa {
       return isKnown;
     }
 
-    // Assumes (valueIsKnown() == true)
     typeHolder expNode::calculateValue(const strToStrMap_t &stsMap){
       if(valueIsKnown() == false)
         return typeHolder();
@@ -2840,25 +2844,22 @@ namespace occa {
       leaves = NULL;
     }
 
-#define PRINTUP << '(' << up << " -> " << this << ')'
-// #define PRINTUP
-
     void expNode::print(const std::string &tab){
       if( !(info & expType::hasInfo) ){
 
-        std::cout << tab << "[" << getBits(info) << "] " << value PRINTUP << '\n';
+        std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
         for(int i = 0; i < leafCount; ++i)
           leaves[i]->print(tab + "    ");
       }
       else if(info & expType::varInfo){
         if(info & expType::type)
-          std::cout << tab << "[VT: " << getBits(info) << "] " << getVarInfo() PRINTUP << '\n';
+          std::cout << tab << "[VT: " << getBits(info) << "] " << getVarInfo() << '\n';
         else
-          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo().name PRINTUP << '\n';
+          std::cout << tab << "[V: " << getBits(info) << "] " << getVarInfo().name << '\n';
       }
       else if(info & expType::typeInfo){
-        std::cout << tab << "[T: " << getBits(info) << "]\n" << getTypeInfo().toString(tab + "        ") PRINTUP << '\n';
+        std::cout << tab << "[T: " << getBits(info) << "]\n" << getTypeInfo().toString(tab + "        ") << '\n';
       }
     }
 
