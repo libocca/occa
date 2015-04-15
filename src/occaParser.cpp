@@ -1221,9 +1221,6 @@ namespace occa {
         OCCA_CHECK(0 < varType.size(),
                    "Iterator [" << var << "] is not a proper type (e.g. int" << suffix << ')');
 
-        // expNode *csvInitValueNode = ((tileDim == 1) ?
-
-
         //  ---[ Proper check vars ]----
         int varsInCheck = csvCheckNode.leafCount;
 
@@ -1280,7 +1277,7 @@ namespace occa {
 
           checkOp[dim2] = check.value;
 
-          orderBuffer[dim2] = &(csvCheckNode[dim]);
+          orderBuffer[dim2] = &(csvCheckNode[tileDim - dim - 1]);
         }
 
         for(int dim = 0; dim < tileDim; ++dim){
@@ -1314,7 +1311,7 @@ namespace occa {
             dim2 = (update[0][1].value[0] - 'x');
           }
 
-          orderBuffer[dim2] = &(csvUpdateNode[dim]);
+          orderBuffer[dim2] = &(csvUpdateNode[tileDim - dim - 1]);
         }
 
         for(int dim = 0; dim < tileDim; ++dim){
@@ -1382,7 +1379,7 @@ namespace occa {
           ss << "for("
              << varType << tileVar << " = " << csvInitValueNode[dim].toString() << "; ";
 
-          if(checkOp[dim][0] == '<')
+          if(checkIterOnLeft[dim])
             ss << tileVar << checkOp[dim] << checkValue[dim].toString() << "; ";
           else
             ss << checkValue[dim].toString() << checkOp[dim] << tileVar << "; ";
@@ -1395,7 +1392,7 @@ namespace occa {
 
           ss << "for(" << var << " = __occa_tile_var" << dim << "; ";
 
-          if(checkOp[dim][0] == '<')
+          if(checkIterOnLeft[dim])
             ss << var.name << checkOp[dim] << '(' << tileVar << strideSign[dim] << stride[dim].toString() << "); ";
           else
             ss << checkValue[dim].toString() << checkOp[dim] << tileVar << "; ";
