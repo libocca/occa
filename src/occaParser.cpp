@@ -1386,25 +1386,28 @@ namespace occa {
         expNode &check  = csvCheckNode[dim];
         expNode &update = csvUpdateNode[dim];
 
-        std::string tileVar = "__occa_tile_var0";
-        tileVar[tileVar.size() - 1] += dim;
+        std::string oTileVar = "__occa_oTileVar0";
+        oTileVar[oTileVar.size() - 1] += dim;
+
+        std::string iTileVar = "__occa_iTileVar0";
+        iTileVar[iTileVar.size() - 1] += dim;
 
         ss << "for("
-           << varType << ' ' << tileVar << " = " << csvInitValueNode[dim].toString() << "; ";
+           << varType << ' ' << oTileVar << " = " << csvInitValueNode[dim].toString() << "; ";
 
         if(checkIterOnLeft[dim])
-          ss << tileVar << check.value << check[1].toString() << "; ";
+          ss << oTileVar << check.value << check[1].toString() << "; ";
         else
-          ss << check[0].toString() << check.value << tileVar << "; ";
+          ss << check[0].toString() << check.value << oTileVar << "; ";
 
         if(update.info != expType::LR){
           if(update.value == "++")
-            ss << tileVar << " += " << csvTileDims[dim] << "; ";
+            ss << oTileVar << " += " << csvTileDims[dim] << "; ";
           else
-            ss << tileVar << " -= " << csvTileDims[dim] << "; ";
+            ss << oTileVar << " -= " << csvTileDims[dim] << "; ";
         }
         else {
-          ss << tileVar << update.value << csvTileDims[dim] << "; ";
+          ss << oTileVar << update.value << csvTileDims[dim] << "; ";
         }
 
         ss << "outer" << dim << ')';
@@ -1415,17 +1418,24 @@ namespace occa {
 
         std::string varName = var.name;
 
-        if(1 < tileDim){
-          varName += '.';
-          varName += (char) ('x' + dim);
-        }
+        if(1 < tileDim)
+          varName = iTileVar;
 
-        ss << "for(" << varName << " = __occa_tile_var" << dim << "; ";
+        ss << "for(";
+
+        if(1 < tileDim)
+          ss << varType << ' ';
+
+        ss << varName << " = " << oTileVar << "; ";
 
         if(checkIterOnLeft[dim])
-          ss << varName << check.value << '(' << tileVar << " + " << csvTileDims[dim] << "); ";
+          ss << varName << check.value << '(' << oTileVar << " + " << csvTileDims[dim] << "); ";
         else
-          ss << '(' << tileVar << " + " << 16 << ')' << check.value << var.name << "; ";
+          ss << '(' << oTileVar << " + " << csvTileDims[dim] << ')' << check.value << varName << "; ";
+
+        csvUpdateNode[dim][0].free();
+        csvUpdateNode[dim][0].info  = expType::printValue;
+        csvUpdateNode[dim][0].value = varName;
 
         ss << csvUpdateNode[dim].toString() << "; ";
 
@@ -1446,8 +1456,8 @@ namespace occa {
       }
 
       // Add variable declaration if needed
-      if(varIsDeclared){
-        if(tileDim == 1){
+      if(tileDim == 1){
+        if(varIsDeclared){
           expNode &newInitNode = *(iStatements[0]->getForStatement(0));
 
           expNode &ph = *(new expNode( *(newInitNode.sInfo) ));
@@ -1461,20 +1471,25 @@ namespace occa {
           newInitNode.getVariableInfoNode(0)->info |= (expType::declaration |
                                                        expType::type);
         }
-        else {
-          statement     &os  = *(oStatements[tileDim - 1]);
-          statementNode *osn = os.getStatementNode();
+      }
+      else { // (1 < tileDim)
+        statement &is = *(iStatements[0]);
 
-          statement &newS = os.createStatementFromSource((std::string) var + ";");
-          newS.up = os.up;
+        if(varIsDeclared)
+          is.pushSourceLeftOf(is.statementStart,
+                              (std::string) var + ";");
 
-          if(osn->left){
-            osn->left->push(&newS);
-          }
-          else {
-            os.up->statementStart = new statementNode(&newS);
-            os.up->statementStart->push(osn);
-          }
+        statementNode *sn = is.statementStart;
+
+        for(int dim = 0; dim < tileDim; ++dim){
+          ss << var.name << "." << (char) ('x' + dim) << " = __occa_iTileVar" << dim << ';';
+
+          is.pushSourceRightOf(sn,
+                               ss.str());
+
+          ss.str("");
+
+          sn = sn->right;
         }
       }
 
