@@ -3,7 +3,6 @@ kernel void addVectors(const int entries,
                        const float *b,
                        float *ab){
   for(int i = 0; i < entries; ++i; tile(16)){
-  // for(int2 i = {0,0}; i.y < entries, i.x < entries; ++i.y, ++i.x; tile(16,16)){
     if(i < entries)
       ab[i] = a[i] + b[i];
   }
