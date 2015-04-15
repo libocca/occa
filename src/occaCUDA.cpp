@@ -945,7 +945,7 @@ namespace occa {
 
     salt << "CUDA"
          << info_.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;
@@ -1339,13 +1339,16 @@ namespace occa {
     mem->size     = bytes;
     mem->isMapped = true;
 
-    OCCA_CUDA_CHECK("Device: malloc",
-                    cuMemAllocHost((void**) &(mem->handle), bytes));
+    OCCA_CUDA_CHECK("Device: malloc host",
+                    cuMemAllocHost((void**) &(mem->mappedPtr), bytes));
+
+    OCCA_CUDA_CHECK("Device: get device pointer from host",
+                    cuMemHostGetDevicePointer((CUdeviceptr*) mem->handle,
+                                              mem->mappedPtr,
+                                              0));
 
     if(src != NULL)
-      ::memcpy(mem->handle, src, bytes);
-
-    mem->mappedPtr = mem->handle;
+      ::memcpy(mem->mappedPtr, src, bytes);
 
     return mem;
   }

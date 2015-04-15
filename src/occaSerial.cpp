@@ -1024,7 +1024,7 @@ namespace occa {
 
     salt << "Serial"
          << info_.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;

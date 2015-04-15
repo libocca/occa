@@ -11,7 +11,7 @@
 #include <assert.h>
 
 #include "occaDefines.hpp"
-#include "occaParser.hpp"
+#include "occaParserTypes.hpp"
 
 #if   (OCCA_OS & LINUX_OS)
 #  include <sys/time.h>
@@ -63,6 +63,20 @@ namespace occa {
     void unlock();
   };
 
+  class fnvOutput_t {
+  public:
+    int h[8];
+
+    fnvOutput_t();
+
+    bool operator == (const fnvOutput_t &fo);
+    bool operator != (const fnvOutput_t &fo);
+
+    void mergeWith(const fnvOutput_t &fo);
+
+    operator std::string ();
+  };
+
   double currentTime();
 
   std::string getFilePrefix(const std::string &filename);
@@ -86,7 +100,15 @@ namespace occa {
                                         const std::string &functionName,
                                         const kernelInfo &info);
 
-  std::string fnv(const std::string &saltedString);
+  fnvOutput_t fnv(const void *ptr, uintptr_t bytes);
+
+  template <class TM>
+  fnvOutput_t fnv(const TM &t){
+    return fnv(&t, sizeof(TM));
+  }
+
+  template <>
+  fnvOutput_t fnv(const std::string &saltedString);
 
   bool fileExists(const std::string &filename);
 

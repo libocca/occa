@@ -28,6 +28,7 @@ namespace occa {
 
     extern opTypeMap_t opPrecedence;
     extern opLevelMap_t opLevelMap[17];
+    extern bool opLevelL2R[17];
     //==============================================
 
 
@@ -57,13 +58,41 @@ namespace occa {
       int type;
 
       typeHolder();
+      typeHolder(const typeHolder &th);
       typeHolder(const std::string strValue, int type_ = noType);
+      typeHolder(const int int__);
+      typeHolder(const bool bool__);
+      typeHolder(const char char__);
+      typeHolder(const long long__);
+      typeHolder(const short short__);
+      typeHolder(const float float__);
+      typeHolder(const double double__);
 
-      bool isAFloat();
+      typeHolder& operator = (const typeHolder &th);
+      typeHolder& operator = (const std::string &str);
+      typeHolder& operator = (const int int__);
+      typeHolder& operator = (const bool bool__);
+      typeHolder& operator = (const char char__);
+      typeHolder& operator = (const long long__);
+      typeHolder& operator = (const short short__);
+      typeHolder& operator = (const float float__);
+      typeHolder& operator = (const double double__);
 
-      bool boolValue();
-      long longValue();
-      double doubleValue();
+      bool operator == (const typeHolder &th) const;
+      bool operator != (const typeHolder &th) const;
+
+      bool operator <  (const typeHolder &th) const;
+      bool operator <= (const typeHolder &th) const;
+      bool operator >= (const typeHolder &th) const;
+      bool operator >  (const typeHolder &th) const;
+
+      bool isAFloat() const;
+
+      bool boolValue() const;
+      long longValue() const;
+      double doubleValue() const;
+
+      void convertTo(int type_);
 
       void setLongValue(const long &l);
       void setDoubleValue(const double &d);

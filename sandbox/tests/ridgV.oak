@@ -29,34 +29,36 @@ kernel void acousticsVolumeKernelNew(const int  K,
                                      const datafloat  * Q,
                                      datafloat  * rhsQ0,
                                      datafloat  * rhsQ1,
-                                     datafloat  * rhsQ2){
+                                     datafloat  * rhsQ2){ // (no restrict) pointers -> anonymous
 
   for(int ky=0; ky<(Klev+p_KblkV-1)/p_KblkV; ++ky){  // ky [Stride: 1, Bounds: [0, (Klev+p_KblkV-1)/p_KblkV]]
 
-    datafloat s_p[p_KblkV][p_Np];                    // No dependencies
-    datafloat s_UdotGr[p_KblkV][p_Np];               // No dependencies
-    datafloat s_UdotGs[p_KblkV][p_Np];               // No dependencies
-    datafloat s_UdotGt[p_KblkV][p_Np];               // No dependencies
+    shared datafloat s_p[p_KblkV][p_Np];             //
+    shared datafloat s_UdotGr[p_KblkV][p_Np];        //
+    shared datafloat s_UdotGs[p_KblkV][p_Np];        //
+    shared datafloat s_UdotGt[p_KblkV][p_Np];        //
 
-    datafloat s_vgeofacs[9][p_KblkV];                // No dependencies
+    shared datafloat s_vgeofacs[9][p_KblkV];         //
 
-    int k, active;                                   // Depends on kx, ky
+    exclusive int k, active;                         //
 
-    for(int kx=0; kx<p_KblkV; ++kx){                 // kx [Stride: 1, Bounds: [0, p_KblkV]]
-      for(int n=0; n<p_Np; ++n){                     // n  [Stride: 1, Bounds: [0, p_Np]   ]
+    int kx;
 
-        k = kx + ky*p_KblkV;                         // Depends on kx, ky
-                                                     // ky -> ky*[kx.stride,...] -> + kx -> independent
-        active = (k < Klev);                         // Depends on k -> kx, ky
+    for(kx=0; kx<p_KblkV; ++kx){                     // kx [Stride: 1, Bounds: [0, p_KblkV]]
+      for(int n=0; n<p_Np; n++){                     // n  [Stride: 1, Bounds: [0, p_Np]   ]
 
-        if(active){                                  // Depends on kx, ky
-          if(Klev != K)                              // Constant
-            k = ks[k]-1;                             // Depends on every loop (ks[k] is injective?)
+        k = 0*18 + 1*kx + ky*p_KblkV;                // Made of kx (1), ky (p_KblkV)
+                                                     // kx.bound <= ky.stride -> k is different for kx, ky
+        active = (k < Klev);                         // Different for kx, ky
 
-          int m = n;                                 // Depends on n
-          while(m < 9){                              // m [Bounds: [n, 9]], dependent on n
-            s_vgeofacs[m][kx] = vgeofacs[m + 9*k];   // s_vgeofacs [Write: [m,kx]]
-                                                     // vgeofacs [Read: [m,k]] Dependent on m->n, k
+        if(active){                                  // Different for kx, ky
+          // if(Klev != K)                              // Independent
+          //   k = ks[k]-1;                             // injective ? ks[k] is different for kx, ky : k has LCD
+
+          int m = n;                                 // Value different for n (1)
+          while(m < 9){                              // m [Bounds: [n->0, 9]]
+            s_vgeofacs[m][kx] = vgeofacs[m + 9*k];   // s_vgeofacs [Write: [m, kx]] Different for m -> n, kx
+                                                     // vgeofacs   [Read : [m, k ]] DIfferent for m -> n, k -> kx, ky
             m += p_Np;                               // Local reduction on m, p_Np = n.bound -> while() is independent of n
           }
 
@@ -67,9 +69,9 @@ kernel void acousticsVolumeKernelNew(const int  K,
     for(int kx=0; kx<p_KblkV; ++kx){                 // kx [Stride: 1, Bounds: [0, p_KblkV]]
       for(int n=0; n<p_Np; ++n){                     // n  [Stride: 1, Bounds: [0, p_Np]   ]
 
-        if(active){                                  // Depends of n, kx, ky [NLCD: n, kx, ky]
-          int id = n + k*p_Nfields*p_Npad;           // Depends on p_Np < 4 * (p_Npad)
-          datafloat pn = Q[id]; id+= p_Npad;         // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
+        if(active){                                  // Different for kx, ky
+          int id = n + k*p_Nfields*p_Npad;           // Different for n (1), k -> kx, ky (p_Np < p_Nfields*p_Npad)
+          datafloat pn = Q[id]; id+= p_Npad;         // Different fon n (1), k (p_Nfields*p_Npad); id = n (1), 1(p_Npad), k*(p_Nfields * p_Npad)
           datafloat un = Q[id]; id+= p_Npad;         // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
           datafloat vn = Q[id]; id+= p_Npad;         // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
           datafloat wn = Q[id];                      // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds

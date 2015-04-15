@@ -1,4 +1,5 @@
 #include "occaTools.hpp"
+#include "occaParser.hpp"
 #include "occa.hpp"      // For kernelInfo
 
 namespace occa {
@@ -69,6 +70,45 @@ namespace occa {
 #else
     ReleaseMutex(mutexHandle);
 #endif
+  }
+
+  fnvOutput_t::fnvOutput_t(){
+    h[0] = 101527; h[1] = 101531;
+    h[2] = 101533; h[3] = 101537;
+    h[4] = 101561; h[5] = 101573;
+    h[6] = 101581; h[7] = 101599;
+  }
+
+  bool fnvOutput_t::operator == (const fnvOutput_t &fo){
+    for(int i = 0; i < 8; ++i){
+      if(h[i] != fo.h[i])
+        return false;
+    }
+
+    return true;
+  }
+
+  bool fnvOutput_t::operator != (const fnvOutput_t &fo){
+    for(int i = 0; i < 8; ++i){
+      if(h[i] != fo.h[i])
+        return true;
+    }
+
+    return false;
+  }
+
+  void fnvOutput_t::mergeWith(const fnvOutput_t &fo){
+    for(int i = 0; i < 8; ++i)
+      h[i] ^= fo.h[i];
+  }
+
+  fnvOutput_t::operator std::string () {
+    std::stringstream ss;
+
+    for(int i = 0; i < 8; ++i)
+      ss << std::hex << h[i];
+
+    return ss.str();
   }
 
   double currentTime(){
@@ -268,23 +308,23 @@ namespace occa {
     return parsedKernelInfo();
   }
 
-  std::string fnv(const std::string &saltedString){
-    const int len = saltedString.size();
+  fnvOutput_t fnv(const void *ptr, uintptr_t bytes){
     std::stringstream ss;
 
-    int h[8] = {101527, 101531,
-                101533, 101537,
-                101561, 101573,
-                101581, 101599};
+    const char *c = (char*) ptr;
+
+    fnvOutput_t fo;
+    int *h = fo.h;
 
     const int p[8] = {102679, 102701,
                       102761, 102763,
                       102769, 102793,
                       102797, 102811};
 
-    for(int c = 0; c < len; ++c)
-      for(int i = 0; i < 8; ++i)
-        h[i] = (h[i] * p[i]) ^ saltedString[c];
+    for(int i = 0; i < bytes; ++i){
+      for(int j = 0; j < 8; ++j)
+        h[j] = (h[j] * p[j]) ^ c[i];
+    }
 
     // int h2[8];
 
@@ -298,10 +338,12 @@ namespace occa {
     //     |     ((h[6] & (0xFF << (8*i))) << (8*i + 6))
     //     |     ((h[7] & (0xFF << (8*i))) << (8*i + 7));
 
-    for(int i = 0; i < 8; ++i)
-      ss <<  std::hex << h[i];
+    return fo;
+  }
 
-    return ss.str();
+  template <>
+  fnvOutput_t fnv(const std::string &saltedString){
+    return fnv(saltedString.c_str(), saltedString.size());
   }
 
   bool fileExists(const std::string &filename){
@@ -473,8 +515,10 @@ namespace occa {
   std::string getCacheHash(const std::string &content,
                            const std::string &salt){
 
+    std::string fo = fnv(content + salt);
+
     // Only taking the first 16 characters
-    return fnv(content + salt).substr(0, 16);
+    return fo.substr(0, 16);
   }
 
   std::string getCachedName(const std::string &filename,

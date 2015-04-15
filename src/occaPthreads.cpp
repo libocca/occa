@@ -660,7 +660,7 @@ namespace occa {
 
     salt << "Pthreads"
          << info_.salt()
-         << parser::version
+         << parserVersion
          << compilerEnvScript
          << compiler
          << compilerFlags;

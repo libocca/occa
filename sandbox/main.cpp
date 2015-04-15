@@ -32,10 +32,10 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  {
-    std::string parsedContent = parser.parseFile("tests/test.cpp");
-    std::cout << parsedContent << '\n';
-  }
+  // {
+  //   std::string parsedContent = parser.parseFile("tests/test.cpp");
+  //   std::cout << parsedContent << '\n';
+  // }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/scratch.okl");
@@ -100,12 +100,12 @@ int main(int argc, char **argv){
   //   std::cout << parsedContent << '\n';
   // }
 
-  // {
-  //   parser.magicEnabled = true;
+  {
+    parser.magicEnabled = true;
 
-  //   std::string parsedContent = parser.parseFile("tests/ridgV.oak");
-  //   std::cout << parsedContent << '\n';
-  // }
+    std::string parsedContent = parser.parseFile("tests/ridgV.oak");
+    std::cout << parsedContent << '\n';
+  }
 
   // {
   //   std::string parsedContent = parser.parseFile("tests/PCGpart1.cl");

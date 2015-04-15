@@ -3,7 +3,6 @@
 
 #include "occaParserDefines.hpp"
 #include "occaParserNodes.hpp"
-#include "occaParserStatement.hpp"
 
 namespace occa {
   class parsedKernelInfo;
@@ -291,6 +290,8 @@ namespace occa {
 
       std::string& getLastLeftQualifier();
       std::string& getLastRightQualifier();
+
+      int pointerDepth();
 
       expNode& stackSizeExpNode(const int pos);
       void removeStackPointers();

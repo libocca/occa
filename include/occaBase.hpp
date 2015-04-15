@@ -73,6 +73,8 @@ namespace occa {
   class kernelDatabase;
 
   //---[ Globals & Flags ]------------
+  extern const int parserVersion;
+
   extern kernelInfo defaultKernelInfo;
 
   extern const int autoDetect;
@@ -275,83 +277,9 @@ namespace occa {
   public:
     std::map<std::string, std::string> iMap;
 
-    inline argInfoMap(){}
+    argInfoMap();
 
-    inline argInfoMap(const std::string &infos){
-      if(infos.size() == 0)
-        return;
-
-      parserNS::strNode *n;
-
-      n = parserNS::splitContent(infos);
-      n = parserNS::labelCode(n);
-
-      while(n){
-        std::string &info = n->value;
-        std::string value;
-
-        n = n->right;
-
-        if((info != "mode")        &&
-           (info != "UVA")         &&
-           (info != "platformID")  &&
-           (info != "deviceID")    &&
-           (info != "schedule")    &&
-           (info != "chunk")       &&
-           (info != "threadCount") &&
-           (info != "schedule")    &&
-           (info != "pinnedCores")){
-
-          std::cout << "Flag [" << info << "] is not available, skipping it\n";
-
-          while(n && (n->value != ","))
-            n = n->right;
-
-          if(n)
-            n = n->right;
-
-          continue;
-        }
-
-        if(n == NULL)
-          break;
-
-        if(n->value == "=")
-          n = n->right;
-
-        while(n && (n->value != ",")){
-          std::string &v = n->value;
-
-          occa::strip(v);
-
-          if(v.size()){
-            if(segmentPair(v[0]) == 0){
-              value += v;
-              value += ' ';
-            }
-            else if(n->down){
-              std::string dv = n->down->toString();
-              occa::strip(dv);
-
-              value += dv;
-              value += ' ';
-            }
-          }
-
-          n = n->right;
-        }
-
-        if(n)
-          n = n->right;
-
-        occa::strip(value);
-
-        iMap[info] = value;
-
-        info  = "";
-        value = "";
-      }
-    }
+    inline argInfoMap(const std::string &infos);
 
     inline bool has(const std::string &info){
       return (iMap.find(info) != iMap.end());
@@ -407,16 +335,7 @@ namespace occa {
       }
     }
 
-    friend inline std::ostream& operator << (std::ostream &out, const argInfoMap &m){
-      std::map<std::string,std::string>::const_iterator it = m.iMap.begin();
-
-      while(it != m.iMap.end()){
-        out << it->first << " = " << it->second << '\n';
-        ++it;
-      }
-
-      return out;
-    }
+    friend std::ostream& operator << (std::ostream &out, const argInfoMap &m);
   };
 
   template <>

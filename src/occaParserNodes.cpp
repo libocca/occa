@@ -1,4 +1,5 @@
 #include "occaParserNodes.hpp"
+#include "occaParserTools.hpp"
 
 namespace occa {
   namespace parserNS {
