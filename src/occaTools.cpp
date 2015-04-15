@@ -321,7 +321,7 @@ namespace occa {
                       102769, 102793,
                       102797, 102811};
 
-    for(int i = 0; i < bytes; ++i){
+    for(uintptr_t i = 0; i < bytes; ++i){
       for(int j = 0; j < 8; ++j)
         h[j] = (h[j] * p[j]) ^ c[i];
     }
