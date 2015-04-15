@@ -121,7 +121,7 @@ namespace occa {
                         macroStatementType  |
                         gotoStatementType   |
                         blockStatementType)            ||
-         (sInfo->info == keywordType["occaOuterFor0"]) ||
+         (sInfo->info == occaForType) ||
          (sInfo->info == elseStatementType)            ||
          (sInfo->info == doWhileStatementType)){
 
@@ -310,7 +310,7 @@ namespace occa {
         }
 
         if(sExpStart < sExpEnd){
-          leaf.addNodes(0, 1, sExpEnd - sExpStart);
+          leaf.addNodes(expType::root, 1, sExpEnd - sExpStart);
 
           for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
@@ -344,7 +344,7 @@ namespace occa {
         int nextLeafPos = typeInfo::nextDelimiter(expDown, leafPos, ";");
 
         if(leafPos < nextLeafPos){
-          leaf.addNodes(0, 0, (nextLeafPos - leafPos));
+          leaf.addNodes(expType::root, 0, (nextLeafPos - leafPos));
 
           for(int j = 0; j < leaf.leafCount; ++j){
             delete leaf.leaves[j];
@@ -507,7 +507,7 @@ namespace occa {
         leafPos = sExpEnd;
 
         if(sExpStart < sExpEnd){
-          leaf.addNodes(0, 1, sExpEnd - sExpStart);
+          leaf.addNodes(expType::root, 1, sExpEnd - sExpStart);
 
           for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
@@ -2207,6 +2207,52 @@ namespace occa {
       delete &flatRoot;
     }
 
+    expNode* expNode::makeCsvFlatHandle(){
+      expNode *flatNode;
+
+      if(sInfo != NULL)
+        flatNode = new expNode(*sInfo);
+      else
+        flatNode = new expNode(*this);
+
+      if((leafCount == 0) && (info == expType::root))
+        return flatNode;
+
+      int csvCount = 1;
+
+      for(int pass = 0; pass < 2; ++pass){
+        expNode *cNode = ((info == expType::root) ? leaves[0] : this);
+
+        if(pass == 1){
+          flatNode->info      = expType::printLeaves;
+          flatNode->leaves    = new expNode*[csvCount];
+          flatNode->leafCount = csvCount;
+        }
+
+        while(cNode                         &&
+              (cNode->info  == expType::LR) &&
+              (cNode->value == ",")){
+
+          if(pass == 0){
+            ++csvCount;
+          }
+          else {
+            flatNode->leaves[--csvCount] = cNode->leaves[1];
+
+            if(csvCount == 1)
+              flatNode->leaves[--csvCount] = cNode->leaves[0];
+          }
+
+          cNode = cNode->leaves[0];
+        }
+
+        if((pass == 1) && csvCount)
+          flatNode->leaves[0] = this;
+      }
+
+      return flatNode;
+    }
+
     void expNode::addNodes(const int info_,
                            const int pos_,
                            const int count){
@@ -3373,9 +3419,12 @@ namespace occa {
 
     std::string statement::getTab(){
       std::string ret = "";
+      statement *up_  = up;
 
-      for(int i = 0; i < depth; ++i)
+      while(up_){
         ret += "  ";
+        up_ = up_->up;
+      }
 
       return ret;
     }
@@ -3399,7 +3448,7 @@ namespace occa {
       else if(nodeRoot->info == 0)
         return 0;
 
-      else if(nodeRoot->info == keywordType["occaOuterFor0"])
+      else if(nodeRoot->info == occaForType)
         return checkOccaForStatementType(nodeRoot, expPtr);
 
       else if((nodeRoot->info & typedefType) |
@@ -5740,9 +5789,9 @@ namespace occa {
       // OCCA For's
       if(info == occaForType){
         if( !(flags & statementFlag::printSubStatements) )
-          return expRoot.toString();
+          return expRoot.value;
 
-        std::string ret = tab + expRoot.toString() + "{\n";
+        std::string ret = tab + expRoot.value + "{\n";
 
         while(statementPos){
           ret += (std::string) *(statementPos->value);
@@ -5874,6 +5923,11 @@ namespace occa {
       }
 
       return expRoot.toString(tab);
+    }
+
+    std::string statement::onlyThisToString(){
+      return toString(statementFlag::printEverything &
+                      ~statementFlag::printSubStatements);
     }
 
     statement::operator std::string() {

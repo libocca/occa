@@ -14,7 +14,7 @@ namespace occa {
 
     //---[ Exp Node ]-------------------------------
     namespace expType {
-      static const int root            = (1 << 0);
+      static const int root            = 0;
 
       static const int LCR             = (7 << 1);
       static const int LR              = (5 << 1);
@@ -254,6 +254,8 @@ namespace occa {
                           expNode **flatLeaves);
 
       static void freeFlatHandle(expNode &flatRoot);
+
+      expNode* makeCsvFlatHandle();
 
       void addNode(const int info_ = 0, const int pos = -1);
       void addNode(const int info_, const std::string &value_, const int pos = -1);
@@ -696,6 +698,7 @@ namespace occa {
                                const bool autoMode = true);
 
       std::string toString(const int flags = (statementFlag::printSubStatements));
+      std::string onlyThisToString();
 
       operator std::string();
     };

@@ -383,12 +383,12 @@ namespace occa {
 
 #if DBP2
       std::cout << "SIMP1: e2 = " << e2 << '\n';
-      e2.print();
+      // e2.print();
 #endif
       magician::simplify(*db, e2);
 #if DBP2
       std::cout << "SIMP2: e2 = " << e2 << '\n';
-      e2.print();
+      // e2.print();
 #endif
 
       expVec_t strideNodes;
@@ -728,29 +728,33 @@ namespace occa {
     }
 
     void valueInfo_t::add(const std::string &str){
-      const int index = hasStride(str);
 #if DBP1
+      const int index = hasStride(str);
+
       std::cout << "index = " << index << '\n';
 #endif
     }
 
     void valueInfo_t::add(expNode &e){
-      const int index = hasStride(e);
 #if DBP1
+      const int index = hasStride(e);
+
       std::cout << "index = " << index << '\n';
 #endif
     }
 
     void valueInfo_t::sub(const std::string &str){
-      const int index = hasStride(str);
 #if DBP1
+      const int index = hasStride(str);
+
       std::cout << "index = " << index << '\n';
 #endif
     }
 
     void valueInfo_t::sub(expNode &e){
-      const int index = hasStride(e);
 #if DBP1
+      const int index = hasStride(e);
+
       std::cout << "index = " << index << '\n';
 #endif
     }
@@ -881,8 +885,7 @@ namespace occa {
           << info.stride;
 
       if(info.s)
-        out << ", From: " << info.s->toString(statementFlag::printEverything &
-                                              ~statementFlag::printSubStatements);
+        out << ", From: " << info.s->onlyThisToString();
 
       out << ']';
 
@@ -1854,7 +1857,7 @@ namespace occa {
           leaf.info  = expType::LR;
           leaf.value = "+";
 
-          leaf.addNodes(0, 0, 2);
+          leaf.addNodes(expType::root, 0, 2);
         }
 
         leaf.leaves[lastI] = sums2[i];
@@ -2023,7 +2026,7 @@ namespace occa {
           e2.info  = nextLeaf.info;
           e2.value = nextLeaf.value;
 
-          e2.addNodes(0, 0, 2);
+          e2.addNodes(expType::root, 0, 2);
         }
 
         e2[lastI].info  = expType::LR;

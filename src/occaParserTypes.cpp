@@ -443,6 +443,8 @@ namespace occa {
       if(leftQualifiers.has("typedef"))
         return loadTypedefFrom(expRoot, leafPos);
 
+      baseType = this;
+
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].info & expType::unknown)){
 
@@ -2037,9 +2039,9 @@ namespace occa {
         statement &s = *(sVec[sDep.sID]);
 
         for(int v = 0; v < varCount; ++v){
-          varInfo &var = sDep[v];
+          varInfo *var = &(sDep[v]);
 
-          if(&var != NULL){
+          if(var != NULL){
             varDepGraph vdg(sDep[v], s, idMap);
 
             vdg.addFullDependencyMap(depMap, idMap, sVec);
