@@ -2247,7 +2247,7 @@ namespace occa {
         }
 
         if((pass == 1) && csvCount)
-          flatNode->leaves[0] = this;
+          flatNode->leaves[0] = cNode;
       }
 
       return flatNode;

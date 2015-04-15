@@ -1192,15 +1192,34 @@ namespace occa {
         OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
                    "Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString());
 
-        //  ---[ Single init var ]------
         int varsInInit = ((initNode.info & expType::declaration) ?
                           initNode.getVariableCount()            :
                           initNode.getUpdatedVariableCount());
 
         OCCA_CHECK(varsInInit == 1,
-                   "Only one variable can be initialized:\n" << s.onlyThisToString());
+                   "Only one iterator can be initialized:\n" << s.onlyThisToString());
+
+        expNode *varInitNode = ((initNode.info & expType::declaration) ?
+                                initNode.getVariableInitNode(0)        :
+                                initNode.getUpdatedVariableSetNode(0));
+
+        expNode *csvInitValueNode_;
+
+        if(tileDim == 1){
+          csvInitValueNode_ = varInitNode->makeCsvFlatHandle();
+        }
+        else {
+          OCCA_CHECK(varInitNode->value == "{",
+                     "Iterator is not defined properly (e.g. int2 i = {0,0}):\n" << s.onlyThisToString());
+
+          csvInitValueNode_ = varInitNode->leaves[0]->makeCsvFlatHandle();
+        }
+
+        expNode &csvInitValueNode = *csvInitValueNode_;
 
         //  ---[ Proper init var ]------
+        const bool varIsDeclared = (initNode.info & expType::declaration);
+
         varInfo &var = ((initNode.info & expType::declaration)        ?
                         initNode.getVariableInfoNode(0)->getVarInfo() :
                         initNode.getUpdatedVariableInfoNode(0)->getVarInfo());
@@ -1229,7 +1248,6 @@ namespace occa {
 
         expNode **orderBuffer = new expNode*[csvCheckNode.leafCount];
         bool *checkIterOnLeft = new bool[csvCheckNode.leafCount];
-        std::string *checkOp  = new std::string[csvCheckNode.leafCount];
 
         for(int dim = 0; dim < tileDim; ++dim)
           orderBuffer[dim] = NULL;
@@ -1238,12 +1256,15 @@ namespace occa {
           expNode &check = csvCheckNode[dim];
           int dim2 = dim;
 
+          std::cout << "check = " << check << '\n';
+          check.print();
+
           OCCA_CHECK((check.info == expType::LR) &&
                      ((check.value == "<=") ||
                       (check.value == "<" ) ||
                       (check.value == ">" ) ||
                       (check.value == ">=")),
-                     "Error on: " << s.onlyThisToString() << "\n      "
+                     "Error on: " << s.onlyThisToString() << "\n\n"
                      << "Check operator must be in [<=, <, >, >=]: " << check.toString());
 
           int side;
@@ -1269,15 +1290,13 @@ namespace occa {
           }
 
           OCCA_CHECK(side < 2,
-                     "Error on: " << s.onlyThisToString() << "\n      "
+                     "Error on: " << s.onlyThisToString() << "\n\n"
                      << "Variable checks must look like:\n"
                      "  X op Y where op can be [<=, <, >, >=]\n"
                      "  X or Y must be for-loop iterator\n"
                      "  For 2D or 3D tiling: X.x < Y, X.y < Y, X.z < Y (order doesn't matter)");
 
-          checkOp[dim2] = check.value;
-
-          orderBuffer[dim2] = &(csvCheckNode[tileDim - dim - 1]);
+          orderBuffer[dim2] = &(csvCheckNode[dim]);
         }
 
         for(int dim = 0; dim < tileDim; ++dim){
@@ -1311,7 +1330,7 @@ namespace occa {
             dim2 = (update[0][1].value[0] - 'x');
           }
 
-          orderBuffer[dim2] = &(csvUpdateNode[tileDim - dim - 1]);
+          orderBuffer[dim2] = &(csvUpdateNode[dim]);
         }
 
         for(int dim = 0; dim < tileDim; ++dim){
@@ -1336,31 +1355,31 @@ namespace occa {
         statement **iStatements = new statement*[tileDim];
 
         // Swap s's statementNode with outer-most for-loop
-        oStatements[0] = s.up->makeSubStatement();
-        s.getStatementNode()->value = oStatements[0];
+        oStatements[tileDim - 1] = s.up->makeSubStatement();
+        s.getStatementNode()->value = oStatements[tileDim - 1];
 
-        for(int dim = 1; dim < tileDim; ++dim){
-          oStatements[dim] = oStatements[dim - 1]->makeSubStatement();
-          oStatements[dim - 1]->addStatement(oStatements[dim]);
+        for(int dim = (tileDim - 2); 0 <= dim; --dim){
+          oStatements[dim] = oStatements[dim + 1]->makeSubStatement();
+          oStatements[dim + 1]->addStatement(oStatements[dim]);
         }
 
-        iStatements[0] = oStatements[tileDim - 1]->makeSubStatement();
-        oStatements[tileDim - 1]->addStatement(iStatements[0]);
+        iStatements[tileDim - 1] = oStatements[0]->makeSubStatement();
+        oStatements[0]->addStatement(iStatements[tileDim - 1]);
 
-        for(int dim = 1; dim < tileDim; ++dim){
-          iStatements[dim] = iStatements[dim - 1]->makeSubStatement();
-          iStatements[dim - 1]->addStatement(iStatements[dim]);
+        for(int dim = (tileDim - 2); 0 <= dim; --dim){
+          iStatements[dim] = iStatements[dim + 1]->makeSubStatement();
+          iStatements[dim + 1]->addStatement(iStatements[dim]);
         }
 
         // Place s's statementNode's in inner-most for-loop
-        iStatements[tileDim - 1]->statementCount = s.statementCount;
-        iStatements[tileDim - 1]->statementStart = s.statementStart;
-        iStatements[tileDim - 1]->statementEnd   = s.statementEnd;
+        iStatements[0]->statementCount = s.statementCount;
+        iStatements[0]->statementStart = s.statementStart;
+        iStatements[0]->statementEnd   = s.statementEnd;
 
-        statementNode *sn = iStatements[tileDim - 1]->statementStart;
+        statementNode *sn = iStatements[0]->statementStart;
 
         while(sn){
-          sn->value->up = iStatements[tileDim - 1];
+          sn->value->up = iStatements[0];
           sn = sn->right;
         }
 
@@ -1372,36 +1391,60 @@ namespace occa {
 
           os.info = forStatementType;
           is.info = forStatementType;
-#if 0
-          const std::string tileVar = "__occa_tile_var0";
+
+          expNode &check  = csvCheckNode[dim];
+          expNode &update = csvUpdateNode[dim];
+
+          std::string tileVar = "__occa_tile_var0";
           tileVar[tileVar.size() - 1] += dim;
 
           ss << "for("
-             << varType << tileVar << " = " << csvInitValueNode[dim].toString() << "; ";
+             << varType << ' ' << tileVar << " = " << csvInitValueNode[dim].toString() << "; ";
 
           if(checkIterOnLeft[dim])
-            ss << tileVar << checkOp[dim] << checkValue[dim].toString() << "; ";
+            ss << tileVar << check.value << check[1].toString() << "; ";
           else
-            ss << checkValue[dim].toString() << checkOp[dim] << tileVar << "; ";
+            ss << check[0].toString() << check.value << tileVar << "; ";
+
+          // 16 -> stride[dim].toString()
+          if(update.info != expType::LR){
+            if(update.value == "++")
+              ss << tileVar << " += " << 16 << "; ";
+            else
+              ss << tileVar << " -= " << 16 << "; ";
+          }
+          else {
+            ss << tileVar << update.value << 16 << "; ";
+          }
 
           ss << "outer" << dim << ')';
 
           std::string outerForSource = ss.str();
 
-          ss.clear();
+          ss.str("");
 
-          ss << "for(" << var << " = __occa_tile_var" << dim << "; ";
+          std::string varName = var.name;
 
+          if(1 < tileDim){
+            varName += '.';
+            varName += (char) ('x' + dim);
+          }
+
+          ss << "for(" << varName << " = __occa_tile_var" << dim << "; ";
+
+          // 16 -> stride[dim].toString()
           if(checkIterOnLeft[dim])
-            ss << var.name << checkOp[dim] << '(' << tileVar << strideSign[dim] << stride[dim].toString() << "); ";
+            ss << varName << check.value << '(' << tileVar << " + " << 16 << "); ";
           else
-            ss << checkValue[dim].toString() << checkOp[dim] << tileVar << "; ";
+            ss << '(' << tileVar << " + " << 16 << ')' << check.value << var.name << "; ";
 
-          ss << csvUpdateNode[dim].toString();
+          ss << csvUpdateNode[dim].toString() << "; ";
+
+          ss << "inner" << dim << ')';
 
           std::string innerForSource = ss.str();
 
-          ss.clear();
+          ss.str("");
 
           expNode *outerExp = s.createExpNodeFrom(outerForSource);
           expNode *innerExp = s.createExpNodeFrom(innerForSource);
@@ -1411,15 +1454,53 @@ namespace occa {
 
           outerExp->free();
           innerExp->free();
-#endif
+        }
+
+        // Add variable declaration if needed
+        if(varIsDeclared){
+          if(tileDim == 1){
+            expNode &newInitNode = *(iStatements[0]->getForStatement(0));
+
+            expNode &ph = *(new expNode( *(newInitNode.sInfo) ));
+
+            expNode::swap(newInitNode, ph);
+
+            newInitNode.reserve(1);
+            newInitNode.setLeaf(ph, 0);
+
+            printf("1. newInitNode\n");
+            newInitNode.print();
+
+            newInitNode.info = expType::declaration;
+            newInitNode.getVariableInfoNode(0)->info |= (expType::declaration |
+                                                          expType::type);
+
+            printf("2. newInitNode\n");
+            newInitNode.print();
+          }
+          else {
+            statement     &os  = *(oStatements[tileDim - 1]);
+            statementNode *osn = os.getStatementNode();
+
+            statement &newS = os.createStatementFromSource((std::string) var + ";");
+            newS.up = os.up;
+
+            if(osn->left){
+              osn->left->push(&newS);
+            }
+            else {
+              os.up->statementStart = new statementNode(&newS);
+              os.up->statementStart->push(osn);
+            }
+          }
         }
 
         expNode::freeFlatHandle(csvCheckNode);
+        expNode::freeFlatHandle(csvInitValueNode);
         expNode::freeFlatHandle(csvUpdateNode);
         expNode::freeFlatHandle(csvTileDims);
 
         delete [] checkIterOnLeft;
-        delete [] checkOp;
       }
     }
 
@@ -4254,9 +4335,12 @@ namespace occa {
       }
 
       //---[ Node 1 Check ]---
-      OCCA_CHECK((node1.info == expType::declaration) &&
-                 (node1.getVariableCount() == 1)      &&
-                 node1.variableHasInit(0),
+      OCCA_CHECK(((node1.info == expType::declaration) &&
+                  (node1.getVariableCount() == 1)      &&
+                  node1.variableHasInit(0)) ||
+                 ((node1.info != expType::declaration)   &&
+                  (node1.getUpdatedVariableCount() == 1) &&
+                  node1.variableHasInit(0)),
 
                  "Wrong 1st statement for:\n  " << sInfo->expRoot);
 
