@@ -2444,7 +2444,10 @@ namespace occa {
     }
 
     bool expNode::hasQualifier(const std::string &qualifier){
-      if(info & expType::type){
+      if(info & expType::varInfo){
+        return getVarInfo().hasQualifier(qualifier);
+      }
+      else if(info & expType::type){
         if(!leafCount ||
            !(leaves[0]->info & expType::qualifier))
           return false;
@@ -2471,9 +2474,6 @@ namespace occa {
         }
         else
           return false;
-      }
-      else if(info & expType::varInfo){
-        return getVarInfo().hasQualifier(qualifier);
       }
 
       return false;
