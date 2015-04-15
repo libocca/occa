@@ -1230,9 +1230,12 @@ namespace occa {
         OCCA_CHECK(varsInCheck == tileDim,
                    "Only one variable can be checked:\n" << s.onlyThisToString());
 
-        expNode **checkBuffer = new expNode*[csvCheckNode.leafCount];
+        expNode **orderBuffer = new expNode*[csvCheckNode.leafCount];
         bool *checkIterOnLeft = new bool[csvCheckNode.leafCount];
         std::string *checkOp  = new std::string[csvCheckNode.leafCount];
+
+        for(int dim = 0; dim < tileDim; ++dim)
+          orderBuffer[dim] = NULL;
 
         for(int dim = 0; dim < tileDim; ++dim){
           expNode &check = csvCheckNode[dim];
@@ -1243,7 +1246,8 @@ namespace occa {
                       (check.value == "<" ) ||
                       (check.value == ">" ) ||
                       (check.value == ">=")),
-                     "Check operator must be in [<=, <, >, >=]: " << check.toString());
+                     "Error on: " << s.onlyThisToString() << "\n      "
+                     << "Check operator must be in [<=, <, >, >=]: " << check.toString());
 
           int side;
 
@@ -1268,26 +1272,59 @@ namespace occa {
           }
 
           OCCA_CHECK(side < 2,
-                     "Variable checks must look like:\n"
+                     "Error on: " << s.onlyThisToString() << "\n      "
+                     << "Variable checks must look like:\n"
                      "  X op Y where op can be [<=, <, >, >=]\n"
                      "  X or Y must be for-loop iterator\n"
                      "  For 2D or 3D tiling: X.x < Y, X.y < Y, X.z < Y (order doesn't matter)");
 
           checkOp[dim2] = check.value;
 
-          checkBuffer[dim2] = &(csvCheckNode[dim]);
+          orderBuffer[dim2] = &(csvCheckNode[dim]);
         }
 
-        for(int dim = 0; dim < tileDim; ++dim)
-          csvCheckNode.leaves[dim] = checkBuffer[dim];
+        for(int dim = 0; dim < tileDim; ++dim){
+          OCCA_CHECK(orderBuffer[dim] != NULL,
+                     var.name << '.' << (char) ('x' + dim) << " needs to be checked: " << s.onlyThisToString());
 
-        delete [] checkBuffer;
+          csvCheckNode.leaves[dim] = orderBuffer[dim];
+          orderBuffer[dim]         = NULL;
+        }
 
         //  ---[ Proper update vars ]---
         int varsInUpdate = csvUpdateNode.leafCount;
 
         OCCA_CHECK(varsInUpdate == tileDim,
                    "Only one variable can be updated:\n" << s.onlyThisToString());
+
+        for(int dim = 0; dim < tileDim; ++dim){
+          expNode &update = csvUpdateNode[dim];
+          int dim2 = dim;
+
+          OCCA_CHECK((update.value == "++") ||
+                     (update.value == "--") ||
+                     (update.value == "+=") ||
+                     (update.value == "-="),
+                     "Update operator must be in [++, --, +=, -=]: " << update.toString());
+
+          if(1 < tileDim){
+            OCCA_CHECK(update[0][0].value == var.name,
+                       "Iterator [" << var.name << "] is not updated, [" << update[0][0].value << "] is updated instead");
+
+            dim2 = (update[0][1].value[0] - 'x');
+          }
+
+          orderBuffer[dim2] = &(csvUpdateNode[dim]);
+        }
+
+        for(int dim = 0; dim < tileDim; ++dim){
+          OCCA_CHECK(orderBuffer[dim] != NULL,
+                     var.name << '.' << (char) ('x' + dim) << " needs to be updated: " << s.onlyThisToString());
+
+          csvUpdateNode.leaves[dim] = orderBuffer[dim];
+        }
+
+        delete [] orderBuffer;
         //========================================
 
         printf("initNode\n");
@@ -1383,6 +1420,9 @@ namespace occa {
         expNode::freeFlatHandle(csvCheckNode);
         expNode::freeFlatHandle(csvUpdateNode);
         expNode::freeFlatHandle(csvTileDims);
+
+        delete [] checkIterOnLeft;
+        delete [] checkOp;
       }
     }
 
