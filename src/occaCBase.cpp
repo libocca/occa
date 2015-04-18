@@ -477,14 +477,21 @@ extern "C" {
 
   occaStream OCCA_RFUNC occaDeviceCreateStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
+    occaStream *stream = new occaStream;
 
-    return (occaStream) device_.createStream();
+    *stream =  device_.createStream();
+
+    return (occaStream) stream;
   }
 
   occaStream OCCA_RFUNC occaDeviceGetStream(occaDevice device){
     occa::device &device_ = *((occa::device*) device);
 
-    return (occaStream) device_.getStream();
+    occaStream *stream = new occaStream;
+
+    *stream = device_.getStream();
+
+    return (occaStream) stream;
   }
 
   void OCCA_RFUNC occaDeviceSetStream(occaDevice device, occaStream stream){
@@ -522,6 +529,8 @@ extern "C" {
     occa::stream &stream_ = *((occa::stream*) stream);
 
     device_.freeStream(stream_);
+
+    delete (occa::stream*) stream;
   }
 
   void OCCA_RFUNC occaDeviceFree(occaDevice device){
