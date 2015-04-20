@@ -2,7 +2,9 @@
 
 #define DBP0 0 // Read/Write/Expand
 #define DBP1 0 // Index Sorting/Updating
-#define DBP2 1 // Expression simplification
+#define DBP2 1 // Expression Simplification
+#define DBP3 0 // Has Stride
+#define DBP4 1 // Check Conflicts
 
 namespace occa {
   namespace parserNS {
@@ -350,6 +352,39 @@ namespace occa {
       }
     }
 
+    bool valueInfo_t::isConstant(){
+      if(info & viType::isConstant)
+        return true;
+
+      for(int i = 0; i < indices; ++i){
+        if(!(vars[i].info    & viType::isConstant) ||
+           !(strides[i].info & viType::isConstant)){
+
+          return false;
+        }
+      }
+
+      return true;
+    }
+
+    typeHolder valueInfo_t::constValue(){
+      typeHolder ret;
+
+      if(!isConstant())
+        return ret;
+
+      if(indices == 0)
+        return value.constValue;
+
+      ret = applyOperator(vars[0].constValue, "*", strides[0].constValue);
+
+      for(int i = 1; i < indices; ++i)
+        ret = applyOperator(ret, "+",
+                            applyOperator(vars[0].constValue, "*", strides[0].constValue));
+
+      return ret;
+    }
+
     bool valueInfo_t::isUseless(){
       if(info & viType::isConstant)
         return false;
@@ -408,7 +443,7 @@ namespace occa {
       if(changed)
         reEvaluateStrides();
 
-      sortIndices();
+      // sortIndices();
 
       // e2.free();
     }
@@ -543,6 +578,7 @@ namespace occa {
         expNode e;
         saveTo(e);
         load(e[0]); // Skip [0] root
+        e.freeThis();
 
         return analyzeInfo::changed;
       }
@@ -582,7 +618,6 @@ namespace occa {
       }
 
       // Add values
-
 
       // Sort based by value
       qsort(vi, indices, 2*sizeof(int), valueInfo_t::qSortIndices);
@@ -683,21 +718,38 @@ namespace occa {
       if(info & viType::isUseless)
         return;
 
-      if(op.value == "++"){
-        add("1");
-      }
-      else if(op.value == "--"){
-        sub("1");
-      }
-      else if(op.value == "+="){
-        add(e);
-      }
-      else if(op.value == "-="){
-        sub(e);
+      if((op.value.size() == 2) &&
+         (op.value == "++" ||
+          op.value == "--" ||
+          op.value == "+=" ||
+          op.value == "-=" ||
+          op.value == "*=" ||
+          op.value == "/=")){
+
+        std::string opValue;
+        opValue += op.value[0];
+
+        if(op.value[1] == '=')
+          insertOp(opValue, e);
+        else
+          insertOp(opValue, "1");
       }
       else {
         info = viType::isUseless;
       }
+    }
+
+    int valueInfo_t::hasStride(expNode &e){
+      for(int i = 0; i < indices; ++i){
+#if DBP3
+        std::cout << "  strides[i] = " << strides[i] << '\n'
+                  << "  e          = " << e.toString() << '\n';
+#endif
+        if(strides[i] == e)
+          return i;
+      }
+
+      return -1;
     }
 
     int valueInfo_t::hasStride(const std::string &str){
@@ -714,53 +766,120 @@ namespace occa {
       return -1;
     }
 
-    int valueInfo_t::hasStride(expNode &e){
+    int valueInfo_t::hasStride(atomInfo_t &stride){
       for(int i = 0; i < indices; ++i){
-#if DBP1
-        std::cout << "  strides[i] = " << strides[i] << '\n'
-                  << "  e          = " << e.toString() << '\n';
-#endif
-        if(strides[i] == e)
-          return i;
+        // if(strides[i] == stride) // [<>]
+        //   return true;
       }
 
-      return -1;
+      return false;
     }
 
-    void valueInfo_t::add(const std::string &str){
-#if DBP1
-      const int index = hasStride(str);
+    bool valueInfo_t::hasComplexStride(){
+      for(int i = 0; i < indices; ++i){
+        if(vars[i].info & (viType::isComplex |
+                           viType::isUseless)){
 
-      std::cout << "index = " << index << '\n';
+          return true;
+        }
+        if( !(strides[i].info & viType::isConstant) )
+          return true;
+      }
+
+      return false;
+    }
+
+    bool valueInfo_t::stridesConflict(){
+      return false;
+    }
+
+    // Assumption that (this and v) are not complex
+    //   nor have conflicting strides
+    bool valueInfo_t::conflictsWith(valueInfo_t &v){
+#if DBP4
+      std::cout << "A:V1 = " << *this << '\n'
+                << "A:V2 = " << v << '\n';
 #endif
+
+      if((indices == 0) || (v.indices == 0))
+        return false;
+
+      typeHolder *boundsA = new typeHolder[3*  indices];
+      typeHolder *boundsB = new typeHolder[3*v.indices];
+      bool *hasBoundsA = new bool[3*  indices];
+      bool *hasBoundsB = new bool[3*v.indices];
+
+      for(int i = 0; i < 3*  indices; ++i) hasBoundsA[i] = false;
+      for(int i = 0; i < 3*v.indices; ++i) hasBoundsB[i] = false;
+
+      for(int pass = 0; pass < 2; ++pass){
+        typeHolder *bounds    = (pass ? boundsB    : boundsA   );
+        bool       *hasBounds = (pass ? hasBoundsB : hasBoundsA);
+        int         indices_  = (pass ? v.indices  : indices   );
+        atomInfo_t *vars_     = (pass ? v.vars     : vars      );
+        atomInfo_t *strides_  = (pass ? v.strides  : strides   );
+
+        for(int i = 0; i < indices_; ++i){
+          if(vars_[i].info & viType::isConstant){
+            bounds[3*i + 0]    = vars_[i].constValue;
+            bounds[3*i + 1]    = vars_[i].constValue;
+            bounds[3*i + 2]    = typeHolder((int) 0);
+            hasBounds[3*i + 0] = true;
+            hasBounds[3*i + 1] = true;
+            hasBounds[3*i + 2] = true;
+
+            std::cout << "vars_[i] = " << vars_[i] << '\n';
+            std::cout << "2. bounds[3*i + 0] = " << bounds[3*i + 0] << '\n'
+                      << "2. bounds[3*i + 1] = " << bounds[3*i + 1] << '\n'
+                      << "2. bounds[3*i + 2] = " << bounds[3*i + 2] << '\n';
+          }
+          else { // Is an iterator
+            viInfo_t &vi               = (*db)[*(vars_[i].var)];
+            iteratorInfo_t &iter       = vi.iteratorInfo;
+            valueInfo_t *iterBounds[3] = {&(iter.start), &(iter.end), &(iter.stride)};
+
+            std::cout << "vi = " << vi << '\n';
+
+            for(int b = 0; b < 3; ++b){
+              if(iterBounds[b]->isConstant()){
+                bounds[3*i + b]    = applyOperator(iterBounds[b]->constValue(),
+                                                   "*",
+                                                   strides_[i].constValue);
+                hasBounds[3*i + b] = true;
+
+                std::cout << "1. bounds[3*i + " << b << "] = " << bounds[3*i + b] << '\n';
+              }
+            }
+          }
+        }
+      }
+
+      return false;
     }
 
-    void valueInfo_t::add(expNode &e){
-#if DBP1
-      const int index = hasStride(e);
+    void valueInfo_t::insertOp(const std::string &op,
+                               expNode &value){
+      expNode eOp;
+      eOp.info  = expType::LR;
+      eOp.value = op;
 
-      std::cout << "index = " << index << '\n';
-#endif
+      eOp.addNodes(expType::root, 0, 2);
+
+      saveTo(eOp[1]);
+
+      eOp.leaves[0] = &value;
+
+      load(eOp);
     }
 
-    void valueInfo_t::sub(const std::string &str){
-#if DBP1
-      const int index = hasStride(str);
+    void valueInfo_t::insertOp(const std::string &op,
+                               const std::string &value){
 
-      std::cout << "index = " << index << '\n';
-#endif
-    }
+      expNode eValue;
+      eValue.info  = expType::presetValue;
+      eValue.value = value;
 
-    void valueInfo_t::sub(expNode &e){
-#if DBP1
-      const int index = hasStride(e);
-
-      std::cout << "index = " << index << '\n';
-#endif
-    }
-
-    typeHolder valueInfo_t::constValue(){
-      return value.constValue;
+      insertOp(op, eValue);
     }
 
     varInfo& valueInfo_t::varValue(){
@@ -847,8 +966,46 @@ namespace occa {
       }
     }
 
+    bool accessInfo_t::hasComplexAccess(){
+      if(dim <= 0)
+        return false;
+
+      for(int i = 0; i < dim; ++i){
+        if(dimIndices[i].hasComplexStride())
+          return true;
+      }
+
+      return false;
+    }
+
+    bool accessInfo_t::stridesConflict(){
+      for(int i = 0; i < dim; ++i){
+        if(dimIndices[i].stridesConflict())
+          return true;
+      }
+
+      return false;
+    }
+
     bool accessInfo_t::conflictsWith(accessInfo_t &ai){
-      return true;
+#if DBP4
+      std::cout << "A1 = " << *this << '\n'
+                << "A2 = " << ai << '\n';
+#endif
+
+      // Only check access infos
+      if((dim != ai.dim) ||
+         (dim == 0)){
+
+        return false;
+      }
+
+      for(int i = 0; i < dim; ++i){
+        if(dimIndices[i].conflictsWith(ai.dimIndices[i]))
+          return true;
+      }
+
+      return false;
     }
 
     std::ostream& operator << (std::ostream &out, accessInfo_t &info){
@@ -892,8 +1049,9 @@ namespace occa {
       return out;
     }
 
-    viInfo_t::viInfo_t(infoDB_t *db_) :
+    viInfo_t::viInfo_t(infoDB_t *db_, varInfo *var_) :
       db(db_),
+      var(var_),
       info(viType::isUseless),
       valueInfo(db_),
       iteratorInfo(db_) {}
@@ -917,8 +1075,6 @@ namespace occa {
 #if DBP0
       std::cout << "W1. ai = " << ai << '\n';
 #endif
-
-      checkLastInput(ai, writeValue);
 
       return ai;
     }
@@ -945,8 +1101,6 @@ namespace occa {
 #if DBP0
       std::cout << "R1. ai = " << ai << '\n';
 #endif
-
-      checkLastInput(ai, readValue);
 
       return ai;
     }
@@ -977,7 +1131,13 @@ namespace occa {
 #endif
       }
       else {
+#if DBP0
+        std::cout << "Y1. valueInfo = " << valueInfo << '\n';
+#endif
         valueInfo.update(opNode, setNode);
+#if DBP0
+        std::cout << "Y2. valueInfo = " << valueInfo << '\n';
+#endif
       }
 
       checkComplexity();
@@ -993,14 +1153,53 @@ namespace occa {
     }
 
     void viInfo_t::checkLastInput(accessInfo_t &ai, const int inputType){
-      std::vector<accessInfo_t> &inputs = ((inputType & readValue) ? writes : reads);
+      if(var->hasQualifier("occaShared") ||
+         var->hasQualifier("exclusive")){
 
-      const int inputCount = (int) inputs.size();
+        return;
+      }
 
-      for(int i = 0; i < inputCount; ++i){
-        if(inputs[i].conflictsWith(ai)){
+#if DBP4
+      std::cout << "viInfo: " << *var << '\n';
+#endif
 
-          break;
+      if(info & viType::isComplex)
+        return;
+
+      if(ai.hasComplexAccess()){
+        std::cout << "Complex access: " << ai << '\n';
+        info |= viType::isComplex;
+        return;
+      }
+
+      if(ai.stridesConflict()){
+        std::cout << "Access strides overlap: " << ai << '\n';
+        info |= viType::isComplex;
+        return;
+      }
+
+      const bool isWriting = (inputType == writeValue);
+
+      std::vector<accessInfo_t> *pInputs[2] = {&writes, &reads};
+
+      const int inputCounts[2] = {(int) writes.size() - isWriting,
+                                  (int) reads.size()};
+
+      const int checkInputs = 1 + isWriting;
+
+      for(int i = 0; i < checkInputs; ++i){
+        std::vector<accessInfo_t> &inputs = *(pInputs[i]);
+        const int inputCount = inputCounts[i];
+
+        for(int j = 0; j < inputCount; ++j){
+          if(inputs[j].conflictsWith(ai)){
+            std::cout << "Access conflicts:\n"
+                      << "  A1: " << ai        << '\n'
+                      << "  A2: " << inputs[j] << '\n';
+
+            info |= viType::isComplex;
+            return;
+          }
         }
       }
     }
@@ -1050,13 +1249,13 @@ namespace occa {
 
       if(it == viMap.end()){
         if(var.hasQualifier("restrict")){
-          viMap[&var] = new viInfo_t(db);
+          viMap[&var] = new viInfo_t(db, &var);
         }
         else{
           if(anonVar != NULL)
             viMap[&var] = anonVar;
           else
-            viMap[&var] = new viInfo_t(db);
+            viMap[&var] = new viInfo_t(db, &var);
         }
       }
     }
@@ -1287,9 +1486,6 @@ namespace occa {
 
         addVariableWrite(varNode, opNode, setNode);
         addExpressionRead(setNode);
-
-        viInfo_t &viInfo = db[ varNode.getVarInfo() ];
-        viInfo.valueInfo.update(opNode, setNode);
       }
       else
         addExpressionRead(e);
@@ -1337,7 +1533,9 @@ namespace occa {
       }
 
       if(wrongFormat){
-        printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n  X op Y where op can be [+=] or [-=]\n  ++X, X++, --X, X--\n");
+        printf("[Magic Analyzer] For-loop update statement (3rd statement) is not standard, for example:\n"
+               "  X op Y where op can be [+=] or [-=]\n"
+               "  ++X, X++, --X, X--\n");
         return;
       }
 
@@ -1393,7 +1591,7 @@ namespace occa {
         return;
       }
 
-      // [2] Find bounds
+      // [2] Find bounds [<>] Only works on [<] operator
       wrongFormat = true;
 
       if((checkNode.leafCount == 1) &&
@@ -1703,47 +1901,65 @@ namespace occa {
 
     //---[ Helper Functions ]---------
     void magician::placeAddedExps(infoDB_t &db, expNode &e, expVec_t &addedExps){
-      expVec_t sumNodes;
+      placeExps(db, e, addedExps, "+-");
+    }
 
-      if( (e.info != expType::LR) ||
-          ((e.value != "+") &&
-           (e.value != "-")) ){
+    void magician::placeMultExps(infoDB_t &db, expNode &e, expVec_t &multExps){
+      placeExps(db, e, multExps, "*");
+    }
 
-        addedExps.push_back(&e);
-      }
-      else {
-        sumNodes.push_back(&e);
-      }
+    void magician::placeExps(infoDB_t &db, expNode &e, expVec_t &exps, const std::string &delimiters){
+      expVec_t opNodes;
 
-      while(sumNodes.size()){
-        expVec_t sumNodes2;
-        const int snc = sumNodes.size();
+      if(!expHasOp(e, delimiters))
+        exps.push_back(&e);
+      else
+        opNodes.push_back(&e);
+
+      while(opNodes.size()){
+        expVec_t opNodes2;
+        const int snc = opNodes.size();
 
         for(int i = 0; i < snc; ++i){
-          expNode &se = *(sumNodes[i]);
+          expNode &se = *(opNodes[i]);
 
           for(int j = 0; j < 2; ++j){
-            if( (se[j].info == expType::LR) &&
-                ((se[j].value == "+") ||
-                 (se[j].value == "-")) ){
-
-              sumNodes2.push_back( &(se[j]) );
-            }
-            else {
-              addedExps.push_back( &(se[j]) );
-            }
+            if(expHasOp(se[j], delimiters))
+              opNodes2.push_back( &(se[j]) );
+            else
+              exps.push_back( &(se[j]) );
           }
         }
 
-        sumNodes.swap(sumNodes2);
-        sumNodes2.clear();
+        opNodes.swap(opNodes2);
+        opNodes2.clear();
       }
+    }
+
+    bool magician::expHasOp(expNode &e, const std::string &delimiters){
+      const std::string &eValue = e.value;
+
+      if((eValue.size() != 1) ||
+         (e.info != expType::LR)){
+
+        return false;
+      }
+
+      const int dCount = (int) delimiters.size();
+
+      for(int i = 0; i < dCount; ++i){
+        if(eValue[0] == delimiters[i])
+          return true;
+      }
+
+      return false;
     }
 
     void magician::simplify(infoDB_t &db, expNode &e){
       turnMinusIntoNegatives(db, e);
       expandExp(db, e);
       mergeConstants(db, e);
+      // mergeVariables(db, e);
     }
 
     void magician::turnMinusIntoNegatives(infoDB_t &db, expNode &e){
@@ -1953,6 +2169,78 @@ namespace occa {
       }
     }
 
+    void magician::mergeVariables(infoDB_t &db, expNode &e){
+      std::cout << "mergeVariables\n";
+
+      expVec_t sums, *mults;
+      placeAddedExps(db, e, sums);
+
+      const int sumCount = (int) sums.size();
+
+      mults = new expVec_t[sumCount];
+
+      printf("-----------------------------------\n");
+      for(int i = 0; i < sumCount; ++i){
+        expNode &leaf = *(sums[i]);
+
+        placeMultExps(db, leaf, mults[i]);
+      }
+
+      for(int i1 = 0; i1 < sumCount; ++i1){
+        expVec_t &mult1 = mults[i1];
+        expVec_t iter1  = iteratorsIn(db, mult1);
+
+        if(iter1.size() == 0)
+          continue;
+
+        for(int i2 = (i1 + 1); i2 < sumCount; ++i2){
+          expVec_t &mult2 = mults[i2];
+          expVec_t iter2  = iteratorsIn(db, mult2);
+
+          if(iter2.size() == 0)
+            continue;
+
+          if(iteratorsMatch(iter1, iter2)){
+            expVec_t nonIter1 = removeItersFromExpVec(mult1, iter1);
+            expVec_t nonIter2 = removeItersFromExpVec(mult2, iter2);
+
+            printf("HERE\n");
+            expNode::printVec(mult1);
+            printf("  1:\n");
+            expNode::printVec(iter1);
+            printf("  2:\n");
+            expNode::printVec(nonIter1);
+            printf("HERE\n");
+            expNode::printVec(mult2);
+            printf("  1:\n");
+            expNode::printVec(iter2);
+            printf("  2:\n");
+            expNode::printVec(nonIter2);
+
+            nonIter1.insert(nonIter1.end(), nonIter1.begin(), nonIter1.end());
+
+            expNode zipIter, zipNonIter;
+
+            multiplyExpVec(iter1, zipIter);
+            sumExpVec(nonIter1, zipNonIter);
+
+            expNode sum2;
+            sum2.info  = expType::LR;
+            sum2.value = "*";
+
+            sum2.reserve(2);
+            sum2.setLeaf(zipIter   , 0);
+            sum2.setLeaf(zipNonIter, 1);
+
+            expNode::swap(*(sums[i2]), sum2);
+
+            sums.erase(sums.begin() + i1);
+          }
+        }
+      }
+      printf("===================================\n");
+    }
+
     void magician::expandExp(infoDB_t &db, expNode &e){
       expNode &flatRoot = *(e.makeFlatHandle());
 
@@ -2051,6 +2339,182 @@ namespace occa {
       e.freeThis();
 
       expNode::swap(e, leaf);
+    }
+
+    expVec_t magician::iteratorsIn(infoDB_t &db, expVec_t &v){
+      expVec_t iterV;
+
+      const int vCount = (int) v.size();
+
+      std::cout << "II: v = \n";
+      expNode::printVec(v);
+
+      for(int i = 0; i < vCount; ++i){
+        expNode &leaf = *(v[i]);
+
+        if(leaf.info & expType::varInfo){
+          viInfo_t *vi = db.viInfoMap.has(leaf.getVarInfo());
+          if(vi != NULL)
+            std::cout << "vi = " << *vi << '\n';
+        }
+
+        if((leaf.info & expType::varInfo) &&
+           db.varIsAnIterator(leaf.getVarInfo())){
+
+          iterV.push_back(&leaf);
+        }
+      }
+
+      std::cout << "II: iters = \n";
+      expNode::printVec(iterV);
+
+      return iterV;
+    }
+
+    bool magician::iteratorsMatch(expVec_t &a, expVec_t &b){
+      const int aCount = (int) a.size();
+      const int bCount = (int) b.size();
+
+      if(aCount != bCount)
+        return false;
+
+      for(int i = 0; i < aCount; ++i){
+        expNode &aLeaf = *(a[i]);
+        int clones[2] = {1,0};
+
+        // Pass 0: Finds clones in a
+        // Pass 1: Finds clones in b
+        for(int pass = 0; pass < 2; ++pass){
+          for(int j = 0; j < aCount; ++j){
+            if((i == j) && (pass == 0))
+              continue;
+
+            expNode &leaf = (pass ? *(b[j]) : *(a[j]));
+
+            if(&(aLeaf.getVarInfo()) ==
+               &(leaf.getVarInfo())){
+
+              // Only the first instance will check
+              if((j < i) && (pass == 0)){
+                clones[pass] = 0;
+                break;
+              }
+
+              ++clones[pass];
+            }
+          }
+
+          if(clones[0] == 0)
+            break;
+        }
+
+        if(clones[0] == 0)
+          continue;
+
+        if(clones[0] != clones[1])
+          return false;
+      }
+
+      return true;
+    }
+
+    expVec_t magician::removeItersFromExpVec(expVec_t &v, expVec_t &iters){
+      const int vCount    = (int) v.size();
+      const int iterCount = (int) iters.size();
+
+      expVec_t ret;
+
+      if(iters.size() == 0)
+        return ret;;
+
+      std::cout << "v     = \n";
+      expNode::printVec(v);
+      std::cout << "iters = \n";
+      expNode::printVec(iters);
+
+      for(int i = 0; i < vCount; ++i){
+        expNode &leaf = *(v[i]);
+
+        if( !(leaf.info & expType::varInfo) ){
+          ret.push_back(&leaf);
+          continue;
+        }
+
+        int clones[2] = {1,0};
+
+        // Pass 0: Finds clones in v
+        // Pass 1: Finds clones in iters
+        for(int pass = 0; pass < 2; ++pass){
+          int count = (pass ? iterCount : vCount);
+
+          for(int j = 0; j < count; ++j){
+            if((i == j) && (pass == 0))
+              continue;
+
+            expNode &leaf2 = (pass ? *(iters[j]) : *(v[j]));
+
+            if( !(leaf2.info & expType::varInfo) )
+              continue;
+
+            if(&(leaf.getVarInfo()) ==
+               &(leaf2.getVarInfo())){
+
+              // Only the first instance will check
+              if((j < i) && (pass == 0)){
+                clones[0] = 0;
+                break;
+              }
+
+              ++clones[pass];
+            }
+          }
+
+          if(clones[0] == 0)
+            break;
+        }
+
+        if(clones[0] == 0)
+          continue;
+
+        std::cout << "clones[0] = " << clones[0] << '\n'
+                  << "clones[1] = " << clones[1] << '\n';
+
+        for(int j = clones[1]; j < clones[0]; ++j)
+          ret.push_back(&leaf);
+      }
+
+      return ret;
+    }
+
+    void magician::multiplyExpVec(expVec_t &v, expNode &e){
+      applyOpToExpVec(v, e, "*");
+    }
+
+    void magician::sumExpVec(expVec_t &v, expNode &e){
+      applyOpToExpVec(v, e, "+");
+    }
+
+    void magician::applyOpToExpVec(expVec_t &v, expNode &e, const std::string &op){
+      const int vCount = (int) v.size();
+      expNode *cNode = &e;
+
+      if(vCount == 1){
+        expNode::swap(e, *(v[0]->clone()));
+        return;
+      }
+
+      for(int i = (vCount - 1); 0 <= i; --i){
+        if(0 < i)
+          cNode->reserve(2);
+
+        cNode->info  = expType::LR;
+        cNode->value = op;
+
+        cNode->setLeaf(*(v[i]), (0 < i));
+
+        if(1 < i)
+          cNode = cNode->leaves[1];
+      }
     }
   };
 };

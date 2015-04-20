@@ -342,6 +342,8 @@ namespace occa {
                    const std::string &tab = "",
                    const int flags = expFlag::none);
 
+      static void printVec(expVec_t &v);
+
       std::string toString(const std::string &tab = "");
       std::string toString(const int leafPos, const int printLeafCount);
 

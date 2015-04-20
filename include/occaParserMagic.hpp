@@ -93,6 +93,9 @@ namespace occa {
 
       void allocVS(const int count);
 
+      bool isConstant();
+      typeHolder constValue();
+
       bool isUseless();
       bool isComplex();
 
@@ -122,16 +125,21 @@ namespace occa {
 
       void update(expNode &op, expNode &e);
 
-      int hasStride(const std::string &str);
       int hasStride(expNode &e);
+      int hasStride(const std::string &str);
+      int hasStride(atomInfo_t &stride);
 
-      void add(const std::string &str);
-      void add(expNode &e);
+      bool hasComplexStride();
+      bool stridesConflict();
+      // Assumption that (this and v) are not complex
+      //   nor have conflicting strides
+      bool conflictsWith(valueInfo_t &v);
 
-      void sub(const std::string &str);
-      void sub(expNode &e);
+      void insertOp(const std::string &op,
+                    expNode &value);
+      void insertOp(const std::string &op,
+                    const std::string &value);
 
-      typeHolder constValue();
       varInfo& varValue();
       varInfo& var(const int pos);
       atomInfo_t& stride(const int pos);
@@ -158,6 +166,8 @@ namespace occa {
       void load(expNode &varNode);
       void load(const int brackets, expNode &bracketNode);
 
+      bool hasComplexAccess();
+      bool stridesConflict();
       bool conflictsWith(accessInfo_t &ai);
 
       friend std::ostream& operator << (std::ostream &out, accessInfo_t &info);
@@ -180,6 +190,7 @@ namespace occa {
     class viInfo_t {
     public:
       infoDB_t *db;
+      varInfo *var;
 
       int info;
       valueInfo_t    valueInfo;
@@ -190,7 +201,7 @@ namespace occa {
       static const int writeValue = (1 << 0);
       static const int readValue  = (1 << 1);
 
-      viInfo_t(infoDB_t *db_ = NULL);
+      viInfo_t(infoDB_t *db_ = NULL, varInfo *var_ = NULL);
 
       void setDB(infoDB_t *db_);
 
@@ -309,6 +320,9 @@ namespace occa {
 
       //---[ Helper Functions ]---------
       static void placeAddedExps(infoDB_t &db, expNode &e, expVec_t &sumNodes);
+      static void placeMultExps(infoDB_t &db, expNode &e, expVec_t &sumNodes);
+      static void placeExps(infoDB_t &db, expNode &e, expVec_t &sumNodes, const std::string &delimiters);
+      static bool expHasOp(expNode &e, const std::string &delimiters);
 
       static void simplify(infoDB_t &db, expNode &e);
 
@@ -317,10 +331,18 @@ namespace occa {
       static void mergeConstants(infoDB_t &db, expNode &e);
       static void mergeConstantsIn(infoDB_t &db, expNode &e);
       static void applyConstantsIn(infoDB_t &db, expNode &e);
+      static void mergeVariables(infoDB_t &db, expNode &e);
 
       static void expandExp(infoDB_t &db, expNode &e);
       static void expandMult(infoDB_t &db, expNode &e);
       static void removeParentheses(infoDB_t &db, expNode &e);
+
+      static expVec_t iteratorsIn(infoDB_t &db, expVec_t &v);
+      static bool iteratorsMatch(expVec_t &a, expVec_t &b);
+      static expVec_t removeItersFromExpVec(expVec_t &a, expVec_t &b);
+      static void multiplyExpVec(expVec_t &v, expNode &e);
+      static void sumExpVec(expVec_t &v, expNode &e);
+      static void applyOpToExpVec(expVec_t &v, expNode &e, const std::string &op);
     };
   };
 };
