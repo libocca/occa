@@ -361,8 +361,9 @@ def cOperatorDefinition(N):
             '          kernel_.addArgument(i, occa::kernelArg(memory_.mem));\n'   + \
             '        }\n'                                                         + \
             '        else{\n'                                                     + \
-            '          occaType_t &type_ = *((occaType_t*) args[i]);\n' + \
+            '          occaType_t &type_ = *((occaType_t*) args[i]);\n'           + \
             '          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));\n' + \
+            '          delete (occaType_t*) args[i];\n'                           + \
             '        }\n'                                                         + \
             '      }\n'                                                           + \
             '      \n'                                                            + \
