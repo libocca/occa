@@ -33,9 +33,14 @@ namespace occa {
 
       static const int noLCD       = (1 << 2);
 
-      // Return info
+      // Return Info
       static const int didntChange = 0;
       static const int changed     = 1;
+
+      // Bounds Info
+      static const int LB = 0;
+      static const int UB = 1;
+      static const int S  = 2;
     };
 
     class atomInfo_t {
@@ -134,6 +139,7 @@ namespace occa {
       // Assumption that (this and v) are not complex
       //   nor have conflicting strides
       bool conflictsWith(valueInfo_t &v);
+      void setBoundInfo(typeHolder *&bounds, bool *&hasBounds);
 
       void insertOp(const std::string &op,
                     expNode &value);

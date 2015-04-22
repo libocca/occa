@@ -1,8 +1,8 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 0 // Read/Write/Expand
+#define DBP0 1 // Read/Write/Expand
 #define DBP1 0 // Index Sorting/Updating
-#define DBP2 1 // Expression Simplification
+#define DBP2 0 // Expression Simplification
 #define DBP3 0 // Has Stride
 #define DBP4 1 // Check Conflicts
 
@@ -790,12 +790,72 @@ namespace occa {
     }
 
     bool valueInfo_t::stridesConflict(){
+#if DBP4
+      std::cout << "SC:V = " << *this << '\n';
+#endif
+
+      if(indices <= 1)
+        return false;
+
+      typeHolder *bounds;
+      bool *hasBounds;
+
+      setBoundInfo(bounds, hasBounds);
+
+      bool checkLB[2], checkUB[2];
+      int idx[2];
+
+      for(int i = 0; i < indices; ++i){
+        idx[0]     = i;
+        checkLB[0] = (hasBounds[3*i + analyzeInfo::LB] &&
+                      hasBounds[3*i + analyzeInfo::S]);
+        checkUB[0] =  hasBounds[3*i + analyzeInfo::UB];
+
+        for(int j = (i + 1); j < indices; ++j){
+          idx[1]     = j;
+          checkLB[1] = (hasBounds[3*j + analyzeInfo::LB] &&
+                        hasBounds[3*j + analyzeInfo::S]);
+          checkUB[1] =  hasBounds[3*j + analyzeInfo::UB];
+
+          int fails = 0;
+
+          for(int pass = 0; pass < 2; ++pass){
+            if(checkUB[pass] && checkLB[(pass + 1) % 2]){
+              int a = idx[pass];
+              int b = idx[(pass + 1) % 2];
+
+              typeHolder &aMax = bounds[3*a + analyzeInfo::UB];
+              typeHolder  bMin = applyOperator(bounds[3*b + analyzeInfo::LB],
+                                               "+",
+                                               bounds[3*b + analyzeInfo::S]);
+
+              // [<>] Assumes for-loop as [<] operator, not [<=]
+              typeHolder comp = applyOperator(aMax, "<=", bMin);
+
+              fails += (comp.boolValue() == false);
+            }
+
+            // Strides overlap
+            if(fails == 2){
+              delete [] bounds;
+              delete [] hasBounds;
+              return true;
+            }
+          }
+        }
+      }
+
+      delete [] bounds;
+      delete [] hasBounds;
+
       return false;
     }
 
     // Assumption that (this and v) are not complex
     //   nor have conflicting strides
     bool valueInfo_t::conflictsWith(valueInfo_t &v){
+      return false; // [<>] test
+
 #if DBP4
       std::cout << "A:V1 = " << *this << '\n'
                 << "A:V2 = " << v << '\n';
@@ -804,57 +864,61 @@ namespace occa {
       if((indices == 0) || (v.indices == 0))
         return false;
 
-      typeHolder *boundsA = new typeHolder[3*  indices];
-      typeHolder *boundsB = new typeHolder[3*v.indices];
-      bool *hasBoundsA = new bool[3*  indices];
-      bool *hasBoundsB = new bool[3*v.indices];
+      typeHolder *boundsA, *boundsB;
+      bool *hasBoundsA, *hasBoundsB;
 
-      for(int i = 0; i < 3*  indices; ++i) hasBoundsA[i] = false;
-      for(int i = 0; i < 3*v.indices; ++i) hasBoundsB[i] = false;
+      setBoundInfo(boundsA, hasBoundsA);
+      setBoundInfo(boundsB, hasBoundsB);
 
-      for(int pass = 0; pass < 2; ++pass){
-        typeHolder *bounds    = (pass ? boundsB    : boundsA   );
-        bool       *hasBounds = (pass ? hasBoundsB : hasBoundsA);
-        int         indices_  = (pass ? v.indices  : indices   );
-        atomInfo_t *vars_     = (pass ? v.vars     : vars      );
-        atomInfo_t *strides_  = (pass ? v.strides  : strides   );
+      delete [] boundsA;
+      delete [] boundsB;
+      delete [] hasBoundsA;
+      delete [] hasBoundsB;
 
-        for(int i = 0; i < indices_; ++i){
-          if(vars_[i].info & viType::isConstant){
-            bounds[3*i + 0]    = vars_[i].constValue;
-            bounds[3*i + 1]    = vars_[i].constValue;
-            bounds[3*i + 2]    = typeHolder((int) 0);
-            hasBounds[3*i + 0] = true;
-            hasBounds[3*i + 1] = true;
-            hasBounds[3*i + 2] = true;
+      return false;
+    }
 
-            std::cout << "vars_[i] = " << vars_[i] << '\n';
-            std::cout << "2. bounds[3*i + 0] = " << bounds[3*i + 0] << '\n'
-                      << "2. bounds[3*i + 1] = " << bounds[3*i + 1] << '\n'
-                      << "2. bounds[3*i + 2] = " << bounds[3*i + 2] << '\n';
-          }
-          else { // Is an iterator
-            viInfo_t &vi               = (*db)[*(vars_[i].var)];
-            iteratorInfo_t &iter       = vi.iteratorInfo;
-            valueInfo_t *iterBounds[3] = {&(iter.start), &(iter.end), &(iter.stride)};
+    void valueInfo_t::setBoundInfo(typeHolder *&bounds, bool *&hasBounds){
+      if(indices == 0){
+        bounds    = NULL;
+        hasBounds = NULL;
+        return;
+      }
 
-            std::cout << "vi = " << vi << '\n';
+      bounds    = new typeHolder[3*indices];
+      hasBounds = new bool[3*indices];
 
-            for(int b = 0; b < 3; ++b){
-              if(iterBounds[b]->isConstant()){
-                bounds[3*i + b]    = applyOperator(iterBounds[b]->constValue(),
-                                                   "*",
-                                                   strides_[i].constValue);
-                hasBounds[3*i + b] = true;
+      for(int i = 0; i < 3*indices; ++i)
+        hasBounds[i] = false;
 
-                std::cout << "1. bounds[3*i + " << b << "] = " << bounds[3*i + b] << '\n';
-              }
+      for(int i = 0; i < indices; ++i){
+        if(vars[i].info & viType::isConstant){
+          bounds[3*i + analyzeInfo::LB] = vars[i].constValue;
+          bounds[3*i + analyzeInfo::UB] = vars[i].constValue;
+          bounds[3*i + analyzeInfo::S]  = typeHolder((int) 0);
+          hasBounds[3*i + analyzeInfo::LB] = true;
+          hasBounds[3*i + analyzeInfo::UB] = true;
+          hasBounds[3*i + analyzeInfo::S]  = true;
+        }
+        else { // Is an iterator
+          viInfo_t &vi         = (*db)[*(vars[i].var)];
+          iteratorInfo_t &iter = vi.iteratorInfo;
+
+          valueInfo_t *iterBounds[3];
+          iterBounds[analyzeInfo::LB] = &(iter.start);
+          iterBounds[analyzeInfo::UB] = &(iter.end);
+          iterBounds[analyzeInfo::S]  = &(iter.stride);
+
+          for(int b = 0; b < 3; ++b){
+            if(iterBounds[b]->isConstant()){
+              bounds[3*i + b]    = applyOperator(iterBounds[b]->constValue(),
+                                                 "*",
+                                                 strides[i].constValue);
+              hasBounds[3*i + b] = true;
             }
           }
         }
       }
-
-      return false;
     }
 
     void valueInfo_t::insertOp(const std::string &op,
@@ -1163,19 +1227,21 @@ namespace occa {
       std::cout << "viInfo: " << *var << '\n';
 #endif
 
-      if(info & viType::isComplex)
-        return;
+      bool autoConflicts = false;
 
-      if(ai.hasComplexAccess()){
+      if(info & viType::isComplex)
+        autoConflicts = true;
+
+      if(!autoConflicts && ai.hasComplexAccess()){
         std::cout << "Complex access: " << ai << '\n';
         info |= viType::isComplex;
-        return;
+        autoConflicts = true;
       }
 
-      if(ai.stridesConflict()){
+      if(!autoConflicts && ai.stridesConflict()){
         std::cout << "Access strides overlap: " << ai << '\n';
         info |= viType::isComplex;
-        return;
+        autoConflicts = true;
       }
 
       const bool isWriting = (inputType == writeValue);
@@ -1192,12 +1258,10 @@ namespace occa {
         const int inputCount = inputCounts[i];
 
         for(int j = 0; j < inputCount; ++j){
-          if(inputs[j].conflictsWith(ai)){
+          if(autoConflicts || inputs[j].conflictsWith(ai)){
             std::cout << "Access conflicts:\n"
                       << "  A1: " << ai        << '\n'
                       << "  A2: " << inputs[j] << '\n';
-
-            info |= viType::isComplex;
             return;
           }
         }

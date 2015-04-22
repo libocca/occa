@@ -82,12 +82,14 @@ kernel void acousticsVolumeKernelNew(const int  K,
           s_UdotGs[kx][n] = un*sx + vn*sy + wn*sz;   // Dependent on kx, n
           s_UdotGt[kx][n] = un*tx + vn*ty + wn*tz;   // Dependent on kx, n
 
-          id = n + k*p_Nfields*p_Npad;               // Reset id, depends of n, kx, ky [NLCD: n, kx, ky]
+          // id = n + k*p_Nfields*p_Npad;               // Reset id, depends of n, kx, ky [NLCD: n, kx, ky]
 
 #pragma unroll p_Nfields
           for(int fld=0; fld<p_Nfields; ++fld){      // fld [Stride: 1, Bounds: p_Nfields]
+            id = n + fld*p_Npad + k*p_Nfields*p_Npad;
             rhsQ2[id] = rhsQ1[id];                   // rhsQ2 [Write: id], rhsQ1 [Read: id] [NLCD: n, kx, ky]
-            rhsQ1[id] = rhsQ0[id]; id += p_Npad;     // rhsQ1 [Write: id], rhsQ0 [Read: id] [NLCD: n, kx, ky]
+            rhsQ1[id] = rhsQ0[id];                   // rhsQ1 [Write: id], rhsQ0 [Read: id] [NLCD: n, kx, ky]
+            // id += p_Npad;
           }
 
         }
