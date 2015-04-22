@@ -3,6 +3,7 @@
 #define p_Nfields     5
 #define p_KblkV       7
 #define p_Nparameters 11
+#define p_Nfaces      13
 
 #define rx s_vgeofacs[0][kx]
 #define ry s_vgeofacs[1][kx]
@@ -71,9 +72,9 @@ kernel void acousticsVolumeKernelNew(const int  K,
 
         if(active){                                  // Different for kx, ky
           int id = n + k*p_Nfields*p_Npad;           // Different for n (1), k -> kx, ky (p_Np < p_Nfields*p_Npad)
-          datafloat pn = Q[id]; id+= p_Npad;         // Different fon n (1), k (p_Nfields*p_Npad); id = n (1), 1(p_Npad), k*(p_Nfields * p_Npad)
-          datafloat un = Q[id]; id+= p_Npad;         // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
-          datafloat vn = Q[id]; id+= p_Npad;         // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
+          datafloat pn = Q[id]; id += p_Npad;        // Different fon n (1), k (p_Nfields*p_Npad); id = n (1), 1(p_Npad), k*(p_Nfields * p_Npad)
+          datafloat un = Q[id]; id += p_Npad;        // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
+          datafloat vn = Q[id]; id += p_Npad;        // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
           datafloat wn = Q[id];                      // Q[id] (dependent on kx, ky, n); local reduction id, id still in bounds
 
           s_p[kx][n] = pn;                           // Dependent on kx, n
@@ -81,12 +82,14 @@ kernel void acousticsVolumeKernelNew(const int  K,
           s_UdotGs[kx][n] = un*sx + vn*sy + wn*sz;   // Dependent on kx, n
           s_UdotGt[kx][n] = un*tx + vn*ty + wn*tz;   // Dependent on kx, n
 
-          id = n + k*p_Nfields*p_Npad;               // Reset id, depends of n, kx, ky [NLCD: n, kx, ky]
+          // id = n + k*p_Nfields*p_Npad;               // Reset id, depends of n, kx, ky [NLCD: n, kx, ky]
 
 #pragma unroll p_Nfields
           for(int fld=0; fld<p_Nfields; ++fld){      // fld [Stride: 1, Bounds: p_Nfields]
+            id = n + fld*p_Npad + k*p_Nfields*p_Npad;
             rhsQ2[id] = rhsQ1[id];                   // rhsQ2 [Write: id], rhsQ1 [Read: id] [NLCD: n, kx, ky]
-            rhsQ1[id] = rhsQ0[id]; id += p_Npad;     // rhsQ1 [Write: id], rhsQ0 [Read: id] [NLCD: n, kx, ky]
+            rhsQ1[id] = rhsQ0[id];                   // rhsQ1 [Write: id], rhsQ0 [Read: id] [NLCD: n, kx, ky]
+            // id += p_Npad;
           }
 
         }
@@ -124,7 +127,7 @@ kernel void acousticsVolumeKernelNew(const int  K,
           const datafloat invRho = 1.f/rho;          //
 
           int id = n + k*p_Nfields*p_Npad;           //
-          rhsQ0[id] = -ccRho * divU; id += p_Npad;   //
+          rhsQ0[id] = -ccRho * divU;  id += p_Npad;  //
           rhsQ0[id] = -invRho * dpdx; id += p_Npad;  //
           rhsQ0[id] = -invRho * dpdy; id += p_Npad;  //
           rhsQ0[id] = -invRho * dpdz;                //

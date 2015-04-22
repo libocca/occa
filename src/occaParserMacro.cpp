@@ -125,30 +125,37 @@ namespace occa {
 
     typeHolder::typeHolder(const int int__){
       *this = int__;
+      type  = intType;
     }
 
     typeHolder::typeHolder(const bool bool__){
       *this = bool__;
+      type  = boolType;
     }
 
     typeHolder::typeHolder(const char char__){
       *this = char__;
+      type  = charType;
     }
 
     typeHolder::typeHolder(const long long__){
       *this = long__;
+      type  = longType;
     }
 
     typeHolder::typeHolder(const short short__){
       *this = short__;
+      type  = shortType;
     }
 
     typeHolder::typeHolder(const float float__){
       *this = float__;
+      type  = floatType;
     }
 
     typeHolder::typeHolder(const double double__){
       *this = double__;
+      type  = doubleType;
     }
 
     typeHolder& typeHolder::operator = (const typeHolder &th){

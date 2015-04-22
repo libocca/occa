@@ -3308,6 +3308,13 @@ namespace occa {
       };
     }
 
+    void expNode::printVec(expVec_t &v){
+      const int vCount = (int) v.size();
+
+      for(int i = 0; i < vCount; ++i)
+        v[i]->print();
+    }
+
     std::string expNode::toString(const int leafPos,
                                   const int printLeafCount){
       if(leafCount <= leafPos)
