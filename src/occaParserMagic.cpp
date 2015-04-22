@@ -777,13 +777,25 @@ namespace occa {
 
     bool valueInfo_t::hasComplexStride(){
       for(int i = 0; i < indices; ++i){
-        if(vars[i].info & (viType::isComplex |
-                           viType::isUseless)){
+        if(vars[i].info & viType::isAVariable){
+          viInfo_t *vi = db->has( *(vars[i].var) );
+
+          if((vi != NULL) &&
+             (vi->info & viType::isAnIterator)){
+
+            return false;
+          }
 
           return true;
         }
-        if( !(strides[i].info & viType::isConstant) )
+        else if(vars[i].info & (viType::isComplex |
+                                viType::isUseless)){
+
           return true;
+        }
+        if( !(strides[i].info & viType::isConstant) ){
+          return true;
+        }
       }
 
       return false;
