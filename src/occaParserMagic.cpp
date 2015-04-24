@@ -6,7 +6,7 @@
 #define DBP3 0 // Has Stride
 #define DBP4 0 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
 #define DBP5 0 // LCD-labeled Statements and GCS Prints, For-loops with LCD
-#define DBP6 0 // Loop Bounds
+#define DBP6 1 // Outer-Loop/Inner-Loop Posibilities
 
 namespace occa {
   namespace parserNS {
@@ -2071,10 +2071,6 @@ namespace occa {
       for(int o = 0; o < loopCount; ++o){
         const int loopDepth = depthVec[o];
 
-#if DBP6
-        std::cout << "Loop(" << loopDepth << "):" << s.onlyThisToString() << '\n';
-#endif
-
         // The deepest for-loop branch has all of
         //   the possible bounds
         int innerMostLoop  = 0;
@@ -2093,6 +2089,14 @@ namespace occa {
         }
 
         for(int i = innerMostLoop; o < i; --i){
+          int iDepth = depthVec[i];
+
+          // Going down the loop path
+          if(innerMostDepth < iDepth)
+            continue;
+          else
+            innerMostDepth = (iDepth - 1);
+
           intVector_t innerLoopVec;
 
           storeInnerLoopCandidates(loopsVec,
@@ -2179,6 +2183,7 @@ namespace occa {
                                     iteratorInfo,
                                     innerLoopVec)){
 
+          std::cout << "HERE\n";
           break;
         }
       }
@@ -2193,7 +2198,19 @@ namespace occa {
                                              intVector_t &depthVec,
                                              int outerLoopIdx,
                                              intVector_t &innerLoopVec){
+#if DBP6
+        statement &os = *(loopsVec[outerLoopIdx]);
+        std::cout << "Outer Loop: " << os.onlyThisToString() << '\n';
 
+        const int innerLoopCount = (int) innerLoopVec.size();
+
+        for(int i = 0; i < innerLoopCount; ++i){
+          int innerLoopIdx = innerLoopVec[i];
+          statement &is = *(loopsVec[innerLoopIdx]);
+
+          std::cout << "(" << i << ") Inner Loop: " << is.onlyThisToString() << '\n';
+        }
+#endif
     }
 
     void magician::storeLoopsAndDepths(statement &s,
