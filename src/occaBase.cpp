@@ -81,6 +81,30 @@ namespace occa {
   // occa::memory uvaPtrInfo_t::getMemory(){
   // }
 
+  void dontSync(void *ptr){
+    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+
+    if(it == uvaMap.end())
+      return;
+
+    memory m(it->second);
+
+    if(!m.uvaIsDirty())
+      return;
+
+    const size_t dirtyEntries = uvaDirtyMemory.size();
+
+    for(size_t i = 0; i < dirtyEntries; ++i){
+      if(m.getMemoryHandle() == uvaDirtyMemory[i]){
+
+        m.uvaMarkClean();
+        uvaDirtyMemory.erase(uvaDirtyMemory.begin() + i);
+
+        break;
+      }
+    }
+  }
+
   void free(void *ptr){
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
@@ -719,6 +743,20 @@ namespace occa {
     placeInUva();
 
     mHandle->isManaged = true;
+  }
+
+  bool memory::uvaIsDirty(){
+    return (mHandle && (mHandle->uva_isDirty));
+  }
+
+  void memory::uvaMarkDirty(){
+    if(mHandle)
+      mHandle->uva_isDirty = true;
+  }
+
+  void memory::uvaMarkClean(){
+    if(mHandle)
+      mHandle->uva_isDirty = false;
   }
 
   void memory::copyFrom(const void *src,

@@ -113,6 +113,8 @@ namespace occa {
   extern ptrRangeMap_t uvaMap;
   extern memoryArray_t uvaDirtyMemory;
 
+  void dontSync(void *ptr);
+
   void free(void *ptr);
   //==================================
 
@@ -925,6 +927,10 @@ namespace occa {
 
     void placeInUva();
     void manage();
+
+    bool uvaIsDirty();
+    void uvaMarkDirty();
+    void uvaMarkClean();
 
     void copyFrom(const void *src,
                   const uintptr_t bytes = 0,

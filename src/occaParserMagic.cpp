@@ -2200,16 +2200,22 @@ namespace occa {
                                              intVector_t &innerLoopVec){
 #if DBP6
         statement &os = *(loopsVec[outerLoopIdx]);
-        std::cout << "Outer Loop: " << os.onlyThisToString() << '\n';
 
         const int innerLoopCount = (int) innerLoopVec.size();
+
+        char sepChar = ((innerLoopCount == 1) ? ' ' : 's');
+
+        std::cout << "Outer Loop " <<            ": " << os.onlyThisToString() << '\n';
+        std::cout << "Inner Loop"  << sepChar << ":\n";
 
         for(int i = 0; i < innerLoopCount; ++i){
           int innerLoopIdx = innerLoopVec[i];
           statement &is = *(loopsVec[innerLoopIdx]);
 
-          std::cout << "(" << i << ") Inner Loop: " << is.onlyThisToString() << '\n';
+          std::cout << "  " << i << ": " << is.onlyThisToString() << '\n';
         }
+
+        std::cout << '\n';
 #endif
     }
 
