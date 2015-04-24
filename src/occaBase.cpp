@@ -81,6 +81,12 @@ namespace occa {
   // occa::memory uvaPtrInfo_t::getMemory(){
   // }
 
+  bool needsSync(void *ptr){
+    occa::memory m(ptr);
+
+    return m.uvaIsDirty();
+  }
+
   void dontSync(void *ptr){
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
@@ -95,8 +101,7 @@ namespace occa {
     const size_t dirtyEntries = uvaDirtyMemory.size();
 
     for(size_t i = 0; i < dirtyEntries; ++i){
-      if(m.getMemoryHandle() == uvaDirtyMemory[i]){
-
+      if(m.getOccaHandle() == uvaDirtyMemory[i]){
         m.uvaMarkClean();
         uvaDirtyMemory.erase(uvaDirtyMemory.begin() + i);
 
@@ -679,6 +684,19 @@ namespace occa {
     strMode(""),
     mHandle(NULL) {}
 
+  memory::memory(void *uvaPtr){
+    // Default to uvaPtr is actually a memory_v*
+    memory_v *mHandle_ = (memory_v*) uvaPtr;
+
+    ptrRangeMap_t::iterator it = uvaMap.find(uvaPtr);
+
+    if(it != uvaMap.end())
+      mHandle_ = it->second;
+
+    strMode = occa::modeToStr(mHandle_->mode());
+    mHandle = mHandle_;
+  }
+
   memory::memory(memory_v *mHandle_) :
     strMode( occa::modeToStr(mHandle_->mode()) ),
     mHandle(mHandle_) {}
@@ -701,6 +719,10 @@ namespace occa {
 
   void* memory::textureArg() const {
     return (void*) ((mHandle->textureInfo).arg);
+  }
+
+  const memory_v* memory::getOccaHandle(){
+    return mHandle;
   }
 
   void* memory::getMappedPointer(){

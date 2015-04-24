@@ -113,6 +113,7 @@ namespace occa {
   extern ptrRangeMap_t uvaMap;
   extern memoryArray_t uvaDirtyMemory;
 
+  bool needsSync(void *ptr);
   void dontSync(void *ptr);
 
   void free(void *ptr);
@@ -905,6 +906,7 @@ namespace occa {
 
   public:
     memory();
+    memory(void *uvaPtr);
     memory(memory_v *mHandle_);
 
     memory(const memory &m);
@@ -920,6 +922,8 @@ namespace occa {
     }
 
     void* textureArg() const;
+
+    const memory_v* getOccaHandle();
 
     void* getMappedPointer();
     void* getMemoryHandle();

@@ -1,6 +1,6 @@
 kernel void addVectors(const int entries,
                        const float *a,
-                       const float *b,
+                       float *b,
                        float *ab){
   for(int group = 0; group < ((entries + 15) / 16); ++group; outer0){
     for(int item = 0; item < 16; ++item; inner0){

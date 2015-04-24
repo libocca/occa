@@ -10,7 +10,7 @@ int main(int argc, char **argv){
   // occa::enableUVAByDefault();
 
   occa::device device;
-  device.setup("mode = Serial, UVA = enabled");
+  device.setup("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
 
   // Allocate [managed] arrays that will
   //   automatically synchronize between
@@ -31,6 +31,10 @@ int main(int argc, char **argv){
   // Arrays a, b, and ab are now resident
   //   on [device]
   addVectors(entries, a, b, ab);
+
+  // b is not const in the kernel, so we can use
+  //   dontSync(b) to manually force b to not sync
+  occa::dontSync(b);
 
   // Finish work queued up in [device],
   //   synchronizing a, b, and ab and
