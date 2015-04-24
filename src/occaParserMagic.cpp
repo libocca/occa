@@ -1,10 +1,12 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 1 // Read/Write/Expand
+#define DBP0 0 // Read/Write/Expand
 #define DBP1 0 // Index Sorting/Updating
 #define DBP2 0 // Expression Simplification
 #define DBP3 0 // Has Stride
-#define DBP4 1 // Check Conflicts
+#define DBP4 0 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
+#define DBP5 0 // LCD-labeled Statements and GCS Prints, For-loops with LCD
+#define DBP6 0 // Loop Bounds
 
 namespace occa {
   namespace parserNS {
@@ -69,6 +71,38 @@ namespace occa {
       }
 
       return (exp && (*exp == e));
+    }
+
+    bool atomInfo_t::operator == (atomInfo_t &ai){
+      if(info & viType::isConstant){
+        if( !(ai.info & viType::isConstant) )
+          return false;
+
+        return (constValue == ai.constValue);
+      }
+      else if(info & viType::isAVariable){
+        if( !(ai.info & viType::isAVariable) )
+          return false;
+
+        return (var == ai.var);
+      }
+      else {
+        if(info & (viType::isConstant |
+                   viType::isAVariable)){
+          return false;
+        }
+
+        if((exp == NULL) || (ai.exp == NULL))
+          return false;
+
+        return exp->sameAs(*ai.exp);
+      }
+
+      return true;
+    }
+
+    bool atomInfo_t::operator != (atomInfo_t &ai){
+      return !(*this == ai);
     }
 
     void atomInfo_t::setDB(infoDB_t *db_){
@@ -326,6 +360,29 @@ namespace occa {
       strides = vi.strides;
 
       return *this;
+    }
+
+    bool valueInfo_t::operator == (valueInfo_t &vi){
+      if(indices != vi.indices)
+        return false;
+
+      if(indices == 0){
+        return (value == vi.value);
+      }
+      else {
+        for(int i = 0; i < indices; ++i)
+          if((vars[i]    != vi.vars[i]) ||
+             (strides[i] != vi.strides[i])){
+
+            return false;
+          }
+      }
+
+      return true;
+    }
+
+    bool valueInfo_t::operator != (valueInfo_t &vi){
+      return !(*this == vi);
     }
 
     void valueInfo_t::setDB(infoDB_t *db_){
@@ -1103,6 +1160,16 @@ namespace occa {
       end(db_),
       stride(db_) {}
 
+    bool iteratorInfo_t::operator == (iteratorInfo_t &iter){
+      return ((start  == iter.start) &&
+              (end    == iter.end)   &&
+              (stride == iter.stride));
+    }
+
+    bool iteratorInfo_t::operator != (iteratorInfo_t &iter){
+      return !(*this == iter);
+    }
+
     void iteratorInfo_t::setDB(infoDB_t *db_){
       db = db_;
 
@@ -1143,20 +1210,33 @@ namespace occa {
       return (writes.size() != 0);
     }
 
-    accessInfo_t& viInfo_t::addWrite(expNode &varNode){
+    void viInfo_t::addWrite(const bool isUpdated,
+                            expNode &varNode){
+      if(db->isLocked())
+        return;
+
+      if(isUpdated)
+        statementHasLCD(varNode.sInfo);
+
       writes.push_back( accessInfo_t(db) );
+      writeSetsValue.push_back(!isUpdated);
 
       accessInfo_t &ai = writes.back();
       ai.load(varNode);
 #if DBP0
       std::cout << "W1. ai = " << ai << '\n';
 #endif
-
-      return ai;
     }
 
-    accessInfo_t& viInfo_t::addWrite(const int brackets, expNode &bracketNode){
+    void viInfo_t::addWrite(const bool isUpdated,
+                            const int brackets, expNode &bracketNode){
+      if(db->isLocked())
+        return;
+
+      // No reduction check for array entries
+
       writes.push_back( accessInfo_t(db) );
+      writeSetsValue.push_back(!isUpdated);
 
       accessInfo_t &ai = writes.back();
       ai.load(brackets, bracketNode);
@@ -1165,11 +1245,12 @@ namespace occa {
 #endif
 
       checkLastInput(ai, writeValue);
-
-      return ai;
     }
 
-    accessInfo_t& viInfo_t::addRead(expNode &varNode){
+    void viInfo_t::addRead(expNode &varNode){
+      if(db->isLocked())
+        return;
+
       reads.push_back( accessInfo_t(db) );
 
       accessInfo_t &ai = reads.back();
@@ -1177,11 +1258,12 @@ namespace occa {
 #if DBP0
       std::cout << "R1. ai = " << ai << '\n';
 #endif
-
-      return ai;
     }
 
-    accessInfo_t& viInfo_t::addRead(const int brackets, expNode &bracketNode){
+    void viInfo_t::addRead(const int brackets, expNode &bracketNode){
+      if(db->isLocked())
+        return;
+
       reads.push_back( accessInfo_t(db) );
 
       accessInfo_t &ai = reads.back();
@@ -1191,8 +1273,6 @@ namespace occa {
 #endif
 
       checkLastInput(ai, readValue);
-
-      return ai;
     }
 
     void viInfo_t::updateValue(expNode &opNode, expNode &setNode){
@@ -1217,6 +1297,62 @@ namespace occa {
       }
 
       checkComplexity();
+    }
+
+    void viInfo_t::statementHasLCD(statement *sEnd){
+      if((sEnd == NULL) ||
+         (sEnd->info == forStatementType)){
+
+        return;
+      }
+
+      statement *sStart = lastSetStatement();
+
+      // Variable wasn't set, only label sEnd
+      if(sStart == NULL){
+        db->statementsHaveLCD(sEnd);
+        return;
+      }
+
+      // If the [up] statement is the same, nothing is wrong
+      if(sStart->up == sEnd->up)
+        return;
+
+      statement *gcs = &(sStart->greatestCommonStatement(*sEnd));
+
+#if DBP5
+      if(gcs != NULL)
+        std::cout << "GCS s:: " << gcs->onlyThisToString() << '\n';
+      else
+        std::cout << "GCS s:: NULL\n";
+#endif
+
+      db->statementsHaveLCD(gcs);
+    }
+
+    void viInfo_t::sharedStatementHaveLCD(statement *a, statement *b){
+      if((a == NULL) || (b == NULL))
+        return;
+
+      statement *gcs = &(a->greatestCommonStatement(*b));
+
+      if(gcs != NULL)
+        std::cout << "GCS s:: " << gcs->onlyThisToString() << '\n';
+      else
+        std::cout << "GCS s:: NULL\n";
+
+      db->statementsHaveLCD(gcs);
+    }
+
+    statement* viInfo_t::lastSetStatement(){
+      const int writeCount = (int) writes.size();
+
+      for(int i = (writeCount - 1); 0 <= i; --i){
+        if(writeSetsValue[i])
+          return writes[i].s;
+      }
+
+      return NULL;
     }
 
     void viInfo_t::checkComplexity(){
@@ -1245,13 +1381,17 @@ namespace occa {
         autoConflicts = true;
 
       if(!autoConflicts && ai.hasComplexAccess()){
+#if DBP4
         std::cout << "Complex access: " << ai << '\n';
+#endif
         info |= viType::isComplex;
         autoConflicts = true;
       }
 
       if(!autoConflicts && ai.stridesConflict()){
+#if DBP4
         std::cout << "Access strides overlap: " << ai << '\n';
+#endif
         info |= viType::isComplex;
         autoConflicts = true;
       }
@@ -1271,10 +1411,12 @@ namespace occa {
 
         for(int j = 0; j < inputCount; ++j){
           if(autoConflicts || inputs[j].conflictsWith(ai)){
+#if DBP4
             std::cout << "Access conflicts:\n"
                       << "  A1: " << ai        << '\n'
                       << "  A2: " << inputs[j] << '\n';
-            return;
+#endif
+            sharedStatementHaveLCD(ai.s, inputs[j].s);
           }
         }
       }
@@ -1357,9 +1499,22 @@ namespace occa {
     }
 
     infoDB_t::infoDB_t() :
+      locked(false),
       viInfoMap(this) {
 
       smntInfoStack.push(analyzeInfo::isExecuted);
+    }
+
+    void infoDB_t::lock(){
+      locked = true;
+    }
+
+    void infoDB_t::unlock(){
+      locked = false;
+    }
+
+    bool infoDB_t::isLocked(){
+      return locked;
     }
 
     int& infoDB_t::getSmntInfo(){
@@ -1390,6 +1545,28 @@ namespace occa {
       viInfo_t *vi = viInfoMap.has(var);
 
       return ((vi != NULL) && (vi->info & viType::isAnIterator));
+    }
+
+    void infoDB_t::statementsHaveLCD(statement *s){
+      if(s == NULL)
+        return;
+
+#if DBP5
+      std::cout << "LCD s:: " << s->onlyThisToString() << '\n';
+#endif
+
+      smntInfoMap[s] |= analyzeInfo::hasLCD;
+
+      statementNode *sn = s->statementStart;
+
+      while(sn){
+        statementsHaveLCD(sn->value);
+        sn = sn->right;
+      }
+    }
+
+    bool infoDB_t::statementHasLCD(statement &s){
+      return (smntInfoMap[&s] & analyzeInfo::hasLCD);
     }
 
     magician::magician(parserBase &parser_) :
@@ -1439,6 +1616,11 @@ namespace occa {
       }
 
       db.leavingStatement();
+
+      db.lock();
+      updateLoopBounds(fs);
+      generateOuterLoops(fs);
+      db.unlock();
     }
 
     void magician::analyzeStatement(statement &s){
@@ -1873,30 +2055,235 @@ namespace occa {
       return false;
     }
 
-    bool magician::variableIsUpdated(expNode &varNode){
-      if(!(varNode.info & (expType::varInfo |
-                           expType::variable))){
+    void magician::generateOuterLoops(statement &kernel){
+#if DBP5
+      printIfLoopsHaveLCD(kernel);
+#endif
 
-        return false;
+      statementVector_t loopsVec;
+      intVector_t depthVec;
+      int depth = 0;
+
+      storeLoopsAndDepths(kernel, loopsVec, depthVec, depth);
+
+      const int loopCount = (int) loopsVec.size();
+
+      for(int o = 0; o < loopCount; ++o){
+        const int loopDepth = depthVec[o];
+
+#if DBP6
+        std::cout << "Loop(" << loopDepth << "):" << s.onlyThisToString() << '\n';
+#endif
+
+        // The deepest for-loop branch has all of
+        //   the possible bounds
+        int innerMostLoop  = 0;
+        int innerMostDepth = 0;
+
+        for(int i = (o + 1); i < loopCount; ++i){
+          int iDepth = depthVec[i];
+
+          if(iDepth == loopDepth)
+            break;
+
+          if(innerMostDepth < iDepth){
+            innerMostDepth = iDepth;
+            innerMostLoop  = i;
+          }
+        }
+
+        for(int i = innerMostLoop; o < i; --i){
+          intVector_t innerLoopVec;
+
+          storeInnerLoopCandidates(loopsVec,
+                                   depthVec,
+                                   o, i,
+                                   innerLoopVec);
+
+          if(innerLoopVec.size()){
+            generateOuterLoopInstance(loopsVec,
+                                      depthVec,
+                                      o,
+                                      innerLoopVec);
+          }
+        }
+      }
+    }
+
+    void magician::storeInnerLoopCandidates(statementVector_t &loopsVec,
+                                            intVector_t &depthVec,
+                                            int outerLoopIdx,
+                                            int innerLoopIdx,
+                                            intVector_t &innerLoopVec){
+
+      iteratorInfo_t iteratorInfo = iteratorLoopBounds(*(loopsVec[innerLoopIdx]));
+
+      bool foundLoops = nestedLoopHasSameBounds(loopsVec,
+                                                depthVec,
+                                                outerLoopIdx,
+                                                iteratorInfo,
+                                                innerLoopVec);
+
+      if(!foundLoops)
+        innerLoopVec.clear();
+    }
+
+    void magician::storeNextDepthLoops(statementVector_t &loopsVec,
+                                       intVector_t &depthVec,
+                                       int loopIdx,
+                                       intVector_t &ndLoopsVec){
+
+      const int loopCount = (int) loopsVec.size();
+      const int depth    = depthVec[loopIdx];
+
+      for(int i = (loopIdx + 1); i < loopCount; ++i){
+        int iDepth = depthVec[i];
+
+        if(iDepth == depth)
+          break;
+
+        if(iDepth == (depth + 1))
+          ndLoopsVec.push_back(i);
+      }
+    }
+
+    bool magician::nestedLoopHasSameBounds(statementVector_t &loopsVec,
+                                           intVector_t &depthVec,
+                                           int ndLoopIdx,
+                                           iteratorInfo_t &iteratorInfo,
+                                           intVector_t &innerLoopVec){
+
+      statement &ndS = *(loopsVec[ndLoopIdx]);
+
+      iteratorInfo_t ndIteratorInfo = iteratorLoopBounds(ndS);
+
+      if(ndIteratorInfo == iteratorInfo){
+        innerLoopVec.push_back(ndLoopIdx);
+        return true;
       }
 
-      expNode *up = varNode.up;
+      intVector_t ndLoopsVec;
 
-      if((up != NULL) &&
-         (up->info & expType::variable)){
+      storeNextDepthLoops(loopsVec,
+                          depthVec,
+                          ndLoopIdx,
+                          ndLoopsVec);
 
-        up = up->up;
+      const int ndLoopCount = (int) ndLoopsVec.size();
+      int b;
+
+      for(b = 0; b < ndLoopCount; ++b){
+        if(!nestedLoopHasSameBounds(loopsVec,
+                                    depthVec,
+                                    ndLoopsVec[b],
+                                    iteratorInfo,
+                                    innerLoopVec)){
+
+          break;
+        }
       }
 
-      if(up == NULL)
+      if(b != ndLoopCount)
         return false;
 
-      return ((up->info & expType::operator_) &&
-              isAnUpdateOperator(up->value));
+      return true;
+    }
+
+    void magician::generateOuterLoopInstance(statementVector_t &loopsVec,
+                                             intVector_t &depthVec,
+                                             int outerLoopIdx,
+                                             intVector_t &innerLoopVec){
+
+    }
+
+    void magician::storeLoopsAndDepths(statement &s,
+                                       statementVector_t &loopsVec,
+                                       intVector_t &depthVec, int depth){
+
+      statementNode *sn = s.statementStart;
+
+      while(sn){
+        statement &s2 = *(sn->value);
+
+        if(s2.info == forStatementType){
+          loopsVec.push_back(&s2);
+          depthVec.push_back(depth);
+          storeLoopsAndDepths(s2, loopsVec, depthVec, depth + 1);
+        }
+        else
+          storeLoopsAndDepths(s2, loopsVec, depthVec, depth);
+
+        sn = sn->right;
+      }
+    }
+
+    iteratorInfo_t magician::iteratorLoopBounds(statement &s){
+      const bool dbWasLocked = db.isLocked();
+      db.lock();
+
+      iteratorInfo_t iteratorInfo;
+
+      expNode &flatRoot = *(s.expRoot[2].makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if(leaf.info & expType::varInfo){
+          varInfo &var = leaf.getVarInfo();
+
+          if(db.varIsAnIterator(var)){
+            viInfo_t &vi = db[var];
+
+            iteratorInfo = vi.iteratorInfo;
+            break;
+          }
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      if(!dbWasLocked)
+        db.unlock();
+
+      return iteratorInfo;
+    }
+
+    void magician::updateLoopBounds(statement &s){
+      statementNode *sn = s.statementStart;
+
+      while(sn){
+        statement &s2 = *(sn->value);
+
+        if(s2.info == forStatementType){
+          if(parser.parsingC)
+            analyzeForStatement(s2);
+          else
+            analyzeFortranForStatement(s2);
+
+          updateLoopBounds(s2);
+        }
+        else
+          updateLoopBounds(s2);
+
+        sn = sn->right;
+      }
+    }
+
+    void magician::printIfLoopsHaveLCD(statement &s){
+      if(s.info == forStatementType)
+        std::cout << "LCD(" << db.statementHasLCD(s) << "): " << s.onlyThisToString() << '\n';
+
+      statementNode *sn = s.statementStart;
+
+      while(sn){
+        printIfLoopsHaveLCD(*(sn->value));
+        sn = sn->right;
+      }
     }
 
     void magician::addVariableWrite(expNode &varNode, expNode &opNode, expNode &setNode){
-      const bool isUpdated = variableIsUpdated(varNode);
+      const bool isUpdated = (isAnUpdateOperator(opNode.value) &&
+                              (opNode.value != "="));
 
       if(varNode.info & expType::variable){
         const int brackets = varNode.getVariableBracketCount();
@@ -1913,7 +2300,7 @@ namespace occa {
 
       viInfo_t &viInfo = db[ varNode.getVarInfo() ];
 
-      viInfo.addWrite(varNode);
+      viInfo.addWrite(isUpdated, varNode);
       viInfo.updateValue(opNode, setNode);
     }
 
@@ -1922,14 +2309,16 @@ namespace occa {
                                     expNode &setNode,
                                     const int brackets,
                                     expNode &bracketNode){
-      const bool isUpdated = variableIsUpdated(varNode);
+
+      const bool isUpdated = (isAnUpdateOperator(opNode.value) &&
+                              (opNode.value != "="));
 
       if(isUpdated)
         addVariableRead(varNode, brackets, bracketNode);
 
       viInfo_t &viInfo = db[ varNode[0].getVarInfo() ];
 
-      viInfo.addWrite(brackets, bracketNode);
+      viInfo.addWrite(isUpdated, brackets, bracketNode);
     }
 
     void magician::addVariableRead(expNode &varNode){

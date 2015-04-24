@@ -31,7 +31,7 @@ namespace occa {
       static const int isIgnored   = (1 << 1);
       static const int schrodinger = (isExecuted | isIgnored); // hehe
 
-      static const int noLCD       = (1 << 2);
+      static const int hasLCD       = (1 << 2);
 
       // Return Info
       static const int didntChange = 0;
@@ -59,6 +59,8 @@ namespace occa {
 
       bool operator == (const std::string &str);
       bool operator == (expNode &e);
+      bool operator == (atomInfo_t &ai);
+      bool operator != (atomInfo_t &ai);
 
       void setDB(infoDB_t *db_);
 
@@ -93,6 +95,9 @@ namespace occa {
 
       valueInfo_t(const valueInfo_t &vi);
       valueInfo_t& operator = (const valueInfo_t &vi);
+
+      bool operator == (valueInfo_t &vi);
+      bool operator != (valueInfo_t &vi);
 
       void setDB(infoDB_t *db_);
 
@@ -188,6 +193,9 @@ namespace occa {
 
       iteratorInfo_t(infoDB_t *db_ = NULL);
 
+      bool operator == (iteratorInfo_t &iter);
+      bool operator != (iteratorInfo_t &iter);
+
       void setDB(infoDB_t *db_);
 
       friend std::ostream& operator << (std::ostream &out, iteratorInfo_t &info);
@@ -203,6 +211,7 @@ namespace occa {
       iteratorInfo_t iteratorInfo;
 
       std::vector<accessInfo_t> reads, writes;
+      std::vector<bool> writeSetsValue;
 
       static const int writeValue = (1 << 0);
       static const int readValue  = (1 << 1);
@@ -213,13 +222,18 @@ namespace occa {
 
       bool hasBeenInitialized();
 
-      accessInfo_t& addWrite(expNode &varNode);
-      accessInfo_t& addWrite(const int brackets, expNode &bracketNode);
+      void addWrite(const bool isUpdated, expNode &varNode);
+      void addWrite(const bool isUpdated, const int brackets, expNode &bracketNode);
 
-      accessInfo_t& addRead(expNode &varNode);
-      accessInfo_t& addRead(const int brackets, expNode &bracketNode);
+      void addRead(expNode &varNode);
+      void addRead(const int brackets, expNode &bracketNode);
 
       void updateValue(expNode &opNode, expNode &setNode);
+
+      void statementHasLCD(statement *sEnd);
+      void sharedStatementHaveLCD(statement *a, statement *b);
+
+      statement* lastSetStatement();
 
       void checkComplexity();
 
@@ -249,11 +263,17 @@ namespace occa {
 
     class infoDB_t {
     public:
+      bool locked;
+
       viInfoMap_t viInfoMap;
       smntInfoMap_t smntInfoMap;
       std::stack<int> smntInfoStack;
 
       infoDB_t();
+
+      void lock();
+      void unlock();
+      bool isLocked();
 
       int& getSmntInfo();
 
@@ -266,6 +286,9 @@ namespace occa {
       viInfo_t& operator [] (varInfo &var);
 
       bool varIsAnIterator(varInfo &var);
+
+      void statementsHaveLCD(statement *s);
+      bool statementHasLCD(statement &s);
     };
 
     class magician {
@@ -308,7 +331,33 @@ namespace occa {
 
       bool statementGuaranteesBreak(statement &s);
 
-      bool variableIsUpdated(expNode &varNode);
+      void generateOuterLoops(statement &kernel);
+      void storeInnerLoopCandidates(statementVector_t &loopsVec,
+                                    intVector_t &depthVec,
+                                    int outerLoopIdx,
+                                    int innerLoopIdx,
+                                    intVector_t &innerLoopVec);
+      void storeNextDepthLoops(statementVector_t &loopsVec,
+                               intVector_t &depthVec,
+                               int loopIdx,
+                               intVector_t &ndLoopsVec);
+      bool nestedLoopHasSameBounds(statementVector_t &loopsVec,
+                                   intVector_t &depthVec,
+                                   int ndLoopIdx,
+                                   iteratorInfo_t &iteratorInfo,
+                                   intVector_t &innerLoopVec);
+      void generateOuterLoopInstance(statementVector_t &loopsVec,
+                                     intVector_t &depthVec,
+                                     int outerLoopIdx,
+                                     intVector_t &innerLoopVec);
+      void storeLoopsAndDepths(statement &s,
+                               statementVector_t &loopsVec,
+                               intVector_t &depthVec, int depth);
+
+      iteratorInfo_t iteratorLoopBounds(statement &s);
+      void updateLoopBounds(statement &s);
+
+      void printIfLoopsHaveLCD(statement &s);
 
       void addVariableWrite(expNode &varNode, expNode &opNode, expNode &setNode);
       void addVariableWrite(expNode &varNode,
