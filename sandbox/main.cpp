@@ -109,14 +109,11 @@ int main(int argc, char **argv){
   //====================================
 
   //---[ Magic ]------------------------
-  // {
-  //   parser.magicEnabled = true;
-
-  //   std::string parsedContent = parser.parseFile("tests/ridgV.oak");
-  //   std::cout << parsedContent << '\n';
-  // }
   {
     parser.magicEnabled = true;
+
+    //---[ Generic ]--------------------
+    std::string parsedContent = parser.parseFile("tests/ridgV.oak");
 
     //---[ Arturo ]---------------------
     // std::string parsedContent = parser.parseFile("magicTests/arturo/hermiteAdvec.okl");

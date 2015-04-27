@@ -1223,11 +1223,11 @@ namespace occa {
       if(isUpdated)
         statementHasLCD(varNode.sInfo);
 
-      writes.push_back( accessInfo_t(db) );
-      writeSetsValue.push_back(!isUpdated);
-
-      accessInfo_t &ai = writes.back();
+      accessInfo_t ai(db);
       ai.load(varNode);
+
+      writes.push_back(ai);
+      writeSetsValue.push_back(!isUpdated);
 #if DBP0
       std::cout << "W1. ai = " << ai << '\n';
 #endif
@@ -1240,11 +1240,11 @@ namespace occa {
 
       // No reduction check for array entries
 
-      writes.push_back( accessInfo_t(db) );
-      writeSetsValue.push_back(!isUpdated);
-
-      accessInfo_t &ai = writes.back();
+      accessInfo_t ai(db);
       ai.load(brackets, bracketNode);
+
+      writes.push_back(ai);
+      writeSetsValue.push_back(!isUpdated);
 #if DBP0
       std::cout << "W2. ai = " << ai << '\n';
 #endif
@@ -1256,10 +1256,10 @@ namespace occa {
       if(db->isLocked())
         return;
 
-      reads.push_back( accessInfo_t(db) );
-
-      accessInfo_t &ai = reads.back();
+      accessInfo_t ai(db);
       ai.load(varNode);
+
+      reads.push_back(ai);
 #if DBP0
       std::cout << "R1. ai = " << ai << '\n';
 #endif
@@ -1269,10 +1269,10 @@ namespace occa {
       if(db->isLocked())
         return;
 
-      reads.push_back( accessInfo_t(db) );
-
-      accessInfo_t &ai = reads.back();
+      accessInfo_t ai(db);
       ai.load(brackets, bracketNode);
+
+      reads.push_back(ai);
 #if DBP0
       std::cout << "R2. ai = " << ai << '\n';
 #endif
@@ -1282,14 +1282,19 @@ namespace occa {
 
     void viInfo_t::updateValue(expNode &opNode, expNode &setNode){
       if(opNode.value == "="){
-        valueInfo.load(setNode);
+        // Fixes recursive issue
+        valueInfo_t vi;
+        vi.setDB(db);
+        vi.load(setNode);
+
 #if DBP0
-        std::cout << "X1. valueInfo = " << valueInfo << '\n';
+        std::cout << "X1. valueInfo = " << vi << '\n';
 #endif
-        valueInfo.expandValues(); // [<>] Recursive x = a[x];
+        vi.expandValues();
 #if DBP0
-        std::cout << "X2. valueInfo = " << valueInfo << '\n';
+        std::cout << "X2. valueInfo = " << vi << '\n';
 #endif
+        valueInfo = vi;
       }
       else {
 #if DBP0

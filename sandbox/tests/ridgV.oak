@@ -49,6 +49,7 @@ kernel void acousticsVolumeKernelNew(const int  K,
       for(int n=0; n<p_Np; n++){                     // n  [Stride: 1, Bounds: [0, p_Np]   ]
 
         k = 0*18 + 1*kx + ky*p_KblkV;                // Made of kx (1), ky (p_KblkV)
+        k = k;
                                                      // kx.bound <= ky.stride -> k is different for kx, ky
         active = (k < Klev);                         // Different for kx, ky
 
