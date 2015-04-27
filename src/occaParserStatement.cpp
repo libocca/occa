@@ -2882,12 +2882,14 @@ namespace occa {
     }
 
     void expNode::freeThis(){
-      leafCount = 0;
+      if(leafCount){
+        leafCount = 0;
 
-      if(leaves)
-        delete [] leaves;
+        if(leaves)
+          delete [] leaves;
 
-      leaves = NULL;
+        leaves = NULL;
+      }
     }
 
     void expNode::print(const std::string &tab){

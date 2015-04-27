@@ -1,8 +1,8 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 0 // Read/Write/Expand
+#define DBP0 1 // Read/Write/Expand
 #define DBP1 0 // Index Sorting/Updating
-#define DBP2 0 // Expression Simplification
+#define DBP2 1 // Expression Simplification
 #define DBP3 0 // Has Stride
 #define DBP4 0 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
 #define DBP5 0 // LCD-labeled Statements and GCS Prints, For-loops with LCD
@@ -234,6 +234,11 @@ namespace occa {
 
           info &= ~(viType::isAVariable |
                     viType::isAnIterator);
+
+          constValue = expRoot->calculateValue();
+
+          if( !(constValue.type & noType) )
+            info |= viType::isConstant;
         }
       }
       else { // Root node -> ()
@@ -1982,15 +1987,18 @@ namespace occa {
       statementNode *sn = snStart;
 
       while(sn != snEnd){
-        statement &s  = *(sn->value);
-        typeHolder th = s.expRoot[0].calculateValue();
+        statement &s = *(sn->value);
 
-        if( !(th.type & noType) &&
-            (th.boolValue() == true) ){
+        if(s.expRoot.leafCount != 0){
+          typeHolder th = s.expRoot[0].calculateValue();
 
-          analyzeEmbeddedStatements(s);
+          if( !(th.type & noType) &&
+              (th.boolValue() == true) ){
 
-          return;
+            analyzeEmbeddedStatements(s);
+
+            return;
+          }
         }
 
         sn = sn->right;
@@ -2622,7 +2630,7 @@ namespace occa {
         expNode &leaf = *(constValues[i]);
 
         // The other leaf is taking care of this
-        if(leaf.up == NULL)
+        if((leaf.up == NULL) || (leaf.up == &leaf)) // [<>] ???
           continue;
 
         expNode &leafUp = *(leaf.up);
@@ -2636,24 +2644,25 @@ namespace occa {
         delete &leaf2;
       }
 
-      if(1 < constCount)
-        constValues[0]->value = (std::string) constValue;
-
       if(constValue == typeHolder((int) 0)){
         e.free();
 
         e.info  = expType::presetValue;
         e.value = (std::string) constValue;
       }
-      else if(constValue == typeHolder((int) 1)){
-        expNode &leaf   = *(constValues[0]);
-        expNode &leafUp = *(leaf.up);
-        expNode &leaf2  = leafUp[!leaf.whichLeafAmI()];
+      else if(1 < constCount){
+        constValues[0]->value = (std::string) constValue;
 
-        expNode::swap(leafUp, leaf2);
+        if(constValue == typeHolder((int) 1)){
+          expNode &leaf   = *(constValues[0]);
+          expNode &leafUp = *(leaf.up);
+          expNode &leaf2  = leafUp[!leaf.whichLeafAmI()];
 
-        leaf2.freeThis();
-        delete &leaf2;
+          expNode::swap(leafUp, leaf2);
+
+          leaf2.freeThis();
+          delete &leaf2;
+        }
       }
     }
 
