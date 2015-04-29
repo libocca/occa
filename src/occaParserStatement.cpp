@@ -3421,6 +3421,66 @@ namespace occa {
 
     statement::~statement(){};
 
+    statement& statement::operator [] (const int snPos){
+      statementNode *sn = statementStart;
+
+      for(int i = 0; i < snPos; ++i)
+        sn = sn->right;
+
+      return *(sn->value);
+    }
+
+    int statement::getSubIndex(){
+      if(up == NULL)
+        return -1;
+
+      statementNode *sn = up->statementStart;
+      int pos = 0;
+
+      while(sn){
+        if(sn->value == this)
+          return pos;
+
+        sn = sn->right;
+        ++pos;
+      }
+
+      return -1;
+    }
+
+    int statement::getDepth(){
+      statement *s = this;
+      int d = 0;
+
+      while(s->up){
+        ++d;
+        s = s->up;
+      }
+
+      return d;
+    }
+
+    void statement::setIndexPath(intVector_t &path){
+      int depth_ = getDepth();
+
+      path.clear();
+      path.reserve(depth_);
+
+      statement *s = this;
+
+      for(int i = 0; i < depth_; ++i){
+        path.push_back(s->getSubIndex());
+        s = s->up;
+      }
+
+      // Place in right order
+      for(int i = 0; i < (depth_/2); ++i){
+        int si              = path[i];
+        path[i]             = path[depth - i - 1];
+        path[depth - i - 1] = si;
+      }
+    }
+
     statement* statement::makeSubStatement(){
       return new statement(depth + 1,
                            0, this);

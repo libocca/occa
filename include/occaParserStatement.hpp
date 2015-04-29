@@ -392,6 +392,12 @@ namespace occa {
 
       ~statement();
 
+      statement& operator [] (const int snPos);
+      int getSubIndex();
+
+      int getDepth();
+      void setIndexPath(intVector_t &path);
+
       statement* makeSubStatement();
 
       std::string getTab();

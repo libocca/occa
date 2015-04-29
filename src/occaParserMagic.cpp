@@ -1,8 +1,8 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 1 // Read/Write/Expand
+#define DBP0 0 // Read/Write/Expand
 #define DBP1 0 // Index Sorting/Updating
-#define DBP2 1 // Expression Simplification
+#define DBP2 0 // Expression Simplification
 #define DBP3 0 // Has Stride
 #define DBP4 0 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
 #define DBP5 0 // LCD-labeled Statements and GCS Prints, For-loops with LCD
@@ -2075,14 +2075,19 @@ namespace occa {
 
       statementVector_t loopsVec;
       intVector_t depthVec;
+      intVector_t outerLoopVec, **innerLoopVec, innerLoopCountVec;
       int depth = 0;
+
+      int oPos = 0;
 
       storeLoopsAndDepths(kernel, loopsVec, depthVec, depth);
 
       const int loopCount = (int) loopsVec.size();
 
+      innerLoopVec = new intVector_t*[loopCount];
+
       for(int o = 0; o < loopCount; ++o){
-        const int loopDepth = depthVec[o];
+        const int oDepth = depthVec[o];
 
         // The deepest for-loop branch has all of
         //   the possible bounds
@@ -2092,7 +2097,7 @@ namespace occa {
         for(int i = (o + 1); i < loopCount; ++i){
           int iDepth = depthVec[i];
 
-          if(iDepth == loopDepth)
+          if(iDepth <= oDepth)
             break;
 
           if(innerMostDepth < iDepth){
@@ -2101,6 +2106,12 @@ namespace occa {
           }
         }
 
+        if(innerMostLoop == 0)
+          continue;
+
+        intVector_t orderVec;
+
+        // Get the correct order
         for(int i = innerMostLoop; o < i; --i){
           int iDepth = depthVec[i];
 
@@ -2110,21 +2121,49 @@ namespace occa {
           else
             innerMostDepth = (iDepth - 1);
 
-          intVector_t innerLoopVec;
+          orderVec.push_back(i);
+        }
+
+        const int innerLoopCount = orderVec.size();
+
+        if(innerLoopCount == 0)
+          continue;
+
+        innerLoopVec[oPos] = new intVector_t[innerLoopCount];
+
+        int iPos = 0;
+
+        for(int i_ = (innerLoopCount - 1); 0 <= i_; --i_){
+          int i2_ = (innerLoopCount - 1) - i_;
+          int i   = orderVec[i_];
 
           storeInnerLoopCandidates(loopsVec,
                                    depthVec,
                                    o, i,
-                                   innerLoopVec);
+                                   innerLoopVec[oPos][iPos]);
 
-          if(innerLoopVec.size()){
-            generateOuterLoopInstance(loopsVec,
-                                      depthVec,
-                                      o,
-                                      innerLoopVec);
-          }
+          if(innerLoopVec[oPos][i2_].size())
+            ++iPos;
+        }
+
+        if(iPos == 0){
+          innerLoopCountVec.pop_back();
+          delete [] innerLoopVec[oPos];
+        }
+        else{
+          outerLoopVec.push_back(o);
+          innerLoopCountVec.push_back(iPos);
+          ++oPos;
         }
       }
+
+      generateOuterLoopInstances(loopsVec,
+                                 depthVec,
+                                 outerLoopVec,
+                                 innerLoopVec,
+                                 innerLoopCountVec);
+
+      // [<>] Free loopVec stuff
     }
 
     void magician::storeInnerLoopCandidates(statementVector_t &loopsVec,
@@ -2168,15 +2207,21 @@ namespace occa {
                                            intVector_t &depthVec,
                                            int ndLoopIdx,
                                            iteratorInfo_t &iteratorInfo,
-                                           intVector_t &innerLoopVec){
+                                           intVector_t &innerLoopVec,
+                                           const bool isFirstCall){
 
       statement &ndS = *(loopsVec[ndLoopIdx]);
 
       iteratorInfo_t ndIteratorInfo = iteratorLoopBounds(ndS);
 
-      if(ndIteratorInfo == iteratorInfo){
-        innerLoopVec.push_back(ndLoopIdx);
-        return true;
+      // First call doesn't return in the case that
+      //   the inner-loop has the same bounds as the
+      //   outer-loop
+      if(!isFirstCall){
+        if(ndIteratorInfo == iteratorInfo){
+          innerLoopVec.push_back(ndLoopIdx);
+          return true;
+        }
       }
 
       intVector_t ndLoopsVec;
@@ -2194,9 +2239,11 @@ namespace occa {
                                     depthVec,
                                     ndLoopsVec[b],
                                     iteratorInfo,
-                                    innerLoopVec)){
-
-          std::cout << "HERE\n";
+                                    innerLoopVec,
+                                    false)){
+#if DBP6
+          std::cout << "loops have different bounds\n";
+#endif
           break;
         }
       }
@@ -2207,29 +2254,38 @@ namespace occa {
       return true;
     }
 
-    void magician::generateOuterLoopInstance(statementVector_t &loopsVec,
-                                             intVector_t &depthVec,
-                                             int outerLoopIdx,
-                                             intVector_t &innerLoopVec){
+    void magician::generateOuterLoopInstances(statementVector_t &loopsVec,
+                                              intVector_t &depthVec,
+                                              intVector_t &outerLoopVec,
+                                              intVector_t **innerLoopVec,
+                                              intVector_t &innerLoopCountVec){
+      const int outerLoopCount = outerLoopVec.size();
+
+      for(int ol = 0; ol < outerLoopCount; ++ol){
+        const int o   = outerLoopVec[ol];
+        statement &os = *(loopsVec[o]);
+
+        intVector_t *oInnerLoopsVec = innerLoopVec[ol];
+        const int oInnerLoopCount   = innerLoopCountVec[ol];
+
+        std::cout << "Outer Loop   : " << os.onlyThisToString() << '\n';
+        std::cout << "Inner Loop(s):\n";
+
+        for(int il = 0; il < oInnerLoopCount; ++il){
+          const int innerLoopCount = oInnerLoopsVec[il].size();
+
+          for(int i_ = 0; i_ < innerLoopCount; ++i_){
+            const int i   = oInnerLoopsVec[il][i_];
+            statement &is = *(loopsVec[i]);
 #if DBP6
-        statement &os = *(loopsVec[outerLoopIdx]);
-
-        const int innerLoopCount = (int) innerLoopVec.size();
-
-        char sepChar = ((innerLoopCount == 1) ? ' ' : 's');
-
-        std::cout << "Outer Loop " <<            ": " << os.onlyThisToString() << '\n';
-        std::cout << "Inner Loop"  << sepChar << ":\n";
-
-        for(int i = 0; i < innerLoopCount; ++i){
-          int innerLoopIdx = innerLoopVec[i];
-          statement &is = *(loopsVec[innerLoopIdx]);
-
-          std::cout << "  " << i << ": " << is.onlyThisToString() << '\n';
-        }
-
-        std::cout << '\n';
+            std::cout << "  " << i << ": " << is.onlyThisToString() << '\n';
 #endif
+          }
+#if DBP6
+          std::cout << '\n';
+#endif
+        }
+      }
     }
 
     void magician::storeLoopsAndDepths(statement &s,

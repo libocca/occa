@@ -345,11 +345,13 @@ namespace occa {
                                    intVector_t &depthVec,
                                    int ndLoopIdx,
                                    iteratorInfo_t &iteratorInfo,
-                                   intVector_t &innerLoopVec);
-      void generateOuterLoopInstance(statementVector_t &loopsVec,
-                                     intVector_t &depthVec,
-                                     int outerLoopIdx,
-                                     intVector_t &innerLoopVec);
+                                   intVector_t &innerLoopVec,
+                                   const bool isFirstCall = true);
+      void generateOuterLoopInstances(statementVector_t &loopsVec,
+                                      intVector_t &depthVec,
+                                      intVector_t &outerLoopVec,
+                                      intVector_t **innerLoopVec,
+                                      intVector_t &innerLoopCountVec);
       void storeLoopsAndDepths(statement &s,
                                statementVector_t &loopsVec,
                                intVector_t &depthVec, int depth);

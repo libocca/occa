@@ -222,6 +222,10 @@
 #define occaFastAtan   half_atan
 #define occaNativeAtan native_atan
 
+#define occaAtan2       atan2
+#define occaFastAtan2   atan2
+#define occaNativeAtan2 atan2
+
 #define occaTanh       tanh
 #define occaFastTanh   half_tanh
 #define occaNativeTanh native_tanh

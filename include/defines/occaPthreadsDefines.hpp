@@ -289,6 +289,10 @@ TM occaAtomicXor(TM *ptr, const TM &update){
 #define occaFastAtan   atan
 #define occaNativeAtan atan
 
+#define occaAtan2       atan2
+#define occaFastAtan2   atan2
+#define occaNativeAtan2 atan2
+
 #define occaTanh       tanh
 #define occaFastTanh   tanh
 #define occaNativeTanh tanh

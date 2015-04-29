@@ -237,6 +237,13 @@ __device__ inline double occaCuda_atan(const double x){ return atan(x);  }
 #define occaFastAtan   occaCuda_atan
 #define occaNativeAtan occaCuda_atan
 
+__device__ inline float  occaCuda_atan2(const float x){  return atan2f(x); }
+__device__ inline double occaCuda_atan2(const double x){ return atan2(x);  }
+
+#define occaAtan2       occaCuda_atan2
+#define occaFastAtan2   occaCuda_atan2
+#define occaNativeAtan2 occaCuda_atan2
+
 __device__ inline float  occaCuda_tanh(const float x){  return tanhf(x); }
 __device__ inline double occaCuda_tanh(const double x){ return tanh(x);  }
 
