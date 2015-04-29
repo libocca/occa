@@ -5892,7 +5892,7 @@ namespace occa {
         if(info != doWhileStatementType){
           ret += expRoot.toString(tab);
 
-          if(statementCount > 1)
+          if(0 < statementCount)
             ret += "{";
           else if(statementCount == 0) // The [Jesse Chan] Case
             ret += "\n" + tab + "  ;";
@@ -5909,7 +5909,7 @@ namespace occa {
           statementPos = statementPos->right;
         }
 
-        if((statementCount > 1) ||
+        if((0 < statementCount) ||
            (info == doWhileStatementType)){
 
             ret += tab + "}\n";
