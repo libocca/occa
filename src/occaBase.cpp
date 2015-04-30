@@ -69,17 +69,49 @@ namespace occa {
     return ((a != b) && (a.start < b.start));
   }
 
-  // uvaPtrInfo_t::uvaPtrInfo_t(){
-  // }
+  uvaPtrInfo_t::uvaPtrInfo_t() :
+    mem(NULL) {}
 
-  // uvaPtrInfo_t::uvaPtrInfo_t(occa::memory_v *mem){
-  // }
+  uvaPtrInfo_t::uvaPtrInfo_t(void *ptr){
+    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
-  // occa::device uvaPtrInfo_t::getDevice(){
-  // }
+    if(it != uvaMap.end())
+      mem = (it->second);
+    else
+      mem = (occa::memory_v*) ptr; // Defaults to ptr being a memory_v
+  }
 
-  // occa::memory uvaPtrInfo_t::getMemory(){
-  // }
+  uvaPtrInfo_t::uvaPtrInfo_t(occa::memory_v *mem_) :
+    mem(mem_) {}
+
+  uvaPtrInfo_t::uvaPtrInfo_t(const uvaPtrInfo_t &upi) :
+    mem(upi.mem) {}
+
+  uvaPtrInfo_t& uvaPtrInfo_t::operator = (const uvaPtrInfo_t &upi){
+    mem = upi.mem;
+
+    return *this;
+  }
+
+  occa::device uvaPtrInfo_t::getDevice(){
+    occa::memory m(mem);
+
+    return occa::device(m.getOccaDeviceHandle());
+  }
+
+  occa::memory uvaPtrInfo_t::getMemory(){
+    return occa::memory(mem);
+  }
+
+  void syncToDevice(void *ptr, const uintptr_t bytes){
+    occa::memory m(ptr);
+    m.syncToDevice(bytes);
+  }
+
+  void syncFromDevice(void *ptr, const uintptr_t bytes){
+    occa::memory m(ptr);
+    m.syncFromDevice(bytes);
+  }
 
   bool needsSync(void *ptr){
     occa::memory m(ptr);
@@ -88,6 +120,10 @@ namespace occa {
   }
 
   void dontSync(void *ptr){
+    removeFromDirtyMap(ptr);
+  }
+
+  void removeFromDirtyMap(void *ptr){
     ptrRangeMap_t::iterator it = uvaMap.find(ptr);
 
     if(it == uvaMap.end())
@@ -98,10 +134,16 @@ namespace occa {
     if(!m.uvaIsDirty())
       return;
 
+    removeFromDirtyMap(m.getOccaMemoryHandle());
+  }
+
+  void removeFromDirtyMap(memory_v *mem){
+    occa::memory m(mem);
+
     const size_t dirtyEntries = uvaDirtyMemory.size();
 
     for(size_t i = 0; i < dirtyEntries; ++i){
-      if(m.getOccaHandle() == uvaDirtyMemory[i]){
+      if(uvaDirtyMemory[i] == mem){
         m.uvaMarkClean();
         uvaDirtyMemory.erase(uvaDirtyMemory.begin() + i);
 
@@ -721,7 +763,11 @@ namespace occa {
     return (void*) ((mHandle->textureInfo).arg);
   }
 
-  const memory_v* memory::getOccaHandle(){
+  device_v* memory::getOccaDeviceHandle(){
+    return mHandle->dHandle;
+  }
+
+  memory_v* memory::getOccaMemoryHandle(){
     return mHandle;
   }
 
@@ -765,6 +811,32 @@ namespace occa {
     placeInUva();
 
     mHandle->isManaged = true;
+  }
+
+  void memory::syncToDevice(const uintptr_t bytes){
+    if(mHandle->dHandle->fakesUva()){
+      uintptr_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
+
+      copyTo(mHandle->uvaPtr, bytes_);
+
+      mHandle->uva_inDevice = true;
+      mHandle->uva_isDirty  = false;
+
+      removeFromDirtyMap(mHandle);
+    }
+  }
+
+  void memory::syncFromDevice(const uintptr_t bytes){
+    if(mHandle->dHandle->fakesUva()){
+      uintptr_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
+
+      copyFrom(mHandle->uvaPtr, bytes_);
+
+      mHandle->uva_inDevice = false;
+      mHandle->uva_isDirty  = false;
+
+      removeFromDirtyMap(mHandle);
+    }
   }
 
   bool memory::uvaIsDirty(){

@@ -1597,13 +1597,13 @@ namespace occa {
         statement &s = *(sn->value);
 
         if(parser.statementIsAKernel(s))
-          analyzeFunction(s);
-
-        sn = sn->right;
+          sn = analyzeFunction(s);
+        else
+          sn = sn->right;
       }
     }
 
-    void magician::analyzeFunction(statement &fs){
+    statementNode* magician::analyzeFunction(statement &fs){
       varInfo &func = *(fs.getFunctionVar());
 
       db.enteringStatement(fs);
@@ -1629,8 +1629,10 @@ namespace occa {
 
       db.lock();
       updateLoopBounds(fs);
-      generateOuterLoops(fs);
+      statementNode *ret = generatePossibleKernels(fs);
       db.unlock();
+
+      return ret;
     }
 
     void magician::analyzeStatement(statement &s){
@@ -2068,23 +2070,23 @@ namespace occa {
       return false;
     }
 
-    void magician::generateOuterLoops(statement &kernel){
+    statementNode* magician::generatePossibleKernels(statement &kernel){
 #if DBP5
       printIfLoopsHaveLCD(kernel);
 #endif
 
       statementVector_t loopsVec;
       intVector_t depthVec;
-      intVector_t outerLoopVec, **innerLoopVec, innerLoopCountVec;
+      intVector_t outerLoopVec;
+      intVecVector_t innerLoopVec;
       int depth = 0;
 
-      int oPos = 0;
+      // Initial vector
+      innerLoopVec.push_back(intVector_t());
 
       storeLoopsAndDepths(kernel, loopsVec, depthVec, depth);
 
       const int loopCount = (int) loopsVec.size();
-
-      innerLoopVec = new intVector_t*[loopCount];
 
       for(int o = 0; o < loopCount; ++o){
         const int oDepth = depthVec[o];
@@ -2129,41 +2131,25 @@ namespace occa {
         if(innerLoopCount == 0)
           continue;
 
-        innerLoopVec[oPos] = new intVector_t[innerLoopCount];
-
-        int iPos = 0;
-
         for(int i_ = (innerLoopCount - 1); 0 <= i_; --i_){
-          int i2_ = (innerLoopCount - 1) - i_;
-          int i   = orderVec[i_];
+          int i = orderVec[i_];
 
           storeInnerLoopCandidates(loopsVec,
                                    depthVec,
                                    o, i,
-                                   innerLoopVec[oPos][iPos]);
+                                   innerLoopVec.back());
 
-          if(innerLoopVec[oPos][i2_].size())
-            ++iPos;
-        }
-
-        if(iPos == 0){
-          innerLoopCountVec.pop_back();
-          delete [] innerLoopVec[oPos];
-        }
-        else{
-          outerLoopVec.push_back(o);
-          innerLoopCountVec.push_back(iPos);
-          ++oPos;
+          if(innerLoopVec.back().size()){
+            outerLoopVec.push_back(o);
+            innerLoopVec.push_back(intVector_t());
+          }
         }
       }
 
-      generateOuterLoopInstances(loopsVec,
-                                 depthVec,
-                                 outerLoopVec,
-                                 innerLoopVec,
-                                 innerLoopCountVec);
-
-      // [<>] Free loopVec stuff
+      return generateKernelsAndLabelLoops(loopsVec,
+                                          depthVec,
+                                          outerLoopVec,
+                                          innerLoopVec);
     }
 
     void magician::storeInnerLoopCandidates(statementVector_t &loopsVec,
@@ -2254,38 +2240,89 @@ namespace occa {
       return true;
     }
 
-    void magician::generateOuterLoopInstances(statementVector_t &loopsVec,
-                                              intVector_t &depthVec,
-                                              intVector_t &outerLoopVec,
-                                              intVector_t **innerLoopVec,
-                                              intVector_t &innerLoopCountVec){
-      const int outerLoopCount = outerLoopVec.size();
+    statementNode* magician::generateKernelsAndLabelLoops(statementVector_t &loopsVec,
+                                                          intVector_t &depthVec,
+                                                          intVector_t &outerLoopVec,
+                                                          intVecVector_t &innerLoopVec){
+      const int kernelCount = outerLoopVec.size();
 
-      for(int ol = 0; ol < outerLoopCount; ++ol){
-        const int o   = outerLoopVec[ol];
+      statement &kernel = *(parserBase::getStatementKernel(*(loopsVec[0])));
+      statementNode *sn = kernel.getStatementNode();
+
+      if(kernelCount == 0)
+        return sn->right;
+
+#if DBP6
+      std::cout << "Kernel: " << kernel.onlyThisToString() << '\n';
+#endif
+
+      statement &globalScope = *(kernel.getGlobalScope());
+
+      std::string kernelName = kernel.getFunctionName();
+      globalScope.createUniqueSequentialVariables(kernelName, kernelCount);
+
+      varInfo &kernelVar = *(kernel.getFunctionVar());
+
+      intVector_t path;
+
+      for(int k = 0; k < kernelCount; ++k){
+        sn = sn->push(kernel.clone());
+        statement &newKernel = *(sn->value);
+
+        // Also clone the kernel function variable
+        varInfo &newKernelVar = *(new varInfo);
+        newKernelVar = kernelVar.clone();
+
+        newKernel.setFunctionVar(newKernelVar);
+
+        std::stringstream ss;
+        ss << k;
+        newKernel.setFunctionName(kernelName + ss.str());
+
+        const int o   = outerLoopVec[k];
         statement &os = *(loopsVec[o]);
 
-        intVector_t *oInnerLoopsVec = innerLoopVec[ol];
-        const int oInnerLoopCount   = innerLoopCountVec[ol];
+        os.setIndexPath(path, &kernel);
+        statement &newOs = newKernel[path];
 
-        std::cout << "Outer Loop   : " << os.onlyThisToString() << '\n';
+        if(newOs.getForStatementCount() == 3)
+          newOs.addForStatement();
+
+        expNode &newOsE = *(newOs.getForStatement(3));
+        newOsE.info  = expType::unknown;
+        newOsE.value = "outer0";
+
+        intVector_t &innerLoopsVec = innerLoopVec[k];
+        const int innerLoopCount  = innerLoopsVec.size();
+
+#if DBP6
+        std::cout << "Outer Loop   : " << newOs.onlyThisToString() << '\n';
         std::cout << "Inner Loop(s):\n";
-
-        for(int il = 0; il < oInnerLoopCount; ++il){
-          const int innerLoopCount = oInnerLoopsVec[il].size();
-
-          for(int i_ = 0; i_ < innerLoopCount; ++i_){
-            const int i   = oInnerLoopsVec[il][i_];
-            statement &is = *(loopsVec[i]);
-#if DBP6
-            std::cout << "  " << i << ": " << is.onlyThisToString() << '\n';
 #endif
-          }
+
+        for(int i_ = 0; i_ < innerLoopCount; ++i_){
+          const int i   = innerLoopsVec[i_];
+          statement &is = *(loopsVec[i]);
+
+          is.setIndexPath(path, &kernel);
+          statement &newIs = newKernel[path];
+
+          if(newIs.getForStatementCount() == 3)
+            newIs.addForStatement();
+
+          expNode &newIsE = *(newIs.getForStatement(3));
+          newIsE.info  = expType::unknown;
+          newIsE.value = "inner0";
 #if DBP6
-          std::cout << '\n';
+          std::cout << "  " << i << ": " << newIs.onlyThisToString() << '\n';
 #endif
         }
+#if DBP6
+        std::cout << '\n';
+#endif
       }
+
+      return sn->right;
     }
 
     void magician::storeLoopsAndDepths(statement &s,

@@ -113,8 +113,30 @@ namespace occa {
   extern ptrRangeMap_t uvaMap;
   extern memoryArray_t uvaDirtyMemory;
 
+  class uvaPtrInfo_t {
+  private:
+    occa::memory_v *mem;
+
+  public:
+    uvaPtrInfo_t();
+    uvaPtrInfo_t(void *ptr);
+    uvaPtrInfo_t(occa::memory_v *mem_);
+
+    uvaPtrInfo_t(const uvaPtrInfo_t &upi);
+    uvaPtrInfo_t& operator = (const uvaPtrInfo_t &upi);
+
+    occa::device getDevice();
+    occa::memory getMemory();
+  };
+
+  void syncToDevice(void *ptr, const uintptr_t bytes = 0);
+  void syncFromDevice(void *ptr, const uintptr_t bytes = 0);
+
   bool needsSync(void *ptr);
   void dontSync(void *ptr);
+
+  void removeFromDirtyMap(void *ptr);
+  void removeFromDirtyMap(memory_v *mem);
 
   void free(void *ptr);
   //==================================
@@ -923,7 +945,8 @@ namespace occa {
 
     void* textureArg() const;
 
-    const memory_v* getOccaHandle();
+    device_v* getOccaDeviceHandle();
+    memory_v* getOccaMemoryHandle();
 
     void* getMappedPointer();
     void* getMemoryHandle();
@@ -931,6 +954,9 @@ namespace occa {
 
     void placeInUva();
     void manage();
+
+    void syncToDevice(const uintptr_t bytes);
+    void syncFromDevice(const uintptr_t bytes);
 
     bool uvaIsDirty();
     void uvaMarkDirty();

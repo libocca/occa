@@ -309,7 +309,7 @@ namespace occa {
       static void castMagicOn(parserBase &parser_);
 
       void castMagic();
-      void analyzeFunction(statement &fs);
+      statementNode* analyzeFunction(statement &fs);
       void analyzeStatement(statement &s);
 
       void analyzeEmbeddedStatements(statement &s);
@@ -331,7 +331,7 @@ namespace occa {
 
       bool statementGuaranteesBreak(statement &s);
 
-      void generateOuterLoops(statement &kernel);
+      statementNode* generatePossibleKernels(statement &kernel);
       void storeInnerLoopCandidates(statementVector_t &loopsVec,
                                     intVector_t &depthVec,
                                     int outerLoopIdx,
@@ -347,11 +347,10 @@ namespace occa {
                                    iteratorInfo_t &iteratorInfo,
                                    intVector_t &innerLoopVec,
                                    const bool isFirstCall = true);
-      void generateOuterLoopInstances(statementVector_t &loopsVec,
-                                      intVector_t &depthVec,
-                                      intVector_t &outerLoopVec,
-                                      intVector_t **innerLoopVec,
-                                      intVector_t &innerLoopCountVec);
+      statementNode* generateKernelsAndLabelLoops(statementVector_t &loopsVec,
+                                                  intVector_t &depthVec,
+                                                  intVector_t &outerLoopVec,
+                                                  intVecVector_t &innerLoopVec);
       void storeLoopsAndDepths(statement &s,
                                statementVector_t &loopsVec,
                                intVector_t &depthVec, int depth);

@@ -85,9 +85,9 @@ namespace occa {
       void applyToStatementsUsingVar(varInfo &info,
                                      applyToStatementsUsingVar_t func);
 
-      bool statementIsAKernel(statement &s);
+      static bool statementIsAKernel(statement &s);
 
-      statement* getStatementKernel(statement &s);
+      static statement* getStatementKernel(statement &s);
       statement* getStatementOuterMostLoop(statement &s);
 
       bool statementKernelUsesNativeOCCA(statement &s);

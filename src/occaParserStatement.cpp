@@ -3430,6 +3430,17 @@ namespace occa {
       return *(sn->value);
     }
 
+    statement& statement::operator [] (intVector_t &path){
+      statement *s = this;
+
+      const int pathCount = (int) path.size();
+
+      for(int i = 0; i < pathCount; ++i)
+        s = &( (*s)[path[i]] );
+
+      return *s;
+    }
+
     int statement::getSubIndex(){
       if(up == NULL)
         return -1;
@@ -3460,7 +3471,8 @@ namespace occa {
       return d;
     }
 
-    void statement::setIndexPath(intVector_t &path){
+    void statement::setIndexPath(intVector_t &path,
+                                 statement *target){
       int depth_ = getDepth();
 
       path.clear();
@@ -3471,13 +3483,18 @@ namespace occa {
       for(int i = 0; i < depth_; ++i){
         path.push_back(s->getSubIndex());
         s = s->up;
+
+        if(s == target){
+          depth_ = (i + 1);
+          break;
+        }
       }
 
       // Place in right order
       for(int i = 0; i < (depth_/2); ++i){
-        int si              = path[i];
-        path[i]             = path[depth - i - 1];
-        path[depth - i - 1] = si;
+        int si               = path[i];
+        path[i]              = path[depth_ - i - 1];
+        path[depth_ - i - 1] = si;
       }
     }
 
@@ -5577,6 +5594,10 @@ namespace occa {
         return expRoot.leaves[pos];
 
       return NULL;
+    }
+
+    void statement::addForStatement(){
+      expRoot.addNode();
     }
 
     int statement::getForStatementCount(){

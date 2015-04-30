@@ -393,10 +393,12 @@ namespace occa {
       ~statement();
 
       statement& operator [] (const int snPos);
+      statement& operator [] (intVector_t &path);
+
       int getSubIndex();
 
       int getDepth();
-      void setIndexPath(intVector_t &path);
+      void setIndexPath(intVector_t &path, statement *target = NULL);
 
       statement* makeSubStatement();
 
@@ -697,6 +699,7 @@ namespace occa {
       void addFunctionArg(const int pos, varInfo &var);
 
       expNode* getForStatement(const int pos);
+      void addForStatement();
       int getForStatementCount();
       //================================
 
