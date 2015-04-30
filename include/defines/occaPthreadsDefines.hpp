@@ -228,6 +228,20 @@ TM occaAtomicXor(TM *ptr, const TM &update){
   return old;
 }
 
+template <class TM>
+TM occaAtomicCAS(TM *ptr, const int comp, const TM &update){
+  TM old;
+
+#pragma omp critical
+  {
+    old = *ptr;
+    if(comp)
+      *ptr = update;
+  }
+
+  return old;
+}
+
 #define occaAtomicAdd64  occaAtomicAdd
 #define occaAtomicSub64  occaAtomicSub
 #define occaAtomicSwap64 occaAtomicSwap

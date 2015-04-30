@@ -142,29 +142,30 @@
 //---[ Atomics ]----------------------------------
 #ifdef cl_khr_int32_base_atomics
 #  pragma OPENCL EXTENSION cl_khr_int32_base_atomics : enable
-#  define occaAtomicAdd(PTR, UPDATE)  atomic_add
-#  define occaAtomicSub(PTR, UPDATE)  atomic_sub
-#  define occaAtomicSwap(PTR, UPDATE) atomic_xchg
-#  define occaAtomicInc(PTR, UPDATE)  atomic_inc
-#  define occaAtomicDec(PTR, UPDATE)  atomic_dec
+#  define occaAtomicAdd(PTR, UPDATE)        atomic_add(PTR, UPDATE)
+#  define occaAtomicSub(PTR, UPDATE)        atomic_sub(PTR, UPDATE)
+#  define occaAtomicSwap(PTR, UPDATE)       atomic_xchg(PTR, UPDATE)
+#  define occaAtomicInc(PTR, UPDATE)        atomic_inc(PTR, UPDATE)
+#  define occaAtomicDec(PTR, UPDATE)        atomic_dec(PTR, UPDATE)
+#  define occaAtomicCAS(PTR, COMP, UPDATE) atomic_cmpxchg(PTR, COMP, UPDATE)
 #endif
 
 #ifdef cl_khr_int32_extended_atomics
 #  pragma OPENCL EXTENSION cl_khr_int32_extended_atomics : enable
-#  define occaAtomicMin(PTR, UPDATE)  atomic_min
-#  define occaAtomicMax(PTR, UPDATE)  atomic_max
-#  define occaAtomicAnd(PTR, UPDATE)  atomic_and
-#  define occaAtomicOr(PTR, UPDATE)   atomic_or
-#  define occaAtomicXor(PTR, UPDATE)  atomic_xor
+#  define occaAtomicMin(PTR, UPDATE)  atomic_min(PTR, UPDATE)
+#  define occaAtomicMax(PTR, UPDATE)  atomic_max(PTR, UPDATE)
+#  define occaAtomicAnd(PTR, UPDATE)  atomic_and(PTR, UPDATE)
+#  define occaAtomicOr(PTR, UPDATE)   atomic_or(PTR, UPDATE)
+#  define occaAtomicXor(PTR, UPDATE)  atomic_xor(PTR, UPDATE)
 #endif
 
 #ifdef cl_khr_int64_atomics
 #  pragma OPENCL EXTENSION cl_khr_int64_atomics : enable
-#  define occaAtomicAdd64(PTR, UPDATE)  atom_add
-#  define occaAtomicSub64(PTR, UPDATE)  atom_sub
-#  define occaAtomicSwap64(PTR, UPDATE) atom_swap
-#  define occaAtomicInc64(PTR, UPDATE)  atom_inc
-#  define occaAtomicDec64(PTR, UPDATE)  atom_dec
+#  define occaAtomicAdd64(PTR, UPDATE)  atom_add(PTR, UPDATE)
+#  define occaAtomicSub64(PTR, UPDATE)  atom_sub(PTR, UPDATE)
+#  define occaAtomicSwap64(PTR, UPDATE) atom_swap(PTR, UPDATE)
+#  define occaAtomicInc64(PTR, UPDATE)  atom_inc(PTR, UPDATE)
+#  define occaAtomicDec64(PTR, UPDATE)  atom_dec(PTR, UPDATE)
 #endif
 //================================================
 
