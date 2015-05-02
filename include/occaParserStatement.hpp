@@ -180,6 +180,9 @@ namespace occa {
       // Add used vars to varUsedMap
       void labelUsedVariables();
 
+      // @(attributes)
+      void loadAttributes();
+
       // <const int,float>
       void mergeTypes();
 
@@ -378,6 +381,8 @@ namespace occa {
       int statementCount;
       statementNode *statementStart, *statementEnd;
 
+      strToStrMap_t attributeMap;
+
       statement(parserBase &pb);
 
       statement(const int depth_,
@@ -427,7 +432,6 @@ namespace occa {
       int checkBlockStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
 
       //  ---[ Fortran ]------
-
       int checkFortranStructStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
       int checkFortranUpdateStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
       int checkFortranDescriptorStatementType(strNode *&nodeRoot, expNode *expPtr = NULL);
@@ -713,6 +717,12 @@ namespace occa {
 
       operator std::string();
     };
+
+    int setAttributeMap(strToStrMap_t &attributeMap,
+                        expNode &expRoot,
+                        int leafPos);
+
+    std::string attributeMapToString(strToStrMap_t &attributeMap);
 
     std::ostream& operator << (std::ostream &out, statement &s);
     //============================================

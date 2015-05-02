@@ -382,6 +382,7 @@ namespace occa {
 
       static void simplify(infoDB_t &db, expNode &e);
 
+      static void removePermutations(infoDB_t &db, expNode &e);
       static void turnMinusIntoNegatives(infoDB_t &db, expNode &e);
 
       static void mergeConstants(infoDB_t &db, expNode &e);

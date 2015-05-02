@@ -158,6 +158,7 @@ namespace occa {
     public:
       int info;
 
+      strToStrMap_t attributeMap;
       qualifierInfo leftQualifiers, rightQualifiers;
 
       typeInfo *baseType;
@@ -270,6 +271,8 @@ namespace occa {
       //================================
 
       //---[ Variable Info ]------------
+      bool hasAttribute(const std::string &attr);
+
       int leftQualifierCount();
       int rightQualifierCount();
 

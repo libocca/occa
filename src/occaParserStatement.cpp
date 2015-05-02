@@ -1087,6 +1087,9 @@ namespace occa {
         labelUsedVariables();
 
       //---[ Level 1 ]------
+      // @(attributes)
+      loadAttributes();
+
       // <const int,float>
       mergeTypes();
 
@@ -1390,6 +1393,27 @@ namespace occa {
             sInfo->addVariableToUsedMap(var);
           }
         }
+      }
+    }
+
+    // @(attributes)
+    void expNode::loadAttributes(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if(leaves[leafPos]->value == "@"){
+          const int nextLeafPos = leafPos + 2;
+
+          if(sInfo){
+            setAttributeMap(sInfo->attributeMap,
+                            *this,
+                            leafPos);
+          }
+
+          removeNodes(leafPos, nextLeafPos - leafPos);
+        }
+
+        ++leafPos;
       }
     }
 
@@ -2036,27 +2060,28 @@ namespace occa {
           }
         }
         else if(isFuncInfo){
-          newExp.addVarInfoNode(0);
-          newExp.setVarInfo(0, leaves[0]->getVarInfo());
-
           // Get function variable
-          varInfo &var = leaves[0]->getVarInfo();
+          varInfo &var    = leaves[0]->getVarInfo();
+          varInfo &newVar = *(new varInfo(var.clone()));
+
+          newExp.addVarInfoNode(0);
+          newExp.setVarInfo(0, newVar);
+
 
           // Make sure we haven't initialized it
           //   from the original or an extern
           if(sChanged      &&
              (sUp != NULL) &&
-             !(sUp->hasVariableInLocalScope(var.name)) ){
+             !(sUp->hasVariableInLocalScope(newVar.name)) ){
 
-            sUp->addVariable(&var);
+            sUp->addVariable(&newVar);
           }
 
-          for(int i = 0; i < var.argumentCount; ++i){
-            varInfo &argVar = *(new varInfo());
-            argVar = var.getArgument(i).clone();
+          for(int i = 0; i < newVar.argumentCount; ++i){
+            varInfo &argVar = *(new varInfo(var.getArgument(i).clone()));
 
             newExp.sInfo->addVariable(&argVar);
-            var.setArgument(i, argVar);
+            newVar.setArgument(i, argVar);
           }
         }
       }
@@ -5064,6 +5089,8 @@ namespace occa {
 
       expRoot.cloneTo(newStatement->expRoot);
 
+      newStatement->attributeMap = attributeMap;
+
       newStatement->statementStart = NULL;
       newStatement->statementEnd   = NULL;
 
@@ -6022,6 +6049,83 @@ namespace occa {
 
     statement::operator std::string() {
       return toString();
+    }
+
+    int setAttributeMap(strToStrMap_t &attributeMap,
+                        expNode &expRoot,
+                        int leafPos){
+
+      if(expRoot.leafCount <= (leafPos + 1))
+        return leafPos;
+
+      if(expRoot[leafPos].value != "@")
+        return leafPos;
+
+      ++leafPos;
+
+      // Only one attribute
+      if(expRoot[leafPos].info != expType::C){
+        attributeMap[expRoot[leafPos].value] = "";
+      }
+      else {
+        expNode &csvFlatRoot = *(expRoot[leafPos].makeCsvFlatHandle());
+
+        const int attributeCount = csvFlatRoot.leafCount;
+
+        for(int i = 0; i < attributeCount; ++i){
+          expNode &attrNode   = csvFlatRoot[i];
+          const int attrIsSet = (attrNode.value == "=");
+
+          expNode *lrValues[2] = {attrIsSet ? &(attrNode[0]) : &attrNode,
+                                  attrIsSet ? &(attrNode[1]) : (expNode*) NULL};
+
+          std::string strValues[2];
+
+          for(int j = 0; j < (1 + attrIsSet); ++j){
+            for(int k = 0; k < lrValues[j]->leafCount; ++k){
+              if(k) strValues[j] += ' ';
+              strValues[j] += (*(lrValues[j]))[k];
+            }
+          }
+
+          attributeMap[strValues[0]] = strValues[1];
+        }
+
+        expNode::freeFlatHandle(csvFlatRoot);
+      }
+
+      return (leafPos + 1);
+    }
+
+    std::string attributeMapToString(strToStrMap_t &attributeMap){
+      std::string ret;
+
+      if(attributeMap.size()){
+        ret += "@(";
+
+        strToStrMapIterator it = attributeMap.begin();
+        bool oneAttrSet = false;
+
+        while(it != attributeMap.end()){
+          if(oneAttrSet)
+            ret += ", ";
+          else
+            oneAttrSet = true;
+
+          ret += it->first;
+
+          if(it->second != ""){
+            ret += " = ";
+            ret += it->second;
+          }
+
+          ++it;
+        }
+
+        ret += ')';
+      }
+
+      return ret;
     }
 
     std::ostream& operator << (std::ostream &out, statement &s){

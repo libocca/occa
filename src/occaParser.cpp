@@ -46,8 +46,8 @@ namespace occa {
 
       if(magicEnabled){
         magician::castMagicOn(*this);
-        // std::cout << (std::string) *globalScope;
-        // throw 1;
+        std::cout << (std::string) *globalScope;
+        throw 1;
       }
 
       labelNativeKernels();

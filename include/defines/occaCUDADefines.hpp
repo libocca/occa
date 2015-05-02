@@ -238,8 +238,8 @@ __device__ inline double occaCuda_atan(const double x){ return atan(x);  }
 #define occaFastAtan   occaCuda_atan
 #define occaNativeAtan occaCuda_atan
 
-__device__ inline float  occaCuda_atan2(const float x){  return atan2f(x); }
-__device__ inline double occaCuda_atan2(const double x){ return atan2(x);  }
+__device__ inline float  occaCuda_atan2(const float y, const float x){  return atan2f(y,x); }
+__device__ inline double occaCuda_atan2(const double y, const double x){ return atan2(y,x);  }
 
 #define occaAtan2       occaCuda_atan2
 #define occaFastAtan2   occaCuda_atan2

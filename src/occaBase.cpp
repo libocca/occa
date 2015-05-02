@@ -24,7 +24,7 @@ namespace occa {
 
   //---[ UVA ]------------------------
   ptrRangeMap_t uvaMap;
-  memoryArray_t uvaDirtyMemory;
+  memoryVector_t uvaDirtyMemory;
 
   bool hasUvaEnabledByDefault(){
     return uvaEnabledByDefault_f;
@@ -103,14 +103,37 @@ namespace occa {
     return occa::memory(mem);
   }
 
+  occa::memory_v* uvaToMemory(void *ptr){
+    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+
+    if(it == uvaMap.end())
+      return NULL;
+
+    return it->second;
+  }
+
   void syncToDevice(void *ptr, const uintptr_t bytes){
-    occa::memory m(ptr);
-    m.syncToDevice(bytes);
+    occa::memory_v *mem = uvaToMemory(ptr);
+
+    if(mem == NULL)
+      return;
+
+    if(!mem->dHandle->fakesUva())
+      memcpy(mem->handle, mem->uvaPtr, bytes);
+    else
+      occa::memory(mem).syncToDevice(bytes);
   }
 
   void syncFromDevice(void *ptr, const uintptr_t bytes){
-    occa::memory m(ptr);
-    m.syncFromDevice(bytes);
+    occa::memory_v *mem = uvaToMemory(ptr);
+
+    if(mem == NULL)
+      return;
+
+    if(!mem->dHandle->fakesUva())
+      memcpy(mem->uvaPtr, mem->handle, bytes);
+    else
+      occa::memory(mem).syncFromDevice(bytes);
   }
 
   bool needsSync(void *ptr){
@@ -150,6 +173,23 @@ namespace occa {
         break;
       }
     }
+  }
+
+  void setupMagicFor(void *ptr){
+    ptrRangeMap_t::iterator it = uvaMap.find(ptr);
+
+    if(it == uvaMap.end())
+      return;
+
+    memory_v &mem = *(it->second);
+
+    if(mem.dHandle->fakesUva())
+      return;
+
+    if(mem.uvaPtr == NULL)
+      mem.uvaPtr = cpu::malloc(mem.size);
+
+    memcpy(mem.uvaPtr, mem.handle, mem.size);
   }
 
   void free(void *ptr){

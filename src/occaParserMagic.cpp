@@ -2245,9 +2245,11 @@ namespace occa {
                                                           intVector_t &outerLoopVec,
                                                           intVecVector_t &innerLoopVec){
       const int kernelCount = outerLoopVec.size();
+      statementVector_t newKernelVec;
 
-      statement &kernel = *(parserBase::getStatementKernel(*(loopsVec[0])));
-      statementNode *sn = kernel.getStatementNode();
+      statement &kernel  = *(parserBase::getStatementKernel(*(loopsVec[0])));
+      varInfo &kernelVar = *(kernel.getFunctionVar());
+      statementNode *sn  = kernel.getStatementNode();
 
       if(kernelCount == 0)
         return sn->right;
@@ -2261,23 +2263,19 @@ namespace occa {
       std::string kernelName = kernel.getFunctionName();
       globalScope.createUniqueSequentialVariables(kernelName, kernelCount);
 
-      varInfo &kernelVar = *(kernel.getFunctionVar());
-
+      std::stringstream ss;
       intVector_t path;
 
       for(int k = 0; k < kernelCount; ++k){
+        ss.str("");
+        ss << k;
+        kernel.setFunctionName(kernelName + ss.str());
+
         sn = sn->push(kernel.clone());
         statement &newKernel = *(sn->value);
+        newKernelVec.push_back(&newKernel);
 
-        // Also clone the kernel function variable
-        varInfo &newKernelVar = *(new varInfo);
-        newKernelVar = kernelVar.clone();
-
-        newKernel.setFunctionVar(newKernelVar);
-
-        std::stringstream ss;
-        ss << k;
-        newKernel.setFunctionName(kernelName + ss.str());
+        kernel.setFunctionName(kernelName);
 
         const int o   = outerLoopVec[k];
         statement &os = *(loopsVec[o]);
@@ -2322,7 +2320,58 @@ namespace occa {
 #endif
       }
 
-      return sn->right;
+      statementNode *retSn = sn->right;
+
+      sn = kernel.statementStart;
+
+      while(sn)
+        popAndGoRight(sn);
+
+      kernel.statementStart = NULL;
+      kernel.statementEnd   = NULL;
+
+      std::string syncArgsStr, kernelArgs;
+
+      for(int i = 0; i < kernelVar.argumentCount; ++i){
+        varInfo &argVar = kernelVar.getArgument(i);
+
+        if(0 < argVar.pointerCount){
+          ss.str("");
+          ss << "occa::setupMagicFor(" << argVar.name << ");";
+          kernel.addStatementFromSource(ss.str());
+
+          ss.str("");
+          ss << "occa::syncToDevice(" << argVar.name << ");";
+          syncArgsStr += ss.str();
+        }
+      }
+
+      ss.str("");
+
+      ss << '(';
+
+      for(int i = 0; i < kernelVar.argumentCount; ++i){
+        if(i) ss << ',';
+        ss << kernelVar.getArgument(i).name;
+      }
+
+      ss << ");";
+
+      kernelArgs = ss.str();
+
+      for(int k = 0; k < kernelCount; ++k){
+        ss.str("");
+        ss << k;
+
+        std::string kStr = ss.str();
+
+        kernel.addStatementFromSource(kernelName + kStr + kernelArgs);
+
+        if(k < (kernelCount - 1))
+          kernel.addStatementsFromSource(syncArgsStr);
+      }
+
+      return retSn;
     }
 
     void magician::storeLoopsAndDepths(statement &s,
@@ -2550,10 +2599,30 @@ namespace occa {
     }
 
     void magician::simplify(infoDB_t &db, expNode &e){
+      removePermutations(db, e);
       turnMinusIntoNegatives(db, e);
       expandExp(db, e);
       mergeConstants(db, e);
       // mergeVariables(db, e);
+    }
+
+    void magician::removePermutations(infoDB_t &db, expNode &e){
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if(leaf.info & expType::variable){
+          varInfo &var = leaf[0].getVarInfo();
+
+          if(var.hasAttribute("permutation")){
+            leaf.info = expType::root;
+            expNode::swap(leaf, leaf[1][0][0]);
+          }
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     void magician::turnMinusIntoNegatives(infoDB_t &db, expNode &e){

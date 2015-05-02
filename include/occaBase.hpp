@@ -108,10 +108,10 @@ namespace occa {
   };
 
   typedef std::map<ptrRange_t, occa::memory_v*> ptrRangeMap_t;
-  typedef std::vector<occa::memory_v*>          memoryArray_t;
+  typedef std::vector<occa::memory_v*>          memoryVector_t;
 
   extern ptrRangeMap_t uvaMap;
-  extern memoryArray_t uvaDirtyMemory;
+  extern memoryVector_t uvaDirtyMemory;
 
   class uvaPtrInfo_t {
   private:
@@ -129,6 +129,8 @@ namespace occa {
     occa::memory getMemory();
   };
 
+  occa::memory_v* uvaToMemory(void *ptr);
+
   void syncToDevice(void *ptr, const uintptr_t bytes = 0);
   void syncFromDevice(void *ptr, const uintptr_t bytes = 0);
 
@@ -137,6 +139,8 @@ namespace occa {
 
   void removeFromDirtyMap(void *ptr);
   void removeFromDirtyMap(memory_v *mem);
+
+  void setupMagicFor(void *ptr);
 
   void free(void *ptr);
   //==================================
@@ -840,6 +844,7 @@ namespace occa {
 
     virtual void free() = 0;
 
+    //---[ Friend Functions ]-----------
 
     // Let [memcpy] use private info
     friend void memcpy(void *dest, void *src,
@@ -854,6 +859,11 @@ namespace occa {
                        const uintptr_t bytes,
                        const int flags,
                        const bool isAsync);
+
+    friend void syncToDevice(void *ptr, const uintptr_t bytes);
+    friend void syncFromDevice(void *ptr, const uintptr_t bytes);
+
+    friend void setupMagicFor(void *ptr);
   };
 
   template <occa::mode mode_>
@@ -1083,7 +1093,7 @@ namespace occa {
 
     bool uvaEnabled_;
     ptrRangeMap_t uvaMap;
-    memoryArray_t uvaDirtyMemory;
+    memoryVector_t uvaDirtyMemory;
 
     stream currentStream;
     std::vector<stream> streams;

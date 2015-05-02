@@ -711,6 +711,7 @@ namespace occa {
     varInfo::varInfo(const varInfo &var) :
       info(var.info),
 
+      attributeMap(var.attributeMap),
       leftQualifiers(var.leftQualifiers),
       rightQualifiers(var.rightQualifiers),
 
@@ -733,6 +734,7 @@ namespace occa {
     varInfo& varInfo::operator = (const varInfo &var){
       info = var.info;
 
+      attributeMap    = var.attributeMap;
       leftQualifiers  = var.leftQualifiers;
       rightQualifiers = var.rightQualifiers;
 
@@ -758,6 +760,7 @@ namespace occa {
     varInfo varInfo::clone(){
       varInfo v = *this;
 
+      v.attributeMap    = attributeMap;
       v.leftQualifiers  = leftQualifiers.clone();
       v.rightQualifiers = rightQualifiers.clone();
 
@@ -822,6 +825,12 @@ namespace occa {
 
       leafPos = loadNameFrom(expRoot, leafPos);
       leafPos = loadArgsFrom(expRoot, leafPos);
+
+      if((leafPos < (expRoot.leafCount - 1)) &&
+         (expRoot[leafPos].value == "@")){
+
+        leafPos = setAttributeMap(attributeMap, expRoot, leafPos);
+      }
 
       return leafPos;
     }
@@ -1648,6 +1657,10 @@ namespace occa {
 
 
     //---[ Variable Info ]------------
+    bool varInfo::hasAttribute(const std::string &attr){
+      return (attributeMap.find(attr) != attributeMap.end());
+    }
+
     int varInfo::leftQualifierCount(){
       return leftQualifiers.qualifierCount;
     }
@@ -1835,6 +1848,11 @@ namespace occa {
 
         ret += ')';
       }
+
+      // Print attributes (for debugging purposes)
+#if 0
+      std::cout << ' ' << attributeMapToString(attributeMap);
+#endif
 
       return ret;
     }
