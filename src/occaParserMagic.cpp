@@ -6,7 +6,7 @@
 #define DBP3 0 // Has Stride
 #define DBP4 0 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
 #define DBP5 0 // LCD-labeled Statements and GCS Prints, For-loops with LCD
-#define DBP6 1 // Outer-Loop/Inner-Loop Posibilities
+#define DBP6 0 // Outer-Loop/Inner-Loop Posibilities
 
 namespace occa {
   namespace parserNS {
