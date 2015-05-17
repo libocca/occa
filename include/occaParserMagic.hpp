@@ -298,6 +298,8 @@ namespace occa {
       varUsedMap_t &varUpdateMap;
       varUsedMap_t &varUsedMap;
 
+      intVector_t testedTileSizes;
+
       infoDB_t db;
 
       magician(parserBase &parser_);

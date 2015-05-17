@@ -18,7 +18,7 @@
 typedef float  datafloat;
 typedef float4 datafloat4;
 
-kernel void acousticsVolumeKernelNew(const int  K,
+kernel void acousticsVolumeKernelNew(const int  K ,
                                      const int  Klev,
                                      const int  timeDirection,
                                      const int        * ks @(permutation),

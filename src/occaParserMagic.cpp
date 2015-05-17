@@ -1,12 +1,12 @@
 #include "occaParserMagic.hpp"
 
-#define DBP0 0 // Read/Write/Expand
+#define DBP0 1 // Read/Write/Expand
 #define DBP1 0 // Index Sorting/Updating
 #define DBP2 0 // Expression Simplification
 #define DBP3 0 // Has Stride
-#define DBP4 0 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
+#define DBP4 1 // Check Complex Inputs, Access Stride Conflicts, Access Conflicts
 #define DBP5 0 // LCD-labeled Statements and GCS Prints, For-loops with LCD
-#define DBP6 0 // Outer-Loop/Inner-Loop Posibilities
+#define DBP6 1 // Outer-Loop/Inner-Loop Posibilities
 
 namespace occa {
   namespace parserNS {
@@ -1583,7 +1583,15 @@ namespace occa {
       parser(parser_),
       globalScope( *(parser_.globalScope) ),
       varUpdateMap(parser_.varUpdateMap),
-      varUsedMap(parser_.varUsedMap) {}
+      varUsedMap(parser_.varUsedMap) {
+
+      testedTileSizes.push_back(8);
+      testedTileSizes.push_back(16);
+      testedTileSizes.push_back(32);
+      testedTileSizes.push_back(64);
+      testedTileSizes.push_back(128);
+      testedTileSizes.push_back(256);
+    }
 
     void magician::castMagicOn(parserBase &parser_){
       magician mickey(parser_);
@@ -2108,6 +2116,14 @@ namespace occa {
           }
         }
 
+        // Always setup tiled kernels
+        const int tileKernels = (int) testedTileSizes.size();
+
+        for(int tk = 0; tk < tileKernels; ++tk){
+          outerLoopVec.push_back(o);
+          innerLoopVec.push_back(intVector_t());
+        }
+
         if(innerMostLoop == 0)
           continue;
 
@@ -2266,6 +2282,8 @@ namespace occa {
       std::stringstream ss;
       intVector_t path;
 
+      int tileTest = 0;
+
       for(int k = 0; k < kernelCount; ++k){
         ss.str("");
         ss << k;
@@ -2292,6 +2310,26 @@ namespace occa {
 
         intVector_t &innerLoopsVec = innerLoopVec[k];
         const int innerLoopCount  = innerLoopsVec.size();
+
+        if(innerLoopCount != 0){
+          tileTest = 0;
+        }
+        else {
+          newOsE.info  = expType::root;
+          newOsE.value = "";
+
+          newOsE.addNodes(expType::unknown, 0, 2);
+          newOsE[0].value = "tile";
+
+          newOsE[1].info  = expType::C;
+          newOsE[1].value = "(";
+
+          ss.str("");
+          ss << testedTileSizes[tileTest++];
+
+          newOsE[1].addNode(expType::presetValue, ss.str());
+          continue;
+        }
 
 #if DBP6
         std::cout << "Outer Loop   : " << newOs.onlyThisToString() << '\n';
