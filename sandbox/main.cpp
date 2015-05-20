@@ -101,11 +101,13 @@ int main(int argc, char **argv){
 
     //---[ Generic ]--------------------
     // parsedContent = parser.parseFile("tests/ridgV.oak");
+    // parsedContent = parser.parseFile("magicTests/addVectors.oak");
+    parsedContent = parser.parseFile("magicTests/fdTest.oak");
 
     //---[ Rodinia ]--------------------
     // parsedContent = parser.parseFile("magicTests/rodinia/backprop.oak");
     // parsedContent = parser.parseFile("magicTests/rodinia/bfs.oak"); // Fails: Has dynamic bounds
-    parsedContent = parser.parseFile("magicTests/rodinia/gaussian.oak");
+    // parsedContent = parser.parseFile("magicTests/rodinia/gaussian.oak");
 
     //---[ Arturo ]---------------------
     // parsedContent = parser.parseFile("magicTests/arturo/hermiteAdvec.okl");
