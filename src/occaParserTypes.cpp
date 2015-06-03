@@ -3,6 +3,195 @@
 
 namespace occa {
   namespace parserNS {
+    //---[ Attribute Class ]----------------------
+    attribute_t::attribute_t() :
+      argCount(0),
+      args(NULL),
+
+      value(NULL) {}
+
+    attribute_t::attribute_t(expNode &e) :
+      argCount(0),
+      args(NULL),
+
+      value(NULL) {
+
+      load(e);
+    }
+
+    attribute_t::attribute_t(const attribute_t &attr) :
+      name(attr.name),
+
+      argCount(attr.argCount),
+      args(attr.args),
+
+      value(attr.value) {}
+
+    attribute_t& attribute_t::operator = (const attribute_t &attr){
+      name = attr.name;
+
+      argCount = attr.argCount;
+      args     = attr.args;
+
+      value = attr.value;
+
+      return *this;
+    }
+
+    void attribute_t::load(expNode &e){
+      const int attrIsSet = (e.value == "=");
+
+      expNode *attrNode = (attrIsSet ? &(e[0]) : &e);
+
+      if(attrNode->info & expType::variable)
+        loadVariable(*attrNode);
+      else
+        name = attrNode->toString();
+
+      if(!attrIsSet)
+        return;
+
+      value = e[1].clone();
+    }
+
+    void attribute_t::loadVariable(expNode &e){
+      name = e[0].toString();
+
+      expNode &bn = e[1];
+
+      if((bn.info    & expType::qualifier) &&
+         (bn[0].info & expType::C)){
+
+        expNode &csvFlatRoot = *(bn[0][0].makeCsvFlatHandle());
+
+        argCount = csvFlatRoot.leafCount;
+
+        if(argCount){
+          args = new expNode*[argCount];
+
+          for(int i = 0; i < argCount; ++i)
+            args[i] = csvFlatRoot[i].clone();
+        }
+
+        expNode::freeFlatHandle(csvFlatRoot);
+      }
+    }
+
+    expNode& attribute_t::operator [] (const int pos){
+      return *(args[pos]);
+    }
+
+    std::string attribute_t::argStr(const int pos){
+      return args[pos]->toString();
+    }
+
+    std::string attribute_t::valueStr(){
+      return value->toString();
+    }
+
+    attribute_t::operator std::string(){
+      std::string ret;
+
+      ret += name;
+
+      if(argCount){
+        ret += "(";
+
+        for(int i = 0; i < argCount; ++i){
+          if(i)
+            ret += ", ";
+
+          ret += argStr(i);
+        }
+
+        ret += ")";
+      }
+
+      if(value){
+        ret += " = ";
+        ret += valueStr();
+      }
+
+      return ret;
+    }
+
+    std::ostream& operator << (std::ostream &out, attribute_t &attr){
+      out << (std::string) attr;
+
+      return out;
+    }
+
+    int setAttributeMap(attributeMap_t &attributeMap,
+                        expNode &expRoot,
+                        int leafPos){
+
+      if(expRoot.leafCount <= (leafPos + 1))
+        return leafPos;
+
+      if(expRoot[leafPos].value != "@")
+        return leafPos;
+
+      ++leafPos;
+
+      // Only one attribute
+      if(expRoot[leafPos].info != expType::C){
+        attribute_t &attr = *(new attribute_t(expRoot[leafPos]));
+        attributeMap[attr.name] = &attr;
+      }
+      else {
+        expNode &attrRoot = expRoot[leafPos];
+
+        for(int i = 0; i < attrRoot.leafCount; ++i){
+          if(attrRoot[i].info & expType::unknown)
+            attrRoot[i].info |= expType::attribute;
+        }
+
+        expRoot[leafPos].organizeLeaves();
+        expNode &csvFlatRoot = *(expRoot[leafPos][0].makeCsvFlatHandle());
+
+        const int attributeCount = csvFlatRoot.leafCount;
+
+        for(int i = 0; i < attributeCount; ++i){
+          expNode &attrNode = csvFlatRoot[i];
+          attribute_t &attr = *(new attribute_t(attrNode));
+
+          attributeMap[attr.name] = &attr;
+        }
+
+        expNode::freeFlatHandle(csvFlatRoot);
+      }
+
+      return (leafPos + 1);
+    }
+
+    std::string attributeMapToString(attributeMap_t &attributeMap){
+      std::string ret;
+
+      if(attributeMap.size()){
+        ret += "@(";
+
+        attributeMapIterator it = attributeMap.begin();
+        bool oneAttrSet = false;
+
+        while(it != attributeMap.end()){
+          if(oneAttrSet)
+            ret += ", ";
+          else
+            oneAttrSet = true;
+
+          ret += (std::string) *(it->second);
+
+          ++it;
+        }
+
+        ret += ')';
+      }
+
+      return ret;
+    }
+    //==================================
+
+
     //---[ Qualifier Info Class ]-----------------
     qualifierInfo::qualifierInfo() :
       qualifierCount(0),
@@ -526,6 +715,7 @@ namespace occa {
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value != "{")){
+
         typeInfo *tmp = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
 
         if(tmp){
@@ -632,7 +822,21 @@ namespace occa {
                                 int pos){
       leftQualifiers.add(qName, pos);
     }
+
+    int typeInfo::pointerDepth(){
+      if(typedefing)
+        return typedefVar->pointerDepth();
+
+      return 0;
+    }
     //==================================
+
+
+    //---[ Class Info ]---------------
+    varInfo* typeInfo::hasOperator(const std::string &name){
+      return NULL;
+    }
+    //================================
 
     std::string typeInfo::toString(const std::string &tab){
       std::string ret;
@@ -726,6 +930,7 @@ namespace occa {
       stackExpRoots(var.stackExpRoots),
 
       dimAttr(var.dimAttr),
+      idxOrdering(var.idxOrdering),
 
       argumentCount(var.argumentCount),
       argumentVarInfos(var.argumentVarInfos),
@@ -750,7 +955,8 @@ namespace occa {
       stackPointersUsed  = var.stackPointersUsed;
       stackExpRoots      = var.stackExpRoots;
 
-      dimAttr = var.dimAttr;
+      dimAttr     = var.dimAttr;
+      idxOrdering = var.idxOrdering;
 
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
@@ -836,7 +1042,7 @@ namespace occa {
         leafPos = setAttributeMap(attributeMap, expRoot, leafPos);
       }
 
-      setupAttributeDims();
+      setupAttributes();
 
       return leafPos;
     }
@@ -1040,13 +1246,53 @@ namespace occa {
       return (leafPos + 1);
     }
 
-    void varInfo::setupAttributeDims(){
+    void varInfo::setupAttributes(){
       attributeMapIterator it = attributeMap.find("dim");
 
-      if(it == attributeMap.end())
-        return;
+      if(it != attributeMap.end())
+        dimAttr = *(it->second);
 
-      dimAttr = *(it->second);
+      it = attributeMap.find("idxOrder");
+
+      if(it != attributeMap.end()){
+        attribute_t &idxOrderAttr = *(it->second);
+
+        OCCA_CHECK(idxOrderAttr.argCount == dimAttr.argCount,
+                   "Variable [" << *this << "] has attributes dim(...) and idxOrder(...) with different dimensions");
+
+        const int dims = dimAttr.argCount;
+
+        bool *idxFound = new bool[dims];
+
+        idxOrdering.clear();
+
+        for(int i = 0; i < dims; ++i){
+          idxFound[i] = false;
+          idxOrdering.push_back(0);
+        }
+
+        for(int i = 0; i < dims; ++i){
+          OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
+                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time");
+
+          typeHolder th = idxOrderAttr[i].calculateValue();
+
+          OCCA_CHECK(!th.isAFloat(),
+                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering");
+
+          const int idxOrder = (int) th.longValue();
+
+          idxOrdering[idxOrder] = i;
+
+          OCCA_CHECK(idxFound[idxOrder] == false,
+                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a repeating index");
+
+          OCCA_CHECK((0 <= idxOrder) && (idxOrder < dims),
+                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with an index [" << idxOrder << "] outside the range [0," << (dims - 1) << "]");
+
+          idxFound[idxOrder] = true;
+        }
+      }
     }
 
     //   ---[ Fortran ]-------
@@ -1672,8 +1918,13 @@ namespace occa {
 
 
     //---[ Variable Info ]------------
-    bool varInfo::hasAttribute(const std::string &attr){
-      return (attributeMap.find(attr) != attributeMap.end());
+    attribute_t* varInfo::hasAttribute(const std::string &attr){
+      attributeMapIterator it = attributeMap.find(attr);
+
+      if(it == attributeMap.end())
+        return NULL;
+
+      return (it->second);
     }
 
     int varInfo::leftQualifierCount(){
@@ -1725,7 +1976,10 @@ namespace occa {
     }
 
     int varInfo::pointerDepth(){
-      return (pointerCount + stackPointerCount);
+      if(baseType)
+        return (pointerCount + stackPointerCount + baseType->pointerDepth());
+      else
+        return (pointerCount + stackPointerCount);
     }
 
     expNode& varInfo::stackSizeExpNode(const int pos){
@@ -1766,6 +2020,22 @@ namespace occa {
 
       argumentVarInfos = newArgumentVarInfos;
       ++argumentCount;
+    }
+    //================================
+
+
+    //---[ Class Info ]---------------
+    varInfo* varInfo::hasOperator(const std::string &op){
+      if(op.size() == 0)
+        return NULL;
+
+      if(pointerDepth())
+        return (varInfo*) -1; // Dummy non-zero value
+
+      if(baseType)
+        return baseType->hasOperator(op);
+
+      return NULL;
     }
     //================================
 

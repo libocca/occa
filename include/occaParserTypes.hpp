@@ -50,6 +50,7 @@ namespace occa {
     std::string attributeMapToString(attributeMap_t &attributeMap);
     //============================================
 
+
     //---[ Qualifier Info Class ]-----------------
     class qualifierInfo {
     public:
@@ -169,6 +170,13 @@ namespace occa {
       //---[ Type Info ]----------------
       void addQualifier(const std::string &qName,
                         int pos = -1);
+
+      int pointerDepth();
+      //================================
+
+      //---[ Class Info ]---------------
+
+      varInfo* hasOperator(const std::string &op);
       //================================
 
       std::string toString(const std::string &tab = "");
@@ -212,6 +220,7 @@ namespace occa {
 
       // @dim()
       attribute_t dimAttr;
+      intVector_t idxOrdering;
 
       int argumentCount;
       varInfo **argumentVarInfos;
@@ -252,7 +261,7 @@ namespace occa {
       int loadArgsFrom(expNode &expRoot,
                        int leafPos);
 
-      void setupAttributeDims();
+      void setupAttributes();
 
       //   ---[ Fortran ]-----
       int loadFromFortran(expNode &expRoot,
@@ -312,7 +321,7 @@ namespace occa {
       //================================
 
       //---[ Variable Info ]------------
-      bool hasAttribute(const std::string &attr);
+      attribute_t* hasAttribute(const std::string &attr);
 
       int leftQualifierCount();
       int rightQualifierCount();
@@ -343,6 +352,10 @@ namespace occa {
       varInfo& getArgument(const int pos);
       void setArgument(const int pos, varInfo &var);
       void addArgument(const int pos, varInfo &arg);
+      //================================
+
+      //---[ Class Info ]---------------
+      varInfo* hasOperator(const std::string &op);
       //================================
 
       bool isConst();

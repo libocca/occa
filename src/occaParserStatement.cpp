@@ -177,8 +177,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      print();
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -1105,6 +1105,9 @@ namespace occa {
       // a[3]
       mergeArrays();
 
+      // ptr(a,b)
+      mergePointerArrays();
+
       organizeLeaves(1);
       //====================
 
@@ -1410,6 +1413,7 @@ namespace occa {
                             leafPos);
           }
 
+          // Remove nodes from the AST
           removeNodes(leafPos, nextLeafPos - leafPos);
         }
 
@@ -1486,9 +1490,20 @@ namespace occa {
 
     // a[2]
     void expNode::mergeArrays(){
-      int leafPos = 0;
+      int leafPos = 1;
 
       while(leafPos < leafCount){
+        expNode &preLeaf = *(leaves[leafPos - 1]);
+
+        if( !((preLeaf.info & expType::varInfo) &&
+              (preLeaf.getVarInfo().hasOperator("(") ||
+               preLeaf.getVarInfo().hasOperator("["))) &&
+            ((preLeaf.info & expType::attribute) == 0) ){
+
+          ++leafPos;
+          continue;
+        }
+
         if((leaves[leafPos]->info & expType::C) &&
            ((leaves[leafPos]->value == "[") ||
             (leaves[leafPos]->value == "("))){
@@ -1553,6 +1568,92 @@ namespace occa {
         }
         else
           ++leafPos;
+      }
+    }
+
+    // ptr(a,b)
+    void expNode::mergePointerArrays(){
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        expNode &leaf = *(leaves[leafPos]);
+
+        if((leaf.info & expType::variable)       && // Variable
+           (1 < leaf.leafCount)                  &&
+           (leaf[0].info & expType::varInfo)     && // varInfo
+           (leaf[0].getVarInfo().pointerDepth()) && // that is a pointer
+           (leaf[1].info & expType::qualifier)   &&
+           (leaf[1][0].value == "(")){              // Uses () operator
+
+          varInfo &var      = leaf[0].getVarInfo();
+          expNode &arrNode  = leaf[1][0];
+
+          const int dims     = var.dimAttr.argCount;
+          const bool reorder = var.idxOrdering.size();
+
+          expNode &csvFlatRoot = *(arrNode[0].makeCsvFlatHandle());
+          expVec_t indices;
+
+          OCCA_CHECK(dims != 0,
+                     "Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute");
+
+          OCCA_CHECK(dims == csvFlatRoot.leafCount,
+                     "Variable use [" << toString() << "] has different index count of its attribute [" << var.dimAttr << "]");
+
+          arrNode.value = "[";
+
+          for(int i = 0; i < dims; ++i){
+            if(reorder)
+              indices.push_back( csvFlatRoot[ var.idxOrdering[i] ].clone() );
+            else
+              indices.push_back( csvFlatRoot[i].clone() );
+          }
+
+          expNode::freeFlatHandle(csvFlatRoot);
+          arrNode[0].free();
+
+          arrNode.addNode();
+          expNode *plusNode_ = &(arrNode[0]);
+
+          for(int i = 0; i < dims - 1; ++i){
+            const int i2 = (reorder ? var.idxOrdering[i] : i);
+
+            expNode &plusNode = *plusNode_;
+
+            plusNode.info  = expType::LR;
+            plusNode.value = "+";
+
+            plusNode.addNodes(expType::root, 0, 2);
+
+            expNode &timesNode = plusNode[1];
+
+            plusNode[0].free();
+            expNode::swap(plusNode[0], *(indices[i]));
+
+            timesNode.info  = expType::LR;
+            timesNode.value = "*";
+
+            timesNode.addNodes(expType::root, 0, 2);
+
+            timesNode[0].free();
+            expNode::swap(timesNode[0], *(var.dimAttr[i2].clone()));
+
+            if(i < (dims - 2)){
+              timesNode[1].info  = expType::C;
+              timesNode[1].value = "(";
+
+              timesNode[1].addNode();
+
+              plusNode_ = &(timesNode[1][0]);
+            }
+            else{
+              timesNode[1].free();
+              expNode::swap(timesNode[1], *(indices[i + 1]));
+            }
+          }
+        }
+
+        ++leafPos;
       }
     }
 
@@ -1738,7 +1839,8 @@ namespace occa {
 
       return ((leaves[pos]->value == "*") ||
               (leaves[pos]->value == "&") ||
-              (leaves[pos]->value == "["));
+              (leaves[pos]->value == "[") ||
+              (leaves[pos]->value == "("));
     }
 
     void expNode::mergeFortranArrays(){
@@ -3054,6 +3156,12 @@ namespace occa {
       }
 
       case (expType::unknown):{
+        out << value;
+
+        break;
+      }
+
+      case (expType::unknown | expType::attribute):{
         out << value;
 
         break;
@@ -6057,185 +6165,6 @@ namespace occa {
       out << (std::string) s;
 
       return out;
-    }
-
-    attribute_t::attribute_t() :
-      argCount(0),
-      args(NULL),
-
-      value(NULL) {}
-
-    attribute_t::attribute_t(expNode &e) :
-      argCount(0),
-      args(NULL),
-
-      value(NULL) {
-
-      load(e);
-    }
-
-    attribute_t::attribute_t(const attribute_t &attr) :
-      name(attr.name),
-
-      argCount(attr.argCount),
-      args(attr.args),
-
-      value(attr.value) {}
-
-    attribute_t& attribute_t::operator = (const attribute_t &attr){
-      name = attr.name;
-
-      argCount = attr.argCount;
-      args     = attr.args;
-
-      value = attr.value;
-
-      return *this;
-    }
-
-    void attribute_t::load(expNode &e){
-      const int attrIsSet = (e.value == "=");
-
-      expNode *attrNode = (attrIsSet ? &(e[0]) : &e);
-
-      if(attrNode->info & expType::variable)
-        loadVariable(*attrNode);
-      else
-        name = attrNode->toString();
-
-      if(!attrIsSet)
-        return;
-
-      value = e[1].clone();
-    }
-
-    void attribute_t::loadVariable(expNode &e){
-      name = e[0].toString();
-
-      expNode &bn = e[1];
-
-      if((bn.info    & expType::qualifier) &&
-         (bn[0].info & expType::C)){
-
-        expNode &csvFlatRoot = *(bn[0][0].makeCsvFlatHandle());
-
-        argCount = csvFlatRoot.leafCount;
-
-        if(argCount){
-          args = new expNode*[argCount];
-
-          for(int i = 0; i < argCount; ++i)
-            args[i] = csvFlatRoot[i].clone();
-        }
-
-        expNode::freeFlatHandle(csvFlatRoot);
-      }
-    }
-
-    expNode& attribute_t::operator [] (const int pos){
-      return *(args[pos]);
-    }
-
-    std::string attribute_t::argStr(const int pos){
-      return args[pos]->toString();
-    }
-
-    std::string attribute_t::valueStr(){
-      return value->toString();
-    }
-
-    attribute_t::operator std::string(){
-      std::string ret;
-
-      ret += name;
-
-      if(argCount){
-        ret += "(";
-
-        for(int i = 0; i < argCount; ++i){
-          if(i)
-            ret += ", ";
-
-          ret += argStr(i);
-        }
-
-        ret += ")";
-      }
-
-      if(value){
-        ret += " = ";
-        ret += valueStr();
-      }
-
-      return ret;
-    }
-
-    std::ostream& operator << (std::ostream &out, attribute_t &attr){
-      out << (std::string) attr;
-
-      return out;
-    }
-
-    int setAttributeMap(attributeMap_t &attributeMap,
-                        expNode &expRoot,
-                        int leafPos){
-
-      if(expRoot.leafCount <= (leafPos + 1))
-        return leafPos;
-
-      if(expRoot[leafPos].value != "@")
-        return leafPos;
-
-      ++leafPos;
-
-      // Only one attribute
-      if(expRoot[leafPos].info != expType::C){
-        attribute_t &attr = *(new attribute_t(expRoot[leafPos]));
-        attributeMap[attr.name] = &attr;
-      }
-      else {
-        expRoot[leafPos].organizeLeaves();
-        expNode &csvFlatRoot = *(expRoot[leafPos][0].makeCsvFlatHandle());
-
-        const int attributeCount = csvFlatRoot.leafCount;
-
-        for(int i = 0; i < attributeCount; ++i){
-          expNode &attrNode = csvFlatRoot[i];
-          attribute_t &attr = *(new attribute_t(attrNode));
-
-          attributeMap[attr.name] = &attr;
-        }
-
-        expNode::freeFlatHandle(csvFlatRoot);
-      }
-
-      return (leafPos + 1);
-    }
-
-    std::string attributeMapToString(attributeMap_t &attributeMap){
-      std::string ret;
-
-      if(attributeMap.size()){
-        ret += "@(";
-
-        attributeMapIterator it = attributeMap.begin();
-        bool oneAttrSet = false;
-
-        while(it != attributeMap.end()){
-          if(oneAttrSet)
-            ret += ", ";
-          else
-            oneAttrSet = true;
-
-          ret += (std::string) *(it->second);
-
-          ++it;
-        }
-
-        ret += ')';
-      }
-
-      return ret;
     }
     //============================================
 
