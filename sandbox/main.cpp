@@ -10,99 +10,43 @@ int main(int argc, char **argv){
 
   std::string parsedContent;
 
-  // {
-  //   parsedContent = parser.parseFile("tests/easy.c");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/test.cpp");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/test2.cpp");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/scratch.okl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/pwdg.okl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/openclTest.cpp");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/cudaTest.cpp");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/fd2d_cuda.okl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/midg.okl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/cleanTest.c");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/clangTest.c");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/addVectors.okl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/PCGpart1.cl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/lookup_kernel.okl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/reduction.cl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/loopy.cl");
-  // }
-
-  // {
-  //   parsedContent = parser.parseFile("tests/addVectors_loopy.cl");
-  // }
+  // parsedContent = parser.parseFile("tests/easy.c");
+  // parsedContent = parser.parseFile("tests/test.cpp");
+  // parsedContent = parser.parseFile("tests/test2.cpp");
+  parsedContent = parser.parseFile("tests/scratch.okl");
+  // parsedContent = parser.parseFile("tests/pwdg.okl");
+  // parsedContent = parser.parseFile("tests/openclTest.cpp");
+  // parsedContent = parser.parseFile("tests/cudaTest.cpp");
+  // parsedContent = parser.parseFile("tests/fd2d_cuda.okl");
+  // parsedContent = parser.parseFile("tests/midg.okl");
+  // parsedContent = parser.parseFile("tests/cleanTest.c");
+  // parsedContent = parser.parseFile("tests/clangTest.c");
+  // parsedContent = parser.parseFile("tests/addVectors.okl");
+  // parsedContent = parser.parseFile("tests/PCGpart1.cl");
+  // parsedContent = parser.parseFile("tests/lookup_kernel.okl");
+  // parsedContent = parser.parseFile("tests/reduction.cl");
+  // parsedContent = parser.parseFile("tests/loopy.cl");
+  // parsedContent = parser.parseFile("tests/addVectors_loopy.cl");
 
   //---[ Fortran ]----------------------
-  // {
-  //   parsedContent = parser.parseFile("tests/scratch.ofl",
-  //                                                occa::parserNS::parsingFortran);
-  // }
+  // parsedContent = parser.parseFile("tests/scratch.ofl",
+  //                                  occa::parserNS::parsingFortran);
 
-  // {
-  //   parsedContent = parser.parseFile("tests/addVectors.ofl",
-  //                                                occa::parserNS::parsingFortran);
-  // }
+  // parsedContent = parser.parseFile("tests/addVectors.ofl",
+  //                                  occa::parserNS::parsingFortran);
 
-  // {
-  //   parsedContent = parser.parseFile("tests/fakeNuma.ofl",
-  //                                                occa::parserNS::parsingFortran);
-  // }
+  // parsedContent = parser.parseFile("tests/fakeNuma.ofl",
+  //                                  occa::parserNS::parsingFortran);
   //====================================
 
   //---[ Magic ]------------------------
   {
-    parser.magicEnabled = true;
+    // parser.magicEnabled = true;
 
     //---[ Generic ]--------------------
     // parsedContent = parser.parseFile("tests/ridgV.oak");
     // parsedContent = parser.parseFile("magicTests/addVectors.oak");
-    parsedContent = parser.parseFile("magicTests/fdTest.oak");
+    // parsedContent = parser.parseFile("magicTests/fdTest.oak");
 
     //---[ Rodinia ]--------------------
     // parsedContent = parser.parseFile("magicTests/rodinia/backprop.oak");

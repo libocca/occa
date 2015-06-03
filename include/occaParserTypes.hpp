@@ -14,6 +14,42 @@ namespace occa {
 
     class varLeaf_t;
 
+    //---[ Attribute Class ]----------------------
+    class attribute_t {
+    public:
+      std::string name;
+
+      int argCount;
+      expNode **args;
+
+      expNode *value;
+
+      attribute_t();
+      attribute_t(expNode &e);
+
+      attribute_t(const attribute_t &attr);
+      attribute_t& operator = (const attribute_t &attr);
+
+      void load(expNode &e);
+      void loadVariable(expNode &e);
+
+      expNode& operator [] (const int pos);
+
+      std::string argStr(const int pos);
+      std::string valueStr();
+
+      operator std::string();
+    };
+
+    std::ostream& operator << (std::ostream &out, attribute_t &attr);
+
+    int setAttributeMap(attributeMap_t &attributeMap,
+                        expNode &expRoot,
+                        int leafPos);
+
+    std::string attributeMapToString(attributeMap_t &attributeMap);
+    //============================================
+
     //---[ Qualifier Info Class ]-----------------
     class qualifierInfo {
     public:
@@ -158,7 +194,7 @@ namespace occa {
     public:
       int info;
 
-      strToStrMap_t attributeMap;
+      attributeMap_t attributeMap;
       qualifierInfo leftQualifiers, rightQualifiers;
 
       typeInfo *baseType;
@@ -175,8 +211,7 @@ namespace occa {
       expNode *stackExpRoots;
 
       // @dim()
-      int dimCount;
-      expNode *dimExpRoots;
+      attribute_t dimAttr;
 
       int argumentCount;
       varInfo **argumentVarInfos;
@@ -216,6 +251,8 @@ namespace occa {
 
       int loadArgsFrom(expNode &expRoot,
                        int leafPos);
+
+      void setupAttributeDims();
 
       //   ---[ Fortran ]-----
       int loadFromFortran(expNode &expRoot,

@@ -381,7 +381,7 @@ namespace occa {
       int statementCount;
       statementNode *statementStart, *statementEnd;
 
-      strToStrMap_t attributeMap;
+      attributeMap_t attributeMap;
 
       statement(parserBase &pb);
 
@@ -717,12 +717,6 @@ namespace occa {
 
       operator std::string();
     };
-
-    int setAttributeMap(strToStrMap_t &attributeMap,
-                        expNode &expRoot,
-                        int leafPos);
-
-    std::string attributeMapToString(strToStrMap_t &attributeMap);
 
     std::ostream& operator << (std::ostream &out, statement &s);
     //============================================
