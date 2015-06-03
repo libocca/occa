@@ -1413,6 +1413,7 @@ namespace occa {
                             leafPos);
           }
 
+          // Remove nodes from the AST
           removeNodes(leafPos, nextLeafPos - leafPos);
         }
 
@@ -1489,9 +1490,20 @@ namespace occa {
 
     // a[2]
     void expNode::mergeArrays(){
-      int leafPos = 0;
+      int leafPos = 1;
 
       while(leafPos < leafCount){
+        expNode &preLeaf = *(leaves[leafPos - 1]);
+
+        if( !((preLeaf.info & expType::varInfo) &&
+              (preLeaf.getVarInfo().hasOperator("(") ||
+               preLeaf.getVarInfo().hasOperator("["))) &&
+            ((preLeaf.info & expType::attribute) == 0) ){
+
+          ++leafPos;
+          continue;
+        }
+
         if((leaves[leafPos]->info & expType::C) &&
            ((leaves[leafPos]->value == "[") ||
             (leaves[leafPos]->value == "("))){
@@ -3144,6 +3156,12 @@ namespace occa {
       }
 
       case (expType::unknown):{
+        out << value;
+
+        break;
+      }
+
+      case (expType::unknown | expType::attribute):{
         out << value;
 
         break;

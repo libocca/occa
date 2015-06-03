@@ -139,6 +139,13 @@ namespace occa {
         attributeMap[attr.name] = &attr;
       }
       else {
+        expNode &attrRoot = expRoot[leafPos];
+
+        for(int i = 0; i < attrRoot.leafCount; ++i){
+          if(attrRoot[i].info & expType::unknown)
+            attrRoot[i].info |= expType::attribute;
+        }
+
         expRoot[leafPos].organizeLeaves();
         expNode &csvFlatRoot = *(expRoot[leafPos][0].makeCsvFlatHandle());
 
@@ -708,6 +715,7 @@ namespace occa {
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value != "{")){
+
         typeInfo *tmp = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
 
         if(tmp){
@@ -814,7 +822,21 @@ namespace occa {
                                 int pos){
       leftQualifiers.add(qName, pos);
     }
+
+    int typeInfo::pointerDepth(){
+      if(typedefing)
+        return typedefVar->pointerDepth();
+
+      return 0;
+    }
     //==================================
+
+
+    //---[ Class Info ]---------------
+    varInfo* typeInfo::hasOperator(const std::string &name){
+      return NULL;
+    }
+    //================================
 
     std::string typeInfo::toString(const std::string &tab){
       std::string ret;
@@ -1954,7 +1976,10 @@ namespace occa {
     }
 
     int varInfo::pointerDepth(){
-      return (pointerCount + stackPointerCount);
+      if(baseType)
+        return (pointerCount + stackPointerCount + baseType->pointerDepth());
+      else
+        return (pointerCount + stackPointerCount);
     }
 
     expNode& varInfo::stackSizeExpNode(const int pos){
@@ -1995,6 +2020,22 @@ namespace occa {
 
       argumentVarInfos = newArgumentVarInfos;
       ++argumentCount;
+    }
+    //================================
+
+
+    //---[ Class Info ]---------------
+    varInfo* varInfo::hasOperator(const std::string &op){
+      if(op.size() == 0)
+        return NULL;
+
+      if(pointerDepth())
+        return (varInfo*) -1; // Dummy non-zero value
+
+      if(baseType)
+        return baseType->hasOperator(op);
+
+      return NULL;
     }
     //================================
 

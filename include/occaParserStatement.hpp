@@ -44,14 +44,15 @@ namespace occa {
       static const int transfer_       = (1 << 23);
       static const int occaFor         = (1 << 24);
       static const int checkSInfo      = (1 << 25);
+      static const int attribute       = (1 << 26);
 
-      static const int hasInfo         = (3 << 26);
-      static const int varInfo         = (1 << 26);
-      static const int typeInfo        = (1 << 27);
+      static const int hasInfo         = (3 << 27);
+      static const int varInfo         = (1 << 27);
+      static const int typeInfo        = (1 << 28);
 
-      static const int printValue      = (1 << 28);
-      static const int printLeaves     = (1 << 29);
-      static const int maxBit          = 30;
+      static const int printValue      = (1 << 29);
+      static const int printLeaves     = (1 << 30);
+      static const int maxBit          = 31;
     };
 
     namespace expFlag {
