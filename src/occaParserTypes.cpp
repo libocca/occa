@@ -702,6 +702,9 @@ namespace occa {
       stackPointersUsed(0),
       stackExpRoots(NULL),
 
+      dimCount(0),
+      dimExpRoots(NULL),
+
       argumentCount(0),
       argumentVarInfos(NULL),
 
@@ -724,6 +727,9 @@ namespace occa {
       stackPointerCount(var.stackPointerCount),
       stackPointersUsed(var.stackPointersUsed),
       stackExpRoots(var.stackExpRoots),
+
+      dimCount(var.dimCount),
+      dimExpRoots(var.dimExpRoots),
 
       argumentCount(var.argumentCount),
       argumentVarInfos(var.argumentVarInfos),
@@ -748,6 +754,9 @@ namespace occa {
       stackPointersUsed  = var.stackPointersUsed;
       stackExpRoots      = var.stackExpRoots;
 
+      dimCount    = var.dimCount;
+      dimExpRoots = var.dimExpRoots;
+
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
 
@@ -769,6 +778,13 @@ namespace occa {
 
         for(int i = 0; i < stackPointerCount; ++i)
           stackExpRoots[i].cloneTo(v.stackExpRoots[i]);
+      }
+
+      if(dimCount){
+        v.dimExpRoots = new expNode[dimCount];
+
+        for(int i = 0; i < dimCount; ++i)
+          dimExpRoots[i].cloneTo(v.dimExpRoots[i]);
       }
 
       if(argumentCount){

@@ -174,6 +174,10 @@ namespace occa {
       int stackPointerCount, stackPointersUsed;
       expNode *stackExpRoots;
 
+      // @dim()
+      int dimCount;
+      expNode *dimExpRoots;
+
       int argumentCount;
       varInfo **argumentVarInfos;
 
