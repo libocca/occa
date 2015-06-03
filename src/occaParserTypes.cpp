@@ -1242,10 +1242,12 @@ namespace occa {
 
         bool *idxFound = new bool[dims];
 
-        for(int i = 0; i < dims; ++i)
-          idxFound[i] = false;
-
         idxOrdering.clear();
+
+        for(int i = 0; i < dims; ++i){
+          idxFound[i] = false;
+          idxOrdering.push_back(0);
+        }
 
         for(int i = 0; i < dims; ++i){
           OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
@@ -1258,7 +1260,7 @@ namespace occa {
 
           const int idxOrder = (int) th.longValue();
 
-          idxOrdering.push_back(idxOrder);
+          idxOrdering[idxOrder] = i;
 
           OCCA_CHECK(idxFound[idxOrder] == false,
                      "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a repeating index");

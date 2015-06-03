@@ -1576,17 +1576,69 @@ namespace occa {
           varInfo &var      = leaf[0].getVarInfo();
           expNode &arrNode  = leaf[1][0];
 
-          expNode &csvFlatRoot = *(arrNode[0].makeCsvFlatHandle());
+          const int dims     = var.dimAttr.argCount;
+          const bool reorder = var.idxOrdering.size();
 
-          OCCA_CHECK(var.dimAttr.argCount != 0,
+          expNode &csvFlatRoot = *(arrNode[0].makeCsvFlatHandle());
+          expVec_t indices;
+
+          OCCA_CHECK(dims != 0,
                      "Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute");
 
-          OCCA_CHECK(var.dimAttr.argCount == csvFlatRoot.leafCount,
+          OCCA_CHECK(dims == csvFlatRoot.leafCount,
                      "Variable use [" << toString() << "] has different index count of its attribute [" << var.dimAttr << "]");
 
           arrNode.value = "[";
 
+          for(int i = 0; i < dims; ++i){
+            if(reorder)
+              indices.push_back( csvFlatRoot[ var.idxOrdering[i] ].clone() );
+            else
+              indices.push_back( csvFlatRoot[i].clone() );
+          }
+
           expNode::freeFlatHandle(csvFlatRoot);
+          arrNode[0].free();
+
+          arrNode.addNode();
+          expNode *plusNode_ = &(arrNode[0]);
+
+          for(int i = 0; i < dims - 1; ++i){
+            const int i2 = (reorder ? var.idxOrdering[i] : i);
+
+            expNode &plusNode = *plusNode_;
+
+            plusNode.info  = expType::LR;
+            plusNode.value = "+";
+
+            plusNode.addNodes(expType::root, 0, 2);
+
+            expNode &timesNode = plusNode[1];
+
+            plusNode[0].free();
+            expNode::swap(plusNode[0], *(indices[i]));
+
+            timesNode.info  = expType::LR;
+            timesNode.value = "*";
+
+            timesNode.addNodes(expType::root, 0, 2);
+
+            timesNode[0].free();
+            expNode::swap(timesNode[0], *(var.dimAttr[i2].clone()));
+
+            if(i < (dims - 2)){
+              timesNode[1].info  = expType::C;
+              timesNode[1].value = "(";
+
+              timesNode[1].addNode();
+
+              plusNode_ = &(timesNode[1][0]);
+            }
+            else{
+              timesNode[1].free();
+              expNode::swap(timesNode[1], *(indices[i + 1]));
+            }
+          }
         }
 
         ++leafPos;
