@@ -581,6 +581,7 @@ namespace occa {
 
     parsedKernelInfo metaInfo;
 
+    uintptr_t maximumInnerDimSize_;
     int preferredDimSize_;
 
     int dims;
@@ -607,6 +608,7 @@ namespace occa {
     virtual kernel_v* loadFromLibrary(const char *cache,
                                       const std::string &functionName_) = 0;
 
+    virtual uintptr_t maximumInnerDimSize() = 0;
     virtual int preferredDimSize() = 0;
 
 #include "operators/occaVirtualOperatorDeclarations.hpp"
@@ -644,6 +646,7 @@ namespace occa {
     kernel_t<mode_>* loadFromLibrary(const char *cache,
                                     const std::string &functionName_);
 
+    uintptr_t maximumInnerDimSize();
     int preferredDimSize();
 
 #include "operators/occaOperatorDeclarations.hpp"
@@ -681,6 +684,7 @@ namespace occa {
     kernel& loadFromLibrary(const char *cache,
                             const std::string &functionName_);
 
+    uintptr_t maximumInnerDimSize();
     int preferredDimSize();
 
     void setWorkingDims(int dims, dim inner, dim outer);

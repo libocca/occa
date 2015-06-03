@@ -640,11 +640,15 @@ namespace occa {
     }
   }
 
-  int kernel::preferredDimSize(){
-    OCCA_CHECK(kHandle->nestedKernelCount == 0,
-               "Cannot get preferred size for fused kernels");
+  uintptr_t kernel::maximumInnerDimSize(){
+    return kHandle->maximumInnerDimSize();
+  }
 
-    return 1;
+  int kernel::preferredDimSize(){
+    if(0 < kHandle->nestedKernelCount)
+      return 0;
+
+    return kHandle->preferredDimSize();
   }
 
   void kernel::clearArgumentList(){

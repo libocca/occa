@@ -128,6 +128,9 @@ namespace occa {
                                                       const std::string &functionName_);
 
   template <>
+  uintptr_t kernel_t<OpenCL>::maximumInnerDimSize();
+
+  template <>
   int kernel_t<OpenCL>::preferredDimSize();
 
   template <>

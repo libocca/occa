@@ -123,6 +123,9 @@ namespace occa {
                                                       const std::string &functionName_);
 
   template <>
+  uintptr_t kernel_t<Serial>::maximumInnerDimSize();
+
+  template <>
   int kernel_t<Serial>::preferredDimSize();
 
   template <>

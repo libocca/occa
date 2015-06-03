@@ -560,6 +560,12 @@ extern "C" {
     return kernel_.mode().c_str();
   }
 
+  uintptr_t OCCA_RFUNC occaKernelMaximumInnerDimSize(occaKernel kernel){
+    occa::kernel &kernel_ = *((occa::kernel*) kernel);
+
+    return kernel_.maximumInnerDimSize();
+  }
+
   int OCCA_RFUNC occaKernelPreferredDimSize(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 

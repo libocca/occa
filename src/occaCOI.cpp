@@ -373,6 +373,11 @@ namespace occa {
     return buildFromBinary(cache, functionName);
   }
 
+  template <>
+  uintptr_t kernel_t<COI>::maximumInnerDimSize(){
+    return ((uintptr_t) -1);
+  }
+
   // [-] Missing
   template <>
   int kernel_t<COI>::preferredDimSize(){

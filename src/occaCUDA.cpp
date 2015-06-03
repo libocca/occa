@@ -207,7 +207,8 @@ namespace occa {
 
     nestedKernelCount = 0;
 
-    preferredDimSize_ = 0;
+    maximumInnerDimSize_ = 0;
+    preferredDimSize_    = 0;
   }
 
   template <>
@@ -422,6 +423,21 @@ namespace occa {
                     cuModuleGetFunction(&data_.function, data_.module, functionName.c_str()));
 
     return this;
+  }
+
+  template <>
+  uintptr_t kernel_t<CUDA>::maximumInnerDimSize(){
+    if(maximumInnerDimSize_)
+      return maximumInnerDimSize_;
+
+    int maxSize;
+
+    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting Maximum Inner-Dim Size",
+                    cuFuncGetAttribute(&maxSize, CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK, data_.function));
+
+    maximumInnerDimSize_ = (uintptr_t) maxSize;
+
+    return maximumInnerDimSize_;
   }
 
   template <>

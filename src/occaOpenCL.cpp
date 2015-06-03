@@ -349,10 +349,10 @@ namespace occa {
 
     void saveProgramBinary(OpenCLKernelData_t &data_,
                            const std::string &cachedBinary){
-      uintptr_t binarySize;
+      size_t binarySize;
       char *binary;
 
-      cl_int error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(uintptr_t), &binarySize, NULL);
+      cl_int error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &binarySize, NULL);
 
       if(error)
         releaseFile(cachedBinary);
@@ -503,7 +503,8 @@ namespace occa {
 
     nestedKernelCount = 0;
 
-    preferredDimSize_ = 0;
+    maximumInnerDimSize_ = 0;
+    preferredDimSize_    = 0;
   }
 
   template <>
@@ -526,7 +527,8 @@ namespace occa {
         nestedKernels[i] = k.nestedKernels[i];
     }
 
-    preferredDimSize_ = k.preferredDimSize_;
+    maximumInnerDimSize_ = k.maximumInnerDimSize_;
+    preferredDimSize_    = k.preferredDimSize_;
   }
 
   template <>
@@ -549,7 +551,8 @@ namespace occa {
         nestedKernels[i] = k.nestedKernels[i];
     }
 
-    preferredDimSize_ = k.preferredDimSize_;
+    maximumInnerDimSize_ = k.maximumInnerDimSize_;
+    preferredDimSize_    = k.preferredDimSize_;
 
     return *this;
   }
@@ -648,21 +651,41 @@ namespace occa {
   }
 
   template <>
+  uintptr_t kernel_t<OpenCL>::maximumInnerDimSize(){
+    if(maximumInnerDimSize_)
+      return maximumInnerDimSize_;
+
+    OCCA_EXTRACT_DATA(OpenCL, Kernel);
+
+    size_t pds;
+
+    OCCA_CL_CHECK("Kernel: Getting Preferred Dim Size",
+                  clGetKernelWorkGroupInfo(data_.kernel,
+                                           data_.deviceID,
+                                           CL_KERNEL_WORK_GROUP_SIZE,
+                                           sizeof(size_t), &pds, NULL));
+
+    maximumInnerDimSize_ = (uintptr_t) pds;
+
+    return maximumInnerDimSize_;
+  }
+
+  template <>
   int kernel_t<OpenCL>::preferredDimSize(){
     if(preferredDimSize_)
       return preferredDimSize_;
 
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
-    uintptr_t pds;
+    size_t pds;
 
     OCCA_CL_CHECK("Kernel: Getting Preferred Dim Size",
                   clGetKernelWorkGroupInfo(data_.kernel,
                                            data_.deviceID,
                                            CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE,
-                                           sizeof(uintptr_t), &pds, NULL));
+                                           sizeof(size_t), &pds, NULL));
 
-    preferredDimSize_ = pds;
+    preferredDimSize_ = (uintptr_t) pds;
 
     return preferredDimSize_;
   }

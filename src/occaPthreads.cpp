@@ -222,6 +222,11 @@ namespace occa {
     return buildFromBinary(cache, functionName);
   }
 
+  template <>
+  uintptr_t kernel_t<Pthreads>::maximumInnerDimSize(){
+    return ((uintptr_t) -1);
+  }
+
   // [-] Missing
   template <>
   int kernel_t<Pthreads>::preferredDimSize(){

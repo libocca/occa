@@ -90,6 +90,9 @@ namespace occa {
                                                 const std::string &functionName_);
 
   template <>
+  uintptr_t kernel_t<HSA>::maximumInnerDimSize();
+
+  template <>
   int kernel_t<HSA>::preferredDimSize();
 
   template <>
