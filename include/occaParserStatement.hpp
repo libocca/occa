@@ -200,6 +200,9 @@ namespace occa {
       // a[3]
       void mergeArrays();
 
+      // ptr(a,b)
+      void mergePointerArrays();
+
       // (class) x
       void mergeClassCasts();
 

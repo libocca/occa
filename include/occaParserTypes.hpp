@@ -212,6 +212,7 @@ namespace occa {
 
       // @dim()
       attribute_t dimAttr;
+      intVector_t idxOrdering;
 
       int argumentCount;
       varInfo **argumentVarInfos;
@@ -252,7 +253,7 @@ namespace occa {
       int loadArgsFrom(expNode &expRoot,
                        int leafPos);
 
-      void setupAttributeDims();
+      void setupAttributes();
 
       //   ---[ Fortran ]-----
       int loadFromFortran(expNode &expRoot,
@@ -312,7 +313,7 @@ namespace occa {
       //================================
 
       //---[ Variable Info ]------------
-      bool hasAttribute(const std::string &attr);
+      attribute_t* hasAttribute(const std::string &attr);
 
       int leftQualifierCount();
       int rightQualifierCount();
