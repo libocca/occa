@@ -1846,7 +1846,7 @@ namespace occa {
     std::string loopyLang = "loopy";
 
     if(useLoopyOrFloopy == occa::useFloopy)
-      loopyLang = "fortran";
+      loopyLang = "fpp";
 
     std::stringstream command;
 
