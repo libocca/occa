@@ -725,6 +725,8 @@ namespace occa {
       stackPointersUsed(var.stackPointersUsed),
       stackExpRoots(var.stackExpRoots),
 
+      dimAttr(var.dimAttr),
+
       argumentCount(var.argumentCount),
       argumentVarInfos(var.argumentVarInfos),
 
@@ -747,6 +749,8 @@ namespace occa {
       stackPointerCount  = var.stackPointerCount;
       stackPointersUsed  = var.stackPointersUsed;
       stackExpRoots      = var.stackExpRoots;
+
+      dimAttr = var.dimAttr;
 
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
@@ -831,6 +835,8 @@ namespace occa {
 
         leafPos = setAttributeMap(attributeMap, expRoot, leafPos);
       }
+
+      setupAttributeDims();
 
       return leafPos;
     }
@@ -1032,6 +1038,15 @@ namespace occa {
       }
 
       return (leafPos + 1);
+    }
+
+    void varInfo::setupAttributeDims(){
+      attributeMapIterator it = attributeMap.find("dim");
+
+      if(it == attributeMap.end())
+        return;
+
+      dimAttr = *(it->second);
     }
 
     //   ---[ Fortran ]-------

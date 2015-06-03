@@ -177,8 +177,8 @@ namespace occa {
       else
         splitAndOrganizeFortranNode(newNodeRoot);
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
-      // print();
+      std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      print();
 
       // Only the root needs to free
       if(up == NULL)
@@ -1490,13 +1490,15 @@ namespace occa {
 
       while(leafPos < leafCount){
         if((leaves[leafPos]->info & expType::C) &&
-           (leaves[leafPos]->value == "[")){
+           ((leaves[leafPos]->value == "[") ||
+            (leaves[leafPos]->value == "("))){
 
           int brackets = 0;
 
           while(((leafPos + brackets) < leafCount) &&
                 (leaves[leafPos + brackets]->info & expType::C) &&
-                (leaves[leafPos + brackets]->value == "[")){
+                ((leaves[leafPos + brackets]->value == "[") ||
+                 (leaves[leafPos + brackets]->value == "("))){
 
             ++brackets;
           }
@@ -6051,7 +6053,130 @@ namespace occa {
       return toString();
     }
 
-    int setAttributeMap(strToStrMap_t &attributeMap,
+    std::ostream& operator << (std::ostream &out, statement &s){
+      out << (std::string) s;
+
+      return out;
+    }
+
+    attribute_t::attribute_t() :
+      argCount(0),
+      args(NULL),
+
+      value(NULL) {}
+
+    attribute_t::attribute_t(expNode &e) :
+      argCount(0),
+      args(NULL),
+
+      value(NULL) {
+
+      load(e);
+    }
+
+    attribute_t::attribute_t(const attribute_t &attr) :
+      name(attr.name),
+
+      argCount(attr.argCount),
+      args(attr.args),
+
+      value(attr.value) {}
+
+    attribute_t& attribute_t::operator = (const attribute_t &attr){
+      name = attr.name;
+
+      argCount = attr.argCount;
+      args     = attr.args;
+
+      value = attr.value;
+
+      return *this;
+    }
+
+    void attribute_t::load(expNode &e){
+      const int attrIsSet = (e.value == "=");
+
+      expNode *attrNode = (attrIsSet ? &(e[0]) : &e);
+
+      if(attrNode->info & expType::variable)
+        loadVariable(*attrNode);
+      else
+        name = attrNode->toString();
+
+      if(!attrIsSet)
+        return;
+
+      value = e[1].clone();
+    }
+
+    void attribute_t::loadVariable(expNode &e){
+      name = e[0].toString();
+
+      expNode &bn = e[1];
+
+      if((bn.info    & expType::qualifier) &&
+         (bn[0].info & expType::C)){
+
+        expNode &csvFlatRoot = *(bn[0][0].makeCsvFlatHandle());
+
+        argCount = csvFlatRoot.leafCount;
+
+        if(argCount){
+          args = new expNode*[argCount];
+
+          for(int i = 0; i < argCount; ++i)
+            args[i] = csvFlatRoot[i].clone();
+        }
+
+        expNode::freeFlatHandle(csvFlatRoot);
+      }
+    }
+
+    expNode& attribute_t::operator [] (const int pos){
+      return *(args[pos]);
+    }
+
+    std::string attribute_t::argStr(const int pos){
+      return args[pos]->toString();
+    }
+
+    std::string attribute_t::valueStr(){
+      return value->toString();
+    }
+
+    attribute_t::operator std::string(){
+      std::string ret;
+
+      ret += name;
+
+      if(argCount){
+        ret += "(";
+
+        for(int i = 0; i < argCount; ++i){
+          if(i)
+            ret += ", ";
+
+          ret += argStr(i);
+        }
+
+        ret += ")";
+      }
+
+      if(value){
+        ret += " = ";
+        ret += valueStr();
+      }
+
+      return ret;
+    }
+
+    std::ostream& operator << (std::ostream &out, attribute_t &attr){
+      out << (std::string) attr;
+
+      return out;
+    }
+
+    int setAttributeMap(attributeMap_t &attributeMap,
                         expNode &expRoot,
                         int leafPos){
 
@@ -6065,30 +6190,20 @@ namespace occa {
 
       // Only one attribute
       if(expRoot[leafPos].info != expType::C){
-        attributeMap[expRoot[leafPos].value] = "";
+        attribute_t &attr = *(new attribute_t(expRoot[leafPos]));
+        attributeMap[attr.name] = &attr;
       }
       else {
-        expNode &csvFlatRoot = *(expRoot[leafPos].makeCsvFlatHandle());
+        expRoot[leafPos].organizeLeaves();
+        expNode &csvFlatRoot = *(expRoot[leafPos][0].makeCsvFlatHandle());
 
         const int attributeCount = csvFlatRoot.leafCount;
 
         for(int i = 0; i < attributeCount; ++i){
-          expNode &attrNode   = csvFlatRoot[i];
-          const int attrIsSet = (attrNode.value == "=");
+          expNode &attrNode = csvFlatRoot[i];
+          attribute_t &attr = *(new attribute_t(attrNode));
 
-          expNode *lrValues[2] = {attrIsSet ? &(attrNode[0]) : &attrNode,
-                                  attrIsSet ? &(attrNode[1]) : (expNode*) NULL};
-
-          std::string strValues[2];
-
-          for(int j = 0; j < (1 + attrIsSet); ++j){
-            for(int k = 0; k < lrValues[j]->leafCount; ++k){
-              if(k) strValues[j] += ' ';
-              strValues[j] += (*(lrValues[j]))[k];
-            }
-          }
-
-          attributeMap[strValues[0]] = strValues[1];
+          attributeMap[attr.name] = &attr;
         }
 
         expNode::freeFlatHandle(csvFlatRoot);
@@ -6097,13 +6212,13 @@ namespace occa {
       return (leafPos + 1);
     }
 
-    std::string attributeMapToString(strToStrMap_t &attributeMap){
+    std::string attributeMapToString(attributeMap_t &attributeMap){
       std::string ret;
 
       if(attributeMap.size()){
         ret += "@(";
 
-        strToStrMapIterator it = attributeMap.begin();
+        attributeMapIterator it = attributeMap.begin();
         bool oneAttrSet = false;
 
         while(it != attributeMap.end()){
@@ -6112,12 +6227,7 @@ namespace occa {
           else
             oneAttrSet = true;
 
-          ret += it->first;
-
-          if(it->second != ""){
-            ret += " = ";
-            ret += it->second;
-          }
+          ret += (std::string) *(it->second);
 
           ++it;
         }
@@ -6126,12 +6236,6 @@ namespace occa {
       }
 
       return ret;
-    }
-
-    std::ostream& operator << (std::ostream &out, statement &s){
-      out << (std::string) s;
-
-      return out;
     }
     //============================================
 

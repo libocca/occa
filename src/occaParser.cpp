@@ -2196,10 +2196,13 @@ namespace occa {
 
         // Break after each outer-most outer-loop (between kernels)
         // Break after each outer-most inner-loop (One work-group size (for now))
-        bool firstOuter = true;
+        bool lastOuter  = false;
         bool firstInner = true;
 
         //---[ Add kernel body ]----------
+        if(info.nestedKernels.size() <= kID)
+          break;
+
         statement &ks = *(info.nestedKernels[kID]);
 
         // Kernel's outer-most outer-loop
@@ -2221,13 +2224,14 @@ namespace occa {
 
             firstInner = false;
           }
-          else if(s2.isOccaOuterFor(forInfo) &&
-                  (nest == outerDim)){
-
-            if(firstOuter == false)
+          else if(s2.isOccaOuterFor(forInfo)){
+            if(lastOuter){
+              lastOuter = false;
               break;
+            }
 
-            firstOuter = false;
+            if(nest == 0)
+              lastOuter = true;
           }
 
           statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
@@ -2264,7 +2268,7 @@ namespace occa {
         }
 
         // Move dependencies to the front
-        if(ksnOuter->right){
+        if(ksnOuter && ksnOuter->right){
           statementNode *oldFirst = ks.statementStart;
           statementNode *oldEnd   = ksnOuter;
 
