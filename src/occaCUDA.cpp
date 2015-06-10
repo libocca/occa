@@ -434,7 +434,7 @@ namespace occa {
 
     int maxSize;
 
-    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting Maximum Inner-Dim Size",
+    OCCA_CUDA_CHECK("Kernel: Getting Maximum Inner-Dim Size",
                     cuFuncGetAttribute(&maxSize, CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK, data_.function));
 
     maximumInnerDimSize_ = (uintptr_t) maxSize;
