@@ -430,6 +430,8 @@ namespace occa {
     if(maximumInnerDimSize_)
       return maximumInnerDimSize_;
 
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
     int maxSize;
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Getting Maximum Inner-Dim Size",
