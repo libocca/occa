@@ -2038,7 +2038,7 @@ namespace occa {
                      "Only 1D exclusive arrays are supported:\n"
                      << "exclusive " << s);
 
-          ss << var.stackExpRoots[0][0];
+          ss << var.stackExpRoots[0];
         }
 
         ss << ");";
