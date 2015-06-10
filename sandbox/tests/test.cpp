@@ -18,6 +18,8 @@ typedef int blah234;
 const tFloat hat_t0 = 1.3523661426929/freq; /* Testing 3 */
 const tFloat &hat_t1 = hat_t0;
 
+occaFunction tFloat hatWavelet(tFloat t);
+
 occaFunction tFloat dummyFunction(shared tFloat t){
   return 0;
 }
@@ -53,22 +55,11 @@ occaKernel void fd2d(tFloat *u1,
 
   BOXIFY(s[i].x);
 
-  /*
-    for(int n = 0; n < bDimX; ++n; tile(lDimX)){
-    }
+  for(int n = 0; n < bDimX; ++n; tile(lDimX)){
+  }
 
-    for(int2 n = 0; n < bDimX; ++n; tile(lDimX, lDimY)){
-    }
-
-    for(int2 n(0,0); n < int2(bDimX, bDimY); n += int2(1,1); tile(lDimX,lDimY)){
-    }
-
-    for(int3 n(0,0,0);
-    n < int3(bDimX, bDimY, bDimZ);
-    n += int3(lDimX, lDimY, lDimZ);
-    tile(lDimX,lDimY,lDimZ)){
-    }
-  */
+  // for(int2 i = {0,1}; i.x < bDimX, i.y < bDimY; i.y += 2, ++i.x; tile(lDimX,lDimY)){
+  // }
 
   for(int by = 0; by < bDimY; by += 16; outer0){
     for(int bx = 0; bx < bDimX; bx += 16; outer1){
@@ -169,7 +160,7 @@ occaKernel void fd2d(tFloat *u1,
           const tFloat u_n1 = (-tStencil[1]*r_u2 - tStencil[2]*r_u3 + lap)/tStencil[0];
 
           if((tx == mX) && (ty == mY))
-            u1[id] = u_n1 + hatWavelet(currentTime)/tStencil[0];
+            u1[id] = u_n1 + hatWavelet(currentTime, 1, 2)/tStencil[0];
           else
             u1[id] = u_n1;
         }

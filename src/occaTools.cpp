@@ -278,7 +278,12 @@ namespace occa {
 
     parser fileParser;
 
-    const bool parsingC = (getFileExtension(filename) != "ofl");
+    int parsingLanguage;
+
+    if(getFileExtension(filename) != "ofl")
+      parsingLanguage = parserInfo::parsingC;
+    else
+      parsingLanguage = parserInfo::parsingFortran;
 
     std::ofstream fs;
     fs.open(pCachedBinary.c_str());
@@ -290,7 +295,7 @@ namespace occa {
 
     fs.open(iCachedBinary.c_str());
     fs << info.occaKeywords << fileParser.parseFile(pCachedBinary,
-                                                    parsingC);
+                                                    parsingLanguage);
 
     fs.close();
 

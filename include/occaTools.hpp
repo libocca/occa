@@ -140,6 +140,15 @@ namespace occa {
                                        const bool useParser = true);
 
   template <class TM>
+  std::string strFrom(const TM &t){
+    std::stringstream ss;
+
+    ss << t;
+
+    return ss.str();
+  }
+
+  template <class TM>
   TM strTo(const std::string &str){
     std::stringstream ss;
     TM ret;

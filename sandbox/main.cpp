@@ -13,7 +13,7 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/easy.c");
   // parsedContent = parser.parseFile("tests/test.cpp");
   // parsedContent = parser.parseFile("tests/test2.cpp");
-  parsedContent = parser.parseFile("tests/scratch.okl");
+  // parsedContent = parser.parseFile("tests/scratch.okl");
   // parsedContent = parser.parseFile("tests/pwdg.okl");
   // parsedContent = parser.parseFile("tests/openclTest.cpp");
   // parsedContent = parser.parseFile("tests/cudaTest.cpp");
@@ -30,13 +30,13 @@ int main(int argc, char **argv){
 
   //---[ Fortran ]----------------------
   // parsedContent = parser.parseFile("tests/scratch.ofl",
-  //                                  occa::parserNS::parsingFortran);
+  //                                  occa::parsingInfo::parsingFortran);
 
-  // parsedContent = parser.parseFile("tests/addVectors.ofl",
-  //                                  occa::parserNS::parsingFortran);
+  parsedContent = parser.parseFile("tests/addVectors.ofl",
+                                   occa::parserInfo::parsingFortran);
 
   // parsedContent = parser.parseFile("tests/fakeNuma.ofl",
-  //                                  occa::parserNS::parsingFortran);
+  //                                  occa::parsingInfo::parsingFortran);
   //====================================
 
   //---[ Magic ]------------------------

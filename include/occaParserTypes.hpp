@@ -79,32 +79,27 @@ namespace occa {
       qualifierInfo clone();
 
       int loadFrom(expNode &expRoot,
-                   int leafPos);
+                   int leafPos = 0);
 
-      int loadFromFortran(varInfo &var,
+      int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0);
+
+      int loadFromFortran(statement &s,
+                          varInfo &var,
                           expNode &expRoot,
                           int leafPos);
 
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos);
+      bool fortranVarNeedsUpdate(varInfo &var,
+                                 const std::string &fortranQualifier);
 
-      strNode* loadFromFortran(varInfo &var,
-                               statement &s,
-                               strNode *nodePos);
-
-      bool updateFortranVar(varInfo &var,
-                            const std::string &fortranQualifier);
-
-      int updateFortranVar(varInfo &var,
+      int updateFortranVar(statement &s,
+                           varInfo &var,
                            expNode &expPos,
                            const int leafPos);
 
-      strNode* updateFortranVar(varInfo &var,
-                                statement &s,
-                                strNode *nodePos);
-
       //---[ Qualifier Info ]-----------
-      bool has(const std::string &qName);
+      int has(const std::string &qName);
       std::string& get(const int pos);
 
       void add(const std::string &qName,
@@ -128,7 +123,10 @@ namespace occa {
     class typeInfo {
     public:
       qualifierInfo leftQualifiers;
+
       std::string name;
+
+      info_t thType;
 
       int nestedInfoCount;
       expNode *nestedExps;
@@ -139,6 +137,8 @@ namespace occa {
 
       varInfo *typedefVar;
 
+      opOverloadMaps_t opOverloadMaps;
+
       typeInfo();
 
       typeInfo(const typeInfo &type);
@@ -146,12 +146,23 @@ namespace occa {
 
       typeInfo clone();
 
-      //---[ NEW ]------------
+      //---[ Load Info ]----------------
       int loadFrom(expNode &expRoot,
                    int leafPos = 0);
 
-      int loadTypedefFrom(expNode &expRoot,
+      int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0);
+
+      int loadTypedefFrom(statement &s,
+                          expNode &expRoot,
                           int leafPos = 0);
+
+      void updateThType();
+
+      static bool statementIsATypeInfo(statement &s,
+                                       expNode &expRoot,
+                                       int leafPos);
 
       static int delimiterCount(expNode &expRoot,
                                 const char *delimiter);
@@ -159,15 +170,11 @@ namespace occa {
       static int nextDelimiter(expNode &expRoot,
                                int leafPos,
                                const char *delimiter);
-
-      static bool statementIsATypeInfo(expNode &expRoot,
-                                       int leafPos);
       //======================
 
-      static bool statementIsATypeInfo(statement &s,
-                                       strNode *nodePos);
-
       //---[ Type Info ]----------------
+      int hasQualifier(const std::string &qName);
+
       void addQualifier(const std::string &qName,
                         int pos = -1);
 
@@ -175,7 +182,6 @@ namespace occa {
       //================================
 
       //---[ Class Info ]---------------
-
       varInfo* hasOperator(const std::string &op);
       //================================
 
@@ -190,12 +196,11 @@ namespace occa {
     //---[ Variable Info Class ]------------------
     namespace varType {
       static const int var             = (1 << 0);
+      static const int functionPointer = (3 << 0);
 
-      static const int functionType    = (7 << 1);
-      static const int function        = (3 << 1);
-      static const int functionDec     = (1 << 1);
-      static const int functionDef     = (1 << 2);
-      static const int functionPointer = (1 << 3);
+      static const int function        = (3 << 2);
+      static const int functionDec     = (1 << 2);
+      static const int functionDef     = (1 << 3);
     };
 
     class varInfo {
@@ -222,6 +227,10 @@ namespace occa {
       attribute_t dimAttr;
       intVector_t idxOrdering;
 
+      bool usesTemplate;
+      int tArgCount;
+      typeInfo **tArgs;
+
       int argumentCount;
       varInfo **argumentVarInfos;
 
@@ -235,21 +244,35 @@ namespace occa {
 
       varInfo clone();
 
-      static int variablesInStatement(strNode *nodePos);
+      static int variablesInStatement(expNode &expRoot);
 
-      //---[ NEW ]----------------------
+      //---[ Load Info ]----------------
       int loadFrom(expNode &expRoot,
-                   int leafPos,
+                   int leafPos = 0,
                    varInfo *varHasType = NULL);
 
-      int loadTypeFrom(expNode &expRoot,
+      int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0,
+                   varInfo *varHasType = NULL);
+
+      int loadTypeFrom(statement &s,
+                       expNode &expRoot,
                        int leafPos,
                        varInfo *varHasType = NULL);
 
-      int loadNameFrom(expNode &expRoot,
+      int loadNameFrom(statement &s,
+                       expNode &expRoot,
                        int leafPos);
 
-      int getVarInfoFrom(expNode &expRoot,
+      bool nodeHasName(expNode &expRoot,
+                       int leafPos);
+
+      int loadNameFromNode(expNode &expRoot,
+                           int leafPos);
+
+      int getVarInfoFrom(statement &s,
+                         expNode &expRoot,
                          int leafPos);
 
       int getNestCountFrom(expNode &expRoot,
@@ -258,7 +281,8 @@ namespace occa {
       int loadStackPointersFrom(expNode &expRoot,
                                 int leafPos);
 
-      int loadArgsFrom(expNode &expRoot,
+      int loadArgsFrom(statement &s,
+                       expNode &expRoot,
                        int leafPos);
 
       void setupAttributes();
@@ -268,7 +292,17 @@ namespace occa {
                           int leafPos,
                           varInfo *varHasType = NULL);
 
+      int loadFromFortran(statement &s,
+                          expNode &expRoot,
+                          int leafPos,
+                          varInfo *varHasType = NULL);
+
       int loadTypeFromFortran(expNode &expRoot,
+                              int leafPos,
+                              varInfo *varHasType = NULL);
+
+      int loadTypeFromFortran(statement &s,
+                              expNode &expRoot,
                               int leafPos,
                               varInfo *varHasType = NULL);
 
@@ -281,43 +315,8 @@ namespace occa {
       void setupFortranStackExp(expNode &stackExp,
                                 expNode &valueExp);
       //   ===================
-      //================================
 
-      //---[ OLD ]----------------------
-      strNode* loadFrom(statement &s,
-                        strNode *nodePos,
-                        varInfo *varHasType = NULL);
-
-      strNode* loadTypeFrom(statement &s,
-                            strNode *nodePos,
-                            varInfo *varHasType);
-
-      strNode* loadNameFrom(statement &s,
-                            strNode *nodePos);
-
-      int getVarInfoFrom(statement &s,
-                         strNode *nodePos);
-
-      int getNestCountFrom(statement &s,
-                           strNode *nodePos);
-
-      strNode* loadStackPointersFrom(statement &s,
-                                     strNode *nodePos);
-
-      strNode* loadArgsFrom(statement &s,
-                            strNode *nodePos);
-
-      //   ---[ Fortran ]-----
-      strNode* loadFromFortran(statement &s,
-                               strNode *nodePos,
-                               varInfo *varHasType = NULL);
-
-      strNode* loadTypeFromFortran(statement &s,
-                                   strNode *nodePos,
-                                   varInfo *varHasType);
-
-      static std::string getFullFortranType(strNode *&nodePos);
-      //   ===================
+      void organizeExpNodes();
       //================================
 
       //---[ Variable Info ]------------
@@ -326,8 +325,8 @@ namespace occa {
       int leftQualifierCount();
       int rightQualifierCount();
 
-      bool hasQualifier(const std::string &qName);
-      bool hasRightQualifier(const std::string &qName);
+      int hasQualifier(const std::string &qName);
+      int hasRightQualifier(const std::string &qName);
 
       void addQualifier(const std::string &qName,
                         int pos = -1);
@@ -356,6 +355,9 @@ namespace occa {
 
       //---[ Class Info ]---------------
       varInfo* hasOperator(const std::string &op);
+
+      bool canBeCastedTo(varInfo &var);
+      bool hasSameTypeAs(varInfo &var);
       //================================
 
       bool isConst();
@@ -365,6 +367,26 @@ namespace occa {
       operator std::string ();
 
       friend std::ostream& operator << (std::ostream &out, varInfo &var);
+    };
+    //============================================
+
+
+    //---[ Overloaded Operator Class ]------------
+    class overloadedOp_t {
+    public:
+      std::vector<varInfo*> functions;
+
+      void add(varInfo &function);
+
+      varInfo* getFromArgs(const int argumentCount,
+                           expNode *arguments);
+
+      varInfo* getFromTypes(const int argumentCount,
+                            varInfo *argumentTypes);
+
+      varInfo* bestFitFor(const int argumentCount,
+                          varInfo *argumentTypes,
+                          varInfoVector_t &candidates);
     };
     //============================================
 

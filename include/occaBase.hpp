@@ -308,7 +308,7 @@ namespace occa {
 
     argInfoMap();
 
-    inline argInfoMap(const std::string &infos);
+    argInfoMap(const std::string &infos);
 
     inline bool has(const std::string &info){
       return (iMap.find(info) != iMap.end());

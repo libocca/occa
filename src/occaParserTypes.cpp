@@ -41,40 +41,34 @@ namespace occa {
     void attribute_t::load(expNode &e){
       const int attrIsSet = (e.value == "=");
 
-      expNode *attrNode = (attrIsSet ? &(e[0]) : &e);
+      expNode &attrNode = (attrIsSet ? e[0] : e);
 
-      if(attrNode->info & expType::variable)
-        loadVariable(*attrNode);
+      if(startsSection(attrNode.value))
+        loadVariable(attrNode);
       else
-        name = attrNode->toString();
+        name = attrNode.toString();
 
       if(!attrIsSet)
         return;
 
-      value = e[1].clone();
+      value = e[1].clonePtr();
     }
 
     void attribute_t::loadVariable(expNode &e){
       name = e[0].toString();
 
-      expNode &bn = e[1];
+      expNode &csvFlatRoot = *(e[1].makeCsvFlatHandle());
 
-      if((bn.info    & expType::qualifier) &&
-         (bn[0].info & expType::C)){
+      argCount = csvFlatRoot.leafCount;
 
-        expNode &csvFlatRoot = *(bn[0][0].makeCsvFlatHandle());
+      if(argCount){
+        args = new expNode*[argCount];
 
-        argCount = csvFlatRoot.leafCount;
-
-        if(argCount){
-          args = new expNode*[argCount];
-
-          for(int i = 0; i < argCount; ++i)
-            args[i] = csvFlatRoot[i].clone();
-        }
-
-        expNode::freeFlatHandle(csvFlatRoot);
+        for(int i = 0; i < argCount; ++i)
+          args[i] = csvFlatRoot[i].clonePtr();
       }
+
+      expNode::freeFlatHandle(csvFlatRoot);
     }
 
     expNode& attribute_t::operator [] (const int pos){
@@ -146,8 +140,9 @@ namespace occa {
             attrRoot[i].info |= expType::attribute;
         }
 
-        expRoot[leafPos].organizeLeaves();
-        expNode &csvFlatRoot = *(expRoot[leafPos][0].makeCsvFlatHandle());
+        attrRoot.organizeLeaves();
+
+        expNode &csvFlatRoot = *(attrRoot[0].makeCsvFlatHandle());
 
         const int attributeCount = csvFlatRoot.leafCount;
 
@@ -234,6 +229,17 @@ namespace occa {
 
     int qualifierInfo::loadFrom(expNode &expRoot,
                                 int leafPos){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
+    }
+
+    int qualifierInfo::loadFrom(statement &s,
+                                expNode &expRoot,
+                                int leafPos){
+
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
@@ -257,14 +263,15 @@ namespace occa {
       return leafPos;
     }
 
-    int qualifierInfo::loadFromFortran(varInfo &var,
+    int qualifierInfo::loadFromFortran(statement &s,
+                                       varInfo &var,
                                        expNode &expRoot,
                                        int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
       while(true){
-        int newLeafPos = updateFortranVar(var, expRoot, leafPos);
+        int newLeafPos = updateFortranVar(s, var, expRoot, leafPos);
 
         if(newLeafPos == leafPos)
           break;
@@ -285,59 +292,8 @@ namespace occa {
       return leafPos;
     }
 
-    strNode* qualifierInfo::loadFrom(statement &s,
-                                      strNode *nodePos){
-      strNode *nodeRoot = nodePos;
-
-      while(nodePos &&
-            s.nodeHasQualifier(nodePos)){
-        ++qualifierCount;
-        nodePos = nodePos->right;
-      }
-
-      if(qualifierCount){
-        qualifiers = new std::string[qualifierCount];
-        nodePos = nodeRoot;
-
-        for(int i = 0; i < qualifierCount; ++i){
-          qualifiers[i] = nodePos->value;
-          nodePos = nodePos->right;
-        }
-      }
-
-      return nodePos;
-    }
-
-    strNode* qualifierInfo::loadFromFortran(varInfo &var,
-                                            statement &s,
-                                            strNode *nodePos){
-      if(nodePos == NULL)
-        return NULL;
-
-      while(true){
-        strNode *nNodePos = updateFortranVar(var, s, nodePos);
-
-        if(nNodePos == nodePos)
-          break;
-
-        if(nNodePos){
-          if(nNodePos->value == ","){
-            nNodePos = nNodePos->right;
-          }
-          else if(nNodePos->value == "::"){
-            nNodePos = nNodePos->right;
-            break;
-          }
-        }
-
-        nodePos = nNodePos;
-      }
-
-      return nodePos;
-    }
-
-    bool qualifierInfo::updateFortranVar(varInfo &var,
-                                         const std::string &fortranQualifier){
+    bool qualifierInfo::fortranVarNeedsUpdate(varInfo &var,
+                                              const std::string &fortranQualifier){
       // Normal Fortran
       if(fortranQualifier == "POINTER"){
         ++(var.pointerCount);
@@ -372,17 +328,18 @@ namespace occa {
       return false;
     }
 
-    int qualifierInfo::updateFortranVar(varInfo &var,
+    int qualifierInfo::updateFortranVar(statement &s,
+                                        varInfo &var,
                                         expNode &expPos,
                                         const int leafPos){
-      if(updateFortranVar(var, expPos[leafPos]))
+      if(fortranVarNeedsUpdate(var, expPos[leafPos].value))
         return (leafPos + 1);
 
       if(expPos[leafPos].info & expType::type){
         int nextLeafPos = leafPos;
 
         std::string typeName = varInfo::getFullFortranType(expPos, nextLeafPos);
-        var.baseType = expPos.sInfo->hasTypeInScope(typeName);
+        var.baseType = s.hasTypeInScope(typeName);
 
         return nextLeafPos;
       }
@@ -415,49 +372,16 @@ namespace occa {
       return leafPos;
     }
 
-    strNode* qualifierInfo::updateFortranVar(varInfo &var,
-                                             statement &s,
-                                             strNode *nodePos){
-      if(updateFortranVar(var, nodePos->value))
-        return (nodePos->right);
-
-      if(nodePos->info & specifierType){
-        std::string typeName = varInfo::getFullFortranType(nodePos);
-        var.baseType = s.hasTypeInScope(typeName);
-      }
-      else{
-        const std::string &value = nodePos->value;
-
-        if(value == "INTENT"){
-          nodePos = nodePos->right;
-
-          if(nodePos && nodePos->down){
-            strNode *downNode = nodePos->down;
-
-            var.leftQualifiers.add("INTENT" + upString(downNode->value));
-            var.rightQualifiers.add("&", 0);
-
-            if(upStringCheck(downNode->value, "IN"))
-              add("const", 0);
-
-            return nodePos->right;
-          }
-
-          return nodePos;
-        }
-      }
-
-      return nodePos;
-    }
-
     //---[ Qualifier Info ]-------------
-    bool qualifierInfo::has(const std::string &qName){
+    int qualifierInfo::has(const std::string &qName){
+      int count = 0;
+
       for(int i = 0; i < qualifierCount; ++i){
         if(qualifiers[i] == qName)
-          return true;
+          ++count;
       }
 
-      return false;
+      return count;
     }
 
     std::string& qualifierInfo::get(const int pos){
@@ -540,6 +464,11 @@ namespace occa {
         }
       }
 
+      // Print attributes (for debugging purposes)
+#if 0
+      std::cout << ' ' << attributeMapToString(attributeMap);
+#endif
+
       return ret;
     }
 
@@ -561,6 +490,8 @@ namespace occa {
 
       name(""),
 
+      thType(noType),
+
       nestedInfoCount(0),
       nestedExps(NULL),
 
@@ -575,6 +506,8 @@ namespace occa {
 
       name(type.name),
 
+      thType(type.thType),
+
       nestedInfoCount(type.nestedInfoCount),
       nestedExps(type.nestedExps),
 
@@ -582,12 +515,16 @@ namespace occa {
       typedefing(type.typedefing),
       baseType(type.baseType),
 
-      typedefVar(type.typedefVar)  {}
+      typedefVar(type.typedefVar),
+
+      opOverloadMaps(type.opOverloadMaps) {}
 
     typeInfo& typeInfo::operator = (const typeInfo &type){
       leftQualifiers = type.leftQualifiers;
 
       name = type.name;
+
+      thType = type.thType;
 
       nestedInfoCount = type.nestedInfoCount;
       nestedExps      = type.nestedExps;
@@ -597,6 +534,8 @@ namespace occa {
       baseType             = type.baseType;
 
       typedefVar = type.typedefVar;
+
+      opOverloadMaps = type.opOverloadMaps;
 
       return *this;
     }
@@ -621,16 +560,27 @@ namespace occa {
       return c;
     }
 
-    //---[ NEW ]--------------
+    //---[ Load Info ]------------------
     int typeInfo::loadFrom(expNode &expRoot,
                            int leafPos){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
+    }
+
+    int typeInfo::loadFrom(statement &s,
+                           expNode &expRoot,
+                           int leafPos){
+
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+      leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
 
       if(leftQualifiers.has("typedef"))
-        return loadTypedefFrom(expRoot, leafPos);
+        return loadTypedefFrom(s, expRoot, leafPos);
 
       baseType = this;
 
@@ -638,6 +588,8 @@ namespace occa {
          (expRoot[leafPos].info & expType::unknown)){
 
         name = expRoot[leafPos++].value;
+
+        updateThType();
       }
 
       if((leafPos < expRoot.leafCount) &&
@@ -658,7 +610,7 @@ namespace occa {
 
           // Empty statements
           if(sNextLeafPos != sLeafPos){
-            const bool loadType = typeInfo::statementIsATypeInfo(leaf, sLeafPos);
+            const bool loadType = typeInfo::statementIsATypeInfo(s, leaf, sLeafPos);
 
             sNextLeafPos = leaf.mergeRange(expType::root,
                                            sLeafPos,
@@ -667,9 +619,9 @@ namespace occa {
             expNode::swap(nestedExps[i], leaf[sLeafPos]);
 
             if(!loadType)
-              nestedExps[i].splitDeclareStatement(parsingFortran);
+              nestedExps[i].splitDeclareStatement(expFlag::none);
             else
-              nestedExps[i].splitStructStatement(parsingFortran);
+              nestedExps[i].splitStructStatement();
 
             leaf.leaves[sLeafPos] = &(nestedExps[i]);
           }
@@ -684,6 +636,118 @@ namespace occa {
       }
 
       return leafPos;
+    }
+
+    int typeInfo::loadTypedefFrom(statement &s,
+                                  expNode &expRoot,
+                                  int leafPos){
+      leftQualifiers.remove("typedef");
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value != "{")){
+        typeInfo *tmp = s.hasTypeInScope(expRoot[leafPos].value);
+
+        if(tmp){
+          typedefing = tmp;
+        }
+        else{
+          typedefing           = new typeInfo;
+          typedefing->name     = expRoot[leafPos].value;
+          typedefing->baseType = typedefing;
+        }
+
+        ++leafPos;
+      }
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "{")){
+        // Anonymous type
+        if(typedefing == NULL){
+          typedefing           = new typeInfo;
+          typedefing->baseType = typedefing;
+        }
+
+        typedefing->loadFrom(s, expRoot, leafPos);
+        ++leafPos;
+
+        typedefHasDefinition = true;
+      }
+
+      baseType = typedefing->baseType;
+
+      varInfo typedefVarInfo;
+      typedefVarInfo.baseType = typedefing;
+
+      typedefVar = new varInfo;
+      leafPos = typedefVar->loadFrom(s, expRoot, leafPos, &typedefVarInfo);
+
+      name = typedefVar->name;
+
+      updateThType();
+
+      return leafPos;
+    }
+
+    void typeInfo::updateThType(){
+      if(name == "bool")
+        thType = boolType;
+      else if(name == "char")
+        thType = charType;
+      else if(name == "float")
+        thType = floatType;
+      else if(name == "double")
+        thType = doubleType;
+      else {
+        if(name == "short"){
+          const bool unsigned_ = hasQualifier("unsigned");
+
+          thType = (unsigned_ ? ushortType : shortType);
+        }
+        else if((name == "int") ||
+                (name == "long")){
+
+          const bool unsigned_ = hasQualifier("unsigned");
+          const int longs_     = hasQualifier("long");
+
+          switch(longs_){
+          case 0:
+            thType = (unsigned_ ? uintType      : intType);
+          case 1:
+            thType = (unsigned_ ? ulongType     : longType);
+          default:
+            thType = (unsigned_ ? ulonglongType : longlongType);
+          }
+        }
+        else
+          thType = noType;
+      }
+    }
+
+    bool typeInfo::statementIsATypeInfo(statement &s,
+                                        expNode &expRoot,
+                                        int leafPos){
+      if(expRoot.leafCount == 0)
+        return false;
+
+      qualifierInfo qualifiers;
+
+      leafPos = qualifiers.loadFrom(s, expRoot, leafPos);
+
+      if(qualifiers.has("typedef"))
+        return true;
+
+      if(leafPos < expRoot.leafCount){
+        if((expRoot[leafPos].info & expType::unknown) &&
+           (!s.hasTypeInScope(expRoot[leafPos].value))){
+
+          return true;
+        }
+
+        if(expRoot[leafPos].value == "{")
+          return true;
+      }
+
+      return false;
     }
 
     int typeInfo::delimiterCount(expNode &expRoot,
@@ -708,116 +772,14 @@ namespace occa {
 
       return expRoot.leafCount;
     }
+    //==================================
 
-    int typeInfo::loadTypedefFrom(expNode &expRoot,
-                                  int leafPos){
-      leftQualifiers.remove("typedef");
-
-      if((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value != "{")){
-
-        typeInfo *tmp = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
-
-        if(tmp){
-          typedefing = tmp;
-        }
-        else{
-          typedefing           = new typeInfo;
-          typedefing->name     = expRoot[leafPos].value;
-          typedefing->baseType = typedefing;
-        }
-
-        ++leafPos;
-      }
-
-      if((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value == "{")){
-        // Anonymous type
-        if(typedefing == NULL){
-          typedefing           = new typeInfo;
-          typedefing->baseType = typedefing;
-        }
-
-        typedefing->loadFrom(expRoot, leafPos);
-        ++leafPos;
-
-        typedefHasDefinition = true;
-      }
-
-      baseType = typedefing->baseType;
-
-      varInfo typedefVarInfo;
-      typedefVarInfo.baseType = typedefing;
-
-      typedefVar = new varInfo;
-      leafPos = typedefVar->loadFrom(expRoot, leafPos, &typedefVarInfo);
-
-      name = typedefVar->name;
-
-      return leafPos;
-    }
-    //========================
-
-    bool typeInfo::statementIsATypeInfo(statement &s,
-                                        strNode *nodePos){
-      if(nodePos == NULL)
-        return false;
-
-      qualifierInfo qualifiers;
-
-      nodePos = qualifiers.loadFrom(s, nodePos);
-
-      if(qualifiers.has("typedef")){
-        qualifiers.free();
-        return true;
-      }
-
-      if(nodePos                           &&
-         (nodePos->info & unknownVariable) &&
-         (!s.hasTypeInScope(nodePos->value))){
-
-        qualifiers.free();
-        return true;
-      }
-
-      if(nodePos &&
-         (nodePos->info == startBrace)){
-
-        qualifiers.free();
-        return true;
-      }
-
-      qualifiers.free();
-      return false;
-    }
-
-    bool typeInfo::statementIsATypeInfo(expNode &expRoot,
-                                        int leafPos){
-      if(expRoot.leafCount == 0)
-        return false;
-
-      qualifierInfo qualifiers;
-
-      leafPos = qualifiers.loadFrom(expRoot, leafPos);
-
-      if(qualifiers.has("typedef"))
-        return true;
-
-      if(leafPos < expRoot.leafCount){
-        if((expRoot[leafPos].info & expType::unknown) &&
-           (!expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value))){
-
-          return true;
-        }
-
-        if(expRoot[leafPos].value == "{")
-          return true;
-      }
-
-      return false;
-    }
 
     //---[ Type Info ]------------------
+    int typeInfo::hasQualifier(const std::string &qName){
+      return leftQualifiers.has(qName);
+    }
+
     void typeInfo::addQualifier(const std::string &qName,
                                 int pos){
       leftQualifiers.add(qName, pos);
@@ -866,8 +828,12 @@ namespace occa {
           ret += '{';
           ret += '\n';
 
-          for(int i = 0; i < nestedInfoCount; ++i)
+          for(int i = 0; i < nestedInfoCount; ++i){
             ret += nestedExps[i].toString(tab + "  ");
+
+            if(back(ret) != '\n')
+              ret += '\n';
+          }
 
           ret += tab;
           ret += '}';
@@ -906,6 +872,10 @@ namespace occa {
       stackPointersUsed(0),
       stackExpRoots(NULL),
 
+      usesTemplate(false),
+      tArgCount(0),
+      tArgs(NULL),
+
       argumentCount(0),
       argumentVarInfos(NULL),
 
@@ -931,6 +901,10 @@ namespace occa {
 
       dimAttr(var.dimAttr),
       idxOrdering(var.idxOrdering),
+
+      usesTemplate(var.usesTemplate),
+      tArgCount(var.tArgCount),
+      tArgs(var.tArgs),
 
       argumentCount(var.argumentCount),
       argumentVarInfos(var.argumentVarInfos),
@@ -958,6 +932,10 @@ namespace occa {
       dimAttr     = var.dimAttr;
       idxOrdering = var.idxOrdering;
 
+      usesTemplate = var.usesTemplate;
+      tArgCount    = var.tArgCount;
+      tArgs        = var.tArgs;
+
       argumentCount    = var.argumentCount;
       argumentVarInfos = var.argumentVarInfos;
 
@@ -981,6 +959,13 @@ namespace occa {
           stackExpRoots[i].cloneTo(v.stackExpRoots[i]);
       }
 
+      if(tArgCount){
+        v.tArgs = new typeInfo*[tArgCount];
+
+        for(int i = 0; i < tArgCount; ++i)
+          v.tArgs[i] = new typeInfo(tArgs[i]->clone());
+      }
+
       if(argumentCount){
         v.argumentVarInfos = new varInfo*[argumentCount];
 
@@ -998,43 +983,52 @@ namespace occa {
       return v;
     }
 
-    int varInfo::variablesInStatement(strNode *nodePos){
+    int varInfo::variablesInStatement(expNode &expRoot){
       int argc = 0;
 
-      while(nodePos){
-        if((nodePos->value == ",") ||
-           (nodePos->value == ";")){
+      for(int i = 0; i < expRoot.leafCount; ++i){
+        if((expRoot[i].value == ",") ||
+           (expRoot[i].value == ";")){
 
           ++argc;
         }
-        else if((nodePos->right) == NULL)
+        else if(i == (expRoot.leafCount - 1))
           ++argc;
-
-        nodePos = nodePos->right;
       }
 
       return argc;
     }
 
-    //---[ NEW ]------------------------
+    //---[ Load Info ]------------------
     int varInfo::loadFrom(expNode &expRoot,
+                          int leafPos,
+                          varInfo *varHasType){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFrom(*(expRoot.sInfo), expRoot, leafPos, varHasType);
+    }
+
+    int varInfo::loadFrom(statement &s,
+                          expNode &expRoot,
                           int leafPos,
                           varInfo *varHasType){
 
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      leafPos = loadTypeFrom(expRoot, leafPos, varHasType);
+      leafPos = loadTypeFrom(s, expRoot, leafPos, varHasType);
 
-      info = getVarInfoFrom(expRoot, leafPos);
+      info = getVarInfoFrom(s, expRoot, leafPos);
 
       if(info & varType::functionPointer){
         functionNestCount = getNestCountFrom(expRoot, leafPos);
         functionNests     = new varInfo[functionNestCount];
       }
 
-      leafPos = loadNameFrom(expRoot, leafPos);
-      leafPos = loadArgsFrom(expRoot, leafPos);
+      leafPos = loadNameFrom(s, expRoot, leafPos);
+      leafPos = loadArgsFrom(s, expRoot, leafPos);
 
       if((leafPos < (expRoot.leafCount - 1)) &&
          (expRoot[leafPos].value == "@")){
@@ -1044,10 +1038,13 @@ namespace occa {
 
       setupAttributes();
 
+      organizeExpNodes();
+
       return leafPos;
     }
 
-    int varInfo::loadTypeFrom(expNode &expRoot,
+    int varInfo::loadTypeFrom(statement &s,
+                              expNode &expRoot,
                               int leafPos,
                               varInfo *varHasType){
 
@@ -1055,10 +1052,10 @@ namespace occa {
         return leafPos;
 
       if(varHasType == NULL){
-        leafPos = leftQualifiers.loadFrom(expRoot, leafPos);
+        leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
 
         if(leafPos < expRoot.leafCount){
-          baseType = expRoot.sInfo->hasTypeInScope(expRoot[leafPos].value);
+          baseType = s.hasTypeInScope(expRoot[leafPos].value);
 
           if(baseType)
             ++leafPos;
@@ -1069,7 +1066,7 @@ namespace occa {
         baseType       = varHasType->baseType;
       }
 
-      leafPos = rightQualifiers.loadFrom(expRoot, leafPos);
+      leafPos = rightQualifiers.loadFrom(s, expRoot, leafPos);
 
       for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
         if(rightQualifiers[i] == "*")
@@ -1079,7 +1076,8 @@ namespace occa {
       return leafPos;
     }
 
-    int varInfo::getVarInfoFrom(expNode &expRoot,
+    int varInfo::getVarInfoFrom(statement &s,
+                                expNode &expRoot,
                                 int leafPos){
       // No name var (argument for function)
       if(expRoot.leafCount <= leafPos)
@@ -1092,9 +1090,10 @@ namespace occa {
 
       ++leafPos;
 
-      if((leafPos < expRoot.leafCount) &&
-         (expRoot[leafPos].value == "(")){
+      if(expRoot.leafCount <= leafPos)
+        return varType::var;
 
+      if(expRoot[leafPos].value == "("){
         ++leafPos;
 
         if((leafPos < expRoot.leafCount) &&
@@ -1137,61 +1136,95 @@ namespace occa {
       return nestCount;
     }
 
-    int varInfo::loadNameFrom(expNode &expRoot,
+    int varInfo::loadNameFrom(statement &s,
+                              expNode &expRoot,
                               int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
+      if(nodeHasName(expRoot, leafPos))
+        return loadNameFromNode(expRoot, leafPos);
+
+      expNode *expRoot2 = &expRoot;
+      int leafPos2      = leafPos;
+      expNode *leaf     = expRoot2->leaves[leafPos2];
+
       int nestPos = 0;
 
-      expNode *leaf = expRoot.leaves[leafPos];
-
-      if(leaf->value == "(")
-        ++leafPos;
-
-      while((leaf->value == "(") &&
-            (leaf->leafCount != 0)){
+      while((leaf != NULL)            &&
+            (leaf->info & expType::C) &&
+            (0 < leaf->leafCount)     &&
+            (leaf->value == "(")){
 
         if(leaf->leaves[0]->value == "*"){
-          ++nestPos;
+          if((leafPos2 + 1) < (expRoot2->leafCount)){
+            leaf = expRoot2->leaves[leafPos2 + 1];
 
-          if(1 < leaf->leafCount){
-            if((2 < leaf->leafCount) &&
-               (leaf->leaves[2]->value == "(")){
+            if((leaf->info & expType::C) &&
+               (leaf->value == "(")){
 
-              functionNests[nestPos - 1].info = varType::function;
-              functionNests[nestPos - 1].loadArgsFrom(*leaf, 2);
+              functionNests[nestPos].info = varType::function;
+              functionNests[nestPos].loadArgsFrom(s, *expRoot2, leafPos2 + 1);
             }
-
-            leaf = leaf->leaves[1];
           }
-          else
-            break;
+
+          expRoot2 = expRoot2->leaves[leafPos2];
+          leafPos2 = 1;
+
+          leaf = ((leafPos2 < expRoot.leafCount) ?
+                  expRoot2->leaves[leafPos2] :
+                  NULL);
+
+          ++nestPos;
         }
-        else
-          leaf = leaf->leaves[0];
       }
+
+      if((expRoot2 != &expRoot) &&
+         (nodeHasName(*expRoot2, leafPos2))){
+
+        leafPos2 = loadNameFromNode(*expRoot2, leafPos2);
+
+        if((leafPos2 < expRoot2->leafCount) &&
+           expRoot2->leaves[leafPos2]->value == "("){
+
+          info = varType::function;
+          loadArgsFrom(s, *expRoot2, leafPos2);
+        }
+
+        // Skip the name and function-pointer arguments
+        leafPos += 2;
+      }
+
+      return leafPos;
+    }
+
+    bool varInfo::nodeHasName(expNode &expRoot,
+                              int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return false;
+
+      return (expRoot[leafPos].info & (expType::unknown  |
+                                       expType::varInfo  |
+                                       expType::function));
+    }
+
+    int varInfo::loadNameFromNode(expNode &expRoot,
+                                  int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      expNode *leaf = expRoot.leaves[leafPos];
 
       if(leaf->info & (expType::unknown  |
                        expType::varInfo  |
                        expType::function)){
 
-        if(leaf->info & expType::varInfo){
-          if(baseType)
-            name = leaf->getVarInfo().name;
-          else
-            return leafPos;
-        }
+        if(leaf->info & expType::varInfo)
+          name = leaf->getVarInfo().name;
         else
           name = leaf->value;
 
-        int sLeafPos = leaf->whichLeafAmI();
-
-        if(leaf->up == &expRoot){
-          return loadStackPointersFrom(expRoot, sLeafPos + 1);
-        }
-        else
-          loadStackPointersFrom(*leaf, sLeafPos + 1);
+        return loadStackPointersFrom(expRoot, leafPos + 1);
       }
 
       return leafPos;
@@ -1201,6 +1234,8 @@ namespace occa {
                                        int leafPos){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
+
+      stackPointerCount = 0;
 
       for(int i = leafPos; i < expRoot.leafCount; ++i){
         if(expRoot[i].value == "[")
@@ -1213,7 +1248,7 @@ namespace occa {
         stackExpRoots = new expNode[stackPointerCount];
 
         for(int i = 0; i < stackPointerCount; ++i)
-          expNode::swap(stackExpRoots[i], expRoot[leafPos + i]);
+          expRoot[leafPos + i][0].cloneTo(stackExpRoots[i]);
       }
 
       stackPointersUsed = stackPointerCount;
@@ -1221,9 +1256,10 @@ namespace occa {
       return (leafPos + stackPointerCount);
     }
 
-    int varInfo::loadArgsFrom(expNode &expRoot,
+    int varInfo::loadArgsFrom(statement &s,
+                              expNode &expRoot,
                               int leafPos){
-      if( !(info & varType::functionType) )
+      if( !(info & varType::function) )
         return leafPos;
 
       OCCA_CHECK(leafPos < expRoot.leafCount,
@@ -1238,7 +1274,7 @@ namespace occa {
 
         for(int i = 0; i < argumentCount; ++i){
           argumentVarInfos[i] = new varInfo();
-          sLeafPos = argumentVarInfos[i]->loadFrom(leaf, sLeafPos);
+          sLeafPos = argumentVarInfos[i]->loadFrom(s, leaf, sLeafPos);
           sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
         }
       }
@@ -1272,15 +1308,36 @@ namespace occa {
         }
 
         for(int i = 0; i < dims; ++i){
-          OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
-                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time");
+          typeHolder th;
 
-          typeHolder th = idxOrderAttr[i].calculateValue();
+          bool foundIdx = false;
 
-          OCCA_CHECK(!th.isAFloat(),
-                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering");
+          if((idxOrderAttr[i].leafCount    == 0) &&
+             (idxOrderAttr[i].value.size() == 1)){
 
-          const int idxOrder = (int) th.longValue();
+            const char c = idxOrderAttr[i].value[0];
+
+            if(('w' <= c) && (c <= 'z')){
+              th = (int) (((c - 'w') + 3) % 4); // [w,x,y,z] -> [x,y,z,w]
+              foundIdx = true;
+            }
+            else if(('W' <= c) && (c <= 'Z')){
+              th = (int) (((c - 'W') + 3) % 4); // [W,X,Y,Z] -> [X,Y,Z,W]
+              foundIdx = true;
+            }
+          }
+
+          if(!foundIdx){
+            OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
+                       "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time");
+
+            th = idxOrderAttr[i].calculateValue();
+
+            OCCA_CHECK(!th.isAFloat(),
+                       "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering");
+          }
+
+          const int idxOrder = th.to<int>();
 
           idxOrdering[idxOrder] = i;
 
@@ -1299,8 +1356,19 @@ namespace occa {
     int varInfo::loadFromFortran(expNode &expRoot,
                                  int leafPos,
                                  varInfo *varHasType){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
+    }
+
+    int varInfo::loadFromFortran(statement &s,
+                                 expNode &expRoot,
+                                 int leafPos,
+                                 varInfo *varHasType){
       // Load Type
-      leafPos = loadTypeFromFortran(expRoot, leafPos, varHasType);
+      leafPos = loadTypeFromFortran(s, expRoot, leafPos, varHasType);
 
       // Load Name
       if(expRoot.leafCount <= leafPos)
@@ -1315,7 +1383,7 @@ namespace occa {
       if(expRoot[leafPos].leafCount){
         expNode &leaf = *(expRoot.leaves[leafPos]);
 
-        if(info & varType::functionType){
+        if(info & varType::function){
           argumentCount = (leaf.leafCount + 1)/2;
 
           if(argumentCount)
@@ -1339,15 +1407,26 @@ namespace occa {
     int varInfo::loadTypeFromFortran(expNode &expRoot,
                                      int leafPos,
                                      varInfo *varHasType){
+
+      if(expRoot.sInfo == NULL)
+        throw 1;
+
+      return loadTypeFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
+    }
+
+    int varInfo::loadTypeFromFortran(statement &s,
+                                     expNode &expRoot,
+                                     int leafPos,
+                                     varInfo *varHasType){
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
       if(varHasType == NULL){
-        leafPos = leftQualifiers.loadFromFortran(*this, expRoot, leafPos);
+        leafPos = leftQualifiers.loadFromFortran(s, *this, expRoot, leafPos);
 
         if(leafPos < expRoot.leafCount){
           if(expRoot[leafPos].value == "SUBROUTINE"){
-            baseType = expRoot.sInfo->hasTypeInScope("void");
+            baseType = s.hasTypeInScope("void");
             info    |= varType::functionDec;
             ++leafPos;
           }
@@ -1367,470 +1446,6 @@ namespace occa {
         info |= varType::var;
 
       return leafPos;
-    }
-
-    int varInfo::loadStackPointersFromFortran(expNode &expRoot,
-                                              int leafPos){
-      if(expRoot.leafCount <= leafPos)
-        return leafPos;
-
-      if((expRoot[leafPos].value != "(") ||
-         (expRoot[leafPos].leafCount == 0)){
-
-        if(expRoot[leafPos].value == "(")
-          return (leafPos + 1);
-
-        return leafPos;
-      }
-
-      expRoot[leafPos].organize(parsingFortran);
-
-      expNode *expPos = &(expRoot[leafPos][0]);
-
-      bool hasColon = false;
-
-      // rightQualifiers are copied from [firstVar]
-      if(rightQualifiers.has("*"))
-        rightQualifiers.remove("*");
-
-      if(expPos->value != ","){
-        if(expPos->value == ":"){
-          pointerCount = 1;
-          rightQualifiers.add("*", 0);
-        }
-        else{
-          stackPointerCount = 1;
-
-          stackExpRoots = new expNode[1];
-
-          setupFortranStackExp(stackExpRoots[0],
-                               expRoot[leafPos][0]);
-        }
-      }
-      else if((expPos->leafCount) &&
-              (expPos->value == ",")){
-
-        stackPointerCount = 1;
-        int found = 0;
-
-        for(int pass = 0; pass < 2; ++pass){
-
-          while((expPos->leafCount) &&
-                (expPos->value == ",")){
-
-            if(!hasColon)
-              hasColon = ((expPos->leaves[0]->value == ":") ||
-                          (expPos->leaves[1]->value == ":"));
-
-            if(pass == 0) {
-              ++stackPointerCount;
-            }
-            else {
-              setupFortranStackExp(stackExpRoots[found++],
-                                   *(expPos->leaves[1]));
-            }
-
-            expPos = expPos->leaves[0];
-          }
-
-          if(hasColon){
-            pointerCount      = stackPointerCount;
-            stackPointerCount = 0;
-
-            for(int i = 0; i < pointerCount; ++i)
-              rightQualifiers.add("*", 0);
-
-            break;
-          }
-
-          if(pass == 0){
-            stackExpRoots = new expNode[stackPointerCount];
-          }
-          else{
-            setupFortranStackExp(stackExpRoots[found],
-                                 *expPos);
-          }
-
-          expPos = &(expRoot[leafPos][0]);
-        }
-      }
-
-      ++leafPos;
-
-      if(pointerCount &&
-         rightQualifiers.has("&")){
-
-        rightQualifiers.remove("&");
-      }
-
-      stackPointersUsed = stackPointerCount;
-
-      return leafPos;
-    }
-
-    void varInfo::setupFortranStackExp(expNode &stackExp,
-                                       expNode &valueExp){
-      stackExp.info  = expType::C;
-      stackExp.value = "[";
-
-      stackExp.leaves    = new expNode*[1];
-      stackExp.leafCount = 1;
-
-      stackExp.leaves[0] = &valueExp;
-    }
-    //   =====================
-    //==================================
-
-    //---[ OLD ]------------------------
-    strNode* varInfo::loadFrom(statement &s,
-                               strNode *nodePos,
-                               varInfo *varHasType){
-      nodePos = loadTypeFrom(s, nodePos, varHasType);
-
-      info = getVarInfoFrom(s, nodePos);
-
-      if(info & varType::functionPointer){
-        functionNestCount = getNestCountFrom(s, nodePos);
-        functionNests     = new varInfo[functionNestCount];
-      }
-
-      nodePos = loadNameFrom(s, nodePos);
-      nodePos = loadArgsFrom(s, nodePos);
-
-      if(nodePos &&
-         (nodePos->value == ","))
-        nodePos = nodePos->right;
-
-      return nodePos;
-    }
-
-    strNode* varInfo::loadTypeFrom(statement &s,
-                                   strNode *nodePos,
-                                   varInfo *varHasType){
-      if(varHasType == NULL){
-        nodePos = leftQualifiers.loadFrom(s, nodePos);
-
-        baseType = s.hasTypeInScope(nodePos->value);
-
-        if(baseType)
-          nodePos = nodePos->right;
-      }
-      else{
-        leftQualifiers = varHasType->leftQualifiers.clone();
-        baseType       = varHasType->baseType;
-      }
-
-      nodePos = rightQualifiers.loadFrom(s, nodePos);
-
-      for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
-        if(rightQualifiers[i] == "*")
-          ++pointerCount;
-      }
-
-      return nodePos;
-    }
-
-    int varInfo::getVarInfoFrom(statement &s,
-                                strNode *nodePos){
-      // No name var (argument for function)
-      if(nodePos == NULL)
-        return varType::var;
-
-      strNode *nextNode = nodePos->right;
-
-      const int nestCount = getNestCountFrom(s, nodePos);
-
-      if(nestCount)
-        return varType::functionPointer;
-
-      if(nextNode &&
-         (nextNode->info == startParentheses)){
-
-        if((nextNode->right)       &&
-           (nextNode->right->info == startBrace)){
-
-          return varType::functionDef;
-        }
-        else{
-          return varType::functionDec;
-        }
-      }
-
-      return varType::var;
-    }
-
-    int varInfo::getNestCountFrom(statement &s,
-                                  strNode *nodePos){
-      int nestCount = 0;
-
-      while(nodePos &&
-            (nodePos->info == startParentheses)){
-
-        nodePos = nodePos->down;
-
-        if(nodePos &&
-           nodePos->value == "*"){
-
-          ++nestCount;
-          nodePos = nodePos->right;
-        }
-      }
-
-      return nestCount;
-    }
-
-    strNode* varInfo::loadNameFrom(statement &s,
-                                   strNode *nodePos){
-      if(nodePos == NULL)
-        return NULL;
-
-      strNode *nextNode = nodePos->right;
-
-      int nestPos = 0;
-
-      while(nodePos &&
-            (nodePos->info == startParentheses)){
-
-        nodePos = nodePos->down;
-
-        if(nodePos &&
-           nodePos->value == "*"){
-
-          nodePos = nodePos->right;
-
-          if(nodePos        &&
-             nodePos->right &&
-             (nodePos->right->info == startParentheses)){
-
-            functionNests[nestPos].info = varType::function;
-            functionNests[nestPos].loadArgsFrom(s, nodePos->right);
-          }
-
-          ++nestPos;
-        }
-      }
-
-      if(nodePos &&
-         (nodePos->info & unknownVariable)){
-
-        name    = nodePos->value;
-        nodePos = nodePos->right;
-
-        if(nodePos == nextNode)
-          nextNode = loadStackPointersFrom(s, nextNode);
-        else
-          nodePos = loadStackPointersFrom(s, nodePos);
-      }
-
-      return nextNode;
-    }
-
-    strNode* varInfo::loadStackPointersFrom(statement &s,
-                                            strNode *nodePos){
-      strNode *nodeRoot = nodePos;
-
-      if(nodePos &&
-         (nodePos->value == "[") &&
-         (nodePos->down)){
-
-        ++stackPointerCount;
-        nodePos = nodePos->right;
-      }
-
-      if(stackPointerCount){
-        nodePos = nodeRoot;
-
-        stackExpRoots = new expNode[stackPointerCount];
-
-        for(int i = 0; i < stackPointerCount; ++i){
-          stackExpRoots[i].sInfo = &s;
-
-          if(nodePos->down)
-            s.setExpNodeFromStrNode(stackExpRoots[i], nodePos->down);
-
-          nodePos = nodePos->right;
-        }
-      }
-
-      stackPointersUsed = stackPointerCount;
-
-      return nodePos;
-    }
-
-    strNode* varInfo::loadArgsFrom(statement &s,
-                                   strNode *nodePos){
-      if( !(info & varType::functionType) )
-        return nodePos;
-
-      OCCA_CHECK(nodePos != NULL,
-                 "Missing arguments from function variable");
-
-      strNode *nextNode = nodePos->right;
-
-      if(nodePos->down){
-        nodePos = nodePos->down;
-
-        argumentCount    = variablesInStatement(nodePos);
-        argumentVarInfos = new varInfo*[argumentCount];
-
-        for(int i = 0; i < argumentCount; ++i){
-          argumentVarInfos[i] = new varInfo();
-          nodePos = argumentVarInfos[i]->loadFrom(s, nodePos);
-        }
-      }
-
-      return nextNode;
-    }
-
-    //   ---[ Fortran ]-------
-    strNode* varInfo::loadFromFortran(statement &s,
-                                      strNode *nodePos,
-                                      varInfo *varHasType){
-      // Load Type
-      nodePos = loadTypeFromFortran(s, nodePos, varHasType);
-
-      // Load Name
-      if(nodePos == NULL)
-        return NULL;
-
-      name = nodePos->value;
-      nodePos = nodePos->right;
-
-      // Load Args
-      if(nodePos == NULL)
-        return NULL;
-
-      if((info & varType::functionType) &&
-         (nodePos->down)){
-
-        strNode *downNode = nodePos->down;
-
-        argumentCount = variablesInStatement(downNode);
-
-        if(argumentCount)
-          argumentVarInfos = new varInfo*[argumentCount];
-
-        for(int i = 0; i < argumentCount; ++i){
-          argumentVarInfos[i] = new varInfo();
-          argumentVarInfos[i]->name = downNode->value;
-
-          if((i + 1) < argumentCount)
-            downNode = downNode->right->right;
-        }
-      }
-
-      return nodePos;
-    }
-
-    strNode* varInfo::loadTypeFromFortran(statement &s,
-                                          strNode *nodePos,
-                                          varInfo *varHasType){
-      if(varHasType == NULL){
-        nodePos = leftQualifiers.loadFromFortran(*this, s, nodePos);
-
-        if(nodePos){
-          if(nodePos->value == "SUBROUTINE"){
-            baseType = s.hasTypeInScope("void");
-            info    |= varType::functionDec;
-            nodePos  = nodePos->right;
-          }
-          else if(nodePos->value == "FUNCTION"){
-            info |= varType::functionDec;
-            nodePos = nodePos->right;
-          }
-        }
-      }
-      else{
-        leftQualifiers  = varHasType->leftQualifiers.clone();
-        rightQualifiers = varHasType->rightQualifiers.clone();
-        baseType        = varHasType->baseType;
-      }
-
-      if( !(info & varType::functionDec) )
-        info |= varType::var;
-
-      return nodePos;
-    }
-
-    std::string varInfo::getFullFortranType(strNode *&nodePos){
-      if( !(nodePos->info & specifierType) )
-        return "";
-
-      strNode *nextNode = nodePos->right;
-
-      std::string typeNode = nodePos->value;
-
-      if(nextNode){
-        int bytes = -1;
-
-        // [-] Ignoring complex case
-        const bool isFloat = ((typeNode.find("REAL") != std::string::npos) ||
-                              (typeNode == "PRECISION")                    ||
-                              (typeNode == "COMPLEX"));
-
-        const int typeNodeChars = typeNode.size();
-        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
-
-        std::string suffix = "";
-
-        if(typeHasSuffix){
-          for(int i = 0; i < typeNodeChars; ++i){
-            if(isANumber(typeNode[i]))
-              suffix += typeNode[i];
-          }
-        }
-
-        if(isFloat){
-          if(typeNode.find("REAL") != std::string::npos)
-            bytes = 4;
-          else if(typeNode == "PRECISION")
-            bytes = 8;
-        }
-        else {
-          if(typeNode.find("INTEGER") != std::string::npos)
-            bytes = 4;
-          else if((typeNode == "LOGICAL") ||
-                  (typeNode == "CHARACTER"))
-            bytes = 1;
-        }
-
-        if(nextNode->value == "*"){
-          nextNode = nextNode->right;
-          bytes    = atoi(nextNode->value.c_str());
-          nextNode = nextNode->right;
-        }
-        else if((nextNode->value == "(") &&
-                (nextNode->down)){
-          bytes = atoi(nextNode->down->value.c_str());
-          nextNode = nextNode->right;
-        }
-
-        switch(bytes){
-        case 1:
-          typeNode = "char" + suffix; break;
-        case 2:
-          typeNode = "short" + suffix; break;
-        case 4:
-          if(isFloat)
-            typeNode = "float" + suffix;
-          else
-            typeNode = "int" + suffix;
-          break;
-        case 8:
-          if(isFloat)
-            typeNode = "double" + suffix;
-          else
-            typeNode = "long long" + suffix;
-          break;
-        default:
-          OCCA_CHECK(false,
-                     "Error loading " << typeNode << "(" << bytes << ")");
-        };
-      }
-
-      nodePos = nextNode;
-
-      return typeNode;
     }
 
     std::string varInfo::getFullFortranType(expNode &expRoot,
@@ -1913,7 +1528,94 @@ namespace occa {
 
       return typeNode;
     }
+
+    int varInfo::loadStackPointersFromFortran(expNode &expRoot,
+                                              int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return leafPos;
+
+      if((expRoot[leafPos].value != "(") ||
+         (expRoot[leafPos].leafCount == 0)){
+
+        if(expRoot[leafPos].value == "(")
+          return (leafPos + 1);
+
+        return leafPos;
+      }
+
+      // rightQualifiers are copied from [firstVar]
+      if(rightQualifiers.has("*"))
+        rightQualifiers.remove("*");
+
+      expRoot[leafPos].changeExpTypes();
+      expRoot[leafPos].organize(parserInfo::parsingFortran);
+
+      expNode &csvFlatRoot = *(expRoot[leafPos][0].makeCsvFlatHandle());
+
+      for(int i = 0; i < csvFlatRoot.leafCount; ++i){
+        expNode &stackNode = csvFlatRoot[i];
+
+        if(stackNode.value == ":"){
+          pointerCount      = csvFlatRoot.leafCount;
+          stackPointerCount = 0;
+
+          for(int i = 0; i < pointerCount; ++i)
+            rightQualifiers.add("*", 0);
+
+          break;
+        }
+        else {
+          ++stackPointerCount;
+        }
+      }
+
+      if(stackPointerCount){
+        stackExpRoots = new expNode[stackPointerCount];
+
+        for(int i = 0; i < stackPointerCount; ++i)
+          csvFlatRoot[i].cloneTo(stackExpRoots[i]);
+      }
+
+      expNode::freeFlatHandle(csvFlatRoot);
+
+      ++leafPos;
+
+      if(pointerCount &&
+         rightQualifiers.has("&")){
+
+        rightQualifiers.remove("&");
+      }
+
+      return leafPos;
+    }
+
+    void varInfo::setupFortranStackExp(expNode &stackExp,
+                                       expNode &valueExp){
+      stackExp.info  = expType::C;
+      stackExp.value = "[";
+
+      stackExp.leaves    = new expNode*[1];
+      stackExp.leafCount = 1;
+
+      stackExp.leaves[0] = &valueExp;
+    }
     //   =====================
+
+    void varInfo::organizeExpNodes(){
+      for(int i = 0; i < stackPointerCount; ++i){
+        if(!stackExpRoots[i].isOrganized()){
+          stackExpRoots[i].changeExpTypes();
+          stackExpRoots[i].initOrganization();
+          stackExpRoots[i].organize();
+        }
+      }
+
+      for(int i = 0; i < argumentCount; ++i)
+        argumentVarInfos[i]->organizeExpNodes();
+
+      for(int i = 0; i < functionNestCount; ++i)
+        functionNests[i].organizeExpNodes();
+    }
     //==================================
 
 
@@ -1935,11 +1637,11 @@ namespace occa {
       return rightQualifiers.qualifierCount;
     }
 
-    bool varInfo::hasQualifier(const std::string &qName){
+    int varInfo::hasQualifier(const std::string &qName){
       return leftQualifiers.has(qName);
     }
 
-    bool varInfo::hasRightQualifier(const std::string &qName){
+    int varInfo::hasRightQualifier(const std::string &qName){
       return rightQualifiers.has(qName);
     }
 
@@ -1983,7 +1685,7 @@ namespace occa {
     }
 
     expNode& varInfo::stackSizeExpNode(const int pos){
-      return stackExpRoots[pos][0];
+      return stackExpRoots[pos];
     }
 
     void varInfo::removeStackPointers(){
@@ -2037,6 +1739,30 @@ namespace occa {
 
       return NULL;
     }
+
+    bool varInfo::canBeCastedTo(varInfo &var){
+      if(((    baseType->thType & noType) == 0) &&
+         ((var.baseType->thType & noType) == 0)){
+
+        return true;
+      }
+
+      return false;
+    }
+
+    bool varInfo::hasSameTypeAs(varInfo &var){
+      if(baseType != var.baseType)
+        return false;
+
+      if(stackPointerCount != var.stackPointerCount)
+        return false;
+
+      // [-] Need to check if void* is an exception
+      if(pointerCount != var.pointerCount)
+        return false;
+
+      return true;
+    }
     //================================
 
     bool varInfo::isConst(){
@@ -2070,7 +1796,7 @@ namespace occa {
                                (name.size()));
 
         if(!addSpaceBeforeName){
-          if((info & varType::functionType)  &&
+          if((info & varType::function)       &&
              (rightQualifiers.qualifierCount) &&
              ((getLastRightQualifier() == "*") ||
               (getLastRightQualifier() == "&"))){
@@ -2096,8 +1822,11 @@ namespace occa {
 
       if(stackPointerCount && stackPointersUsed){
         if(stackPointersUsed == stackPointerCount){
-          for(int i = 0; i < stackPointerCount; ++i)
+          for(int i = 0; i < stackPointerCount; ++i){
+            ret += '[';
             ret += (std::string) stackExpRoots[i];
+            ret += ']';
+          }
         }
         else{
           ret += "[(";
@@ -2114,12 +1843,7 @@ namespace occa {
         }
       }
 
-      for(int i = (functionNestCount - 1); 0 <= i; --i){
-        ret += functionNests[i].toString();
-        ret += ')';
-      }
-
-      if(info & varType::functionType){
+      if(info & varType::function){
         ret += '(';
 
         if(argumentCount){
@@ -2134,10 +1858,10 @@ namespace occa {
         ret += ')';
       }
 
-      // Print attributes (for debugging purposes)
-#if 0
-      std::cout << ' ' << attributeMapToString(attributeMap);
-#endif
+      for(int i = (functionNestCount - 1); 0 <= i; --i){
+        ret += ')';
+        ret += functionNests[i].toString();
+      }
 
       return ret;
     }
@@ -2149,6 +1873,117 @@ namespace occa {
     std::ostream& operator << (std::ostream &out, varInfo &var){
       out << var.toString();
       return out;
+    }
+    //============================================
+
+
+    //---[ Overloaded Operator Class ]------------
+    void overloadedOp_t::add(varInfo &function){
+      functions.push_back(&function);
+    }
+
+    varInfo* overloadedOp_t::getFromArgs(const int argumentCount,
+                                         expNode *arguments){
+
+      varInfo *argumentTypes = new varInfo[argumentCount];
+
+      for(int i = 0; i < argumentCount; ++i)
+        argumentTypes[i] = arguments[i].evaluateType();
+
+      varInfo *ret = getFromTypes(argumentCount,
+                                  argumentTypes);
+
+      delete [] argumentTypes;
+
+      return ret;
+    }
+
+    varInfo* overloadedOp_t::getFromTypes(const int argumentCount,
+                                          varInfo *argumentTypes){
+
+      const int functionCount = (int) functions.size();
+
+      varInfoVector_t candidates;
+
+      for(int i = 0; i < functionCount; ++i){
+        varInfo &f = argumentTypes[i];
+        int arg;
+
+        if(f.argumentCount != argumentCount)
+          continue;
+
+        for(arg = 0; arg < argumentCount; ++arg){
+          if(!argumentTypes[arg].canBeCastedTo(f.getArgument(arg)))
+            break;
+        }
+
+        if(arg == argumentCount)
+          candidates.push_back(&f);
+      }
+
+      return bestFitFor(argumentCount,
+                        argumentTypes,
+                        candidates);
+    }
+
+    varInfo* overloadedOp_t::bestFitFor(const int argumentCount,
+                                        varInfo *argumentTypes,
+                                        varInfoVector_t &candidates){
+
+      const int candidateCount = (int) candidates.size();
+
+      if(candidateCount == 0)
+        return NULL;
+      else if(candidateCount == 1)
+        return candidates[0];
+
+      int nonAmbiguousCount = candidateCount;
+      bool *ambiguous       = new bool[candidateCount];
+
+      for(int i = 0; i < candidateCount; ++i)
+        ambiguous[i] = false;
+
+      for(int arg = 0; arg < argumentCount; ++arg){
+        varInfo &argType = argumentTypes[arg];
+
+        for(int i = 0; i < candidateCount; ++i){
+          if(!ambiguous[i])
+            continue;
+
+          if(candidates[i]->getArgument(arg).hasSameTypeAs(argType)){
+            for(int i2 = 0; i2 < i; ++i){
+              if(!ambiguous[i2]){
+                --nonAmbiguousCount;
+                ambiguous[i2] = true;
+              }
+            }
+
+            for(int i2 = (i + 1); i2 < candidateCount; ++i2){
+              if(!candidates[i2]->getArgument(arg).hasSameTypeAs(argType)){
+                if(!ambiguous[i2]){
+                  --nonAmbiguousCount;
+                  ambiguous[i2] = true;
+                }
+              }
+            }
+          }
+        }
+
+        // [-] Clean the error message
+        OCCA_CHECK(0 < nonAmbiguousCount,
+                   "Ambiguous Function");
+      }
+
+      // [-] Clean the error message
+      OCCA_CHECK(1 < nonAmbiguousCount,
+                 "Ambiguous Function");
+
+      for(int i = 0; i < candidateCount; ++i){
+        if(!ambiguous[i])
+          return candidates[i];
+      }
+
+      return NULL;
     }
     //============================================
 
@@ -2235,7 +2070,7 @@ namespace occa {
     void varDepGraph::setup(varInfo &var,
                             statement &sBound,
                             statementIdMap_t &idMap){
-      statementNode *originSN = &(sBound.varUpdateMap[&var]);
+      statementNode *originSN = &(sBound.parser.varUpdateMap[&var]);
       statementNode *sn       = lastNode(originSN);
 
       const int sID = idMap[&sBound];
@@ -2268,7 +2103,7 @@ namespace occa {
       const bool stop      = false;
 
       if((idMap.find(&s) == idMap.end()) ||  // Skip if statement is not in the map
-         (s.info & functionStatementType)){ // Functions don't have dependencies
+         (s.info & smntType::functionStatement)){ // Functions don't have dependencies
 
         return keepGoing;
       }
