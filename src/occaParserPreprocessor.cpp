@@ -225,6 +225,8 @@ namespace occa {
       }
 
       if(*c == '0'){
+        ++digits;
+
         ++c;
 
         const char C = upChar(*(c++));
@@ -1310,21 +1312,34 @@ namespace occa {
 
     typeHolder::operator std::string () const {
       std::stringstream ss;
+      std::string str;
 
       switch(type){
-      case intType   : ss << value.int_;    break;
-      case boolType  : ss << value.bool_;   break;
-      case charType  : ss << value.char_;   break;
-      case longType  : ss << value.long_;   break;
-      case shortType : ss << value.short_;  break;
-      case floatType : ss << value.float_;  break;
-      case doubleType: ss << value.double_; break;
+      case intType   : ss << value.int_;    str = ss.str();             break;
+      case boolType  : ss << value.bool_;   str = ss.str();             break;
+      case charType  : ss << value.char_;   str = ss.str();             break;
+      case longType  : ss << value.long_;   str = ss.str(); str += 'L'; break;
+      case shortType : ss << value.short_;  str = ss.str();             break;
+      case floatType : ss << value.float_;  str = ss.str();             break;
+      case doubleType: ss << value.double_; str = ss.str();             break;
       default:
         OCCA_CHECK(false,
                    "Value not set\n");
       }
 
-      return ss.str();
+      if((type == floatType) ||
+         (type == doubleType)){
+
+        if(str.find('.') == std::string::npos){
+          str += ".0";
+
+          if(type == floatType)
+            str += 'f';
+        }
+      }
+
+
+      return str;
     }
 
     std::ostream& operator << (std::ostream &out, const typeHolder &th){
