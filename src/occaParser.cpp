@@ -2007,7 +2007,6 @@ namespace occa {
       }
       else{
         newRoot.free();
-        delete &newRoot;
       }
       //================================
 
