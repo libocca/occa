@@ -35,10 +35,12 @@ namespace occa {
         unsigned_ = true;
       else
         break;
+
+      ++c;
     }
 
     if(negative)
-      ret = ((~ret) - 1);
+      ret = ((~ret) + 1);
 
     if(longs == 0)
       ret = ((uintptr_t) ((int) ret));
@@ -119,7 +121,7 @@ namespace occa {
     }
 
     if(negative)
-      ret = ((~ret) - 1);
+      ret = ((~ret) + 1);
 
     return ret;
   }
@@ -189,26 +191,33 @@ namespace occa {
       }
     }
 
-    void typeHolder::load(const std::string &str){
+    void typeHolder::load(const char *&c){
       bool negative  = false;
       bool unsigned_ = false;
       bool decimal   = false;
       bool float_    = false;
       int bits       = 0;
       int longs      = 0;
+      int digits     = 0;
 
-      if((str == "true") || (str == "false")){
+      const char *c0 = c;
+
+      if((strcmp(c, "true")  == 0) ||
+         (strcmp(c, "false") == 0)){
+
         type        = boolType;
-        value.bool_ = (str == "true");
+        value.bool_ = (strcmp(c, "true") == 0);
+
+        ++c;
         return;
       }
-      else if(str == "NULL"){
+      else if(strcmp(c, "NULL")  == 0){
         type             = ulonglongType;
         value.ulonglong_ = 0;
+
+        ++c;
         return;
       }
-
-      const char *c = str.c_str();
 
       if((*c == '+') || (*c == '-')){
         negative = (*c == '-');
@@ -226,17 +235,19 @@ namespace occa {
           bits = 2;
         else if(('0' <= *c) && (*c <= '9'))
           bits = 3;
+        else
+          --c;
       }
 
       while(true){
         const char C = upChar(*c);
 
         if(('0' <= *c) && (*c <= '9')){
-          // OK
+          ++digits;
         }
         else if((bits == 4) &&
                 ('A' <=  C) && ( C <= 'F')){
-          // OK
+          ++digits;
         }
         else if(*c == '.')
           decimal = true;
@@ -249,58 +260,79 @@ namespace occa {
       while(*c != '\0'){
         const char C = upChar(*c);
 
-        if(C == 'L')
+        if(C == 'L'){
           ++longs;
-        else if(C == 'U')
+          ++c;
+        }
+        else if(C == 'U'){
           unsigned_ = true;
-        else if(C == 'F')
+          ++c;
+        }
+        else if(C == 'F'){
           float_ = true;
+          ++c;
+        }
         else
           break;
+      }
+
+      // If there was something else or no number
+      if(!charIsIn(*c, parserNS::cWordDelimiter) ||
+         (digits == 0)){
+
+        type = noType;
+
+        c = c0;
+        return;
       }
 
       if(decimal){
         if(!float_){
           type          = doubleType;
-          value.double_ = occa::atof(str);
+          value.double_ = occa::atof(std::string(c0, c - c0));
         }
         else{
           type         = floatType;
-          value.float_ = occa::atof(str);
+          value.float_ = occa::atof(std::string(c0, c - c0));
         }
       }
       else{
         if(longs == 0){
           if(!unsigned_){
             type       = intType;
-            value.int_ = occa::atoi(str);
+            value.int_ = occa::atoi(std::string(c0, c - c0));
           }
           else{
             type        = uintType;
-            value.uint_ = occa::atoi(str);
+            value.uint_ = occa::atoi(std::string(c0, c - c0));
           }
         }
         else if(longs == 1){
           if(!unsigned_){
             type        = longType;
-            value.long_ = occa::atoi(str);
+            value.long_ = occa::atoi(std::string(c0, c - c0));
           }
           else{
             type         = ulongType;
-            value.ulong_ = occa::atoi(str);
+            value.ulong_ = occa::atoi(std::string(c0, c - c0));
           }
         }
         else{
           if(!unsigned_){
             type            = longlongType;
-            value.longlong_ = occa::atoi(str);
+            value.longlong_ = occa::atoi(std::string(c0, c - c0));
           }
           else{
             type             = ulonglongType;
-            value.ulonglong_ = occa::atoi(str);
+            value.ulonglong_ = occa::atoi(std::string(c0, c - c0));
           }
         }
       }
+    }
+
+    void typeHolder::load(const std::string &str){
+      const char *c = str.c_str();
+      load(c);
     }
 
     typeHolder::typeHolder(const bool bool__){

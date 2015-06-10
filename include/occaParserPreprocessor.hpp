@@ -76,6 +76,7 @@ namespace occa {
       typeHolder(const std::string &str);
       typeHolder(const std::string &str, info_t type_);
 
+      void load(const char *&c);
       void load(const std::string &str);
 
       typeHolder(const bool bool__);

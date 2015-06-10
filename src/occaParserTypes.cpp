@@ -1247,8 +1247,10 @@ namespace occa {
       if(stackPointerCount){
         stackExpRoots = new expNode[stackPointerCount];
 
-        for(int i = 0; i < stackPointerCount; ++i)
-          expRoot[leafPos + i][0].cloneTo(stackExpRoots[i]);
+        for(int i = 0; i < stackPointerCount; ++i){
+          if(expRoot[leafPos + i].leafCount)
+            expRoot[leafPos + i][0].cloneTo(stackExpRoots[i]);
+        }
       }
 
       stackPointersUsed = stackPointerCount;
@@ -1463,14 +1465,14 @@ namespace occa {
                               (typeNode == "PRECISION")                    ||
                               (typeNode == "COMPLEX"));
 
-        const int typeNodeChars = typeNode.size();
-        const bool typeHasSuffix = isANumber(typeNode[typeNodeChars - 1]);
+        const int typeNodeChars  = typeNode.size();
+        const bool typeHasSuffix = isADigit(typeNode[typeNodeChars - 1]);
 
         std::string suffix = "";
 
         if(typeHasSuffix){
           for(int i = 0; i < typeNodeChars; ++i){
-            if(isANumber(typeNode[i]))
+            if(isADigit(typeNode[i]))
               suffix += typeNode[i];
           }
         }
@@ -1572,8 +1574,10 @@ namespace occa {
       if(stackPointerCount){
         stackExpRoots = new expNode[stackPointerCount];
 
-        for(int i = 0; i < stackPointerCount; ++i)
-          csvFlatRoot[i].cloneTo(stackExpRoots[i]);
+        for(int i = 0; i < stackPointerCount; ++i){
+          if(csvFlatRoot[i].leafCount)
+            csvFlatRoot[i].cloneTo(stackExpRoots[i]);
+        }
       }
 
       expNode::freeFlatHandle(csvFlatRoot);

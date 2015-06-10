@@ -50,7 +50,7 @@ namespace occa {
   bool isAFloat(const std::string &str);
   bool isANumber(const std::string &str);
 
-  inline bool isANumber(const char c){
+  inline bool isADigit(const char c){
     return (('0' <= c) && (c <= '9'));
   }
 

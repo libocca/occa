@@ -3517,8 +3517,9 @@ namespace occa {
           const char *cRight = cLeft;
 
           bool loadString = isAString(cLeft);
-          bool loadNumber = isANumber(cLeft) && ((cLeft[0] != '+') &&
-                                                 (cLeft[0] != '-'));
+          bool loadNumber = ((*cLeft != '-') &&
+                             (*cLeft != '+') &&
+                             isANumber(cLeft));
 
           if(loadString){ //-----------------------------------------------[ 1 ]
             skipString(cRight, parsingLanguage);
@@ -3529,14 +3530,14 @@ namespace occa {
             cLeft = cRight;
           }
           else if(loadNumber){ //------------------------------------------[ 2 ]
-            skipNumber(cRight, parsingLanguage);
+            typeHolder th;
+            th.load(cLeft);
+            // skipNumber(cRight, parsingLanguage); [---]
 
             cNode->addNode(expType::presetValue);
 
-            cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
+            cNode->lastNode().value = (std::string) th;
             cNode->lastNode().info  = expType::firstPass | expType::presetValue;
-
-            cLeft = cRight;
           }
           else{ //---------------------------------------------------------[ 3 ]
             const int delimiterChars = isAWordDelimiter(cLeft, parsingLanguage);

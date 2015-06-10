@@ -7,9 +7,9 @@
 #define BOXIFY(x)                               \
   {                                             \
     if ((x) >= 0.5)                             \
-      x -= 1.0;                                 \
+      x -= 1.;                                 \
     else if ((x) < -0.5)                        \
-      x += 1.0;                                 \
+      x += 1.;                                 \
   }
 
 typedef int blah234;
@@ -29,10 +29,23 @@ occaFunction tFloat hatWavelet(tFloat t){
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
-  return (1.0 - 2.0*pift2)*exp(-pift2);
+  return (1. - 2.0*pift2)*exp(-pift2);
 }
 
 const int2 * const a34;
+float allTheOnes[] = {1, +1, -1,
+                      1., +1., -1.,
+                      1.0, -1.0, +1.0,
+                      1.0f, -1.0f, +1.0f,
+                      1.01F, -1.01F, +1.01F,
+                      1l, -1l, +1l,
+                      1.01L, -1.01L, +1.01L,
+                      0b001, -0b001, +0b001,
+                      0B001, -0B001, +0B001,
+                      0x001, -0x001, +0x001,
+                      0X001, -0X001, +0X001,
+                      0001, -0001, +0001};
+
 
 #if 1
 occaKernel void fd2d(tFloat *u1,

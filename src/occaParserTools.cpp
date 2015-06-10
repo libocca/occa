@@ -1,3 +1,4 @@
+#include "occaParserPreprocessor.hpp"
 #include "occaParserTools.hpp"
 #include "occaTools.hpp"
 
@@ -123,49 +124,24 @@ namespace occa {
   }
 
   bool isAnInt(const char *c){
-    const char *cEnd = c;
-    skipToWhitespace(cEnd);
+    parserNS::typeHolder th;
+    th.load(c);
 
-    if((*c == '-') ||
-       (*c == '+')){
-
-      ++c;
-    }
-
-    while(c < cEnd){
-      if(('0' > *c) || (*c > '9'))
-        return false;
-
-      ++c;
-    }
-
-    return true;
+    return (th.isAnInt());
   }
 
   bool isAFloat(const char *c){
-    if((*c == '-') ||
-       (*c == '+')){
+    parserNS::typeHolder th;
+    th.load(c);
 
-      ++c;
-    }
-
-    const char *c0 = c;
-
-    if(('0' <= *c) && (*c <= '9'))
-      skipInt(c);
-
-    if((*c != '.') ||
-       (*c != 'f') ||
-       (*c != 'F')){
-
-      return false;
-    }
-
-    return (c0 < c);
+    return (th.isAFloat());
   }
 
   bool isANumber(const char *c){
-    return (isAnInt(c) || isAFloat(c));
+    parserNS::typeHolder th;
+    th.load(c);
+
+    return (th.type != parserNS::noType);
   }
 
   bool isAString(const std::string &str){
@@ -185,40 +161,13 @@ namespace occa {
   }
 
   void skipInt(const char *&c){
-    while((*c != '\0') &&
-          ('0' <= *c) && (*c <= '9'))
-      ++c;
+    parserNS::typeHolder th;
+    th.load(c);
   }
 
   void skipNumber(const char *&c, const int parsingLanguage_){
-    if(!(parsingLanguage_ & parserInfo::parsingC)){
-      skipFortranNumber(c);
-      return;
-    }
-
-    if((*c == '+') || (*c == '-'))
-      ++c;
-
-    skipInt(c);
-
-    if(*c == '.'){
-      ++c;
-
-      skipInt(c);
-    }
-
-    if(*c == 'e'){
-      ++c;
-
-      if((*c == '+') || (*c == '-'))
-        ++c;
-
-      skipInt(c);
-    }
-
-    if((*c == 'f') || (*c == 'F') ||
-       (*c == 'l') || (*c == 'L'))
-      ++c;
+    parserNS::typeHolder th;
+    th.load(c);
   }
 
   void skipFortranNumber(const char *&c){
