@@ -3479,6 +3479,10 @@ namespace occa {
       return labelCode(allExp);
     }
 
+    expNode splitAndOrganizeContent(const std::string &str, const int parsingLanguage){
+      return splitAndOrganizeContent(str.c_str(), parsingLanguage);
+    }
+
     expNode splitAndOrganizeContent(const char *cRoot, const int parsingLanguage){
       expNode tmpExp, retExp;
 
