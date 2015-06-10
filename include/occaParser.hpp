@@ -257,6 +257,8 @@ namespace occa {
                                  const int parsingLanguage_ = parserInfo::parsingC);
     expNode splitAndLabelContent(const char *cRoot,
                                  const int parsingLanguage_ = parserInfo::parsingC);
+    expNode splitAndOrganizeContent(const std::string &str,
+                                    const int parsingLanguage_ = parserInfo::parsingC);
     expNode splitAndOrganizeContent(const char *cRoot,
                                     const int parsingLanguage_ = parserInfo::parsingC);
 

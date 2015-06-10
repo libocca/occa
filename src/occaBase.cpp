@@ -344,6 +344,8 @@ namespace occa {
         ++leafPos;
       }
 
+      ++leafPos;
+
       occa::strip(value);
 
       iMap[info] = value;
