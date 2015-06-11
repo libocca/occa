@@ -3,6 +3,16 @@
 using namespace occa;
 using namespace occa::parserNS;
 
+// Bugs:
+//   - missing occaParallelFor
+//   - expType::printLeaf for occaXId (extra space)
+//   - 0.5 -> 0
+//   - if() { (add space)
+//   - occaUnroll
+//   - ; before occaFor?
+//   - occaUnroll(4)for(int fld = 0;fld < 4;++ fld){s_Q[fld][kx][n] = Q[id] + c0 * rhsQ0[id] + c1 * rhsQ1[id] + c2 * rhsQ2[id];id += 32;}if(saveValuesWB){id = n + k * 4 * 32;occaUnroll(4)for(int fld = 0;fld < 4;++ fld){Q[id] = s_Q[fld][kx][n];id += 32;}}
+//   - s_D[4][4] -> s_D[4][4 + 1] [X + 1] -> [X] (chopped off)
+
 int main(int argc, char **argv){
   occa::parser parser;
   parser.warnForMissingBarriers     = false;
