@@ -4509,7 +4509,8 @@ namespace occa {
       expNode &node1 = *(sInfo->getForStatement(0));
 
       std::stringstream ss;
-      node1.printOn(ss, "", expFlag::noSemicolon);
+      node1.printOn(ss, "", (expFlag::noSemicolon |
+                             expFlag::noNewline));
 
       return ss.str();
     }
