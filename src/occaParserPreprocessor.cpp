@@ -279,7 +279,8 @@ namespace occa {
       }
 
       // If there was something else or no number
-      if(!charIsIn(*c, parserNS::cWordDelimiter) ||
+      if(((*c != '\0') &&
+          !charIsIn(*c, parserNS::cWordDelimiter)) ||
          (digits == 0)){
 
         type = noType;
