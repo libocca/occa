@@ -1839,7 +1839,9 @@ namespace occa {
             }
           }
 
-          if(s.getFunctionArgName(0) != "occaKernelInfoArg"){
+          if((s.getFunctionArgCount() == 0) ||
+             (s.getFunctionArgName(0) != "occaKernelInfoArg")){
+
             varInfo &arg0 = *(new varInfo());
 
             arg0.name = "occaKernelInfoArg";
@@ -3949,6 +3951,12 @@ namespace occa {
       cKeywordType["occaGlobalDim0"]     = (expType::presetValue | expType::occaKeyword);
       cKeywordType["occaGlobalDim1"]     = (expType::presetValue | expType::occaKeyword);
       cKeywordType["occaGlobalDim2"]     = (expType::presetValue | expType::occaKeyword);
+
+      cKeywordType["occaParallelFor0"]   = expType::specialKeyword;
+      cKeywordType["occaParallelFor1"]   = expType::specialKeyword;
+      cKeywordType["occaParallelFor2"]   = expType::specialKeyword;
+
+      cKeywordType["occaUnroll"]         = expType::specialKeyword;
 
       //---[ CUDA Keywords ]--------------
       cKeywordType["threadIdx"]          = (expType::unknown | expType::cudaKeyword);

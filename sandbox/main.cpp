@@ -6,7 +6,6 @@ using namespace occa::parserNS;
 // Bugs:
 //   - missing occaParallelFor
 //   - expType::printLeaf for occaXId (extra space)
-//   - 0.5 -> 0
 //   - if() { (add space)
 //   - occaUnroll
 //   - ; before occaFor?

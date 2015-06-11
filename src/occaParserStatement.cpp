@@ -216,20 +216,22 @@ namespace occa {
         return;
       }
 
+      std::string &firstValue = firstLeaf->value;
+
       //---[ Special Type ]---
       if(firstLeaf->info & expType::specialKeyword){
-        if((firstLeaf->value == "break")    ||
-           (firstLeaf->value == "continue")){
+        if((firstValue == "break")    ||
+           (firstValue == "continue")){
 
           info = expType::transfer_;
 
-          if((firstLeaf->value == "continue") &&
+          if((firstValue == "continue") &&
              (sInfo->distToOccaForLoop() <= sInfo->distToForLoop())){
 
             value = "occaContinue";
           }
           else{
-            value = firstLeaf->value;
+            value = firstValue;
           }
 
           freeThis();
@@ -238,7 +240,7 @@ namespace occa {
         }
 
         // [-] Doesn't support GCC's twisted [Labels as Values]
-        if(firstLeaf->value == "goto"){
+        if(firstValue == "goto"){
           OCCA_CHECK(1 < leafCount,
                      "Goto check [" << toString() << "] needs label");
 
@@ -249,12 +251,12 @@ namespace occa {
 
         // Case where nodeRoot = [case, return]
 
-        if((firstLeaf->value == "case") ||
-           (firstLeaf->value == "default")){
+        if((firstValue == "case") ||
+           (firstValue == "default")){
           info = expType::checkSInfo;
         }
-        else if((parsingC       && (firstLeaf->value == "return")) ||
-                (parsingFortran && (firstLeaf->value == "RETURN"))){
+        else if((parsingC       && (firstValue == "return")) ||
+                (parsingFortran && (firstValue == "RETURN"))){
 
           info = expType::return_;
 
@@ -273,6 +275,30 @@ namespace occa {
 
             --leafCount;
           }
+        }
+
+        // [occaParallelFor][#]
+        // 15              + 1 = 16
+        if((firstValue.find("occaParallelFor") != std::string::npos) &&
+           (firstValue.size() == 16)){
+
+          sInfo->info = smntType::macroStatement;
+          info        = expType::printValue;
+
+          return;
+        }
+
+        if(firstValue == "occaUnroll"){
+          splitAndOrganizeNode();
+
+          value = (std::string) *this;
+
+          free();
+
+          sInfo->info  = smntType::macroStatement;
+          info         = expType::printValue;
+
+          return;
         }
       }
       //======================
@@ -4019,6 +4045,11 @@ namespace occa {
       if(allExp.leafCount <= expPos)
         return smntType::blankStatement;
 
+      if(allExp[expPos].value == "occaUnroll"){
+        expPos += 2;
+        return smntType::blankStatement;
+      }
+
       const bool isCaseStatement = ((allExp[expPos].value == "case") ||
                                     (allExp[expPos].value == "default"));
 
@@ -4791,7 +4822,9 @@ namespace occa {
     void statement::addStatementFromSource(const std::string &source){
       pushLanguage(parserInfo::parsingC);
 
-      loadFromNode(splitAndLabelContent(source, parserInfo::parsingC));
+      expNode allExp = splitAndLabelContent(source, parserInfo::parsingC);
+
+      loadFromNode(allExp);
 
       popLanguage();
     }

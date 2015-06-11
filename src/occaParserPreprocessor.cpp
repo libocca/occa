@@ -226,7 +226,6 @@ namespace occa {
 
       if(*c == '0'){
         ++digits;
-
         ++c;
 
         const char C = upChar(*(c++));
@@ -235,7 +234,7 @@ namespace occa {
           bits = 4;
         else if(C == 'B')
           bits = 2;
-        else if(('0' <= *c) && (*c <= '9'))
+        else if(('0' <= C) && (C <= '9'))
           bits = 3;
         else
           --c;
