@@ -524,7 +524,7 @@ namespace occa {
     const char *cLeft  = line2.c_str();
     const char *cRight = cLeft;
 
-    int status = parserNS::readingCode;
+    info_t status = parserNS::readingCode;
 
     while(*cRight != '\0'){
       if((*cRight == '\0') || (*cRight == '\n'))

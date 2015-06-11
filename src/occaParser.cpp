@@ -628,7 +628,7 @@ namespace occa {
       if(linesIgnored.back() != (allExp.leafCount - 1))
         linesIgnored.push_back(allExp.leafCount - 1);
 
-      const size_t ignoreCount = linesIgnored.size();
+      const int ignoreCount = (int) linesIgnored.size();
 
       int start = (linesIgnored[0] + 1);
       int pos   = linesIgnored[0];
@@ -1751,7 +1751,7 @@ namespace occa {
 
         int occaType = statementOccaForNest(s2);
 
-        if((occaType == notAnOccaFor) ||
+        if((occaType == (int) notAnOccaFor) ||
            !(occaType & occaInnerForMask)){
 
           addOccaBarriersToStatement(s2);
@@ -2165,7 +2165,7 @@ namespace occa {
         bool firstInner = true;
 
         //---[ Add kernel body ]----------
-        if(info.nestedKernels.size() <= kID)
+        if(((int) info.nestedKernels.size()) <= kID)
           break;
 
         statement &ks = *(info.nestedKernels[kID]);
@@ -3419,7 +3419,7 @@ namespace occa {
 
       int lineCount = 1 + countDelimiters(c, '\n');
 
-      int status = readingCode;
+      info_t status = readingCode;
 
       expNode allExp;
       allExp.addNodes(lineCount);

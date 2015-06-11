@@ -4426,9 +4426,9 @@ namespace occa {
                                                expPos,
                                                parsingLanguage);
 
-        int tmpPos  = expPos;
-        int st      = findStatementType(allExp, tmpPos, parsingLanguage);
-        int stCheck = smntType::elseIfStatement;
+        int tmpPos     = expPos;
+        info_t st      = findStatementType(allExp, tmpPos, parsingLanguage);
+        info_t stCheck = smntType::elseIfStatement;
 
         while(true){
           if(st != stCheck){
