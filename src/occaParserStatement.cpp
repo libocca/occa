@@ -5862,7 +5862,7 @@ namespace occa {
       }
       else if(info & smntType::macroStatement){
         if(flags & statementFlag::printSubStatements)
-          return tab + expRoot.value + "\n";
+          return expRoot.value + "\n";
         else
           return expRoot.value;
       }

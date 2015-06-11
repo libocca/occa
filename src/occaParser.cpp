@@ -160,7 +160,11 @@ namespace occa {
     }
 
     typeHolder parserBase::evaluateMacroStatement(const char *c){
-      return evaluateString(c, this);
+      std::string cStr(c);
+      applyMacros(cStr);
+      strip(cStr);
+
+      return evaluateString(cStr, this);
     }
 
     bool parserBase::evaluateMacroBoolStatement(const char *c){
