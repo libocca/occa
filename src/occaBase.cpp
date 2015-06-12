@@ -2053,6 +2053,10 @@ namespace occa {
   //   ---[ Device Functions ]----------
   device currentDevice;
 
+  void setDevice(device d){
+    currentDevice = d;
+  }
+
   void setDevice(const std::string &infos){
     device newDevice(infos);
     currentDevice = newDevice;

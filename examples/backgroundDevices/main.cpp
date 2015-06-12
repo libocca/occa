@@ -5,14 +5,15 @@
 int main(int argc, char **argv){
   int entries = 5;
 
+  // Other useful functions:
+  //   occa::setDevice("mode = OpenMP")
+  //   occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
+  //   occa::device = occa::getCurrentDevice();
+
   // Use the default device (mode = Serial)
   float *a  = (float*) occa::managedUvaAlloc(entries * sizeof(float));
   float *b  = (float*) occa::managedUvaAlloc(entries * sizeof(float));
   float *ab = (float*) occa::managedUvaAlloc(entries * sizeof(float));
-
-  // Other useful functions:
-  //   occa::setDevice("mode = OpenMP")
-  //   occa::device = occa::getCurrentDevice();
 
   for(int i = 0; i < entries; ++i){
     a[i]  = i;

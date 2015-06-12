@@ -1510,7 +1510,9 @@ namespace occa {
   //   ---[ Device Functions ]----------
   extern device currentDevice;
 
-  void setDevice();
+  void setDevice(device d);
+  void setDevice(const std::string &infos);
+
   device getCurrentDevice();
 
   extern mutex_t deviceListMutex;
