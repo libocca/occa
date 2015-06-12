@@ -142,11 +142,31 @@ namespace occa {
 
   void setupMagicFor(void *ptr);
 
+  // More free() functions below, in [Device Functions]
   void free(void *ptr);
   //==============================================
 
   //---[ Typedefs ]-------------------------------
-  typedef void* stream;
+  typedef void* stream_t;
+
+  class stream {
+  public:
+    stream_t handle;
+
+    inline stream() :
+      handle(NULL){}
+
+    inline stream(stream_t handle_) :
+      handle(handle_){}
+
+    inline stream(const stream &s) :
+      handle(s.handle){}
+
+    inline stream& operator = (const stream &s){
+      handle = s.handle;
+      return *this;
+    }
+  };
 
   static const int CPU     = (1 << 0);
   static const int GPU     = (1 << 1);
@@ -1099,8 +1119,8 @@ namespace occa {
     ptrRangeMap_t uvaMap;
     memoryVector_t uvaDirtyMemory;
 
-    stream currentStream;
-    std::vector<stream> streams;
+    stream_t currentStream;
+    std::vector<stream_t> streams;
 
     uintptr_t bytesAllocated;
 
@@ -1134,9 +1154,9 @@ namespace occa {
 
     virtual void waitFor(streamTag tag) = 0;
 
-    virtual stream createStream() = 0;
-    virtual void freeStream(stream s) = 0;
-    virtual stream wrapStream(void *handle_) = 0;
+    virtual stream_t createStream() = 0;
+    virtual void freeStream(stream_t s) = 0;
+    virtual stream_t wrapStream(void *handle_) = 0;
 
     virtual streamTag tagStream() = 0;
     virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) = 0;
@@ -1245,9 +1265,9 @@ namespace occa {
 
     void waitFor(streamTag tag);
 
-    stream createStream();
-    void freeStream(stream s);
-    stream wrapStream(void *handle_);
+    stream_t createStream();
+    void freeStream(stream_t s);
+    stream_t wrapStream(void *handle_);
 
     streamTag tagStream();
     double timeBetween(const streamTag &startTag, const streamTag &endTag);
@@ -1595,6 +1615,13 @@ namespace occa {
 
   void* managedMappedAlloc(const uintptr_t bytes,
                            void *src = NULL);
+  //   =================================
+
+  //   ---[ Free Functions ]------------
+  void free(device d);
+  void free(stream s);
+  void free(kernel k);
+  void free(memory m);
   //   =================================
 
   //---[ KernelArg ]------------------------------

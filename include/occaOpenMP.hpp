@@ -199,13 +199,13 @@ namespace occa {
   void device_t<OpenMP>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<OpenMP>::createStream();
+  stream_t device_t<OpenMP>::createStream();
 
   template <>
-  void device_t<OpenMP>::freeStream(stream s);
+  void device_t<OpenMP>::freeStream(stream_t s);
 
   template <>
-  stream device_t<OpenMP>::wrapStream(void *handle_);
+  stream_t device_t<OpenMP>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<OpenMP>::tagStream();

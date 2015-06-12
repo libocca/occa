@@ -242,13 +242,13 @@ namespace occa {
   void device_t<Pthreads>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<Pthreads>::createStream();
+  stream_t device_t<Pthreads>::createStream();
 
   template <>
-  void device_t<Pthreads>::freeStream(stream s);
+  void device_t<Pthreads>::freeStream(stream_t s);
 
   template <>
-  stream device_t<Pthreads>::wrapStream(void *handle_);
+  stream_t device_t<Pthreads>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<Pthreads>::tagStream();

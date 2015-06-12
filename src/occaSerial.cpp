@@ -1183,15 +1183,15 @@ namespace occa {
   void device_t<Serial>::waitFor(streamTag tag){}
 
   template <>
-  stream device_t<Serial>::createStream(){
+  stream_t device_t<Serial>::createStream(){
     return NULL;
   }
 
   template <>
-  void device_t<Serial>::freeStream(stream s){}
+  void device_t<Serial>::freeStream(stream_t s){}
 
   template <>
-  stream device_t<Serial>::wrapStream(void *handle_){
+  stream_t device_t<Serial>::wrapStream(void *handle_){
     return NULL;
   }
 

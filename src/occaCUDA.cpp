@@ -1080,7 +1080,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<CUDA>::createStream(){
+  stream_t device_t<CUDA>::createStream(){
     CUstream *retStream = new CUstream;
 
     OCCA_CUDA_CHECK("Device: createStream",
@@ -1090,14 +1090,14 @@ namespace occa {
   }
 
   template <>
-  void device_t<CUDA>::freeStream(stream s){
+  void device_t<CUDA>::freeStream(stream_t s){
     OCCA_CUDA_CHECK("Device: freeStream",
                     cuStreamDestroy( *((CUstream*) s) ));
     delete (CUstream*) s;
   }
 
   template <>
-  stream device_t<CUDA>::wrapStream(void *handle_){
+  stream_t device_t<CUDA>::wrapStream(void *handle_){
     return handle_;
   }
 

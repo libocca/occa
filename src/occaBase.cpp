@@ -1305,7 +1305,8 @@ namespace occa {
 
   //---[ Device ]---------------------
   device::device(){
-    setup("mode = Serial");
+    strMode = "Serial";
+    dHandle = new device_t<Serial>();
   }
 
   device::device(device_v *dHandle_) :
@@ -1417,7 +1418,8 @@ namespace occa {
     else
       dHandle->uvaEnabled_ = uvaEnabledByDefault_f;
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1460,7 +1462,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1476,7 +1479,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1493,7 +1497,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1511,7 +1516,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
 
@@ -1613,16 +1619,19 @@ namespace occa {
   }
 
   stream device::createStream(){
-    dHandle->streams.push_back( dHandle->createStream() );
-    return dHandle->streams.back();
+    stream newStream(dHandle->createStream());
+
+    dHandle->streams.push_back(newStream.handle);
+
+    return newStream;
   }
 
   stream device::getStream(){
-    return dHandle->currentStream;
+    return stream(dHandle->currentStream);
   }
 
   void device::setStream(stream s){
-    dHandle->currentStream = s;
+    dHandle->currentStream = s.handle;
   }
 
   stream device::wrapStream(void *handle_){
@@ -1641,7 +1650,7 @@ namespace occa {
     const int streamCount = dHandle->streams.size();
 
     for(int i = 0; i < streamCount; ++i){
-      if(dHandle->streams[i] == s){
+      if(dHandle->streams[i] == s.handle){
         dHandle->freeStream(dHandle->streams[i]);
         dHandle->streams.erase(dHandle->streams.begin() + i);
 
@@ -2310,6 +2319,24 @@ namespace occa {
                            void *src){
 
     return currentDevice.managedMappedAlloc(bytes, src);
+  }
+  //   =================================
+
+  //   ---[ Free Functions ]------------
+  void free(device d){
+    d.free();
+  }
+
+  void free(stream s){
+    currentDevice.freeStream(s);
+  }
+
+  void free(kernel k){
+    k.free();
+  }
+
+  void free(memory m){
+    m.free();
   }
   //   =================================
 

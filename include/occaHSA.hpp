@@ -215,13 +215,13 @@ namespace occa {
   void device_t<HSA>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<HSA>::createStream();
+  stream_t device_t<HSA>::createStream();
 
   template <>
-  void device_t<HSA>::freeStream(stream s);
+  void device_t<HSA>::freeStream(stream_t s);
 
   template <>
-  stream device_t<HSA>::wrapStream(void *handle_);
+  stream_t device_t<HSA>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<HSA>::tagStream();

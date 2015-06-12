@@ -1234,7 +1234,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<OpenCL>::createStream(){
+  stream_t device_t<OpenCL>::createStream(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
@@ -1247,14 +1247,14 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenCL>::freeStream(stream s){
+  void device_t<OpenCL>::freeStream(stream_t s){
     OCCA_CL_CHECK("Device: freeStream",
                   clReleaseCommandQueue( *((cl_command_queue*) s) ));
     delete (cl_command_queue*) s;
   }
 
   template <>
-  stream device_t<OpenCL>::wrapStream(void *handle_){
+  stream_t device_t<OpenCL>::wrapStream(void *handle_){
     return handle_;
   }
 
