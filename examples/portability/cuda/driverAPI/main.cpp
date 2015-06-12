@@ -2,6 +2,9 @@
 
 #include "occa.hpp"
 
+#include "cuda_runtime_api.h"
+
+
 int main(int argc, char **argv){
   int entries = 5;
 
@@ -11,7 +14,7 @@ int main(int argc, char **argv){
   void *cu_a, *cu_b, *cu_ab;
 
   // Default: cuStream = 0
-  cudaStreamCreate(&customStream);
+  cudaStreamCreate(&cuStream);
 
   cudaMalloc(&cu_a , entries*sizeof(float));
   cudaMalloc(&cu_b , entries*sizeof(float));
@@ -44,35 +47,19 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  o_a  = device.wrapMemory(&cu_a , entries*sizeof(float));
-  o_b  = device.wrapMemory(&cu_b , entries*sizeof(float));
-  o_ab = device.wrapMemory(&cu_ab, entries*sizeof(float));
+  o_a  = device.wrapMemory(cu_a , entries*sizeof(float));
+  o_b  = device.wrapMemory(cu_b , entries*sizeof(float));
+  o_ab = device.wrapMemory(cu_ab, entries*sizeof(float));
 
-  addVectors = device.buildKernelFromSource("addVectors.occa",
+  addVectors = device.buildKernelFromSource("addVectors.okl",
                                             "addVectors");
-
-  int dims = 1;
-  int itemsPerGroup(2);
-  int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
-
-  addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
-  occa::initTimer(device);
-
-  occa::tic("addVectors");
-
   addVectors(entries, o_a, o_b, o_ab);
 
-  double elapsedTime = occa::toc("addVectors", addVectors);
-
   o_ab.copyTo(ab);
-
-  std::cout << "Elapsed time = " << elapsedTime << " s" << std::endl;
-
-  occa::printTimer();
 
   for(int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';
