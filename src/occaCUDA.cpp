@@ -1233,7 +1233,7 @@ namespace occa {
     // CUdeviceptr ~ void*
     mem->dHandle = this;
     mem->size    = bytes;
-    *mem->handle = handle_;
+    *mem->handle = (CUdeviceptr*) handle_;
 
     mem->isAWrapper = true;
 
