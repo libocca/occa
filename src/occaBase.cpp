@@ -1304,8 +1304,9 @@ namespace occa {
 
 
   //---[ Device ]---------------------
-  device::device() :
-    dHandle(NULL) {}
+  device::device(){
+    setup("mode = Serial");
+  }
 
   device::device(device_v *dHandle_) :
     dHandle(dHandle_) {}
@@ -2040,6 +2041,18 @@ namespace occa {
     return dHandle->simdWidth();
   }
 
+  //   ---[ Device Functions ]----------
+  device currentDevice;
+
+  void setDevice(const std::string &infos){
+    device newDevice(infos);
+    currentDevice = newDevice;
+  }
+
+  device getCurrentDevice(){
+    return currentDevice;
+  }
+
   mutex_t deviceListMutex;
   std::vector<device> deviceList;
 
@@ -2074,6 +2087,232 @@ namespace occa {
 
     return deviceList;
   }
+
+  void setCompiler(const std::string &compiler_){
+    currentDevice.setCompiler(compiler_);
+  }
+
+  void setCompilerEnvScript(const std::string &compilerEnvScript_){
+    currentDevice.setCompilerEnvScript(compilerEnvScript_);
+  }
+
+  void setCompilerFlags(const std::string &compilerFlags_){
+    currentDevice.setCompilerFlags(compilerFlags_);
+  }
+
+  std::string& getCompiler(){
+    return currentDevice.getCompiler();
+  }
+
+  std::string& getCompilerEnvScript(){
+    return currentDevice.getCompilerEnvScript();
+  }
+
+  std::string& getCompilerFlags(){
+    return currentDevice.getCompilerFlags();
+  }
+
+  void flush(){
+    currentDevice.flush();
+  }
+
+  void finish(){
+    currentDevice.finish();
+  }
+
+  void waitFor(streamTag tag){
+    currentDevice.waitFor(tag);
+  }
+
+  stream createStream(){
+    return currentDevice.createStream();
+  }
+
+  stream getStream(){
+    return currentDevice.getStream();
+  }
+
+  void setStream(stream s){
+    currentDevice.setStream(s);
+  }
+
+  stream wrapStream(void *handle_){
+    return currentDevice.wrapStream(handle_);
+  }
+
+  streamTag tagStream(){
+    return currentDevice.tagStream();
+  }
+
+  //   ---[ Kernel Functions ]----------
+
+  kernel buildKernel(const std::string &str,
+                     const std::string &functionName,
+                     const kernelInfo &info_){
+
+    return currentDevice.buildKernel(str,
+                                     functionName,
+                                     info_);
+  }
+
+  kernel buildKernelFromString(const std::string &content,
+                               const std::string &functionName,
+                               const int language){
+
+    return currentDevice.buildKernelFromString(content,
+                                               functionName,
+                                               language);
+  }
+
+  kernel buildKernelFromString(const std::string &content,
+                               const std::string &functionName,
+                               const kernelInfo &info_,
+                               const int language){
+
+    return currentDevice.buildKernelFromString(content,
+                                               functionName,
+                                               info_,
+                                               language);
+  }
+
+  kernel buildKernelFromSource(const std::string &filename,
+                               const std::string &functionName,
+                               const kernelInfo &info_){
+
+    return currentDevice.buildKernelFromSource(filename,
+                                               functionName,
+                                               info_);
+  }
+
+  kernel buildKernelFromBinary(const std::string &filename,
+                               const std::string &functionName){
+
+    return currentDevice.buildKernelFromBinary(filename,
+                                               functionName);
+  }
+
+  void cacheKernelInLibrary(const std::string &filename,
+                            const std::string &functionName_,
+                            const kernelInfo &info_){
+
+    return currentDevice.cacheKernelInLibrary(filename,
+                                              functionName_,
+                                              info_);
+  }
+
+  kernel loadKernelFromLibrary(const char *cache,
+                               const std::string &functionName_){
+
+    return currentDevice.loadKernelFromLibrary(cache,
+                                               functionName_);
+  }
+
+  kernel buildKernelFromLoopy(const std::string &filename,
+                              const std::string &functionName,
+                              const int loopyOrFloopy){
+
+    return currentDevice.buildKernelFromLoopy(filename,
+                                              functionName,
+                                              loopyOrFloopy);
+  }
+
+  kernel buildKernelFromLoopy(const std::string &filename,
+                              const std::string &functionName,
+                              const kernelInfo &info_,
+                              const int loopyOrFloopy){
+
+    return currentDevice.buildKernelFromLoopy(filename,
+                                              functionName,
+                                              info_,
+                                              loopyOrFloopy);
+  }
+
+  //   ---[ Memory Functions ]----------
+  memory wrapMemory(void *handle_,
+                    const uintptr_t bytes){
+
+    return currentDevice.wrapMemory(handle_, bytes);
+  }
+
+  void* wrapManagedMemory(void *handle_,
+                          const uintptr_t bytes){
+
+    return currentDevice.wrapManagedMemory(handle_, bytes);
+  }
+
+  memory wrapTexture(void *handle_,
+                     const int dim, const occa::dim &dims,
+                     occa::formatType type, const int permissions){
+
+    return currentDevice.wrapTexture(handle_,
+                                     dim, dims,
+                                     type, permissions);
+  }
+
+  void* wrapManagedTexture(void *handle_,
+                           const int dim, const occa::dim &dims,
+                           occa::formatType type, const int permissions){
+
+    return currentDevice.wrapManagedTexture(handle_,
+                                            dim, dims,
+                                            type, permissions);
+  }
+
+  memory malloc(const uintptr_t bytes,
+                void *src){
+
+    return currentDevice.malloc(bytes, src);
+  }
+
+  void* managedAlloc(const uintptr_t bytes,
+                     void *src){
+
+    return currentDevice.managedAlloc(bytes, src);
+  }
+
+  void* uvaAlloc(const uintptr_t bytes,
+                 void *src){
+
+    return currentDevice.uvaAlloc(bytes, src);
+  }
+
+  void* managedUvaAlloc(const uintptr_t bytes,
+                        void *src){
+
+    return currentDevice.managedUvaAlloc(bytes, src);
+  }
+
+  memory textureAlloc(const int dim, const occa::dim &dims,
+                      void *src,
+                      occa::formatType type, const int permissions){
+
+    return currentDevice.textureAlloc(dim, dims,
+                                      src,
+                                      type, permissions);
+  }
+
+  void* managedTextureAlloc(const int dim, const occa::dim &dims,
+                            void *src,
+                            occa::formatType type, const int permissions){
+
+    return currentDevice.managedTextureAlloc(dim, dims,
+                                             src,
+                                             type, permissions);
+  }
+
+  memory mappedAlloc(const uintptr_t bytes,
+                     void *src){
+
+    return currentDevice.mappedAlloc(bytes, src);
+  }
+
+  void* managedMappedAlloc(const uintptr_t bytes,
+                           void *src){
+
+    return currentDevice.managedMappedAlloc(bytes, src);
+  }
+  //   =================================
+
   void printAvailableDevices(){
     std::stringstream ss;
     ss << "==============o=======================o==========================================\n";
