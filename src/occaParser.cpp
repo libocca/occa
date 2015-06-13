@@ -1235,13 +1235,38 @@ namespace occa {
                                                      start,
                                                      end);
 
+      const int rlCount = (int) relatedLoops.size();
+
+      intVector_t rOrder(rlCount);
+      intVector_t rInvOrder(rlCount);
+
+      for(int i = 0; i < rlCount; ++i){
+        statement &s      = *(loopsToReorder[relatedLoops[i]]);
+        attribute_t &attr = *(s.hasAttribute("loopOrder"));
+
+        s.removeAttribute("loopOrder");
+
+        rOrder[i]              = atoi(attr[attr.argCount - 1].value);
+        rInvOrder[ rOrder[i] ] = i;
+      }
+
+      for(int i = 0; i < rlCount; ++i){
+        const int i2 = rInvOrder[i];
+
+        if(i2 == i)
+          continue;
+
+        swapValues(rOrder[i]   , rOrder[i2]);
+        swapValues(rInvOrder[i], rInvOrder[i2]);
+
+        statement::swap(*(loopsToReorder[relatedLoops[i]]),
+                        *(loopsToReorder[relatedLoops[i2]]));
+      }
+
       for(int i = start; i < end; ++i){
         if(loopsToReorder[i]->hasAttribute("loopOrder"))
           reorderLoops(loopsToReorder, i, end);
       }
-
-      if(relatedLoops.size() < 2)
-        return;
     }
 
     intVector_t parserBase::relatedReorderLoops(statementVector_t &loopsToReorder,
@@ -1253,8 +1278,6 @@ namespace occa {
 
       statement &sRoot      = *(loopsToReorder[start]);
       attribute_t &rootAttr = *(sRoot.hasAttribute("loopOrder"));
-
-      sRoot.removeAttribute("loopOrder");
 
       for(int i = (start + 1); i < end; ++i){
         statement &s       = *(loopsToReorder[i]);
@@ -1270,14 +1293,12 @@ namespace occa {
           continue;
 
         if(rootAttr.argCount == 1){
-          s.removeAttribute("loopOrder");
           relatedLoops.push_back(i);
         }
-        else if(rootAttr.argCount == 2){
-          if(rootAttr[0].value == attr[0].value){
-            s.removeAttribute("loopOrder");
-            relatedLoops.push_back(i);
-          }
+        else if((rootAttr.argCount == 2) &&
+                (rootAttr[0].value == attr[0].value)){
+
+          relatedLoops.push_back(i);
         }
       }
 

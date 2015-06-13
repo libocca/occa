@@ -50,13 +50,14 @@ namespace occa {
   //---[ Info ]-----------------------------------
   typedef uint64_t info_t;
 
+  typedef parserNS::node<parserNS::statement*>            statementNode;
+  typedef parserNS::node<parserNS::varInfo*>              varInfoNode;
+
   typedef std::vector<int>                                intVector_t;
   typedef std::vector<intVector_t>                        intVecVector_t;
   typedef std::vector<parserNS::statement*>               statementVector_t;
+  typedef std::vector<statementNode*>                     statementNodeVector_t;
   typedef std::vector<parserNS::varInfo*>                 varInfoVector_t;
-
-  typedef parserNS::node<parserNS::statement*>            statementNode;
-  typedef parserNS::node<parserNS::varInfo*>              varInfoNode;
 
   typedef std::map<std::string,info_t>                    macroMap_t;
   typedef macroMap_t::iterator                            macroMapIterator;

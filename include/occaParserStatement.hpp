@@ -687,6 +687,8 @@ namespace occa {
       void addStatement(statement *newStatement);
       void removeStatement(statement &s);
 
+      static void swap(statement &a, statement &b);
+
       statement* clone(statement *up_ = NULL);
 
       void printVariablesInScope();

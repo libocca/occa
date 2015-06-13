@@ -2439,6 +2439,11 @@ namespace occa {
           flatNode->leaves    = new expNode*[csvCount];
           flatNode->leafCount = csvCount;
 
+          if(csvCount == 1){
+            flatNode->leaves[0] = cNode;
+            return flatNode;
+          }
+
           csvCount = 0;
         }
 
@@ -5239,6 +5244,35 @@ namespace occa {
 
         sn = sn->right;
       }
+    }
+
+    void statement::swap(statement &a, statement &b){
+      statementNode *aSN = a.getStatementNode();
+      statementNode *bSN = b.getStatementNode();
+
+      aSN->value = &b;
+      bSN->value = &a;
+
+      swapValues(a.up, b.up);
+
+      for(int pass = 0; pass < 2; ++pass){
+        statementNode *sn = ((pass == 0)      ?
+                             a.statementStart :
+                             b.statementStart);
+
+        statement *up_ = ((pass == 0) ?
+                          &b          :
+                          &a);
+
+        while(sn){
+          sn->value->up = up_;
+          sn = sn->right;
+        }
+      }
+
+      swapValues(a.statementCount, b.statementCount);
+      swapValues(a.statementStart, b.statementStart);
+      swapValues(a.statementEnd  , b.statementEnd);
     }
 
     statement* statement::clone(statement *up_){
