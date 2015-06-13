@@ -1667,6 +1667,11 @@ namespace occa {
 
           leaf.value = "[";
 
+          if(dims == 1){
+            ++leafPos;
+            continue;
+          }
+
           for(int i = 0; i < dims; ++i){
             if(reorder)
               indices.push_back( csvFlatRoot[ var.idxOrdering[i] ].clonePtr() );

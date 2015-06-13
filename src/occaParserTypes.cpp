@@ -19,6 +19,15 @@ namespace occa {
       load(e);
     }
 
+    attribute_t::attribute_t(expNode &expRoot, int &leafPos) :
+      argCount(0),
+      args(NULL),
+
+      value(NULL) {
+
+      singleLoad(expRoot, leafPos);
+    }
+
     attribute_t::attribute_t(const attribute_t &attr) :
       name(attr.name),
 
@@ -52,6 +61,34 @@ namespace occa {
         return;
 
       value = e[1].clonePtr();
+    }
+
+    void attribute_t::singleLoad(expNode &expRoot, int &leafPos){
+      name = expRoot[leafPos++];
+
+      if(expRoot.leafCount <= leafPos)
+        return;
+
+      expNode &attrNode = expRoot[leafPos];
+
+      if(startsSection(attrNode.value)){
+        ++leafPos;
+
+        attrNode.organizeLeaves();
+
+        expNode &csvFlatRoot = *(attrNode[0].makeCsvFlatHandle());
+
+        argCount = csvFlatRoot.leafCount;
+
+        if(argCount){
+          args = new expNode*[argCount];
+
+          for(int i = 0; i < argCount; ++i)
+            args[i] = csvFlatRoot[i].clonePtr();
+        }
+
+        expNode::freeFlatHandle(csvFlatRoot);
+      }
     }
 
     void attribute_t::loadVariable(expNode &e){
@@ -129,8 +166,11 @@ namespace occa {
 
       // Only one attribute
       if(expRoot[leafPos].info != expType::C){
-        attribute_t &attr = *(new attribute_t(expRoot[leafPos]));
+        attribute_t &attr = *(new attribute_t(expRoot, leafPos));
+
         attributeMap[attr.name] = &attr;
+
+        return leafPos;
       }
       else {
         expNode &attrRoot = expRoot[leafPos];

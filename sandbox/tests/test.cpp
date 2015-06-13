@@ -29,8 +29,11 @@ occaFunction tFloat hatWavelet(tFloat t){
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
-  double *phi @(dim(D,G));
-  phi(d,g);
+  double *psi @(dim(X,Y,Z), idxOrder(2,1,0));
+  psi(a,b,c);
+
+  double *phi @dim(D);
+  phi(blah + 1);
 
   return (1. - 2.0*pift2)*exp(-pift2);
 }

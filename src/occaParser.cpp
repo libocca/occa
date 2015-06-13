@@ -3765,6 +3765,8 @@ namespace occa {
       cKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
+      cKeywordType["@"]                  = expType::L;
+
       cKeywordType["!"]                  = expType::L;
       cKeywordType["%"]                  = expType::LR;
       cKeywordType["&"]                  = (expType::L | expType::LR | expType::qualifier);
@@ -4118,6 +4120,8 @@ namespace occa {
       fortranKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
+      fortranKeywordType["@"]  = expType::L;
+
       fortranKeywordType["%"]  = expType::LR;
       fortranKeywordType["("]  = expType::C;
       fortranKeywordType[")"]  = expType::C;
