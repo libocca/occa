@@ -322,8 +322,6 @@ namespace occa {
       if(sInfo == NULL)
         return;
 
-      printf("Trying to load\n");
-
       expPos = setAttributeMap(sInfo->attributeMap,
                                allExp,
                                expPos);
