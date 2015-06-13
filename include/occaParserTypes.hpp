@@ -45,6 +45,9 @@ namespace occa {
 
     std::ostream& operator << (std::ostream &out, attribute_t &attr);
 
+    void setAttributeMap(attributeMap_t &attributeMap,
+                         const std::string &attrName);
+
     int setAttributeMap(attributeMap_t &attributeMap,
                         expNode &expRoot,
                         int leafPos);

@@ -130,6 +130,7 @@ namespace occa {
                         int &expPos,
                         const int parsingLanguage_);
 
+      void loadAttributes();
       void loadAttributes(expNode &allExp,
                           int &expPos);
 
@@ -494,6 +495,7 @@ namespace occa {
       //================================
 
       attribute_t* hasAttribute(const std::string &attr);
+      void addAttributeTag(const std::string &attrName);
       void removeAttribute(const std::string &attr);
 
       void addType(typeInfo &type);

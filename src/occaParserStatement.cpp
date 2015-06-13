@@ -181,8 +181,18 @@ namespace occa {
 
       const int expEnd = expPos;
 
-      // @(attributes)
-      loadAttributes(allExp, expPos);
+      if(sInfo->info & (smntType::forStatement     |
+                        smntType::whileStatement   |
+                        smntType::doWhileStatement |
+                        smntType::ifStatement      |
+                        smntType::elseIfStatement  |
+                        smntType::elseStatement    |
+                        smntType::switchStatement  |
+                        smntType::functionDefinition)){
+
+        // @(attributes)
+        loadAttributes(allExp, expPos);
+      }
 
       expNode *firstLeaf = this;
 
@@ -315,6 +325,12 @@ namespace occa {
 
       // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
       // print();
+    }
+
+    // @(attributes)
+    void expNode::loadAttributes(){
+      int expPos = 0;
+      loadAttributes(*this, expPos);
     }
 
     // @(attributes)
@@ -1177,6 +1193,9 @@ namespace occa {
       }
 
       //---[ Level 0 ]------
+      // @(attributes)
+      loadAttributes();
+
       // [a][::][b]
       mergeNamespaces();
 
@@ -4084,6 +4103,10 @@ namespace occa {
         return NULL;
 
       return (it->second);
+    }
+
+    void statement::addAttributeTag(const std::string &attrName){
+      setAttributeMap(attributeMap, attrName);
     }
 
     void statement::removeAttribute(const std::string &attr){

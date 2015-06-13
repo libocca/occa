@@ -931,13 +931,7 @@ namespace occa {
       if(sKernel == NULL)
         return false;
 
-      std::string check = obfuscate("native", "occa");
-      varInfo *info = sKernel->hasVariableInScope(check);
-
-      if(info != NULL)
-        return true;
-      else
-        return false;
+      return sKernel->hasAttribute("__occa__native");
     }
 
     bool parserBase::statementKernelUsesNativeOKL(statement &s){
@@ -946,13 +940,7 @@ namespace occa {
       if(sKernel == NULL)
         return false;
 
-      std::string check = obfuscate("native", "okl");
-      varInfo *info = sKernel->hasVariableInScope(check);
-
-      if(info != NULL)
-        return true;
-      else
-        return false;
+      return sKernel->hasAttribute("__okl__native");
     }
 
     bool parserBase::statementKernelUsesNativeLanguage(statement &s){
@@ -1699,17 +1687,14 @@ namespace occa {
           bool hasOklFor  = statementHasOklFor(s);
 
           if(hasOccaFor | hasOklFor){
-            varInfo nativeCheckVar;
-
-            if(hasOccaFor)
-              nativeCheckVar.name = obfuscate("native", "occa");
-            else
-              nativeCheckVar.name = obfuscate("native", "okl");
-
-            varInfo *nativeCheckVar2 = s.hasVariableInScope(nativeCheckVar.name);
-
-            if(nativeCheckVar2 == NULL)
-              s.addVariable(nativeCheckVar);
+            if(hasOccaFor){
+              if(!s.hasAttribute("__occa__native"))
+                s.addAttributeTag("__occa__native");
+            }
+            else {
+              if(!s.hasAttribute("__okl__native"))
+                s.addAttributeTag("__okl__native");
+            }
           }
         }
 

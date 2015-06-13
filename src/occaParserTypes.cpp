@@ -153,6 +153,15 @@ namespace occa {
       return out;
     }
 
+    void setAttributeMap(attributeMap_t &attributeMap,
+                         const std::string &attrName){
+
+      attribute_t &attr = *(new attribute_t());
+      attr.name = attrName;
+
+      attributeMap[attrName] = &attr;
+    }
+
     int setAttributeMap(attributeMap_t &attributeMap,
                         expNode &expRoot,
                         int leafPos){
