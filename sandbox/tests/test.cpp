@@ -36,7 +36,7 @@ occaFunction tFloat hatWavelet(tFloat t){
   double *phi @dim(D);
   phi(blah + 1);
 
-  double *delta @(dim(AI,BJ,BI,AJ), idxOrder(3,2,1,0));
+  double *delta @(dim(BJ,BI,BJ,AI), idxOrder(3,2,1,0));
 
   for(int ai = 0; ai < 10; ++ai) @loopOrder("a", 1) {
     for(int bj = 0; bj < 10; ++bj) @loopOrder("b", 1) {
@@ -57,6 +57,9 @@ float numberSamples[] = {1, +1, -1,
                          1., +1., -1.,
                          1.0, -1.0, +1.0,
                          1.0f, -1.0f, +1.0f,
+                         1.01F, -1.01F, +1.01F,
+                         1.0e1f, -1.0e-11f, +1.0e+111f,
+                         1.0E1, -1.0E-11, +1.0E+111,
                          1.01F, -1.01F, +1.01F,
                          1l, -1l, +1l,
                          1.01L, -1.01L, +1.01L,
