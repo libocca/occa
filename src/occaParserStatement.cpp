@@ -5261,6 +5261,8 @@ namespace occa {
         ++it;
       }
 
+      newStatement->attributeMap = attributeMap;
+
       return newStatement;
     }
 

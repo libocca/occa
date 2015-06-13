@@ -121,6 +121,8 @@ namespace occa {
       bool statementHasOccaStuff(statement &s);
 
       void reorderLoops();
+      void placeLoopsToReorder(statement &s,
+                               statementVector_t &loopsToReorder);
 
       void splitTileOccaFors(statement &s);
 

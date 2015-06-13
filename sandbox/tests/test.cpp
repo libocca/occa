@@ -38,7 +38,7 @@ occaFunction tFloat hatWavelet(tFloat t){
 
   double *delta @(dim(I,J), idxOrder(1,0));
 
-  for(int i = 0; i < 10; ++i) @loopOrder(1)
+  for(int i = 0; i < 10; ++i) @loopOrder(1,1)
     for(int j = 0; j < 10; ++j) @loopOrder(0)
       delta(i,j) = 0;
 

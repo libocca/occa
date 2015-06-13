@@ -64,7 +64,7 @@ namespace occa {
     }
 
     void attribute_t::singleLoad(expNode &expRoot, int &leafPos){
-      name = expRoot[leafPos++];
+      name = expRoot[leafPos++].value;
 
       if(expRoot.leafCount <= leafPos)
         return;
@@ -74,6 +74,7 @@ namespace occa {
       if(startsSection(attrNode.value)){
         ++leafPos;
 
+        attrNode.changeExpTypes();
         attrNode.organizeLeaves();
 
         expNode &csvFlatRoot = *(attrNode[0].makeCsvFlatHandle());
@@ -92,7 +93,7 @@ namespace occa {
     }
 
     void attribute_t::loadVariable(expNode &e){
-      name = e[0].toString();
+      name = e[0].value;
 
       expNode &csvFlatRoot = *(e[1].makeCsvFlatHandle());
 

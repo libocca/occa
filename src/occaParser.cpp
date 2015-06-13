@@ -1190,7 +1190,36 @@ namespace occa {
     }
 
     void parserBase::reorderLoops(){
+      statementVector_t loopsToReorder; // ltr
 
+      placeLoopsToReorder(*globalScope, loopsToReorder);
+
+      const int ltrCount = (int) loopsToReorder.size();
+
+      for(int i = 0; i < ltrCount; ++i){
+        statement &s = *(loopsToReorder[i]);
+
+        std::cout << "s = " << s.onlyThisToString() << '\n';
+      }
+    }
+
+    void parserBase::placeLoopsToReorder(statement &s,
+                                         statementVector_t &loopsToReorder){
+
+      if((s.info & smntType::forStatement) &&
+         s.hasAttribute("loopOrder")){
+
+        loopsToReorder.push_back(&s);
+      }
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        placeLoopsToReorder(*(statementPos->value),
+                            loopsToReorder);
+
+        statementPos = statementPos->right;
+      }
     }
 
     void parserBase::splitTileOccaFors(statement &s){
