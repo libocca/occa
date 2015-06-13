@@ -493,6 +493,8 @@ namespace occa {
       info_t checkFortranSpecialStatementType(expNode &allExp, int &expPos);
       //================================
 
+      attribute_t* hasAttribute(const std::string &attr);
+
       void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);
 

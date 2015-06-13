@@ -181,6 +181,7 @@ namespace occa {
 
       const int expEnd = expPos;
 
+      // @(attributes)
       loadAttributes(allExp, expPos);
 
       expNode *firstLeaf = this;
@@ -4065,6 +4066,15 @@ namespace occa {
       return smntType::blockStatement;
     }
     //==================================
+
+    attribute_t* statement::hasAttribute(const std::string &attr){
+      attributeMapIterator it = attributeMap.find(attr);
+
+      if(it == attributeMap.end())
+        return NULL;
+
+      return (it->second);
+    }
 
     void statement::addType(typeInfo &type){
       scopeTypeMap[type.name] = &type;
