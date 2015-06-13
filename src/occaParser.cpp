@@ -1630,7 +1630,7 @@ namespace occa {
           expNode &leaf    = *(flatRoot[i].up);
           const char coord = (leaf[1].value[0] + ('0' - 'x'));
 
-          leaf.info  = expType::printValue;
+          leaf.info  = (expType::presetValue | expType::occaKeyword);
           leaf.value = occaValue + coord;
 
           leaf.leafCount = 0;

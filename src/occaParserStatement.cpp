@@ -3397,6 +3397,12 @@ namespace occa {
         break;
       }
 
+      case (expType::presetValue | expType::occaKeyword):{
+        out << value;
+
+        break;
+      }
+
       case (expType::operator_):{
         out << value;
 
@@ -5778,7 +5784,7 @@ namespace occa {
         if( !(flags & statementFlag::printSubStatements) )
           return expRoot.value;
 
-        std::string ret = tab + expRoot.value + "{\n";
+        std::string ret = tab + expRoot.value + " {\n";
 
         while(statementPos){
           ret += (std::string) *(statementPos->value);
@@ -5811,7 +5817,7 @@ namespace occa {
           ret += expRoot.toString(tab);
 
           if(0 < statementCount)
-            ret += "{";
+            ret += " {";
           else if(statementCount == 0) // The [Jesse Chan] Case
             ret += "\n" + tab + "  ;";
 
