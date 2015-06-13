@@ -130,6 +130,9 @@ namespace occa {
                         int &expPos,
                         const int parsingLanguage_);
 
+      void loadAttributes(expNode &allExp,
+                          int &expPos);
+
       void splitAndOrganizeNode();
       void splitAndOrganizeFortranNode();
 
@@ -188,9 +191,6 @@ namespace occa {
 
       // Add used vars to varUsedMap
       void labelUsedVariables();
-
-      // @(attributes)
-      void loadAttributes();
 
       // <const int,float>
       void mergeTypes();
@@ -440,7 +440,7 @@ namespace occa {
       int statementCount;
       statementNode *statementStart, *statementEnd;
 
-      strToStrMap_t attributeMap;
+      attributeMap_t attributeMap;
 
       statement(parserBase &pb);
 
@@ -763,10 +763,6 @@ namespace occa {
 
       operator std::string();
     };
-
-    int setAttributeMap(strToStrMap_t &attributeMap,
-                        expNode &expRoot,
-                        int leafPos);
 
     std::string attributeMapToString(strToStrMap_t &attributeMap);
 

@@ -179,12 +179,16 @@ namespace occa {
 
       sInfo->labelStatement(allExp, expPos, parsingLanguage);
 
+      const int expEnd = expPos;
+
+      loadAttributes(allExp, expPos);
+
       expNode *firstLeaf = this;
 
       // expPos is not included, it starts the next expNode tree
       if((1 < (expPos - expStart)) ||
          (0 < allExp[expStart].leafCount)){
-        useExpLeaves(allExp, expStart, (expPos - expStart));
+        useExpLeaves(allExp, expStart, (expEnd - expStart));
         firstLeaf = leaves[0];
       }
       else{
@@ -310,6 +314,19 @@ namespace occa {
 
       // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
       // print();
+    }
+
+    // @(attributes)
+    void expNode::loadAttributes(expNode &allExp,
+                                 int &expPos){
+      if(sInfo == NULL)
+        return;
+
+      printf("Trying to load\n");
+
+      expPos = setAttributeMap(sInfo->attributeMap,
+                               allExp,
+                               expPos);
     }
 
     void expNode::splitAndOrganizeNode(){
@@ -1190,8 +1207,6 @@ namespace occa {
         labelUsedVariables();
 
       //---[ Level 1 ]------
-      // @(attributes)
-      loadAttributes();
 
       // <const int,float>
       mergeTypes();
@@ -1509,27 +1524,6 @@ namespace occa {
             sInfo->addVariableToUsedMap(var);
           }
         }
-      }
-    }
-
-    // @(attributes)
-    void expNode::loadAttributes(){
-      int leafPos = 0;
-
-      while(leafPos < leafCount){
-        if(leaves[leafPos]->value == "@"){
-          const int nextLeafPos = leafPos + 2;
-
-          if(sInfo){
-            setAttributeMap(sInfo->attributeMap,
-                            *this,
-                            leafPos);
-          }
-
-          removeNodes(leafPos, nextLeafPos - leafPos);
-        }
-
-        ++leafPos;
       }
     }
 
@@ -5918,83 +5912,6 @@ namespace occa {
 
     statement::operator std::string() {
       return toString();
-    }
-
-    int setAttributeMap(strToStrMap_t &attributeMap,
-                        expNode &expRoot,
-                        int leafPos){
-
-      if(expRoot.leafCount <= (leafPos + 1))
-        return leafPos;
-
-      if(expRoot[leafPos].value != "@")
-        return leafPos;
-
-      ++leafPos;
-
-      // Only one attribute
-      if(expRoot[leafPos].info != expType::C){
-        attributeMap[expRoot[leafPos].value] = "";
-      }
-      else {
-        expNode &csvFlatRoot = *(expRoot[leafPos].makeCsvFlatHandle());
-
-        const int attributeCount = csvFlatRoot.leafCount;
-
-        for(int i = 0; i < attributeCount; ++i){
-          expNode &attrNode   = csvFlatRoot[i];
-          const int attrIsSet = (attrNode.value == "=");
-
-          expNode *lrValues[2] = {attrIsSet ? &(attrNode[0]) : &attrNode,
-                                  attrIsSet ? &(attrNode[1]) : (expNode*) NULL};
-
-          std::string strValues[2];
-
-          for(int j = 0; j < (1 + attrIsSet); ++j){
-            for(int k = 0; k < lrValues[j]->leafCount; ++k){
-              if(k) strValues[j] += ' ';
-              strValues[j] += (*(lrValues[j]))[k];
-            }
-          }
-
-          attributeMap[strValues[0]] = strValues[1];
-        }
-
-        expNode::freeFlatHandle(csvFlatRoot);
-      }
-
-      return (leafPos + 1);
-    }
-
-    std::string attributeMapToString(strToStrMap_t &attributeMap){
-      std::string ret;
-
-      if(attributeMap.size()){
-        ret += "@(";
-
-        strToStrMapIterator it = attributeMap.begin();
-        bool oneAttrSet = false;
-
-        while(it != attributeMap.end()){
-          if(oneAttrSet)
-            ret += ", ";
-          else
-            oneAttrSet = true;
-
-          ret += it->first;
-
-          if(it->second != ""){
-            ret += " = ";
-            ret += it->second;
-          }
-
-          ++it;
-        }
-
-        ret += ')';
-      }
-
-      return ret;
     }
 
     std::ostream& operator << (std::ostream &out, statement &s){
