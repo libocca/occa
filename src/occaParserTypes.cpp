@@ -1248,8 +1248,12 @@ namespace occa {
         stackExpRoots = new expNode[stackPointerCount];
 
         for(int i = 0; i < stackPointerCount; ++i){
-          if(expRoot[leafPos + i].leafCount)
-            expRoot[leafPos + i][0].cloneTo(stackExpRoots[i]);
+          if(expRoot[leafPos + i].leafCount){
+            expRoot[leafPos + i].cloneTo(stackExpRoots[i]);
+
+            stackExpRoots[i].info  = expType::root;
+            stackExpRoots[i].value = "";
+          }
         }
       }
 

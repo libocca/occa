@@ -1490,6 +1490,9 @@ namespace occa {
 
     // Add used vars to varUsedMap
     void expNode::labelUsedVariables(){
+      if(sInfo == NULL)
+        return;
+
       for(int i = 0; i < leafCount; ++i){
         expNode &n = *(leaves[i]);
 
