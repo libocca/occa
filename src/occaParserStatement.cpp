@@ -2438,6 +2438,8 @@ namespace occa {
           flatNode->info      = expType::printLeaves;
           flatNode->leaves    = new expNode*[csvCount];
           flatNode->leafCount = csvCount;
+
+          csvCount = 0;
         }
 
         while(cNode                         &&
@@ -2448,17 +2450,14 @@ namespace occa {
             ++csvCount;
           }
           else {
-            flatNode->leaves[--csvCount] = cNode->leaves[0];
+            flatNode->leaves[csvCount++] = cNode->leaves[0];
 
-            if(csvCount == 1)
-              flatNode->leaves[--csvCount] = cNode->leaves[1];
+            if(csvCount == (flatNode->leafCount - 1))
+              flatNode->leaves[csvCount++] = cNode->leaves[1];
           }
 
           cNode = cNode->leaves[1];
         }
-
-        if((pass == 1) && csvCount)
-          flatNode->leaves[0] = cNode;
       }
 
       return flatNode;
@@ -4082,6 +4081,13 @@ namespace occa {
       return (it->second);
     }
 
+    void statement::removeAttribute(const std::string &attr){
+      attributeMapIterator it = attributeMap.find(attr);
+
+      if(it != attributeMap.end())
+        attributeMap.erase(it);
+    }
+
     void statement::addType(typeInfo &type){
       scopeTypeMap[type.name] = &type;
     }
@@ -5002,7 +5008,18 @@ namespace occa {
       return -1; // Maximum distance
     }
 
+    bool statement::insideOf(statement &s){
+      statement *up_ = up;
 
+      while(up_ != NULL){
+        if(up_ == &s)
+          return true;
+
+        up_ = up_->up;
+      }
+
+      return false;
+    }
 
     void statement::setStatementIdMap(statementIdMap_t &idMap){
       int startID = 0;

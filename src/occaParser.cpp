@@ -1196,11 +1196,92 @@ namespace occa {
 
       const int ltrCount = (int) loopsToReorder.size();
 
-      for(int i = 0; i < ltrCount; ++i){
+      if(ltrCount < 2)
+        return;
+
+      int start = 0;
+      statement *sRoot = loopsToReorder[0];
+
+      for(int i = 1; i < ltrCount; ++i){
         statement &s = *(loopsToReorder[i]);
 
-        std::cout << "s = " << s.onlyThisToString() << '\n';
+        if(!s.insideOf(*sRoot)){
+          if((i - start) < 2){
+            start = i;
+            sRoot = &s;
+
+            continue;
+          }
+
+          reorderLoops(loopsToReorder, start, i);
+
+          start = i;
+          sRoot = &s;
+        }
       }
+
+      if(2 <= (ltrCount - start))
+        reorderLoops(loopsToReorder, start, ltrCount);
+    }
+
+    void parserBase::reorderLoops(statementVector_t &loopsToReorder,
+                                  const int start,
+                                  const int end){
+
+      if((end - start) < 2)
+        return;
+
+      intVector_t relatedLoops = relatedReorderLoops(loopsToReorder,
+                                                     start,
+                                                     end);
+
+      for(int i = start; i < end; ++i){
+        if(loopsToReorder[i]->hasAttribute("loopOrder"))
+          reorderLoops(loopsToReorder, i, end);
+      }
+
+      if(relatedLoops.size() < 2)
+        return;
+    }
+
+    intVector_t parserBase::relatedReorderLoops(statementVector_t &loopsToReorder,
+                                                const int start,
+                                                const int end){
+
+      intVector_t relatedLoops;
+      relatedLoops.push_back(start);
+
+      statement &sRoot      = *(loopsToReorder[start]);
+      attribute_t &rootAttr = *(sRoot.hasAttribute("loopOrder"));
+
+      sRoot.removeAttribute("loopOrder");
+
+      for(int i = (start + 1); i < end; ++i){
+        statement &s       = *(loopsToReorder[i]);
+        attribute_t *attr_ = s.hasAttribute("loopOrder");
+
+        // This statement is already taken
+        if(attr_ == NULL)
+          continue;
+
+        attribute_t &attr = *(attr_);
+
+        if(attr.argCount != rootAttr.argCount)
+          continue;
+
+        if(rootAttr.argCount == 1){
+          s.removeAttribute("loopOrder");
+          relatedLoops.push_back(i);
+        }
+        else if(rootAttr.argCount == 2){
+          if(rootAttr[0].value == attr[0].value){
+            s.removeAttribute("loopOrder");
+            relatedLoops.push_back(i);
+          }
+        }
+      }
+
+      return relatedLoops;
     }
 
     void parserBase::placeLoopsToReorder(statement &s,

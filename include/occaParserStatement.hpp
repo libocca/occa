@@ -494,6 +494,7 @@ namespace occa {
       //================================
 
       attribute_t* hasAttribute(const std::string &attr);
+      void removeAttribute(const std::string &attr);
 
       void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);
@@ -765,8 +766,6 @@ namespace occa {
 
       operator std::string();
     };
-
-    std::string attributeMapToString(strToStrMap_t &attributeMap);
 
     std::ostream& operator << (std::ostream &out, statement &s);
     //============================================

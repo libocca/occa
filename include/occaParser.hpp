@@ -120,9 +120,20 @@ namespace occa {
 
       bool statementHasOccaStuff(statement &s);
 
+      //   ---[ Loop Reordering ]-------
       void reorderLoops();
+
+      void reorderLoops(statementVector_t &loopsToReorder,
+                        const int start,
+                        const int end);
+
+      intVector_t relatedReorderLoops(statementVector_t &loopsToReorder,
+                                      const int start,
+                                      const int end);
+
       void placeLoopsToReorder(statement &s,
                                statementVector_t &loopsToReorder);
+      //   =============================
 
       void splitTileOccaFors(statement &s);
 
