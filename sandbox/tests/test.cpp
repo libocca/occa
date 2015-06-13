@@ -29,24 +29,27 @@ occaFunction tFloat hatWavelet(tFloat t){
   const tFloat pift  = PI*freq*(t - hat_t0);
   const tFloat pift2 = pift*pift;
 
+  double *phi @(dim(D,G));
+  phi(d,g);
+
   return (1. - 2.0*pift2)*exp(-pift2);
 }
 
 const int2 * const a34;
 
-float numberSamples[] = {1, +1, -1,
-                         1., +1., -1.,
-                         1.0, -1.0, +1.0,
-                         1.0f, -1.0f, +1.0f,
-                         1.01F, -1.01F, +1.01F,
-                         1l, -1l, +1l,
-                         1.01L, -1.01L, +1.01L,
-                         0b001, -0b010, +0b011,
-                         0B100, -0B101, +0B110,
-                         00001, -00010, +00011,
-                         00100, -00101, +00110,
-                         0x001, -0x010, +0x011,
-                         0X100, -0X101, +0X110}
+// float numberSamples[] = {1, +1, -1,
+//                          1., +1., -1.,
+//                          1.0, -1.0, +1.0,
+//                          1.0f, -1.0f, +1.0f,
+//                          1.01F, -1.01F, +1.01F,
+//                          1l, -1l, +1l,
+//                          1.01L, -1.01L, +1.01L,
+//                          0b001, -0b010, +0b011,
+//                          0B100, -0B101, +0B110,
+//                          00001, -00010, +00011,
+//                          00100, -00101, +00110,
+//                          0x001, -0x010, +0x011,
+//                          0X100, -0X101, +0X110};
 
 #if 1
 occaKernel void fd2d(tFloat *u1,
@@ -72,7 +75,10 @@ occaKernel void fd2d(tFloat *u1,
   for(int n = 0; n < bDimX; ++n; tile(lDimX)){
   }
 
-  // for(int2 i = {0,1}; i.x < bDimX, i.y < bDimY; i.y += 2, ++i.x; tile(lDimX,lDimY)){
+  // for(int2 i(0,1); i.x < bDimX, i.y < bDimY; i.y += 2, ++i.x; tile(lDimX,lDimY)){
+  // }
+
+  // for(int2 i(0,1); i.x < bDimX, i.y < bDimY; ++i; tile(lDimX,lDimY)){
   // }
 
   for(int by = 0; by < bDimY; by += 16; outer0){
@@ -183,3 +189,51 @@ occaKernel void fd2d(tFloat *u1,
   }
 }
 #endif
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+for(int l = 0; l < 10; ++l) @loopOrder("a", 0){
+  for(int k = 0; k < 10; ++k) @loopOrder("a", 1){
+      for(int i = 0; i < 10; ++i) @loopOrder("b", 0){
+          for(int j = 0; j < 10; ++j) @(loopOrder("b", 1), tile(10)){
+            }
+        }
+
+      for(int i = 0; i < 10; ++i)  @loopOrder("c", 1){
+          for(int j = 0; j < 10; ++j)  @loopOrder("c", 0){
+            }
+        }
+    }
+}
