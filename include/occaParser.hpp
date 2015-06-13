@@ -120,9 +120,11 @@ namespace occa {
 
       bool statementHasOccaStuff(statement &s);
 
+      void reorderLoops();
+
       void splitTileOccaFors(statement &s);
 
-      void markKernelFunctions(statement &s);
+      void markKernelFunctions();
 
       void labelNativeKernels();
 

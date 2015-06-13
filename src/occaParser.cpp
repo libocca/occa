@@ -63,11 +63,13 @@ namespace occa {
       // std::cout << (std::string) *globalScope;
       // throw 1;
 
+      reorderLoops();
+
       applyToAllStatements(*globalScope, &parserBase::splitTileOccaFors);
       // std::cout << (std::string) *globalScope;
       // throw 1;
 
-      markKernelFunctions(*globalScope);
+      markKernelFunctions();
       labelNativeKernels();
 
       if(magicEnabled){
@@ -1187,6 +1189,10 @@ namespace occa {
       return false;
     }
 
+    void parserBase::reorderLoops(){
+
+    }
+
     void parserBase::splitTileOccaFors(statement &s){
       if((s.info != smntType::forStatement) ||
          (s.getForStatementCount() < 4)){
@@ -1527,8 +1533,8 @@ namespace occa {
       delete [] checkIterOnLeft;
     }
 
-    void parserBase::markKernelFunctions(statement &s){
-      statementNode *snPos = s.statementStart;
+    void parserBase::markKernelFunctions(){
+      statementNode *snPos = globalScope->statementStart;
 
       while(snPos){
         statement &s2 = *(snPos->value);

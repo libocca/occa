@@ -269,6 +269,17 @@ namespace occa {
           unsigned_ = true;
           ++c;
         }
+        else if(C == 'E'){
+          ++c;
+
+          typeHolder exp;
+          exp.load(c);
+
+          // Check if there was an 'F' in exp
+          float_ = (exp.type == floatType);
+
+          break;
+        }
         else if(C == 'F'){
           float_ = true;
           ++c;
@@ -288,7 +299,7 @@ namespace occa {
         return;
       }
 
-      if(decimal){
+      if(decimal || float_){
         if(!float_){
           type          = doubleType;
           value.double_ = occa::atof(std::string(c0, c - c0));
@@ -1315,29 +1326,35 @@ namespace occa {
       std::string str;
 
       switch(type){
-      case intType   : ss << value.int_;    str = ss.str();             break;
-      case boolType  : ss << value.bool_;   str = ss.str();             break;
-      case charType  : ss << value.char_;   str = ss.str();             break;
-      case longType  : ss << value.long_;   str = ss.str(); str += 'L'; break;
-      case shortType : ss << value.short_;  str = ss.str();             break;
-      case floatType : ss << value.float_;  str = ss.str();             break;
-      case doubleType: ss << value.double_; str = ss.str();             break;
+      case intType   : ss << value.int_;    str = ss.str(); break;
+      case boolType  : ss << value.bool_;   str = ss.str(); break;
+      case charType  : ss << value.char_;   str = ss.str(); break;
+      case longType  : ss << value.long_;   str = ss.str(); break;
+      case shortType : ss << value.short_;  str = ss.str(); break;
+      case floatType : ss << value.float_;  str = ss.str(); break;
+      case doubleType: ss << value.double_; str = ss.str(); break;
       default:
         OCCA_CHECK(false,
                    "Value not set\n");
       }
 
+      if((str.find("inf") != std::string::npos)||
+         (str.find("INF") != std::string::npos)){
+
+        return str;
+      }
+
       if((type == floatType) ||
          (type == doubleType)){
 
-        if(str.find('.') == std::string::npos){
+        if(str.find('.') == std::string::npos)
           str += ".0";
 
-          if(type == floatType)
-            str += 'f';
-        }
+        if(type == floatType)
+          str += 'f';
       }
-
+      else if(type == longType)
+        str += 'L';
 
       return str;
     }
