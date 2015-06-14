@@ -539,6 +539,8 @@ namespace occa {
 
       static expNode createExpNodeFrom(const std::string &source);
       expNode createPlainExpNodeFrom(const std::string &source);
+
+      void reloadFromSource(const std::string &source);
       expNode createOrganizedExpNodeFrom(const std::string &source);
       expNode createOrganizedExpNodeFrom(expNode &allExp,
                                          const int expPos,

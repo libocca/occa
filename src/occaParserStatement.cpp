@@ -4485,17 +4485,23 @@ namespace occa {
       return ret;
     }
 
-    expNode statement::createOrganizedExpNodeFrom(const std::string &source){
+    void statement::reloadFromSource(const std::string &source){
       pushLanguage(parserInfo::parsingC);
 
-      expNode ret = parserNS::splitAndLabelContent(source, parserInfo::parsingC);
-
-      statement &tmpS = *(makeSubStatement());
+      expNode newExpRoot = parserNS::splitAndLabelContent(source, parserInfo::parsingC);
 
       int expPos = 0;
-      tmpS.expRoot.loadFromNode(ret, expPos, parserInfo::parsingC);
+
+      expRoot.free();
+      expRoot.loadFromNode(newExpRoot, expPos, parserInfo::parsingC);
 
       popLanguage();
+    }
+
+    expNode statement::createOrganizedExpNodeFrom(const std::string &source){
+      statement &tmpS = *(makeSubStatement());
+
+      tmpS.reloadFromSource(source);
 
       return tmpS.expRoot;
     }

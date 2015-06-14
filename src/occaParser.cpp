@@ -1571,16 +1571,11 @@ namespace occa {
 
         ss.str("");
 
-        expNode outerExp = s.createOrganizedExpNodeFrom(outerForSource);
-        expNode innerExp = s.createOrganizedExpNodeFrom(innerForSource);
+        os.expRoot.free();
+        is.expRoot.free();
 
-        expNode::swap(os.expRoot, outerExp);
-        expNode::swap(is.expRoot, innerExp);
-
-        os.printDebugInfo();
-
-        outerExp.free();
-        innerExp.free();
+        os.reloadFromSource(outerForSource);
+        is.reloadFromSource(innerForSource);
       }
 
       // Add variable declaration if needed
