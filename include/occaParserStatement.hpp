@@ -437,12 +437,12 @@ namespace occa {
 
       expNode expRoot;
 
-      int statementCount;
       statementNode *statementStart, *statementEnd;
 
       attributeMap_t attributeMap;
 
       statement(parserBase &pb);
+      statement(const statement &s);
 
       statement(statement *up_);
 
@@ -457,6 +457,8 @@ namespace occa {
       int getSubIndex();
 
       int depth();
+      int statementCount();
+
       void setIndexPath(intVector_t &path, statement *target = NULL);
 
       statement* makeSubStatement();
@@ -774,6 +776,7 @@ namespace occa {
       int getForStatementCount();
       //================================
 
+      void printDebugInfo();
       std::string toString(const info_t flags = (statementFlag::printSubStatements));
       std::string onlyThisToString();
 

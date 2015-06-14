@@ -1490,7 +1490,6 @@ namespace occa {
       }
 
       // Place s's statementNode's in inner-most for-loop
-      iStatements[0]->statementCount = s.statementCount;
       iStatements[0]->statementStart = s.statementStart;
       iStatements[0]->statementEnd   = s.statementEnd;
 
@@ -1577,6 +1576,8 @@ namespace occa {
 
         expNode::swap(os.expRoot, outerExp);
         expNode::swap(is.expRoot, innerExp);
+
+        os.printDebugInfo();
 
         outerExp.free();
         innerExp.free();
@@ -2134,10 +2135,7 @@ namespace occa {
       if(sn->right)
         sn->right->left = s.statementEnd;
 
-      s.up->statementCount += (argc - 1);
-
       s.statementStart = s.statementEnd = NULL;
-      s.statementCount = 0;
     }
 
     // [-] Missing
@@ -2785,7 +2783,6 @@ namespace occa {
           sn = sn2;
         }
 
-        sPos->statementCount = 0;
         sPos->statementStart = sPos->statementEnd = NULL;
         sPos->scopeVarMap.clear();
 
@@ -2801,14 +2798,13 @@ namespace occa {
       // Get rid of empty blocks
       //  kernel void blah(){{  -->  kernel void blah(){
       //  }}                    -->  }
-      while(sPos->statementCount == 1){
+      while(sPos->statementCount() == 1){
         statement *sDown = sPos->statementStart->value;
 
         if(sDown->info == smntType::blockStatement){
           sPos->scopeVarMap.insert(sDown->scopeVarMap.begin(),
                                    sDown->scopeVarMap.end());
 
-          sPos->statementCount = 0;
           sPos->statementStart = sPos->statementEnd = NULL;
 
           statementNode *sn = sDown->statementStart;

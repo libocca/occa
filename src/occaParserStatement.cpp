@@ -323,10 +323,8 @@ namespace occa {
       else
         organizeFortranNode();
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this;
-      // if(sInfo) std::cout << ' ' << sInfo->attributeMapToString();
-      // std::cout << '\n';
-      // print();
+      // if(sInfo)
+      //   sInfo->printDebugInfo();
     }
 
     // @(attributes)
@@ -3769,9 +3767,26 @@ namespace occa {
 
       expRoot(*this),
 
-      statementCount(0),
       statementStart(NULL),
       statementEnd(NULL) {}
+
+    statement::statement(const statement &s) :
+      parser(s.parser),
+
+      scopeTypeMap(s.scopeTypeMap),
+      scopeVarMap(s.scopeVarMap),
+
+      info(s.info),
+
+      up(s.up),
+
+      expRoot(s.expRoot),
+
+      statementStart(s.statementStart),
+      statementEnd(s.statementEnd),
+
+      attributeMap(s.attributeMap) {}
+
 
     statement::statement(const info_t info_,
                          statement *up_) :
@@ -3783,7 +3798,6 @@ namespace occa {
 
       expRoot(*this),
 
-      statementCount(0),
       statementStart(NULL),
       statementEnd(NULL) {}
 
@@ -3837,6 +3851,18 @@ namespace occa {
       }
 
       return depth_;
+    }
+
+    int statement::statementCount(){
+      statementNode *sn = statementStart;
+      int count = 0;
+
+      while(sn){
+        ++count;
+        sn = sn->right;
+      }
+
+      return count;
     }
 
     void statement::setIndexPath(intVector_t &path,
@@ -5346,11 +5372,9 @@ namespace occa {
       newStatement->up = this;
 
       if(statementStart != NULL){
-        ++statementCount;
         statementEnd = statementEnd->push(newStatement);
       }
       else{
-        statementCount = 1;
         statementStart = new statementNode(newStatement);
         statementEnd   = statementStart;
       }
@@ -5411,7 +5435,6 @@ namespace occa {
         }
       }
 
-      swapValues(a.statementCount, b.statementCount);
       swapValues(a.statementStart, b.statementStart);
       swapValues(a.statementEnd  , b.statementEnd);
     }
@@ -5934,6 +5957,13 @@ namespace occa {
     }
     //================================
 
+    void statement::printDebugInfo(){
+      std::cout << "[" << getBits(info) << "] s = " << expRoot
+                << ' ' << attributeMapToString() << '\n';
+
+      expRoot.print();
+    }
+
     std::string statement::toString(const info_t flags){
       std::string tab;
 
@@ -5981,9 +6011,9 @@ namespace occa {
         if(info != smntType::doWhileStatement){
           ret += expRoot.toString(tab);
 
-          if(0 < statementCount)
+          if(statementStart != NULL)
             ret += " {";
-          else if(statementCount == 0) // The [Jesse Chan] Case
+          else
             ret += "\n" + tab + "  ;";
 
           ret += '\n';
@@ -5998,7 +6028,7 @@ namespace occa {
           statementPos = statementPos->right;
         }
 
-        if((0 < statementCount) ||
+        if((statementStart != NULL) ||
            (info == smntType::doWhileStatement)){
 
             ret += tab + "}\n";
