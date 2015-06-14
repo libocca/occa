@@ -3177,38 +3177,6 @@ namespace occa {
     void expNode::setNestedSInfo(statement &sInfo_){
       setNestedSInfo(&sInfo_);
     }
-
-    void expNode::switchBaseStatement(statement &s1, statement &s2){
-      expNode &flatRoot = *(makeFlatHandle());
-
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        expNode &n = flatRoot[i];
-
-        if(n.hasVariable()){
-          std::string varName = n.getMyVariableName();
-          varInfo &var        = *(s1.hasVariableInScope(varName));
-
-          statementNode *sn1 = &(s1.parser.varUpdateMap[&var]);
-          statementNode *sn2 = &(s1.parser.varUsedMap[&var]);
-
-          while(sn1){
-            if(sn1->value == &s1)
-              sn1->value = &s2;
-
-            sn1 = sn1->right;
-          }
-
-          while(sn2){
-            if(sn2->value == &s1)
-              sn2->value = &s2;
-
-            sn2 = sn2->right;
-          }
-        }
-      }
-
-      freeFlatHandle(flatRoot);
-    }
     //  ===========================
     //================================
 
@@ -4600,6 +4568,11 @@ namespace occa {
                                      int &expPos,
                                      const int parsingLanguage){
 
+      if(up)
+        up->loadOneStatementFromNode(up->info,
+                                     allExp,
+                                     expPos,
+                                     parsingLanguage);
     }
 
     // [-] Missing Fortran

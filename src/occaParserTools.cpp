@@ -4,14 +4,6 @@
 
 namespace occa {
   //---[ Helper Functions ]-----------------------
-  std::string obfuscate(const std::string s1){
-    return "__occa__variable__" + s1 + "__";
-  }
-
-  std::string obfuscate(const std::string s1, const std::string s2){
-    return "__occa__variable__" + s1 + "__" + s2 + "__";
-  }
-
   bool stringsAreEqual(const char *cStart, const size_t chars,
                        const char *c2){
     for(size_t c = 0; c < chars; ++c){

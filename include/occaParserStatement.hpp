@@ -359,10 +359,8 @@ namespace occa {
       //  ---[ Statement-based ]---
       void setNestedSInfo(statement *sInfo_);
       void setNestedSInfo(statement &sInfo_);
-      void switchBaseStatement(statement &s1, statement &s2);
       //  =========================
       //================================
-
 
       //---[ Analysis Info ]------------
       bool valueIsKnown(const strToStrMap_t &stsMap = strToStrMap_t());

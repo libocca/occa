@@ -960,41 +960,22 @@ namespace occa {
 
       statement &sOuterLoop = *(getStatementOuterMostLoop(s));
 
-      sOuterLoop.addAttribute("@occaTag = " + ioLoop);
+      s.addAttribute("@(occaTag     = "  + ioLoop   + ")");
+      s.addAttribute("@(occaNest    = "  + loopNest + ")");
+      s.addAttribute("@(occaIterExp = " + loopIters + ")");
 
-      //---[ Add loop counter ]---------
-      varInfo ioDimVar;
-      ioDimVar.name = obfuscate(ioLoop);
-      ioDimVar.addQualifier(loopNest);
+      attribute_t *maxNestAttr = sOuterLoop.hasAttribute("occaMaxNest_" + ioLoop);
+      int nest = ::atoi(loopNest.c_str());
 
-      varInfo *ioDimVar2 = s.hasVariableInScope(ioDimVar.name);
+      if(maxNestAttr){
+        const std::string maxNestStr = maxNestAttr->valueStr();
+        int maxNest = ::atoi(maxNestStr.c_str());
 
-      if(ioDimVar2 == NULL){
-        statement *sPlace = getStatementOuterMostLoop(s);
-
-        if(sPlace == NULL)
-          sPlace = getStatementKernel(s);
-
-        sPlace->addVariable(ioDimVar);
+        if(maxNest < nest)
+          maxNestAttr->value->value = toString<int>(maxNest);
       }
-      else{
-        if(!ioDimVar2->hasQualifier(loopNest))
-          ioDimVar2->addQualifier(loopNest);
-      }
-
-      //---[ Add loop iterations ]------
-      if(loopIters.size()){
-        varInfo ioIterVar;
-        ioIterVar.name = obfuscate("loop", "iters");
-
-        varInfo *ioIterVar2 = s.hasVariableInScope(ioIterVar.name);
-
-        if(ioIterVar2 == NULL){
-          statement &sOuterLoop = *(getStatementOuterMostLoop(s));
-          ioIterVar2 = &(sOuterLoop.addVariable(ioIterVar));
-        }
-
-        ioIterVar2->addQualifier(loopIters);
+      else {
+        sOuterLoop.addAttribute("@(occaMaxNest_" + ioLoop + " = " + loopNest + ")");
       }
     }
 
@@ -1036,8 +1017,7 @@ namespace occa {
       std::stringstream ss;
 
       // Working Dim
-      ss << ioLoopVar << '[' << loopNest << "] = "
-         << '('
+      ss << '('
          <<   "((" << bound << ") - (" << start << ") + (" << stride << " - 1))"
          <<   " / (" << stride << ")"
          << ");";
@@ -2261,7 +2241,8 @@ namespace occa {
       while(occaLoopPos){
         statement &sOuter = *(occaLoopPos->value);
 
-        varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
+        varInfo *loopIter = sOuter.hasVariableInScope("blahblahblahblahblah");
+        // varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
 
         loopOffsets.push_back(loopStatements.size());
 
@@ -2533,7 +2514,8 @@ namespace occa {
 
         statement &sOuter = *(occaLoops->value);
 
-        varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
+        varInfo *loopIter = sOuter.hasVariableInScope("blahblahblahblahblah");
+        // varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
 
         if(loopIter == NULL){
           occaLoops = occaLoops->right;
@@ -2810,121 +2792,71 @@ namespace occa {
     }
 
     int parserBase::getKernelOuterDim(statement &s){
-      statementNode *statementPos = s.statementStart;
-
-      std::string outerStr = obfuscate("Outer");
-      int outerDim = -1;
-
-      varInfo *info = s.hasVariableInScope(outerStr);
-
-      if(info != NULL){
-        const int extras = info->leftQualifierCount();
-
-        for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
-
-          if(outerDim < loopNest)
-            outerDim = loopNest;
-
-          // Max Dim
-          if(outerDim == 2)
-            return outerDim;
-        }
-      }
-
-      while(statementPos){
-        const int outerDim2 = getKernelOuterDim( *(statementPos->value) );
-
-        if(outerDim < outerDim2)
-          outerDim = outerDim2;
-
-        // Max Dim
-        if(outerDim == 2)
-          return outerDim;
-
-        statementPos = statementPos->right;
-      }
-
-      return outerDim;
+      return getKernelDimFor(s, "outer");
     }
 
     int parserBase::getKernelInnerDim(statement &s){
+      return getKernelDimFor(s, "inner");
+    }
+
+    int parserBase::getKernelDimFor(statement &s,
+                                    const std::string &tag){
       statementNode *statementPos = s.statementStart;
+      int dim = -1;
 
-      std::string innerStr = obfuscate("Inner");
-      int innerDim = -1;
+      attribute_t *occaTagAttr = s.hasAttribute("occaTag");
 
-      varInfo *info = s.hasVariableInScope(innerStr);
+      const int passes = (1 + ((occaTagAttr != NULL) &&
+                               occaTagAttr->valueStr() == tag));
 
-      if(info != NULL){
-        const int extras = info->leftQualifierCount();
+      for(int pass = 0; pass < passes; ++pass){
+        attribute_t *occaNestAttr = ((pass == 0)                         ?
+                                    s.hasAttribute("occaMaxNest_" + tag) :
+                                    s.hasAttribute("occaNest"));
 
-        for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
+        if(occaTagAttr){
+          const std::string nestStr = occaNestAttr->valueStr();
+          dim = ::atoi(nestStr.c_str());
 
-          if(innerDim < loopNest)
-            innerDim = loopNest;
-
-          // Max Dim
-          if(innerDim == 2)
-            return innerDim;
+          break;
         }
       }
 
       while(statementPos){
-        const int innerDim2 = getKernelInnerDim( *(statementPos->value) );
+        const int dim2 = getKernelDimFor(*(statementPos->value), tag);
 
-        if(innerDim < innerDim2)
-          innerDim = innerDim2;
+        if(dim < dim2)
+          dim = dim2;
 
-        // Max Dim
-        if(innerDim == 2)
-          return innerDim;
+        // Max dim
+        if(dim == 2)
+          return dim;
 
         statementPos = statementPos->right;
       }
 
-      return innerDim;
+      return dim;
     }
 
     int parserBase::getOuterMostForDim(statement &s){
-      return getForDim(s, "Outer");
+      return getForDim(s, "outer");
     }
 
     int parserBase::getInnerMostForDim(statement &s){
-      return getForDim(s, "Inner");
+      return getForDim(s, "inner");
     }
 
     int parserBase::getForDim(statement &s,
                               const std::string &tag){
 
-      std::string outerStr = obfuscate(tag);
-      int outerDim = -1;
+      attribute_t *occaNestAttr = s.hasAttribute("occaMaxNest_" + tag);
 
-      varInfo *info = s.hasVariableInScope(outerStr);
+      OCCA_CHECK((occaNestAttr != NULL) &&
+                 (occaNestAttr->valueStr() == tag),
+                 "Error, outer-most loop doesn't contain [" << tag << "] loops");
 
-      if(info != NULL){
-        const int extras = info->leftQualifierCount();
-
-        for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
-
-          if(outerDim < loopNest)
-            outerDim = loopNest;
-
-          // Max Dim
-          if(outerDim == 2)
-            return outerDim;
-        }
-
-        return outerDim;
-      }
-
-      OCCA_CHECK(false,
-                 "Error, outer-most loop doesn't contain obfuscate(\"" << tag << "\"):\n"
-                 << s.expRoot);
-
-      return -1;
+      const std::string tagStr = occaNestAttr->valueStr();
+      return ::atoi(tagStr.c_str());
     }
 
     void parserBase::splitDefineForVariable(varInfo &var){
@@ -3363,6 +3295,8 @@ namespace occa {
             if(isInnerId || isOuterId){
               // [occa][-----][Id#]
               ioLoop = value.substr(4,5);
+              ioLoop[0] -= ('A' - 'a');
+
               // [occa][-----Id][#]
               loopNest = value.substr(11,1);
 
@@ -3372,14 +3306,16 @@ namespace occa {
               // [occa][------Id][#]
               loopNest = value.substr(12,1);
 
-              addOccaForCounter(s, "Inner", loopNest);
-              addOccaForCounter(s, "Outer", loopNest);
+              addOccaForCounter(s, "inner", loopNest);
+              addOccaForCounter(s, "outer", loopNest);
             }
           }
           else { // isDim
             if(isInnerDim || isOuterDim){
               // [occa][-----][Dim#]
               ioLoop = value.substr(4,5);
+              ioLoop[0] -= ('A' - 'a');
+
               // [occa][-----Dim][#]
               loopNest = value.substr(12,1);
 
@@ -3389,8 +3325,8 @@ namespace occa {
               // [occa][------Dim][#]
               loopNest = value.substr(13,1);
 
-              addOccaForCounter(s, "Inner", loopNest);
-              addOccaForCounter(s, "Outer", loopNest);
+              addOccaForCounter(s, "inner", loopNest);
+              addOccaForCounter(s, "outer", loopNest);
             }
           }
 
@@ -4566,8 +4502,6 @@ namespace occa {
       ioLoopVar = arg4.substr(0,5);
       ioLoop    = ioLoopVar;
       loopNest  = arg4.substr(5,1);
-
-      ioLoop[0] += ('A' - 'a');
     }
 
     void occaLoopInfo::getLoopNode1Info(std::string &iter,

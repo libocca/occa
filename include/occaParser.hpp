@@ -203,6 +203,7 @@ namespace occa {
 
       static int getKernelOuterDim(statement &s);
       static int getKernelInnerDim(statement &s);
+      static int getKernelDimFor(statement &s, const std::string &tag);
 
       int getOuterMostForDim(statement &s);
       int getInnerMostForDim(statement &s);
