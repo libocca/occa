@@ -95,8 +95,6 @@ namespace occa {
       modifyTextureVariables();
 
       addArgQualifiers();
-      std::cout << (std::string) *globalScope;
-      throw 1;
 
       loadKernelInfos();
 
