@@ -1009,6 +1009,13 @@ namespace occa {
 
       std::string setupExp = loopInfo.getSetupExpression();
 
+      // [occa][-----][Id/For#]
+      std::string occaIdName  = "occa" + ioLoop + "Id"  + loopNest;
+      std::string occaForName = "occa" + ioLoop + "For" + loopNest;
+
+      occaIdName[4]  += ('A' - 'a');
+      occaForName[4] += ('A' - 'a');
+
       std::string stride = ((opSign[0] == '-') ? "-(" : "(");
       stride += opStride;
       stride += ")";
@@ -1031,15 +1038,12 @@ namespace occa {
 
         ss << ' '
            << opSign
-           << " (occa" << ioLoop << "Id" << loopNest
-           << " * (" << opStride << "));";
+           << " (" << occaIdName << " * (" << opStride << "));";
       }
       else{
         ss << setupExp;
 
-        ss << ' '
-           << opSign
-           << " occa" << ioLoop << "Id" << loopNest << ";";
+        ss << ' ' << opSign << ' ' << occaIdName << ';';
       }
 
       varInfo &iterVar = *(s.hasVariableInScope(iter));
@@ -1050,8 +1054,6 @@ namespace occa {
       s.scopeVarMap.erase(iter);
 
       s.pushSourceLeftOf(s.statementStart, ss.str());
-
-      std::string occaForName = "occa" + ioLoop + "For" + loopNest;
 
       s.expRoot.info  = expType::occaFor;
       s.expRoot.value = occaForName;
