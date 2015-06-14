@@ -19,15 +19,6 @@ namespace occa {
       load(e);
     }
 
-    attribute_t::attribute_t(expNode &expRoot, int &leafPos) :
-      argCount(0),
-      args(NULL),
-
-      value(NULL) {
-
-      singleLoad(expRoot, leafPos);
-    }
-
     attribute_t::attribute_t(const attribute_t &attr) :
       name(attr.name),
 
@@ -55,41 +46,12 @@ namespace occa {
       if(startsSection(attrNode.value))
         loadVariable(attrNode);
       else
-        name = attrNode.toString();
+        name = attrNode.value;
 
       if(!attrIsSet)
         return;
 
       value = e[1].clonePtr();
-    }
-
-    void attribute_t::singleLoad(expNode &expRoot, int &leafPos){
-      name = expRoot[leafPos++].value;
-
-      if(expRoot.leafCount <= leafPos)
-        return;
-
-      expNode &attrNode = expRoot[leafPos];
-
-      if(startsSection(attrNode.value)){
-        ++leafPos;
-
-        attrNode.changeExpTypes();
-        attrNode.organizeLeaves();
-
-        expNode &csvFlatRoot = *(attrNode[0].makeCsvFlatHandle());
-
-        argCount = csvFlatRoot.leafCount;
-
-        if(argCount){
-          args = new expNode*[argCount];
-
-          for(int i = 0; i < argCount; ++i)
-            args[i] = csvFlatRoot[i].clonePtr();
-        }
-
-        expNode::freeFlatHandle(csvFlatRoot);
-      }
     }
 
     void attribute_t::loadVariable(expNode &e){
@@ -175,15 +137,35 @@ namespace occa {
       ++leafPos;
 
       // Only one attribute
-      if(expRoot[leafPos].info != expType::C){
-        attribute_t &attr = *(new attribute_t(expRoot, leafPos));
+      if((expRoot[leafPos].info & expType::C) == 0){
+        expNode attrNode;
+
+        expRoot[leafPos].info |= expType::attribute;
+
+        const int leafStart = leafPos;
+
+        if(((leafPos + 1) < expRoot.leafCount) &&
+           (expRoot[leafPos + 1].info & expType::C)){
+
+          ++leafPos;
+        }
+
+        ++leafPos;
+
+        attrNode.copyAndUseExpLeaves(expRoot,
+                                     leafStart, (leafPos - leafStart));
+        attrNode.organizeLeaves();
+
+        attribute_t &attr = *(new attribute_t(attrNode[0]));
 
         attributeMap[attr.name] = &attr;
+
+        attrNode.free();
 
         return leafPos;
       }
       else {
-        expNode &attrRoot = expRoot[leafPos];
+        expNode attrRoot = expRoot[leafPos].clone();
 
         for(int i = 0; i < attrRoot.leafCount; ++i){
           if(attrRoot[i].info & expType::unknown)
@@ -198,24 +180,37 @@ namespace occa {
 
         for(int i = 0; i < attributeCount; ++i){
           expNode &attrNode = csvFlatRoot[i];
+
           attribute_t &attr = *(new attribute_t(attrNode));
 
           attributeMap[attr.name] = &attr;
         }
 
+        attrRoot.free();
         expNode::freeFlatHandle(csvFlatRoot);
       }
 
       return (leafPos + 1);
     }
 
+    void printAttributeMap(attributeMap_t &attributeMap){
+      std::cout << attributeMapToString(attributeMap) << '\n';
+    }
+
     std::string attributeMapToString(attributeMap_t &attributeMap){
       std::string ret;
 
       if(attributeMap.size()){
-        ret += "@(";
-
         attributeMapIterator it = attributeMap.begin();
+
+        const bool putParentheses = ((1 < attributeMap.size()) ||
+                                     (it->second->value != NULL));
+
+        ret += '@';
+
+        if(putParentheses)
+          ret += '(';
+
         bool oneAttrSet = false;
 
         while(it != attributeMap.end()){
@@ -229,7 +224,8 @@ namespace occa {
           ++it;
         }
 
-        ret += ')';
+        if(putParentheses)
+          ret += ')';
       }
 
       return ret;
@@ -513,11 +509,6 @@ namespace occa {
           ret += ' ';
         }
       }
-
-      // Print attributes (for debugging purposes)
-#if 0
-      std::cout << ' ' << attributeMapToString(attributeMap);
-#endif
 
       return ret;
     }

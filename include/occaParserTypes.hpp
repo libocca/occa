@@ -26,13 +26,11 @@ namespace occa {
 
       attribute_t();
       attribute_t(expNode &e);
-      attribute_t(expNode &e, int &leafPos);
 
       attribute_t(const attribute_t &attr);
       attribute_t& operator = (const attribute_t &attr);
 
       void load(expNode &e);
-      void singleLoad(expNode &e, int &leafPos);
       void loadVariable(expNode &e);
 
       expNode& operator [] (const int pos);
@@ -52,6 +50,7 @@ namespace occa {
                         expNode &expRoot,
                         int leafPos);
 
+    void printAttributeMap(attributeMap_t &attributeMap);
     std::string attributeMapToString(attributeMap_t &attributeMap);
     //============================================
 

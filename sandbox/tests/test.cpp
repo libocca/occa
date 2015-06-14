@@ -42,7 +42,7 @@ occaFunction tFloat hatWavelet(tFloat t){
     for(int bj = 0; bj < 10; ++bj) @loopOrder("b", 1) {
       for(int bi = 0; bi < 10; ++bi) @loopOrder("b", 0) {
         for(int aj = 0; aj < 10; ++aj) @loopOrder("a", 0) {
-          delta(aj,bi,bj,ai) = 0;
+            delta(aj,bi,bj,ai) = 0;
         }
       }
     }

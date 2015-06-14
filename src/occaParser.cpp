@@ -957,6 +957,11 @@ namespace occa {
                                        const std::string &ioLoop,
                                        const std::string &loopNest,
                                        const std::string &loopIters){
+
+      statement &sOuterLoop = *(getStatementOuterMostLoop(s));
+
+      sOuterLoop.addAttribute("@occaTag = " + ioLoop);
+
       //---[ Add loop counter ]---------
       varInfo ioDimVar;
       ioDimVar.name = obfuscate(ioLoop);

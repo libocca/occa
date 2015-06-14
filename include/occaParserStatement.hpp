@@ -295,6 +295,7 @@ namespace occa {
       void reserve(const int count);
       int insertExpAt(expNode &exp, int pos);
       void useExpLeaves(expNode &exp, const int pos, const int count);
+      void copyAndUseExpLeaves(expNode &exp, const int pos, const int count);
       void reserveAndShift(const int pos, const int count = 1);
 
       void setLeaf(expNode &leaf, const int pos);
@@ -495,8 +496,12 @@ namespace occa {
       //================================
 
       attribute_t* hasAttribute(const std::string &attr);
+      void addAttribute(attribute_t &attr);
+      void addAttribute(const std::string &attrSource);
       void addAttributeTag(const std::string &attrName);
       void removeAttribute(const std::string &attr);
+
+      void printAttributeMap();
 
       void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);

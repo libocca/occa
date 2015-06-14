@@ -329,15 +329,34 @@ namespace occa {
 
     // @(attributes)
     void expNode::loadAttributes(){
-      int expPos = 0;
-      loadAttributes(*this, expPos);
+      return;
+      int leafPos = 0;
+
+      while(leafPos < leafCount){
+        if(leaves[leafPos]->value == "@"){
+          const int leafStart = leafPos;
+
+          loadAttributes(*this, leafPos);
+
+          removeNodes(leafStart, leafPos - leafStart);
+
+          leafPos = (leafStart - 1);
+        }
+
+        ++leafPos;
+      };
     }
 
     // @(attributes)
     void expNode::loadAttributes(expNode &allExp,
                                  int &expPos){
-      if(sInfo == NULL)
+
+      if((sInfo == NULL)              ||
+         (allExp.leafCount <= expPos) ||
+         (allExp[expPos].value != "@")){
+
         return;
+      }
 
       expPos = setAttributeMap(sInfo->attributeMap,
                                allExp,
@@ -2553,11 +2572,27 @@ namespace occa {
       return (pos + exp.leafCount);
     }
 
-    void expNode::useExpLeaves(expNode &exp, const int pos, const int count){
+    void expNode::useExpLeaves(expNode &exp,
+                               const int pos,
+                               const int count){
       reserveAndShift(0, count);
 
       for(int i = pos; i < (pos + count); ++i){
         leaves[i - pos]     = exp.leaves[i];
+        leaves[i - pos]->up = this;
+      }
+
+      if(sInfo)
+        setNestedSInfo(*sInfo);
+    }
+
+    void expNode::copyAndUseExpLeaves(expNode &exp,
+                                      const int pos,
+                                      const int count){
+      reserveAndShift(0, count);
+
+      for(int i = pos; i < (pos + count); ++i){
+        leaves[i - pos]     = exp.leaves[i]->clonePtr();
         leaves[i - pos]->up = this;
       }
 
@@ -4105,6 +4140,16 @@ namespace occa {
       return (it->second);
     }
 
+    void statement::addAttribute(attribute_t &attr){
+      attributeMap[attr.name] = &attr;
+    }
+
+    void statement::addAttribute(const std::string &attrSource){
+      expNode attrNode = createPlainExpNodeFrom(attrSource);
+
+      setAttributeMap(attributeMap, attrNode, 0);
+    }
+
     void statement::addAttributeTag(const std::string &attrName){
       setAttributeMap(attributeMap, attrName);
     }
@@ -4114,6 +4159,10 @@ namespace occa {
 
       if(it != attributeMap.end())
         attributeMap.erase(it);
+    }
+
+    void statement::printAttributeMap(){
+      parserNS::printAttributeMap(attributeMap);
     }
 
     void statement::addType(typeInfo &type){
