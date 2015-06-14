@@ -1768,12 +1768,6 @@ namespace occa {
     }
 
     void magician::analyzeForStatement(statement &s){
-      if(s.getForStatementCount() < 3){
-        printf("[Magic Analyzer] For-loops without 3 statements (4 for okl/ofl loops) are not supported\n");
-        db.getSmntInfo() = analyzeInfo::schrodinger;
-        return;
-      }
-
       expNode &initNode   = s.expRoot[0];
       expNode &checkNode  = s.expRoot[1];
       expNode &updateNode = s.expRoot[2];
@@ -2300,12 +2294,8 @@ namespace occa {
         os.setIndexPath(path, &kernel);
         statement &newOs = newKernel[path];
 
-        if(newOs.getForStatementCount() == 3)
-          newOs.addForStatement();
-
-        expNode &newOsE = *(newOs.getForStatement(3));
-        newOsE.info  = expType::unknown;
-        newOsE.value = "outer0";
+        if(newOs.hasAttribute("occaTag") == NULL)
+          newOs.addAttribute("@(occaTag = outer, occaNest = 0)");
 
         intVector_t &innerLoopsVec = innerLoopVec[k];
         const int innerLoopCount  = innerLoopsVec.size();
@@ -2314,19 +2304,13 @@ namespace occa {
           tileTest = 0;
         }
         else {
-          newOsE.info  = expType::root;
-          newOsE.value = "";
+          newOs.removeAttribute("occaTag");
+          newOs.removeAttribute("occaNest");
 
-          newOsE.addNodes(expType::unknown, 0, 2);
-          newOsE[0].value = "tile";
+          newOs.addAttribute("@(occaTag = tile("
+                             + toString(testedTileSizes[tileTest++])
+                             + "))");
 
-          newOsE[1].info  = expType::C;
-          newOsE[1].value = "(";
-
-          ss.str("");
-          ss << testedTileSizes[tileTest++];
-
-          newOsE[1].addNode(expType::printValue, ss.str());
           continue;
         }
 
@@ -2342,12 +2326,11 @@ namespace occa {
           is.setIndexPath(path, &kernel);
           statement &newIs = newKernel[path];
 
-          if(newIs.getForStatementCount() == 3)
-            newIs.addForStatement();
+          attribute_t *occaTagAttr = newIs.hasAttribute("occaTag");
 
-          expNode &newIsE = *(newIs.getForStatement(3));
-          newIsE.info  = expType::unknown;
-          newIsE.value = "inner0";
+          if(occaTagAttr == NULL)
+            newIs.addAttribute("@(occaTag = inner, occaNest = 0)");
+
 #if DBP6
           std::cout << "  " << i << ": " << newIs.onlyThisToString() << '\n';
 #endif

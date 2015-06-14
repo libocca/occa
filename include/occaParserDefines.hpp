@@ -55,6 +55,7 @@ namespace occa {
 
   typedef std::vector<int>                                intVector_t;
   typedef std::vector<intVector_t>                        intVecVector_t;
+  typedef std::vector<std::string>                        stringVector_t;
   typedef std::vector<parserNS::statement*>               statementVector_t;
   typedef std::vector<statementNode*>                     statementNodeVector_t;
   typedef std::vector<parserNS::varInfo*>                 varInfoVector_t;
@@ -183,15 +184,6 @@ namespace occa {
     static const info_t readingCode          = 0;
     static const info_t insideCommentBlock   = 1;
     static const info_t finishedCommentBlock = 2;
-
-    //   ---[ OCCA Fors ]------
-    static const info_t occaOuterForShift = 0;
-    static const info_t occaInnerForShift = 3;
-
-    static const info_t occaOuterForMask = 7;
-    static const info_t occaInnerForMask = 56;
-
-    static const info_t notAnOccaFor = 64;
     //==============================================
   };
 };

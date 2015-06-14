@@ -66,8 +66,6 @@ namespace occa {
       reorderLoops();
 
       applyToAllStatements(*globalScope, &parserBase::splitTileOccaFors);
-      // std::cout << (std::string) *globalScope;
-      // throw 1;
 
       markKernelFunctions();
       labelNativeKernels();
@@ -953,18 +951,13 @@ namespace occa {
       return false;
     }
 
-    void parserBase::addOccaForCounter(statement &s,
-                                       const std::string &ioLoop,
-                                       const std::string &loopNest,
-                                       const std::string &loopIters){
+    void parserBase::updateOccaOMLoopAttributes(statement &s,
+                                                const std::string &loopTag,
+                                                const std::string &loopNest){
 
       statement &sOuterLoop = *(getStatementOuterMostLoop(s));
 
-      s.addAttribute("@(occaTag     = "  + ioLoop   + ")");
-      s.addAttribute("@(occaNest    = "  + loopNest + ")");
-      s.addAttribute("@(occaIterExp = " + loopIters + ")");
-
-      attribute_t *maxNestAttr = sOuterLoop.hasAttribute("occaMaxNest_" + ioLoop);
+      attribute_t *maxNestAttr = sOuterLoop.hasAttribute("occaMaxNest_" + loopTag);
       int nest = ::atoi(loopNest.c_str());
 
       if(maxNestAttr){
@@ -975,16 +968,13 @@ namespace occa {
           maxNestAttr->value->value = toString<int>(maxNest);
       }
       else {
-        sOuterLoop.addAttribute("@(occaMaxNest_" + ioLoop + " = " + loopNest + ")");
+        sOuterLoop.addAttribute("@(occaMaxNest_" + loopTag + " = " + loopNest + ")");
       }
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if( !(s.info & smntType::forStatement) ||
-          (s.getForStatementCount() <= 3) ){
-
+      if((s.info & smntType::occaFor) == 0)
         return;
-      }
 
       statement *spKernel = getStatementKernel(s);
 
@@ -996,12 +986,16 @@ namespace occa {
 
       occaLoopInfo loopInfo(s, parsingLanguage);
 
-      std::string ioLoopVar, ioLoop, loopNest;
+      std::string loopTag, capLoopTag, loopNest;
       std::string iter, start;
       std::string bound, iterCheck;
       std::string opStride, opSign, iterOp;
 
-      loopInfo.getLoopInfo(ioLoopVar, ioLoop, loopNest);
+      loopInfo.getLoopInfo(loopTag, loopNest);
+
+      // Capitalized tag
+      capLoopTag = loopTag;
+      capLoopTag[0] += ('A' - 'a');
 
       loopInfo.getLoopNode1Info(iter, start);
       loopInfo.getLoopNode2Info(bound, iterCheck);
@@ -1009,14 +1003,8 @@ namespace occa {
 
       std::string setupExp = loopInfo.getSetupExpression();
 
-      // [occa][-----][Id/For#]
-      // ioLoop is not capitalized to be consistent with
-      //   attribute names
-      std::string occaIdName  = "occa" + ioLoop + "Id"  + loopNest;
-      std::string occaForName = "occa" + ioLoop + "For" + loopNest;
-
-      occaIdName[4]  += ('A' - 'a');
-      occaForName[4] += ('A' - 'a');
+      std::string occaIdName  = "occa" + capLoopTag + "Id"  + loopNest;
+      std::string occaForName = "occa" + capLoopTag + "For" + loopNest;
 
       std::string stride = ((opSign[0] == '-') ? "-(" : "(");
       stride += opStride;
@@ -1026,12 +1014,13 @@ namespace occa {
       std::stringstream ss;
 
       // Working Dim
-      ss << '('
+      ss << "@(occaIterExp = "
+         << "("
          <<   "((" << bound << ") - (" << start << ") + (" << stride << " - 1))"
          <<   " / (" << stride << ")"
-         << ");";
+         << "))";
 
-      addOccaForCounter(s, ioLoop, loopNest, ss.str());
+      s.addAttribute(ss.str());
 
       ss.str("");
 
@@ -1129,8 +1118,8 @@ namespace occa {
     }
 
     bool parserBase::statementHasOklFor(statement &s){
-      if((s.info == smntType::forStatement) &&
-         (s.getForStatementCount() == 4)){
+      if((s.info == smntType::occaFor) &&
+         s.hasAttribute("occaTag")){
 
         return true;
       }
@@ -1302,20 +1291,18 @@ namespace occa {
     }
 
     void parserBase::splitTileOccaFors(statement &s){
-      if((s.info != smntType::forStatement) ||
-         (s.getForStatementCount() < 4)){
+      if(s.info != smntType::occaFor)
+        return;
+
+      attribute_t *occaTagAttr_ = s.hasAttribute("occaTag");
+
+      if((occaTagAttr_ == NULL) ||
+         (occaTagAttr_->name != "tile")){
 
         return;
       }
 
-      expNode &tagNode = *(s.getForStatement(3));
-
-      if((tagNode[0].value != "(")   ||
-         (tagNode[0].leafCount != 2) ||
-         (tagNode[0][0].value != "tile")){
-
-        return;
-      }
+      attribute_t &occaTagAttr = *occaTagAttr_;
 
       expNode &initNode   = *(s.getForStatement(0));
       expNode &checkNode  = *(s.getForStatement(1));
@@ -1324,11 +1311,9 @@ namespace occa {
       expNode &csvCheckNode  = *(checkNode.makeCsvFlatHandle());
       expNode &csvUpdateNode = *(updateNode.makeCsvFlatHandle());
 
-      expNode &csvTileDims = *(tagNode[0][1].makeCsvFlatHandle());
-
       //---[ Checks ]---------------------------
       //  ---[ Tile Dim ]-------------
-      const int tileDim = csvTileDims.leafCount;
+      const int tileDim = occaTagAttr.argCount;
 
       OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
                  "Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString());
@@ -1542,12 +1527,12 @@ namespace occa {
 
         if(update.info != expType::LR){
           if(update.value == "++")
-            ss << oTileVar << " += " << csvTileDims[dim] << "; ";
+            ss << oTileVar << " += " << occaTagAttr[dim] << "; ";
           else
-            ss << oTileVar << " -= " << csvTileDims[dim] << "; ";
+            ss << oTileVar << " -= " << occaTagAttr[dim] << "; ";
         }
         else {
-          ss << oTileVar << update.value << csvTileDims[dim] << "; ";
+          ss << oTileVar << update.value << occaTagAttr[dim] << "; ";
         }
 
         ss << "outer" << dim << ')';
@@ -1569,9 +1554,9 @@ namespace occa {
         ss << varName << " = " << oTileVar << "; ";
 
         if(checkIterOnLeft[dim])
-          ss << varName << check.value << '(' << oTileVar << " + " << csvTileDims[dim] << "); ";
+          ss << varName << check.value << '(' << oTileVar << " + " << occaTagAttr[dim] << "); ";
         else
-          ss << '(' << oTileVar << " + " << csvTileDims[dim] << ')' << check.value << varName << "; ";
+          ss << '(' << oTileVar << " + " << occaTagAttr[dim] << ')' << check.value << varName << "; ";
 
         csvUpdateNode[dim][0].free();
         csvUpdateNode[dim][0].info  = expType::printValue;
@@ -1636,7 +1621,6 @@ namespace occa {
       expNode::freeFlatHandle(csvCheckNode);
       expNode::freeFlatHandle(csvInitValueNode);
       expNode::freeFlatHandle(csvUpdateNode);
-      expNode::freeFlatHandle(csvTileDims);
 
       delete [] checkIterOnLeft;
     }
@@ -1788,35 +1772,6 @@ namespace occa {
       }
     }
 
-    int parserBase::statementOccaForNest(statement &s){
-      if((s.info != smntType::forStatement) ||
-         (s.getForStatementCount() != 4)){
-
-        return notAnOccaFor;
-      }
-
-      int ret = notAnOccaFor;
-
-      expNode &labelNode = *(s.getForStatement(3));
-
-      const std::string &forName = (std::string) labelNode;
-
-      if(isAnOccaOuterTag(forName)){
-        ret = ((1 + forName[5] - '0') << occaOuterForShift);
-      }
-      else if(isAnOccaInnerTag(forName)){
-        ret = ((1 + forName[5] - '0') << occaInnerForShift);
-      }
-
-      return ret;
-    }
-
-    bool parserBase::statementIsAnOccaFor(statement &s){
-      const int nest = statementOccaForNest(s);
-
-      return !(nest & notAnOccaFor);
-    }
-
     void parserBase::checkOccaBarriers(statement &s){
       statementNode *statementPos = s.statementStart;
 
@@ -1860,10 +1815,10 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        int occaType = statementOccaForNest(s2);
+        attribute_t *occaTagAttr = s2.hasAttribute("occaTag");
 
-        if((occaType == (int) notAnOccaFor) ||
-           !(occaType & occaInnerForMask)){
+        if((occaTagAttr == NULL) ||
+           occaTagAttr->valueStr() != "inner"){
 
           addOccaBarriersToStatement(s2);
         }
@@ -2247,6 +2202,8 @@ namespace occa {
 
       const int kernelCount = (int) omLoops.size();
 
+      std::cout << "kernelCount = " << kernelCount << '\n';
+
       varInfoVecVector_t varDeps(kernelCount);
 
       for(int k = 0; k < kernelCount; ++k)
@@ -2259,7 +2216,8 @@ namespace occa {
 
       sKernel.up->pushSourceLeftOf(snKernel , "#ifdef OCCA_LAUNCH_KERNEL");
       sKernel.up->pushSourceRightOf(snKernel, "#else");
-      sKernel.up->pushSourceRightOf(nkEnd   , "#endif");
+      sKernel.up->pushSourceRightOf(NULL    , "#endif");
+      // sKernel.up->pushSourceRightOf(nkEnd   , "#endif");
 
       return nkEnd;
     }
@@ -2275,7 +2233,7 @@ namespace occa {
     void parserBase::findOuterLoopSets(statement &s,
                                        statementVector_t &omLoops){
 
-      if(s.info == expType::occaFor){
+      if(s.info == smntType::occaFor){
         attribute_t &occaTagAttr = s.attribute("occaTag");
 
         if(occaTagAttr.valueStr() == "outer"){
@@ -2910,7 +2868,7 @@ namespace occa {
         const bool isDim = (isInnerDim || isOuterDim || isGlobalDim);
 
         if(isId || isDim){
-          std::string ioLoop, loopNest;
+          std::string loopTag, loopNest;
 
           if(isId){
             // ioLoop is not capitalized to be consistent with
@@ -2918,39 +2876,39 @@ namespace occa {
 
             if(isInnerId || isOuterId){
               // [occa][-----][Id#]
-              ioLoop = value.substr(4,5);
-              ioLoop[0] -= ('A' - 'a');
+              loopTag     = value.substr(4,5);
+              loopTag[0] -= ('A' - 'a');
 
               // [occa][-----Id][#]
               loopNest = value.substr(11,1);
 
-              addOccaForCounter(s, ioLoop, loopNest);
+              updateOccaOMLoopAttributes(s, loopTag, loopNest);
             }
             else { // isGlobalId
               // [occa][------Id][#]
               loopNest = value.substr(12,1);
 
-              addOccaForCounter(s, "inner", loopNest);
-              addOccaForCounter(s, "outer", loopNest);
+              updateOccaOMLoopAttributes(s, "inner", loopNest);
+              updateOccaOMLoopAttributes(s, "outer", loopNest);
             }
           }
           else { // isDim
             if(isInnerDim || isOuterDim){
               // [occa][-----][Dim#]
-              ioLoop = value.substr(4,5);
-              ioLoop[0] -= ('A' - 'a');
+              loopTag     = value.substr(4,5);
+              loopTag[0] -= ('A' - 'a');
 
               // [occa][-----Dim][#]
               loopNest = value.substr(12,1);
 
-              addOccaForCounter(s, ioLoop, loopNest);
+              updateOccaOMLoopAttributes(s, loopTag, loopNest);
             }
             else { // isGlobalDim
               // [occa][------Dim][#]
               loopNest = value.substr(13,1);
 
-              addOccaForCounter(s, "inner", loopNest);
-              addOccaForCounter(s, "outer", loopNest);
+              updateOccaOMLoopAttributes(s, "inner", loopNest);
+              updateOccaOMLoopAttributes(s, "outer", loopNest);
             }
           }
 
@@ -4021,20 +3979,14 @@ namespace occa {
       sInfo = &s;
 
       while(sInfo){
-        if((sInfo->info & smntType::forStatement) &&
-           (sInfo->getForStatementCount() > 3)){
+        if(sInfo->info == smntType::occaFor){
+          attribute_t *occaTagAttr = s.hasAttribute("occaTag");
 
-          OCCA_CHECK(sInfo->getForStatementCount() <= 4,
-                     "More than 4 statements for:\n  " << sInfo->expRoot);
+          if((occaTagAttr != NULL) &&
+             (occaTagAttr->valueStr() == tag)){
 
-          if(tag.size()){
-            std::string arg4 = (std::string) *(sInfo->getForStatement(3));
-
-            if(arg4 == tag)
-              break;
-          }
-          else
             break;
+          }
         }
 
         sInfo = sInfo->up;
@@ -4048,17 +4000,6 @@ namespace occa {
       expNode &node1   = *(sInfo->getForStatement(0));
       expNode &node2   = *(sInfo->getForStatement(1));
       expNode &node3   = *(sInfo->getForStatement(2));
-      std::string arg4 = (std::string) *(sInfo->getForStatement(3));
-
-      // Fortran-loading is easier
-      if(parsingLanguage & parserInfo::parsingFortran){
-        //---[ Node 4 Check ]---
-        // If it has a fourth argument, make sure it's the correct one
-        OCCA_CHECK(isAnOccaTag(arg4),
-                   "Wrong 4th statement for:\n  " << sInfo->expRoot);
-
-        return;
-      }
 
       //---[ Node 1 Check ]---
       OCCA_CHECK((node1.info == expType::declaration) &&
@@ -4103,11 +4044,6 @@ namespace occa {
                  (node3[0][1].value == iter),
 
                  "Wrong 3rd statement for:\n  " << sInfo->expRoot);
-
-      //---[ Node 4 Check ]---
-      // If it has a fourth argument, make sure it's the correct one
-      OCCA_CHECK(isAnOccaTag(arg4),
-                 "Wrong 4th statement for:\n  " << sInfo->expRoot);
     }
 
     // [-] Missing
@@ -4116,16 +4052,15 @@ namespace occa {
                                        std::string *outerIters){
     }
 
-    void occaLoopInfo::getLoopInfo(std::string &ioLoopVar,
-                                   std::string &ioLoop,
+    void occaLoopInfo::getLoopInfo(std::string &loopTag,
                                    std::string &loopNest){
 
-      std::string arg4 = (std::string) *(sInfo->getForStatement(3));
+      attribute_t &occaTagAttr  = sInfo->attribute("occaTag");
+      attribute_t &occaNestAttr = sInfo->attribute("occaNest");
 
       // [-----][#]
-      ioLoopVar = arg4.substr(0,5);
-      ioLoop    = ioLoopVar;
-      loopNest  = arg4.substr(5,1);
+      loopTag  = occaTagAttr.valueStr();
+      loopNest = occaNestAttr.valueStr();
     }
 
     void occaLoopInfo::getLoopNode1Info(std::string &iter,

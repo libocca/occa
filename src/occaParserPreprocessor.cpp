@@ -1528,7 +1528,7 @@ namespace occa {
       strip(lineExpNode.value);
 
       labelCode(lineExpNode);
-      lineExpNode.splitAndOrganizeNode();
+      lineExpNode.organizeNode();
 
       expNode &flatRoot = *(lineExpNode.makeFlatHandle());
 

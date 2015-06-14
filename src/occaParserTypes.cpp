@@ -660,9 +660,9 @@ namespace occa {
             expNode::swap(nestedExps[i], leaf[sLeafPos]);
 
             if(!loadType)
-              nestedExps[i].splitDeclareStatement(expFlag::none);
+              nestedExps[i].organizeDeclareStatement(expFlag::none);
             else
-              nestedExps[i].splitStructStatement();
+              nestedExps[i].organizeStructStatement();
 
             leaf.leaves[sLeafPos] = &(nestedExps[i]);
           }

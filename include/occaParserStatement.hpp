@@ -134,32 +134,32 @@ namespace occa {
       void loadAttributes(expNode &allExp,
                           int &expPos);
 
-      void splitAndOrganizeNode();
-      void splitAndOrganizeFortranNode();
+      void organizeNode();
+      void organizeFortranNode();
 
       void organize(const int parsingLanguage_ = parserInfo::parsingC);
 
-      void splitDeclareStatement(const info_t flags = (expFlag::addVarToScope |
-                                                       expFlag::addToParent));
+      void organizeDeclareStatement(const info_t flags = (expFlag::addVarToScope |
+                                                          expFlag::addToParent));
 
-      void splitUpdateStatement();
+      void organizeUpdateStatement();
 
-      void splitFlowStatement();
+      void organizeFlowStatement();
 
-      void splitFunctionStatement(const info_t flags = (expFlag::addVarToScope |
-                                                        expFlag::addToParent));
+      void organizeFunctionStatement(const info_t flags = (expFlag::addVarToScope |
+                                                           expFlag::addToParent));
 
-      void splitStructStatement(const info_t flags = (expFlag::addTypeToScope |
-                                                      expFlag::addToParent));
+      void organizeStructStatement(const info_t flags = (expFlag::addTypeToScope |
+                                                         expFlag::addToParent));
 
-      void splitCaseStatement(const int parsingLanguage_ = parserInfo::parsingC);
+      void organizeCaseStatement(const int parsingLanguage_ = parserInfo::parsingC);
 
       //  ---[ Fortran ]------
-      void splitFortranDeclareStatement();
-      void splitFortranUpdateStatement();
-      void splitFortranFlowStatement();
-      void splitFortranForStatement();
-      void splitFortranFunctionStatement();
+      void organizeFortranDeclareStatement();
+      void organizeFortranUpdateStatement();
+      void organizeFortranFlowStatement();
+      void organizeFortranForStatement();
+      void organizeFortranFunctionStatement();
       //  ====================
 
       static void translateOccaKeyword(expNode &exp,
@@ -463,7 +463,7 @@ namespace occa {
 
       std::string getTab();
 
-      //---[ Find Statement ]-----------
+      //---[ Find Statement ]---------------------
       void labelStatement(expNode &allExp,
                           int &expPos,
                           const int parsingLanguage_ = parserInfo::parsingC);
@@ -485,14 +485,15 @@ namespace occa {
       info_t checkSpecialStatementType(expNode &allExp, int &expPos);
       info_t checkBlockStatementType(expNode &allExp, int &expPos);
 
-      //  ---[ Fortran ]------
+      //  ---[ Fortran ]----------------
       info_t checkFortranStructStatementType(expNode &allExp, int &expPos);
       info_t checkFortranUpdateStatementType(expNode &allExp, int &expPos);
       info_t checkFortranDescriptorStatementType(expNode &allExp, int &expPos);
       info_t checkFortranFlowStatementType(expNode &allExp, int &expPos);
       info_t checkFortranSpecialStatementType(expNode &allExp, int &expPos);
-      //================================
+      //==========================================
 
+      //  ---[ Attributes ]-------------
       attribute_t& attribute(const std::string &attr);
       attribute_t* hasAttribute(const std::string &attr);
       void addAttribute(attribute_t &attr);
@@ -500,7 +501,11 @@ namespace occa {
       void addAttributeTag(const std::string &attrName);
       void removeAttribute(const std::string &attr);
 
+      std::string attributeMapToString();
       void printAttributeMap();
+
+      void updateInitialLoopAttributes();
+      //================================
 
       void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);
@@ -722,12 +727,6 @@ namespace occa {
       bool hasQualifier(const std::string &qualifier);
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void removeQualifier(const std::string &qualifier);
-
-      info_t occaForInfo();
-
-      static info_t occaForNest(const info_t forInfo);
-      static bool isOccaOuterFor(const info_t forInfo);
-      static bool isOccaInnerFor(const info_t forInfo);
 
       void setVariableDeps(varInfo &var,
                            sDep_t &sDep);

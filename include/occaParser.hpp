@@ -103,10 +103,10 @@ namespace occa {
 
       bool statementKernelUsesNativeLanguage(statement &s);
 
-      void addOccaForCounter(statement &s,
-                             const std::string &ioLoop,
-                             const std::string &loopNest,
-                             const std::string &loopIters = "");
+
+      void updateOccaOMLoopAttributes(statement &s,
+                                      const std::string &loopTag,
+                                      const std::string &loopNest);
 
       void setupOccaFors(statement &s);
 
@@ -144,9 +144,6 @@ namespace occa {
       void setupCudaVariables(statement &s);
 
       void addFunctionPrototypes();
-
-      int statementOccaForNest(statement &s);
-      bool statementIsAnOccaFor(statement &s);
 
       void checkOccaBarriers(statement &s);
       void addOccaBarriers();
@@ -329,8 +326,7 @@ namespace occa {
                            std::string *innerIters,
                            std::string *outerIters);
 
-      void getLoopInfo(std::string &ioLoopVar,
-                       std::string &ioLoop,
+      void getLoopInfo(std::string &loopTag,
                        std::string &loopNest);
 
       void getLoopNode1Info(std::string &iter,

@@ -304,7 +304,7 @@ namespace occa {
         }
 
         if(firstValue == "occaUnroll"){
-          splitAndOrganizeNode();
+          organizeNode();
 
           value = (std::string) *this;
 
@@ -319,11 +319,13 @@ namespace occa {
       //======================
 
       if(parsingLanguage & parserInfo::parsingC)
-        splitAndOrganizeNode();
+        organizeNode();
       else
-        splitAndOrganizeFortranNode();
+        organizeFortranNode();
 
-      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this << '\n';
+      // std::cout << "[" << getBits(sInfo->info) << "] this = " << *this;
+      // if(sInfo) std::cout << ' ' << sInfo->attributeMapToString();
+      // std::cout << '\n';
       // print();
     }
 
@@ -363,7 +365,7 @@ namespace occa {
                                expPos);
     }
 
-    void expNode::splitAndOrganizeNode(){
+    void expNode::organizeNode(){
       changeExpTypes();
       initOrganization();
 
@@ -371,11 +373,11 @@ namespace occa {
         organize();
 
       else if(sInfo->info & smntType::declareStatement){
-        splitDeclareStatement();
+        organizeDeclareStatement();
       }
 
       else if(sInfo->info & smntType::updateStatement)
-        splitUpdateStatement();
+        organizeUpdateStatement();
 
       else if((sInfo->info & (smntType::ifStatement    |
                               smntType::forStatement   |
@@ -383,23 +385,23 @@ namespace occa {
                               smntType::switchStatement)) &&
               (sInfo->info != smntType::elseStatement)){
 
-        splitFlowStatement();
+        organizeFlowStatement();
       }
 
       else if(sInfo->info & smntType::functionStatement)
-        splitFunctionStatement();
+        organizeFunctionStatement();
 
       else if(sInfo->info & smntType::structStatement)
-        splitStructStatement();
+        organizeStructStatement();
 
       else if(sInfo->info & smntType::caseStatement)
-        splitCaseStatement();
+        organizeCaseStatement();
 
       else
         organize();
     }
 
-    void expNode::splitAndOrganizeFortranNode(){
+    void expNode::organizeFortranNode(){
       changeExpTypes();
 
       if(leafCount == 0)
@@ -412,27 +414,27 @@ namespace occa {
         organize();
 
       else if(sInfo->info & smntType::declareStatement)
-        splitFortranDeclareStatement();
+        organizeFortranDeclareStatement();
 
       else if(sInfo->info & smntType::updateStatement)
-        splitFortranUpdateStatement();
+        organizeFortranUpdateStatement();
 
       else if((sInfo->info & (smntType::ifStatement  |
                               smntType::forStatement |
                               smntType::whileStatement)) &&
               (sInfo->info != smntType::elseStatement)){
 
-        splitFortranFlowStatement();
+        organizeFortranFlowStatement();
       }
 
       else if(sInfo->info & smntType::functionStatement)
-        splitFortranFunctionStatement();
+        organizeFortranFunctionStatement();
 
       else if(sInfo->info & smntType::structStatement)
-        splitStructStatement();
+        organizeStructStatement();
 
       else if(sInfo->info & smntType::caseStatement)
-        splitCaseStatement(parserInfo::parsingFortran);
+        organizeCaseStatement(parserInfo::parsingFortran);
 
       else
         organize(parserInfo::parsingFortran);
@@ -448,7 +450,7 @@ namespace occa {
         organizeFortranLeaves();
     }
 
-    void expNode::splitDeclareStatement(const info_t flags){
+    void expNode::organizeDeclareStatement(const info_t flags){
       info = expType::declaration;
 
       int varCount = 1 + typeInfo::delimiterCount(*this, ",");
@@ -515,7 +517,7 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitUpdateStatement(){
+    void expNode::organizeUpdateStatement(){
       // Don't put the [;]
       if(leafCount &&
          (leaves[leafCount - 1]->value == ";")){
@@ -531,12 +533,15 @@ namespace occa {
       organize();
     }
 
-    void expNode::splitFlowStatement(){
+    void expNode::organizeFlowStatement(){
       info = expType::checkSInfo;
 
       expNode &expDown = *(leaves[1]);
 
-      int statementCount = 1 + typeInfo::delimiterCount(expDown, ";");
+      int statementCount    = 1 + typeInfo::delimiterCount(expDown, ";");
+
+      int maxStatementCount = ((sInfo->info & smntType::forStatement) ?
+                               3 : 1);
 
       expNode newExp(*sInfo);
       newExp.info = info;
@@ -550,14 +555,7 @@ namespace occa {
         int nextLeafPos = typeInfo::nextDelimiter(expDown, leafPos, ";");
 
         if(leafPos < nextLeafPos){
-          leaf.addNodes(nextLeafPos - leafPos);
-
-          for(int j = 0; j < leaf.leafCount; ++j){
-            delete leaf.leaves[j];
-
-            leaf.leaves[j]     = expDown.leaves[leafPos + j];
-            leaf.leaves[j]->up = &leaf;
-          }
+          leaf.useExpLeaves(expDown, leafPos, (nextLeafPos - leafPos));
 
           bool hasDeclare = ((sInfo->info & smntType::forStatement) && (i == 0));
 
@@ -572,9 +570,22 @@ namespace occa {
 
           if(!hasDeclare){
             leaf.organize();
+
+            if(maxStatementCount <= i){
+              std::stringstream ss;
+
+              ss << "@(" << leaf << ")";
+
+              sInfo->addAttribute(ss.str());
+
+              sInfo->updateInitialLoopAttributes();
+
+              leaf.free();
+              newExp.removeNode(-1);
+            }
           }
           else{
-            leaf.splitDeclareStatement(expFlag::addVarToScope);
+            leaf.organizeDeclareStatement(expFlag::addVarToScope);
 
             expNode &flatRoot = *(makeDumbFlatHandle());
 
@@ -600,7 +611,7 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitFunctionStatement(const info_t flags){
+    void expNode::organizeFunctionStatement(const info_t flags){
       const bool functionIsDefined = (sInfo->info & smntType::functionDefinition);
 
       if(functionIsDefined)
@@ -632,7 +643,7 @@ namespace occa {
       removeNodes(1, leafPos);
     }
 
-    void expNode::splitStructStatement(const info_t flags){
+    void expNode::organizeStructStatement(const info_t flags){
       info = expType::struct_;
 
       // Store type
@@ -654,7 +665,7 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitCaseStatement(const int parsingLanguage){
+    void expNode::organizeCaseStatement(const int parsingLanguage){
       // Fortran doesn't have [:] leaf at the end
       if(parsingLanguage & parserInfo::parsingC)
         --leafCount;
@@ -666,8 +677,8 @@ namespace occa {
       --leafCount;
     }
 
-    //  ---[ Fortran ]--------
-    void expNode::splitFortranDeclareStatement(){
+    //  ---[ Fortran ]------------------
+    void expNode::organizeFortranDeclareStatement(){
       info = expType::declaration;
 
       int varCount = 1;
@@ -825,7 +836,7 @@ namespace occa {
       }
     }
 
-    void expNode::splitFortranUpdateStatement(){
+    void expNode::organizeFortranUpdateStatement(){
       if(leafCount == 0)
         return;
 
@@ -886,14 +897,14 @@ namespace occa {
       setLeaf(retValueLeaf, 0);
     }
 
-    void expNode::splitFortranFlowStatement(){
+    void expNode::organizeFortranFlowStatement(){
       info = expType::checkSInfo;
 
       if(leafCount == 0)
         return;
 
       if(sInfo->info & smntType::forStatement){
-        splitFortranForStatement();
+        organizeFortranForStatement();
       }
       // [IF/ELSE IF/DO WHILE]( EXPR )
       else if((sInfo->info == smntType::ifStatement)     ||
@@ -916,7 +927,7 @@ namespace occa {
       }
     }
 
-    void expNode::splitFortranForStatement(){
+    void expNode::organizeFortranForStatement(){
       // [DO] iter=start,end[,stride][,loop]
       // Infinite [DO]
       if(leafCount == 1){
@@ -1064,7 +1075,7 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::splitFortranFunctionStatement(){
+    void expNode::organizeFortranFunctionStatement(){
       info = (expType::function | expType::declaration);
 
       if(leafCount == 0)
@@ -4097,8 +4108,10 @@ namespace occa {
     info_t statement::checkBlockStatementType(expNode &allExp, int &expPos){
       return smntType::blockStatement;
     }
-    //==================================
+    //============================================
 
+
+    //  ---[ Attributes ]---------------
     attribute_t& statement::attribute(const std::string &attr){
       return *(attributeMap[attr]);
     }
@@ -4133,9 +4146,45 @@ namespace occa {
         attributeMap.erase(it);
     }
 
+    std::string statement::attributeMapToString(){
+      return parserNS::attributeMapToString(attributeMap);
+    }
+
     void statement::printAttributeMap(){
       parserNS::printAttributeMap(attributeMap);
     }
+
+    void statement::updateInitialLoopAttributes(){
+      attributeMapIterator it = attributeMap.begin();
+
+      stringVector_t attributesToAdd;
+      stringVector_t attributesToErase;
+
+      while(it != attributeMap.end()){
+        const std::string &attrName = (it->second->name);
+
+        if(isAnOccaTag(attrName)){
+          // [-----][#]
+          const std::string loopTag  = attrName.substr(0,5);
+          const std::string loopNest = attrName.substr(5,1);
+
+          attributesToAdd.push_back("@(occaTag  = " + loopTag  + ", "
+                                    + "occaNest = " + loopNest + ")");
+
+          attributesToErase.push_back(attrName);
+        }
+
+        ++it;
+      }
+
+      const int updateCount = (int) attributesToAdd.size();
+
+      for(int i = 0; i < updateCount; ++i){
+        addAttribute(attributesToAdd[i]);
+        removeAttribute(attributesToErase[i]);
+      }
+    }
+    //==================================
 
     void statement::addType(typeInfo &type){
       scopeTypeMap[type.name] = &type;
@@ -5050,12 +5099,8 @@ namespace occa {
       unsigned int dist = 0;
 
       while(s){
-        if((s->info == smntType::occaFor) ||
-           ((s->info == smntType::forStatement) &&
-            (s->getForStatementCount() == 4))){
-
+        if(s->info == smntType::occaFor)
           return dist;
-        }
 
         s = s->up;
         ++dist;
@@ -5544,37 +5589,6 @@ namespace occa {
       }
     }
 
-
-    info_t statement::occaForInfo(){
-      if(info != smntType::occaFor)
-        return notAnOccaFor;
-
-      std::string forLoop = expRoot.value;
-      const int chars     = forLoop.size();
-
-      const int nest = (1 + forLoop[chars - 1] - '0');
-
-      if(forLoop.find("Inner") != std::string::npos)
-        return (nest << occaInnerForShift);
-
-      return (nest << occaOuterForShift);
-    }
-
-    info_t statement::occaForNest(const info_t forInfo){
-      if(forInfo & occaInnerForMask)
-        return ((forInfo >> occaInnerForShift) - 1);
-
-      return ((forInfo >> occaOuterForShift) - 1);
-    }
-
-    bool statement::isOccaOuterFor(const info_t forInfo){
-      return ((forInfo & occaOuterForMask) != 0);
-    }
-
-    bool statement::isOccaInnerFor(const info_t forInfo){
-      return ((forInfo & occaInnerForMask) != 0);
-    }
-
     void statement::setVariableDeps(varInfo &var,
                                     sDep_t &sDep){
 
@@ -5900,7 +5914,9 @@ namespace occa {
       statementNode *statementPos = statementStart;
 
       // OCCA For's
-      if(info == smntType::occaFor){
+      if((info == smntType::occaFor) &&
+         (expRoot.leafCount == 0)){
+
         if( !(flags & statementFlag::printSubStatements) )
           return expRoot.value;
 
