@@ -68,6 +68,22 @@ namespace occa {
       return right;
     }
 
+    template<class TM>
+    node<TM>* node<TM>::push(node <TM> *nStart,
+                             node <TM> *nEnd){
+      node *rr = right;
+
+      right = nStart;
+
+      right->left  = this;
+      nEnd->right  = rr;
+
+      if(rr)
+        rr->left = nEnd;
+
+      return nEnd;
+    }
+
     template <class TM>
     node<TM>* node<TM>::push(const TM &t){
       return push(new node(t));

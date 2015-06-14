@@ -493,6 +493,7 @@ namespace occa {
       info_t checkFortranSpecialStatementType(expNode &allExp, int &expPos);
       //================================
 
+      attribute_t& attribute(const std::string &attr);
       attribute_t* hasAttribute(const std::string &attr);
       void addAttribute(attribute_t &attr);
       void addAttribute(const std::string &attrSource);
@@ -621,6 +622,12 @@ namespace occa {
 
       statement* getGlobalScope();
       statementNode* getStatementNode();
+
+      void pushLastStatementLeftOf(statement *target);
+      void pushLastStatementRightOf(statement *target);
+
+      void pushLeftOf(statement *target, statement *s);
+      void pushRightOf(statement *target, statement *s);
 
       statement& pushNewStatementLeft(const info_t info_ = 0);
       statement& pushNewStatementRight(const info_t info_ = 0);

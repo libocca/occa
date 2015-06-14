@@ -169,6 +169,27 @@ namespace occa {
 
       void modifyTextureVariables();
 
+      //   ---[ Load Kernels ]----------
+      void loadKernelInfos();
+
+      statementNode* splitKernelStatement(statementNode *snKernel,
+                                          kernelInfo &info);
+
+      statementVector_t findOuterLoopSets(statement &sKernel);
+
+      void findOuterLoopSets(statement &s, statementVector_t &omLoops);
+
+      varInfoVector_t calculateDependenciesFor(statement &omLoop);
+      void calculateDependenciesFor(statement &s, varInfoVector_t deps);
+
+      statementNode* newKernelsFromLoops(statement &sKernel,
+                                         statementVector_t &omLoops,
+                                         varInfoVecVector_t &varDeps);
+
+      void zeroOccaIdsFrom(statement &s);
+      //   =============================
+
+#if 0
       statementNode* splitKernelStatement(statementNode *snKernel,
                                           kernelInfo &info);
 
@@ -178,8 +199,6 @@ namespace occa {
 
       int kernelCountInOccaLoops(statementNode *occaLoops);
 
-      void zeroOccaIdsFrom(statement &s);
-
       statementNode* createNestedKernelsFromLoops(statementNode *snKernel,
                                                   kernelInfo &info,
                                                   statementNode *outerLoopRoot);
@@ -188,15 +207,10 @@ namespace occa {
 
       void setupHostKernelArgsFromLoops(statement &sKernel);
 
-      void loadKernelInfos();
-
       void stripOccaFromKernel(statement &s);
 
       std::string occaScope(statement &s);
-
-      void incrementDepth(statement &s);
-
-      void decrementDepth(statement &s);
+#endif
 
       statementNode* findStatementWith(statement &s,
                                        findStatementWith_t func);

@@ -21,6 +21,7 @@ namespace occa {
       node<TM>* pop();
 
       node* push(node<TM> *n);
+      node* push(node<TM> *nStart, node<TM> *nEnd);
       node* push(const TM &t);
 
       node* pushDown(node<TM> *n);

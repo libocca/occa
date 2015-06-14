@@ -58,6 +58,7 @@ namespace occa {
   typedef std::vector<parserNS::statement*>               statementVector_t;
   typedef std::vector<statementNode*>                     statementNodeVector_t;
   typedef std::vector<parserNS::varInfo*>                 varInfoVector_t;
+  typedef std::vector<varInfoVector_t>                    varInfoVecVector_t;
 
   typedef std::map<std::string,info_t>                    macroMap_t;
   typedef macroMap_t::iterator                            macroMapIterator;

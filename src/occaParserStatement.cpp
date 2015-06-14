@@ -4099,6 +4099,10 @@ namespace occa {
     }
     //==================================
 
+    attribute_t& statement::attribute(const std::string &attr){
+      return *(attributeMap[attr]);
+    }
+
     attribute_t* statement::hasAttribute(const std::string &attr){
       attributeMapIterator it = attributeMap.find(attr);
 
@@ -4835,48 +4839,104 @@ namespace occa {
       return NULL;
     }
 
+    void statement::pushLastStatementLeftOf(statement *target){
+      if(target == NULL)
+        return;
+
+      statementNode *lastSN   = statementEnd;
+      statementNode *targetSN = target->getStatementNode();
+
+      statementEnd = statementEnd->left;
+
+      // Only one statement
+      if(statementEnd == NULL){
+        statementEnd        = statementStart;
+        statementEnd->right = NULL;
+
+        return;
+      }
+
+      statementEnd->right = NULL;
+
+      if(statementStart->value == target)
+        statementStart = lastSN;
+
+      // Set lastSN neighbors
+      lastSN->left  = targetSN->left;
+      lastSN->right = targetSN;
+
+      // Set lastSN neighbors' neighbors
+      if(targetSN->left)
+        targetSN->left->right = lastSN;
+
+      targetSN->left = lastSN;
+    }
+
+    void statement::pushLastStatementRightOf(statement *target){
+      if(target == NULL)
+        return;
+
+      statementNode *lastSN   = statementEnd;
+      statementNode *targetSN = target->getStatementNode();
+
+      if(targetSN == statementEnd->left)
+        return;
+
+      statementEnd = statementEnd->left;
+
+      // Only one statement
+      if(statementEnd == NULL){
+        statementEnd        = statementStart;
+        statementEnd->right = NULL;
+
+        return;
+      }
+
+      statementEnd->right = NULL;
+
+      // Set lastSN neighbors
+      lastSN->left  = targetSN;
+      lastSN->right = targetSN->right;
+
+      // Set lastSN neighbors' neighbors
+      if(targetSN->right)
+        targetSN->right->left = lastSN;
+
+      targetSN->right = lastSN;
+    }
+
+    void statement::pushLeftOf(statement *target, statement *s){
+      addStatement(s);
+
+      pushLastStatementLeftOf(target);
+    }
+
+    void statement::pushRightOf(statement *target, statement *s){
+      addStatement(s);
+
+      pushLastStatementRightOf(target);
+    }
+
     statement& statement::pushNewStatementLeft(const info_t info_){
-      statementNode *newSN = new statementNode(up->makeSubStatement());
+      statement &newS = *(up->makeSubStatement());
+      newS.info = info_;
 
-      statement *newS = newSN->value;
-      newS->info      = info_;
+      up->addStatement(&newS);
 
-      statementNode *sn = getStatementNode();
+      pushLastStatementLeftOf(this);
 
-      if(up->statementStart == sn)
-        up->statementStart = newSN;
-
-      if(sn->left)
-        sn->left->right = newSN;
-
-      newSN->left  = sn->left;
-      newSN->right = sn;
-
-      sn->left = newSN;
-
-      return *newS;
+      return newS;
     }
 
     statement& statement::pushNewStatementRight(const info_t info_){
-      statementNode *newSN = new statementNode(up->makeSubStatement());
+      statement &newS = *(up->makeSubStatement());
+      newS.info = info_;
 
-      statement *newS = newSN->value;
-      newS->info      = info_;
+      up->addStatement(&newS);
 
-      statementNode *sn = getStatementNode();
+      pushLastStatementRightOf(this);
 
-      if(up->statementEnd == sn)
-        up->statementEnd = newSN;
-
-      if(sn->right)
-        sn->right->left = newSN;
-
-      newSN->right  = sn->right;
-      newSN->left   = sn;
-
-      sn->right = newSN;
-
-      return *newS;
+      return newS;
     }
 
     statement& statement::createStatementFromSource(const std::string &source){
@@ -4913,52 +4973,14 @@ namespace occa {
                                      const std::string &source){
       addStatementFromSource(source);
 
-      if(target == NULL)
-        return;
-
-      statementNode *newSN = statementEnd;
-
-      statementEnd = statementEnd->left;
-
-      if(statementEnd)
-        statementEnd->right = NULL;
-
-      if(statementStart == target)
-        statementStart = newSN;
-
-      if(target->left)
-        target->left->right = newSN;
-
-      newSN->left  = target->left;
-      newSN->right = target;
-
-      target->left = newSN;
+      pushLastStatementLeftOf((target == NULL) ? NULL : target->value);
     }
 
     void statement::pushSourceRightOf(statementNode *target,
                                       const std::string &source){
       addStatementFromSource(source);
 
-      if((target == NULL) ||
-         (target == statementEnd->left)){
-
-        return;
-      }
-
-      statementNode *newSN = statementEnd;
-
-      statementEnd = statementEnd->left;
-
-      if(statementEnd)
-        statementEnd->right = NULL;
-
-      if(target->right)
-        target->right->left = newSN;
-
-      newSN->right  = target->right;
-      newSN->left   = target;
-
-      target->right = newSN;
+      pushLastStatementRightOf((target == NULL) ? NULL : target->value);
     }
 
     //---[ Misc ]---------------------
