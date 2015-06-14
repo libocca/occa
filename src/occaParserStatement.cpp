@@ -4157,21 +4157,50 @@ namespace occa {
     void statement::updateInitialLoopAttributes(){
       attributeMapIterator it = attributeMap.begin();
 
+      if(it == attributeMap.end())
+        return;
+
       stringVector_t attributesToAdd;
       stringVector_t attributesToErase;
 
       while(it != attributeMap.end()){
-        const std::string &attrName = (it->second->name);
+        attribute_t &attr = *(it->second);
 
-        if(isAnOccaTag(attrName)){
+        if(isAnOccaTag(attr.name)){
+          info = smntType::occaFor;
+
           // [-----][#]
-          const std::string loopTag  = attrName.substr(0,5);
-          const std::string loopNest = attrName.substr(5,1);
+          const std::string loopTag  = attr.name.substr(0,5);
+          const std::string loopNest = attr.name.substr(5,1);
 
           attributesToAdd.push_back("@(occaTag  = " + loopTag  + ", "
                                     + "occaNest = " + loopNest + ")");
 
-          attributesToErase.push_back(attrName);
+          attributesToErase.push_back(attr.name);
+        }
+        else if(attr.name == "tile"){
+          info = smntType::occaFor;
+
+          const int tileDim = attr.argCount;
+
+          OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
+                     "tile() attribute can only supports 1, 2, or 3D transformations");
+
+          std::stringstream ss;
+
+          ss << "@(occaTag = tile, tileDim(";
+
+          for(int i = 0; i < tileDim; ++i){
+            if(i)
+              ss << ',';
+
+            ss << attr[i];
+          }
+
+          ss << "))";
+
+          attributesToAdd.push_back(ss.str());
+          attributesToErase.push_back(attr.name);
         }
 
         ++it;

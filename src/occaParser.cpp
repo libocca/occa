@@ -95,6 +95,8 @@ namespace occa {
       modifyTextureVariables();
 
       addArgQualifiers();
+      std::cout << (std::string) *globalScope;
+      throw 1;
 
       loadKernelInfos();
 
@@ -1297,12 +1299,12 @@ namespace occa {
       attribute_t *occaTagAttr_ = s.hasAttribute("occaTag");
 
       if((occaTagAttr_ == NULL) ||
-         (occaTagAttr_->name != "tile")){
+         (occaTagAttr_->valueStr() != "tile")){
 
         return;
       }
 
-      attribute_t &occaTagAttr = *occaTagAttr_;
+      attribute_t &occaTagDim = s.attribute("tileDim");
 
       expNode &initNode   = *(s.getForStatement(0));
       expNode &checkNode  = *(s.getForStatement(1));
@@ -1313,7 +1315,7 @@ namespace occa {
 
       //---[ Checks ]---------------------------
       //  ---[ Tile Dim ]-------------
-      const int tileDim = occaTagAttr.argCount;
+      const int tileDim = occaTagDim.argCount;
 
       OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
                  "Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString());
@@ -1527,12 +1529,12 @@ namespace occa {
 
         if(update.info != expType::LR){
           if(update.value == "++")
-            ss << oTileVar << " += " << occaTagAttr[dim] << "; ";
+            ss << oTileVar << " += " << occaTagDim[dim] << "; ";
           else
-            ss << oTileVar << " -= " << occaTagAttr[dim] << "; ";
+            ss << oTileVar << " -= " << occaTagDim[dim] << "; ";
         }
         else {
-          ss << oTileVar << update.value << occaTagAttr[dim] << "; ";
+          ss << oTileVar << update.value << occaTagDim[dim] << "; ";
         }
 
         ss << "outer" << dim << ')';
@@ -1554,9 +1556,9 @@ namespace occa {
         ss << varName << " = " << oTileVar << "; ";
 
         if(checkIterOnLeft[dim])
-          ss << varName << check.value << '(' << oTileVar << " + " << occaTagAttr[dim] << "); ";
+          ss << varName << check.value << '(' << oTileVar << " + " << occaTagDim[dim] << "); ";
         else
-          ss << '(' << oTileVar << " + " << occaTagAttr[dim] << ')' << check.value << varName << "; ";
+          ss << '(' << oTileVar << " + " << occaTagDim[dim] << ')' << check.value << varName << "; ";
 
         csvUpdateNode[dim][0].free();
         csvUpdateNode[dim][0].info  = expType::printValue;
