@@ -101,7 +101,11 @@ occaKernel void fd2d(tFloat *u1,
 
   BOXIFY(s[i].x);
 
-  for(int n = 0; n < bDimX; ++n; tile(lDimX)){
+  for(int i = 0; i < 10; ++i; loopOrder(0)){
+    for(int j = 0; j < 10; ++j; loopOrder(1)){
+      for(int n = 0; n < bDimX; ++n; tile(lDimX)){
+      }
+    }
   }
 
   // for(int2 i(0,1); i.x < bDimX, i.y < bDimY; i.y += 2, ++i.x; tile(lDimX,lDimY)){

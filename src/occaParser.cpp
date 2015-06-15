@@ -938,7 +938,7 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if((s.info & smntType::occaFor) == 0)
+      if(s.info != smntType::occaFor)
         return;
 
       statement *spKernel = getStatementKernel(s);
@@ -1067,8 +1067,11 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaFor(statement &s){
-      if(s.info == smntType::occaFor)
+      if((s.info == smntType::occaFor) &&
+         (s.getForStatementCount() == 0)){
+
         return true;
+      }
 
       statementNode *statementPos = s.statementStart;
 
@@ -1084,7 +1087,7 @@ namespace occa {
 
     bool parserBase::statementHasOklFor(statement &s){
       if((s.info == smntType::occaFor) &&
-         s.hasAttribute("occaTag")){
+         (0 < s.getForStatementCount())){
 
         return true;
       }
@@ -1512,10 +1515,8 @@ namespace occa {
 
         ss << "for(";
 
-        if(1 < tileDim)
-          ss << varType << ' ';
-
-        ss << varName << " = " << oTileVar << "; ";
+        ss << varType << ' '
+           << varName << " = " << oTileVar << "; ";
 
         if(checkIterOnLeft[dim])
           ss << varName << check.value << '(' << oTileVar << " + " << occaTagDim[dim] << "); ";
@@ -1550,12 +1551,9 @@ namespace occa {
       if(tileDim == 1){
         if(varIsDeclared){
           expNode &newInitNode = *(iStatements[0]->getForStatement(0));
+          expNode &varNode     = *(newInitNode.getVariableInfoNode(0));
 
-          newInitNode.info |= expType::declaration;
-
-          expNode &varNode = newInitNode[0][0];
-
-          varNode.free();
+          varNode.freeThis();
           varNode.putVarInfo(var);
 
           varNode.info |= expType::type;
@@ -1622,6 +1620,9 @@ namespace occa {
 
           bool hasOccaFor = statementHasOccaFor(s);
           bool hasOklFor  = statementHasOklFor(s);
+
+          std::cout << "hasOccaFor  = " << hasOccaFor  << '\n'
+                    << "hasOklFor   = " << hasOklFor   << '\n';
 
           if(hasOccaFor | hasOklFor){
             if(hasOccaFor){
@@ -3980,13 +3981,10 @@ namespace occa {
 
       while(sInfo){
         if(sInfo->info == smntType::occaFor){
-          attribute_t *occaTagAttr = s.hasAttribute("occaTag");
+          attribute_t *occaTagAttr = sInfo->hasAttribute("occaTag");
 
-          if((occaTagAttr != NULL) &&
-             (occaTagAttr->valueStr() == tag)){
-
-            break;
-          }
+          if(occaTagAttr != NULL)
+             break;
         }
 
         sInfo = sInfo->up;
@@ -3994,8 +3992,6 @@ namespace occa {
 
       //---[ Overload iter vars ]---
       setIterDefaultValues();
-
-      sInfo->info = smntType::occaFor;
 
       expNode &node1   = *(sInfo->getForStatement(0));
       expNode &node2   = *(sInfo->getForStatement(1));
