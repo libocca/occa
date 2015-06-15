@@ -91,6 +91,10 @@ namespace occa {
   typedef varUsedMap_t::iterator                          varUsedMapIterator;
   typedef varUsedMap_t::const_iterator                    cVarUsedMapIterator;
 
+  typedef std::vector<varUsedMap_t>                       varUsedMapVector_t;
+  typedef varUsedMapVector_t::iterator                    varUsedMapVectorIterator;
+  typedef varUsedMapVector_t::const_iterator              cVarUsedMapVectorIterator;
+
   typedef std::map<std::string,parserNS::kernelInfo*>     kernelInfoMap_t;
   typedef kernelInfoMap_t::iterator                       kernelInfoIterator;
   typedef kernelInfoMap_t::const_iterator                 cKernelInfoIterator;

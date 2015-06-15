@@ -1016,6 +1016,23 @@ namespace occa {
       s.expRoot.free();
 
       s.info = smntType::occaFor;
+
+      // Change the origin of the iteration variable
+      statement &newIterS = *(s.statementStart->value);
+      expNode &initNode   = newIterS.expRoot;
+
+      expNode *newVarNode = ((initNode.info & expType::declaration) ?
+                             initNode.getVariableInfoNode(0) :
+                             initNode.getUpdatedVariableInfoNode(0));
+
+      if(newVarNode){
+        newVarNode->freeThis();
+        newVarNode->putVarInfo(iterVar);
+
+        newVarNode->info |= expType::type;
+
+        newIterS.addVariable(&iterVar, newIterS.up);
+      }
     }
 
     bool parserBase::statementIsOccaOuterFor(statement &s){
@@ -2159,7 +2176,7 @@ namespace occa {
 
       const int kernelCount = (int) omLoops.size();
 
-      varInfoVecVector_t varDeps(kernelCount);
+      varUsedMapVector_t varDeps(kernelCount);
 
       for(int k = 0; k < kernelCount; ++k)
         varDeps[k] = calculateDependenciesFor(*(omLoops[k]));
@@ -2214,8 +2231,8 @@ namespace occa {
       }
     }
 
-    varInfoVector_t parserBase::calculateDependenciesFor(statement &omLoop){
-      varInfoVector_t deps;
+    varUsedMap_t parserBase::calculateDependenciesFor(statement &omLoop){
+      varUsedMap_t deps;
 
       calculateDependenciesFor(omLoop, deps);
 
@@ -2223,12 +2240,26 @@ namespace occa {
     }
 
     void parserBase::calculateDependenciesFor(statement &s,
-                                              varInfoVector_t deps){
-      // for(var.in(s) &&
-      //       var.notIn(deps)){
+                                              varUsedMap_t &deps){
 
-      //   deps.add(var);
-      // }
+      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(flatRoot[i].info & expType::varInfo){
+          varInfo &var = flatRoot[i].getVarInfo();
+
+          // varInfo is also used for casts
+          if(var.name.size() == 0)
+            continue;
+
+          varUsedMapIterator it = deps.find(&var);
+
+          if(it == deps.end())
+            deps[&var].value = globalScope->getVarOriginStatement(var);
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
 
       statementNode *statementPos = s.statementStart;
 
@@ -2243,7 +2274,7 @@ namespace occa {
 
     statementVector_t parserBase::newKernelsFromLoops(statement &sKernel,
                                                       statementVector_t &omLoops,
-                                                      varInfoVecVector_t &varDeps){
+                                                      varUsedMapVector_t &varDeps){
       statementVector_t newKernels;
       std::stringstream ss;
 
@@ -2264,12 +2295,11 @@ namespace occa {
 
         newKernels.push_back(&newSKernel);
 
-        statement &omLoop     = *(omLoops[k]);
-        varInfoVector_t &deps = varDeps[k];
+        statement &omLoop  = *(omLoops[k]);
+        varUsedMap_t &deps = varDeps[k];
 
         varInfo &newKernelVar = *(new varInfo(kernelVar.clone()));
         newSKernel.setFunctionVar(newKernelVar);
-
 
         ss << kernelBaseName << k;
 
@@ -2300,24 +2330,35 @@ namespace occa {
     }
 
     void parserBase::addDepStatementsToKernel(statement &sKernel,
-                                              varInfoVector_t &deps){
+                                              varUsedMap_t &deps){
 
-      const int depCount = (int) deps.size();
+      varInfo &kernelVar = *(sKernel.getFunctionVar());
 
-      for(int i = 0; i < depCount; ++i){
-        // kernelVar.addArgument(args + i, deps[i]);
+      int argPos = kernelVar.argumentCount;
 
+      varUsedMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        varInfo &var         = *(it->first);
+        statement &varOrigin = *(it->second.value);
+
+        ++it;
       }
     }
 
     void parserBase::addDepsToKernelArguments(varInfo &kernelVar,
-                                              varInfoVector_t &deps){
+                                              varUsedMap_t &deps){
 
-      const int depCount = (int) deps.size();
-      const int argCount = kernelVar.argumentCount;
+      int argPos = kernelVar.argumentCount;
 
-      for(int i = 0; i < depCount; ++i)
-        kernelVar.addArgument(argCount + i, *(deps[i]));
+      varUsedMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        varInfo &var         = *(it->first);
+        statement &varOrigin = *(it->second.value);
+
+        ++it;
+      }
     }
 
     statement& parserBase::launchStatementForKernel(statement &sKernel,

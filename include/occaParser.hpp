@@ -175,18 +175,18 @@ namespace occa {
 
       void findOuterLoopSets(statement &s, statementVector_t &omLoops);
 
-      varInfoVector_t calculateDependenciesFor(statement &omLoop);
-      void calculateDependenciesFor(statement &s, varInfoVector_t deps);
+      varUsedMap_t calculateDependenciesFor(statement &omLoop);
+      void calculateDependenciesFor(statement &s, varUsedMap_t &deps);
 
       statementVector_t newKernelsFromLoops(statement &sKernel,
                                             statementVector_t &omLoops,
-                                            varInfoVecVector_t &varDeps);
+                                            varUsedMapVector_t &varDeps);
 
       void addDepStatementsToKernel(statement &sKernel,
-                                    varInfoVector_t &deps);
+                                    varUsedMap_t &deps);
 
       void addDepsToKernelArguments(varInfo &kernelVar,
-                                    varInfoVector_t &deps);
+                                    varUsedMap_t &deps);
 
       statement& launchStatementForKernel(statement &sKernel,
                                           varInfo &kernelVar,
