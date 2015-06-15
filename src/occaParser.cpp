@@ -1555,8 +1555,25 @@ namespace occa {
         os.expRoot.free();
         is.expRoot.free();
 
+        if((dim == 0) &&
+           (varIsDeclared)){
+
+          iStatements[0]->removeFromUpdateMapFor(var);
+          iStatements[0]->removeFromUsedMapFor(var);
+
+          iStatements[0]->scopeVarMap.erase(var);
+        }
+
         os.reloadFromSource(outerForSource);
         is.reloadFromSource(innerForSource);
+
+        // [--] Nasty, fix later
+        if((dim == 0) &&
+           (varIsDeclared)){
+
+          varUsedMapIterator it = is.parser.varUpdateMap.find(&var);
+          (it->second).value = &is;
+        }
 
         os.updateOccaOMLoopAttributes("outer", toString(dim));
         is.updateOccaOMLoopAttributes("inner", toString(dim));
@@ -2484,8 +2501,9 @@ namespace occa {
 
       const int argCount = newKernelVar.argumentCount;
 
-      for(int i = 0; i < argCount; ++i){
-        if(i)
+      // Skip occaKernelInfoArg
+      for(int i = 1; i < argCount; ++i){
+        if(1 < i)
           ss << ", ";
 
         ss << newKernelVar.getArgument(i).name;
@@ -2496,6 +2514,28 @@ namespace occa {
       expNode allExp = splitAndPreprocessContent(ss.str());
 
       sHost.loadAllFromNode(allExp);
+
+      // Add nestedKernels argument
+      varInfo &nestedKernelsArg = *(new varInfo());
+      expNode nkNode = sKernel.createPlainExpNodeFrom("int *nestedKernels");
+      nestedKernelsArg.loadFrom(nkNode);
+
+      typeInfo &occaKernelType = *(new typeInfo);
+      occaKernelType.name      = "occa::kernel";
+
+      nestedKernelsArg.baseType = &occaKernelType;
+
+      sKernel.addFunctionArg(1, nestedKernelsArg);
+
+      // Change outer and inner types to occa::dim
+      varInfo &outerVar = *(sHost.hasVariableInScope("outer"));
+      varInfo &innerVar = *(sHost.hasVariableInScope("inner"));
+
+      typeInfo &occaDimType = *(new typeInfo);
+      occaDimType.name      = "occa::dim";
+
+      outerVar.baseType = &occaDimType;
+      innerVar.baseType = &occaDimType;
 
       return sHost;
     }
@@ -2535,9 +2575,13 @@ namespace occa {
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
-        if((flatRoot[i].info & expType::presetValue) &&
-           isAnOccaID(flatRoot[i].value)){
+        if(((flatRoot[i].info & expType::presetValue) &&
+            isAnOccaID(flatRoot[i].value))               ||
+           (flatRoot[i].value.find("__occa_oTileVar") != std::string::npos)){
 
+          flatRoot[i].freeThis();
+
+          flatRoot[i].info  = expType::presetValue;
           flatRoot[i].value = "0";
         }
       }
