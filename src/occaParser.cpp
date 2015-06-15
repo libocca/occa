@@ -2168,17 +2168,21 @@ namespace occa {
       for(int k = 0; k < kernelCount; ++k)
         varDeps[k] = calculateDependenciesFor(*(omLoops[k]));
 
-      statementNode *nkStart = newKernelsFromLoops(sKernel, omLoops, varDeps);
-      statementNode *nkEnd   = lastNode(nkStart);
+      statementVector_t newKernels = newKernelsFromLoops(sKernel,
+                                                         omLoops,
+                                                         varDeps);
 
-      // snKernel->push(nkStart, nkEnd);
+      for(int k = (kernelCount - 1); 0 <= k; --k)
+        sKernel.up->pushRightOf(&sKernel, newKernels[k]);
 
-      sKernel.up->pushSourceLeftOf(snKernel , "#ifdef OCCA_LAUNCH_KERNEL");
-      sKernel.up->pushSourceRightOf(snKernel, "#else");
-      sKernel.up->pushSourceRightOf(NULL    , "#endif");
-      // sKernel.up->pushSourceRightOf(nkEnd   , "#endif");
+      statement &lastNewKernel = *(newKernels[kernelCount - 1]);
+      statementNode *lastNewSN = lastNewKernel.getStatementNode();
 
-      return nkEnd;
+      sKernel.up->pushSourceLeftOf(snKernel  , "#ifdef OCCA_LAUNCH_KERNEL");
+      sKernel.up->pushSourceRightOf(snKernel , "#else");
+      sKernel.up->pushSourceRightOf(lastNewSN,"#endif");
+
+      return lastNewSN->right;
     }
 
     statementVector_t parserBase::findOuterLoopSets(statement &sKernel){
@@ -2239,11 +2243,10 @@ namespace occa {
       }
     }
 
-    statementNode* parserBase::newKernelsFromLoops(statement &sKernel,
-                                                   statementVector_t &omLoops,
-                                                   varInfoVecVector_t &varDeps){
-      statementNode snRoot, *snPos;
-      snPos = &snRoot;
+    statementVector_t parserBase::newKernelsFromLoops(statement &sKernel,
+                                                      statementVector_t &omLoops,
+                                                      varInfoVecVector_t &varDeps){
+      statementVector_t newKernels;
 
       const int kernelCount = (int) omLoops.size();
 
@@ -2254,7 +2257,13 @@ namespace occa {
                                                    kernelCount);
 
       for(int k = 0; k < kernelCount; ++k){
-        statement &newSKernel = *(new statement(sKernel.parser));
+        // Copy newSKernel from sKernel
+        statement &newSKernel = *(globalScope->makeSubStatement());
+
+        newSKernel.info = sKernel.info;
+        sKernel.expRoot.cloneTo(newSKernel.expRoot);
+
+        newKernels.push_back(&newSKernel);
 
         statement &omLoop     = *(omLoops[k]);
         varInfoVector_t &deps = varDeps[k];
@@ -2265,29 +2274,23 @@ namespace occa {
         addDepStatementsToKernel(newSKernel, deps);
         addDepsToKernelArguments(newKernelVar, deps);
 
-        statement &sLaunch   = launchStatementForKernel(sKernel,
-                                                        newKernelVar,
-                                                        omLoop.attributeMap);
+        statement &sLaunch = launchStatementForKernel(sKernel,
+                                                      newKernelVar,
+                                                      omLoop.attributeMap);
+
+        newSKernel.addStatement(&sLaunch);
 
         // Swap positions for:
         //   outer-most-loop <--> host kernel
-        statement::swap(omLoop, sLaunch);
+        statement::swapPlaces(omLoop, sLaunch);
 
-        // Renamed for readability
-        //   It holds omLoop
-        statement &newOmLoop = sLaunch;
-
-        newSKernel.addStatement(&newOmLoop);
-
-        newSKernel.pushSourceLeftOf(newOmLoop.getStatementNode(),
+        newSKernel.pushSourceLeftOf(omLoop.getStatementNode(),
                                     "occaParallelFor0");
         // newSKernel.pushBefore(newSKernel.firstStatement,
         //                       depStatements);
-
-        snPos = snPos->push(&newSKernel);
       }
 
-      return snRoot.right;
+      return newKernels;
     }
 
     void parserBase::addDepStatementsToKernel(statement &sKernel,

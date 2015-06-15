@@ -2151,6 +2151,9 @@ namespace occa {
         for(int i = 0; i < b.leafCount; ++i)
           b.leaves[i]->up = &b;
       }
+
+      a.setNestedSInfo(a.sInfo);
+      b.setNestedSInfo(b.sInfo);
     }
 
     expNode expNode::clone(){
@@ -3277,7 +3280,7 @@ namespace occa {
 
       for(int i = 0; i < leafCount; ++i){
         leaves[i]->free();
-        delete leaves[i];
+        // delete leaves[i]; [--] Segfault?
       }
 
       leafCount = 0;
@@ -3298,7 +3301,7 @@ namespace occa {
     void expNode::print(const std::string &tab){
       if( !(info & expType::hasInfo) ){
 
-        std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
+        std::cout << tab << "[" << sInfo << "|" << getBits(info) << "] " << value << '\n';
 
         for(int i = 0; i < leafCount; ++i)
           leaves[i]->print(tab + "    ");
@@ -5451,11 +5454,17 @@ namespace occa {
     }
 
     void statement::swap(statement &a, statement &b){
-      statementNode *aSN = a.getStatementNode();
-      statementNode *bSN = b.getStatementNode();
+      swapValues(a.info, b.info);
 
-      if(aSN != NULL) aSN->value = &b;
-      if(bSN != NULL) bSN->value = &a;
+      expNode::swap(a.expRoot, b.expRoot);
+    }
+
+    void statement::swapPlaces(statement &a, statement &b){
+      statementNode *aSN = b.getStatementNode();
+      statementNode *bSN = a.getStatementNode();
+
+      if(aSN != NULL) aSN->value = &a;
+      if(bSN != NULL) bSN->value = &b;
 
       swapValues(a.up, b.up);
 
@@ -5464,18 +5473,15 @@ namespace occa {
                              a.statementStart :
                              b.statementStart);
 
-        statement *up_ = ((pass == 0) ?
-                          &b          :
-                          &a);
+        statementNode *upSN = ((pass == 0) ?
+                               aSN         :
+                               bSN);
 
         while(sn){
-          sn->value->up = up_;
-          sn = sn->right;
+          sn->up = upSN;
+          sn     = sn->right;
         }
       }
-
-      swapValues(a.statementStart, b.statementStart);
-      swapValues(a.statementEnd  , b.statementEnd);
     }
 
     statement* statement::clone(statement *up_){

@@ -178,9 +178,9 @@ namespace occa {
       varInfoVector_t calculateDependenciesFor(statement &omLoop);
       void calculateDependenciesFor(statement &s, varInfoVector_t deps);
 
-      statementNode* newKernelsFromLoops(statement &sKernel,
-                                         statementVector_t &omLoops,
-                                         varInfoVecVector_t &varDeps);
+      statementVector_t newKernelsFromLoops(statement &sKernel,
+                                            statementVector_t &omLoops,
+                                            varInfoVecVector_t &varDeps);
 
       void addDepStatementsToKernel(statement &sKernel,
                                     varInfoVector_t &deps);

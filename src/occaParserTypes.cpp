@@ -651,7 +651,9 @@ namespace occa {
 
           // Empty statements
           if(sNextLeafPos != sLeafPos){
-            const bool loadType = typeInfo::statementIsATypeInfo(s, leaf, sLeafPos);
+            const bool loadType = typeInfo::statementIsATypeInfo(s,
+                                                                 leaf,
+                                                                 sLeafPos);
 
             sNextLeafPos = leaf.mergeRange(expType::root,
                                            sLeafPos,
@@ -664,7 +666,7 @@ namespace occa {
             else
               nestedExps[i].organizeStructStatement();
 
-            leaf.leaves[sLeafPos] = &(nestedExps[i]);
+            leaf.setLeaf(nestedExps[i], sLeafPos);
           }
           else{
             --i;

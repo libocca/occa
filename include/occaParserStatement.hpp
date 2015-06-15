@@ -712,8 +712,10 @@ namespace occa {
       void removeStatement(statement &s);
 
       static void swap(statement &a, statement &b);
+      static void swapPlaces(statement &a, statement &b);
 
       statement* clone(statement *up_ = NULL);
+      statement* clonePtr(statement *up_ = NULL);
 
       void printVariablesInScope();
       void printVariablesInLocalScope();
