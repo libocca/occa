@@ -2291,9 +2291,19 @@ namespace occa {
         lastNewSN = newKernels[kernelCount - 1]->getStatementNode();
       }
 
-      sKernel.up->pushSourceLeftOf(snKernel  , "#ifdef OCCA_LAUNCH_KERNEL");
-      sKernel.up->pushSourceRightOf(snKernel , "#else");
-      sKernel.up->pushSourceRightOf(lastNewSN, "#endif");
+      sKernel.up->pushSourceLeftOf(snKernel, "#ifdef OCCA_LAUNCH_KERNEL");
+
+      if(kernelCount){
+        sKernel.up->pushSourceRightOf(snKernel , "#else");
+        sKernel.up->pushSourceRightOf(lastNewSN, "#endif");
+      }
+      else {
+        sKernel.up->pushSourceRightOf(snKernel, "#endif");
+        sKernel.up->pushSourceRightOf(snKernel, "#else");
+
+        if(lastNewSN)
+          lastNewSN = lastNewSN->left;
+      }
 
       return ((lastNewSN != NULL) ?
               lastNewSN->right    :
