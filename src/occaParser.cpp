@@ -2186,6 +2186,8 @@ namespace occa {
                                                          omLoops,
                                                          varDeps);
 
+      storeKernelInfo(info, sKernel, newKernels);
+
       applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
 
       for(int k = (kernelCount - 1); 0 <= k; --k)
@@ -2227,6 +2229,31 @@ namespace occa {
         statement &s2 = *(statementPos->value);
 
         findOuterLoopSets(s2, omLoops);
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    statementVector_t parserBase::findOccaLoops(statement &sKernel){
+      statementVector_t occaLoops;
+
+      findOccaLoops(sKernel, occaLoops);
+
+      return occaLoops;
+    }
+
+    void parserBase::findOccaLoops(statement &s,
+                                   statementVector_t &occaLoops){
+
+      if(s.info == smntType::occaFor)
+        occaLoops.push_back(&s);
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        findOccaLoops(s2, occaLoops);
 
         statementPos = statementPos->right;
       }
@@ -2322,8 +2349,9 @@ namespace occa {
         addDepsToKernelArguments(newKernelVar, deps);
 
         statement &sLaunch = launchStatementForKernel(sKernel,
-                                                      newKernelVar,
-                                                      omLoop.attributeMap);
+                                                      omLoop,
+                                                      k,
+                                                      newKernelVar);
 
         newSKernel.addStatement(&sLaunch);
 
@@ -2404,13 +2432,103 @@ namespace occa {
     }
 
     statement& parserBase::launchStatementForKernel(statement &sKernel,
-                                                    varInfo &kernelVar,
-                                                    attributeMap_t &loopAttributes){
+                                                    statement &omLoop,
+                                                    const int newKernelPos,
+                                                    varInfo &newKernelVar){
       statement &sHost = *(sKernel.makeSubStatement());
+      sHost.info = smntType::blockStatement;
 
-      printAttributeMap(loopAttributes);
+      std::stringstream ss;
+
+      statementVector_t occaLoops = findOccaLoops(omLoop);
+      const int occaLoopCount    = (int) occaLoops.size();
+
+      attribute_t &maxOuterAttr = omLoop.attribute("occaMaxNest_outer");
+      attribute_t &maxInnerAttr = omLoop.attribute("occaMaxNest_inner");
+
+      const int outerDim = 1 + occa::atoi(maxOuterAttr.valueStr());
+      const int innerDim = 1 + occa::atoi(maxInnerAttr.valueStr());
+      const int maxDim   = ((outerDim < innerDim) ?
+                            outerDim              :
+                            innerDim);
+
+      // [outer/inner][dim]
+      std::string iterExps[2][3];
+
+      ss << "const int dims = " << maxDim << ";\n"
+         << "int outer, inner;\n";
+
+      for(int i = 0; i < occaLoopCount; ++i){
+        statement &loop = *(occaLoops[i]);
+
+        attribute_t &occaTagAttr  = loop.attribute("occaTag");
+        attribute_t &occaNestAttr = loop.attribute("occaNest");
+
+        const int occaTag  = (occaTagAttr.valueStr()  == "inner");
+        const int occaNest = occa::atoi(occaNestAttr.valueStr());
+
+        std::string &iterExp = iterExps[occaTag][occaNest];
+
+        if(iterExp.size() == 0)
+          iterExp = loop.attribute("occaIterExp").valueStr();
+      }
+
+      for(int o = 0; o < outerDim; ++o)
+        ss << "outer[" << o << "] = " << iterExps[0][o] << ";\n";
+
+      for(int i = 0; i < innerDim; ++i)
+        ss << "inner[" << i << "] = " << iterExps[1][i] << ";\n";
+
+      ss << "nestedKernels[" << newKernelPos << "].setWorkingDims(dims, inner, outer);\n"
+         << "nestedKernels[" << newKernelPos << "](";
+
+      const int argCount = newKernelVar.argumentCount;
+
+      for(int i = 0; i < argCount; ++i){
+        if(i)
+          ss << ", ";
+
+        ss << newKernelVar.getArgument(i).name;
+      }
+
+      ss << ");";
+
+      expNode allExp = splitAndPreprocessContent(ss.str());
+
+      sHost.loadAllFromNode(allExp);
 
       return sHost;
+    }
+
+    void parserBase::storeKernelInfo(kernelInfo &info,
+                                     statement &sKernel,
+                                     statementVector_t &newKernels){
+
+      const int kernelCount = (int) newKernels.size();
+
+      varInfo &kernelVar    = *(sKernel.getFunctionVar());
+      varInfo &newKernelVar = *(newKernels[0]->getFunctionVar());
+
+      const int argCount = kernelVar.argumentCount;
+
+      // Remove the 0 in the first new kernel
+      //   to get the baseName
+      info.name     = kernelVar.name;
+      info.baseName = newKernelVar.name.substr(0, newKernelVar.name.size() - 1);
+
+      for(int k = 0; k < kernelCount; ++k)
+        info.nestedKernels.push_back(newKernels[k]);
+
+      for(int i = 0; i < argCount; ++i){
+        argumentInfo argInfo;
+        varInfo &arg = kernelVar.getArgument(i);
+
+        argInfo.pos     = i;
+        argInfo.isConst = (arg.hasQualifier("occaConst") ||
+                           arg.hasQualifier("occaConstant"));
+
+        info.argumentInfos.push_back(argInfo);
+      }
     }
 
     void parserBase::zeroOccaIdsFrom(statement &s){

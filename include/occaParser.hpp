@@ -172,8 +172,10 @@ namespace occa {
                                           kernelInfo &info);
 
       statementVector_t findOuterLoopSets(statement &sKernel);
-
       void findOuterLoopSets(statement &s, statementVector_t &omLoops);
+
+      statementVector_t findOccaLoops(statement &sKernel);
+      void findOccaLoops(statement &s, statementVector_t &occaLoops);
 
       varUsedMap_t findDependenciesFor(statement &sKernel,
                                        statement &omLoop);
@@ -194,8 +196,13 @@ namespace occa {
                                     varUsedMap_t &deps);
 
       statement& launchStatementForKernel(statement &sKernel,
-                                          varInfo &kernelVar,
-                                          attributeMap_t &loopAttributes);
+                                          statement &omLoop,
+                                          const int newKernelPos,
+                                          varInfo &newKernelVar);
+
+      void storeKernelInfo(kernelInfo &info,
+                           statement &sKernel,
+                           statementVector_t &newKernels);
 
       void zeroOccaIdsFrom(statement &s);
       //   =============================
