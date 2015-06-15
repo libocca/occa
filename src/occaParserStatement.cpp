@@ -4200,9 +4200,19 @@ namespace occa {
         if(isAnOccaTag(attr.name)){
           info = smntType::occaFor;
 
+          std::string loopTag, loopNest;
+
           // [-----][#]
-          const std::string loopTag  = attr.name.substr(0,5);
-          const std::string loopNest = attr.name.substr(5,1);
+          if(5 < attr.name.size()){
+            loopTag  = attr.name.substr(0,5);
+            loopNest = attr.name.substr(5,1);
+          }
+          // [-----]
+          else {
+            loopTag  = attr.name;
+            loopNest = "auto";
+          }
+          // [-] Missing outer(X), if attr has arguments
 
           attributesToAdd.push_back("@(occaTag  = " + loopTag  + ", "
                                     + "occaNest = " + loopNest + ")");
@@ -4268,9 +4278,14 @@ namespace occa {
 
       if(maxNestAttr){
         const std::string maxNestStr = maxNestAttr->valueStr();
-        int maxNest = ::atoi(maxNestStr.c_str());
 
-        if(maxNest < nest)
+        if(maxNestStr != "auto"){
+          int maxNest = ::atoi(maxNestStr.c_str());
+
+          if(maxNest < nest)
+            maxNestAttr->value->value = occa::toString(nest);
+        }
+        else
           maxNestAttr->value->value = occa::toString(nest);
       }
       else {
@@ -5459,6 +5474,12 @@ namespace occa {
       swapValues(a.info, b.info);
 
       expNode::swap(a.expRoot, b.expRoot);
+
+
+      a.scopeTypeMap.swap(b.scopeTypeMap);
+      a.scopeVarMap.swap(b.scopeVarMap);
+
+      a.attributeMap.swap(b.attributeMap);
     }
 
     void statement::swapPlaces(statement &a, statement &b){
@@ -6184,7 +6205,8 @@ namespace occa {
 
     bool isAnOccaInnerTag(const std::string &tag){
       if( (tag.find("inner") == std::string::npos) ||
-          ((tag != "inner0") &&
+          ((tag != "inner")  &&
+           (tag != "inner0") &&
            (tag != "inner1") &&
            (tag != "inner2")) ){
 
@@ -6196,7 +6218,8 @@ namespace occa {
 
     bool isAnOccaOuterTag(const std::string &tag){
       if( (tag.find("outer") == std::string::npos) ||
-          ((tag != "outer0") &&
+          ((tag != "outer")  &&
+           (tag != "outer0") &&
            (tag != "outer1") &&
            (tag != "outer2")) ){
 

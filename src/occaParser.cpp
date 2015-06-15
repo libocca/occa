@@ -64,6 +64,7 @@ namespace occa {
       // throw 1;
 
       reorderLoops();
+      retagAutoOccaLoops();
 
       applyToAllStatements(*globalScope, &parserBase::splitTileOccaFors);
 
@@ -1197,7 +1198,8 @@ namespace occa {
 
         s.removeAttribute("loopOrder");
 
-        rOrder[i]              = atoi(attr[attr.argCount - 1].value);
+        const int loopPos      = atoi(attr[attr.argCount - 1].value);
+        rOrder[i]              = (rlCount - loopPos - 1);
         rInvOrder[ rOrder[i] ] = i;
       }
 
@@ -1270,6 +1272,80 @@ namespace occa {
       while(statementPos){
         placeLoopsToReorder(*(statementPos->value),
                             loopsToReorder);
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    void parserBase::retagAutoOccaLoops(){
+      retagAutoOccaLoops(*globalScope);
+    }
+
+    void parserBase::retagAutoOccaLoops(statement &s){
+      if(s.info == smntType::occaFor){
+        statementVector_t occaLoops = findOccaLoops(s);
+        const int occaLoopCount     = (int) occaLoops.size();
+
+        int outerCount = 0;
+        int innerCount = 0;
+
+        // Count outer/inner loops
+        for(int i = 0; i < occaLoopCount; ++i){
+          statement &occaLoop = *(occaLoops[i]);
+
+          attribute_t &occaTagAttr = occaLoop.attribute("occaTag");
+          std::string occaTag      = occaTagAttr.valueStr();
+
+          if(occaTag == "tile")
+            return;
+
+          if(occaTag == "outer")
+            ++outerCount;
+          else
+            ++innerCount;
+        }
+
+        // Reorder tags
+        for(int i = 0; i < occaLoopCount; ++i){
+          statement &occaLoop = *(occaLoops[i]);
+
+          occaLoop.removeAttribute("occaTag");
+          occaLoop.removeAttribute("occaNest");
+          occaLoop.removeAttribute("occaMaxNest_inner");
+          occaLoop.removeAttribute("occaMaxNest_outer");
+
+          if(outerCount){
+            std::string nestStr = occa::toString(--outerCount);
+
+            occaLoop.addAttribute("@(occaTag = outer,"
+                                  " occaNest = " + nestStr + ")");
+          }
+          else{
+            std::string nestStr = occa::toString(--innerCount);
+
+            occaLoop.addAttribute("@(occaTag = inner,"
+                                  " occaNest = " + nestStr + ")");
+          }
+        }
+
+        // Update max outer/inner dims
+        for(int i = 0; i < occaLoopCount; ++i){
+          statement &occaLoop = *(occaLoops[i]);
+
+          attribute_t &occaTagAttr  = occaLoop.attribute("occaTag");
+          attribute_t &occaNestAttr = occaLoop.attribute("occaNest");
+
+          occaLoop.updateOccaOMLoopAttributes(occaTagAttr.valueStr(),
+                                              occaNestAttr.valueStr());
+        }
+
+        return;
+      }
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        retagAutoOccaLoops(*(statementPos->value));
 
         statementPos = statementPos->right;
       }
@@ -2460,7 +2536,7 @@ namespace occa {
       std::stringstream ss;
 
       statementVector_t occaLoops = findOccaLoops(omLoop);
-      const int occaLoopCount    = (int) occaLoops.size();
+      const int occaLoopCount     = (int) occaLoops.size();
 
       attribute_t &maxOuterAttr = omLoop.attribute("occaMaxNest_outer");
       attribute_t &maxInnerAttr = omLoop.attribute("occaMaxNest_inner");
