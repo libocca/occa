@@ -713,6 +713,7 @@ namespace occa {
 
       static void swap(statement &a, statement &b);
       static void swapPlaces(statement &a, statement &b);
+      static void swapStatementNodesFor(statement &a, statement &b);
 
       statement* clone(statement *up_ = NULL);
 

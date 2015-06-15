@@ -5507,6 +5507,40 @@ namespace occa {
       }
     }
 
+    void statement::swapStatementNodesFor(statement &a, statement &b){
+      statementNode *aSN = b.getStatementNode();
+      statementNode *bSN = a.getStatementNode();
+
+      if(aSN != NULL) aSN->value = &a;
+      if(bSN != NULL) bSN->value = &b;
+
+      swapValues(a.up, b.up);
+
+      for(int pass = 0; pass < 2; ++pass){
+        statement *up_ = ((pass == 0) ?
+                          &b          :
+                          &a);
+
+        statementNode *sn = ((pass == 0)      ?
+                             a.statementStart :
+                             b.statementStart);
+
+        statementNode *upSN = ((pass == 0) ?
+                               aSN         :
+                               bSN);
+
+        while(sn){
+          sn->up        = upSN;
+          sn->value->up = up_;
+
+          sn = sn->right;
+        }
+      }
+
+      swapValues(a.statementStart, b.statementStart);
+      swapValues(a.statementEnd  , b.statementEnd);
+    }
+
     statement* statement::clone(statement *up_){
       statement *newStatement;
 

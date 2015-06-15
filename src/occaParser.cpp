@@ -1212,8 +1212,8 @@ namespace occa {
         swapValues(rOrder[i]   , rOrder[i2]);
         swapValues(rInvOrder[i], rInvOrder[i2]);
 
-        statement::swap(*(loopsToReorder[relatedLoops[i]]),
-                        *(loopsToReorder[relatedLoops[i2]]));
+        statement::swapStatementNodesFor(*(loopsToReorder[relatedLoops[i]]),
+                                         *(loopsToReorder[relatedLoops[i2]]));
       }
 
       for(int i = start; i < end; ++i){
@@ -2293,9 +2293,11 @@ namespace occa {
 
       sKernel.up->pushSourceLeftOf(snKernel  , "#ifdef OCCA_LAUNCH_KERNEL");
       sKernel.up->pushSourceRightOf(snKernel , "#else");
-      sKernel.up->pushSourceRightOf(lastNewSN,"#endif");
+      sKernel.up->pushSourceRightOf(lastNewSN, "#endif");
 
-      return lastNewSN->right;
+      return ((lastNewSN != NULL) ?
+              lastNewSN->right    :
+              NULL);
     }
 
     statementVector_t parserBase::findOuterLoopSets(statement &sKernel){
@@ -2472,13 +2474,6 @@ namespace occa {
       while(it != deps.end()){
         varInfo &var         = *(it->first);
         statement &varOrigin = *(it->second.value);
-
-        if((varOrigin.up == globalScope) ||
-           (varOrigin.insideOf(sKernel))){
-
-          ++it;
-          continue;
-        }
 
         if(var.hasQualifier("exclusive") ||
            var.hasQualifier("occaShared")){
