@@ -3301,7 +3301,7 @@ namespace occa {
     void expNode::print(const std::string &tab){
       if( !(info & expType::hasInfo) ){
 
-        std::cout << tab << "[" << sInfo << "|" << getBits(info) << "] " << value << '\n';
+        std::cout << tab << "[" << getBits(info) << "] " << value << '\n';
 
         for(int i = 0; i < leafCount; ++i)
           leaves[i]->print(tab + "    ");

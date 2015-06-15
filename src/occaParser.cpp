@@ -1532,6 +1532,8 @@ namespace occa {
 
         std::string innerForSource = ss.str();
 
+        std::cout << "innerForSource = " << innerForSource << '\n';
+
         ss.str("");
 
         os.expRoot.free();
@@ -1549,16 +1551,14 @@ namespace occa {
         if(varIsDeclared){
           expNode &newInitNode = *(iStatements[0]->getForStatement(0));
 
-          expNode &ph = *(new expNode( *(newInitNode.sInfo) ));
+          newInitNode.info |= expType::declaration;
 
-          expNode::swap(newInitNode, ph);
+          expNode &varNode = newInitNode[0][0];
 
-          newInitNode.reserve(1);
-          newInitNode.setLeaf(ph, 0);
+          varNode.free();
+          varNode.putVarInfo(var);
 
-          newInitNode.info = expType::declaration;
-          newInitNode.getVariableInfoNode(0)->info |= (expType::declaration |
-                                                       expType::type);
+          varNode.info |= expType::type;
         }
       }
       else { // (1 < tileDim)
