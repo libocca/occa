@@ -1533,8 +1533,6 @@ namespace occa {
 
         std::string innerForSource = ss.str();
 
-        std::cout << "innerForSource = " << innerForSource << '\n';
-
         ss.str("");
 
         os.expRoot.free();
@@ -1620,9 +1618,6 @@ namespace occa {
 
           bool hasOccaFor = statementHasOccaFor(s);
           bool hasOklFor  = statementHasOklFor(s);
-
-          std::cout << "hasOccaFor  = " << hasOccaFor  << '\n'
-                    << "hasOklFor   = " << hasOklFor   << '\n';
 
           if(hasOccaFor | hasOklFor){
             if(hasOccaFor){
@@ -2173,6 +2168,8 @@ namespace occa {
                                                          omLoops,
                                                          varDeps);
 
+      applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
+
       for(int k = (kernelCount - 1); 0 <= k; --k)
         sKernel.up->pushRightOf(&sKernel, newKernels[k]);
 
@@ -2248,6 +2245,7 @@ namespace occa {
                                                       statementVector_t &omLoops,
                                                       varInfoVecVector_t &varDeps){
       statementVector_t newKernels;
+      std::stringstream ss;
 
       const int kernelCount = (int) omLoops.size();
 
@@ -2271,6 +2269,13 @@ namespace occa {
 
         varInfo &newKernelVar = *(new varInfo(kernelVar.clone()));
         newSKernel.setFunctionVar(newKernelVar);
+
+
+        ss << kernelBaseName << k;
+
+        newKernelVar.name = ss.str();
+
+        ss.str("");
 
         addDepStatementsToKernel(newSKernel, deps);
         addDepsToKernelArguments(newKernelVar, deps);
