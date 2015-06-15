@@ -127,8 +127,6 @@ namespace occa {
   typedef void (parserNS::parserBase::*applyToStatementsUsingVar_t)(parserNS::varInfo &info,
                                                                     parserNS::statement &s);
 
-  typedef bool (parserNS::parserBase::*findStatementWith_t)(parserNS::statement &s);
-
   namespace parserInfo {
     static const int nothing        = 0;
     static const int parsingC       = (1 << 0);

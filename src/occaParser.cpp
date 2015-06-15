@@ -2171,6 +2171,12 @@ namespace occa {
 
       statement &sKernel = *(snKernel->value);
 
+      statementIdMap_t idMap;
+      statementVector_t sIdVec;
+
+      sKernel.setStatementIdMap(idMap);
+      sKernel.setStatementVector(idMap, sIdVec);
+
       // [O]uter [M]ost [Loops]
       statementVector_t omLoops = findOuterLoopSets(sKernel);
 
@@ -2179,7 +2185,9 @@ namespace occa {
       varUsedMapVector_t varDeps(kernelCount);
 
       for(int k = 0; k < kernelCount; ++k)
-        varDeps[k] = calculateDependenciesFor(*(omLoops[k]));
+        varDeps[k] = findDependenciesFor(*(omLoops[k]),
+                                         idMap,
+                                         sIdVec);
 
       statementVector_t newKernels = newKernelsFromLoops(sKernel,
                                                          omLoops,
@@ -2231,16 +2239,20 @@ namespace occa {
       }
     }
 
-    varUsedMap_t parserBase::calculateDependenciesFor(statement &omLoop){
+    varUsedMap_t parserBase::findDependenciesFor(statement &omLoop,
+                                                 statementIdMap_t idMap,
+                                                 statementVector_t sIdVec){
       varUsedMap_t deps;
 
-      calculateDependenciesFor(omLoop, deps);
+      findDependenciesFor(omLoop, deps, idMap, sIdVec);
 
       return deps;
     }
 
-    void parserBase::calculateDependenciesFor(statement &s,
-                                              varUsedMap_t &deps){
+    void parserBase::findDependenciesFor(statement &s,
+                                         varUsedMap_t &deps,
+                                         statementIdMap_t idMap,
+                                         statementVector_t sIdVec){
 
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
@@ -2254,8 +2266,10 @@ namespace occa {
 
           varUsedMapIterator it = deps.find(&var);
 
-          if(it == deps.end())
-            deps[&var].value = globalScope->getVarOriginStatement(var);
+          if(it != deps.end())
+            continue;
+
+          deps[&var].value = globalScope->getVarOriginStatement(var);
         }
       }
 
@@ -2266,7 +2280,7 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        calculateDependenciesFor(s2, deps);
+        findDependenciesFor(s2, deps, idMap, sIdVec);
 
         statementPos = statementPos->right;
       }
@@ -2276,7 +2290,6 @@ namespace occa {
                                                       statementVector_t &omLoops,
                                                       varUsedMapVector_t &varDeps){
       statementVector_t newKernels;
-      std::stringstream ss;
 
       const int kernelCount = (int) omLoops.size();
 
@@ -2301,11 +2314,7 @@ namespace occa {
         varInfo &newKernelVar = *(new varInfo(kernelVar.clone()));
         newSKernel.setFunctionVar(newKernelVar);
 
-        ss << kernelBaseName << k;
-
-        newKernelVar.name = ss.str();
-
-        ss.str("");
+        newKernelVar.name = kernelBaseName + occa::toString(k);
 
         addDepStatementsToKernel(newSKernel, deps);
         addDepsToKernelArguments(newKernelVar, deps);
@@ -2322,8 +2331,6 @@ namespace occa {
 
         newSKernel.pushSourceLeftOf(omLoop.getStatementNode(),
                                     "occaParallelFor0");
-        // newSKernel.pushBefore(newSKernel.firstStatement,
-        //                       depStatements);
       }
 
       return newKernels;
@@ -2332,15 +2339,21 @@ namespace occa {
     void parserBase::addDepStatementsToKernel(statement &sKernel,
                                               varUsedMap_t &deps){
 
-      varInfo &kernelVar = *(sKernel.getFunctionVar());
-
-      int argPos = kernelVar.argumentCount;
-
       varUsedMapIterator it = deps.begin();
 
       while(it != deps.end()){
         varInfo &var         = *(it->first);
         statement &varOrigin = *(it->second.value);
+
+        if((varOrigin.up == globalScope) ||
+           (varOrigin.insideOf(sKernel))){
+
+          ++it;
+          continue;
+        }
+
+        std::cout << "var = " << var << '\n'
+                  << "varOrigin = " << varOrigin.onlyThisToString() << '\n';
 
         ++it;
       }
@@ -2383,40 +2396,6 @@ namespace occa {
       }
 
       expNode::freeFlatHandle(flatRoot);
-    }
-
-    statementNode* parserBase::findStatementWith(statement &s,
-                                                 findStatementWith_t func){
-      statementNode *ret     = new statementNode(&s);
-      statementNode *retDown = NULL;
-
-      if((this->*func)(s))
-        return ret;
-
-      statementNode *statementPos = s.statementStart;
-
-      while(statementPos){
-        statementNode *ret2 = findStatementWith(*(statementPos->value), func);
-
-        if(ret2 != NULL){
-          if(retDown){
-            retDown = retDown->push(ret2);
-          }
-          else{
-            ret->down = ret2;
-            retDown   = ret2;
-          }
-        }
-
-        statementPos = statementPos->right;
-      }
-
-      if(retDown)
-        return ret;
-
-      delete ret;
-
-      return NULL;
     }
 
     int parserBase::getKernelOuterDim(statement &s){

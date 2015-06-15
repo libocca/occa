@@ -175,8 +175,14 @@ namespace occa {
 
       void findOuterLoopSets(statement &s, statementVector_t &omLoops);
 
-      varUsedMap_t calculateDependenciesFor(statement &omLoop);
-      void calculateDependenciesFor(statement &s, varUsedMap_t &deps);
+      varUsedMap_t findDependenciesFor(statement &omLoop,
+                                       statementIdMap_t idMap,
+                                       statementVector_t sIdVec);
+
+      void findDependenciesFor(statement &s,
+                               varUsedMap_t &deps,
+                               statementIdMap_t idMap,
+                               statementVector_t sIdVec);
 
       statementVector_t newKernelsFromLoops(statement &sKernel,
                                             statementVector_t &omLoops,
@@ -194,32 +200,6 @@ namespace occa {
 
       void zeroOccaIdsFrom(statement &s);
       //   =============================
-
-#if 0
-      statementNode* splitKernelStatement(statementNode *snKernel,
-                                          kernelInfo &info);
-
-      statementNode* getOuterLoopsInStatement(statement &s);
-      statementNode* getOccaLoopsInStatement(statement &s,
-                                             const bool getNestedLoops = true);
-
-      int kernelCountInOccaLoops(statementNode *occaLoops);
-
-      statementNode* createNestedKernelsFromLoops(statementNode *snKernel,
-                                                  kernelInfo &info,
-                                                  statementNode *outerLoopRoot);
-
-      std::string getNestedKernelArgsFromLoops(statement &sKernel);
-
-      void setupHostKernelArgsFromLoops(statement &sKernel);
-
-      void stripOccaFromKernel(statement &s);
-
-      std::string occaScope(statement &s);
-#endif
-
-      statementNode* findStatementWith(statement &s,
-                                       findStatementWith_t func);
 
       static int getKernelOuterDim(statement &s);
       static int getKernelInnerDim(statement &s);
