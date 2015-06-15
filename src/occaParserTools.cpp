@@ -510,7 +510,7 @@ namespace occa {
     if(!(parsingLanguage_ & parserInfo::parsingC))
       return stripFortranComments(line);
 
-    std::string line2  = line;
+    std::string line2 = line;
     line = "";
 
     const char *cLeft  = line2.c_str();
@@ -523,8 +523,10 @@ namespace occa {
         break;
 
       if((cRight[0] == '/') && (cRight[1] == '/')){
-        line += std::string(cLeft, cRight - cLeft);
-        return parserNS::readingCode;
+        if( !(status == parserNS::insideCommentBlock) ){
+          line += std::string(cLeft, cRight - cLeft);
+          return parserNS::readingCode;
+        }
       }
       else if((cRight[0] == '/') && (cRight[1] == '*')){
         if( !(status == parserNS::insideCommentBlock) ){
@@ -546,7 +548,7 @@ namespace occa {
       ++cRight;
     }
 
-    if(cLeft != cRight)
+    if(cLeft < cRight)
       line += std::string(cLeft, cRight - cLeft);
 
     return status;
