@@ -4203,6 +4203,8 @@ namespace occa {
                                     + "occaNest = " + loopNest + ")");
 
           attributesToErase.push_back(attr.name);
+
+          updateOccaOMLoopAttributes(loopTag, loopNest);
         }
         else if(attr.name == "tile"){
           info = smntType::occaFor;
@@ -4237,6 +4239,37 @@ namespace occa {
       for(int i = 0; i < updateCount; ++i){
         addAttribute(attributesToAdd[i]);
         removeAttribute(attributesToErase[i]);
+      }
+    }
+
+    void statement::updateOccaOMLoopAttributes(const std::string &loopTag,
+                                               const std::string &loopNest){
+
+      // Get outer-most loop
+      statement *sOuterLoop_ = this;
+      statement *sUp         = this;
+
+      while(sUp){
+        if(sUp->info == smntType::occaFor)
+          sOuterLoop_ = sUp;
+
+        sUp = sUp->up;
+      }
+
+      statement &sOuterLoop = *sOuterLoop_;
+
+      attribute_t *maxNestAttr = sOuterLoop.hasAttribute("occaMaxNest_" + loopTag);
+      int nest = ::atoi(loopNest.c_str());
+
+      if(maxNestAttr){
+        const std::string maxNestStr = maxNestAttr->valueStr();
+        int maxNest = ::atoi(maxNestStr.c_str());
+
+        if(maxNest < nest)
+          maxNestAttr->value->value = occa::toString(nest);
+      }
+      else {
+        sOuterLoop.addAttribute("@(occaMaxNest_" + loopTag + " = " + loopNest + ")");
       }
     }
     //==================================
@@ -5421,8 +5454,8 @@ namespace occa {
       statementNode *aSN = a.getStatementNode();
       statementNode *bSN = b.getStatementNode();
 
-      aSN->value = &b;
-      bSN->value = &a;
+      if(aSN != NULL) aSN->value = &b;
+      if(bSN != NULL) bSN->value = &a;
 
       swapValues(a.up, b.up);
 

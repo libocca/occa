@@ -908,20 +908,6 @@ namespace occa {
 
       return sUp;
     }
-    statement* parserBase::getStatementOuterMostLoop(statement &s){
-      statement *ret = ((s.info == smntType::occaFor) ? &s : NULL);
-
-      statement *sUp = &s;
-
-      while(sUp){
-        if(sUp->info == smntType::occaFor)
-          ret = sUp;
-
-        sUp = sUp->up;
-      }
-
-      return ret;
-    }
 
     bool parserBase::statementKernelUsesNativeOCCA(statement &s){
       statement *sKernel = getStatementKernel(s);
@@ -949,27 +935,6 @@ namespace occa {
         return true;
 
       return false;
-    }
-
-    void parserBase::updateOccaOMLoopAttributes(statement &s,
-                                                const std::string &loopTag,
-                                                const std::string &loopNest){
-
-      statement &sOuterLoop = *(getStatementOuterMostLoop(s));
-
-      attribute_t *maxNestAttr = sOuterLoop.hasAttribute("occaMaxNest_" + loopTag);
-      int nest = ::atoi(loopNest.c_str());
-
-      if(maxNestAttr){
-        const std::string maxNestStr = maxNestAttr->valueStr();
-        int maxNest = ::atoi(maxNestStr.c_str());
-
-        if(maxNest < nest)
-          maxNestAttr->value->value = toString<int>(maxNest);
-      }
-      else {
-        sOuterLoop.addAttribute("@(occaMaxNest_" + loopTag + " = " + loopNest + ")");
-      }
     }
 
     void parserBase::setupOccaFors(statement &s){
@@ -1574,6 +1539,9 @@ namespace occa {
 
         os.reloadFromSource(outerForSource);
         is.reloadFromSource(innerForSource);
+
+        os.updateOccaOMLoopAttributes("outer", toString(dim));
+        is.updateOccaOMLoopAttributes("inner", toString(dim));
       }
 
       // Add variable declaration if needed
@@ -2195,8 +2163,6 @@ namespace occa {
 
       const int kernelCount = (int) omLoops.size();
 
-      std::cout << "kernelCount = " << kernelCount << '\n';
-
       varInfoVecVector_t varDeps(kernelCount);
 
       for(int k = 0; k < kernelCount; ++k)
@@ -2288,31 +2254,71 @@ namespace occa {
                                                    kernelCount);
 
       for(int k = 0; k < kernelCount; ++k){
-        statement &newKernel = *(new statement(sKernel.parser));
+        statement &newSKernel = *(new statement(sKernel.parser));
 
         statement &omLoop     = *(omLoops[k]);
-        // varInfoVector_t &deps = varDeps[k];
+        varInfoVector_t &deps = varDeps[k];
 
         varInfo &newKernelVar = *(new varInfo(kernelVar.clone()));
-        newKernel.setFunctionVar(newKernelVar);
-        // kernelVar2.addArguments(varDeps); // Check for wrong args
+        newSKernel.setFunctionVar(newKernelVar);
 
-        // statementNode *omLoopSN = omLoop.getStatementNode();
+        addDepStatementsToKernel(newSKernel, deps);
+        addDepsToKernelArguments(newKernelVar, deps);
 
-        // statement &hostCall = makeHostCallFor(newKernelVar, omLoop);
+        statement &sLaunch   = launchStatementForKernel(sKernel,
+                                                        newKernelVar,
+                                                        omLoop.attributeMap);
 
-        newKernel.addStatement(&omLoop);
+        // Swap positions for:
+        //   outer-most-loop <--> host kernel
+        statement::swap(omLoop, sLaunch);
 
-        // omLoopSN.value = &hostCall;
+        // Renamed for readability
+        //   It holds omLoop
+        statement &newOmLoop = sLaunch;
 
-        // newKernel.pushBefore(olSet, parallelFor);
-        // newKernel.pushBefore(newKernel.firstStatement,
-        //                      depStatements);
+        newSKernel.addStatement(&newOmLoop);
 
-        snPos = snPos->push(&newKernel);
+        newSKernel.pushSourceLeftOf(newOmLoop.getStatementNode(),
+                                    "occaParallelFor0");
+        // newSKernel.pushBefore(newSKernel.firstStatement,
+        //                       depStatements);
+
+        snPos = snPos->push(&newSKernel);
       }
 
       return snRoot.right;
+    }
+
+    void parserBase::addDepStatementsToKernel(statement &sKernel,
+                                              varInfoVector_t &deps){
+
+      const int depCount = (int) deps.size();
+
+      for(int i = 0; i < depCount; ++i){
+        // kernelVar.addArgument(args + i, deps[i]);
+
+      }
+    }
+
+    void parserBase::addDepsToKernelArguments(varInfo &kernelVar,
+                                              varInfoVector_t &deps){
+
+      const int depCount = (int) deps.size();
+      const int argCount = kernelVar.argumentCount;
+
+      for(int i = 0; i < depCount; ++i)
+        kernelVar.addArgument(argCount + i, *(deps[i]));
+    }
+
+    statement& parserBase::launchStatementForKernel(statement &sKernel,
+                                                    varInfo &kernelVar,
+                                                    attributeMap_t &loopAttributes){
+      statement &sHost = *(sKernel.makeSubStatement());
+
+      printAttributeMap(loopAttributes);
+
+      return sHost;
     }
 
     void parserBase::zeroOccaIdsFrom(statement &s){
@@ -2873,14 +2879,14 @@ namespace occa {
               // [occa][-----Id][#]
               loopNest = value.substr(11,1);
 
-              updateOccaOMLoopAttributes(s, loopTag, loopNest);
+              s.updateOccaOMLoopAttributes(loopTag, loopNest);
             }
             else { // isGlobalId
               // [occa][------Id][#]
               loopNest = value.substr(12,1);
 
-              updateOccaOMLoopAttributes(s, "inner", loopNest);
-              updateOccaOMLoopAttributes(s, "outer", loopNest);
+              s.updateOccaOMLoopAttributes("inner", loopNest);
+              s.updateOccaOMLoopAttributes("outer", loopNest);
             }
           }
           else { // isDim
@@ -2892,14 +2898,14 @@ namespace occa {
               // [occa][-----Dim][#]
               loopNest = value.substr(12,1);
 
-              updateOccaOMLoopAttributes(s, loopTag, loopNest);
+              s.updateOccaOMLoopAttributes(loopTag, loopNest);
             }
             else { // isGlobalDim
               // [occa][------Dim][#]
               loopNest = value.substr(13,1);
 
-              updateOccaOMLoopAttributes(s, "inner", loopNest);
-              updateOccaOMLoopAttributes(s, "outer", loopNest);
+              s.updateOccaOMLoopAttributes("inner", loopNest);
+              s.updateOccaOMLoopAttributes("outer", loopNest);
             }
           }
 

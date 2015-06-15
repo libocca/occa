@@ -95,7 +95,6 @@ namespace occa {
       static bool statementIsAKernel(statement &s);
 
       static statement* getStatementKernel(statement &s);
-      statement* getStatementOuterMostLoop(statement &s);
 
       bool statementKernelUsesNativeOCCA(statement &s);
 
@@ -182,6 +181,16 @@ namespace occa {
       statementNode* newKernelsFromLoops(statement &sKernel,
                                          statementVector_t &omLoops,
                                          varInfoVecVector_t &varDeps);
+
+      void addDepStatementsToKernel(statement &sKernel,
+                                    varInfoVector_t &deps);
+
+      void addDepsToKernelArguments(varInfo &kernelVar,
+                                    varInfoVector_t &deps);
+
+      statement& launchStatementForKernel(statement &sKernel,
+                                          varInfo &kernelVar,
+                                          attributeMap_t &loopAttributes);
 
       void zeroOccaIdsFrom(statement &s);
       //   =============================

@@ -507,6 +507,9 @@ namespace occa {
       void printAttributeMap();
 
       void updateInitialLoopAttributes();
+
+      void updateOccaOMLoopAttributes(const std::string &loopTag,
+                                      const std::string &loopNest);
       //================================
 
       void addType(typeInfo &type);
