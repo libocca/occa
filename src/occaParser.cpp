@@ -2186,32 +2186,34 @@ namespace occa {
     statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
                                                     kernelInfo &info){
 
-      statement &sKernel = *(snKernel->value);
+      statement &sKernel       = *(snKernel->value);
+      statementNode *lastNewSN = snKernel->right;
 
       // [O]uter [M]ost [Loops]
       statementVector_t omLoops = findOuterLoopSets(sKernel);
 
       const int kernelCount = (int) omLoops.size();
 
-      varUsedMapVector_t varDeps(kernelCount);
+      if(0 < kernelCount){
+        varUsedMapVector_t varDeps(kernelCount);
 
-      for(int k = 0; k < kernelCount; ++k)
-        varDeps[k] = findDependenciesFor(sKernel,
-                                         *(omLoops[k]));
+        for(int k = 0; k < kernelCount; ++k)
+          varDeps[k] = findDependenciesFor(sKernel,
+                                           *(omLoops[k]));
 
-      statementVector_t newKernels = newKernelsFromLoops(sKernel,
-                                                         omLoops,
-                                                         varDeps);
+        statementVector_t newKernels = newKernelsFromLoops(sKernel,
+                                                           omLoops,
+                                                           varDeps);
 
-      storeKernelInfo(info, sKernel, newKernels);
+        storeKernelInfo(info, sKernel, newKernels);
 
-      applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
+        applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
 
-      for(int k = (kernelCount - 1); 0 <= k; --k)
-        sKernel.up->pushRightOf(&sKernel, newKernels[k]);
+        for(int k = (kernelCount - 1); 0 <= k; --k)
+          sKernel.up->pushRightOf(&sKernel, newKernels[k]);
 
-      statement &lastNewKernel = *(newKernels[kernelCount - 1]);
-      statementNode *lastNewSN = lastNewKernel.getStatementNode();
+        lastNewSN = newKernels[kernelCount - 1]->getStatementNode();
+      }
 
       sKernel.up->pushSourceLeftOf(snKernel  , "#ifdef OCCA_LAUNCH_KERNEL");
       sKernel.up->pushSourceRightOf(snKernel , "#else");
@@ -2776,8 +2778,8 @@ namespace occa {
     void parserBase::addInnerFors(statement &s){
       int innerDim = getKernelInnerDim(s);
 
-      OCCA_CHECK(0 <= innerDim,
-                 "OCCA Inner for-loop count could not be calculated");
+      if(innerDim < 0)
+        return;
 
       varInfoIdMap_t varInfoIdMap;
       int currentInnerID = 0;
@@ -2790,6 +2792,8 @@ namespace occa {
                                     varInfoIdMap_t &varInfoIdMap,
                                     int &currentInnerID,
                                     const int innerDim){
+
+      std::cout << "s = " << s << '\n';
 
       statementNode *ssStart = s.statementStart;
       statementNode *ssEnd   = lastNode(ssStart);
@@ -2980,8 +2984,8 @@ namespace occa {
     void parserBase::addOuterFors(statement &s){
       int outerDim = getKernelOuterDim(s);
 
-      OCCA_CHECK(0 <= outerDim,
-                 "OCCA Outer for-loop count could not be calculated");
+      if(outerDim < 0)
+        return;
 
       statement *sPos = &s;
 
