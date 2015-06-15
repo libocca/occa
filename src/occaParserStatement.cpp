@@ -966,15 +966,16 @@ namespace occa {
 
       expNode newExp(*sInfo);
       newExp.info = info;
-      newExp.addNodes(3 + hasOccaTag);
+      newExp.addNodes(3);
 
       if(hasOccaTag){
-        expNode &leaf = newExp[3];
-        leaf.addNode(expType::printValue, 0);
-        leaf[0].value = lastLeafValue;
+        std::stringstream ss;
 
-        // Get rid of the tag
-        --statementCount;
+        ss << "@(" << lastLeafValue << ")";
+
+        sInfo->addAttribute(ss.str());
+
+        sInfo->updateInitialLoopAttributes();
       }
 
       // Get iter var name

@@ -646,23 +646,23 @@ namespace occa {
     }
 
     expNode parserBase::splitAndPreprocessContent(const std::string &s,
-                                                  const int parsingLanguage){
+                                                  const int parsingLanguage_){
       return splitAndPreprocessContent(s.c_str(),
-                                       parsingLanguage);
+                                       parsingLanguage_);
     }
 
     expNode parserBase::splitAndPreprocessContent(const char *cRoot,
-                                                  const int parsingLanguage){
+                                                  const int parsingLanguage_){
       expNode allExp;
 
-      pushLanguage(parsingLanguage);
+      pushLanguage(parsingLanguage_);
 
-      allExp = splitContent(cRoot, parsingLanguage);
+      allExp = splitContent(cRoot, parsingLanguage_);
 
-      initMacros(parsingLanguage);
+      initMacros(parsingLanguage_);
       preprocessMacros(allExp);
 
-      labelCode(allExp, parsingLanguage);
+      labelCode(allExp, parsingLanguage_);
 
       allExp.setNestedSInfo(globalScope);
 
@@ -672,8 +672,8 @@ namespace occa {
     }
     //====================================
 
-    void parserBase::initMacros(const int parsingLanguage){
-      if(parsingLanguage & parserInfo::parsingFortran)
+    void parserBase::initMacros(const int parsingLanguage_){
+      if(parsingLanguage_ & parserInfo::parsingFortran)
         initFortranMacros();
 
       if(macrosAreInitialized)
@@ -2511,6 +2511,8 @@ namespace occa {
 
       ss << ");";
 
+      pushLanguage(parserInfo::parsingC);
+
       expNode allExp = splitAndPreprocessContent(ss.str());
 
       sHost.loadAllFromNode(allExp);
@@ -2536,6 +2538,8 @@ namespace occa {
 
       outerVar.baseType = &occaDimType;
       innerVar.baseType = &occaDimType;
+
+      popLanguage();
 
       return sHost;
     }
@@ -3268,14 +3272,14 @@ namespace occa {
 
     //==============================================
 
-    expNode splitContent(const std::string &str, const int parsingLanguage){
-      return splitContent(str.c_str(), parsingLanguage);
+    expNode splitContent(const std::string &str, const int parsingLanguage_){
+      return splitContent(str.c_str(), parsingLanguage_);
     }
 
-    expNode splitContent(const char *cRoot, const int parsingLanguage){
-      pushLanguage(parsingLanguage);
+    expNode splitContent(const char *cRoot, const int parsingLanguage_){
+      pushLanguage(parsingLanguage_);
 
-      const bool parsingFortran = (parsingLanguage & parserInfo::parsingFortran);
+      const bool parsingFortran = (parsingLanguage_ & parserInfo::parsingFortran);
 
       const char *c = cRoot;
 
@@ -3288,9 +3292,9 @@ namespace occa {
       int expPos = 0;
 
       while(*c != '\0'){
-        const char *cEnd = readLine(c, parsingLanguage);
+        const char *cEnd = readLine(c, parsingLanguage_);
 
-        std::string line = strip(c, cEnd - c, parsingLanguage);
+        std::string line = strip(c, cEnd - c, parsingLanguage_);
 
         if(line.size()){
           if(parsingFortran &&
@@ -3301,9 +3305,9 @@ namespace occa {
           }
 
           if(status != insideCommentBlock){
-            status = stripComments(line, parsingLanguage);
+            status = stripComments(line, parsingLanguage_);
 
-            strip(line, parsingLanguage);
+            strip(line, parsingLanguage_);
 
             if(line.size()){
               allExp[expPos].value = line;
@@ -3311,9 +3315,9 @@ namespace occa {
             }
           }
           else{
-            status = stripComments(line, parsingLanguage);
+            status = stripComments(line, parsingLanguage_);
 
-            strip(line, parsingLanguage);
+            strip(line, parsingLanguage_);
 
             if((status == finishedCommentBlock) && line.size()){
               allExp[expPos].value = line;
@@ -3332,36 +3336,36 @@ namespace occa {
       return allExp;
     }
 
-    expNode splitAndLabelContent(const std::string &str, const int parsingLanguage){
-      return splitAndLabelContent(str.c_str(), parsingLanguage);
+    expNode splitAndLabelContent(const std::string &str, const int parsingLanguage_){
+      return splitAndLabelContent(str.c_str(), parsingLanguage_);
     }
 
-    expNode splitAndLabelContent(const char *cRoot, const int parsingLanguage){
-      expNode allExp = splitContent(cRoot, parsingLanguage);
+    expNode splitAndLabelContent(const char *cRoot, const int parsingLanguage_){
+      expNode allExp = splitContent(cRoot, parsingLanguage_);
 
       return labelCode(allExp);
     }
 
-    expNode splitAndOrganizeContent(const std::string &str, const int parsingLanguage){
-      return splitAndOrganizeContent(str.c_str(), parsingLanguage);
+    expNode splitAndOrganizeContent(const std::string &str, const int parsingLanguage_){
+      return splitAndOrganizeContent(str.c_str(), parsingLanguage_);
     }
 
-    expNode splitAndOrganizeContent(const char *cRoot, const int parsingLanguage){
+    expNode splitAndOrganizeContent(const char *cRoot, const int parsingLanguage_){
       expNode tmpExp, retExp;
 
-      tmpExp = splitContent(cRoot, parsingLanguage);
-      tmpExp = labelCode(tmpExp, parsingLanguage);
+      tmpExp = splitContent(cRoot, parsingLanguage_);
+      tmpExp = labelCode(tmpExp, parsingLanguage_);
 
       retExp.loadFromNode(tmpExp);
 
       return retExp;
     }
 
-    expNode& labelCode(expNode &allExp, const int parsingLanguage){
-      pushLanguage(parsingLanguage);
+    expNode& labelCode(expNode &allExp, const int parsingLanguage_){
+      pushLanguage(parsingLanguage_);
 
-      const bool parsingC       = (parsingLanguage & parserInfo::parsingC      );
-      const bool parsingFortran = (parsingLanguage & parserInfo::parsingFortran);
+      const bool parsingC       = (parsingLanguage_ & parserInfo::parsingC      );
+      const bool parsingFortran = (parsingLanguage_ & parserInfo::parsingFortran);
 
       const bool usingLeaves = (allExp.leafCount != 0);
       const int lineCount    = (usingLeaves      ?
@@ -3389,7 +3393,7 @@ namespace occa {
                              isANumber(cLeft));
 
           if(loadString){ //-----------------------------------------------[ 1 ]
-            skipString(cRight, parsingLanguage);
+            skipString(cRight, parsingLanguage_);
 
             cNode->addNode(expType::presetValue);
             cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
@@ -3407,7 +3411,7 @@ namespace occa {
             cNode->lastNode().info  = expType::firstPass | expType::presetValue;
           }
           else{ //---------------------------------------------------------[ 3 ]
-            const int delimiterChars = isAWordDelimiter(cLeft, parsingLanguage);
+            const int delimiterChars = isAWordDelimiter(cLeft, parsingLanguage_);
 
             cNode->addNode();
 
@@ -3469,7 +3473,7 @@ namespace occa {
               cLeft += delimiterChars;
             } //=========================================================[ 3.1 ]
             else{ //-----------------------------------------------------[ 3.2 ]
-              skipWord(cRight, parsingLanguage);
+              skipWord(cRight, parsingLanguage_);
 
               std::string str(cLeft, (cRight - cLeft));
               keywordTypeMapIterator it;
@@ -3511,17 +3515,17 @@ namespace occa {
                   }
                 }
                 else{
-                  if(checkLastTwoNodes(*cNode, "else", "if"   , parsingLanguage) ||
-                     checkLastTwoNodes(*cNode, "do"  , "while", parsingLanguage)){
+                  if(checkLastTwoNodes(*cNode, "else", "if"   , parsingLanguage_) ||
+                     checkLastTwoNodes(*cNode, "do"  , "while", parsingLanguage_)){
 
-                    mergeLastTwoNodes(*cNode, addSpace, parsingLanguage);
+                    mergeLastTwoNodes(*cNode, addSpace, parsingLanguage_);
                   }
-                  else if(checkLastTwoNodes(*cNode, "end" , "do"        , parsingLanguage) ||
-                          checkLastTwoNodes(*cNode, "end" , "if"        , parsingLanguage) ||
-                          checkLastTwoNodes(*cNode, "end" , "function"  , parsingLanguage) ||
-                          checkLastTwoNodes(*cNode, "end" , "subroutine", parsingLanguage)){
+                  else if(checkLastTwoNodes(*cNode, "end" , "do"        , parsingLanguage_) ||
+                          checkLastTwoNodes(*cNode, "end" , "if"        , parsingLanguage_) ||
+                          checkLastTwoNodes(*cNode, "end" , "function"  , parsingLanguage_) ||
+                          checkLastTwoNodes(*cNode, "end" , "subroutine", parsingLanguage_)){
 
-                    mergeLastTwoNodes(*cNode, !addSpace, parsingLanguage);
+                    mergeLastTwoNodes(*cNode, !addSpace, parsingLanguage_);
 
                     expNode &mergedNode = (*cNode)[-1];
 
@@ -3554,9 +3558,9 @@ namespace occa {
     bool checkLastTwoNodes(expNode &node,
                            const std::string &leftValue,
                            const std::string &rightValue,
-                           const int parsingLanguage){
+                           const int parsingLanguage_){
 
-      if(parsingLanguage & parserInfo::parsingC){
+      if(parsingLanguage_ & parserInfo::parsingC){
         return ((2 <= node.leafCount)   &&
                 (node[-2].value == leftValue) &&
                 (node[-1].value == rightValue));
@@ -3569,7 +3573,7 @@ namespace occa {
 
     void mergeLastTwoNodes(expNode &node,
                            const bool addSpace,
-                           const int parsingLanguage){
+                           const int parsingLanguage_){
 
       if(node.leafCount < 2)
         return;
@@ -3579,7 +3583,7 @@ namespace occa {
 
       node[-2].value += node[-1].value;
 
-      if(parsingLanguage & parserInfo::parsingFortran)
+      if(parsingLanguage_ & parserInfo::parsingFortran)
         node[-2].value = upString(node[-2].value);
 
       node.removeNode(-1);
@@ -3589,8 +3593,8 @@ namespace occa {
       return statement::createExpNodeFrom(source);
     }
 
-    void loadKeywords(const int parsingLanguage){
-      if(parsingLanguage & parserInfo::parsingC)
+    void loadKeywords(const int parsingLanguage_){
+      if(parsingLanguage_ & parserInfo::parsingC)
         loadCKeywords();
       else
         loadFortranKeywords();
@@ -4205,6 +4209,9 @@ namespace occa {
 
         sInfo = sInfo->up;
       }
+
+      if(s.parser.parsingLanguage & parserInfo::parsingFortran)
+        return;
 
       //---[ Overload iter vars ]---
       setIterDefaultValues();
