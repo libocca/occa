@@ -114,9 +114,10 @@ occaKernel void fd2d(tFloat *u1,
   // for(int2 i(0,1); i.x < bDimX, i.y < bDimY; ++i; tile(lDimX,lDimY)){
   // }
 
+  shared tFloat Lu[bDimY + 2*sr][bDimX + 2*sr];
+
   for(int by = 0; by < bDimY; by += 16; outer0){
     for(int bx = 0; bx < bDimX; bx += 16; outer1){
-      shared tFloat Lu[bDimY + 2*sr][bDimX + 2*sr];
       exclusive tFloat r_u2 = 2, r_u3 = 3, r_u4[3], *r_u5, *r_u6[3];
 
       for(int ly = by; ly < (by + lDimY); ++ly; inner1){

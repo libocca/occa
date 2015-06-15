@@ -472,8 +472,9 @@ namespace occa {
             if(sInfo->up != NULL)
               sInfo->up->addVariable(&var, sInfo);
           }
-          else
+          else{
             sInfo->addVariable(&var);
+          }
         }
 
         leaf[0].info |= expType::declaration;

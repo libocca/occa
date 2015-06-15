@@ -2171,12 +2171,6 @@ namespace occa {
 
       statement &sKernel = *(snKernel->value);
 
-      statementIdMap_t idMap;
-      statementVector_t sIdVec;
-
-      sKernel.setStatementIdMap(idMap);
-      sKernel.setStatementVector(idMap, sIdVec);
-
       // [O]uter [M]ost [Loops]
       statementVector_t omLoops = findOuterLoopSets(sKernel);
 
@@ -2185,9 +2179,8 @@ namespace occa {
       varUsedMapVector_t varDeps(kernelCount);
 
       for(int k = 0; k < kernelCount; ++k)
-        varDeps[k] = findDependenciesFor(*(omLoops[k]),
-                                         idMap,
-                                         sIdVec);
+        varDeps[k] = findDependenciesFor(sKernel,
+                                         *(omLoops[k]));
 
       statementVector_t newKernels = newKernelsFromLoops(sKernel,
                                                          omLoops,
@@ -2239,20 +2232,19 @@ namespace occa {
       }
     }
 
-    varUsedMap_t parserBase::findDependenciesFor(statement &omLoop,
-                                                 statementIdMap_t idMap,
-                                                 statementVector_t sIdVec){
+    varUsedMap_t parserBase::findDependenciesFor(statement &sKernel,
+                                                 statement &omLoop){
       varUsedMap_t deps;
 
-      findDependenciesFor(omLoop, deps, idMap, sIdVec);
+      findDependenciesFor(sKernel, omLoop, omLoop, deps);
 
       return deps;
     }
 
-    void parserBase::findDependenciesFor(statement &s,
-                                         varUsedMap_t &deps,
-                                         statementIdMap_t idMap,
-                                         statementVector_t sIdVec){
+    void parserBase::findDependenciesFor(statement &sKernel,
+                                         statement &omLoop,
+                                         statement &s,
+                                         varUsedMap_t &deps){
 
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
@@ -2269,7 +2261,17 @@ namespace occa {
           if(it != deps.end())
             continue;
 
-          deps[&var].value = globalScope->getVarOriginStatement(var);
+          statement &varOrigin = *(globalScope->getVarOriginStatement(var));
+
+          if((&varOrigin   == &sKernel)    ||
+             (varOrigin.up == globalScope) ||
+             (&varOrigin   == &omLoop)     ||
+             (varOrigin.insideOf(omLoop))){
+
+            continue;
+          }
+
+          deps[&var].value = &varOrigin;
         }
       }
 
@@ -2280,7 +2282,7 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        findDependenciesFor(s2, deps, idMap, sIdVec);
+        findDependenciesFor(sKernel, omLoop, s2, deps);
 
         statementPos = statementPos->right;
       }
@@ -2341,6 +2343,9 @@ namespace occa {
 
       varUsedMapIterator it = deps.begin();
 
+      statementIdMap_t placedStatements;
+      varInfoVector_t usedVars;
+
       while(it != deps.end()){
         varInfo &var         = *(it->first);
         statement &varOrigin = *(it->second.value);
@@ -2352,10 +2357,33 @@ namespace occa {
           continue;
         }
 
-        std::cout << "var = " << var << '\n'
-                  << "varOrigin = " << varOrigin.onlyThisToString() << '\n';
+        if(var.hasQualifier("exclusive") ||
+           var.hasQualifier("occaShared")){
+
+          usedVars.push_back(&var);
+          placedStatements[&varOrigin];
+        }
 
         ++it;
+      }
+
+      const int usedVarCount = (int) usedVars.size();
+
+      for(int i = 0; i < usedVarCount; ++i)
+        deps.erase(usedVars[i]);
+
+      statementIdMapIterator sIt = placedStatements.begin();
+
+      while(sIt != placedStatements.end()){
+        statement *firstS = ((sKernel.statementStart == NULL) ?
+                             NULL :
+                             sKernel.statementStart->value);
+
+        statement *s2 = sIt->first->clone(&sKernel);
+
+        sKernel.pushLeftOf(firstS, s2);
+
+        ++sIt;
       }
     }
 
@@ -2367,8 +2395,9 @@ namespace occa {
       varUsedMapIterator it = deps.begin();
 
       while(it != deps.end()){
-        varInfo &var         = *(it->first);
-        statement &varOrigin = *(it->second.value);
+        varInfo &var = *(it->first);
+
+        kernelVar.addArgument(argPos++, var);
 
         ++it;
       }
