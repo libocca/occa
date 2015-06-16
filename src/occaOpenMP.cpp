@@ -138,10 +138,13 @@ namespace occa {
     outer = k.outer;
 
     nestedKernelCount = k.nestedKernelCount;
-    nestedKernels     = k.nestedKernels;
 
-    for(int i = 0; i < nestedKernelCount; ++i)
-      nestedKernels[i] = k.nestedKernels[i];
+    if(0 < nestedKernelCount){
+      nestedKernels = new kernel[nestedKernelCount];
+
+      for(int i = 0; i < nestedKernelCount; ++i)
+        nestedKernels[i] = k.nestedKernels[i];
+    }
   }
 
   template <>
@@ -155,11 +158,12 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
-    nestedKernelCount = k.nestedKernelCount;
-    nestedKernels     = k.nestedKernels;
+    if(0 < nestedKernelCount){
+      nestedKernels = new kernel[nestedKernelCount];
 
-    for(int i = 0; i < nestedKernelCount; ++i)
-      nestedKernels[i] = k.nestedKernels[i];
+      for(int i = 0; i < nestedKernelCount; ++i)
+        nestedKernels[i] = k.nestedKernels[i];
+    }
 
     return *this;
   }

@@ -2331,6 +2331,8 @@ namespace occa {
                                                            omLoops,
                                                            varDeps);
 
+        addNestedKernelArgTo(sKernel);
+
         storeKernelInfo(info, sKernel, newKernels);
 
         applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
@@ -2557,8 +2559,6 @@ namespace occa {
         newSKernel.pushSourceLeftOf(omLoop.getStatementNode(),
                                     "occaParallelFor0");
       }
-
-      addNestedKernelArgTo(sKernel);
 
       return newKernels;
     }

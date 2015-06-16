@@ -675,7 +675,7 @@ namespace occa {
 #include "operators/occaOperatorDefinitions.cpp"
 
   void kernel::free(){
-    if(kHandle->nestedKernelCount){
+    if(0 < kHandle->nestedKernelCount){
       for(int k = 0; k < kHandle->nestedKernelCount; ++k)
         kHandle->nestedKernels[k].free();
 
