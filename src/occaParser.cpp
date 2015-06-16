@@ -989,8 +989,9 @@ namespace occa {
          << "))";
 
       s.addAttribute(ss.str());
-
       ss.str("");
+
+      removeIntraLoopDepsFromIterExp(s);
 
       if(opStride != "1"){
         ss << setupExp;
@@ -1037,6 +1038,27 @@ namespace occa {
         newIterS.addVariable(&iterVar, newIterS.up);
       }
     }
+
+    void parserBase::removeIntraLoopDepsFromIterExp(statement &s){
+      expNode &occaIterExp = s.attribute("occaIterExp").valueExp();
+      varUsedMap_t deps;
+
+      findDependenciesFor(occaIterExp, deps);
+
+      varUsedMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        varInfo   &var       = *(it->first);
+        statement &varOrigin = *(it->second.value);
+
+        if(varOrigin.info == smntType::occaFor){
+          // std::cout << "[" << var << "].origin = " << varOrigin.onlyThisToString() << '\n';
+        }
+
+        ++it;
+      }
+    }
+
 
     bool parserBase::statementIsOccaOuterFor(statement &s){
       if(s.info == smntType::occaFor){
@@ -2412,7 +2434,34 @@ namespace occa {
                                          varUsedMap_t &deps,
                                          const int flags){
 
-      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+      findDependenciesFor(s.expRoot, deps);
+
+      if((flags & parserInfo::checkSubStatements) == 0)
+        return;
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        findDependenciesFor(s2, deps, flags);
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    varUsedMap_t parserBase::findDependenciesFor(expNode &e){
+      varUsedMap_t deps;
+
+      findDependenciesFor(e, deps);
+
+      return deps;
+    }
+
+    void parserBase::findDependenciesFor(expNode &e,
+                                         varUsedMap_t &deps){
+
+      expNode &flatRoot = *(e.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         if(flatRoot[i].info & expType::varInfo){
@@ -2434,19 +2483,6 @@ namespace occa {
       }
 
       expNode::freeFlatHandle(flatRoot);
-
-      if((flags & parserInfo::checkSubStatements) == 0)
-        return;
-
-      statementNode *statementPos = s.statementStart;
-
-      while(statementPos){
-        statement &s2 = *(statementPos->value);
-
-        findDependenciesFor(s2, deps, flags);
-
-        statementPos = statementPos->right;
-      }
     }
 
     statementVector_t parserBase::newKernelsFromLoops(statement &sKernel,

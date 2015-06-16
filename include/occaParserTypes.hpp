@@ -36,6 +36,8 @@ namespace occa {
       expNode& operator [] (const int pos);
 
       std::string argStr(const int pos);
+
+      expNode& valueExp();
       std::string valueStr();
 
       operator std::string();

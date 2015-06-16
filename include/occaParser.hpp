@@ -109,6 +109,8 @@ namespace occa {
 
       void setupOccaFors(statement &s);
 
+      void removeIntraLoopDepsFromIterExp(statement &s);
+
       bool statementIsOccaOuterFor(statement &s);
       bool statementIsOccaInnerFor(statement &s);
 
@@ -189,6 +191,11 @@ namespace occa {
       void findDependenciesFor(statement &s,
                                varUsedMap_t &deps,
                                const int flags = parserInfo::checkSubStatements);
+
+      varUsedMap_t findDependenciesFor(expNode &e);
+
+      void findDependenciesFor(expNode &e,
+                               varUsedMap_t &deps);
 
       statementVector_t newKernelsFromLoops(statement &sKernel,
                                             statementVector_t &omLoops,

@@ -79,6 +79,10 @@ namespace occa {
       return args[pos]->toString();
     }
 
+    expNode& attribute_t::valueExp(){
+      return *value;
+    }
+
     std::string attribute_t::valueStr(){
       return value->toString();
     }
