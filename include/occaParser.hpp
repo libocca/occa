@@ -180,13 +180,15 @@ namespace occa {
       statementVector_t findOccaLoops(statement &sKernel);
       void findOccaLoops(statement &s, statementVector_t &occaLoops);
 
-      varUsedMap_t findDependenciesFor(statement &sKernel,
-                                       statement &omLoop);
+      varUsedMap_t findKernelDependenciesFor(statement &sKernel,
+                                             statement &omLoop);
 
-      void findDependenciesFor(statement &sKernel,
-                               statement &omLoop,
-                               statement &s,
-                               varUsedMap_t &deps);
+      varUsedMap_t findDependenciesFor(statement &s,
+                                       const int flags = parserInfo::checkSubStatements);
+
+      void findDependenciesFor(statement &s,
+                               varUsedMap_t &deps,
+                               const int flags = parserInfo::checkSubStatements);
 
       statementVector_t newKernelsFromLoops(statement &sKernel,
                                             statementVector_t &omLoops,

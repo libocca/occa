@@ -2276,8 +2276,8 @@ namespace occa {
         varUsedMapVector_t varDeps(kernelCount);
 
         for(int k = 0; k < kernelCount; ++k)
-          varDeps[k] = findDependenciesFor(sKernel,
-                                           *(omLoops[k]));
+          varDeps[k] = findKernelDependenciesFor(sKernel,
+                                                 *(omLoops[k]));
 
         statementVector_t newKernels = newKernelsFromLoops(sKernel,
                                                            omLoops,
@@ -2368,19 +2368,49 @@ namespace occa {
       }
     }
 
-    varUsedMap_t parserBase::findDependenciesFor(statement &sKernel,
-                                                 statement &omLoop){
+    varUsedMap_t parserBase::findKernelDependenciesFor(statement &sKernel,
+                                                       statement &omLoop){
+      varInfoVector_t depsIgnored;
       varUsedMap_t deps;
 
-      findDependenciesFor(sKernel, omLoop, omLoop, deps);
+      findDependenciesFor(omLoop, deps);
+
+      varUsedMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        statement &varOrigin = *(it->second.value);
+
+        if((&varOrigin   == &sKernel)    ||
+           (varOrigin.up == globalScope) ||
+           (&varOrigin   == &omLoop)     ||
+           (varOrigin.insideOf(omLoop))){
+
+          depsIgnored.push_back(it->first);
+        }
+
+        ++it;
+      }
+
+      const int ignoredCount = depsIgnored.size();
+
+      for(int i = 0; i < ignoredCount; ++i)
+        deps.erase(depsIgnored[i]);
 
       return deps;
     }
 
-    void parserBase::findDependenciesFor(statement &sKernel,
-                                         statement &omLoop,
-                                         statement &s,
-                                         varUsedMap_t &deps){
+    varUsedMap_t parserBase::findDependenciesFor(statement &s,
+                                                 const int flags){
+      varUsedMap_t deps;
+
+      findDependenciesFor(s, deps, flags);
+
+      return deps;
+    }
+
+    void parserBase::findDependenciesFor(statement &s,
+                                         varUsedMap_t &deps,
+                                         const int flags){
 
       expNode &flatRoot = *(s.expRoot.makeFlatHandle());
 
@@ -2399,26 +2429,21 @@ namespace occa {
 
           statement &varOrigin = *(globalScope->getVarOriginStatement(var));
 
-          if((&varOrigin   == &sKernel)    ||
-             (varOrigin.up == globalScope) ||
-             (&varOrigin   == &omLoop)     ||
-             (varOrigin.insideOf(omLoop))){
-
-            continue;
-          }
-
           deps[&var].value = &varOrigin;
         }
       }
 
       expNode::freeFlatHandle(flatRoot);
 
+      if((flags & parserInfo::checkSubStatements) == 0)
+        return;
+
       statementNode *statementPos = s.statementStart;
 
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        findDependenciesFor(sKernel, omLoop, s2, deps);
+        findDependenciesFor(s2, deps, flags);
 
         statementPos = statementPos->right;
       }

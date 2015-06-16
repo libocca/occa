@@ -128,9 +128,12 @@ namespace occa {
                                                                     parserNS::statement &s);
 
   namespace parserInfo {
-    static const int nothing        = 0;
-    static const int parsingC       = (1 << 0);
-    static const int parsingFortran = (1 << 1);
+    static const int nothing            = 0;
+    static const int parsingC           = (1 << 0);
+    static const int parsingFortran     = (1 << 1);
+
+    //---[ Check Flags ]------
+    static const int checkSubStatements = (1 << 0);
   };
 
   namespace parserNS {
