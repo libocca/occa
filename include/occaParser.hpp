@@ -208,6 +208,8 @@ namespace occa {
                            statementVector_t &newKernels);
 
       void zeroOccaIdsFrom(statement &s);
+
+      void addNestedKernelArgTo(statement &sKernel);
       //   =============================
 
       static int getKernelOuterDim(statement &s);

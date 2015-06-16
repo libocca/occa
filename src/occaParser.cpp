@@ -344,8 +344,10 @@ namespace occa {
           int pos;
 
           if(macroMap.find(name) == macroMap.end()){
+            macroInfo tmpMacro;
+
             pos = macros.size();
-            macros.push_back( macroInfo() );
+            macros.push_back(tmpMacro);
             macroMap[name] = pos;
           }
           else
@@ -410,7 +412,7 @@ namespace occa {
 
           leafPos = allExp.insertExpAt(includeExpRoot, leafPos + 1);
 
-          delete includeExpRoot.leaves;
+          includeExpRoot.free();
 
           return (state | forceLineRemoval);
         }
@@ -2470,6 +2472,8 @@ namespace occa {
                                     "occaParallelFor0");
       }
 
+      addNestedKernelArgTo(sKernel);
+
       return newKernels;
     }
 
@@ -2600,18 +2604,6 @@ namespace occa {
 
       sHost.loadAllFromNode(allExp);
 
-      // Add nestedKernels argument
-      varInfo &nestedKernelsArg = *(new varInfo());
-      expNode nkNode = sKernel.createPlainExpNodeFrom("int *nestedKernels");
-      nestedKernelsArg.loadFrom(nkNode);
-
-      typeInfo &occaKernelType = *(new typeInfo);
-      occaKernelType.name      = "occa::kernel";
-
-      nestedKernelsArg.baseType = &occaKernelType;
-
-      sKernel.addFunctionArg(1, nestedKernelsArg);
-
       // Change outer and inner types to occa::dim
       varInfo &outerVar = *(sHost.hasVariableInScope("outer"));
       varInfo &innerVar = *(sHost.hasVariableInScope("inner"));
@@ -2674,6 +2666,20 @@ namespace occa {
       }
 
       expNode::freeFlatHandle(flatRoot);
+    }
+
+    void parserBase::addNestedKernelArgTo(statement &sKernel){
+      // Add nestedKernels argument
+      varInfo &nestedKernelsArg = *(new varInfo());
+      expNode nkNode = sKernel.createPlainExpNodeFrom("int *nestedKernels");
+      nestedKernelsArg.loadFrom(nkNode);
+
+      typeInfo &occaKernelType = *(new typeInfo);
+      occaKernelType.name      = "occa::kernel";
+
+      nestedKernelsArg.baseType = &occaKernelType;
+
+      sKernel.addFunctionArg(1, nestedKernelsArg);
     }
 
     int parserBase::getKernelOuterDim(statement &s){
@@ -2842,12 +2848,12 @@ namespace occa {
       s.expRoot[0].info |= expType::type;
 
       // Swap and free old expNode
-      expNode *tmp = &(origin.expRoot[0]);
+      // expNode *tmp = &(origin.expRoot[0]); [--]
 
       expNode::swap(origin.expRoot, origin.expRoot[0]);
       expNode::swap(origin.expRoot, s.expRoot);
 
-      delete tmp;
+      // delete tmp; [--] ?
       //================================
 
       if(s.expRoot.lastLeaf()->value != ";")
