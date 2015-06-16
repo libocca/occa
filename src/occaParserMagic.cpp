@@ -489,7 +489,7 @@ namespace occa {
       // e2.print();
 #endif
 
-      expVec_t strideNodes;
+      expVector_t strideNodes;
       magician::placeAddedExps(*db, e2, strideNodes);
 
       indices = strideNodes.size();
@@ -2568,16 +2568,16 @@ namespace occa {
     }
 
     //---[ Helper Functions ]---------
-    void magician::placeAddedExps(infoDB_t &db, expNode &e, expVec_t &addedExps){
+    void magician::placeAddedExps(infoDB_t &db, expNode &e, expVector_t &addedExps){
       placeExps(db, e, addedExps, "+-");
     }
 
-    void magician::placeMultExps(infoDB_t &db, expNode &e, expVec_t &multExps){
+    void magician::placeMultExps(infoDB_t &db, expNode &e, expVector_t &multExps){
       placeExps(db, e, multExps, "*");
     }
 
-    void magician::placeExps(infoDB_t &db, expNode &e, expVec_t &exps, const std::string &delimiters){
-      expVec_t opNodes;
+    void magician::placeExps(infoDB_t &db, expNode &e, expVector_t &exps, const std::string &delimiters){
+      expVector_t opNodes;
 
       if(!expHasOp(e, delimiters))
         exps.push_back(&e);
@@ -2585,7 +2585,7 @@ namespace occa {
         opNodes.push_back(&e);
 
       while(opNodes.size()){
-        expVec_t opNodes2;
+        expVector_t opNodes2;
         const int snc = opNodes.size();
 
         for(int i = 0; i < snc; ++i){
@@ -2693,7 +2693,7 @@ namespace occa {
       if(e.leafCount <= 1)
         return;
 
-      expVec_t sums, sums2;
+      expVector_t sums, sums2;
 
       typeHolder constValue = 0;
       bool hasConst = false;
@@ -2776,7 +2776,7 @@ namespace occa {
       if(!(e.info & expType::LR))
         return;
 
-      expVec_t v, v2, constValues;
+      expVector_t v, v2, constValues;
 
       v.push_back(&e);
 
@@ -2862,12 +2862,12 @@ namespace occa {
     void magician::mergeVariables(infoDB_t &db, expNode &e){
       std::cout << "mergeVariables\n";
 
-      expVec_t sums, *mults;
+      expVector_t sums, *mults;
       placeAddedExps(db, e, sums);
 
       const int sumCount = (int) sums.size();
 
-      mults = new expVec_t[sumCount];
+      mults = new expVector_t[sumCount];
 
       printf("-----------------------------------\n");
       for(int i = 0; i < sumCount; ++i){
@@ -2877,22 +2877,22 @@ namespace occa {
       }
 
       for(int i1 = 0; i1 < sumCount; ++i1){
-        expVec_t &mult1 = mults[i1];
-        expVec_t iter1  = iteratorsIn(db, mult1);
+        expVector_t &mult1 = mults[i1];
+        expVector_t iter1  = iteratorsIn(db, mult1);
 
         if(iter1.size() == 0)
           continue;
 
         for(int i2 = (i1 + 1); i2 < sumCount; ++i2){
-          expVec_t &mult2 = mults[i2];
-          expVec_t iter2  = iteratorsIn(db, mult2);
+          expVector_t &mult2 = mults[i2];
+          expVector_t iter2  = iteratorsIn(db, mult2);
 
           if(iter2.size() == 0)
             continue;
 
           if(iteratorsMatch(iter1, iter2)){
-            expVec_t nonIter1 = removeItersFromExpVec(mult1, iter1);
-            expVec_t nonIter2 = removeItersFromExpVec(mult2, iter2);
+            expVector_t nonIter1 = removeItersFromExpVec(mult1, iter1);
+            expVector_t nonIter2 = removeItersFromExpVec(mult2, iter2);
 
             printf("HERE\n");
             expNode::printVec(mult1);
@@ -2955,7 +2955,7 @@ namespace occa {
     void magician::expandMult(infoDB_t &db, expNode &e){
       const std::string op = e.value;
 
-      expVec_t a, b;
+      expVector_t a, b;
       expNode tmp;
 
       placeAddedExps(db, e[0], a);
@@ -3031,8 +3031,8 @@ namespace occa {
       expNode::swap(e, leaf);
     }
 
-    expVec_t magician::iteratorsIn(infoDB_t &db, expVec_t &v){
-      expVec_t iterV;
+    expVector_t magician::iteratorsIn(infoDB_t &db, expVector_t &v){
+      expVector_t iterV;
 
       const int vCount = (int) v.size();
 
@@ -3061,7 +3061,7 @@ namespace occa {
       return iterV;
     }
 
-    bool magician::iteratorsMatch(expVec_t &a, expVec_t &b){
+    bool magician::iteratorsMatch(expVector_t &a, expVector_t &b){
       const int aCount = (int) a.size();
       const int bCount = (int) b.size();
 
@@ -3108,11 +3108,11 @@ namespace occa {
       return true;
     }
 
-    expVec_t magician::removeItersFromExpVec(expVec_t &v, expVec_t &iters){
+    expVector_t magician::removeItersFromExpVec(expVector_t &v, expVector_t &iters){
       const int vCount    = (int) v.size();
       const int iterCount = (int) iters.size();
 
-      expVec_t ret;
+      expVector_t ret;
 
       if(iters.size() == 0)
         return ret;;
@@ -3176,15 +3176,15 @@ namespace occa {
       return ret;
     }
 
-    void magician::multiplyExpVec(expVec_t &v, expNode &e){
+    void magician::multiplyExpVec(expVector_t &v, expNode &e){
       applyOpToExpVec(v, e, "*");
     }
 
-    void magician::sumExpVec(expVec_t &v, expNode &e){
+    void magician::sumExpVec(expVector_t &v, expNode &e){
       applyOpToExpVec(v, e, "+");
     }
 
-    void magician::applyOpToExpVec(expVec_t &v, expNode &e, const std::string &op){
+    void magician::applyOpToExpVec(expVector_t &v, expNode &e, const std::string &op){
       const int vCount = (int) v.size();
       expNode *cNode = &e;
 

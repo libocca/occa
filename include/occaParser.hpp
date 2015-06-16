@@ -217,6 +217,7 @@ namespace occa {
                            statementVector_t &newKernels);
 
       void zeroOccaIdsFrom(statement &s);
+      void zeroOccaIdsFrom(expNode &e);
 
       void addNestedKernelArgTo(statement &sKernel);
       //   =============================

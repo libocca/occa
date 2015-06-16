@@ -116,8 +116,8 @@ namespace occa {
   typedef std::map<int,bool>                              idDepMap_t;
   typedef idDepMap_t::iterator                            idDepMapIterator;
 
-  typedef std::vector<parserNS::expNode*>                 expVec_t;
-  typedef expVec_t::iterator                              expVecIterator;
+  typedef std::vector<parserNS::expNode*>                 expVector_t;
+  typedef expVector_t::iterator                           expVectorIterator;
 
   typedef void (parserNS::parserBase::*applyToAllStatements_t)(parserNS::statement &s);
 

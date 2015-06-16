@@ -993,17 +993,19 @@ namespace occa {
 
       removeIntraLoopDepsFromIterExp(s);
 
+      std::string setupAttr = "@isAnOccaIterExp";
+
       if(opStride != "1"){
         ss << setupExp;
 
         ss << ' '
            << opSign
-           << " (" << occaIdName << " * (" << opStride << "));";
+           << " (" << occaIdName << " * (" << opStride << ")) " << setupAttr << ";";
       }
       else{
         ss << setupExp;
 
-        ss << ' ' << opSign << ' ' << occaIdName << ';';
+        ss << ' ' << opSign << ' ' << occaIdName << ' ' << setupAttr << ';';
       }
 
       varInfo &iterVar = *(s.hasVariableInScope(iter));
@@ -1041,7 +1043,10 @@ namespace occa {
 
     void parserBase::removeIntraLoopDepsFromIterExp(statement &s){
       expNode &occaIterExp = s.attribute("occaIterExp").valueExp();
+      expNode &flatRoot = *(occaIterExp.makeFlatHandle());
+
       varUsedMap_t deps;
+      expVector_t leavesToRemove;
 
       findDependenciesFor(occaIterExp, deps);
 
@@ -1051,14 +1056,48 @@ namespace occa {
         varInfo   &var       = *(it->first);
         statement &varOrigin = *(it->second.value);
 
-        if(varOrigin.info == smntType::occaFor){
-          // std::cout << "[" << var << "].origin = " << varOrigin.onlyThisToString() << '\n';
+        if(!varOrigin.hasAttribute("isAnOccaIterExp")){
+          ++it;
+          continue;
+        }
+
+        expNode &initNode = *(varOrigin.getDeclarationVarInitNode(0));
+
+        for(int i = 0; i < flatRoot.leafCount; ++i){
+          expNode &leaf = flatRoot[i];
+
+          // [---] Temporary fix
+          if(((leaf.info & expType::varInfo) == 0) ||
+             (leaf.getVarInfo().name != var.name)){
+
+            continue;
+          }
+
+          expNode &leafUp   = *(leaf.up);
+          const int leafPos = leaf.whichLeafAmI();
+
+          leavesToRemove.push_back(&leaf);
+
+          expNode &newLeaf = *(initNode.clonePtr());
+          zeroOccaIdsFrom(newLeaf);
+
+          leafUp.setLeaf(newLeaf, leafPos);
         }
 
         ++it;
       }
-    }
 
+      expNode::freeFlatHandle(flatRoot);
+
+      const int leavesToRemoveCount = (int) leavesToRemove.size();
+
+      for(int i = 0; i < leavesToRemoveCount; ++i){
+        expNode *leaf = leavesToRemove[i];
+
+        leaf->free();
+        delete leaf;
+      }
+    }
 
     bool parserBase::statementIsOccaOuterFor(statement &s){
       if(s.info == smntType::occaFor){
@@ -2712,7 +2751,11 @@ namespace occa {
     }
 
     void parserBase::zeroOccaIdsFrom(statement &s){
-      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
+      zeroOccaIdsFrom(s.expRoot);
+    }
+
+    void parserBase::zeroOccaIdsFrom(expNode &e){
+      expNode &flatRoot = *(e.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
         if(((flatRoot[i].info & expType::presetValue) &&

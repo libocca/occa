@@ -329,7 +329,6 @@ namespace occa {
 
     // @(attributes)
     void expNode::loadAttributes(){
-      return;
       int leafPos = 0;
 
       while(leafPos < leafCount){
@@ -1699,7 +1698,7 @@ namespace occa {
           const bool reorder = var.idxOrdering.size();
 
           expNode &csvFlatRoot = *(arrNode.makeCsvFlatHandle());
-          expVec_t indices;
+          expVector_t indices;
 
           OCCA_CHECK(dims != 0,
                      "Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute");
@@ -2017,7 +2016,7 @@ namespace occa {
                            << *(leaf.up) << "]");
               }
 
-              expVec_t indices;
+              expVector_t indices;
 
               // Feed the indices backwards
               for(int i = 0; i < entries; ++i){
@@ -3703,7 +3702,7 @@ namespace occa {
       };
     }
 
-    void expNode::printVec(expVec_t &v){
+    void expNode::printVec(expVector_t &v){
       const int vCount = (int) v.size();
 
       for(int i = 0; i < vCount; ++i)
