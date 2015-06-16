@@ -179,27 +179,12 @@ namespace occa {
 
       sInfo->labelStatement(allExp, expPos, parsingLanguage);
 
-      const int expEnd = expPos;
-
-      if(sInfo->info & (smntType::forStatement     |
-                        smntType::whileStatement   |
-                        smntType::doWhileStatement |
-                        smntType::ifStatement      |
-                        smntType::elseIfStatement  |
-                        smntType::elseStatement    |
-                        smntType::switchStatement  |
-                        smntType::functionDefinition)){
-
-        // @(attributes)
-        loadAttributes(allExp, expPos);
-      }
-
       expNode *firstLeaf = this;
 
       // expPos is not included, it starts the next expNode tree
       if((1 < (expPos - expStart)) ||
          (0 < allExp[expStart].leafCount)){
-        useExpLeaves(allExp, expStart, (expEnd - expStart));
+        useExpLeaves(allExp, expStart, (expPos - expStart));
         firstLeaf = leaves[0];
       }
       else{
@@ -338,12 +323,13 @@ namespace occa {
           loadAttributes(*this, leafPos);
 
           removeNodes(leafStart, leafPos - leafStart);
+          leafPos = leafStart;
 
-          leafPos = (leafStart - 1);
+          continue;
         }
 
         ++leafPos;
-      };
+      }
     }
 
     // @(attributes)
@@ -441,6 +427,9 @@ namespace occa {
       if(leafCount == 0)
         return;
 
+      // @(attributes)
+      loadAttributes();
+
       if(parsingLanguage & parserInfo::parsingC)
         organizeLeaves();
       else
@@ -505,7 +494,7 @@ namespace occa {
           for(int j = sExpStart; j < sExpEnd; ++j)
             expNode::swap(*leaf.leaves[j - sExpStart + 1], *leaves[j]);
 
-          leaf.organizeLeaves();
+          leaf.organize();
         }
 
         if(leafPos < leafCount)
@@ -1222,9 +1211,6 @@ namespace occa {
       }
 
       //---[ Level 0 ]------
-      // @(attributes)
-      loadAttributes();
-
       // [a][::][b]
       mergeNamespaces();
 
@@ -1699,6 +1685,9 @@ namespace occa {
 
           expNode &csvFlatRoot = *(arrNode.makeCsvFlatHandle());
           expVector_t indices;
+
+          if(dims == 0)
+            print();
 
           OCCA_CHECK(dims != 0,
                      "Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute");

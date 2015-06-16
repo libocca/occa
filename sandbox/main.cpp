@@ -11,9 +11,9 @@ int main(int argc, char **argv){
   std::string parsedContent;
 
   // parsedContent = parser.parseFile("tests/easy.c");
-  // parsedContent = parser.parseFile("tests/test.cpp");
+  parsedContent = parser.parseFile("tests/test.cpp");
   // parsedContent = parser.parseFile("tests/test2.cpp");
-  parsedContent = parser.parseFile("tests/scratch.okl");
+  // parsedContent = parser.parseFile("tests/scratch.okl");
   // parsedContent = parser.parseFile("tests/pwdg.okl");
   // parsedContent = parser.parseFile("tests/openclTest.cpp");
   // parsedContent = parser.parseFile("tests/cudaTest.cpp");

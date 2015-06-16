@@ -368,6 +368,7 @@ namespace occa {
 
       bool isConst();
 
+      void printDebugInfo();
       std::string toString(const bool printType = true);
 
       operator std::string ();

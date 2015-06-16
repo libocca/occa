@@ -158,7 +158,7 @@ namespace occa {
 
         attrNode.copyAndUseExpLeaves(expRoot,
                                      leafStart, (leafPos - leafStart));
-        attrNode.organizeLeaves();
+        attrNode.organize();
 
         attribute_t &attr = *(new attribute_t(attrNode[0]));
 
@@ -176,7 +176,7 @@ namespace occa {
             attrRoot[i].info |= expType::attribute;
         }
 
-        attrRoot.organizeLeaves();
+        attrRoot.organize();
 
         expNode &csvFlatRoot = *(attrRoot[0].makeCsvFlatHandle());
 
@@ -1834,6 +1834,10 @@ namespace occa {
       }
 
       return false;
+    }
+
+    void varInfo::printDebugInfo(){
+      std::cout << toString(true) << ' ' << attributeMapToString(attributeMap) << '\n';
     }
 
     std::string varInfo::toString(const bool printType){

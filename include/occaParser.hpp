@@ -136,8 +136,8 @@ namespace occa {
                                statementVector_t &loopsToReorder);
       //   =============================
 
-      void retagAutoOccaLoops();
-      void retagAutoOccaLoops(statement &s);
+      void retagOccaLoops();
+      void retagOccaLoops(statement &s);
 
       void splitTileOccaFors(statement &s);
 

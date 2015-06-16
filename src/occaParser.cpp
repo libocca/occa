@@ -64,7 +64,7 @@ namespace occa {
       // throw 1;
 
       reorderLoops();
-      retagAutoOccaLoops();
+      retagOccaLoops();
 
       applyToAllStatements(*globalScope, &parserBase::splitTileOccaFors);
 
@@ -1046,7 +1046,6 @@ namespace occa {
       expNode &flatRoot = *(occaIterExp.makeFlatHandle());
 
       varUsedMap_t deps;
-      expVector_t leavesToRemove;
 
       findDependenciesFor(occaIterExp, deps);
 
@@ -1076,7 +1075,7 @@ namespace occa {
           expNode &leafUp   = *(leaf.up);
           const int leafPos = leaf.whichLeafAmI();
 
-          leavesToRemove.push_back(&leaf);
+          // leaf.free();
 
           expNode &newLeaf = *(initNode.clonePtr());
           zeroOccaIdsFrom(newLeaf);
@@ -1085,17 +1084,6 @@ namespace occa {
         }
 
         ++it;
-      }
-
-      expNode::freeFlatHandle(flatRoot);
-
-      const int leavesToRemoveCount = (int) leavesToRemove.size();
-
-      for(int i = 0; i < leavesToRemoveCount; ++i){
-        expNode *leaf = leavesToRemove[i];
-
-        leaf->free();
-        delete leaf;
       }
     }
 
@@ -1340,17 +1328,16 @@ namespace occa {
       }
     }
 
-    void parserBase::retagAutoOccaLoops(){
-      retagAutoOccaLoops(*globalScope);
+    void parserBase::retagOccaLoops(){
+      retagOccaLoops(*globalScope);
     }
 
-    void parserBase::retagAutoOccaLoops(statement &s){
+    void parserBase::retagOccaLoops(statement &s){
       if(s.info == smntType::occaFor){
         statementVector_t occaLoops = findOccaLoops(s);
         const int occaLoopCount     = (int) occaLoops.size();
 
         int outerCount = 0;
-        int innerCount = 0;
 
         // Count outer/inner loops
         for(int i = 0; i < occaLoopCount; ++i){
@@ -1364,8 +1351,6 @@ namespace occa {
 
           if(occaTag == "outer")
             ++outerCount;
-          else
-            ++innerCount;
         }
 
         // Reorder tags
@@ -1384,7 +1369,9 @@ namespace occa {
                                   " occaNest = " + nestStr + ")");
           }
           else{
-            std::string nestStr = occa::toString(--innerCount);
+            // innerCount includes itself
+            const int innerCount = (findOccaLoops(occaLoop).size() - 1);
+            std::string nestStr = occa::toString(innerCount);
 
             occaLoop.addAttribute("@(occaTag = inner,"
                                   " occaNest = " + nestStr + ")");
@@ -1408,7 +1395,7 @@ namespace occa {
       statementNode *statementPos = s.statementStart;
 
       while(statementPos){
-        retagAutoOccaLoops(*(statementPos->value));
+        retagOccaLoops(*(statementPos->value));
 
         statementPos = statementPos->right;
       }
@@ -2499,7 +2486,6 @@ namespace occa {
 
     void parserBase::findDependenciesFor(expNode &e,
                                          varUsedMap_t &deps){
-
       expNode &flatRoot = *(e.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
@@ -3610,7 +3596,7 @@ namespace occa {
 
             cNode->addNode();
 
-            expNode &lastExpNode     = cNode->lastNode();
+            expNode &lastExpNode     = (*cNode)[-1];
             std::string &lastNodeStr = lastExpNode.value;
 
             if(delimiterChars){ //---------------------------------------[ 3.1 ]
