@@ -1756,28 +1756,30 @@ namespace occa {
 
       k->nestedKernelCount = k->metaInfo.nestedKernels;
 
-      std::stringstream ss;
-      k->nestedKernels = new kernel[k->metaInfo.nestedKernels];
+      if(k->nestedKernelCount){
+        std::stringstream ss;
+        k->nestedKernels = new kernel[k->nestedKernelCount];
 
-      for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
-        ss << ki;
+        for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
+          ss << ki;
 
-        const std::string sKerName = k->metaInfo.baseName + ss.str();
+          const std::string sKerName = k->metaInfo.baseName + ss.str();
 
-        ss.str("");
+          ss.str("");
 
-        kernel &sKer = k->nestedKernels[ki];
+          kernel &sKer = k->nestedKernels[ki];
 
-        sKer.strMode = strMode;
+          sKer.strMode = strMode;
 
-        sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
-                                                      sKerName,
-                                                      info_);
+          sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
+                                                        sKerName,
+                                                        info_);
 
-        sKer.kHandle->metaInfo               = k->metaInfo;
-        sKer.kHandle->metaInfo.name          = sKerName;
-        sKer.kHandle->metaInfo.nestedKernels = 0;
-        sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
+          sKer.kHandle->metaInfo               = k->metaInfo;
+          sKer.kHandle->metaInfo.name          = sKerName;
+          sKer.kHandle->metaInfo.nestedKernels = 0;
+          sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
+        }
       }
     }
     else{

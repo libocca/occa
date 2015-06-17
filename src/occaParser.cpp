@@ -2284,7 +2284,6 @@ namespace occa {
 
           info.name     = kernel.name;
           info.baseName = info.name;
-          info.nestedKernels.push_back(&s);
 
           if(kernel.argumentCount){
             info.argumentInfos.reserve(kernel.argumentCount);
