@@ -1240,8 +1240,8 @@ namespace occa {
 
       const int rlCount = (int) relatedLoops.size();
 
-      intVector_t rOrder(rlCount);
-      intVector_t rInvOrder(rlCount);
+      intVector_t oldTo(rlCount);
+      intVector_t newFrom(rlCount);
 
       for(int i = 0; i < rlCount; ++i){
         statement &s      = *(loopsToReorder[relatedLoops[i]]);
@@ -1249,22 +1249,25 @@ namespace occa {
 
         s.removeAttribute("loopOrder");
 
-        const int loopPos      = atoi(attr[attr.argCount - 1].value);
-        rOrder[i]              = (rlCount - loopPos - 1);
-        rInvOrder[ rOrder[i] ] = i;
+        const int loopPos   = atoi(attr[attr.argCount - 1].value);
+        oldTo[i]            = (rlCount - loopPos - 1);
+        newFrom[ oldTo[i] ] = i;
       }
 
       for(int i = 0; i < rlCount; ++i){
-        const int i2 = rInvOrder[i];
+        const int to   = i;
+        const int from = newFrom[i];
 
-        if(i2 == i)
+        if(from == to)
           continue;
 
-        swapValues(rOrder[i]   , rOrder[i2]);
-        swapValues(rInvOrder[i], rInvOrder[i2]);
+        newFrom[ oldTo[i] ] = from;
+        oldTo[ from ]       = oldTo[i];
 
-        statement::swapStatementNodesFor(*(loopsToReorder[relatedLoops[i]]),
-                                         *(loopsToReorder[relatedLoops[i2]]));
+        statement::swapStatementNodesFor(*(loopsToReorder[relatedLoops[to]]),
+                                         *(loopsToReorder[relatedLoops[from]]));
+
+        swapValues(relatedLoops[to], relatedLoops[from]);
       }
 
       for(int i = start; i < end; ++i){
