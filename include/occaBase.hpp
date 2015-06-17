@@ -84,6 +84,10 @@ namespace occa {
   extern bool verboseCompilation_f;
 
   void setVerboseCompilation(const bool value);
+
+  namespace flags {
+    extern const int checkCacheDir;
+  };
   //==============================================
 
 

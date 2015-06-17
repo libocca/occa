@@ -53,9 +53,6 @@ namespace occa {
   typedef parserNS::node<parserNS::statement*>            statementNode;
   typedef parserNS::node<parserNS::varInfo*>              varInfoNode;
 
-  typedef std::vector<int>                                intVector_t;
-  typedef std::vector<intVector_t>                        intVecVector_t;
-  typedef std::vector<std::string>                        stringVector_t;
   typedef std::vector<parserNS::statement*>               statementVector_t;
   typedef std::vector<statementNode*>                     statementNodeVector_t;
   typedef std::vector<parserNS::varInfo*>                 varInfoVector_t;

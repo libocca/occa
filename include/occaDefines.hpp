@@ -339,4 +339,16 @@
 #  define OCCA_COI_CHECK( _str , _statement ) do { _statement; } while(0);
 #endif
 //======================================
+
+
+//---[ Typedefs ]-----------------------
+#include <vector>
+
+namespace occa {
+  typedef std::vector<int>          intVector_t;
+  typedef std::vector<intVector_t>  intVecVector_t;
+  typedef std::vector<std::string>  stringVector_t;
+};
+//======================================
+
 #endif

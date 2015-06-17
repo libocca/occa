@@ -19,6 +19,10 @@ namespace occa {
   void setVerboseCompilation(const bool value){
     verboseCompilation_f = value;
   }
+
+  namespace flags {
+    const int checkCacheDir = (1 << 0);
+  };
   //==================================
 
 
@@ -1663,7 +1667,7 @@ namespace occa {
                              const std::string &functionName,
                              const kernelInfo &info_){
 
-    if(fileExists(str))
+    if(sys::fileExists(str, flags::checkCacheDir))
       return buildKernelFromSource(str, functionName, info_);
     else
       return buildKernelFromString(str, functionName, info_);
@@ -1673,7 +1677,10 @@ namespace occa {
                                        const std::string &functionName,
                                        const int language){
 
-    return buildKernelFromString(content, functionName, defaultKernelInfo, language);
+    return buildKernelFromString(content,
+                                 functionName,
+                                 defaultKernelInfo,
+                                 language);
   }
 
   kernel device::buildKernelFromString(const std::string &content,
@@ -1685,38 +1692,42 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    const std::string cachedBinary = getContentCachedName(content, dHandle->getInfoSalt(info));
+    const std::string hash = getFileContentHash(content,
+                                                dHandle->getInfoSalt(info));
 
-    std::string prefix, cacheName;
+    const std::string hashDir = hashDirFor("", hash);
 
-    getFilePrefixAndName(cachedBinary, prefix, cacheName);
-
-    std::string h_cacheName = prefix + "h_" + cacheName;
+    std::string original = hashDir;
 
     if(language & occa::usingOKL)
-      h_cacheName += ".okl";
+      original += "source.okl";
     else if(language & occa::usingOFL)
-      h_cacheName += ".ofl";
+      original += "source.ofl";
     else
-      h_cacheName += ".occa";
+      original += "source.occa";
 
-    if(!haveFile(h_cacheName)){
-      waitForFile(h_cacheName);
-      waitForFile(cachedBinary);
+    if(!haveHash(hash, 1)){
+      waitForHash(hash, 1);
 
-      return buildKernelFromBinary(cachedBinary, functionName);
+      return buildKernelFromBinary(hashDir + "binary", functionName);
     }
 
-    writeToFile(h_cacheName, content);
-    releaseFile(h_cacheName);
+    writeToFile(original, content);
 
-    return buildKernelFromSource(h_cacheName, functionName, info_);
+    kernel k = buildKernelFromSource(original,
+                                     functionName,
+                                     info_);
+
+    releaseHash(hash, 1);
+
+    return k;
   }
 
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
 
+    const std::string realFilename = sys::getFilename(filename);
     const bool usingParser = fileNeedsParser(filename);
 
     kernel ker;
@@ -1731,34 +1742,40 @@ namespace occa {
 
       kernelInfo info = info_;
 
-      const std::string cachedBinary  = k->getCachedBinaryName(filename, info);
-      const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
+      const std::string hash = getFileContentHash(realFilename,
+                                                  dHandle->getInfoSalt(info));
 
-      k->metaInfo = parseFileForFunction(filename,
-                                         cachedBinary,
+      const std::string hashDir    = hashDirFor(realFilename, hash);
+      const std::string parsedFile = hashDir + "source.occa";
+      const std::string binaryFile = hashDir + "binary";
+
+      k->metaInfo = parseFileForFunction(realFilename,
+                                         parsedFile,
                                          functionName,
                                          info_);
 
       info = defaultKernelInfo;
       info.addDefine("OCCA_LAUNCH_KERNEL", 1);
 
-      struct stat buffer;
-      bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-      if(fileExists){
+      if(sys::fileExists(binaryFile)){
         if(verboseCompilation_f)
-          std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+          std::cout << "Found cached binary of ["
+                    << filename << "] in ["
+                    << binaryFile << "]\n";
 
-        k->buildFromBinary(cachedBinary, functionName);
+        k->buildFromBinary(binaryFile, functionName);
       }
       else
-        k->buildFromSource(iCachedBinary, functionName, info);
+        k->buildFromSource(parsedFile, functionName, info);
 
       k->nestedKernelCount = k->metaInfo.nestedKernels;
 
       if(k->nestedKernelCount){
         std::stringstream ss;
         k->nestedKernels = new kernel[k->nestedKernelCount];
+
+        const int vc_f = verboseCompilation_f;
+        verboseCompilation_f = false;
 
         for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
           ss << ki;
@@ -1771,7 +1788,7 @@ namespace occa {
 
           sKer.strMode = strMode;
 
-          sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
+          sKer.kHandle = dHandle->buildKernelFromSource(parsedFile,
                                                         sKerName,
                                                         info_);
 
@@ -1780,10 +1797,14 @@ namespace occa {
           sKer.kHandle->metaInfo.nestedKernels = 0;
           sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
         }
+
+        verboseCompilation_f = vc_f;
       }
     }
     else{
-      k          = dHandle->buildKernelFromSource(filename, functionName, info_);
+      k = dHandle->buildKernelFromSource(realFilename,
+                                         functionName,
+                                         info_);
       k->dHandle = dHandle;
     }
 
@@ -1796,7 +1817,8 @@ namespace occa {
 
     ker.strMode = strMode;
 
-    ker.kHandle          = dHandle->buildKernelFromBinary(filename, functionName);
+    ker.kHandle          = dHandle->buildKernelFromBinary(filename,
+                                                          functionName);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
@@ -1805,7 +1827,10 @@ namespace occa {
   void device::cacheKernelInLibrary(const std::string &filename,
                                     const std::string &functionName,
                                     const kernelInfo &info_){
-    dHandle->cacheKernelInLibrary(filename, functionName, info_);
+
+    dHandle->cacheKernelInLibrary(filename,
+                                  functionName,
+                                  info_);
   }
 
   kernel device::loadKernelFromLibrary(const char *cache,
@@ -1814,7 +1839,8 @@ namespace occa {
 
     ker.strMode = strMode;
 
-    ker.kHandle          = dHandle->loadKernelFromLibrary(cache, functionName);
+    ker.kHandle          = dHandle->loadKernelFromLibrary(cache,
+                                                          functionName);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
@@ -1835,24 +1861,23 @@ namespace occa {
                                       const kernelInfo &info_,
                                       const int useLoopyOrFloopy){
 
-    std::string cachedBinary = getCachedName(filename, dHandle->getInfoSalt(info_));
+    const std::string realFilename = sys::getFilename(filename);
 
-    struct stat buffer;
-    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+    const std::string hash = getFileContentHash(realFilename,
+                                                dHandle->getInfoSalt(info_));
 
-    if(fileExists){
+    const std::string hashDir    = hashDirFor("", hash);
+    const std::string binaryFile = hashDir + "binary";
+
+    if(!haveHash(hash, 2)){
       if(verboseCompilation_f)
-        std::cout << "Found loo.py cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found loo.py cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildKernelFromBinary(cachedBinary, functionName);
+      return buildKernelFromBinary(binaryFile, functionName);
     }
 
-    std::string prefix, cacheName;
-
-    getFilePrefixAndName(cachedBinary, prefix, cacheName);
-
-    const std::string defsFile = prefix + "loopy1_" + cacheName + ".defs";
-    const std::string clFile = prefix + "loopy2_" + cacheName + ".ocl";
+    const std::string defsFile = hashDir + "loopy.defs";
+    const std::string clFile   = hashDir + "loopy.cl";
 
     writeToFile(defsFile, info_.header);
 
@@ -1863,10 +1888,11 @@ namespace occa {
 
     std::stringstream command;
 
-    command << "loopy --lang=" << loopyLang
+    command << "loopy"
+            << " --lang="         << loopyLang
             << " --occa-defines=" << defsFile << ' '
             << " --occa-add-dummy-arg "
-            << filename << ' ' << clFile;
+            << realFilename << ' ' << clFile;
 
     const std::string &sCommand = command.str();
 
@@ -1882,7 +1908,11 @@ namespace occa {
     if(compileError)
       OCCA_CHECK(false, "Compilation error");
 
-    return buildKernelFromSource(clFile, functionName);
+    kernel k = buildKernelFromSource(clFile, functionName);
+
+    releaseHash(hash, 2);
+
+    return k;
   }
 
   memory device::wrapMemory(void *handle_,
