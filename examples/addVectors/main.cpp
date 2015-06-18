@@ -56,7 +56,7 @@ int main(int argc, char **argv){
   o_ab = device.malloc(entries*sizeof(float));
 
   // OKL: OCCA Kernel Language
-  addVectors = device.buildKernelFromSource("[test]/addVectors.okl",
+  addVectors = device.buildKernelFromSource("addVectors.okl",
                                             "addVectors");
 
   // OFL: OCCA Fortran Language
