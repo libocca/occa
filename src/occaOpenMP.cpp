@@ -889,6 +889,7 @@ namespace occa {
   void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
                                               const std::string &functionName,
                                               const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -925,15 +926,19 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName){
+#if 0
     kernel_v *k = new kernel_t<OpenMP>;
     k->dHandle = this;
     k->loadFromLibrary(cache, functionName);
     return k;
+#endif
+    return NULL;
   }
 
   template <>

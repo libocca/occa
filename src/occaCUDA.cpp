@@ -1164,6 +1164,7 @@ namespace occa {
   void device_t<CUDA>::cacheKernelInLibrary(const std::string &filename,
                                             const std::string &functionName,
                                             const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -1196,11 +1197,13 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
   kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
                                                   const std::string &functionName){
+#if 0
     OCCA_EXTRACT_DATA(CUDA, Device);
 
     kernel_v *k = new kernel_t<CUDA>;
@@ -1215,6 +1218,8 @@ namespace occa {
 
     k->loadFromLibrary(cache, functionName);
     return k;
+#endif
+    return NULL;
   }
 
   template <>
