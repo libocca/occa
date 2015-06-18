@@ -283,8 +283,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(cachedBinary, true);
-    data_.handle   = cpu::dlsym(data_.dlHandle, cachedBinary, functionName, true);
+    data_.dlHandle = cpu::dlopen(cachedBinary, hash);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
     releaseFile(cachedBinary);
 
@@ -298,8 +298,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(filename, false);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName, false);
+    data_.dlHandle = cpu::dlopen(filename);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName);
 
     return this;
   }

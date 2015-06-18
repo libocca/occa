@@ -555,7 +555,7 @@ namespace occa {
                             const std::string &hashDir,
                             const kernelInfo &info){
 
-    const std::string sourceFile = hashDir + "source";
+    const std::string sourceFile = hashDir + "source.occa";
 
     if(sys::fileExists(sourceFile))
       return;

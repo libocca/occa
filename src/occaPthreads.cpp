@@ -158,7 +158,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
     data_.dlHandle = cpu::dlopen(binaryFile, hash);
-    data_.handle   = cpu::dlsym(data_.dlHandle, binaryFile, functionName, hash);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dHandle)->data);
 
@@ -187,7 +187,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
     data_.dlHandle = cpu::dlopen(filename);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName);
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dHandle)->data);
 

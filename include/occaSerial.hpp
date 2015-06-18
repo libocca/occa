@@ -85,7 +85,6 @@ namespace occa {
                  const std::string &hash = "");
 
     void* dlsym(void *dlHandle,
-                const std::string &filename,
                 const std::string &functionName,
                 const std::string &hash = "");
   };

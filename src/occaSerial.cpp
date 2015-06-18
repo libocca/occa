@@ -478,7 +478,6 @@ namespace occa {
     }
 
     void* dlsym(void *dlHandle,
-                const std::string &filename,
                 const std::string &functionName,
                 const std::string &hash){
 
@@ -497,7 +496,6 @@ namespace occa {
       void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
       if((sym == NULL) && (0 < hash.size())){
-        releaseHash(hash, 0);
 
         OCCA_CHECK(false,
                    "Error loading symbol from binary with GetProcAddress");
@@ -590,7 +588,7 @@ namespace occa {
 
     const std::string hash       = hashFrom(filename);
     const std::string hashDir    = hashDirFor(filename, hash);
-    const std::string sourceFile = hashDir + "source.cpp";
+    const std::string sourceFile = hashDir + "source.occa";
     const std::string binaryFile = hashDir + "binary";
 
     if(!haveHash(hash, 0)){
@@ -666,7 +664,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(Serial, Kernel);
 
     data_.dlHandle = cpu::dlopen(binaryFile, hash);
-    data_.handle   = cpu::dlsym(data_.dlHandle, binaryFile, functionName, hash);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
     releaseHash(hash, 0);
 
@@ -681,7 +679,7 @@ namespace occa {
     OCCA_EXTRACT_DATA(Serial, Kernel);
 
     data_.dlHandle = cpu::dlopen(filename);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName);
 
     return this;
   }
