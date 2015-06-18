@@ -52,8 +52,8 @@ namespace occa {
       const std::string testFilename = (testDir  + "ompTest.cpp");
       const std::string infoFilename = (testDir  + "ompTestFor_" + safeCompiler);
 
-      if(!haveFile(testFilename)){
-        waitForFile(testFilename);
+      if(!haveHash(hash)){
+        waitForHash(hash);
       }
       else{
         if(!sys::fileExists(testFilename)){
