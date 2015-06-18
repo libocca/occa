@@ -8,7 +8,7 @@ namespace occa {
 #if (OCCA_OS & LINUX_OS)
       std::stringstream ss;
 
-      ss << "echo \"(. " << getOCCADir() << "/scripts/shellTools.sh; " << command << " '" << field << "')\" | bash";
+      ss << "echo \"(. " << env::OCCA_DIR << "/scripts/shellTools.sh; " << command << " '" << field << "')\" | bash";
 
       std::string sCommand = ss.str();
 
