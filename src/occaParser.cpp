@@ -2559,7 +2559,7 @@ namespace occa {
         newKernelVar.name = kernelBaseName + occa::toString(k);
 
         addDepStatementsToKernel(newSKernel, deps);
-        addDepsToKernelArguments(newKernelVar, deps);
+        addDepsToKernelArguments(newSKernel, deps);
         addArgQualifiersTo(newSKernel);
 
         statement &sLaunch = launchStatementForKernel(sKernel,
@@ -2622,20 +2622,26 @@ namespace occa {
       }
     }
 
-    void parserBase::addDepsToKernelArguments(varInfo &kernelVar,
+    void parserBase::addDepsToKernelArguments(statement &sKernel,
                                               varUsedMap_t &deps){
 
-      int argPos = kernelVar.argumentCount;
+      varInfo &kernelVar = *(sKernel.getFunctionVar());
+      int argPos         = kernelVar.argumentCount;
+
+      varToVarMap_t v2v;
 
       varUsedMapIterator it = deps.begin();
 
       while(it != deps.end()){
         varInfo &var = *(it->first);
 
+        v2v[&var] = var.clonePtr();
         kernelVar.addArgument(argPos++, var);
 
         ++it;
       }
+
+      sKernel.replaceVarInfos(v2v);
     }
 
     statement& parserBase::launchStatementForKernel(statement &sKernel,

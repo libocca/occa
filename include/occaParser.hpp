@@ -209,7 +209,7 @@ namespace occa {
       void addDepStatementsToKernel(statement &sKernel,
                                     varUsedMap_t &deps);
 
-      void addDepsToKernelArguments(varInfo &kernelVar,
+      void addDepsToKernelArguments(statement &sKernel,
                                     varUsedMap_t &deps);
 
       statement& launchStatementForKernel(statement &sKernel,

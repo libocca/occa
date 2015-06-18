@@ -709,6 +709,9 @@ namespace occa {
                             varUsedMap_t &usedMap,
                             statement *origin);
 
+      // Swap variable varInfo*
+      void replaceVarInfos(varToVarMap_t &v2v);
+
       void addStatement(statement *newStatement);
       void removeStatement(statement &s);
 
