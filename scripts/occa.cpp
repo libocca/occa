@@ -3,8 +3,15 @@
 void printHelp();
 
 void runHelp(const std::string &cmd);
+
+void runClearOn(const std::string &path);
+void runClearCache();
+void runClearLocks();
+
 void runEnv();
+
 void runInfo();
+
 void runUpdate(const int argc, std::string *args);
 
 int main(int argc, char **argv){
@@ -23,6 +30,18 @@ int main(int argc, char **argv){
   if(args[0] == "help"){
     if(1 < argc)
       runHelp(args[1]);
+    else
+      printHelp();
+  }
+  else if(args[0] == "clear"){
+    if(1 < argc){
+      if(args[1] == "cache")
+        runClearCache();
+      else if(args[1] == "locks")
+        runClearLocks();
+      else
+        printHelp();
+    }
     else
       printHelp();
   }
@@ -58,7 +77,12 @@ void printHelp(){
 }
 
 void runHelp(const std::string &cmd){
-  if(cmd == "env"){
+  if(cmd == "clear"){
+    std::cout << "  Clears kernels that were cached and compilation locks\n"
+              << "    - occa clear cache\n"
+              << "    - occa clear locks\n";
+  }
+  else if(cmd == "env"){
     std::cout << "  The following are optional environment variables and their use\n"
               << "  Basic:\n"
               << "    - OCCA_CACHE_DIR: Directory where kernels and their compiled binaries are cached\n"
@@ -116,6 +140,47 @@ std::string envEcho(const std::string &arg){
   std::string ret = occa::sys::echo(arg);
 
   return (ret.size() ? ret : "[NOT SET]");
+}
+
+void runClearOn(const std::string &path){
+  std::string input;
+
+  std::cout << "  Removing [" << path << "*], are you sure? [y/n]:  ";
+  std::cin >> input;
+
+  occa::strip(input);
+
+  if(input == "y"){
+    std::string command = "rm -rf " + path + "*";
+    system(command.c_str());
+  }
+  else if(input != "n")
+    std::cout << "  Input must be [y] or [n], ignoring clear command\n";
+}
+
+void runClearCache(){
+  const std::string libPath = occa::env::OCCA_CACHE_DIR + "libraries/";
+  const std::string isoPath = occa::env::OCCA_CACHE_DIR + "isolated/";
+
+  const bool libPathExists = occa::sys::fileExists(libPath);
+  const bool isoPathExists = occa::sys::fileExists(isoPath);
+
+  if(libPathExists)
+    runClearOn(libPath);
+  if(isoPathExists)
+    runClearOn(isoPath);
+
+  if(!libPathExists && !isoPathExists)
+    std::cout << "  Cache is already empty\n";
+}
+
+void runClearLocks(){
+  const std::string lockPath = occa::env::OCCA_CACHE_DIR + "locks/";
+
+  if(occa::sys::fileExists(lockPath))
+    runClearOn(lockPath);
+  else
+    std::cout << "  No locks found\n";
 }
 
 void runEnv(){
