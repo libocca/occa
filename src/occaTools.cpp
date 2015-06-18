@@ -694,7 +694,7 @@ namespace occa {
     int start = (int) hashDir.size();
     int end;
 
-    for(end = start; end < chars; ++end){
+    for(end = (start + 1); end < chars; ++end){
       if(c[end] == '/')
         break;
     }
@@ -721,7 +721,7 @@ namespace occa {
         return (env::OCCA_CACHE_DIR + "isolated/");
     }
 
-    return (env::OCCA_CACHE_DIR + "libraries/" + occaLibName + "/" + hash);
+    return (env::OCCA_CACHE_DIR + "libraries/" + occaLibName + "/" + hash + "/");
   }
   //==============================================
 };
