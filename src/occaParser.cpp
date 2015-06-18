@@ -2662,7 +2662,7 @@ namespace occa {
 
       const int outerDim = 1 + occa::atoi(maxOuterAttr.valueStr());
       const int innerDim = 1 + occa::atoi(maxInnerAttr.valueStr());
-      const int maxDim   = ((outerDim < innerDim) ?
+      const int maxDim   = ((outerDim > innerDim) ?
                             outerDim              :
                             innerDim);
 
