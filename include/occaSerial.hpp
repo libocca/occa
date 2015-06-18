@@ -82,12 +82,12 @@ namespace occa {
     void free(void *ptr);
 
     void* dlopen(const std::string &filename,
-                 const bool releaseWithError);
+                 const std::string &hash = "");
 
     void* dlsym(void *dlHandle,
                 const std::string &filename,
                 const std::string &functionName,
-                const bool releaseWithError);
+                const std::string &hash = "");
   };
   //==================================
 

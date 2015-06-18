@@ -51,6 +51,10 @@ namespace occa {
       const std::string parseFile(const std::string &filename,
                                   const int parsingLanguage_ = parserInfo::parsingC);
 
+      const std::string parseFile(const std::string &header,
+                                  const std::string &filename,
+                                  const int parsingLanguage_ = parserInfo::parsingC);
+
       const std::string parseSource(const char *cRoot);
 
       //---[ Macro Parser Functions ]---

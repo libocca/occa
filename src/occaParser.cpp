@@ -35,6 +35,21 @@ namespace occa {
       magicEnabled               = false;
     }
 
+    const std::string parserBase::parseFile(const std::string &header,
+                                            const std::string &filename_,
+                                            const int parsingLanguage_){
+
+      filename = filename_;
+
+      parsingLanguage = parsingLanguage_;
+      pushLanguage(parsingLanguage);
+
+      std::string content = header;
+      content += readFile(filename);
+
+      return parseSource(content.c_str());
+    }
+
     const std::string parserBase::parseFile(const std::string &filename_,
                                             const int parsingLanguage_){
 

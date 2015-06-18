@@ -22,6 +22,10 @@ namespace occa {
       PWD             = sys::echo("PWD");
       PATH            = sys::echo("PATH");
       LD_LIBRARY_PATH = sys::echo("LD_LIBRARY_PATH");
+
+      endDirWithSlash(HOME);
+      endDirWithSlash(PWD);
+      endDirWithSlash(PATH);
 #endif
 
       // OCCA environment variables
@@ -30,10 +34,6 @@ namespace occa {
 
       OCCA_CHECK(0 < OCCA_DIR.size(),
                  "Environment variable [OCCA_DIR] is not set");
-
-      endDirWithSlash(HOME);
-      endDirWithSlash(PWD);
-      endDirWithSlash(PATH);
 
       endDirWithSlash(OCCA_DIR);
       endDirWithSlash(OCCA_CACHE_DIR);
@@ -74,6 +74,8 @@ namespace occa {
 
       return occaCachePath;
     }
+
+    envInitializer_t envInitializer;
   };
 
   namespace sys {
@@ -95,6 +97,8 @@ namespace occa {
     }
 
     int mkdir(const std::string &dir){
+      errno = 0;
+
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       return ::mkdir(dir.c_str(), 0755);
 #else
@@ -179,7 +183,7 @@ namespace occa {
 
       for(int dir = 0; dir < dirCount; ++dir){
         ret += slash;
-        ret += dir;
+        ret += path[dir];
       }
 
       return ret;
@@ -197,7 +201,7 @@ namespace occa {
       if(chars == 0)
         return;
 
-      // Relative path
+      // Starts at home
       if((c[0] == '~') &&
          ((c[1] == '/') || (c[1] == '\0'))){
 
@@ -225,7 +229,8 @@ namespace occa {
           absolutePathVec(env::PWD, pathVec);
         }
       }
-      else {
+      // Relative path
+      else if(c[0] != '/'){
         absolutePathVec(env::PWD, pathVec);
       }
 
@@ -443,6 +448,8 @@ namespace occa {
   void writeToFile(const std::string &filename,
                    const std::string &content){
 
+    sys::mkpath(getFileDirectory(filename));
+
     FILE *fp = fopen(filename.c_str(), "w");
 
     OCCA_CHECK(fp != 0,
@@ -465,9 +472,10 @@ namespace occa {
   bool haveHash(const std::string &hash, const int depth){
     std::string lockDir = getFileLock(hash, depth);
 
+    sys::mkpath(env::OCCA_CACHE_DIR + "locks/");
+
     int mkdirStatus = sys::mkdir(lockDir);
 
-    // Someone else is making it
     if(mkdirStatus && (errno == EEXIST))
       return false;
 
@@ -502,28 +510,19 @@ namespace occa {
                                         const std::string &functionName,
                                         const kernelInfo &info){
 
-#if 0
     parser fileParser;
 
-    int parsingLanguage;
+    int parsingLanguage = ((getFileExtension(filename) != "ofl") ?
+                           parserInfo::parsingC                  :
+                           parserInfo::parsingFortran);
 
-    if(getFileExtension(filename) != "ofl")
-      parsingLanguage = parserInfo::parsingC;
-    else
-      parsingLanguage = parserInfo::parsingFortran;
+    sys::mkpath(getFileDirectory(parsedFile));
 
     std::ofstream fs;
-    fs.open(pCachedBinary.c_str());
-
-    fs << info.header << readFile(filename);
-
-    fs.close();
-    fs.clear();
-
-    fs.open(iCachedBinary.c_str());
-    fs << info.occaKeywords << fileParser.parseFile(pCachedBinary,
+    fs.open(parsedFile.c_str());
+    fs << info.occaKeywords << fileParser.parseFile(info.header,
+                                                    filename,
                                                     parsingLanguage);
-
     fs.close();
 
     kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
@@ -536,7 +535,6 @@ namespace occa {
                "Could not find function ["
                << functionName << "] in file ["
                << filename     << "]");
-#endif
 
     return parsedKernelInfo();
   }
@@ -559,8 +557,10 @@ namespace occa {
 
     const std::string sourceFile = hashDir + "source";
 
-    if(fileExists(sourceFile))
+    if(sys::fileExists(sourceFile))
       return;
+
+    sys::mkpath(getFileDirectory(filename));
 
     std::ofstream fs;
     fs.open(sourceFile.c_str());
@@ -631,13 +631,15 @@ namespace occa {
   }
 
   std::string getLibraryName(const std::string &filename){
-    if(filename.find(env::OCCA_CACHE_DIR) != 0)
+    const std::string cacheLibraryPath = (env::OCCA_CACHE_DIR + "libraries/");
+
+    if(filename.find(cacheLibraryPath) != 0)
       return "";
 
     const int chars = (int) filename.size();
     const char *c   = filename.c_str();
 
-    int start = (int) env::OCCA_CACHE_DIR.size();
+    int start = (int) cacheLibraryPath.size();
     int end;
 
     for(end = start; end < chars; ++end){
@@ -668,13 +670,21 @@ namespace occa {
   std::string hashDirFor(const std::string &filename,
                          const std::string &hash){
 
-    if(filename.size() == 0)
-      return (env::OCCA_CACHE_DIR + "homeless/" + hash);
+    if(filename.size() == 0){
+      if(hash.size() != 0)
+        return (env::OCCA_CACHE_DIR + "isolated/" + hash + "/");
+      else
+        return (env::OCCA_CACHE_DIR + "isolated/");
+    }
 
     std::string occaLibName = getLibraryName(sys::getFilename(filename));
 
-    if(occaLibName.size() == 0)
-      return (env::OCCA_CACHE_DIR + "homeless/" + hash);
+    if(occaLibName.size() == 0){
+      if(hash.size() != 0)
+        return (env::OCCA_CACHE_DIR + "isolated/" + hash + "/");
+      else
+        return (env::OCCA_CACHE_DIR + "isolated/");
+    }
 
     return (env::OCCA_CACHE_DIR + "libraries/" + occaLibName + "/" + hash);
   }

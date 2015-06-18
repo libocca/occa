@@ -173,7 +173,9 @@ namespace occa {
 
   template <>
   std::string kernel_t<OpenMP>::fixBinaryName(const std::string &filename){
-#if (OCCA_OS & WINDOWS_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return filename;
+#else
     return (filename + ".dll");
 #endif
   }

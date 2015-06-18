@@ -56,6 +56,15 @@ namespace occa {
         dir += '/';
       }
     }
+
+    class envInitializer_t {
+    public:
+      inline envInitializer_t(){
+        env::initialize();
+      }
+    };
+
+    extern envInitializer_t envInitializer;
   };
 
   namespace sys {
@@ -127,9 +136,9 @@ namespace occa {
 
   std::string getFileLock(const std::string &filename, const int n);
 
-  bool haveHash(const std::string &hash, const int depth);
-  void waitForHash(const std::string &hash, const int depth);
-  void releaseHash(const std::string &hash, const int depth);
+  bool haveHash(const std::string &hash, const int depth = 0);
+  void waitForHash(const std::string &hash, const int depth = 0);
+  void releaseHash(const std::string &hash, const int depth = 0);
 
   bool fileNeedsParser(const std::string &filename);
 

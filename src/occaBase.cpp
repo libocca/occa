@@ -1675,14 +1675,14 @@ namespace occa {
 
     const std::string hashDir = hashDirFor("", hash);
 
-    std::string original = hashDir;
+    std::string stringSourceFile = hashDir;
 
     if(language & occa::usingOKL)
-      original += "source.okl";
+      stringSourceFile += "stringSource.okl";
     else if(language & occa::usingOFL)
-      original += "source.ofl";
+      stringSourceFile += "stringSource.ofl";
     else
-      original += "source.occa";
+      stringSourceFile += "stringSource.occa";
 
     if(!haveHash(hash, 1)){
       waitForHash(hash, 1);
@@ -1690,9 +1690,9 @@ namespace occa {
       return buildKernelFromBinary(hashDir + "binary", functionName);
     }
 
-    writeToFile(original, content);
+    writeToFile(stringSourceFile, content);
 
-    kernel k = buildKernelFromSource(original,
+    kernel k = buildKernelFromSource(stringSourceFile,
                                      functionName,
                                      info_);
 

@@ -290,16 +290,18 @@ namespace occa {
       int vendor_ = cpu::vendor::notFound;
 
       const std::string safeCompiler = removeSlashes(compiler);
-      const std::string cacheDir     = getCachePath();
+      const std::string cacheDir     = env::OCCA_CACHE_DIR;
 
-      const std::string testFilename = (cacheDir + std::string("/.compilerVendorTest.cpp"));
-      const std::string infoFilename = (cacheDir + std::string("/.compilerVendorTest_") + safeCompiler);
+      const std::string hash         = "vendorTest";
+      const std::string testDir      = (cacheDir + "testing/compiler/");
+      const std::string testFilename = (testDir  + "vendorTest.cpp");
+      const std::string infoFilename = (testDir  + "testFor_" + safeCompiler);
 
-      if(!haveFile(testFilename)){
-        waitForFile(testFilename);
+      if(!haveHash(hash)){
+        waitForHash(hash);
       }
       else{
-        if(!fileExists(testFilename)){
+        if(!sys::fileExists(testFilename)){
           ss << "int main(int argc, char **argv){\n"
              << "#if defined(__clang__)\n"
              << "  return " << cpu::vendor::b_LLVM << ";\n"
@@ -330,13 +332,15 @@ namespace occa {
              << "  return " << cpu::vendor::b_max << ";\n"
              << "}\n";
 
+          sys::mkpath(testDir);
+
           writeToFile(testFilename, ss.str());
           ss.str("");
         }
 
-        const std::string binaryFilename = (cacheDir + std::string("/.compilerVendorBinary_") + safeCompiler);
+        const std::string binaryFilename = (testDir +  "binaryFor_" + safeCompiler);
 
-        if(!fileExists(infoFilename)){
+        if(!sys::fileExists(infoFilename)){
           ss << compiler
              << ' '
              << testFilename
@@ -359,12 +363,13 @@ namespace occa {
 
           writeToFile(infoFilename, ss.str());
 
-          releaseFile(testFilename);
+          releaseHash(hash);
 
           return vendor_;
         }
-        else
-          releaseFile(testFilename);
+        else {
+          releaseHash(hash);
+        }
       }
 
       ss << readFile(infoFilename);
@@ -447,21 +452,22 @@ namespace occa {
     }
 
     void* dlopen(const std::string &filename,
-                 const bool releaseWithError){
+                 const std::string &hash){
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       void *dlHandle = ::dlopen(filename.c_str(), RTLD_NOW);
 
-      if((dlHandle == NULL) && releaseWithError){
-        releaseFile(filename);
+      if((dlHandle == NULL) && (0 < hash.size())){
+        releaseHash(hash, 0);
+
         OCCA_CHECK(false,
                    "Error loading binary [" << filename << "] with dlopen");
       }
 #else
       void *dlHandle = LoadLibraryA(filename.c_str());
 
-      if((dlHandle == NULL) && releaseWithError){
-        releaseFile(filename);
+      if((dlHandle == NULL) && (0 < hash.size())){
+        releaseHash(hash, 0);
 
         OCCA_CHECK(dlHandle != NULL,
                    "Error loading dll [" << filename << "] (WIN32 error: " << GetLastError() << ")");
@@ -474,23 +480,25 @@ namespace occa {
     void* dlsym(void *dlHandle,
                 const std::string &filename,
                 const std::string &functionName,
-                const bool releaseWithError){
+                const std::string &hash){
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
 
       char *dlError;
 
-      if(((dlError = dlerror()) != NULL) && releaseWithError){
-        releaseFile(filename);
+      if(((dlError = dlerror()) != NULL) && (0 < hash.size())){
+        releaseHash(hash, 0);
+
         OCCA_CHECK(false,
                    "Error loading symbol from binary with dlsym (DL Error: " << dlError << ")");
       }
 #else
       void *sym = GetProcAddress((HMODULE) dlHandle, functionName.c_str());
 
-      if((sym == NULL) && releaseWithError){
-        releaseFile(filename);
+      if((sym == NULL) && (0 < hash.size())){
+        releaseHash(hash, 0);
+
         OCCA_CHECK(false,
                    "Error loading symbol from binary with GetProcAddress");
       }
@@ -565,7 +573,9 @@ namespace occa {
 
   template <>
   std::string kernel_t<Serial>::fixBinaryName(const std::string &filename){
-#if (OCCA_OS & WINDOWS_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return filename;
+#else
     return (filename + ".dll");
 #endif
   }
@@ -578,37 +588,32 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash       = hashFrom(filename);
+    const std::string hashDir    = hashDirFor(filename, hash);
+    const std::string sourceFile = hashDir + "source.cpp";
+    const std::string binaryFile = hashDir + "binary";
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
-    struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
     data = new SerialKernelData_t;
 
-    const std::string iCachedBinary = createIntermediateSource(filename,
-                                                               cachedBinary,
-                                                               info,
-                                                               !useParser);
-
-    const std::string occaDir = getOCCADir();
+    createSourceFileFrom(filename, hashDir, info);
 
     std::stringstream command;
 
@@ -619,26 +624,26 @@ namespace occa {
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary
-            << " -o " << cachedBinary
-            << " -I"  << occaDir << "/include"
-            << " -L"  << occaDir << "/lib -locca"
+            << ' '    << sourceFile
+            << " -o " << binaryFile
+            << " -I"  << env::OCCA_DIR << "/include"
+            << " -L"  << env::OCCA_DIR << "/lib -locca"
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca_d.lib ";
 #  else
-    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca.lib ";
 #  endif
-    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
+    std::string ptLib   = env::OCCA_DIR + "\\lib\\pthreadVC2.lib ";
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\include"
-            << ' '    << iCachedBinary
-            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
+            << " /I"  << env::OCCA_DIR << "\\include"
+            << ' '    << sourceFile
+            << " /link " << occaLib << ptLib << " /OUT:" << binaryFile
             << std::endl;
 #endif
 
@@ -654,16 +659,16 @@ namespace occa {
 #endif
 
     if(compileError){
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
       OCCA_CHECK(false, "Compilation error");
     }
 
     OCCA_EXTRACT_DATA(Serial, Kernel);
 
-    data_.dlHandle = cpu::dlopen(cachedBinary, true);
-    data_.handle   = cpu::dlsym(data_.dlHandle, cachedBinary, functionName, true);
+    data_.dlHandle = cpu::dlopen(binaryFile, hash);
+    data_.handle   = cpu::dlsym(data_.dlHandle, binaryFile, functionName, hash);
 
-    releaseFile(cachedBinary);
+    releaseHash(hash, 0);
 
     return this;
   }
@@ -675,8 +680,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Serial, Kernel);
 
-    data_.dlHandle = cpu::dlopen(filename, false);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName, false);
+    data_.dlHandle = cpu::dlopen(filename);
+    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName);
 
     return this;
   }
@@ -1232,6 +1237,7 @@ namespace occa {
   void device_t<Serial>::cacheKernelInLibrary(const std::string &filename,
                                               const std::string &functionName,
                                               const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -1268,15 +1274,19 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
   kernel_v* device_t<Serial>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName){
+#if 0
     kernel_v *k = new kernel_t<Serial>;
     k->dHandle = this;
     k->loadFromLibrary(cache, functionName);
     return k;
+#endif
+    return NULL;
   }
 
   template <>

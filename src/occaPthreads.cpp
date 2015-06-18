@@ -64,7 +64,9 @@ namespace occa {
 
   template <>
   std::string kernel_t<Pthreads>::fixBinaryName(const std::string &filename){
-#if (OCCA_OS & WINDOWS_OS)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return filename;
+#else
     return (filename + ".dll");
 #endif
   }
@@ -80,7 +82,7 @@ namespace occa {
 
     const std::string hash       = hashFrom(filename);
     const std::string hashDir    = hashDirFor(filename, hash);
-    const std::string sourceFile = hashDir + "source";
+    const std::string sourceFile = hashDir + "source.okl";
     const std::string binaryFile = hashDir + "binary";
 
     if(!haveHash(hash, 0)){
@@ -92,25 +94,18 @@ namespace occa {
       return buildFromBinary(binaryFile, functionName);
     }
 
-    struct stat buffer;
-    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
     data = new PthreadsKernelData_t;
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
-
-    const std::string occaDir = getOCCADir();
+    createSourceFileFrom(filename, hashDir, info);
 
     std::stringstream command;
 
@@ -121,26 +116,26 @@ namespace occa {
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary
-            << " -o " << cachedBinary
-            << " -I"  << occaDir << "/include"
-            << " -L"  << occaDir << "/lib -locca"
+            << ' '    << sourceFile
+            << " -o " << binaryFile
+            << " -I"  << env::OCCA_DIR << "/include"
+            << " -L"  << env::OCCA_DIR << "/lib -locca"
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca_d.lib ";
 #  else
-    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca.lib ";
 #  endif
-    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
+    std::string ptLib   = env::OCCA_DIR + "\\lib\\pthreadVC2.lib ";
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\include"
-            << ' '    << iCachedBinary
-            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
+            << " /I"  << env::OCCA_DIR << "\\include"
+            << ' '    << sourceFile
+            << " /link " << occaLib << ptLib << " /OUT:" << binaryFile
             << std::endl;
 #endif
 
@@ -156,14 +151,14 @@ namespace occa {
 #endif
 
     if(compileError){
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
       OCCA_CHECK(false, "Compilation error");
     }
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
-    data_.dlHandle = cpu::dlopen(cachedBinary, true);
-    data_.handle   = cpu::dlsym(data_.dlHandle, cachedBinary, functionName, true);
+    data_.dlHandle = cpu::dlopen(binaryFile, hash);
+    data_.handle   = cpu::dlsym(data_.dlHandle, binaryFile, functionName, hash);
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dHandle)->data);
 
@@ -179,7 +174,7 @@ namespace occa {
     data_.pendingJobsMutex = &(dData.pendingJobsMutex);
     data_.kernelMutex      = &(dData.kernelMutex);
 
-    releaseFile(cachedBinary);
+    releaseHash(hash, 0);
 
     return this;
   }
@@ -191,8 +186,8 @@ namespace occa {
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);
 
-    data_.dlHandle = cpu::dlopen(filename, false);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName, false);
+    data_.dlHandle = cpu::dlopen(filename);
+    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName);
 
     PthreadsDeviceData_t &dData = *((PthreadsDeviceData_t*) ((device_t<Pthreads>*) dHandle)->data);
 
@@ -879,6 +874,7 @@ namespace occa {
   void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
                                                 const std::string &functionName,
                                                 const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -915,6 +911,7 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
