@@ -164,6 +164,7 @@ namespace occa {
       void updateConstToConstant();
 
       void addArgQualifiers();
+      void addArgQualifiersTo(statement &s);
 
       void floatSharedAndExclusivesUp(statement &s);
       statementNode* appendSharedAndExclusives(statement &s,

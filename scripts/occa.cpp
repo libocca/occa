@@ -162,8 +162,8 @@ void runUpdate(const int argc, std::string *args){
     std::string filename = occa::getOnlyFilename(originalFile);
     std::string newFile  = libDir + filename;
 
-    std::ifstream originalS(originalFile, std::ios::binary);
-    std::ofstream newS(     newFile     , std::ios::binary);
+    std::ifstream originalS(originalFile.c_str(), std::ios::binary);
+    std::ofstream newS(     newFile.c_str()     , std::ios::binary);
 
     newS << originalS.rdbuf();
 

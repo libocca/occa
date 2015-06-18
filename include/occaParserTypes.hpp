@@ -249,6 +249,7 @@ namespace occa {
       varInfo& operator = (const varInfo &var);
 
       varInfo clone();
+      varInfo* clonePtr();
 
       static int variablesInStatement(expNode &expRoot);
 

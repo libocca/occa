@@ -2014,35 +2014,46 @@ namespace occa {
         if((s.info & smntType::functionDefinition) &&
            (s.functionHasQualifier("occaKernel"))){
 
-          const int argc = s.getFunctionArgCount();
-
-          for(int i = 0; i < argc; ++i){
-            varInfo &argVar = *(s.getFunctionArgVar(i));
-
-            if(argVar.pointerCount){
-              if(!argVar.hasQualifier("occaPointer"))
-                argVar.addQualifier("occaPointer", 0);
-            }
-            else{
-              if(!argVar.hasRightQualifier("occaVariable"))
-                argVar.addRightQualifier("occaVariable");
-              if(argVar.hasRightQualifier("&"))
-                argVar.removeRightQualifier("&");
-            }
-          }
-
-          if((s.getFunctionArgCount() == 0) ||
-             (s.getFunctionArgName(0) != "occaKernelInfoArg")){
-
-            varInfo &arg0 = *(new varInfo());
-
-            arg0.name = "occaKernelInfoArg";
-
-            s.addFunctionArg(0, arg0);
-          }
+          addArgQualifiersTo(s);
         }
 
         statementPos = statementPos->right;
+      }
+    }
+
+    void parserBase::addArgQualifiersTo(statement &s){
+      const int argc = s.getFunctionArgCount();
+
+      for(int i = 0; i < argc; ++i){
+        varInfo &argVar = *(s.getFunctionArgVar(i));
+
+        if(argVar.name == "occaKernelInfoArg")
+          continue;
+
+        if(argVar.pointerCount){
+          if(!argVar.hasQualifier("occaPointer"))
+            argVar.addQualifier("occaPointer", 0);
+        }
+        else{
+          if(!argVar.hasQualifier("occaConst"))
+            argVar.addQualifier("occaConst");
+
+          if(!argVar.hasRightQualifier("occaVariable"))
+            argVar.addRightQualifier("occaVariable");
+
+          if(argVar.hasRightQualifier("&"))
+            argVar.removeRightQualifier("&");
+        }
+      }
+
+      if((s.getFunctionArgCount() == 0) ||
+         (s.getFunctionArgName(0) != "occaKernelInfoArg")){
+
+        varInfo &arg0 = *(new varInfo());
+
+        arg0.name = "occaKernelInfoArg";
+
+        s.addFunctionArg(0, arg0);
       }
     }
 
@@ -2549,6 +2560,7 @@ namespace occa {
 
         addDepStatementsToKernel(newSKernel, deps);
         addDepsToKernelArguments(newKernelVar, deps);
+        addArgQualifiersTo(newSKernel);
 
         statement &sLaunch = launchStatementForKernel(sKernel,
                                                       omLoop,
