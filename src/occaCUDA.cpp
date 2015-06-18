@@ -275,37 +275,33 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    const std::string hashDir       = hashDirFor(filename, hash);
+    const std::string sourceFile    = hashDir + kc::sourceFile;
+    const std::string binaryFile    = hashDir + fixBinaryName(kc::binaryFile);
+    const std::string ptxBinaryFile = hashDir + "ptxBinary.o";
 
-      if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-
-      return buildFromBinary(cachedBinary, functionName);
-    }
-
-    struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
-    std::string libPath, soname;
-    getFilePrefixAndName(cachedBinary, libPath, soname);
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-    std::string oCachedBinary = libPath + "o_" + soname + ".o";
+      return buildFromBinary(binaryFile, functionName);
+    }
+
+    createSourceFileFrom(filename, hashDir, info);
 
     std::string archSM = "";
 
@@ -334,8 +330,8 @@ namespace occa {
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
             << ' '          << info.flags
-            << " -x cu -c " << iCachedBinary
-            << " -o "       << oCachedBinary;
+            << " -x cu -c " << sourceFile
+            << " -o "       << ptxBinaryFile;
 
     const std::string &ptxCommand = command.str();
 
@@ -352,12 +348,12 @@ namespace occa {
     command.str("");
 
     command << dHandle->compiler
-            << " -o "       << cachedBinary
+            << " -o "       << binaryFile
             << " -ptx -I."
             << ' '          << dHandle->compilerFlags
             << archSM
             << ' '          << info.flags
-            << " -x cu "    << iCachedBinary;
+            << " -x cu "    << sourceFile;
 
     const std::string &sCommand = command.str();
 
@@ -367,15 +363,15 @@ namespace occa {
     const int compileError = system(sCommand.c_str());
 
     if(compileError){
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
       OCCA_CHECK(false, "Compilation error");
     }
 
     const CUresult moduleLoadError = cuModuleLoad(&data_.module,
-                                                  cachedBinary.c_str());
+                                                  binaryFile.c_str());
 
     if(moduleLoadError)
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
                     moduleLoadError);
@@ -385,12 +381,12 @@ namespace occa {
                                                                 functionName.c_str());
 
     if(moduleGetFunctionError)
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
                     moduleGetFunctionError);
 
-    releaseFile(cachedBinary);
+    releaseHash(hash, 0);
 
     return this;
   }

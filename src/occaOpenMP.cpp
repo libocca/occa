@@ -188,36 +188,34 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    const std::string hashDir    = hashDirFor(filename, hash);
+    const std::string sourceFile = hashDir + kc::sourceFile;
+    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
-    struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
     data = new OpenMPKernelData_t;
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
-
-    const std::string occaDir = getOCCADir();
+    createSourceFileFrom(filename, hashDir, info);
 
     std::stringstream command;
 
@@ -241,27 +239,27 @@ namespace occa {
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary
-            << " -o " << cachedBinary
-            << " -I"  << occaDir << "/include"
-            << " -L"  << occaDir << "/lib -locca"
+            << ' '    << sourceFile
+            << " -o " << binaryFile
+            << " -I"  << env::OCCA_DIR << "/include"
+            << " -L"  << env::OCCA_DIR << "/lib -locca"
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca_d.lib ";
 #  else
-    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca.lib ";
 #  endif
 
-    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
+    std::string ptLib   = env::OCCA_DIR + "\\lib\\pthreadVC2.lib ";
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\include"
-            << ' '    << iCachedBinary
-            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
+            << " /I"  << env::OCCA_DIR << "\\include"
+            << ' '    << sourceFile
+            << " /link " << occaLib << ptLib << " /OUT:" << binaryFile
             << std::endl;
 #endif
 
@@ -277,16 +275,16 @@ namespace occa {
 #endif
 
     if(compileError){
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
       OCCA_CHECK(false, "Compilation error");
     }
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(cachedBinary, hash);
+    data_.dlHandle = cpu::dlopen(binaryFile, hash);
     data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
-    releaseFile(cachedBinary);
+      releaseHash(hash, 0);
 
     return this;
   }
