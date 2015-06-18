@@ -11,6 +11,7 @@ namespace occa {
     std::string PATH, LD_LIBRARY_PATH;
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
+    stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize(){
       if(isInitialized)
@@ -29,8 +30,9 @@ namespace occa {
 #endif
 
       // OCCA environment variables
-      OCCA_DIR       = sys::echo("OCCA_DIR");
-      OCCA_CACHE_DIR = getAndInitCachePath();
+      OCCA_DIR = sys::echo("OCCA_DIR");
+      initCachePath();
+      initIncludePath();
 
       OCCA_CHECK(0 < OCCA_DIR.size(),
                  "Environment variable [OCCA_DIR] is not set");
@@ -41,10 +43,10 @@ namespace occa {
       isInitialized = true;
     }
 
-    std::string getAndInitCachePath(){
-      std::string occaCachePath = sys::echo("OCCA_CACHE_DIR");
+    void initCachePath(){
+      env::OCCA_CACHE_DIR = sys::echo("OCCA_CACHE_DIR");
 
-      if(occaCachePath.size() == 0){
+      if(env::OCCA_CACHE_DIR.size() == 0){
         std::stringstream ss;
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
@@ -58,21 +60,44 @@ namespace occa {
         ss << "_x86";    // use different dir's fro 32 and 64 bit
 #  endif
 #endif
-        occaCachePath = ss.str();
+        env::OCCA_CACHE_DIR = ss.str();
       }
 
-      const int chars = occaCachePath.size();
+      const int chars = env::OCCA_CACHE_DIR.size();
 
       OCCA_CHECK(0 < chars,
                  "Path to the OCCA caching directory is not set properly, "
                  "unset OCCA_CACHE_DIR to use default directory [~/._occa]");
 
-      occaCachePath = sys::getFilename(occaCachePath) + "/";
+      env::OCCA_CACHE_DIR = sys::getFilename(env::OCCA_CACHE_DIR);
 
-      if(!sys::dirExists(occaCachePath))
-        sys::mkpath(occaCachePath);
+      if(!sys::dirExists(env::OCCA_CACHE_DIR))
+        sys::mkpath(env::OCCA_CACHE_DIR);
+    }
 
-      return occaCachePath;
+    void initIncludePath(){
+      std::string oip = sys::echo("OCCA_INCLUDE_PATH");
+
+      const char *cStart = oip.c_str();
+      const char *cEnd;
+
+      stringVector_t tmpOIP;
+
+      while(cStart[0] != '\0'){
+        cEnd = cStart;
+        skipTo(cEnd, ':');
+
+        if(0 < (cEnd - cStart)){
+          std::string newPath(cStart, cEnd - cStart);
+          endDirWithSlash(newPath);
+
+          tmpOIP.push_back(newPath);
+        }
+
+        cStart = (cEnd + (cEnd[0] != '\0'));
+      }
+
+      tmpOIP.swap(env::OCCA_INCLUDE_PATH);
     }
 
     envInitializer_t envInitializer;
@@ -198,6 +223,8 @@ namespace occa {
       const int chars = (int) dir.size();
       const char *c   = dir.c_str();
 
+      bool foundIt = false;
+
       if(chars == 0)
         return;
 
@@ -210,6 +237,7 @@ namespace occa {
         if(c[1] == '\0')
           return;
 
+        foundIt = true;
         c += 2;
       }
       // OCCA path
@@ -223,15 +251,29 @@ namespace occa {
           pathVec.push_back("libraries");
           pathVec.push_back(std::string(c0, c - c0));
 
+          foundIt = true;
           ++c;
         }
-        else {
-          absolutePathVec(env::PWD, pathVec);
-        }
       }
+
       // Relative path
-      else if(c[0] != '/'){
-        absolutePathVec(env::PWD, pathVec);
+      if((!foundIt) &&
+         (c[0] != '/')){
+
+        stringVector_t::iterator it = env::OCCA_INCLUDE_PATH.begin();
+
+        while(it != env::OCCA_INCLUDE_PATH.end()){
+          if(sys::fileExists(*it + dir)){
+            absolutePathVec(*it, pathVec);
+
+            foundIt = true;
+          }
+
+          ++it;
+        }
+
+        if(!foundIt)
+          absolutePathVec(env::PWD, pathVec);
       }
 
       while(c[0] != '\0'){
