@@ -72,6 +72,14 @@ namespace occa {
   class deviceInfo;
   class kernelDatabase;
 
+
+  //---[ Typedefs ]-----------------------
+  typedef std::vector<int>          intVector_t;
+  typedef std::vector<intVector_t>  intVecVector_t;
+  typedef std::vector<std::string>  stringVector_t;
+  //======================================
+
+
   //---[ Globals & Flags ]------------------------
   extern const int parserVersion;
 
