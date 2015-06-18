@@ -11,7 +11,7 @@ int main(int argc, char **argv){
   std::string parsedContent;
 
   // parsedContent = parser.parseFile("tests/easy.c");
-  parsedContent = parser.parseFile("tests/test.cpp");
+  // parsedContent = parser.parseFile("tests/test.cpp");
   // parsedContent = parser.parseFile("tests/test2.cpp");
   // parsedContent = parser.parseFile("tests/scratch.okl");
   // parsedContent = parser.parseFile("tests/pwdg.okl");
@@ -32,8 +32,8 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/scratch.ofl",
   //                                  occa::parsingInfo::parsingFortran);
 
-  // parsedContent = parser.parseFile("tests/addVectors.ofl",
-  //                                  occa::parserInfo::parsingFortran);
+  parsedContent = parser.parseFile("tests/addVectors.ofl",
+                                   occa::parserInfo::parsingFortran);
 
   // parsedContent = parser.parseFile("tests/fakeNuma.ofl",
   //                                  occa::parsingInfo::parsingFortran);
