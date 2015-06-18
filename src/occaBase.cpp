@@ -1637,8 +1637,8 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    const std::string hash = getFileContentHash(content,
-                                                dHandle->getInfoSalt(info));
+    const std::string hash = getContentHash(content,
+                                            dHandle->getInfoSalt(info));
 
     const std::string hashDir = hashDirFor("", hash);
 

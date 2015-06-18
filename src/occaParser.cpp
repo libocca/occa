@@ -2633,10 +2633,11 @@ namespace occa {
       varUsedMapIterator it = deps.begin();
 
       while(it != deps.end()){
-        varInfo &var = *(it->first);
+        varInfo &var  = *(it->first);
+        varInfo &var2 = *(var.clonePtr());
 
-        v2v[&var] = var.clonePtr();
-        kernelVar.addArgument(argPos++, var);
+        v2v[&var] = &var2;
+        kernelVar.addArgument(argPos++, var2);
 
         ++it;
       }
