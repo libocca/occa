@@ -1121,6 +1121,11 @@ namespace occa {
   }
 
   template <>
+  std::string device_t<CUDA>::fixBinaryName(const std::string &filename){
+    return filename;
+  }
+
+  template <>
   kernel_v* device_t<CUDA>::buildKernelFromSource(const std::string &filename,
                                                  const std::string &functionName,
                                                  const kernelInfo &info_){
