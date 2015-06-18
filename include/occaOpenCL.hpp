@@ -71,8 +71,8 @@ namespace occa {
                                 const size_t contentBytes,
                                 const std::string &functionName,
                                 const std::string &flags = "",
-                                const std::string &cachedBinary = "",
-                                const std::string &iCachedBinary = "");
+                                const std::string &hash = "",
+                                const std::string &sourceFile = "");
 
     void buildKernelFromBinary(OpenCLKernelData_t &data_,
                                const unsigned char *content,
@@ -81,7 +81,8 @@ namespace occa {
                                const std::string &flags = "");
 
     void saveProgramBinary(OpenCLKernelData_t &data_,
-                           const std::string &cachedBinary);
+                           const std::string &binaryFile,
+                           const std::string &hash = "");
 
     bool imageFormatIsSupported(cl_image_format &f,
                                 cl_image_format *fs,
@@ -111,8 +112,7 @@ namespace occa {
   kernel_t<OpenCL>::kernel_t(const kernel_t<OpenCL> &k);
 
   template <>
-  std::string kernel_t<OpenCL>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_);
+  std::string kernel_t<OpenCL>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,

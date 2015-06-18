@@ -106,8 +106,7 @@ namespace occa {
   kernel_t<Serial>::kernel_t(const kernel_t<Serial> &k);
 
   template <>
-  std::string kernel_t<Serial>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_);
+  std::string kernel_t<Serial>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<Serial>* kernel_t<Serial>::buildFromSource(const std::string &filename,

@@ -103,8 +103,7 @@ namespace occa {
   kernel_t<Pthreads>::kernel_t(const kernel_t<Pthreads> &k);
 
   template <>
-  std::string kernel_t<Pthreads>::getCachedBinaryName(const std::string &filename,
-                                                      kernelInfo &info_);
+  std::string kernel_t<Pthreads>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,

@@ -67,9 +67,9 @@ namespace occa {
                  "Path to the OCCA caching directory is not set properly, "
                  "unset OCCA_CACHE_DIR to use default directory [~/._occa]");
 
-      occaCachePath = sys::absolutePath(occaCachePath);
+      occaCachePath = sys::getFilename(occaCachePath);
 
-      if(!dirExists(occaCachePath))
+      if(!sys::dirExists(occaCachePath))
         sys::mkpath(occaCachePath);
 
       return occaCachePath;
@@ -86,31 +86,31 @@ namespace occa {
       return "";
     }
 
-    void rmdir(const std::strin &dir){
+    void rmdir(const std::string &dir){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-      rmdir(dir.c_str());
+      ::rmdir(dir.c_str());
 #else
-      _rmdir(dir.c_str());
+      ::_rmdir(dir.c_str());
 #endif
     }
 
     int mkdir(const std::string &dir){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-      return mkdir(dir.c_str(), 0755);
+      return ::mkdir(dir.c_str(), 0755);
 #else
-      return _mkdir(dir.c_str());
+      return ::_mkdir(dir.c_str());
 #endif
     }
 
-    int mkpath(const std::string &dir){
+    void mkpath(const std::string &dir){
       stringVector_t path;
-      absolutePathVec(filename, path);
+      sys::absolutePathVec(dir, path);
 
       const int dirCount = (int) path.size();
       int makeFrom = -1;
 
       if(dirCount == 0)
-        return "";
+        return;
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       const char slash = '/';
@@ -145,7 +145,7 @@ namespace occa {
     bool dirExists(const std::string &dir){
       struct stat statInfo;
 
-      return ((stat(filename.c_str(), &buffer) == 0) &&
+      return ((stat(dir.c_str(), &statInfo) == 0) &&
               (statInfo.st_mode &S_IFDIR));
     }
 
@@ -161,6 +161,8 @@ namespace occa {
     }
 
     std::string getFilename(const std::string &filename){
+      std::string ret;
+
       stringVector_t path;
       absolutePathVec(filename, path);
 
@@ -179,12 +181,15 @@ namespace occa {
         ret += slash;
         ret += dir;
       }
+
+      return ret;
     }
 
     void absolutePathVec(const std::string &dir_,
                          stringVector_t &pathVec){
 
-      const std::string dir = strip(dir_);
+      std::string dir = dir_;
+      strip(dir);
 
       const int chars = (int) dir.size();
       const char *c   = dir.c_str();
@@ -199,7 +204,7 @@ namespace occa {
         absolutePathVec(env::HOME, pathVec);
 
         if(c[1] == '\0')
-          return pathVec;
+          return;
 
         c += 2;
       }
@@ -236,7 +241,7 @@ namespace occa {
 
         pathVec.push_back(std::string(c0, c - c0));
 
-        if(c[0] != '/0')
+        if(c[0] != '\0')
           ++c;
       }
     }
@@ -472,7 +477,7 @@ namespace occa {
   void waitForHash(const std::string &hash, const int depth){
     struct stat buffer;
 
-    std::string lockDir   = getFileLock(filename, depth);
+    std::string lockDir   = getFileLock(hash, depth);
     const char *c_lockDir = lockDir.c_str();
 
     while(stat(c_lockDir, &buffer) == 0)
@@ -480,7 +485,7 @@ namespace occa {
   }
 
   void releaseHash(const std::string &hash, const int depth){
-    sys::rmdir( getFileLock(filename, depth) );
+    sys::rmdir( getFileLock(hash, depth) );
   }
 
   bool fileNeedsParser(const std::string &filename){
@@ -497,6 +502,7 @@ namespace occa {
                                         const std::string &functionName,
                                         const kernelInfo &info){
 
+#if 0
     parser fileParser;
 
     int parsingLanguage;
@@ -530,6 +536,7 @@ namespace occa {
                "Could not find function ["
                << functionName << "] in file ["
                << filename     << "]");
+#endif
 
     return parsedKernelInfo();
   }
@@ -546,52 +553,26 @@ namespace occa {
     return ret;
   }
 
-#if 0
-  std::string createIntermediateSource(const std::string &filename,
-                                       const std::string &cachedBinary,
-                                       const kernelInfo &info,
-                                       const bool useParser){
-    std::string prefix, name;
-    getFilePrefixAndName(cachedBinary, prefix, name);
+  void createSourceFileFrom(const std::string &filename,
+                            const std::string &hashDir,
+                            const kernelInfo &info){
 
-    const std::string iCachedBinary = prefix + "i_" + name;
+    const std::string sourceFile = hashDir + "source";
 
-    if(fileExists(iCachedBinary))
-      return iCachedBinary;
+    if(fileExists(sourceFile))
+      return;
 
-    if(useParser && fileNeedsParser(filename)){
-      const std::string pCachedBinary = prefix + "p_" + name;
-      parser fileParser;
+    std::ofstream fs;
+    fs.open(sourceFile.c_str());
 
-      std::ofstream fs;
-      fs.open(pCachedBinary.c_str());
+    fs << info.occaKeywords
+       // << "#include \"" << env::OCCA_CACHE_PATH << "/libraries/occa/primitives.hpp\n"
+       << occaVectorDefines
+       << info.header
+       << readFile(filename);
 
-      fs << info.header << readFile(filename);
-
-      fs.close();
-
-      fs.open(iCachedBinary.c_str());
-      fs << info.occaKeywords
-         << occaVectorDefines
-         << fileParser.parseFile(pCachedBinary);
-
-      fs.close();
-    }
-    else{
-      std::ofstream fs;
-      fs.open(iCachedBinary.c_str());
-
-      fs << info.occaKeywords
-         << occaVectorDefines
-         << info.header
-         << readFile(filename);
-
-      fs.close();
-    }
-
-    return iCachedBinary;
+    fs.close();
   }
-  #endif
   //==============================================
 
 
@@ -649,7 +630,7 @@ namespace occa {
     return getContentHash(readFile(filename), salt);
   }
 
-  std::string getOccaLibraryName(const std::string &filename){
+  std::string getLibraryName(const std::string &filename){
     if(filename.find(env::OCCA_CACHE_DIR) != 0)
       return "";
 
@@ -667,13 +648,30 @@ namespace occa {
     return filename.substr(start, end - start);
   }
 
+  std::string hashFrom(const std::string &filename){
+    std::string hashDir = hashDirFor(filename, "");
+
+    const int chars = (int) filename.size();
+    const char *c   = filename.c_str();
+
+    int start = (int) hashDir.size();
+    int end;
+
+    for(end = start; end < chars; ++end){
+      if(c[end] == '/')
+        break;
+    }
+
+    return filename.substr(start, end - start);
+  }
+
   std::string hashDirFor(const std::string &filename,
                          const std::string &hash){
 
     if(filename.size() == 0)
       return (env::OCCA_CACHE_DIR + "homeless/" + hash);
 
-    std::string occaLibName = getOccaLibraryName(sys::getFilename(filename));
+    std::string occaLibName = getLibraryName(sys::getFilename(filename));
 
     if(occaLibName.size() == 0)
       return (env::OCCA_CACHE_DIR + "homeless/" + hash);

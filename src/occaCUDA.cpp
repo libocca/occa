@@ -261,10 +261,8 @@ namespace occa {
   kernel_t<CUDA>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
-                                                  kernelInfo &info_){
-
-    return getCachedName(filename, dHandle->getInfoSalt(info_));
+  std::string kernel_t<CUDA>::fixBinaryName(const std::string &filename){
+    return filename;
   }
 
   template <>

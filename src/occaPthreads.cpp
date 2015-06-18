@@ -63,18 +63,10 @@ namespace occa {
   kernel_t<Pthreads>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<Pthreads>::getCachedBinaryName(const std::string &filename,
-                                                      kernelInfo &info_){
-
-    std::string cachedBinary = getCachedName(filename,
-                                             dHandle->getInfoSalt(info_));
-
+  std::string kernel_t<Pthreads>::fixBinaryName(const std::string &filename){
 #if (OCCA_OS & WINDOWS_OS)
-    // Windows requires .dll extension
-    cachedBinary = cachedBinary + ".dll";
+    return (filename + ".dll");
 #endif
-
-    return cachedBinary;
   }
 
   template <>
@@ -86,15 +78,18 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash       = hashFrom(filename);
+    const std::string hashDir    = hashDirFor(filename, hash);
+    const std::string sourceFile = hashDir + "source";
+    const std::string binaryFile = hashDir + "binary";
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
     struct stat buffer;

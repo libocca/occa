@@ -619,8 +619,7 @@ namespace occa {
 
     virtual inline ~kernel_v(){}
 
-    virtual std::string getCachedBinaryName(const std::string &filename,
-                                            kernelInfo &info_) = 0;
+    virtual std::string fixBinaryName(const std::string &filename) = 0;
 
     virtual kernel_v* buildFromSource(const std::string &filename,
                                       const std::string &functionName_,
@@ -657,8 +656,7 @@ namespace occa {
 
     ~kernel_t();
 
-    std::string getCachedBinaryName(const std::string &filename,
-                                    kernelInfo &info_);
+    std::string fixBinaryName(const std::string &filename);
 
     kernel_t<mode_>* buildFromSource(const std::string &filename,
                                     const std::string &functionName_,
@@ -697,16 +695,6 @@ namespace occa {
     kernel& operator = (const kernel &k);
 
     const std::string& mode();
-
-    kernel& buildFromSource(const std::string &filename,
-                            const std::string &functionName_,
-                            const kernelInfo &info_ = defaultKernelInfo);
-
-    kernel& buildFromBinary(const std::string &filename,
-                            const std::string &functionName_);
-
-    kernel& loadFromLibrary(const char *cache,
-                            const std::string &functionName_);
 
     uintptr_t maximumInnerDimSize();
     int preferredDimSize();

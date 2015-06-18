@@ -383,19 +383,7 @@ namespace occa {
 
           std::string includeFile = getMacroIncludeFile(c);
 
-          if(includeFile[0] == '~'){
-            includeFile = (env::HOME +
-                           includeFile.substr(1, includeFile.size() - 1));
-          }
-          else if(includeFile[0] != '/'){
-            includeFile = findFileInPath(includeFile);
-          }
-          else{
-            std::string prefix = getFilePrefix(filename);
-
-            if(prefix.size())
-              includeFile = findFileInPath(prefix + '/' + includeFile);
-          }
+          includeFile = sys::getFilename(includeFile);
 
           if(includeFile == "")
             return (state | forceLineRemoval);

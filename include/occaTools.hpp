@@ -61,9 +61,9 @@ namespace occa {
   namespace sys {
     std::string echo(const std::string &var);
 
-    int rmdir(const std::string &dir);
+    void rmdir(const std::string &dir);
     int mkdir(const std::string &dir);
-    int mkpath(const std::string &dir);
+    void mkpath(const std::string &dir);
 
     bool dirExists(const std::string &dir);
     bool fileExists(const std::string &filename,
@@ -139,6 +139,10 @@ namespace occa {
                                         const kernelInfo &info);
 
   std::string removeSlashes(const std::string &str);
+
+  void createSourceFileFrom(const std::string &filename,
+                            const std::string &hashDir,
+                            const kernelInfo &info);
   //==============================================
 
 
@@ -159,7 +163,9 @@ namespace occa {
   std::string getFileContentHash(const std::string &content,
                                  const std::string &salt);
 
-  std::string getOccaLibraryName(const std::string &filename);
+  std::string getLibraryName(const std::string &filename);
+
+  std::string hashFrom(const std::string &filename);
 
   std::string hashDirFor(const std::string &filename,
                          const std::string &hash);

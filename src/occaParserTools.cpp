@@ -714,7 +714,7 @@ namespace occa {
 
       std::string fullFilename = std::string(c0, c1 - c0) + filename;
 
-      if(fileExists(fullFilename))
+      if(sys::fileExists(fullFilename))
         return fullFilename;
 
       if(*c1 != '\0')

@@ -599,28 +599,6 @@ namespace occa {
     return strMode;
   }
 
-  kernel& kernel::buildFromSource(const std::string &filename,
-                                  const std::string &functionName_,
-                                  const kernelInfo &info_){
-    kHandle->buildFromSource(filename, functionName_, info_);
-
-    return *this;
-  }
-
-  kernel& kernel::buildFromBinary(const std::string &filename,
-                                  const std::string &functionName_){
-    kHandle->buildFromBinary(filename, functionName_);
-
-    return *this;
-  }
-
-  kernel& kernel::loadFromLibrary(const char *cache,
-                                  const std::string &functionName_){
-    kHandle->loadFromLibrary(cache, functionName_);
-
-    return *this;
-  }
-
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
     for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
@@ -1746,8 +1724,8 @@ namespace occa {
                                                   dHandle->getInfoSalt(info));
 
       const std::string hashDir    = hashDirFor(realFilename, hash);
-      const std::string parsedFile = hashDir + "source.occa";
-      const std::string binaryFile = hashDir + "binary";
+      const std::string parsedFile = hashDir + "parsedSource.occa";
+      const std::string binaryFile = hashDir + k->fixBinaryName("binary");
 
       k->metaInfo = parseFileForFunction(realFilename,
                                          parsedFile,

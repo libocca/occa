@@ -100,8 +100,7 @@ namespace occa {
   kernel_t<CUDA>::kernel_t(const kernel_t<CUDA> &k);
 
   template <>
-  std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
-                                                  kernelInfo &info_);
+  std::string kernel_t<CUDA>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromSource(const std::string &filename,

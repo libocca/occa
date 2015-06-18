@@ -66,6 +66,11 @@ namespace occa {
   kernel_t<HSA>::~kernel_t(){}
 
   template <>
+  std::string kernel_t<HSA>::fixBinaryName(const std::string &filename){
+    return filename;
+  }
+
+  template <>
   std::string kernel_t<HSA>::getCachedBinaryName(const std::string &filename,
                                                  kernelInfo &info_){}
 

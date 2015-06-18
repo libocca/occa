@@ -208,19 +208,12 @@ namespace occa {
   kernel_t<COI>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<COI>::getCachedBinaryName(const std::string &filename,
-                                                 kernelInfo &info_){
-
-    std::string cachedBinary = getCachedName(filename,
-                                             dHandle->getInfoSalt(info_));
-
-    std::string libPath, soname;
-
-    getFilePrefixAndName(cachedBinary, libPath, soname);
-
-    std::string libName = "lib" + soname + ".so";
-
-    return (libPath + libName);
+  std::string kernel_t<COI>::fixBinaryName(const std::string &filename){
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return ("lib" + filename + ".so");
+#else
+    return (filename + ".dll");
+#endif
   }
 
   template <>

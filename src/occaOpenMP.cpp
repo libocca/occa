@@ -172,18 +172,10 @@ namespace occa {
   kernel_t<OpenMP>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_){
-
-    std::string cachedBinary = getCachedName(filename,
-                                             dHandle->getInfoSalt(info_));
-
+  std::string kernel_t<OpenMP>::fixBinaryName(const std::string &filename){
 #if (OCCA_OS & WINDOWS_OS)
-    // Windows requires .dll extension
-    cachedBinary = cachedBinary + ".dll";
+    return (filename + ".dll");
 #endif
-
-    return cachedBinary;
   }
 
   template <>
