@@ -75,8 +75,8 @@ namespace occa {
       loadLanguageTypes();
 
       globalScope->loadAllFromNode(allExp, parsingLanguage);
-      std::cout << (std::string) *globalScope;
-      throw 1;
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       reorderLoops();
       retagOccaLoops();
