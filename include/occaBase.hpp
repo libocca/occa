@@ -158,6 +158,7 @@ namespace occa {
   void free(void *ptr);
   //==============================================
 
+
   //---[ Typedefs ]-------------------------------
   typedef void* stream_t;
 
