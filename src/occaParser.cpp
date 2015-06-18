@@ -3779,6 +3779,13 @@ namespace occa {
       return statement::createExpNodeFrom(source);
     }
 
+    expNode createOrganizedExpNodeFrom(const std::string &source){
+      expNode ret = statement::createExpNodeFrom(source);
+      ret.organize();
+
+      return ret;
+    }
+
     void loadKeywords(const int parsingLanguage_){
       if(parsingLanguage_ & parserInfo::parsingC)
         loadCKeywords();

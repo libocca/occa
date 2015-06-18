@@ -316,6 +316,7 @@ namespace occa {
                            const int parsingLanguage_ = parserInfo::parsingC);
 
     expNode createExpNodeFrom(const std::string &source);
+    expNode createOrganizedExpNodeFrom(const std::string &source);
 
     void loadKeywords(const int parsingLanguage_ = parserInfo::parsingC);
     void loadCKeywords();
