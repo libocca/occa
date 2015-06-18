@@ -91,6 +91,12 @@ namespace occa {
       return pathVec;
     }
   };
+
+  // Kernel Caching
+  namespace kc {
+    extern std::string sourceFile;
+    extern std::string binaryFile;
+  };
   //==================================
 
   class mutex_t {
@@ -125,6 +131,8 @@ namespace occa {
   double currentTime();
 
   //---[ File Functions ]-------------------------
+  std::string getOnlyFilename(const std::string &filename);
+  std::string getPlainFilename(const std::string &filename);
   std::string getFileDirectory(const std::string &filename);
   std::string getFileExtension(const std::string &filename);
 

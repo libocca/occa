@@ -1153,6 +1153,8 @@ namespace occa {
     virtual streamTag tagStream() = 0;
     virtual double timeBetween(const streamTag &startTag, const streamTag &endTag) = 0;
 
+    virtual std::string fixBinaryName(const std::string &filename) = 0;
+
     virtual kernel_v* buildKernelFromSource(const std::string &filename,
                                             const std::string &functionName_,
                                             const kernelInfo &info_ = defaultKernelInfo) = 0;
@@ -1263,6 +1265,8 @@ namespace occa {
 
     streamTag tagStream();
     double timeBetween(const streamTag &startTag, const streamTag &endTag);
+
+    std::string fixBinaryName(const std::string &filename);
 
     kernel_v* buildKernelFromSource(const std::string &filename,
                                     const std::string &functionName,

@@ -579,10 +579,12 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    const std::string hash       = hashFrom(filename);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
+
     const std::string hashDir    = hashDirFor(filename, hash);
-    const std::string sourceFile = hashDir + "source";
-    const std::string binaryFile = hashDir + "binary";
+    const std::string sourceFile = hashDir + kc::sourceFile;
+    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
 
     if(!haveHash(hash, 0)){
       waitForHash(hash, 0);
@@ -1299,6 +1301,11 @@ namespace occa {
                   clReleaseEvent(endTag.clEvent));
 
     return (double) (1.0e-9 * (double)(end - start));
+  }
+
+  template <>
+  std::string device_t<OpenCL>::fixBinaryName(const std::string &filename){
+    return filename;
   }
 
   template <>

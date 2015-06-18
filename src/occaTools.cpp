@@ -251,6 +251,12 @@ namespace occa {
       }
     }
   };
+
+  // Kernel Caching
+  namespace kc {
+    std::string sourceFile = "source.occa";
+    std::string binaryFile = "binary";
+  };
   //==================================
 
   mutex_t::mutex_t(){
@@ -375,22 +381,51 @@ namespace occa {
   }
 
   //---[ File Functions ]-------------------------
+  std::string getOnlyFilename(const std::string &filename){
+    std::string dir = getFileDirectory(filename);
+
+    if(dir.size() < filename.size())
+      return filename.substr(dir.size(), filename.size() - dir.size());
+
+    return "";
+  }
+
+  std::string getPlainFilename(const std::string &filename){
+    std::string ext = getFileExtension(filename);
+    std::string dir = getFileDirectory(filename);
+
+    int start = (int) dir.size();
+    int end = (int) filename.size();
+
+    // For the [/] character
+    if(0 < start)
+      ++start;
+
+    // For the [.ext] extension
+    if(0 < ext.size())
+      end -= (ext.size() - 1);
+
+    return filename.substr(start, end - start);
+  }
+
   std::string getFileDirectory(const std::string &filename){
+    const int chars = (int) filename.size();
+    const char *c   = filename.c_str();
+
     int lastSlash = 0;
-    const int chars = filename.size();
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
     for(int i = 0; i < chars; ++i)
-      if(filename[i] == '/')
+      if(c[i] == '/')
         lastSlash = i;
 #else
     for(int i = 0; i < chars; ++i)
-      if((filename[i] == '/') ||
-         (filename[i] == '\\'))
+      if((c[i] == '/') ||
+         (c[i] == '\\'))
         lastSlash = i;
 #endif
 
-    if(lastSlash || (filename[0] == '/'))
+    if(lastSlash || (c[0] == '/'))
       ++lastSlash;
 
     return filename.substr(0, lastSlash);
@@ -555,12 +590,12 @@ namespace occa {
                             const std::string &hashDir,
                             const kernelInfo &info){
 
-    const std::string sourceFile = hashDir + "source.occa";
+    const std::string sourceFile = hashDir + kc::sourceFile;
 
     if(sys::fileExists(sourceFile))
       return;
 
-    sys::mkpath(getFileDirectory(filename));
+    sys::mkpath(hashDir);
 
     std::ofstream fs;
     fs.open(sourceFile.c_str());

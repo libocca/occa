@@ -586,10 +586,12 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    const std::string hash       = hashFrom(filename);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
+
     const std::string hashDir    = hashDirFor(filename, hash);
-    const std::string sourceFile = hashDir + "source.occa";
-    const std::string binaryFile = hashDir + "binary";
+    const std::string sourceFile = hashDir + kc::sourceFile;
+    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
 
     if(!haveHash(hash, 0)){
       waitForHash(hash, 0);
@@ -1208,6 +1210,15 @@ namespace occa {
   template <>
   double device_t<Serial>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return (endTag.tagTime - startTag.tagTime);
+  }
+
+  template <>
+  std::string device_t<Serial>::fixBinaryName(const std::string &filename){
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return filename;
+#else
+    return (filename + ".dll");
+#endif
   }
 
   template <>

@@ -261,6 +261,9 @@ namespace occa {
   double device_t<Serial>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<Serial>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<Serial>::buildKernelFromSource(const std::string &filename,
                                                     const std::string &functionName_,
                                                     const kernelInfo &info_);

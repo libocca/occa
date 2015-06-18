@@ -268,6 +268,9 @@ namespace occa {
   double device_t<OpenCL>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<OpenCL>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<OpenCL>::buildKernelFromSource(const std::string &filename,
                                                     const std::string &functionName_,
                                                     const kernelInfo &info_);

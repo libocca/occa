@@ -256,6 +256,9 @@ namespace occa {
   double device_t<Pthreads>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<Pthreads>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,
                                                       const std::string &functionName_,
                                                       const kernelInfo &info_);
@@ -316,7 +319,8 @@ namespace occa {
     CPU_SET(data.pinnedCore, &cpuHandle);
 #else
     // NBN: affinity on hyperthreaded multi-socket systems?
-    fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
+    if(data.rank == 0)
+      fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
     // BOOL SetProcessAffinityMask(HANDLE hProcess,DWORD_PTR dwProcessAffinityMask);
 #endif
 

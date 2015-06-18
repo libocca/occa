@@ -290,14 +290,17 @@ namespace occa {
     if(infos.size() == 0)
       return;
 
-    parserNS::expNode n = parserNS::createExpNodeFrom(infos);
-    int leafPos = 0;
+    parserNS::expNode expRoot = parserNS::createExpNodeFrom(infos);
+    expRoot.organize();
 
-    while(leafPos < n.leafCount){
-      std::string &info = n[leafPos].value;
-      std::string value;
+    parserNS::expNode &csvFlatRoot = *(expRoot.makeCsvFlatHandle());
 
-      ++leafPos;
+    for(int i = 0; i < csvFlatRoot.leafCount; ++i){
+      parserNS::expNode &leaf = csvFlatRoot[i];
+
+      std::string &info = (leaf.leafCount ?
+                           leaf[0].value  :
+                           leaf.value);
 
       if((info != "mode")        &&
          (info != "UVA")         &&
@@ -310,53 +313,18 @@ namespace occa {
          (info != "pinnedCores")){
 
         std::cout << "Flag [" << info << "] is not available, skipping it\n";
-
-        while((leafPos < n.leafCount) &&
-              (n[leafPos].value != ",")){
-          ++leafPos;
-        }
-
-        ++leafPos;
-
         continue;
       }
 
-      if(n[leafPos].value == "=")
-        ++leafPos;
-
-      while((leafPos < n.leafCount) &&
-            (n[leafPos].value != ",")){
-
-        std::string &v = n[leafPos].value;
-
-        occa::strip(v);
-
-        if(v.size()){
-          if(segmentPair(v[0]) == 0){
-            value += v;
-            value += ' ';
-          }
-          else if(n[leafPos].leafCount){
-            std::string dv = n[leafPos].toString();
-            occa::strip(dv);
-
-            value += dv;
-            value += ' ';
-          }
-        }
-
-        ++leafPos;
+      if(leaf.value != "="){
+        std::cout << "Flag [" << info << "] was not set, skipping it\n";
+        continue;
       }
 
-      ++leafPos;
-
-      occa::strip(value);
-
-      iMap[info] = value;
-
-      info  = "";
-      value = "";
+      iMap[info] = leaf[1].toString();
     }
+
+    parserNS::expNode::freeFlatHandle(csvFlatRoot);
   }
 
   std::ostream& operator << (std::ostream &out, const argInfoMap &m){
@@ -1687,7 +1655,9 @@ namespace occa {
     if(!haveHash(hash, 1)){
       waitForHash(hash, 1);
 
-      return buildKernelFromBinary(hashDir + "binary", functionName);
+      return buildKernelFromBinary(hashDir +
+                                   dHandle->fixBinaryName(kc::binaryFile),
+                                   functionName);
     }
 
     writeToFile(stringSourceFile, content);
@@ -1718,33 +1688,21 @@ namespace occa {
       k          = new kernel_t<Serial>;
       k->dHandle = new device_t<Serial>();
 
-      kernelInfo info = info_;
-
       const std::string hash = getFileContentHash(realFilename,
-                                                  dHandle->getInfoSalt(info));
+                                                  dHandle->getInfoSalt(info_));
 
       const std::string hashDir    = hashDirFor(realFilename, hash);
       const std::string parsedFile = hashDir + "parsedSource.occa";
-      const std::string binaryFile = hashDir + k->fixBinaryName("binary");
 
       k->metaInfo = parseFileForFunction(realFilename,
                                          parsedFile,
                                          functionName,
                                          info_);
 
-      info = defaultKernelInfo;
+      kernelInfo info = defaultKernelInfo;
       info.addDefine("OCCA_LAUNCH_KERNEL", 1);
 
-      if(sys::fileExists(binaryFile)){
-        if(verboseCompilation_f)
-          std::cout << "Found cached binary of ["
-                    << filename << "] in ["
-                    << binaryFile << "]\n";
-
-        k->buildFromBinary(binaryFile, functionName);
-      }
-      else
-        k->buildFromSource(parsedFile, functionName, info);
+      k->buildFromSource(parsedFile, functionName, info);
 
       k->nestedKernelCount = k->metaInfo.nestedKernels;
 
