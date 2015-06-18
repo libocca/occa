@@ -47,7 +47,7 @@ else
 
 .SUFFIXES:
 
-all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
+all: $(occaLPath)/libocca.so $(occaBPath)/occa $(occaBPath)/occainfo
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) $(sharedFlag) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
@@ -70,6 +70,9 @@ ifeq (coiEnabled, 1)
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
 endif
+
+$(occaBPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(occaLPath)/libocca.so
+	$(compiler) $(compilerFlags) -o $(occaBPath)/occa $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L${OCCA_DIR}/lib -locca
 
 $(occaBPath)/occainfo:$(OCCA_DIR)/scripts/occaInfo.cpp $(occaLPath)/libocca.so
 	$(compiler) $(compilerFlags) -o $(occaBPath)/occainfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links) -L${OCCA_DIR}/lib -locca
