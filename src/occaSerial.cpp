@@ -295,7 +295,7 @@ namespace occa {
       const std::string hash         = "vendorTest";
       const std::string testDir      = (cacheDir + "testing/compiler/");
       const std::string testFilename = (testDir  + "vendorTest.cpp");
-      const std::string infoFilename = (testDir  + "testFor_" + safeCompiler);
+      const std::string infoFilename = (testDir  + "vendorTestFor_" + safeCompiler);
 
       if(!haveHash(hash)){
         waitForHash(hash);
@@ -338,7 +338,7 @@ namespace occa {
           ss.str("");
         }
 
-        const std::string binaryFilename = (testDir +  "binaryFor_" + safeCompiler);
+        const std::string binaryFilename = (testDir +  "vendorBinaryFor_" + safeCompiler);
 
         if(!sys::fileExists(infoFilename)){
           ss << compiler

@@ -45,16 +45,18 @@ namespace occa {
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       const std::string safeCompiler = removeSlashes(compiler);
-      const std::string cacheDir     = getCachePath();
+      const std::string cacheDir     = env::OCCA_CACHE_DIR;
 
-      const std::string testFilename = (cacheDir + "/.ompTest.cpp");
-      const std::string infoFilename = (cacheDir + std::string("/.ompTest_") + safeCompiler);
+      const std::string hash         = "ompTest";
+      const std::string testDir      = (cacheDir + "testing/compiler/");
+      const std::string testFilename = (testDir  + "ompTest.cpp");
+      const std::string infoFilename = (testDir  + "ompTestFor_" + safeCompiler);
 
       if(!haveFile(testFilename)){
         waitForFile(testFilename);
       }
       else{
-        if(!fileExists(testFilename)){
+        if(!sys::fileExists(testFilename)){
           std::string testContent = ("#include <omp.h>\n"
                                      "\n"
                                      "int main(int argc, char **argv){\n"
@@ -68,9 +70,9 @@ namespace occa {
           writeToFile(testFilename, testContent);
         }
 
-        std::string binaryFilename = (getCachePath() + std::string("/.ompBinary_" + safeCompiler));
+        const std::string binaryFilename = (testDir +  "ompBinaryFor_" + safeCompiler);
 
-        if(!fileExists(infoFilename)){
+        if(!sys::fileExists(infoFilename)){
           std::string flag = baseCompilerFlag(vendor_);
           int compileError = 1;
 
@@ -94,12 +96,13 @@ namespace occa {
 
           writeToFile(infoFilename, flag);
 
-          releaseFile(testFilename);
+          releaseHash(hash);
 
           return flag;
         }
-        else
-          releaseFile(testFilename);
+        else {
+          releaseHash(hash);
+        }
       }
 
       return readFile(infoFilename);
