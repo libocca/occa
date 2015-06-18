@@ -33,8 +33,17 @@ int main(int argc, char **argv){
     runInfo();
   }
   else if(args[0] == "update"){
-    runUpdate(argc, args);
+    --argc;
+
+    if(argc < 2)
+      runHelp("update");
+    else
+      runUpdate(argc, args + 1);
   }
+  else
+    printHelp();
+
+  delete [] args;
 
   return 0;
 }
@@ -139,5 +148,26 @@ void runInfo(){
 }
 
 void runUpdate(const int argc, std::string *args){
+  std::string &library = args[0];
+  std::string libDir   = occa::sys::getFilename("[" + library + "]") + "/";
 
+  occa::sys::mkpath(libDir);
+
+  for(int i = 1; i < argc; ++i){
+    std::string originalFile = occa::sys::getFilename(args[i]);
+
+    if(!occa::sys::fileExists(originalFile))
+      continue;
+
+    std::string filename = occa::getOnlyFilename(originalFile);
+    std::string newFile  = libDir + filename;
+
+    std::ifstream originalS(originalFile, std::ios::binary);
+    std::ofstream newS(     newFile     , std::ios::binary);
+
+    newS << originalS.rdbuf();
+
+    originalS.close();
+    newS.close();
+  }
 }

@@ -67,7 +67,7 @@ namespace occa {
                  "Path to the OCCA caching directory is not set properly, "
                  "unset OCCA_CACHE_DIR to use default directory [~/._occa]");
 
-      occaCachePath = sys::getFilename(occaCachePath);
+      occaCachePath = sys::getFilename(occaCachePath) + "/";
 
       if(!sys::dirExists(occaCachePath))
         sys::mkpath(occaCachePath);
@@ -218,7 +218,7 @@ namespace occa {
         skipTo(c, ']');
 
         if(c[0] == ']'){
-          absolutePathVec(env::OCCA_DIR, pathVec);
+          absolutePathVec(env::OCCA_CACHE_DIR, pathVec);
 
           pathVec.push_back("libraries");
           pathVec.push_back(std::string(c0, c - c0));
