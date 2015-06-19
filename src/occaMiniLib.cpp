@@ -6,8 +6,8 @@
   "                        const int count){\n"         \
   "  for(int b = 0; b < count; b += 128; outer){\n"     \
   "    for(int i = b; i < (b + 128); ++i; inner){\n"    \
-  "      if(i < count)"                                 \
-  "        ptr[i] = value;"                             \
+  "      if(i < count)\n"                               \
+  "        ptr[i] = value;\n"                           \
   "    }\n"                                             \
   "  }\n"                                               \
   "}"
@@ -30,7 +30,7 @@ namespace occa {
       *memsetBoolK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(bool, Bool),
                                        "memsetBoolK");
 
-      (*memsetBoolK)(ptr, value, count);
+      (*memsetBoolK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
@@ -53,7 +53,7 @@ namespace occa {
       *memsetCharK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(char, Char),
                                        "memsetCharK");
 
-      (*memsetCharK)(ptr, value, count);
+      (*memsetCharK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
@@ -76,7 +76,7 @@ namespace occa {
       *memsetShortK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(short, Short),
                                         "memsetShortK");
 
-      (*memsetShortK)(ptr, value, count);
+      (*memsetShortK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
@@ -99,7 +99,7 @@ namespace occa {
       *memsetIntK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(int, Int),
                                       "memsetIntK");
 
-      (*memsetIntK)(ptr, value, count);
+      (*memsetIntK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
@@ -122,7 +122,7 @@ namespace occa {
       *memsetLongK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(long, Long),
                                        "memsetLongK");
 
-      (*memsetLongK)(ptr, value, count);
+      (*memsetLongK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
@@ -145,7 +145,7 @@ namespace occa {
       *memsetFloatK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(float, Float),
                                         "memsetFloatK");
 
-      (*memsetFloatK)(ptr, value, count);
+      (*memsetFloatK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
@@ -168,7 +168,7 @@ namespace occa {
       *memsetDoubleK = occa::buildKernel(OCCA_MEMSET_KERNEL_SOURCE(double, Double),
                                          "memsetDoubleK");
 
-      (*memsetDoubleK)(ptr, value, count);
+      (*memsetDoubleK)(ptr, value, (int) count);
 
       verboseCompilation_f = vc;
     }
