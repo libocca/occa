@@ -4612,7 +4612,7 @@ namespace occa {
       if(parsingLanguage & parserInfo::parsingC){
         loadOneStatementFromNode(st, allExp, expPos, parsingLanguage);
 
-        if(st == smntType::whileStatement) {
+        if(st != smntType::whileStatement) {
           bool skipSemicolon = false;
 
           // Re-use the while-loop load
@@ -6118,16 +6118,16 @@ namespace occa {
           statementPos = statementPos->right;
         }
 
-        if((statementStart != NULL) ||
-           (info == smntType::doWhileStatement)){
+        if(statementStart != NULL)
+            ret += tab + "}";
 
-            ret += tab + "}\n";
+        if(info != smntType::doWhileStatement){
+          ret += '\n';
         }
-
-        if(info == smntType::doWhileStatement){
+        else {
           ret += ' ';
           ret += expRoot.toString();
-          ret += ";\n\n";
+          ret += ";\n";
         }
 
         return ret;
