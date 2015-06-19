@@ -5415,6 +5415,34 @@ namespace occa {
         sn.value = origin;
     }
 
+    // Swap variable varInfo*
+    void statement::replaceVarInfos(varToVarMap_t &v2v){
+      expNode &flatRoot = *(expRoot.makeDumbFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if(leaf.info & expType::varInfo){
+          varToVarMapIterator it = v2v.find(&leaf.getVarInfo());
+
+          if(it != v2v.end())
+            leaf.setVarInfo(*(it->second));
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+
+      statementNode *sn = statementStart;
+
+      while(sn){
+        statement &s = *(sn->value);
+
+        s.replaceVarInfos(v2v);
+
+        sn = sn->right;
+      }
+    }
+
     void statement::addStatement(statement *newStatement){
       newStatement->up = this;
 

@@ -164,6 +164,7 @@ namespace occa {
       void updateConstToConstant();
 
       void addArgQualifiers();
+      void addArgQualifiersTo(statement &s);
 
       void floatSharedAndExclusivesUp(statement &s);
       statementNode* appendSharedAndExclusives(statement &s,
@@ -208,7 +209,7 @@ namespace occa {
       void addDepStatementsToKernel(statement &sKernel,
                                     varUsedMap_t &deps);
 
-      void addDepsToKernelArguments(varInfo &kernelVar,
+      void addDepsToKernelArguments(statement &sKernel,
                                     varUsedMap_t &deps);
 
       statement& launchStatementForKernel(statement &sKernel,
@@ -316,6 +317,7 @@ namespace occa {
                            const int parsingLanguage_ = parserInfo::parsingC);
 
     expNode createExpNodeFrom(const std::string &source);
+    expNode createOrganizedExpNodeFrom(const std::string &source);
 
     void loadKeywords(const int parsingLanguage_ = parserInfo::parsingC);
     void loadCKeywords();

@@ -290,8 +290,7 @@ namespace occa {
     if(infos.size() == 0)
       return;
 
-    parserNS::expNode expRoot = parserNS::createExpNodeFrom(infos);
-    expRoot.organize();
+    parserNS::expNode expRoot = parserNS::createOrganizedExpNodeFrom(infos);
 
     parserNS::expNode &csvFlatRoot = *(expRoot.makeCsvFlatHandle());
 
@@ -1638,8 +1637,8 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    const std::string hash = getFileContentHash(content,
-                                                dHandle->getInfoSalt(info));
+    const std::string hash = getContentHash(content,
+                                            dHandle->getInfoSalt(info));
 
     const std::string hashDir = hashDirFor("", hash);
 

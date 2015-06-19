@@ -2014,35 +2014,46 @@ namespace occa {
         if((s.info & smntType::functionDefinition) &&
            (s.functionHasQualifier("occaKernel"))){
 
-          const int argc = s.getFunctionArgCount();
-
-          for(int i = 0; i < argc; ++i){
-            varInfo &argVar = *(s.getFunctionArgVar(i));
-
-            if(argVar.pointerCount){
-              if(!argVar.hasQualifier("occaPointer"))
-                argVar.addQualifier("occaPointer", 0);
-            }
-            else{
-              if(!argVar.hasRightQualifier("occaVariable"))
-                argVar.addRightQualifier("occaVariable");
-              if(argVar.hasRightQualifier("&"))
-                argVar.removeRightQualifier("&");
-            }
-          }
-
-          if((s.getFunctionArgCount() == 0) ||
-             (s.getFunctionArgName(0) != "occaKernelInfoArg")){
-
-            varInfo &arg0 = *(new varInfo());
-
-            arg0.name = "occaKernelInfoArg";
-
-            s.addFunctionArg(0, arg0);
-          }
+          addArgQualifiersTo(s);
         }
 
         statementPos = statementPos->right;
+      }
+    }
+
+    void parserBase::addArgQualifiersTo(statement &s){
+      const int argc = s.getFunctionArgCount();
+
+      for(int i = 0; i < argc; ++i){
+        varInfo &argVar = *(s.getFunctionArgVar(i));
+
+        if(argVar.name == "occaKernelInfoArg")
+          continue;
+
+        if(argVar.pointerCount){
+          if(!argVar.hasQualifier("occaPointer"))
+            argVar.addQualifier("occaPointer", 0);
+        }
+        else{
+          if(!argVar.hasQualifier("occaConst"))
+            argVar.addQualifier("occaConst");
+
+          if(!argVar.hasRightQualifier("occaVariable"))
+            argVar.addRightQualifier("occaVariable");
+
+          if(argVar.hasRightQualifier("&"))
+            argVar.removeRightQualifier("&");
+        }
+      }
+
+      if((s.getFunctionArgCount() == 0) ||
+         (s.getFunctionArgName(0) != "occaKernelInfoArg")){
+
+        varInfo &arg0 = *(new varInfo());
+
+        arg0.name = "occaKernelInfoArg";
+
+        s.addFunctionArg(0, arg0);
       }
     }
 
@@ -2548,7 +2559,8 @@ namespace occa {
         newKernelVar.name = kernelBaseName + occa::toString(k);
 
         addDepStatementsToKernel(newSKernel, deps);
-        addDepsToKernelArguments(newKernelVar, deps);
+        addDepsToKernelArguments(newSKernel, deps);
+        addArgQualifiersTo(newSKernel);
 
         statement &sLaunch = launchStatementForKernel(sKernel,
                                                       omLoop,
@@ -2610,20 +2622,27 @@ namespace occa {
       }
     }
 
-    void parserBase::addDepsToKernelArguments(varInfo &kernelVar,
+    void parserBase::addDepsToKernelArguments(statement &sKernel,
                                               varUsedMap_t &deps){
 
-      int argPos = kernelVar.argumentCount;
+      varInfo &kernelVar = *(sKernel.getFunctionVar());
+      int argPos         = kernelVar.argumentCount;
+
+      varToVarMap_t v2v;
 
       varUsedMapIterator it = deps.begin();
 
       while(it != deps.end()){
-        varInfo &var = *(it->first);
+        varInfo &var  = *(it->first);
+        varInfo &var2 = *(var.clonePtr());
 
-        kernelVar.addArgument(argPos++, var);
+        v2v[&var] = &var2;
+        kernelVar.addArgument(argPos++, var2);
 
         ++it;
       }
+
+      sKernel.replaceVarInfos(v2v);
     }
 
     statement& parserBase::launchStatementForKernel(statement &sKernel,
@@ -2643,7 +2662,7 @@ namespace occa {
 
       const int outerDim = 1 + occa::atoi(maxOuterAttr.valueStr());
       const int innerDim = 1 + occa::atoi(maxInnerAttr.valueStr());
-      const int maxDim   = ((outerDim < innerDim) ?
+      const int maxDim   = ((outerDim > innerDim) ?
                             outerDim              :
                             innerDim);
 
@@ -3777,6 +3796,13 @@ namespace occa {
 
     expNode createExpNodeFrom(const std::string &source){
       return statement::createExpNodeFrom(source);
+    }
+
+    expNode createOrganizedExpNodeFrom(const std::string &source){
+      expNode ret = statement::createExpNodeFrom(source);
+      ret.organize();
+
+      return ret;
     }
 
     void loadKeywords(const int parsingLanguage_){

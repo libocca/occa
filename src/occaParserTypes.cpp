@@ -1030,6 +1030,10 @@ namespace occa {
       return v;
     }
 
+    varInfo* varInfo::clonePtr(){
+      return new varInfo(clone());
+    }
+
     int varInfo::variablesInStatement(expNode &expRoot){
       int argc = 0;
 

@@ -107,6 +107,10 @@ namespace occa {
   typedef attributeMap_t::iterator                        attributeMapIterator;
   typedef attributeMap_t::const_iterator                  cAttributeMapIterator;
 
+  typedef std::map<parserNS::varInfo*,parserNS::varInfo*> varToVarMap_t;
+  typedef varToVarMap_t::iterator                         varToVarMapIterator;
+  typedef varToVarMap_t::const_iterator                   cVarToVarMapIterator;
+
   typedef std::map<parserNS::statement*,int>              statementIdMap_t;
   typedef statementIdMap_t::iterator                      statementIdMapIterator;
 

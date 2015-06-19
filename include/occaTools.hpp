@@ -44,10 +44,12 @@ namespace occa {
     extern std::string PATH, LD_LIBRARY_PATH;
 
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;
+    extern stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize();
 
-    std::string getAndInitCachePath();
+    void initCachePath();
+    void initIncludePath();
 
     inline void endDirWithSlash(std::string &dir){
       if((0 < dir.size()) &&

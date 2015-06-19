@@ -544,6 +544,7 @@ namespace occa {
       expNode createPlainExpNodeFrom(const std::string &source);
 
       void reloadFromSource(const std::string &source);
+
       expNode createOrganizedExpNodeFrom(const std::string &source);
       expNode createOrganizedExpNodeFrom(expNode &allExp,
                                          const int expPos,
@@ -707,6 +708,9 @@ namespace occa {
       void addVariableToMap(varInfo &var,
                             varUsedMap_t &usedMap,
                             statement *origin);
+
+      // Swap variable varInfo*
+      void replaceVarInfos(varToVarMap_t &v2v);
 
       void addStatement(statement *newStatement);
       void removeStatement(statement &s);
