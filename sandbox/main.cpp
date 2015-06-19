@@ -13,13 +13,13 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/easy.c");
   // parsedContent = parser.parseFile("tests/test.cpp");
   // parsedContent = parser.parseFile("tests/test2.cpp");
-  parsedContent = parser.parseFile("tests/scratch.okl");
+  // parsedContent = parser.parseFile("tests/scratch.okl");
   // parsedContent = parser.parseFile("tests/pwdg.okl");
   // parsedContent = parser.parseFile("tests/openclTest.cpp");
   // parsedContent = parser.parseFile("tests/cudaTest.cpp");
   // parsedContent = parser.parseFile("tests/fd2d_cuda.okl");
   // parsedContent = parser.parseFile("tests/midg.okl");
-  // parsedContent = parser.parseFile("tests/cleanTest.c");
+  parsedContent = parser.parseFile("tests/cleanTest.c");
   // parsedContent = parser.parseFile("tests/clangTest.c");
   // parsedContent = parser.parseFile("tests/addVectors.okl");
   // parsedContent = parser.parseFile("tests/PCGpart1.cl");

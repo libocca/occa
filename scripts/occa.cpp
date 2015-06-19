@@ -71,6 +71,7 @@ void printHelp(){
   std::cout << "  For help on a specific command, type:  [occa help <command>]\n"
             << "  Otherwise run a command with:          [occa <command> <arguments>]\n"
             << "  Available commands:\n"
+            << "    - clear\n"
             << "    - env\n"
             << "    - info\n"
             << "    - update <library or application name> <file>[, file2...]\n";

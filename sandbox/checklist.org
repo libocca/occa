@@ -21,29 +21,34 @@
    [ ] Specialized options
 ** Home Page
 * Features missing
-  - Variadic functions and macros
-  - Propagate casting
-  - Functions with default values
+  - Variadic macros
   - ## macros (with spaces)
   - ## inside arguments
-  - extern "C"
   - __PRETTY_FUNCTION__
   - __cplusplus
-  - enum (valued + value-less)
   - __FILE__
   - __LINE__
-  - template <typename or class>
-  - sizeof()
+
   - extern
-  - funcInfo
   - inline
-  - operator [->] ?
-  - this
-  - operator overloading
   - class
+  - this
   - public, private
+  - sizeof()
+  - union, enum, struct, class prototypes
+  - extern "C"
+  - typedef struct t_ {} *t;
+
+  - funcInfo
+  - Propagate casting
+
+  - enum (valued + value-less)
+
+  - Variadic functions
+  - Functions with default values
+  - template <typename or class>
+  - operator [->] ?
+  - operator overloading
   - initializer lists
   - constructor/destructor
   - [::] member variables
-  - typedef struct t_ {} *t;
-  - union, enum, struct, class prototypes
