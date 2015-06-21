@@ -32,8 +32,7 @@ namespace occa {
 
       bool macrosAreInitialized;
 
-      varUsedMap_t varUpdateMap;
-      varUsedMap_t varUsedMap;     // Statements are placed backwards
+      varOriginMap_t varOriginMap;
 
       kernelInfoMap_t kernelInfoMap;
 
@@ -90,11 +89,6 @@ namespace occa {
 
       void applyToAllKernels(statement &s,
                              applyToAllStatements_t func);
-
-      void applyToStatementsDefiningVar(applyToStatementsDefiningVar_t func);
-
-      void applyToStatementsUsingVar(varInfo &info,
-                                     applyToStatementsUsingVar_t func);
 
       static bool statementIsAKernel(statement &s);
 
@@ -187,30 +181,30 @@ namespace occa {
       statementVector_t findOccaLoops(statement &sKernel);
       void findOccaLoops(statement &s, statementVector_t &occaLoops);
 
-      varUsedMap_t findKernelDependenciesFor(statement &sKernel,
-                                             statement &omLoop);
+      varOriginMap_t findKernelDependenciesFor(statement &sKernel,
+                                               statement &omLoop);
 
-      varUsedMap_t findDependenciesFor(statement &s,
-                                       const int flags = parserInfo::checkSubStatements);
+      varOriginMap_t findDependenciesFor(statement &s,
+                                         const int flags = parserInfo::checkSubStatements);
 
       void findDependenciesFor(statement &s,
-                               varUsedMap_t &deps,
+                               varOriginMap_t &deps,
                                const int flags = parserInfo::checkSubStatements);
 
-      varUsedMap_t findDependenciesFor(expNode &e);
+      varOriginMap_t findDependenciesFor(expNode &e);
 
       void findDependenciesFor(expNode &e,
-                               varUsedMap_t &deps);
+                               varOriginMap_t &deps);
 
       statementVector_t newKernelsFromLoops(statement &sKernel,
                                             statementVector_t &omLoops,
-                                            varUsedMapVector_t &varDeps);
+                                            varOriginMapVector_t &varDeps);
 
       void addDepStatementsToKernel(statement &sKernel,
-                                    varUsedMap_t &deps);
+                                    varOriginMap_t &deps);
 
       void addDepsToKernelArguments(statement &sKernel,
-                                    varUsedMap_t &deps);
+                                    varOriginMap_t &deps);
 
       statement& launchStatementForKernel(statement &sKernel,
                                           statement &omLoop,

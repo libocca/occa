@@ -789,7 +789,7 @@ namespace occa {
 
           // Check if it's a function argument
           if(pVar != NULL){
-            statement *s = sInfo->getVarOriginStatement(*pVar);
+            statement *s = sInfo->parser.varOriginMap[pVar];
 
             if(s &&
                (s->info & smntType::functionDefinition)){
@@ -1042,24 +1042,6 @@ namespace occa {
         newExp[2] = sInfo->createOrganizedExpNodeFrom("++" + iter);
       }
 
-      newExp[0].labelUsedVariables();
-      newExp[1].labelUsedVariables();
-      newExp[2].labelUsedVariables();
-
-      varInfo &vDoStart = *(sInfo->hasVariableInScope(doStart));
-      varInfo &vDoEnd   = *(sInfo->hasVariableInScope(doEnd));
-
-      sInfo->addVariableToUsedMap(vDoStart);
-      sInfo->addVariableToUsedMap(vDoEnd);
-
-      if(statementCount == 3){
-        varInfo &vDoStride     = *(sInfo->hasVariableInScope(doStride));
-        varInfo &vDoStrideSign = *(sInfo->hasVariableInScope(doStrideSign));
-
-        sInfo->addVariableToUsedMap(vDoStride);
-        sInfo->addVariableToUsedMap(vDoStrideSign);
-      }
-
       expNode::swap(*this, newExp);
     }
 
@@ -1235,12 +1217,7 @@ namespace occa {
         }
       }
 
-      // Add used vars to varUsedMap
-      if(inRoot)
-        labelUsedVariables();
-
       //---[ Level 1 ]------
-
       // <const int,float>
       mergeTypes();
 
@@ -1533,30 +1510,6 @@ namespace occa {
         }
 
         ++leafPos;
-      }
-    }
-
-    // Add used vars to varUsedMap
-    void expNode::labelUsedVariables(){
-      if(sInfo == NULL)
-        return;
-
-      for(int i = 0; i < leafCount; ++i){
-        expNode &n = *(leaves[i]);
-
-        if(n.hasVariable()){
-          std::string varName = n.getMyVariableName();
-          varInfo &var        = *(sInfo->hasVariableInScope(varName));
-
-          if(((i + 1) < leafCount) &&
-             isAnUpdateOperator(leaves[i + 1]->value)){
-
-            sInfo->addVariableToUpdateMap(var);
-          }
-          else{
-            sInfo->addVariableToUsedMap(var);
-          }
-        }
       }
     }
 
@@ -2218,19 +2171,6 @@ namespace occa {
             newExp.putVarInfo(var);
 
             newExp.info = info;
-
-            if((sInfo        != NULL) &&
-               (newExp.sInfo != NULL)) {
-
-              if((newExp.up != NULL) &&
-                 (!isAnUpdateOperator(newExp.up->value))){
-
-                sInfo->addVariableToUpdateMap(var, newExp.sInfo);
-              }
-              else{
-                sInfo->addVariableToUsedMap(var, newExp.sInfo);
-              }
-            }
           }
         }
         else if(isTypeInfo){
@@ -5296,48 +5236,6 @@ namespace occa {
         ++it;
       }
     }
-
-    void statement::removeFromUpdateMapFor(varInfo &var){
-      removeFromMapFor(var, parser.varUpdateMap);
-    }
-
-    void statement::removeFromUsedMapFor(varInfo &var){
-      removeFromMapFor(var, parser.varUsedMap);
-    }
-
-    void statement::removeFromMapFor(varInfo &var,
-                                     varUsedMap_t &usedMap){
-      varUsedMapIterator it = usedMap.find(&var);
-
-      if(it == usedMap.end())
-        return;
-
-      statementNode *sn = &(it->second);
-
-      while(sn->value == this){
-        if(sn->right != NULL){
-          statementNode *snRight = sn->right;
-
-          sn->value = snRight->value;
-          sn->right = snRight->right;
-
-          delete snRight;
-        }
-        else{
-          sn->value = NULL;
-          return;
-        }
-      }
-
-      sn = sn->right;
-
-      while(sn){
-        if(sn->value == this)
-          popAndGoRight(sn);
-        else
-          sn = sn->right;
-      }
-    }
     //================================
 
     void statement::checkIfVariableIsDefined(varInfo &var,
@@ -5357,15 +5255,6 @@ namespace occa {
                  << *this);
     }
 
-    statement* statement::getVarOriginStatement(varInfo &var){
-      varUsedMapIterator it = parser.varUpdateMap.find(&var);
-
-      if(it == parser.varUpdateMap.end())
-        return NULL;
-
-      return (it->second).value;
-    }
-
     varInfo& statement::addVariable(varInfo &var,
                                     statement *origin){
       varInfo &newVar = *(new varInfo);
@@ -5377,42 +5266,17 @@ namespace occa {
     }
 
     void statement::addVariable(varInfo *var,
-                                statement *origin){
+                                statement *origin_){
       if(var->name.size() == 0)
         return;
+
+      statement *origin = (origin_ == NULL ? this : origin_);
 
       checkIfVariableIsDefined(*var, origin);
 
       scopeVarMap[var->name] = var;
 
-      addVariableToUpdateMap(*var, origin);
-    }
-
-    void statement::addVariableToUpdateMap(varInfo &var,
-                                           statement *origin_){
-
-      statement *origin = (origin_ == NULL ? this : origin_);
-
-      addVariableToMap(var, parser.varUpdateMap, origin);
-    }
-
-    void statement::addVariableToUsedMap(varInfo &var,
-                                         statement *origin_){
-
-      statement *origin = (origin_ == NULL ? this : origin_);
-
-      addVariableToMap(var, parser.varUsedMap, origin);
-    }
-
-    void statement::addVariableToMap(varInfo &var,
-                                     varUsedMap_t &usedMap,
-                                     statement *origin){
-      statementNode &sn = usedMap[&var];
-
-      if(sn.value)
-        lastNode(&sn)->push(origin);
-      else
-        sn.value = origin;
+      parser.varOriginMap[var] = origin;
     }
 
     // Swap variable varInfo*

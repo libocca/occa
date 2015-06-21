@@ -2136,7 +2136,8 @@ namespace occa {
     void varDepGraph::setup(varInfo &var,
                             statement &sBound,
                             statementIdMap_t &idMap){
-      statementNode *originSN = &(sBound.parser.varUpdateMap[&var]);
+      statement     &originS  = *(sBound.parser.varOriginMap[&var]);
+      statementNode *originSN = originS.getStatementNode();
       statementNode *sn       = lastNode(originSN);
 
       const int sID = idMap[&sBound];

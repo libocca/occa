@@ -50,86 +50,88 @@ namespace occa {
   //---[ Info ]-----------------------------------
   typedef uint64_t info_t;
 
-  typedef std::vector<int>                                intVector_t;
-  typedef std::vector<intVector_t>                        intVecVector_t;
-  typedef std::vector<std::string>                        stringVector_t;
-  typedef parserNS::node<parserNS::statement*>            statementNode;
-  typedef parserNS::node<parserNS::varInfo*>              varInfoNode;
+  typedef std::vector<int>                                  intVector_t;
+  typedef std::vector<intVector_t>                          intVecVector_t;
+  typedef std::vector<std::string>                          stringVector_t;
+  typedef parserNS::node<parserNS::statement*>              statementNode;
+  typedef parserNS::node<parserNS::varInfo*>                varInfoNode;
 
-  typedef std::vector<parserNS::statement*>               statementVector_t;
-  typedef std::vector<statementNode*>                     statementNodeVector_t;
-  typedef std::vector<parserNS::varInfo*>                 varInfoVector_t;
-  typedef std::vector<varInfoVector_t>                    varInfoVecVector_t;
+  typedef std::vector<parserNS::statement*>                 statementVector_t;
+  typedef std::vector<statementNode*>                       statementNodeVector_t;
+  typedef std::vector<parserNS::varInfo*>                   varInfoVector_t;
+  typedef std::vector<varInfoVector_t>                      varInfoVecVector_t;
 
-  typedef std::map<std::string,info_t>                    macroMap_t;
-  typedef macroMap_t::iterator                            macroMapIterator;
-  typedef macroMap_t::const_iterator                      cMacroMapIterator;
+  typedef std::map<std::string,info_t>                      macroMap_t;
+  typedef macroMap_t::iterator                              macroMapIterator;
+  typedef macroMap_t::const_iterator                        cMacroMapIterator;
 
-  typedef std::map<std::string,info_t>                    keywordTypeMap_t;
-  typedef keywordTypeMap_t::iterator                      keywordTypeMapIterator;
-  typedef keywordTypeMap_t::const_iterator                cKeywordTypeMapIterator;
+  typedef std::map<std::string,info_t>                      keywordTypeMap_t;
+  typedef keywordTypeMap_t::iterator                        keywordTypeMapIterator;
+  typedef keywordTypeMap_t::const_iterator                  cKeywordTypeMapIterator;
 
-  typedef std::map<parserNS::opHolder,info_t>             opTypeMap_t;
-  typedef opTypeMap_t::iterator                           opTypeMapIterator;
-  typedef opTypeMap_t::const_iterator                     cOpTypeMapIterator;
+  typedef std::map<parserNS::opHolder,info_t>               opTypeMap_t;
+  typedef opTypeMap_t::iterator                             opTypeMapIterator;
+  typedef opTypeMap_t::const_iterator                       cOpTypeMapIterator;
 
-  typedef std::vector<parserNS::typeInfo*>                anonymousTypeMap_t;
+  typedef std::vector<parserNS::typeInfo*>                  anonymousTypeMap_t;
 
-  typedef std::map<std::string,parserNS::typeInfo*>       scopeTypeMap_t;
-  typedef scopeTypeMap_t::iterator                        scopeTypeMapIterator;
-  typedef scopeTypeMap_t::const_iterator                  cScopeTypeMapIterator;
+  typedef std::map<std::string,parserNS::typeInfo*>         scopeTypeMap_t;
+  typedef scopeTypeMap_t::iterator                          scopeTypeMapIterator;
+  typedef scopeTypeMap_t::const_iterator                    cScopeTypeMapIterator;
 
-  typedef std::map<std::string,parserNS::varInfo*>        scopeVarMap_t;
-  typedef scopeVarMap_t::iterator                         scopeVarMapIterator;
-  typedef scopeVarMap_t::const_iterator                   cScopeVarMapIterator;
+  typedef std::map<std::string,parserNS::varInfo*>          scopeVarMap_t;
+  typedef scopeVarMap_t::iterator                           scopeVarMapIterator;
+  typedef scopeVarMap_t::const_iterator                     cScopeVarMapIterator;
 
-  typedef std::map<std::string,parserNS::overloadedOp_t*> opOverloadMaps_t;
-  typedef opOverloadMaps_t::iterator                      opOverloadMapsIterator;
-  typedef opOverloadMaps_t::const_iterator                cOpOverloadMapsIterator;
+  typedef std::map<std::string,parserNS::overloadedOp_t*>   opOverloadMaps_t;
+  typedef opOverloadMaps_t::iterator                        opOverloadMapsIterator;
+  typedef opOverloadMaps_t::const_iterator                  cOpOverloadMapsIterator;
 
-  typedef std::map<parserNS::varInfo*, statementNode>     varUsedMap_t;
-  typedef varUsedMap_t::iterator                          varUsedMapIterator;
-  typedef varUsedMap_t::const_iterator                    cVarUsedMapIterator;
+  typedef std::map<parserNS::varInfo*,parserNS::statement*> varOriginMap_t;
+  typedef varOriginMap_t::iterator                          varOriginMapIterator;
+  typedef varOriginMap_t::const_iterator                    cVarOriginMapIterator;
 
-  typedef std::vector<varUsedMap_t>                       varUsedMapVector_t;
-  typedef varUsedMapVector_t::iterator                    varUsedMapVectorIterator;
-  typedef varUsedMapVector_t::const_iterator              cVarUsedMapVectorIterator;
+  typedef std::vector<varOriginMap_t>                       varOriginMapVector_t;
+  typedef varOriginMapVector_t::iterator                    varOriginMapVectorIterator;
+  typedef varOriginMapVector_t::const_iterator              cVarOriginMapVectorIterator;
 
-  typedef std::map<std::string,parserNS::kernelInfo*>     kernelInfoMap_t;
-  typedef kernelInfoMap_t::iterator                       kernelInfoIterator;
-  typedef kernelInfoMap_t::const_iterator                 cKernelInfoIterator;
+  typedef std::map<parserNS::varInfo*, statementNode>       varUsedMap_t;
+  typedef varUsedMap_t::iterator                            varUsedMapIterator;
+  typedef varUsedMap_t::const_iterator                      cVarUsedMapIterator;
 
-  typedef std::map<std::string, std::string>              strToStrMap_t;
-  typedef strToStrMap_t::iterator                         strToStrMapIterator;
-  typedef strToStrMap_t::const_iterator                   cStrToStrMapIterator;
+  typedef std::vector<varUsedMap_t>                         varUsedMapVector_t;
+  typedef varUsedMapVector_t::iterator                      varUsedMapVectorIterator;
+  typedef varUsedMapVector_t::const_iterator                cVarUsedMapVectorIterator;
 
-  typedef std::map<std::string,parserNS::attribute_t*>    attributeMap_t;
-  typedef attributeMap_t::iterator                        attributeMapIterator;
-  typedef attributeMap_t::const_iterator                  cAttributeMapIterator;
+  typedef std::map<std::string,parserNS::kernelInfo*>       kernelInfoMap_t;
+  typedef kernelInfoMap_t::iterator                         kernelInfoIterator;
+  typedef kernelInfoMap_t::const_iterator                   cKernelInfoIterator;
 
-  typedef std::map<parserNS::varInfo*,parserNS::varInfo*> varToVarMap_t;
-  typedef varToVarMap_t::iterator                         varToVarMapIterator;
-  typedef varToVarMap_t::const_iterator                   cVarToVarMapIterator;
+  typedef std::map<std::string, std::string>                strToStrMap_t;
+  typedef strToStrMap_t::iterator                           strToStrMapIterator;
+  typedef strToStrMap_t::const_iterator                     cStrToStrMapIterator;
 
-  typedef std::map<parserNS::statement*,int>              statementIdMap_t;
-  typedef statementIdMap_t::iterator                      statementIdMapIterator;
+  typedef std::map<std::string,parserNS::attribute_t*>      attributeMap_t;
+  typedef attributeMap_t::iterator                          attributeMapIterator;
+  typedef attributeMap_t::const_iterator                    cAttributeMapIterator;
 
-  typedef std::map<parserNS::varInfo*,int>                varInfoIdMap_t;
-  typedef varInfoIdMap_t::iterator                        varInfoIdMapIterator;
+  typedef std::map<parserNS::varInfo*,parserNS::varInfo*>   varToVarMap_t;
+  typedef varToVarMap_t::iterator                           varToVarMapIterator;
+  typedef varToVarMap_t::const_iterator                     cVarToVarMapIterator;
 
-  typedef std::map<int,bool>                              idDepMap_t;
-  typedef idDepMap_t::iterator                            idDepMapIterator;
+  typedef std::map<parserNS::statement*,int>                statementIdMap_t;
+  typedef statementIdMap_t::iterator                        statementIdMapIterator;
 
-  typedef std::vector<parserNS::expNode*>                 expVector_t;
-  typedef expVector_t::iterator                           expVectorIterator;
+  typedef std::map<parserNS::varInfo*,int>                  varInfoIdMap_t;
+  typedef varInfoIdMap_t::iterator                          varInfoIdMapIterator;
+
+  typedef std::map<int,bool>                                idDepMap_t;
+  typedef idDepMap_t::iterator                              idDepMapIterator;
+
+  typedef std::vector<parserNS::expNode*>                   expVector_t;
+  typedef expVector_t::iterator                             expVectorIterator;
 
   typedef void (parserNS::parserBase::*applyToAllStatements_t)(parserNS::statement &s);
-
-  typedef void (parserNS::parserBase::*applyToStatementsDefiningVar_t)(parserNS::varInfo &info,
-                                                                       parserNS::statement &s);
-
-  typedef void (parserNS::parserBase::*applyToStatementsUsingVar_t)(parserNS::varInfo &info,
-                                                                    parserNS::statement &s);
 
   namespace parserInfo {
     static const int nothing            = 0;

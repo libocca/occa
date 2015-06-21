@@ -1579,9 +1579,7 @@ namespace occa {
 
     magician::magician(parserBase &parser_) :
       parser(parser_),
-      globalScope( *(parser_.globalScope) ),
-      varUpdateMap(parser_.varUpdateMap),
-      varUsedMap(parser_.varUsedMap) {
+      globalScope( *(parser_.globalScope) ) {
 
       testedTileSizes.push_back(8);
       testedTileSizes.push_back(16);
