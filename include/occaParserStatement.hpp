@@ -190,9 +190,6 @@ namespace occa {
       // const int [*] x
       void labelReferenceQualifiers();
 
-      // Add used vars to varUsedMap
-      void labelUsedVariables();
-
       // <const int,float>
       void mergeTypes();
 
@@ -679,17 +676,10 @@ namespace occa {
 
       static void setStatementVector(statementIdMap_t &idMap,
                                      statementVector_t &vec);
-
-      void removeFromUpdateMapFor(varInfo &var);
-      void removeFromUsedMapFor(varInfo &var);
-      void removeFromMapFor(varInfo &var,
-                            varUsedMap_t &usedMap);
       //================================
 
       void checkIfVariableIsDefined(varInfo &var,
                                     statement *origin);
-
-      statement* getVarOriginStatement(varInfo &var);
 
       // Add from stack memory
       varInfo& addVariable(varInfo &var,
@@ -697,17 +687,7 @@ namespace occa {
 
       // Add from pre-allocated memory
       void addVariable(varInfo *var,
-                       statement *origin = NULL);
-
-      void addVariableToUpdateMap(varInfo &var,
-                                  statement *origin_ = NULL);
-
-      void addVariableToUsedMap(varInfo &var,
-                                statement *origin_ = NULL);
-
-      void addVariableToMap(varInfo &var,
-                            varUsedMap_t &usedMap,
-                            statement *origin);
+                       statement *origin_ = NULL);
 
       // Swap variable varInfo*
       void replaceVarInfos(varToVarMap_t &v2v);

@@ -875,21 +875,6 @@ namespace occa {
       }
     }
 
-    void parserBase::applyToStatementsUsingVar(varInfo &info,
-                                               applyToStatementsUsingVar_t func){
-      varUsedMapIterator it = varUsedMap.find(&info);
-
-      if(it != varUsedMap.end()){
-        statementNode *sn = it->second.right;
-
-        while(sn){
-          (this->*func)(info, *(sn->value));
-
-          sn = sn->right;
-        }
-      }
-    }
-
     bool parserBase::statementIsAKernel(statement &s){
       if(s.info & smntType::functionStatement){
         if(s.hasQualifier("occaKernel"))
@@ -1013,8 +998,7 @@ namespace occa {
 
       varInfo &iterVar = *(s.hasVariableInScope(iter));
 
-      s.removeFromUpdateMapFor(iterVar);
-      s.removeFromUsedMapFor(iterVar);
+      varOriginMap[&iterVar] = NULL;
 
       s.scopeVarMap.erase(iter);
 
@@ -1048,15 +1032,15 @@ namespace occa {
       expNode &occaIterExp = s.attribute("occaIterExp").valueExp();
       expNode &flatRoot = *(occaIterExp.makeFlatHandle());
 
-      varUsedMap_t deps;
+      varOriginMap_t deps;
 
       findDependenciesFor(occaIterExp, deps);
 
-      varUsedMapIterator it = deps.begin();
+      varOriginMapIterator it = deps.begin();
 
       while(it != deps.end()){
         varInfo   &var       = *(it->first);
-        statement &varOrigin = *(it->second.value);
+        statement &varOrigin = *(it->second);
 
         if(!varOrigin.hasAttribute("isAnOccaIterExp")){
           ++it;
@@ -1690,8 +1674,7 @@ namespace occa {
         if((dim == 0) &&
            (varIsDeclared)){
 
-          iStatements[0]->removeFromUpdateMapFor(var);
-          iStatements[0]->removeFromUsedMapFor(var);
+          varOriginMap[&var] = NULL;
 
           iStatements[0]->scopeVarMap.erase(var);
         }
@@ -1703,8 +1686,7 @@ namespace occa {
         if((dim == 0) &&
            (varIsDeclared)){
 
-          varUsedMapIterator it = is.parser.varUpdateMap.find(&var);
-          (it->second).value = &is;
+          varOriginMap[&var] = &is;
         }
 
         os.updateOccaOMLoopAttributes("outer", toString(dim));
@@ -2277,14 +2259,14 @@ namespace occa {
       /*
 
         kernel void kern(texture float **tex){
-          tex[j][i];
+        tex[j][i];
         }
 
         CPU:
         kernel void kern(int64 offsets[argc],
-                         texture float tex,
-                         sampler/textureInfo tex_info)
-       */
+        texture float tex,
+        sampler/textureInfo tex_info)
+      */
     }
 
     void parserBase::loadKernelInfos(){
@@ -2337,7 +2319,7 @@ namespace occa {
       const int kernelCount = (int) omLoops.size();
 
       if(0 < kernelCount){
-        varUsedMapVector_t varDeps(kernelCount);
+        varOriginMapVector_t varDeps(kernelCount);
 
         for(int k = 0; k < kernelCount; ++k)
           varDeps[k] = findKernelDependenciesFor(sKernel,
@@ -2434,17 +2416,17 @@ namespace occa {
       }
     }
 
-    varUsedMap_t parserBase::findKernelDependenciesFor(statement &sKernel,
-                                                       statement &omLoop){
+    varOriginMap_t parserBase::findKernelDependenciesFor(statement &sKernel,
+                                                         statement &omLoop){
       varInfoVector_t depsIgnored;
-      varUsedMap_t deps;
+      varOriginMap_t deps;
 
       findDependenciesFor(omLoop, deps);
 
-      varUsedMapIterator it = deps.begin();
+      varOriginMapIterator it = deps.begin();
 
       while(it != deps.end()){
-        statement &varOrigin = *(it->second.value);
+        statement &varOrigin = *(it->second);
 
         if((&varOrigin   == &sKernel)    ||
            (varOrigin.up == globalScope) ||
@@ -2465,9 +2447,9 @@ namespace occa {
       return deps;
     }
 
-    varUsedMap_t parserBase::findDependenciesFor(statement &s,
-                                                 const int flags){
-      varUsedMap_t deps;
+    varOriginMap_t parserBase::findDependenciesFor(statement &s,
+                                                   const int flags){
+      varOriginMap_t deps;
 
       findDependenciesFor(s, deps, flags);
 
@@ -2475,7 +2457,7 @@ namespace occa {
     }
 
     void parserBase::findDependenciesFor(statement &s,
-                                         varUsedMap_t &deps,
+                                         varOriginMap_t &deps,
                                          const int flags){
 
       findDependenciesFor(s.expRoot, deps);
@@ -2494,8 +2476,8 @@ namespace occa {
       }
     }
 
-    varUsedMap_t parserBase::findDependenciesFor(expNode &e){
-      varUsedMap_t deps;
+    varOriginMap_t parserBase::findDependenciesFor(expNode &e){
+      varOriginMap_t deps;
 
       findDependenciesFor(e, deps);
 
@@ -2503,7 +2485,7 @@ namespace occa {
     }
 
     void parserBase::findDependenciesFor(expNode &e,
-                                         varUsedMap_t &deps){
+                                         varOriginMap_t &deps){
       expNode &flatRoot = *(e.makeFlatHandle());
 
       for(int i = 0; i < flatRoot.leafCount; ++i){
@@ -2514,14 +2496,12 @@ namespace occa {
           if(var.name.size() == 0)
             continue;
 
-          varUsedMapIterator it = deps.find(&var);
+          varOriginMapIterator it = deps.find(&var);
 
           if(it != deps.end())
             continue;
 
-          statement &varOrigin = *(globalScope->getVarOriginStatement(var));
-
-          deps[&var].value = &varOrigin;
+          deps[&var] = varOriginMap[&var];
         }
       }
 
@@ -2530,7 +2510,7 @@ namespace occa {
 
     statementVector_t parserBase::newKernelsFromLoops(statement &sKernel,
                                                       statementVector_t &omLoops,
-                                                      varUsedMapVector_t &varDeps){
+                                                      varOriginMapVector_t &varDeps){
       statementVector_t newKernels;
 
       const int kernelCount = (int) omLoops.size();
@@ -2551,7 +2531,7 @@ namespace occa {
         newKernels.push_back(&newSKernel);
 
         statement &omLoop  = *(omLoops[k]);
-        varUsedMap_t &deps = varDeps[k];
+        varOriginMap_t &deps = varDeps[k];
 
         varInfo &newKernelVar = *(new varInfo(kernelVar.clone()));
         newSKernel.setFunctionVar(newKernelVar);
@@ -2581,16 +2561,16 @@ namespace occa {
     }
 
     void parserBase::addDepStatementsToKernel(statement &sKernel,
-                                              varUsedMap_t &deps){
+                                              varOriginMap_t &deps){
 
-      varUsedMapIterator it = deps.begin();
+      varOriginMapIterator it = deps.begin();
 
       statementIdMap_t placedStatements;
       varInfoVector_t usedVars;
 
       while(it != deps.end()){
         varInfo &var         = *(it->first);
-        statement &varOrigin = *(it->second.value);
+        statement &varOrigin = *(it->second);
 
         if(var.hasQualifier("exclusive") ||
            var.hasQualifier("occaShared")){
@@ -2623,14 +2603,14 @@ namespace occa {
     }
 
     void parserBase::addDepsToKernelArguments(statement &sKernel,
-                                              varUsedMap_t &deps){
+                                              varOriginMap_t &deps){
 
       varInfo &kernelVar = *(sKernel.getFunctionVar());
       int argPos         = kernelVar.argumentCount;
 
       varToVarMap_t v2v;
 
-      varUsedMapIterator it = deps.begin();
+      varOriginMapIterator it = deps.begin();
 
       while(it != deps.end()){
         varInfo &var  = *(it->first);
@@ -2816,8 +2796,8 @@ namespace occa {
 
       for(int pass = 0; pass < passes; ++pass){
         attribute_t *occaNestAttr = ((pass == 0)                         ?
-                                    s.hasAttribute("occaMaxNest_" + tag) :
-                                    s.hasAttribute("occaNest"));
+                                     s.hasAttribute("occaMaxNest_" + tag) :
+                                     s.hasAttribute("occaNest"));
 
         if(occaTagAttr){
           const std::string nestStr = occaNestAttr->valueStr();
@@ -2865,7 +2845,7 @@ namespace occa {
     }
 
     void parserBase::splitDefineForVariable(varInfo &var){
-      statement &origin = *(varUpdateMap[&var].value);
+      statement &origin = *(varOriginMap[&var]);
 
       // Ignore kernel arguments
       if(origin.info & smntType::functionStatement)
@@ -2892,8 +2872,8 @@ namespace occa {
         for(int i = 0; i < argPos; ++i){
           varInfo &argVar = origin.getDeclarationVarInfo(i);
 
-          s.expRoot.leaves[i]         = origin.expRoot.leaves[i];
-          varUpdateMap[&argVar].value = &s;
+          s.expRoot.leaves[i]   = origin.expRoot.leaves[i];
+          varOriginMap[&argVar] = &s;
         }
       }
 
@@ -2908,8 +2888,8 @@ namespace occa {
         for(int i = 0; i < newLeafCount; ++i){
           varInfo &argVar = origin.getDeclarationVarInfo(argPos + 1 + i);
 
-          s.expRoot.leaves[i]         = origin.expRoot.leaves[argPos + 1 + i];
-          varUpdateMap[&argVar].value = &s;
+          s.expRoot.leaves[i]   = origin.expRoot.leaves[argPos + 1 + i];
+          varOriginMap[&argVar] = &s;
 
           // Print out type for the new statement
           if(i == 0)
@@ -2925,7 +2905,7 @@ namespace occa {
     }
 
     void parserBase::splitDefineAndInitForVariable(varInfo &var){
-      statement &origin = *(varUpdateMap[&var].value);
+      statement &origin = *(varOriginMap[&var]);
 
       // Ignore kernel arguments
       if(origin.info & smntType::functionStatement)
@@ -2973,7 +2953,7 @@ namespace occa {
       if(s.expRoot.lastLeaf()->value != ";")
         s.expRoot.addNode(expType::endStatement, ";");
 
-      s.addVariableToUpdateMap(var);
+      varOriginMap[&var] = &s;
     }
 
     void parserBase::addInnerFors(statement &s){
@@ -2993,8 +2973,6 @@ namespace occa {
                                     varInfoIdMap_t &varInfoIdMap,
                                     int &currentInnerID,
                                     const int innerDim){
-
-      std::cout << "s = " << s << '\n';
 
       statementNode *ssStart = s.statementStart;
       statementNode *ssEnd   = lastNode(ssStart);
@@ -4416,7 +4394,7 @@ namespace occa {
           attribute_t *occaTagAttr = sInfo->hasAttribute("occaTag");
 
           if(occaTagAttr != NULL)
-             break;
+            break;
         }
 
         sInfo = sInfo->up;

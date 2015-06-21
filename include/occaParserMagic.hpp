@@ -295,8 +295,6 @@ namespace occa {
     public:
       parserBase &parser;
       statement &globalScope;
-      varUsedMap_t &varUpdateMap;
-      varUsedMap_t &varUsedMap;
 
       intVector_t testedTileSizes;
 
