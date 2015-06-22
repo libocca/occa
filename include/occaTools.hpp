@@ -152,7 +152,8 @@ namespace occa {
 
   bool fileNeedsParser(const std::string &filename);
 
-  parsedKernelInfo parseFileForFunction(const std::string &filename,
+  parsedKernelInfo parseFileForFunction(const std::string &deviceMode,
+                                        const std::string &filename,
                                         const std::string &cachedBinary,
                                         const std::string &functionName,
                                         const kernelInfo &info);

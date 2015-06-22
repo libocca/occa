@@ -27,6 +27,8 @@ namespace occa {
 
       int parsingLanguage;
 
+      strToStrMap_t compilerFlags;
+
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
 
@@ -38,21 +40,27 @@ namespace occa {
 
       statement *globalScope;
 
-      //---[ Warnings ]-----------------
+      //---[ Flags ]--------------------
+      int cpuMode;
+      bool magicEnabled;
+
+      // Warnings
       bool warnForMissingBarriers;
       bool warnForBarrierConditionals;
-      bool magicEnabled;
       //================================
 
       parserBase();
       inline ~parserBase(){}
 
-      const std::string parseFile(const std::string &filename,
-                                  const int parsingLanguage_ = parserInfo::parsingC);
+      inline const std::string parseFile(const std::string &filename_,
+                                         const strToStrMap_t &compilerFlags_ = strToStrMap_t()){
+
+        return parseFile("", filename_, compilerFlags_);
+      }
 
       const std::string parseFile(const std::string &header,
                                   const std::string &filename,
-                                  const int parsingLanguage_ = parserInfo::parsingC);
+                                  const strToStrMap_t &compilerFlags_ = strToStrMap_t());
 
       const std::string parseSource(const char *cRoot);
 

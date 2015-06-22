@@ -35,10 +35,8 @@ int main(int argc, char **argv){
   }
   else if(args[0] == "clear"){
     if(1 < argc){
-      --argc;
-
       if(args[1] == "cache")
-        runClearCache(argc, args + 1);
+        runClearCache(argc - 2, args + 2);
       else if(args[1] == "locks")
         runClearLocks();
       else

@@ -37,34 +37,49 @@ namespace occa {
 
     const std::string parserBase::parseFile(const std::string &header,
                                             const std::string &filename_,
-                                            const int parsingLanguage_){
+                                            const strToStrMap_t &compilerFlags_){
 
       filename = filename_;
 
-      parsingLanguage = parsingLanguage_;
+      compilerFlags = compilerFlags_;
+
+      //---[ Language ]-------
+      strToStrMapIterator it = compilerFlags.find("language");
+
+      if((it          == compilerFlags.end()) ||
+         (it->second) != "Fortran"){
+
+        parsingLanguage = parserInfo::parsingC;
+      }
+      else {
+        parsingLanguage = parserInfo::parsingFortran;
+      }
+
       pushLanguage(parsingLanguage);
+
+      //---[ Mode ]-----------
+      it = compilerFlags.find("mode");
+
+      OCCA_CHECK(it != compilerFlags.end(),
+                 "Compilation mode must be passed to the parser");
+
+      std::string &modeStr = (it->second);
+
+      cpuMode = ((modeStr == "Serial")   ||
+                 (modeStr == "OpenMP")   ||
+                 (modeStr == "Pthreads") ||
+                 (modeStr == "COI"));
+
+      //---[ Magic ]----------
+      it = compilerFlags.find("magic");
+
+      magicEnabled = (( it          != compilerFlags.end()) &&
+                      ((it->second) == "enabled"));
 
       std::string content = header;
       content += readFile(filename);
 
       return parseSource(content.c_str());
-    }
-
-    const std::string parserBase::parseFile(const std::string &filename_,
-                                            const int parsingLanguage_){
-
-      filename = filename_;
-
-      parsingLanguage = parsingLanguage_;
-      pushLanguage(parsingLanguage);
-
-      const char *cRoot = cReadFile(filename);
-
-      const std::string parsedContent = parseSource(cRoot);
-
-      delete [] cRoot;
-
-      return parsedContent;
     }
 
     const std::string parserBase::parseSource(const char *cRoot){

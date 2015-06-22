@@ -582,31 +582,45 @@ namespace occa {
             (ext == "cu"));
   }
 
-  parsedKernelInfo parseFileForFunction(const std::string &filename,
+  parsedKernelInfo parseFileForFunction(const std::string &deviceMode,
+                                        const std::string &filename,
                                         const std::string &parsedFile,
                                         const std::string &functionName,
                                         const kernelInfo &info){
 
     parser fileParser;
+    strToStrMap_t compilerFlags;
 
-    int parsingLanguage = ((getFileExtension(filename) != "ofl") ?
-                           parserInfo::parsingC                  :
-                           parserInfo::parsingFortran);
+    const std::string extension = getFileExtension(filename);
 
-    sys::mkpath(getFileDirectory(parsedFile));
+    compilerFlags["mode"]     = deviceMode;
+    compilerFlags["language"] = ((extension != "ofl") ? "C" : "Fortran");
 
-    std::ofstream fs;
-    fs.open(parsedFile.c_str());
-    fs << info.occaKeywords << fileParser.parseFile(info.header,
-                                                    filename,
-                                                    parsingLanguage);
-    fs.close();
+    if((extension == "oak") ||
+       (extension == "oaf")){
+
+      compilerFlags["magic"] = "enabled";
+    }
+
+    std::string parsedContent = fileParser.parseFile(info.header,
+                                                     filename,
+                                                     compilerFlags);
+
+    if(!sys::fileExists(parsedFile)){
+      sys::mkpath(getFileDirectory(parsedFile));
+
+      std::ofstream fs;
+      fs.open(parsedFile.c_str());
+
+      fs << info.occaKeywords << parsedContent;
+
+      fs.close();
+    }
 
     kernelInfoIterator kIt = fileParser.kernelInfoMap.find(functionName);
 
-    if(kIt != fileParser.kernelInfoMap.end()){
+    if(kIt != fileParser.kernelInfoMap.end())
       return (kIt->second)->makeParsedKernelInfo();
-    }
 
     OCCA_CHECK(false,
                "Could not find function ["
