@@ -5,7 +5,7 @@ void printHelp();
 void runHelp(const std::string &cmd);
 
 void runClearOn(const std::string &path);
-void runClearCache();
+void runClearCache(const int argc, std::string *args);
 void runClearLocks();
 
 void runEnv();
@@ -35,8 +35,10 @@ int main(int argc, char **argv){
   }
   else if(args[0] == "clear"){
     if(1 < argc){
+      --argc;
+
       if(args[1] == "cache")
-        runClearCache();
+        runClearCache(argc, args + 1);
       else if(args[1] == "locks")
         runClearLocks();
       else
@@ -80,7 +82,7 @@ void printHelp(){
 void runHelp(const std::string &cmd){
   if(cmd == "clear"){
     std::cout << "  Clears kernels that were cached and compilation locks\n"
-              << "    - occa clear cache\n"
+              << "    - occa clear cache <library1, library2, ...>\n"
               << "    - occa clear locks\n";
   }
   else if(cmd == "env"){
@@ -159,20 +161,34 @@ void runClearOn(const std::string &path){
     std::cout << "  Input must be [y] or [n], ignoring clear command\n";
 }
 
-void runClearCache(){
+void runClearCache(const int argc, std::string *args){
   const std::string libPath = occa::env::OCCA_CACHE_DIR + "libraries/";
   const std::string isoPath = occa::env::OCCA_CACHE_DIR + "isolated/";
 
   const bool libPathExists = occa::sys::fileExists(libPath);
   const bool isoPathExists = occa::sys::fileExists(isoPath);
 
-  if(libPathExists)
-    runClearOn(libPath);
-  if(isoPathExists)
-    runClearOn(isoPath);
-
-  if(!libPathExists && !isoPathExists)
+  if(!libPathExists && !isoPathExists){
     std::cout << "  Cache is already empty\n";
+    return;
+  }
+
+  if(argc == 0){
+    if(libPathExists)
+      runClearOn(libPath);
+    if(isoPathExists)
+      runClearOn(isoPath);
+  }
+  else {
+    for(int i = 0; i < argc; ++i){
+      const std::string argLibPath = libPath + args[i] + "/";
+
+      if(occa::sys::fileExists(argLibPath))
+        runClearOn(argLibPath);
+      else
+        std::cout << "  Cache for [" << args[i] << "] is already empty\n";
+    }
+  }
 }
 
 void runClearLocks(){
