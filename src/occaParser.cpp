@@ -2337,6 +2337,8 @@ namespace occa {
       statementVector_t omLoops = findOuterLoopSets(sKernel);
       int kernelCount = (int) omLoops.size();
 
+      statementVector_t newKernels;
+
       // Add parallel for's
       if(cpuMode){
         for(int k = 0; k < kernelCount; ++k){
@@ -2346,9 +2348,7 @@ namespace occa {
                                    "occaParallelFor0");
         }
 
-        return ((lastNewSN != NULL) ?
-                lastNewSN->right    :
-                NULL);
+        kernelCount = 0;
       }
 
       if(0 < kernelCount){
@@ -2358,13 +2358,11 @@ namespace occa {
           varDeps[k] = findKernelDependenciesFor(sKernel,
                                                  *(omLoops[k]));
 
-        statementVector_t newKernels = newKernelsFromLoops(sKernel,
-                                                           omLoops,
-                                                           varDeps);
+        newKernels = newKernelsFromLoops(sKernel,
+                                         omLoops,
+                                         varDeps);
 
         addNestedKernelArgTo(sKernel);
-
-        storeKernelInfo(info, sKernel, newKernels);
 
         applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
 
@@ -2387,6 +2385,8 @@ namespace occa {
         if(lastNewSN)
           lastNewSN = lastNewSN->left;
       }
+
+      storeKernelInfo(info, sKernel, newKernels);
 
       return ((lastNewSN != NULL) ?
               lastNewSN->right    :
@@ -2749,14 +2749,18 @@ namespace occa {
       const int kernelCount = (int) newKernels.size();
 
       varInfo &kernelVar    = *(sKernel.getFunctionVar());
-      varInfo &newKernelVar = *(newKernels[0]->getFunctionVar());
+      varInfo *newKernelVar = (kernelCount                     ?
+                               newKernels[0]->getFunctionVar() :
+                               NULL);
 
       const int argCount = kernelVar.argumentCount;
 
       // Remove the 0 in the first new kernel
       //   to get the baseName
       info.name     = kernelVar.name;
-      info.baseName = newKernelVar.name.substr(0, newKernelVar.name.size() - 1);
+      info.baseName = ((newKernelVar != NULL)                                      ?
+                       newKernelVar->name.substr(0, newKernelVar->name.size() - 1) :
+                       kernelVar.name);
 
       for(int k = 0; k < kernelCount; ++k)
         info.nestedKernels.push_back(newKernels[k]);
