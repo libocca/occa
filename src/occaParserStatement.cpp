@@ -1679,16 +1679,20 @@ namespace occa {
 
             expNode &timesNode = plusNode[1];
 
-            plusNode[0].free();
-            expNode::swap(plusNode[0], *(indices[i]));
+            plusNode[0].info  = expType::C;
+            plusNode[0].value = "(";
+
+            plusNode[0].addNode( *(indices[i]) );
 
             timesNode.info  = expType::LR;
             timesNode.value = "*";
 
             timesNode.addNodes(2);
 
-            timesNode[0].free();
-            expNode::swap(timesNode[0], *(var.dimAttr[i2].clonePtr()));
+            timesNode[0].info  = expType::C;
+            timesNode[0].value = "(";
+
+            timesNode[0].addNode(*(var.dimAttr[i2].clonePtr()));
 
             if(i < (dims - 2)){
               timesNode[1].info  = expType::C;
