@@ -1703,8 +1703,10 @@ namespace occa {
               plusNode_ = &(timesNode[1][0]);
             }
             else{
-              timesNode[1].free();
-              expNode::swap(timesNode[1], *(indices[i + 1]));
+              timesNode[1].info  = expType::C;
+              timesNode[1].value = "(";
+
+              timesNode[1].addNode(*(indices[i + 1]));
             }
           }
         }
