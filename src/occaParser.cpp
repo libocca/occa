@@ -126,6 +126,8 @@ namespace occa {
       modifyTextureVariables();
 
       addArgQualifiers();
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       loadKernelInfos();
 
@@ -944,6 +946,9 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
+      if(cpuMode)
+        return;
+
       if(s.info != smntType::occaFor)
         return;
 
@@ -2330,8 +2335,21 @@ namespace occa {
 
       // [O]uter [M]ost [Loops]
       statementVector_t omLoops = findOuterLoopSets(sKernel);
+      int kernelCount = (int) omLoops.size();
 
-      const int kernelCount = (int) omLoops.size();
+      // Add parallel for's
+      if(cpuMode){
+        for(int k = 0; k < kernelCount; ++k){
+          statement &omLoop  = *(omLoops[k]);
+
+          sKernel.pushSourceLeftOf(omLoop.getStatementNode(),
+                                   "occaParallelFor0");
+        }
+
+        return ((lastNewSN != NULL) ?
+                lastNewSN->right    :
+                NULL);
+      }
 
       if(0 < kernelCount){
         varOriginMapVector_t varDeps(kernelCount);
