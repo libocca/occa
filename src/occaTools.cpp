@@ -429,7 +429,7 @@ namespace occa {
     std::string dir = getFileDirectory(filename);
 
     if(dir.size() < filename.size())
-      return filename.substr(dir.size(), filename.size() - dir.size());
+      return filename.substr(dir.size());
 
     return "";
   }
@@ -492,6 +492,26 @@ namespace occa {
     return "";
   }
 
+  std::string compressFilename(const std::string &filename){
+    if(filename.find(env::OCCA_CACHE_DIR) != 0)
+      return filename;
+
+    const std::string libPath = env::OCCA_CACHE_DIR + "libraries/";
+    const std::string kerPath = env::OCCA_CACHE_DIR + "kernels/";
+
+    if(filename.find(libPath) == 0){
+      std::string libName = getLibraryName(filename);
+      std::string theRest = filename.substr(libPath.size() + libName.size() + 1);
+
+      return ("[" + libName + "]/" + theRest);
+    }
+    else if(filename.find(kerPath) == 0){
+      return ("kernels/" + filename.substr(kerPath.size()));
+    }
+
+    return filename;
+  }
+
   // NBN: handle binary mode and EOL chars on Windows
   std::string readFile(const std::string &filename, const bool readingBinary){
     FILE *fp = NULL;
@@ -504,7 +524,7 @@ namespace occa {
     }
 
     OCCA_CHECK(fp != 0,
-               "Failed to open [" << filename << "]");
+               "Failed to open [" << compressFilename(filename) << "]");
 
     struct stat statbuf;
     stat(filename.c_str(), &statbuf);
@@ -532,7 +552,7 @@ namespace occa {
     FILE *fp = fopen(filename.c_str(), "w");
 
     OCCA_CHECK(fp != 0,
-               "Failed to open [" << filename << "]");
+               "Failed to open [" << compressFilename(filename) << "]");
 
     fputs(content.c_str(), fp);
 
@@ -627,7 +647,7 @@ namespace occa {
     OCCA_CHECK(false,
                "Could not find function ["
                << functionName << "] in file ["
-               << filename     << "]");
+               << compressFilename(filename    ) << "]");
 
     return parsedKernelInfo();
   }
@@ -799,18 +819,18 @@ namespace occa {
 
     if(filename.size() == 0){
       if(hash.size() != 0)
-        return (env::OCCA_CACHE_DIR + "isolated/" + hash + "/");
+        return (env::OCCA_CACHE_DIR + "kernels/" + hash + "/");
       else
-        return (env::OCCA_CACHE_DIR + "isolated/");
+        return (env::OCCA_CACHE_DIR + "kernels/");
     }
 
     std::string occaLibName = getLibraryName(sys::getFilename(filename));
 
     if(occaLibName.size() == 0){
       if(hash.size() != 0)
-        return (env::OCCA_CACHE_DIR + "isolated/" + hash + "/");
+        return (env::OCCA_CACHE_DIR + "kernels/" + hash + "/");
       else
-        return (env::OCCA_CACHE_DIR + "isolated/");
+        return (env::OCCA_CACHE_DIR + "kernels/");
     }
 
     return (env::OCCA_CACHE_DIR + "libraries/" + occaLibName + "/" + hash + "/");

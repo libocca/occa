@@ -138,6 +138,8 @@ namespace occa {
   std::string getFileDirectory(const std::string &filename);
   std::string getFileExtension(const std::string &filename);
 
+  std::string compressFilename(const std::string &filename);
+
   std::string readFile(const std::string &filename,
                        const bool readingBinary = false);
 

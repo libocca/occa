@@ -461,7 +461,7 @@ namespace occa {
         releaseHash(hash, 0);
 
         OCCA_CHECK(false,
-                   "Error loading binary [" << filename << "] with dlopen");
+                   "Error loading binary [" << compressFilename(filename) << "] with dlopen");
       }
 #else
       void *dlHandle = LoadLibraryA(filename.c_str());
@@ -470,7 +470,7 @@ namespace occa {
         releaseHash(hash, 0);
 
         OCCA_CHECK(dlHandle != NULL,
-                   "Error loading dll [" << filename << "] (WIN32 error: " << GetLastError() << ")");
+                   "Error loading dll [" << compressFilename(filename) << "] (WIN32 error: " << GetLastError() << ")");
       }
 #endif
 
@@ -597,7 +597,7 @@ namespace occa {
       waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
       return buildFromBinary(binaryFile, functionName);
     }
@@ -606,7 +606,7 @@ namespace occa {
       releaseHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << binaryFile << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
       return buildFromBinary(binaryFile, functionName);
     }

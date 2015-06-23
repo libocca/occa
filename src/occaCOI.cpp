@@ -231,7 +231,7 @@ namespace occa {
       waitForFile(cachedBinary);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(cachedBinary) << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -243,7 +243,7 @@ namespace occa {
       releaseFile(cachedBinary);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(cachedBinary) << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }

@@ -24,6 +24,8 @@ int main(int argc, char **argv){
 
   std::string *args = new std::string[argc];
 
+  std::cout << '\n';
+
   for(int i = 0; i < argc; ++i)
     args[i] = argv[i + 1];
 
@@ -62,6 +64,8 @@ int main(int argc, char **argv){
   else
     printHelp();
 
+  std::cout << '\n';
+
   delete [] args;
 
   return 0;
@@ -69,16 +73,46 @@ int main(int argc, char **argv){
 
 void printHelp(){
   std::cout << "  For help on a specific command, type:  [occa help <command>]\n"
-            << "  Otherwise run a command with:          [occa <command> <arguments>]\n"
+            << "  Otherwise run a command with:          [occa <command> <arguments>]\n\n"
+
             << "  Available commands:\n"
             << "    - clear\n"
             << "    - env\n"
             << "    - info\n"
-            << "    - update <library or application name> <file>[, file2...]\n";
+            << "    - update <library or application name> <file>[, file2...]\n\n"
+
+            << "  Additional information:\n"
+            << "    - occa help cache\n";
 }
 
 void runHelp(const std::string &cmd){
-  if(cmd == "clear"){
+  if(cmd == "cache"){
+    std::cout << "- OCCA caches kernels in:\n\n"
+
+              << "      $OCCA_CACHE_DIR/\n\n"
+
+              << "  which defaults to:\n\n"
+
+              << "      ~/._occa/\n\n"
+
+              << "- Kernel libraries are represented in kernels as:\n\n"
+
+              << "      [libraryName]/kernel.okl\n\n"
+
+              << "  which can be found in:\n\n"
+
+              << "      $OCCA_CACHE_DIR/libraries/libraryName/kernel.okl\n\n"
+
+              << "- If a kernel is not in a library, the intermediate files\n"
+              << "  and binaries can still be found in:\n\n"
+
+              << "      $OCCA_CACHE_DIR/kernels/<hash>/source.occa\n"
+              << "      $OCCA_CACHE_DIR/kernels/<hash>/binary\n\n"
+
+              << "  where the <hash> is printed (by default) when the kernel\n"
+              << "  is built\n";
+  }
+  else if(cmd == "clear"){
     std::cout << "  Clears kernels that were cached and compilation locks\n"
               << "    - occa clear cache <library1, library2, ...>\n"
               << "    - occa clear locks\n";
