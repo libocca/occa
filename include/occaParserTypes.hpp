@@ -58,6 +58,10 @@ namespace occa {
                         expNode &expRoot,
                         int leafPos);
 
+    int setAttributeMapR(attributeMap_t &attributeMap,
+                         expNode &expRoot,
+                         int leafPos);
+
     void printAttributeMap(attributeMap_t &attributeMap);
     std::string attributeMapToString(attributeMap_t &attributeMap);
     //============================================
@@ -93,7 +97,16 @@ namespace occa {
       int loadFrom(expNode &expRoot,
                    int leafPos = 0);
 
+      int loadFrom(varInfo &var,
+                   expNode &expRoot,
+                   int leafPos = 0);
+
       int loadFrom(statement &s,
+                   expNode &expRoot,
+                   int leafPos = 0);
+
+      int loadFrom(statement &s,
+                   varInfo &var,
                    expNode &expRoot,
                    int leafPos = 0);
 

@@ -155,6 +155,22 @@ namespace occa {
                         expNode &expRoot,
                         int leafPos){
 
+      while(true){
+        const int leafPos2 = leafPos;
+
+        leafPos = setAttributeMapR(attributeMap, expRoot, leafPos);
+
+        if(leafPos == leafPos2)
+          break;
+      }
+
+      return leafPos;
+    }
+
+    int setAttributeMapR(attributeMap_t &attributeMap,
+                         expNode &expRoot,
+                         int leafPos){
+
       if(!isAnAttribute(expRoot, leafPos))
         return leafPos;
 
@@ -320,10 +336,32 @@ namespace occa {
       OCCA_CHECK(expRoot.sInfo != NULL,
                  "Cannot load [qualifierInfo] without a statement");
 
-      return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
+      varInfo var;
+
+      return loadFrom(*(expRoot.sInfo), var, expRoot, leafPos);
+    }
+
+    int qualifierInfo::loadFrom(varInfo &var,
+                                expNode &expRoot,
+                                int leafPos){
+
+      OCCA_CHECK(expRoot.sInfo != NULL,
+                 "Cannot load [qualifierInfo] without a statement");
+
+      return loadFrom(*(expRoot.sInfo), var, expRoot, leafPos);
     }
 
     int qualifierInfo::loadFrom(statement &s,
+                                expNode &expRoot,
+                                int leafPos){
+
+      varInfo var;
+
+      return loadFrom(s, var, expRoot, leafPos);
+    }
+
+    int qualifierInfo::loadFrom(statement &s,
+                                varInfo &var,
                                 expNode &expRoot,
                                 int leafPos){
 
@@ -332,19 +370,40 @@ namespace occa {
 
       const int leafRoot = leafPos;
 
-      while((leafPos < expRoot.leafCount) &&
-            (expRoot[leafPos].info & expType::qualifier)){
+      int usedLeavesCount = 0;
+      int attributeCount  = 0;
 
-        ++leafPos;
+      while(leafPos < expRoot.leafCount){
+        if(expRoot[leafPos].info & expType::qualifier){
+          ++leafPos;
+        }
+        else if(isAnAttribute(expRoot, leafPos)){
+          ++leafPos;
+          ++attributeCount;
+        }
+        else
+          break;
       }
 
-      qualifierCount = (leafPos - leafRoot);
+      usedLeavesCount = (leafPos - leafRoot);
+      qualifierCount  = (usedLeavesCount - attributeCount);
 
       if(qualifierCount){
         qualifiers = new std::string[qualifierCount];
 
-        for(int i = 0; i < qualifierCount; ++i)
-          qualifiers[i] = expRoot[leafRoot + i].value;
+        int qPos = 0;
+
+        for(int i = 0; i < usedLeavesCount; ++i){
+          if(!isAnAttribute(expRoot, leafRoot + i))
+            qualifiers[qPos++] = expRoot[leafRoot + i].value;
+        }
+      }
+
+      if(attributeCount){
+        for(int i = 0; i < usedLeavesCount; ++i){
+          if(isAnAttribute(expRoot, leafRoot + i))
+            setAttributeMap(var.attributeMap, expRoot, leafRoot + i);
+        }
       }
 
       return leafPos;

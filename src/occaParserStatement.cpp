@@ -325,8 +325,8 @@ namespace occa {
       else
         organizeFortranNode();
 
-      // if(sInfo)
-      //   sInfo->printDebugInfo();
+      if(sInfo)
+        sInfo->printDebugInfo();
     }
 
     // @(attributes)
@@ -4101,7 +4101,7 @@ namespace occa {
 
       if(isCaseStatement){
         while((expPos < allExp.leafCount) &&
-              (expValue != ":")){
+              (allExp[expPos].value != ":")){
 
           ++expPos;
         }
@@ -4313,7 +4313,8 @@ namespace occa {
 
     bool statement::expHasDescriptor(expNode &allExp, int expPos){
       if(expHasSpecifier(allExp, expPos) ||
-         expHasQualifier(allExp, expPos)){
+         expHasQualifier(allExp, expPos) ||
+         isAnAttribute(allExp, expPos)){
 
         return true;
       }
