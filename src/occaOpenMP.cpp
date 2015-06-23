@@ -287,7 +287,7 @@ namespace occa {
     data_.dlHandle = cpu::dlopen(binaryFile, hash);
     data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
-      releaseHash(hash, 0);
+    releaseHash(hash, 0);
 
     return this;
   }

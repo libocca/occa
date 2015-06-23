@@ -233,13 +233,13 @@ namespace occa {
   static const occa::mode Pthreads = (1 << 25);
   static const occa::mode COI      = (1 << 26);
 
-  static const int onChipModes = (Serial |
-                                  OpenMP |
-                                  Pthreads);
+  static const int onChipMode = (Serial |
+                                 OpenMP |
+                                 Pthreads);
 
-  static const int offChipModes = (OpenCL |
-                                   CUDA   |
-                                   HSA);
+  static const int offChipMode = (OpenCL |
+                                  CUDA   |
+                                  HSA);
 
   static const occa::mode SerialIndex   = 0;
   static const occa::mode OpenMPIndex   = 1;

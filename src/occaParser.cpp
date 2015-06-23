@@ -320,52 +320,52 @@ namespace occa {
           bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
-            return (startHash | readUntilNextHash);
+            return (startHash | readUntilNextHash | forceLineRemoval);
           else
-            return (startHash | ignoreUntilNextHash);
+            return (startHash | ignoreUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "elif")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
-            return ignoreUntilEnd;
+            return (ignoreUntilEnd | forceLineRemoval);
 
           c = cEnd;
 
           bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
-            return readUntilNextHash;
+            return (readUntilNextHash | forceLineRemoval);
           else
-            return ignoreUntilNextHash;
+            return (ignoreUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "else")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
-            return ignoreUntilEnd;
+            return (ignoreUntilEnd | forceLineRemoval);
           else
-            return readUntilNextHash;
+            return (readUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "ifdef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | readUntilNextHash);
+            return (startHash | readUntilNextHash | forceLineRemoval);
           else
-            return (startHash | ignoreUntilNextHash);
+            return (startHash | ignoreUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "ifndef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | ignoreUntilNextHash);
+            return (startHash | ignoreUntilNextHash | forceLineRemoval);
           else
-            return (startHash | readUntilNextHash);
+            return (startHash | readUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "endif")){
-          return doneIgnoring;
+          return (doneIgnoring | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "define")){

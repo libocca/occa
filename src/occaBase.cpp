@@ -875,11 +875,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->copyFrom(srcHandle->getMemoryHandle(),
                              bytes, destOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->copyTo(destHandle->getMemoryHandle(),
                           bytes, srcOffset);
       }
@@ -945,11 +945,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->copyFrom(srcHandle->getMemoryHandle(),
                              bytes, srcOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->copyTo(destHandle->getMemoryHandle(),
                           bytes, destOffset);
       }
@@ -1006,11 +1006,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->asyncCopyFrom(srcHandle->getMemoryHandle(),
                              bytes, destOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->asyncCopyTo(destHandle->getMemoryHandle(),
                           bytes, srcOffset);
       }
@@ -1067,11 +1067,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->asyncCopyFrom(srcHandle->getMemoryHandle(),
                                   bytes, destOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->asyncCopyTo(destHandle->getMemoryHandle(),
                                bytes, srcOffset);
       }
@@ -1685,7 +1685,7 @@ namespace occa {
                                        const kernelInfo &info_){
 
     const std::string realFilename = sys::getFilename(filename);
-    const bool usingParser = fileNeedsParser(filename);
+    const bool usingParser         = fileNeedsParser(filename);
 
     kernel ker;
 
@@ -1694,8 +1694,14 @@ namespace occa {
     kernel_v *&k = ker.kHandle;
 
     if(usingParser){
-      k          = new kernel_t<Serial>;
-      k->dHandle = new device_t<Serial>();
+      if(dHandle->mode() != OpenMP){
+        k          = new kernel_t<Serial>;
+        k->dHandle = new device_t<Serial>;
+      }
+      else {
+        k          = new kernel_t<OpenMP>;
+        k->dHandle = dHandle;
+      }
 
       const std::string hash = getFileContentHash(realFilename,
                                                   dHandle->getInfoSalt(info_));
