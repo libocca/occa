@@ -627,7 +627,9 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
-      leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
+      // Typedefs are pre-loaded with qualifiers
+      if(leftQualifiers.size() == 0)
+        leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
 
       if(leftQualifiers.has("typedef"))
         return loadTypedefFrom(s, expRoot, leafPos);
@@ -656,7 +658,8 @@ namespace occa {
         const bool usesSemicolon = !leftQualifiers.has("enum");
         const char *delimiter = (usesSemicolon ? ";" : ",");
 
-        nestedInfoCount = delimiterCount(leaf, delimiter);
+        // [enum] doesn't end with a semicolon, so we add one more info
+        nestedInfoCount = delimiterCount(leaf, delimiter) + !usesSemicolon;
         nestedExps      = new expNode[nestedInfoCount];
 
         int sLeafPos = 0;
@@ -703,6 +706,7 @@ namespace occa {
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value != "{")){
+
         typeInfo *tmp = s.hasTypeInScope(expRoot[leafPos].value);
 
         if(tmp){
@@ -719,10 +723,20 @@ namespace occa {
 
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value == "{")){
+
         // Anonymous type
         if(typedefing == NULL){
           typedefing           = new typeInfo;
           typedefing->baseType = typedefing;
+
+          std::string transferQuals[4] = {"class", "enum", "union", "struct"};
+
+          for(int i = 0; i < 4; ++i){
+            if(leftQualifiers.has(transferQuals[i])){
+              leftQualifiers.remove(transferQuals[i]);
+              typedefing->leftQualifiers.add(transferQuals[i]);
+            }
+          }
         }
 
         typedefing->loadFrom(s, expRoot, leafPos);

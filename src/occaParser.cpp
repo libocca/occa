@@ -390,7 +390,7 @@ namespace occa {
 
           loadMacroInfo(info, c);
 
-          return (state);
+          return (state | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
