@@ -192,8 +192,8 @@ namespace occa {
         value = allExp[expStart].value;
       }
 
-      // printf("Copied expNode:\n");
-      // print();
+      printf("Copied expNode:\n");
+      print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -317,7 +317,7 @@ namespace occa {
       int leafPos = 0;
 
       while(leafPos < leafCount){
-        if(leaves[leafPos]->value == "@"){
+        if(isAnAttribute(*this, leafPos)){
           const int leafStart = leafPos;
 
           loadAttributes(*this, leafPos);
@@ -337,8 +337,7 @@ namespace occa {
                                  int &expPos){
 
       if((sInfo == NULL)              ||
-         (allExp.leafCount <= expPos) ||
-         (allExp[expPos].value != "@")){
+         !isAnAttribute(allExp, expPos)){
 
         return;
       }

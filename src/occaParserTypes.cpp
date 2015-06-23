@@ -3,6 +3,18 @@
 
 namespace occa {
   namespace parserNS {
+    bool isAnAttribute(const std::string &attrName){
+      return ((attrName == "@") ||
+              (attrName == "__attribute__"));
+    }
+
+    bool isAnAttribute(expNode &expRoot, int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return false;
+
+      return isAnAttribute(expRoot[leafPos].value);
+    }
+
     //---[ Attribute Class ]----------------------
     attribute_t::attribute_t() :
       argCount(0),
@@ -132,10 +144,7 @@ namespace occa {
                         expNode &expRoot,
                         int leafPos){
 
-      if(expRoot.leafCount <= (leafPos + 1))
-        return leafPos;
-
-      if(expRoot[leafPos].value != "@")
+      if(!isAnAttribute(expRoot, leafPos))
         return leafPos;
 
       ++leafPos;
@@ -1133,11 +1142,7 @@ namespace occa {
         }
       }
 
-      if((leafPos < (expRoot.leafCount - 1)) &&
-         (expRoot[leafPos].value == "@")){
-
-        leafPos = setAttributeMap(attributeMap, expRoot, leafPos);
-      }
+      leafPos = setAttributeMap(attributeMap, expRoot, leafPos);
 
       setupAttributes();
 
@@ -1224,7 +1229,9 @@ namespace occa {
       while((leaf->value == "(") &&
             (leaf->leafCount != 0)){
 
-        if(leaf->leaves[0]->value == "*"){
+        if((leaf->leaves[0]->value == "*") ||
+           (leaf->leaves[0]->value == "^")){
+
           ++nestCount;
 
           if(1 < leaf->leafCount)
@@ -1259,7 +1266,12 @@ namespace occa {
             (0 < leaf->leafCount)     &&
             (leaf->value == "(")){
 
-        if(leaf->leaves[0]->value == "*"){
+        if(((*leaf)[0].value == "*") ||
+           ((*leaf)[0].value == "^")){
+
+          if((*leaf)[0].value == "^")
+            info |= varType::block;
+
           if((leafPos2 + 1) < (expRoot2->leafCount)){
             leaf = expRoot2->leaves[leafPos2 + 1];
 
@@ -1279,6 +1291,9 @@ namespace occa {
                   NULL);
 
           ++nestPos;
+        }
+        else {
+          break;
         }
       }
 
@@ -1929,8 +1944,15 @@ namespace occa {
 
       ret += rightQualifiers.toString();
 
-      for(int i = 0; i < functionNestCount; ++i)
+      for(int i = 0; i < (functionNestCount - 1); ++i)
         ret += "(*";
+
+      if(functionNestCount){
+        if((info & varType::block) == 0)
+          ret += "(*";
+        else
+          ret += "(^";
+      }
 
       if(addSpaceBeforeName &&
          (name.size() != 0))

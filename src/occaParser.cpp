@@ -3721,18 +3721,6 @@ namespace occa {
                   if(checkLastTwoNodes(*cNode, "else", "if")){
                     mergeLastTwoNodes(*cNode);
                   }
-                  else if((lastExpNode.info & expType::specialKeyword) &&
-                          (lastExpNode.value == "__attribute__")){
-
-                    skipWhitespace(cRight);
-                    skipPair(cRight);
-
-                    // [-] Early fix
-                    if(cNode->leafCount)
-                      cNode->removeNode(-1);
-                    else if(cNode->up)
-                      cNode = cNode->up;
-                  }
                 }
                 else{
                   if(checkLastTwoNodes(*cNode, "else", "if"   , parsingLanguage_) ||
@@ -3908,7 +3896,6 @@ namespace occa {
       cKeywordType["#"]                  = expType::macroKeyword;
 
       cKeywordType["void"]               = expType::type;
-      cKeywordType["__attribute__"]      = expType::type; // [--]
 
       cKeywordType["long"]               = (expType::qualifier | expType::type);
       cKeywordType["short"]              = (expType::qualifier | expType::type);
@@ -3938,7 +3925,8 @@ namespace occa {
       cKeywordType["typedef"]            = expType::qualifier;
 
       //---[ Non-standard ]-------------
-      cKeywordType["__attribute__"]      = (expType::qualifier | expType::specialKeyword);
+      cKeywordType["__asm"]              = expType::L;
+      cKeywordType["__attribute__"]      = expType::L;
 
       //---[ C++ ]----------------------
       cKeywordType["virtual"]            = expType::qualifier;

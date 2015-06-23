@@ -15,9 +15,9 @@ int main(int argc, char **argv){
 
   compilerFlags["language"] = "C";
   // parsedContent = parser.parseFile("tests/easy.c"             , compilerFlags);
-  parsedContent = parser.parseFile("tests/test.cpp"           , compilerFlags);
+  // parsedContent = parser.parseFile("tests/test.cpp"           , compilerFlags);
   // parsedContent = parser.parseFile("tests/test2.cpp"          , compilerFlags);
-  // parsedContent = parser.parseFile("tests/scratch.okl"        , compilerFlags);
+  parsedContent = parser.parseFile("tests/scratch.okl"        , compilerFlags);
   // parsedContent = parser.parseFile("tests/pwdg.okl"           , compilerFlags);
   // parsedContent = parser.parseFile("tests/openclTest.cpp"     , compilerFlags);
   // parsedContent = parser.parseFile("tests/cudaTest.cpp"       , compilerFlags);

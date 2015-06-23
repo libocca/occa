@@ -15,6 +15,9 @@ namespace occa {
     class varLeaf_t;
 
     //---[ Attribute Class ]----------------------
+    bool isAnAttribute(const std::string &attrName);
+    bool isAnAttribute(expNode &expRoot, int leafPos);
+
     class attribute_t {
     public:
       std::string name;
@@ -209,6 +212,8 @@ namespace occa {
       static const int function        = (3 << 2);
       static const int functionDec     = (1 << 2);
       static const int functionDef     = (1 << 3);
+
+      static const int block           = (1 << 4);
     };
 
     class varInfo {
