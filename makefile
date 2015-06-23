@@ -42,7 +42,9 @@ ifdef occaDirWasInitialized
 .FORCE:
 
 $(occaLPath)/libocca.so: .FORCE
-	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
+	@echo "Error: You need to set the environment variable [OCCA_DIR]"
+	@echo "For example:"
+	@echo "  export OCCA_DIR='$(shell pwd)'"
 else
 
 .SUFFIXES:
@@ -97,7 +99,9 @@ endif
 
 ifdef occaDirWasInitialized
 clean: .FORCE
-	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
+	@echo "Error: You need to set the environment variable [OCCA_DIR]"
+	@echo "For example:"
+	@echo "  export OCCA_DIR='$(shell pwd)'"
 else
 clean:
 	rm -f $(occaOPath)/*;
