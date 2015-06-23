@@ -1,6 +1,8 @@
+#include "occaKernelDefines.hpp"
 #include "occaTools.hpp"
+#include "occaBase.hpp"
+
 #include "occaParser.hpp"
-#include "occa.hpp"      // For kernelInfo
 
 namespace occa {
   //---[ Helper Info ]----------------
@@ -612,7 +614,7 @@ namespace occa {
       std::ofstream fs;
       fs.open(parsedFile.c_str());
 
-      fs << info.occaKeywords << parsedContent;
+      fs << parsedContent;
 
       fs.close();
     }
@@ -642,6 +644,39 @@ namespace occa {
     return ret;
   }
 
+  void setupOccaHeaders(const kernelInfo &info){
+    std::string primitivesFile = sys::getFilename("[occa]/primitives.hpp");
+    std::string headerFile     = info.getModeHeaderFilename();
+
+    if(!sys::fileExists(primitivesFile)){
+      sys::mkpath(getFileDirectory(primitivesFile));
+
+      std::ofstream fs2;
+      fs2.open(primitivesFile.c_str());
+
+      fs2 << occaVectorDefines;
+
+      fs2.close();
+    }
+
+    if(!sys::fileExists(headerFile)){
+      sys::mkpath(getFileDirectory(headerFile));
+
+      std::ofstream fs2;
+      fs2.open(headerFile.c_str());
+
+      if(info.mode & Serial)   fs2 << occaSerialDefines;
+      if(info.mode & OpenMP)   fs2 << occaOpenMPDefines;
+      if(info.mode & OpenCL)   fs2 << occaOpenCLDefines;
+      if(info.mode & CUDA)     fs2 << occaCUDADefines;
+      // if(info.mode & HSA)      fs2 << occaHSADefines;
+      if(info.mode & Pthreads) fs2 << occaPthreadsDefines;
+      if(info.mode & COI)      fs2 << occaCOIDefines;
+
+      fs2.close();
+    }
+  }
+
   void createSourceFileFrom(const std::string &filename,
                             const std::string &hashDir,
                             const kernelInfo &info){
@@ -653,12 +688,13 @@ namespace occa {
 
     sys::mkpath(hashDir);
 
+    setupOccaHeaders(info);
+
     std::ofstream fs;
     fs.open(sourceFile.c_str());
 
-    fs << info.occaKeywords
-       // << "#include \"" << env::OCCA_CACHE_PATH << "/libraries/occa/primitives.hpp\n"
-       << occaVectorDefines
+    fs << "#include \"" << info.getModeHeaderFilename() << "\"\n"
+       << "#include \"" << sys::getFilename("[occa]/primitives.hpp") << "\"\n"
        << info.header
        << readFile(filename);
 

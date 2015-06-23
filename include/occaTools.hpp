@@ -160,6 +160,8 @@ namespace occa {
 
   std::string removeSlashes(const std::string &str);
 
+  void setupOccaHeaders(const kernelInfo &info);
+
   void createSourceFileFrom(const std::string &filename,
                             const std::string &hashDir,
                             const kernelInfo &info);

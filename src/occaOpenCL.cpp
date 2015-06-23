@@ -1137,7 +1137,7 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaOpenCLDefines);
+    info_.mode = OpenCL;
   }
 
   template <>

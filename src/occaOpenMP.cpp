@@ -647,12 +647,7 @@ namespace occa {
 
   template <>
   void device_t<OpenMP>::addOccaHeadersToInfo(kernelInfo &info_){
-    OCCA_EXTRACT_DATA(OpenMP, Device);
-
-    if(data_.supportsOpenMP)
-      info_.addOCCAKeywords(occaOpenMPDefines);
-    else
-      info_.addOCCAKeywords(occaSerialDefines);
+    info_.mode = OpenMP;
   }
 
   template <>

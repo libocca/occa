@@ -948,7 +948,7 @@ namespace occa {
 
   template <>
   void device_t<CUDA>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaCUDADefines);
+    info_.mode = CUDA;
   }
 
   template <>

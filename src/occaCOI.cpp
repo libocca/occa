@@ -797,7 +797,7 @@ namespace occa {
 
   template <>
   void device_t<COI>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaCOIDefines);
+    info_.mode = COI;
   }
 
   template <>

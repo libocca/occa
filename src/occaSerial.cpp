@@ -1023,7 +1023,7 @@ namespace occa {
 
   template <>
   void device_t<Serial>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaSerialDefines);
+    info_.mode = Serial;
   }
 
   template <>

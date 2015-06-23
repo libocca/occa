@@ -648,7 +648,7 @@ namespace occa {
 
   template <>
   void device_t<Pthreads>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaPthreadsDefines);
+    info_.mode = Pthreads;
   }
 
   template <>

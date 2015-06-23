@@ -186,7 +186,9 @@ namespace occa {
   void device_t<HSA>::setup(argInfoMap &aim){}
 
   template <>
-  void device_t<HSA>::addOccaHeadersToInfo(kernelInfo &info_){}
+  void device_t<HSA>::addOccaHeadersToInfo(kernelInfo &info_){
+    info_.mode = HSA;
+  }
 
   template <>
   std::string device_t<HSA>::getInfoSalt(const kernelInfo &info_){}

@@ -339,17 +339,17 @@ namespace occa {
 
   //---[ Kernel Info ]--------
   kernelInfo::kernelInfo() :
-    occaKeywords(""),
+    mode(NoMode),
     header(""),
     flags("") {}
 
   kernelInfo::kernelInfo(const kernelInfo &p) :
-    occaKeywords(p.occaKeywords),
+    mode(p.mode),
     header(p.header),
     flags(p.flags) {}
 
   kernelInfo& kernelInfo::operator = (const kernelInfo &p){
-    occaKeywords = p.occaKeywords;
+    mode   = p.mode;
     header = p.header;
     flags  = p.flags;
 
@@ -365,6 +365,18 @@ namespace occa {
 
   std::string kernelInfo::salt() const {
     return (header + flags);
+  }
+
+  std::string kernelInfo::getModeHeaderFilename() const {
+    if(mode & Serial)   return sys::getFilename("[occa]/defines/Serial.hpp");
+    if(mode & OpenMP)   return sys::getFilename("[occa]/defines/OpenMP.hpp");
+    if(mode & OpenCL)   return sys::getFilename("[occa]/defines/OpenCL.hpp");
+    if(mode & CUDA)     return sys::getFilename("[occa]/defines/CUDA.hpp");
+    if(mode & HSA)      return sys::getFilename("[occa]/defines/HSA.hpp");
+    if(mode & Pthreads) return sys::getFilename("[occa]/defines/Pthreads.hpp");
+    if(mode & COI)      return sys::getFilename("[occa]/defines/COI.hpp");
+
+    return "";
   }
 
   bool kernelInfo::isAnOccaDefine(const std::string &name){
@@ -390,12 +402,10 @@ namespace occa {
     return false;
   }
 
-  void kernelInfo::addOCCAKeywords(const std::string &keywords){
-    occaKeywords = keywords;
-  }
-
   void kernelInfo::addIncludeDefine(const std::string &filename){
-    header += "\n#include \"" + filename + "\"\n";
+    header += "\n#include \"";
+    header += filename;
+    header += "\"\n";
   }
 
   void kernelInfo::addInclude(const std::string &filename){

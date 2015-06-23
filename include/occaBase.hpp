@@ -224,6 +224,7 @@ namespace occa {
   //==============================================
 
   //---[ Mode ]-----------------------------------
+  static const occa::mode NoMode   = 0;
   static const occa::mode Serial   = (1 << 20);
   static const occa::mode OpenMP   = (1 << 21);
   static const occa::mode OpenCL   = (1 << 22);
@@ -247,7 +248,7 @@ namespace occa {
   static const occa::mode HSAIndex      = 4;
   static const occa::mode PthreadsIndex = 5;
   static const occa::mode COIIndex      = 6;
-  static const int modeCount = 6;
+  static const int modeCount = 7;
 
   inline std::string modeToStr(const occa::mode &m){
     if(m & Serial)   return "Serial";
@@ -1777,7 +1778,8 @@ namespace occa {
 
   class kernelInfo {
   public:
-    std::string occaKeywords, header, flags;
+    occa::mode mode;
+    std::string header, flags;
 
     kernelInfo();
 
@@ -1788,9 +1790,9 @@ namespace occa {
 
     std::string salt() const;
 
-    static bool isAnOccaDefine(const std::string &name);
+    std::string getModeHeaderFilename() const ;
 
-    void addOCCAKeywords(const std::string &keywords);
+    static bool isAnOccaDefine(const std::string &name);
 
     void addIncludeDefine(const std::string &filename);
 
