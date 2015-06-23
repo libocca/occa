@@ -191,7 +191,7 @@ void runClearOn(const std::string &path){
 
 void runClearCache(const int argc, std::string *args){
   const std::string libPath = occa::env::OCCA_CACHE_DIR + "libraries/";
-  const std::string isoPath = occa::env::OCCA_CACHE_DIR + "isolated/";
+  const std::string isoPath = occa::env::OCCA_CACHE_DIR + "kernels/";
 
   const bool libPathExists = occa::sys::fileExists(libPath);
   const bool isoPathExists = occa::sys::fileExists(isoPath);

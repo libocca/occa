@@ -1292,11 +1292,13 @@ namespace occa {
     switch(m){
 
     case Serial:{
+      strMode = "Serial";
       dHandle = new device_t<Serial>();
       break;
     }
     case OpenMP:{
 #if OCCA_OPENMP_ENABLED
+      strMode = "OpenMP";
       dHandle = new device_t<OpenMP>();
 #else
       std::cout << "OCCA mode [OpenMP] is not enabled, defaulting to [Serial] mode\n";
@@ -1306,6 +1308,7 @@ namespace occa {
     }
     case OpenCL:{
 #if OCCA_OPENCL_ENABLED
+      strMode = "OpenCL";
       dHandle = new device_t<OpenCL>();
 #else
       std::cout << "OCCA mode [OpenCL] is not enabled, defaulting to [Serial] mode\n";
@@ -1315,6 +1318,7 @@ namespace occa {
     }
     case CUDA:{
 #if OCCA_CUDA_ENABLED
+      strMode = "CUDA";
       dHandle = new device_t<CUDA>();
 #else
       std::cout << "OCCA mode [CUDA] is not enabled, defaulting to [Serial] mode\n";
@@ -1324,12 +1328,14 @@ namespace occa {
     }
     case Pthreads:{
       std::cout << "OCCA mode [Pthreads] is still in development-mode (unstable)\n";
+      strMode = "Pthreads";
       dHandle = new device_t<Pthreads>();
       break;
     }
     case COI:{
 #if OCCA_COI_ENABLED
       std::cout << "OCCA mode [COI] is deprecated (unstable)\n";
+      strMode = "COI";
       dHandle = new device_t<COI>();
 #else
       std::cout << "OCCA mode [COI] is not enabled, defaulting to [Serial] mode\n";
