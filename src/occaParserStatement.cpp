@@ -1131,15 +1131,16 @@ namespace occa {
         }
       }
       else if(needsExpChange()){
-        info &= expType::firstPassMask;
-
         info_t preInfo = info;
+
+        info &= expType::firstPassMask;
 
         if(preInfo & expType::occaKeyword)
           translateOccaKeyword(*this, preInfo, true);
 
         if(preInfo & expType::descriptor){
           if(preInfo == (*keywordType)["long"]){
+
             if((up != NULL)                    &&
                ((leafPos + 1) < up->leafCount) &&
                (sInfo->hasTypeInScope(up->leaves[leafPos + 1]->value))){
@@ -1148,11 +1149,14 @@ namespace occa {
             }
             else
               info = expType::type;
+
           }
-          else if(preInfo & (expType::qualifier | expType::struct_))
+          else if(preInfo & (expType::qualifier | expType::struct_)){
             info = expType::qualifier;
-          else
+          }
+          else {
             info = expType::type;
+          }
 
           // For [*] and [&]
           if(preInfo & expType::operator_)
@@ -4061,10 +4065,21 @@ namespace occa {
       const bool isCaseStatement = ((allExp[expPos].value == "case") ||
                                     (allExp[expPos].value == "default"));
 
-      skipAfterStatement(allExp, expPos);
+      if(isCaseStatement){
+        while((expPos < allExp.leafCount) &&
+              (allExp[expPos].value != ":")){
 
-      if(isCaseStatement)
+          ++expPos;
+        }
+
+        // Skip the [:]
+        if(expPos < allExp.leafCount)
+          ++expPos;
+
         return smntType::caseStatement;
+      }
+
+      skipAfterStatement(allExp, expPos);
 
       return smntType::blankStatement;
     }

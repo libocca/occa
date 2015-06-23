@@ -3871,7 +3871,7 @@ namespace occa {
       cKeywordType["-"]                  = (expType::L | expType::LR);
       cKeywordType["."]                  = expType::LR;
       cKeywordType["/"]                  = expType::LR;
-      cKeywordType[":"]                  = expType::endStatement;
+      cKeywordType[":"]                  = expType::LR;
       cKeywordType[";"]                  = expType::endStatement;
       cKeywordType["<"]                  = expType::LR;
       cKeywordType["="]                  = expType::LR;

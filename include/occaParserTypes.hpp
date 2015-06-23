@@ -231,6 +231,8 @@ namespace occa {
       int stackPointerCount, stackPointersUsed;
       expNode *stackExpRoots;
 
+      int bitfieldSize;
+
       // @dim()
       attribute_t dimAttr;
       intVector_t idxOrdering;

@@ -948,6 +948,8 @@ namespace occa {
       stackPointersUsed(0),
       stackExpRoots(NULL),
 
+      bitfieldSize(-1),
+
       usesTemplate(false),
       tArgCount(0),
       tArgs(NULL),
@@ -974,6 +976,8 @@ namespace occa {
       stackPointerCount(var.stackPointerCount),
       stackPointersUsed(var.stackPointersUsed),
       stackExpRoots(var.stackExpRoots),
+
+      bitfieldSize(var.bitfieldSize),
 
       dimAttr(var.dimAttr),
       idxOrdering(var.idxOrdering),
@@ -1004,6 +1008,8 @@ namespace occa {
       stackPointerCount  = var.stackPointerCount;
       stackPointersUsed  = var.stackPointersUsed;
       stackExpRoots      = var.stackExpRoots;
+
+      bitfieldSize = var.bitfieldSize;
 
       dimAttr     = var.dimAttr;
       idxOrdering = var.idxOrdering;
@@ -1109,6 +1115,23 @@ namespace occa {
 
       leafPos = loadNameFrom(s, expRoot, leafPos);
       leafPos = loadArgsFrom(s, expRoot, leafPos);
+
+      if((leafPos < expRoot.leafCount) &&
+         expRoot[leafPos].value == ":"){
+
+        ++leafPos;
+
+        if(leafPos < expRoot.leafCount){
+          typeHolder th(expRoot[leafPos].value);
+
+          OCCA_CHECK(th.type != noType,
+                     "Bitfield is not known at compile-time");
+
+          bitfieldSize = th.to<int>();
+
+          ++leafPos;
+        }
+      }
 
       if((leafPos < (expRoot.leafCount - 1)) &&
          (expRoot[leafPos].value == "@")){
@@ -1956,6 +1979,11 @@ namespace occa {
       for(int i = (functionNestCount - 1); 0 <= i; --i){
         ret += ')';
         ret += functionNests[i].toString();
+      }
+
+      if(0 <= bitfieldSize){
+        ret += " : ";
+        ret += occa::toString(bitfieldSize);
       }
 
       return ret;
