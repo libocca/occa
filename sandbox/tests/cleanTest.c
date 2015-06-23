@@ -1998,7 +1998,6 @@ typedef long unsigned int uintmax_t;
 #define UINT32_MAX 4294967295U
 #define UINT64_MAX 18446744073709551615ULL
 
-
 #define INT_LEAST8_MIN INT8_MIN
 #define INT_LEAST16_MIN INT16_MIN
 #define INT_LEAST32_MIN INT32_MIN
@@ -3139,3 +3138,5 @@ int main(int argc, char **argv){
 
   return 0;
 }
+
+#endif

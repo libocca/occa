@@ -727,8 +727,17 @@ namespace occa {
       if(leftQualifiers.size() == 0)
         leafPos = leftQualifiers.loadFrom(s, expRoot, leafPos);
 
-      if(leftQualifiers.has("typedef"))
-        return loadTypedefFrom(s, expRoot, leafPos);
+      if(leftQualifiers.has("typedef")){
+        leafPos = loadTypedefFrom(s, expRoot, leafPos);
+
+        if(addTypeToScope &&
+           (s.up != NULL)){
+
+          s.up->addType(*this);
+        }
+
+        return leafPos;
+      }
 
       baseType = this;
 

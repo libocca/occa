@@ -325,8 +325,8 @@ namespace occa {
       else
         organizeFortranNode();
 
-      if(sInfo)
-        sInfo->printDebugInfo();
+      // if(sInfo)
+      //   sInfo->printDebugInfo();
     }
 
     // @(attributes)
