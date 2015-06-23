@@ -24,8 +24,6 @@ int main(int argc, char **argv){
 
   std::string *args = new std::string[argc];
 
-  std::cout << '\n';
-
   for(int i = 0; i < argc; ++i)
     args[i] = argv[i + 1];
 
@@ -63,8 +61,6 @@ int main(int argc, char **argv){
   }
   else
     printHelp();
-
-  std::cout << '\n';
 
   delete [] args;
 

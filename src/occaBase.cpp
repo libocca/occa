@@ -1694,6 +1694,7 @@ namespace occa {
     kernel_v *&k = ker.kHandle;
 
     if(usingParser){
+#if OCCA_OPENMP_ENABLED
       if(dHandle->mode() != OpenMP){
         k          = new kernel_t<Serial>;
         k->dHandle = new device_t<Serial>;
@@ -1702,6 +1703,10 @@ namespace occa {
         k          = new kernel_t<OpenMP>;
         k->dHandle = dHandle;
       }
+#else
+      k          = new kernel_t<Serial>;
+      k->dHandle = new device_t<Serial>;
+#endif
 
       const std::string hash = getFileContentHash(realFilename,
                                                   dHandle->getInfoSalt(info_));
