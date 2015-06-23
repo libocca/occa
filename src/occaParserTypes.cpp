@@ -280,8 +280,8 @@ namespace occa {
     int qualifierInfo::loadFrom(expNode &expRoot,
                                 int leafPos){
 
-      if(expRoot.sInfo == NULL)
-        throw 1;
+      OCCA_CHECK(expRoot.sInfo != NULL,
+                 "Cannot load [qualifierInfo] without a statement");
 
       return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
     }
@@ -607,17 +607,22 @@ namespace occa {
 
     //---[ Load Info ]------------------
     int typeInfo::loadFrom(expNode &expRoot,
-                           int leafPos){
+                           int leafPos,
+                           bool addTypeToScope){
 
-      if(expRoot.sInfo == NULL)
-        throw 1;
+      OCCA_CHECK(expRoot.sInfo != NULL,
+                 "Cannot load [typeInfo] without a statement");
 
-      return loadFrom(*(expRoot.sInfo), expRoot, leafPos);
+      return loadFrom(*(expRoot.sInfo),
+                      expRoot,
+                      leafPos,
+                      addTypeToScope);
     }
 
     int typeInfo::loadFrom(statement &s,
                            expNode &expRoot,
-                           int leafPos){
+                           int leafPos,
+                           bool addTypeToScope){
 
       if(expRoot.leafCount <= leafPos)
         return leafPos;
@@ -633,6 +638,12 @@ namespace occa {
          (expRoot[leafPos].info & expType::unknown)){
 
         name = expRoot[leafPos++].value;
+
+        if(addTypeToScope &&
+           (s.up != NULL)){
+
+          s.up->addType(*this);
+        }
 
         updateThType();
       }
@@ -1055,8 +1066,8 @@ namespace occa {
                           int leafPos,
                           varInfo *varHasType){
 
-      if(expRoot.sInfo == NULL)
-        throw 1;
+      OCCA_CHECK(expRoot.sInfo != NULL,
+                 "Cannot load [varInfo] without a statement");
 
       return loadFrom(*(expRoot.sInfo), expRoot, leafPos, varHasType);
     }
@@ -1414,8 +1425,8 @@ namespace occa {
                                  int leafPos,
                                  varInfo *varHasType){
 
-      if(expRoot.sInfo == NULL)
-        throw 1;
+      OCCA_CHECK(expRoot.sInfo != NULL,
+                 "Cannot load [varInfo] without a statement");
 
       return loadFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
     }
@@ -1465,8 +1476,8 @@ namespace occa {
                                      int leafPos,
                                      varInfo *varHasType){
 
-      if(expRoot.sInfo == NULL)
-        throw 1;
+      OCCA_CHECK(expRoot.sInfo != NULL,
+                 "Cannot load [varInfo] without a statement");
 
       return loadTypeFromFortran(*(expRoot.sInfo), expRoot, leafPos, varHasType);
     }

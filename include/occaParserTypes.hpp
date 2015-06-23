@@ -154,11 +154,13 @@ namespace occa {
 
       //---[ Load Info ]----------------
       int loadFrom(expNode &expRoot,
-                   int leafPos = 0);
+                   int leafPos = 0,
+                   bool addTypeToScope = false);
 
       int loadFrom(statement &s,
                    expNode &expRoot,
-                   int leafPos = 0);
+                   int leafPos = 0,
+                   bool addTypeToScope = false);
 
       int loadTypedefFrom(statement &s,
                           expNode &expRoot,

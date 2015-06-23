@@ -598,7 +598,7 @@ namespace occa {
       expNode::swap(*this, newExp);
     }
 
-    void expNode::organizeFunctionStatement(const info_t flags){
+    void expNode::organizeFunctionStatement(){
       const bool functionIsDefined = (sInfo->info & smntType::functionDefinition);
 
       if(functionIsDefined)
@@ -612,8 +612,7 @@ namespace occa {
       varInfo &var = addVarInfoNode(0);
       int leafPos  = var.loadFrom(*this, 1);
 
-      if((flags & expFlag::addVarToScope) &&
-         (sInfo->up != NULL)              &&
+      if((sInfo->up != NULL)              &&
          (sInfo->up->scopeVarMap.find(var.name) ==
           sInfo->up->scopeVarMap.end())){
 
@@ -630,24 +629,21 @@ namespace occa {
       removeNodes(1, leafPos);
     }
 
-    void expNode::organizeStructStatement(const info_t flags){
+    void expNode::organizeStructStatement(){
       info = expType::struct_;
 
       // Store type
       expNode newExp(*sInfo);
       newExp.info = info;
 
-      typeInfo &type = newExp.addTypeInfoNode(0);
-      type.loadFrom(*this, 0);
+      // For readability
+      const bool addTypeToScope = true;
 
-      if(flags & expFlag::addTypeToScope){
-        if(flags & expFlag::addToParent){
-          if(sInfo->up != NULL)
-            sInfo->up->addType(type);
-        }
-        else
-          sInfo->addType(type);
-      }
+      typeInfo &type = newExp.addTypeInfoNode(0);
+      type.loadFrom(*this, 0, addTypeToScope);
+
+      // if(sInfo->up != NULL)
+      //   sInfo->up->addType(type);
 
       expNode::swap(*this, newExp);
     }

@@ -146,11 +146,9 @@ namespace occa {
 
       void organizeFlowStatement();
 
-      void organizeFunctionStatement(const info_t flags = (expFlag::addVarToScope |
-                                                           expFlag::addToParent));
+      void organizeFunctionStatement();
 
-      void organizeStructStatement(const info_t flags = (expFlag::addTypeToScope |
-                                                         expFlag::addToParent));
+      void organizeStructStatement();
 
       void organizeCaseStatement(const int parsingLanguage_ = parserInfo::parsingC);
 
