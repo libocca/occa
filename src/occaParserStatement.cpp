@@ -192,8 +192,8 @@ namespace occa {
         value = allExp[expStart].value;
       }
 
-      // printf("Copied expNode:\n");
-      // print();
+      printf("Copied expNode:\n");
+      print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -275,6 +275,25 @@ namespace occa {
 
             --leafCount;
           }
+        }
+
+        if(firstValue == "__asm"){
+          info = expType::asm_;
+
+          value = firstValue;
+
+          if((1 < leafCount) &&
+             (leaves[1]->value == "(")){
+
+            setLeaf(*(leaves[1]), 0);
+            leafCount = 1;
+          }
+          else
+            leafCount = 0;
+
+          print();
+
+          return;
         }
 
         // [occaParallelFor][#]
@@ -3616,6 +3635,22 @@ namespace occa {
         break;
       }
 
+      case (expType::asm_):{
+
+        out << value;
+
+        if(leafCount){
+          const char startSeg = (*this)[0].value[0];
+          const char endSeg   = segmentPair(startSeg);
+
+          out << startSeg;
+          out << (*this)[0][1].value;
+          out << endSeg;
+        }
+
+        break;
+      }
+
       case (expType::printValue):{
         out << value;
 
@@ -3998,7 +4033,7 @@ namespace occa {
       varInfo var;
       expPos = var.loadFrom(*this, allExp, expPos);
 
-      if( !(var.info & varType::functionDef) )
+      if((var.info & varType::functionDef) == 0)
         skipAfterStatement(allExp, expPos);
 
       if(var.info & varType::var)
@@ -4056,17 +4091,19 @@ namespace occa {
       if(allExp.leafCount <= expPos)
         return smntType::blankStatement;
 
-      if(allExp[expPos].value == "occaUnroll"){
+      const std::string &expValue = allExp[expPos].value;
+
+      if(expValue == "occaUnroll"){
         expPos += 2;
         return smntType::blankStatement;
       }
 
-      const bool isCaseStatement = ((allExp[expPos].value == "case") ||
-                                    (allExp[expPos].value == "default"));
+      const bool isCaseStatement = ((expValue == "case") ||
+                                    (expValue == "default"));
 
       if(isCaseStatement){
         while((expPos < allExp.leafCount) &&
-              (allExp[expPos].value != ":")){
+              (expValue != ":")){
 
           ++expPos;
         }
@@ -4703,8 +4740,17 @@ namespace occa {
                                                    const int parsingLanguage){
       if(parsingLanguage & parserInfo::parsingC){
         if(expPos < allExp.leafCount){
-          loadAllFromNode(allExp[expPos], parsingLanguage);
-          ++expPos;
+          // Most cases
+          if(((allExp[expPos].info & expType::specialKeyword) == 0) ||
+             (allExp[expPos].value != "__asm")){
+
+            loadAllFromNode(allExp[expPos], parsingLanguage);
+            ++expPos;
+          }
+          // Case where __asm breaks the traditional {} syntax
+          else {
+            loadFromNode(allExp, expPos, parsingLanguage);
+          }
         }
       }
       else
@@ -6057,6 +6103,18 @@ namespace occa {
             return expRoot.toString();
 
           std::string ret = expRoot.toString(tab);
+
+          if(statementCount() == 1){
+            expNode &e = statementStart->value->expRoot;
+
+            if(e.info & expType::asm_){
+              ret += " ";
+              ret += e.toString();
+              ret += ";\n";
+
+              return ret;
+            }
+          }
 
           ret += " {\n";
 

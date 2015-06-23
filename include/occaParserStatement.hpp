@@ -53,23 +53,25 @@ namespace occa {
       static const info_t varInfo         = (((info_t) 1)  << 25);
       static const info_t typeInfo        = (((info_t) 1)  << 26);
 
-      static const info_t printValue      = (((info_t) 1)  << 27);
-      static const info_t printLeaves     = (((info_t) 1)  << 28);
+      static const info_t asm_            = (((info_t) 1)  << 27);
 
-      static const info_t flowControl     = (((info_t) 1)  << 29);
+      static const info_t printValue      = (((info_t) 1)  << 28);
+      static const info_t printLeaves     = (((info_t) 1)  << 29);
 
-      static const info_t specialKeyword  = (((info_t) 1)  << 30);
+      static const info_t flowControl     = (((info_t) 1)  << 30);
 
-      static const info_t macroKeyword    = (((info_t) 1)  << 31);
+      static const info_t specialKeyword  = (((info_t) 1)  << 31);
 
-      static const info_t apiKeyword      = (((info_t) 7)  << 32);
-      static const info_t occaKeyword     = (((info_t) 1)  << 32);
-      static const info_t cudaKeyword     = (((info_t) 1)  << 33);
-      static const info_t openclKeyword   = (((info_t) 1)  << 34);
+      static const info_t macroKeyword    = (((info_t) 1)  << 32);
 
-      static const info_t hasFlag         = (((info_t) 1)  << 35);
+      static const info_t apiKeyword      = (((info_t) 7)  << 33);
+      static const info_t occaKeyword     = (((info_t) 1)  << 33);
+      static const info_t cudaKeyword     = (((info_t) 1)  << 34);
+      static const info_t openclKeyword   = (((info_t) 1)  << 35);
+
+      static const info_t hasFlag         = (((info_t) 1)  << 36);
       static const info_t removeFlags     = ~expType::hasFlag;
-      static const info_t hasSemicolon    = (((info_t) 1)  << 35);
+      static const info_t hasSemicolon    = (((info_t) 1)  << 36);
     };
 
     namespace expFlag {

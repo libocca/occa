@@ -65,10 +65,8 @@ namespace occa {
 
       std::string &modeStr = (it->second);
 
-      cpuMode = ((modeStr == "Serial")   ||
-                 (modeStr == "OpenMP")   ||
-                 (modeStr == "Pthreads") ||
-                 (modeStr == "COI"));
+      cpuMode = ((modeStr == "Serial") ||
+                 (modeStr == "OpenMP"));
 
       //---[ Magic ]----------
       it = compilerFlags.find("magic");
@@ -3846,8 +3844,6 @@ namespace occa {
       cKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
-      cKeywordType["@"]                  = expType::L;
-
       cKeywordType["!"]                  = expType::L;
       cKeywordType["%"]                  = expType::LR;
       cKeywordType["&"]                  = (expType::L | expType::LR | expType::qualifier);
@@ -3925,8 +3921,9 @@ namespace occa {
       cKeywordType["typedef"]            = expType::qualifier;
 
       //---[ Non-standard ]-------------
-      cKeywordType["__asm"]              = expType::L;
+      cKeywordType["@"]                  = expType::L;
       cKeywordType["__attribute__"]      = expType::L;
+      cKeywordType["__asm"]              = expType::specialKeyword;
 
       //---[ C++ ]----------------------
       cKeywordType["virtual"]            = expType::qualifier;

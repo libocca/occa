@@ -1221,14 +1221,16 @@ namespace occa {
       if(expRoot[leafPos].value == "("){
         ++leafPos;
 
-        if((leafPos < expRoot.leafCount) &&
-           (expRoot[leafPos].value == "{")){
+        if(expRoot.leafCount <= leafPos)
+          return varType::functionDec;
+
+        if((expRoot[leafPos].value == "{") ||
+           (expRoot[leafPos].value == "__asm")){
 
           return varType::functionDef;
         }
-        else{
-          return varType::functionDec;
-        }
+
+        return varType::functionDec;
       }
 
       return varType::var;
