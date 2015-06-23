@@ -1192,9 +1192,6 @@ namespace occa {
       // [a][::][b]
       mergeNamespaces();
 
-      // [(class)]
-      labelCasts();
-
       // const int [*] x
       labelReferenceQualifiers();
       //====================
@@ -1214,6 +1211,9 @@ namespace occa {
       }
 
       //---[ Level 1 ]------
+      // [(class)]
+      labelCasts();
+
       // <const int,float>
       mergeTypes();
 

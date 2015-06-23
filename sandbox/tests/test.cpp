@@ -19,6 +19,11 @@ const tFloat hat_t0 = 1.3523661426929/freq; /* Testing 3 */
 const tFloat &hat_t1 = hat_t0;
 
 
+int     (*f1)(int);
+int   (*(*f2)(int))(double);
+int (*(*(*f3)(int))(double))(float);
+
+
 occaFunction tFloat hatWavelet(tFloat t);
 
 occaFunction tFloat dummyFunction(shared tFloat t){
