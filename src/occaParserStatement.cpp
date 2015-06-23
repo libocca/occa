@@ -1420,18 +1420,21 @@ namespace occa {
     void expNode::labelReferenceQualifiers(){
       int leafPos = 0;
 
+      const info_t opQ = cKeywordType["*"];
+
       while(leafPos < leafCount){
-        if(((leaves[leafPos]->info & expType::operator_) == 0) ||
-           ((leaves[leafPos]->info & expType::qualifier) == 0)){
+        expNode &leaf = *(leaves[leafPos]);
+
+        if((((leaf.info & expType::operator_) == 0) &&
+            ((leaf.info & expType::qualifier) == 0))   ||
+           ((*keywordType)[leaf.value] != opQ)){
 
           ++leafPos;
           continue;
         }
 
-        expNode &leaf = *(leaves[leafPos]);
-
         if(leafPos == 0){
-          leaf.info &= ~expType::qualifier;
+          leaf.info = (opQ & ~expType::qualifier);
           ++leafPos;
           continue;
         }
@@ -1441,25 +1444,25 @@ namespace occa {
         if(lLeaf.info & (expType::qualifier |
                          expType::type)){
 
-          leaf.info &= ~expType::operator_;
+          leaf.info = (opQ & ~expType::operator_);
         }
 
         else if(lLeaf.info & expType::unknown){
           if(!sInfo->hasTypeInScope(lLeaf.value))
-            leaf.info &= ~expType::qualifier;
+            leaf.info = (opQ & ~expType::qualifier);
           else
-            leaf.info &= ~expType::operator_;
+            leaf.info = (opQ & ~expType::operator_);
         }
 
         else if((lLeaf.value == ",") &&
                 (up == NULL)         &&
                 (sInfo->info == smntType::declareStatement)){
 
-          leaf.info &= ~expType::operator_;
+          leaf.info = (opQ & ~expType::operator_);
         }
 
         else{
-          leaf.info &= ~expType::qualifier;
+          leaf.info = (opQ & ~expType::qualifier);
         }
 
         ++leafPos;

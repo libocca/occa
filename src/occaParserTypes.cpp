@@ -679,6 +679,10 @@ namespace occa {
 
             expNode::swap(nestedExps[i], leaf[sLeafPos]);
 
+            // For nested types, types are still
+            //   labeled as expType::unknown
+            nestedExps[i].labelReferenceQualifiers();
+
             if(!loadType)
               nestedExps[i].organizeDeclareStatement(expFlag::none);
             else
