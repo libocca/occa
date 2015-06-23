@@ -14,6 +14,9 @@ namespace occa {
 
     class varLeaf_t;
 
+    bool isInlinedASM(const std::string &attrName);
+    bool isInlinedASM(expNode &expRoot, int leafPos);
+
     //---[ Attribute Class ]----------------------
     bool isAnAttribute(const std::string &attrName);
     bool isAnAttribute(expNode &expRoot, int leafPos);

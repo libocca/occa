@@ -3,6 +3,17 @@
 
 namespace occa {
   namespace parserNS {
+    bool isInlinedASM(const std::string &attrName){
+      return (attrName == "__asm");
+    }
+
+    bool isInlinedASM(expNode &expRoot, int leafPos){
+      if(expRoot.leafCount <= leafPos)
+        return false;
+
+      return isInlinedASM(expRoot[leafPos].value);
+    }
+
     bool isAnAttribute(const std::string &attrName){
       return ((attrName == "@") ||
               (attrName == "__attribute__"));
@@ -1225,7 +1236,7 @@ namespace occa {
           return varType::functionDec;
 
         if((expRoot[leafPos].value == "{") ||
-           (expRoot[leafPos].value == "__asm")){
+           isInlinedASM(expRoot, leafPos)){
 
           return varType::functionDef;
         }

@@ -192,8 +192,8 @@ namespace occa {
         value = allExp[expStart].value;
       }
 
-      printf("Copied expNode:\n");
-      print();
+      // printf("Copied expNode:\n");
+      // print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -277,7 +277,7 @@ namespace occa {
           }
         }
 
-        if(firstValue == "__asm"){
+        if(isInlinedASM(firstValue)){
           info = expType::asm_;
 
           value = firstValue;
@@ -290,8 +290,6 @@ namespace occa {
           }
           else
             leafCount = 0;
-
-          print();
 
           return;
         }
@@ -4741,9 +4739,7 @@ namespace occa {
       if(parsingLanguage & parserInfo::parsingC){
         if(expPos < allExp.leafCount){
           // Most cases
-          if(((allExp[expPos].info & expType::specialKeyword) == 0) ||
-             (allExp[expPos].value != "__asm")){
-
+          if(!isInlinedASM(allExp, expPos)){
             loadAllFromNode(allExp[expPos], parsingLanguage);
             ++expPos;
           }
