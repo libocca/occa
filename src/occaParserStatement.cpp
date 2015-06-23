@@ -192,8 +192,8 @@ namespace occa {
         value = allExp[expStart].value;
       }
 
-      printf("Copied expNode:\n");
-      print();
+      // printf("Copied expNode:\n");
+      // print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |

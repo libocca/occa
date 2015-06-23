@@ -147,6 +147,23 @@ namespace occa {
       if(!isAnAttribute(expRoot, leafPos))
         return leafPos;
 
+      if(expRoot[leafPos].value == "__attribute__"){
+        ++leafPos;
+
+        if(leafPos < expRoot.leafCount){
+          expRoot[leafPos].organize();
+
+          attribute_t &attr = *(new attribute_t());
+          attr.name = expRoot[leafPos].toString();
+
+          attributeMap["__attribute__"] = &attr;
+
+          ++leafPos;
+        }
+
+        return leafPos;
+      }
+
       ++leafPos;
 
       // Only one attribute
@@ -2006,6 +2023,13 @@ namespace occa {
       if(0 <= bitfieldSize){
         ret += " : ";
         ret += occa::toString(bitfieldSize);
+      }
+
+      attribute_t *attr = hasAttribute("__attribute__");
+
+      if(attr != NULL){
+        ret += " __attribute__";
+        ret += attr->name;
       }
 
       return ret;
