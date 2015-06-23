@@ -506,7 +506,7 @@ namespace occa {
       return ("[" + libName + "]/" + theRest);
     }
     else if(filename.find(kerPath) == 0){
-      return ("kernels/" + filename.substr(kerPath.size()));
+      return filename.substr(kerPath.size());
     }
 
     return filename;
