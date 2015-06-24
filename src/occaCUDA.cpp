@@ -1250,7 +1250,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle = this;
-    mem->handle  = new CUdeviceptr;
+    mem->handle  = new CUdeviceptr*;
     mem->size    = bytes;
 
     OCCA_CUDA_CHECK("Device: malloc",
@@ -1336,6 +1336,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle  = this;
+    mem->handle   = new CUdeviceptr*;
     mem->size     = bytes;
     mem->isMapped = true;
 
