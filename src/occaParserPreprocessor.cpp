@@ -143,6 +143,8 @@ namespace occa {
       return false;
     }
 
+    keywordTypeMap_t cPodTypes;
+
     opTypeMap_t  *opPrecedence,   cOpPrecedence,   fortranOpPrecedence;
     opLevelMap_t *opLevelMap[17], cOpLevelMap[17], fortranOpLevelMap[17];
     bool         *opLevelL2R[17], cOpLevelL2R[17], fortranOpLevelL2R[17];

@@ -787,6 +787,14 @@ namespace occa {
     void parserBase::loadLanguageTypes(){
       pushLanguage(parserInfo::parsingC);
 
+      cPodTypes["bool"]   = 0;
+      cPodTypes["char"]   = 0;
+      cPodTypes["short"]  = 0;
+      cPodTypes["int"]    = 0;
+      cPodTypes["long"]   = 0;
+      cPodTypes["float"]  = 0;
+      cPodTypes["double"] = 0;
+
       int parts[6]            = {1, 2, 3, 4, 8, 16};
       std::string suffix[6]   = {"", "2", "3", "4", "8", "16"};
       std::string baseType[7] = {"int"  ,

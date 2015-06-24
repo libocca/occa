@@ -1122,13 +1122,40 @@ namespace occa {
       if(info & expType::hasInfo)
         return;
 
+      const int upLeafCount = (up ? up->leafCount : 0);
+      expNode *leftLeaf     = ((up && leafPos)         ?
+                               up->leaves[leafPos - 1] :
+                               NULL);
+
       if(info & expType::unknown){
         info &= expType::firstPassMask;
 
         if(sInfo != NULL){
-          varInfo *nodeVar = sInfo->hasVariableInScope(value);
+          varInfo *nodeVar   = sInfo->hasVariableInScope(value);
+          typeInfo *nodeType = sInfo->hasTypeInScope(value);
 
-          if(nodeVar){
+          if(nodeVar && nodeType){
+            // [const] [type]
+            if((leftLeaf != NULL) &&
+               (leftLeaf->info & expType::qualifier)){
+
+              info = expType::type;
+            }
+            // [type] [X]
+            else if((leafPos == 0)  &&
+                    (1 < upLeafCount) &&
+                    ((*up)[1].info & (expType::varInfo  |
+                                      expType::function |
+                                      expType::unknown  |
+                                      expType::variable))){
+              info = expType::type;
+            }
+            else {
+              putVarInfo(*nodeVar);
+              return;
+            }
+          }
+          else if(nodeVar){
             if( !(nodeVar->info & varType::function) ){
               putVarInfo(*nodeVar);
               return;
@@ -1136,13 +1163,19 @@ namespace occa {
             else
               info = expType::function; // [<>] Change to funcInfo
           }
-          else{
-            typeInfo *nodeType = sInfo->hasTypeInScope(value);
+          else if(nodeType){
+            // [type] [varName]
+            if((leftLeaf != NULL) &&
+               (leftLeaf->info & expType::type)){
 
-            if(!nodeType)
               info = expType::unknown;
-            else
+            }
+            else {
               info = expType::type;
+            }
+          }
+          else {
+            info = expType::unknown;
           }
         }
       }
@@ -1159,7 +1192,7 @@ namespace occa {
 
             if((up != NULL)                    &&
                ((leafPos + 1) < up->leafCount) &&
-               (sInfo->hasTypeInScope(up->leaves[leafPos + 1]->value))){
+               (cPodTypes.find((*up)[leafPos + 1].value) != cPodTypes.end())){
 
               info = expType::qualifier;
             }
@@ -4294,7 +4327,7 @@ namespace occa {
       //    specifiers and qualifiers
       if(allExp[expPos].info == (*keywordType)["long"]){
         if(((expPos + 1) < allExp.leafCount) &&
-           (hasTypeInScope(allExp[expPos + 1].value))){
+           (cPodTypes.find(allExp[expPos + 1].value) != cPodTypes.end())){
 
           return true;
         }

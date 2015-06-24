@@ -41,6 +41,8 @@ namespace occa {
     typedef opLevelMap_t::iterator       opLevelMapIterator;
     typedef opLevelMap_t::const_iterator cOpLevelMapIterator;
 
+    extern keywordTypeMap_t cPodTypes;
+
     extern opTypeMap_t  *opPrecedence  , cOpPrecedence  , fortranOpPrecedence;
     extern opLevelMap_t *opLevelMap[17], cOpLevelMap[17], fortranOpLevelMap[17];
     extern bool         *opLevelL2R[17], cOpLevelL2R[17], fortranOpLevelL2R[17];
