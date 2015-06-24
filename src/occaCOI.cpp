@@ -221,6 +221,8 @@ namespace occa {
                                                           const std::string &functionName,
                                                           const kernelInfo &info_){
 
+    name = functionName;
+
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
@@ -329,6 +331,9 @@ namespace occa {
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
                                                 const std::string &functionName){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(COI, Kernel);
 
     std::string libPath, soname;

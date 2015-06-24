@@ -442,66 +442,52 @@ namespace occa {
 
 
     //---[ Var Dependency Graph ]-----------------
-    class sDep_t {
+#if 0
+    class varDepInfo;
+    class smntDepInfo;
+
+    typedef node<varDepInfo*>                     varDepInfoNode;
+    typedef node<smntDepInfo*>                    smntDepInfoNode;
+
+    typedef std::map<varInfo*,depInfo*>           varToDepMap;
+    typedef std::map<statement*,smntDepInfoNode*> smntToVarDepMap;
+
+    namespace depType {
+      static const int none   = 0;
+      static const int set    = (1 << 0);
+      static const int update = (1 << 1);
+    }
+
+    class varDepInfo {
     public:
-      int sID;
-      varInfoVector_t deps;
+      int info;
 
-      sDep_t();
+      varInfo *var;
+      varDepInfoNode *myNode;
 
-      sDep_t(const sDep_t &sd);
-      sDep_t& operator = (const sDep_t &sd);
-
-      varInfo& operator [] (const int pos);
-
-      int size();
-
-      void add(varInfo &var);
-      void uniqueAdd(varInfo &var);
-
-      bool has(varInfo &var);
+      int startInfo();
+      int endInfo();
     };
 
-    class varDepGraph {
+    class smntDepInfo {
     public:
-      std::vector<sDep_t> sUpdates;
+      varToDepMap v2dMap;
 
-      varDepGraph();
+      statement *s;
+      smntDepInfoNode *myNode;
 
-      varDepGraph(varInfo &var,
-                  statement &sBound);
-
-      varDepGraph(varInfo &var,
-                  statement &sBound,
-                  statementIdMap_t &idMap);
-
-      varDepGraph(const varDepGraph &vdg);
-      varDepGraph& operator = (const varDepGraph &vdg);
-
-      void free();
-
-      void setup(varInfo &var,
-                 statement &sBound);
-
-      void setup(varInfo &var,
-                 statement &sBound,
-                 statementIdMap_t &idMap);
-
-      bool checkStatementForDependency(varInfo &var,
-                                       statement &s,
-                                       const int sBoundID,
-                                       statementIdMap_t &idMap);
-
-      bool has(const int sID);
-
-      void addDependencyMap(idDepMap_t &depMap);
-
-      void addFullDependencyMap(idDepMap_t &depMap,
-                                statementIdMap_t &idMap);
-      void addFullDependencyMap(idDepMap_t &depMap,
-                                statementIdMap_t &idMap,
-                                statementVector_t &sVec);
+      varDepInfo* has(varInfo &var);
+      varDepInfo& operator () (varInfo &var);
     };
+
+    class depMap_t {
+    public:
+      smntToVarDepMap map;
+
+      varDepInfo* has(statement &s, varInfo &var);
+      varDepInfo& operator () (statement &s, varInfo &var);
+    };
+#endif
     //============================================
 
 

@@ -269,6 +269,9 @@ namespace occa {
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromSource(const std::string &filename,
                                                   const std::string &functionName,
                                                   const kernelInfo &info_){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 
     kernelInfo info = info_;
@@ -394,6 +397,9 @@ namespace occa {
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromBinary(const std::string &filename,
                                                  const std::string &functionName){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
@@ -1360,6 +1366,7 @@ namespace occa {
     memory_v *mem = new memory_t<CUDA>;
 
     mem->dHandle  = this;
+    mem->handle   = new CUdeviceptr*;
     mem->size     = bytes;
     mem->isMapped = true;
 

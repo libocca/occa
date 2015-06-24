@@ -582,6 +582,9 @@ namespace occa {
   kernel_t<Serial>* kernel_t<Serial>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName,
                                                       const kernelInfo &info_){
+
+    name = functionName;
+
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
@@ -676,6 +679,9 @@ namespace occa {
   template <>
   kernel_t<Serial>* kernel_t<Serial>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName){
+
+    name = functionName;
+
     data = new SerialKernelData_t;
 
     OCCA_EXTRACT_DATA(Serial, Kernel);
@@ -689,6 +695,8 @@ namespace occa {
   template <>
   kernel_t<Serial>* kernel_t<Serial>::loadFromLibrary(const char *cache,
                                                       const std::string &functionName){
+    name = functionName;
+
     return buildFromBinary(cache, functionName);
   }
 

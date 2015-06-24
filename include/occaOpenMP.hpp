@@ -61,16 +61,16 @@ namespace occa {
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_);
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   uintptr_t kernel_t<OpenMP>::maximumInnerDimSize();
@@ -217,21 +217,21 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromSource(const std::string &filename,
-                                                    const std::string &functionName_,
+                                                    const std::string &functionName,
                                                     const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
-                                              const std::string &functionName_,
+                                              const std::string &functionName,
                                               const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   memory_v* device_t<OpenMP>::wrapMemory(void *handle_,

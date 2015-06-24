@@ -721,27 +721,6 @@ namespace occa {
       void addQualifier(const std::string &qualifier, const int pos = 0);
       void removeQualifier(const std::string &qualifier);
 
-      void setVariableDeps(varInfo &var,
-                           sDep_t &sDep);
-
-      void addVariableDeps(expNode &exp,
-                           sDep_t &sDep);
-
-      bool setsVariableValue(varInfo &var);
-
-      void addStatementDependencies(statementIdMap_t &idMap,
-                                    statementVector_t sVec,
-                                    idDepMap_t &depMap);
-
-      void addStatementDependencies(statement &fromS,
-                                    statementIdMap_t &idMap,
-                                    statementVector_t sVec,
-                                    idDepMap_t &depMap);
-
-      void addNestedDependencies(statementIdMap_t &idMap,
-                                 statementVector_t sVec,
-                                 idDepMap_t &depMap);
-
       varInfo& getDeclarationVarInfo(const int pos);
       expNode* getDeclarationVarNode(const int pos);
       std::string getDeclarationVarName(const int pos);

@@ -573,6 +573,9 @@ namespace occa {
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName,
                                                       const kernelInfo &info_){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
     kernelInfo info = info_;
@@ -626,6 +629,9 @@ namespace occa {
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
     std::string cFile = readFile(filename);

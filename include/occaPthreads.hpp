@@ -107,16 +107,16 @@ namespace occa {
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,
-                                                          const std::string &functionName_,
+                                                          const std::string &functionName,
                                                           const kernelInfo &info_);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
-                                                          const std::string &functionName_);
+                                                          const std::string &functionName);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
-                                                          const std::string &functionName_);
+                                                          const std::string &functionName);
 
   template <>
   uintptr_t kernel_t<Pthreads>::maximumInnerDimSize();
@@ -260,21 +260,21 @@ namespace occa {
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
-                                                const std::string &functionName_,
+                                                const std::string &functionName,
                                                 const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   void device_t<Pthreads>::free();

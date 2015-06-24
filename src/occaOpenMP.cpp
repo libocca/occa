@@ -187,6 +187,9 @@ namespace occa {
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName,
                                                       const kernelInfo &info_){
+
+    name = functionName;
+
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
@@ -295,6 +298,9 @@ namespace occa {
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName){
+
+    name = functionName;
+
     data = new OpenMPKernelData_t;
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);

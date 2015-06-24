@@ -84,16 +84,16 @@ namespace occa {
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
-                                                const std::string &functionName_,
+                                                const std::string &functionName,
                                                 const kernelInfo &info_);
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
-                                                const std::string &functionName_);
+                                                const std::string &functionName);
 
   template <>
   kernel_t<COI>* kernel_t<COI>::loadFromLibrary(const char *cache,
-                                                const std::string &functionName_);
+                                                const std::string &functionName);
 
   template <>
   uintptr_t kernel_t<COI>::maximumInnerDimSize();
@@ -237,21 +237,21 @@ namespace occa {
 
   template <>
   kernel_v* device_t<COI>::buildKernelFromSource(const std::string &filename,
-                                                 const std::string &functionName_,
+                                                 const std::string &functionName,
                                                  const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<COI>::buildKernelFromBinary(const std::string &filename,
-                                                 const std::string &functionName_);
+                                                 const std::string &functionName);
 
   template <>
   void device_t<COI>::cacheKernelInLibrary(const std::string &filename,
-                                           const std::string &functionName_,
+                                           const std::string &functionName,
                                            const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<COI>::loadKernelFromLibrary(const char *cache,
-                                                 const std::string &functionName_);
+                                                 const std::string &functionName);
 
   template <>
   memory_v* device_t<COI>::wrapMemory(void *handle_,

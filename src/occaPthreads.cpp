@@ -76,6 +76,8 @@ namespace occa {
                                                           const std::string &functionName,
                                                           const kernelInfo &info_){
 
+    name = functionName;
+
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
@@ -184,6 +186,9 @@ namespace occa {
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
                                                           const std::string &functionName){
+
+    name = functionName;
+
     data = new PthreadsKernelData_t;
 
     OCCA_EXTRACT_DATA(Pthreads, Kernel);

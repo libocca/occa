@@ -116,16 +116,16 @@ namespace occa {
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_);
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::loadFromLibrary(const char *cache,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   uintptr_t kernel_t<OpenCL>::maximumInnerDimSize();
@@ -272,21 +272,21 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromSource(const std::string &filename,
-                                                    const std::string &functionName_,
+                                                    const std::string &functionName,
                                                     const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromBinary(const std::string &filename,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   void device_t<OpenCL>::cacheKernelInLibrary(const std::string &filename,
-                                              const std::string &functionName_,
+                                              const std::string &functionName,
                                               const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   memory_v* device_t<OpenCL>::wrapMemory(void *handle_,

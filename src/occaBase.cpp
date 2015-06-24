@@ -576,6 +576,10 @@ namespace occa {
     return strMode;
   }
 
+  const std::string& kernel::name(){
+    return kHandle->name;
+  }
+
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
     for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
@@ -2200,19 +2204,19 @@ namespace occa {
   }
 
   void cacheKernelInLibrary(const std::string &filename,
-                            const std::string &functionName_,
+                            const std::string &functionName,
                             const kernelInfo &info_){
 
     return currentDevice.cacheKernelInLibrary(filename,
-                                              functionName_,
+                                              functionName,
                                               info_);
   }
 
   kernel loadKernelFromLibrary(const char *cache,
-                               const std::string &functionName_){
+                               const std::string &functionName){
 
     return currentDevice.loadKernelFromLibrary(cache,
-                                               functionName_);
+                                               functionName);
   }
 
   kernel buildKernelFromLoopy(const std::string &filename,

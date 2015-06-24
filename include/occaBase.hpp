@@ -613,6 +613,8 @@ namespace occa {
     void* data;
     occa::device_v *dHandle;
 
+    std::string name;
+
     parsedKernelInfo metaInfo;
 
     uintptr_t maximumInnerDimSize_;
@@ -632,14 +634,14 @@ namespace occa {
     virtual std::string fixBinaryName(const std::string &filename) = 0;
 
     virtual kernel_v* buildFromSource(const std::string &filename,
-                                      const std::string &functionName_,
+                                      const std::string &functionName,
                                       const kernelInfo &info_ = defaultKernelInfo) = 0;
 
     virtual kernel_v* buildFromBinary(const std::string &filename,
-                                      const std::string &functionName_) = 0;
+                                      const std::string &functionName) = 0;
 
     virtual kernel_v* loadFromLibrary(const char *cache,
-                                      const std::string &functionName_) = 0;
+                                      const std::string &functionName) = 0;
 
     virtual uintptr_t maximumInnerDimSize() = 0;
     virtual int preferredDimSize() = 0;
@@ -658,7 +660,7 @@ namespace occa {
 
     kernel_t();
     kernel_t(const std::string &filename,
-             const std::string &functionName_,
+             const std::string &functionName,
              const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_t(const kernel_t<mode_> &k);
@@ -669,14 +671,14 @@ namespace occa {
     std::string fixBinaryName(const std::string &filename);
 
     kernel_t<mode_>* buildFromSource(const std::string &filename,
-                                    const std::string &functionName_,
+                                    const std::string &functionName,
                                     const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_t<mode_>* buildFromBinary(const std::string &filename,
-                                    const std::string &functionName_);
+                                    const std::string &functionName);
 
     kernel_t<mode_>* loadFromLibrary(const char *cache,
-                                    const std::string &functionName_);
+                                    const std::string &functionName);
 
     uintptr_t maximumInnerDimSize();
     int preferredDimSize();
@@ -705,6 +707,7 @@ namespace occa {
     kernel& operator = (const kernel &k);
 
     const std::string& mode();
+    const std::string& name();
 
     uintptr_t maximumInnerDimSize();
     int preferredDimSize();
@@ -1166,18 +1169,18 @@ namespace occa {
     virtual std::string fixBinaryName(const std::string &filename) = 0;
 
     virtual kernel_v* buildKernelFromSource(const std::string &filename,
-                                            const std::string &functionName_,
+                                            const std::string &functionName,
                                             const kernelInfo &info_ = defaultKernelInfo) = 0;
 
     virtual kernel_v* buildKernelFromBinary(const std::string &filename,
-                                            const std::string &functionName_) = 0;
+                                            const std::string &functionName) = 0;
 
     virtual void cacheKernelInLibrary(const std::string &filename,
-                                      const std::string &functionName_,
+                                      const std::string &functionName,
                                       const kernelInfo &info_ = defaultKernelInfo) = 0;
 
     virtual kernel_v* loadKernelFromLibrary(const char *cache,
-                                            const std::string &functionName_) = 0;
+                                            const std::string &functionName) = 0;
 
 #if OCCA_OPENCL_ENABLED
     friend occa::device cl::wrapDevice(cl_platform_id platformID,
@@ -1286,11 +1289,11 @@ namespace occa {
                                     const std::string &functionName);
 
     void cacheKernelInLibrary(const std::string &filename,
-                              const std::string &functionName_,
+                              const std::string &functionName,
                               const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_v* loadKernelFromLibrary(const char *cache,
-                                    const std::string &functionName_);
+                                    const std::string &functionName);
 
 #if OCCA_OPENCL_ENABLED
     friend occa::device cl::wrapDevice(cl_platform_id platformID,
@@ -1431,11 +1434,11 @@ namespace occa {
                                  const std::string &functionName);
 
     void cacheKernelInLibrary(const std::string &filename,
-                              const std::string &functionName_,
+                              const std::string &functionName,
                               const kernelInfo &info_ = defaultKernelInfo);
 
     kernel loadKernelFromLibrary(const char *cache,
-                                 const std::string &functionName_);
+                                 const std::string &functionName);
 
     kernel buildKernelFromLoopy(const std::string &filename,
                                 const std::string &functionName,
@@ -1568,11 +1571,11 @@ namespace occa {
                                const std::string &functionName);
 
   void cacheKernelInLibrary(const std::string &filename,
-                            const std::string &functionName_,
+                            const std::string &functionName,
                             const kernelInfo &info_ = defaultKernelInfo);
 
   kernel loadKernelFromLibrary(const char *cache,
-                               const std::string &functionName_);
+                               const std::string &functionName);
 
   kernel buildKernelFromLoopy(const std::string &filename,
                               const std::string &functionName,

@@ -77,16 +77,16 @@ namespace occa {
 
   template <>
   kernel_t<HSA>* kernel_t<HSA>::buildFromSource(const std::string &filename,
-                                                const std::string &functionName_,
+                                                const std::string &functionName,
                                                 const kernelInfo &info_);
 
   template <>
   kernel_t<HSA>* kernel_t<HSA>::buildFromBinary(const std::string &filename,
-                                                const std::string &functionName_);
+                                                const std::string &functionName);
 
   template <>
   kernel_t<HSA>* kernel_t<HSA>::loadFromLibrary(const char *cache,
-                                                const std::string &functionName_);
+                                                const std::string &functionName);
 
   template <>
   uintptr_t kernel_t<HSA>::maximumInnerDimSize();
@@ -230,21 +230,21 @@ namespace occa {
 
   template <>
   kernel_v* device_t<HSA>::buildKernelFromSource(const std::string &filename,
-                                                 const std::string &functionName_,
+                                                 const std::string &functionName,
                                                  const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<HSA>::buildKernelFromBinary(const std::string &filename,
-                                                 const std::string &functionName_);
+                                                 const std::string &functionName);
 
   template <>
   void device_t<HSA>::cacheKernelInLibrary(const std::string &filename,
-                                           const std::string &functionName_,
+                                           const std::string &functionName,
                                            const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<HSA>::loadKernelFromLibrary(const char *cache,
-                                                 const std::string &functionName_);
+                                                 const std::string &functionName);
 
   template <>
   memory_v* device_t<HSA>::wrapMemory(void *handle_,
