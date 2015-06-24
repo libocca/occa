@@ -473,7 +473,7 @@ namespace occa {
         return true;
       }
       else if(fortranQualifier == "PARAMETER"){
-        add("const", 0);
+        add("occaConst", 0);
         return true;
       }
       // OFL Keywords
@@ -525,7 +525,7 @@ namespace occa {
             var.rightQualifiers.add("&", 0);
 
             if(upStringCheck(leaf->value, "IN"))
-              add("const", 0);
+              add("occaConst", 0);
 
             return (leafPos + 2);
           }

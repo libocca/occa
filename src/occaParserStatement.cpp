@@ -976,6 +976,9 @@ namespace occa {
         sInfo->addAttribute(ss.str());
 
         sInfo->updateInitialLoopAttributes();
+
+        // Get rid of the tag
+        --statementCount;
       }
 
       // Get iter var name
@@ -1028,6 +1031,8 @@ namespace occa {
         expNode exp2 = sInfo->createOrganizedExpNodeFrom(*this,
                                                          pos[2],
                                                          (pos[3] - pos[2] - 1));
+
+        exp2.print();
 
         const std::string exp2Str = exp2.toString();
 
