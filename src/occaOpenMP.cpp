@@ -45,16 +45,18 @@ namespace occa {
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       const std::string safeCompiler = removeSlashes(compiler);
-      const std::string cacheDir     = getCachePath();
+      const std::string cacheDir     = env::OCCA_CACHE_DIR;
 
-      const std::string testFilename = (cacheDir + "/.ompTest.cpp");
-      const std::string infoFilename = (cacheDir + std::string("/.ompTest_") + safeCompiler);
+      const std::string hash         = "ompTest";
+      const std::string testDir      = (cacheDir + "testing/compiler/");
+      const std::string testFilename = (testDir  + "ompTest.cpp");
+      const std::string infoFilename = (testDir  + "ompTestFor_" + safeCompiler);
 
-      if(!haveFile(testFilename)){
-        waitForFile(testFilename);
+      if(!haveHash(hash)){
+        waitForHash(hash);
       }
       else{
-        if(!fileExists(testFilename)){
+        if(!sys::fileExists(testFilename)){
           std::string testContent = ("#include <omp.h>\n"
                                      "\n"
                                      "int main(int argc, char **argv){\n"
@@ -68,9 +70,9 @@ namespace occa {
           writeToFile(testFilename, testContent);
         }
 
-        std::string binaryFilename = (getCachePath() + std::string("/.ompBinary_" + safeCompiler));
+        const std::string binaryFilename = (testDir +  "ompBinaryFor_" + safeCompiler);
 
-        if(!fileExists(infoFilename)){
+        if(!sys::fileExists(infoFilename)){
           std::string flag = baseCompilerFlag(vendor_);
           int compileError = 1;
 
@@ -94,12 +96,13 @@ namespace occa {
 
           writeToFile(infoFilename, flag);
 
-          releaseFile(testFilename);
+          releaseHash(hash);
 
           return flag;
         }
-        else
-          releaseFile(testFilename);
+        else {
+          releaseHash(hash);
+        }
       }
 
       return readFile(infoFilename);
@@ -115,6 +118,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenMP>::kernel_t(){
+    strMode = "OpenMP";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -138,10 +143,13 @@ namespace occa {
     outer = k.outer;
 
     nestedKernelCount = k.nestedKernelCount;
-    nestedKernels     = k.nestedKernels;
 
-    for(int i = 0; i < nestedKernelCount; ++i)
-      nestedKernels[i] = k.nestedKernels[i];
+    if(0 < nestedKernelCount){
+      nestedKernels = new kernel[nestedKernelCount];
+
+      for(int i = 0; i < nestedKernelCount; ++i)
+        nestedKernels[i] = k.nestedKernels[i];
+    }
   }
 
   template <>
@@ -155,11 +163,12 @@ namespace occa {
     inner = k.inner;
     outer = k.outer;
 
-    nestedKernelCount = k.nestedKernelCount;
-    nestedKernels     = k.nestedKernels;
+    if(0 < nestedKernelCount){
+      nestedKernels = new kernel[nestedKernelCount];
 
-    for(int i = 0; i < nestedKernelCount; ++i)
-      nestedKernels[i] = k.nestedKernels[i];
+      for(int i = 0; i < nestedKernelCount; ++i)
+        nestedKernels[i] = k.nestedKernels[i];
+    }
 
     return *this;
   }
@@ -168,58 +177,53 @@ namespace occa {
   kernel_t<OpenMP>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_){
-
-    std::string cachedBinary = getCachedName(filename,
-                                             dHandle->getInfoSalt(info_));
-
-#if (OCCA_OS & WINDOWS_OS)
-    // Windows requires .dll extension
-    cachedBinary = cachedBinary + ".dll";
+  std::string kernel_t<OpenMP>::fixBinaryName(const std::string &filename){
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return filename;
+#else
+    return (filename + ".dll");
 #endif
-
-    return cachedBinary;
   }
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName,
                                                       const kernelInfo &info_){
+
+    name = functionName;
+
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    const std::string hashDir    = hashDirFor(filename, hash);
+    const std::string sourceFile = hashDir + kc::sourceFile;
+    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
+
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
-    struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
     data = new OpenMPKernelData_t;
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
-
-    const std::string occaDir = getOCCADir();
+    createSourceFileFrom(filename, hashDir, info);
 
     std::stringstream command;
 
@@ -243,27 +247,27 @@ namespace occa {
     command << dHandle->compiler
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << ' '    << iCachedBinary
-            << " -o " << cachedBinary
-            << " -I"  << occaDir << "/include"
-            << " -L"  << occaDir << "/lib -locca"
+            << ' '    << sourceFile
+            << " -o " << binaryFile
+            << " -I"  << env::OCCA_DIR << "/include"
+            << " -L"  << env::OCCA_DIR << "/lib -locca"
             << std::endl;
 #else
 #  if (OCCA_DEBUG_ENABLED)
-    std::string occaLib = occaDir + "\\lib\\libocca_d.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca_d.lib ";
 #  else
-    std::string occaLib = occaDir + "\\lib\\libocca.lib ";
+    std::string occaLib = env::OCCA_DIR + "\\lib\\libocca.lib ";
 #  endif
 
-    std::string ptLib = occaDir + "\\lib\\pthreadVC2.lib ";
+    std::string ptLib   = env::OCCA_DIR + "\\lib\\pthreadVC2.lib ";
 
     command << dHandle->compiler
             << " /D MC_CL_EXE"
             << ' '    << dHandle->compilerFlags
             << ' '    << info.flags
-            << " /I"  << occaDir << "\\include"
-            << ' '    << iCachedBinary
-            << " /link " << occaLib << ptLib << " /OUT:" << cachedBinary
+            << " /I"  << env::OCCA_DIR << "\\include"
+            << ' '    << sourceFile
+            << " /link " << occaLib << ptLib << " /OUT:" << binaryFile
             << std::endl;
 #endif
 
@@ -279,16 +283,16 @@ namespace occa {
 #endif
 
     if(compileError){
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
       OCCA_CHECK(false, "Compilation error");
     }
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(cachedBinary, true);
-    data_.handle   = cpu::dlsym(data_.dlHandle, cachedBinary, functionName, true);
+    data_.dlHandle = cpu::dlopen(binaryFile, hash);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName, hash);
 
-    releaseFile(cachedBinary);
+    releaseHash(hash, 0);
 
     return this;
   }
@@ -296,12 +300,15 @@ namespace occa {
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName){
+
+    name = functionName;
+
     data = new OpenMPKernelData_t;
 
     OCCA_EXTRACT_DATA(OpenMP, Kernel);
 
-    data_.dlHandle = cpu::dlopen(filename, false);
-    data_.handle   = cpu::dlsym(data_.dlHandle, filename, functionName, false);
+    data_.dlHandle = cpu::dlopen(filename);
+    data_.handle   = cpu::dlsym(data_.dlHandle, functionName);
 
     return this;
   }
@@ -310,6 +317,11 @@ namespace occa {
   kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
                                                       const std::string &functionName){
     return buildFromBinary(cache, functionName);
+  }
+
+  template <>
+  uintptr_t kernel_t<OpenMP>::maximumInnerDimSize(){
+    return ((uintptr_t) -1);
   }
 
   // [-] Missing
@@ -337,6 +349,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<OpenMP>::memory_t(){
+    strMode = "OpenMP";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -590,6 +604,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenMP>::device_t(){
+    strMode = "OpenMP";
+
     data = NULL;
 
     uvaEnabled_ = false;
@@ -643,12 +659,7 @@ namespace occa {
 
   template <>
   void device_t<OpenMP>::addOccaHeadersToInfo(kernelInfo &info_){
-    OCCA_EXTRACT_DATA(OpenMP, Device);
-
-    if(data_.supportsOpenMP)
-      info_.addOCCAKeywords(occaOpenMPDefines);
-    else
-      info_.addOCCAKeywords(occaSerialDefines);
+    info_.mode = OpenMP;
   }
 
   template <>
@@ -813,15 +824,15 @@ namespace occa {
   void device_t<OpenMP>::waitFor(streamTag tag){}
 
   template <>
-  stream device_t<OpenMP>::createStream(){
+  stream_t device_t<OpenMP>::createStream(){
     return NULL;
   }
 
   template <>
-  void device_t<OpenMP>::freeStream(stream s){}
+  void device_t<OpenMP>::freeStream(stream_t s){}
 
   template <>
-  stream device_t<OpenMP>::wrapStream(void *handle_){
+  stream_t device_t<OpenMP>::wrapStream(void *handle_){
     return NULL;
   }
 
@@ -837,6 +848,15 @@ namespace occa {
   template <>
   double device_t<OpenMP>::timeBetween(const streamTag &startTag, const streamTag &endTag){
     return (endTag.tagTime - startTag.tagTime);
+  }
+
+  template <>
+  std::string device_t<OpenMP>::fixBinaryName(const std::string &filename){
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return filename;
+#else
+    return (filename + ".dll");
+#endif
   }
 
   template <>
@@ -888,6 +908,7 @@ namespace occa {
   void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
                                               const std::string &functionName,
                                               const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -924,15 +945,19 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName){
+#if 0
     kernel_v *k = new kernel_t<OpenMP>;
     k->dHandle = this;
     k->loadFromLibrary(cache, functionName);
     return k;
+#endif
+    return NULL;
   }
 
   template <>

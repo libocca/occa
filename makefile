@@ -42,12 +42,14 @@ ifdef occaDirWasInitialized
 .FORCE:
 
 $(occaLPath)/libocca.so: .FORCE
-	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
+	@echo "Error: You need to set the environment variable [OCCA_DIR]"
+	@echo "For example:"
+	@echo "  export OCCA_DIR='$(shell pwd)'"
 else
 
 .SUFFIXES:
 
-all: $(occaLPath)/libocca.so $(occaBPath)/occainfo
+all: $(occaLPath)/libocca.so $(occaBPath)/occa $(occaBPath)/occainfo
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) $(sharedFlag) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
@@ -70,6 +72,9 @@ ifeq (coiEnabled, 1)
 $(occaOPath)/occaCOI.o:$(occaSPath)/occaCOI.cpp $(occaIPath)/occaCOI.hpp
 	$(compiler) $(compilerFlags) -o $@ $(flags) -Wl,--enable-new-dtags -c $(paths) $<
 endif
+
+$(occaBPath)/occa:$(OCCA_DIR)/scripts/occa.cpp $(occaLPath)/libocca.so
+	$(compiler) $(compilerFlags) -o $(occaBPath)/occa $(flags) $(OCCA_DIR)/scripts/occa.cpp $(paths) $(links) -L${OCCA_DIR}/lib -locca
 
 $(occaBPath)/occainfo:$(OCCA_DIR)/scripts/occaInfo.cpp $(occaLPath)/libocca.so
 	$(compiler) $(compilerFlags) -o $(occaBPath)/occainfo $(flags) $(OCCA_DIR)/scripts/occaInfo.cpp $(paths) $(links) -L${OCCA_DIR}/lib -locca
@@ -94,7 +99,9 @@ endif
 
 ifdef occaDirWasInitialized
 clean: .FORCE
-	@echo "Error: You need to set the environment variable [OCCA_DIR], for example:\nexport OCCA_DIR='$(shell pwd)'"
+	@echo "Error: You need to set the environment variable [OCCA_DIR]"
+	@echo "For example:"
+	@echo "  export OCCA_DIR='$(shell pwd)'"
 else
 clean:
 	rm -f $(occaOPath)/*;

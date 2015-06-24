@@ -40,11 +40,64 @@ namespace occa {
   namespace env {
     extern bool isInitialized;
 
-    extern std::string HOME;
+    extern std::string HOME, PWD;
     extern std::string PATH, LD_LIBRARY_PATH;
 
+    extern std::string OCCA_DIR, OCCA_CACHE_DIR;
+    extern stringVector_t OCCA_INCLUDE_PATH;
+
     void initialize();
+
+    void initCachePath();
+    void initIncludePath();
+
+    inline void endDirWithSlash(std::string &dir){
+      if((0 < dir.size()) &&
+         (dir[dir.size() - 1] != '/')){
+
+        dir += '/';
+      }
+    }
+
+    class envInitializer_t {
+    public:
+      inline envInitializer_t(){
+        env::initialize();
+      }
+    };
+
+    extern envInitializer_t envInitializer;
+  };
+
+  namespace sys {
     std::string echo(const std::string &var);
+
+    void rmdir(const std::string &dir);
+    int mkdir(const std::string &dir);
+    void mkpath(const std::string &dir);
+
+    bool dirExists(const std::string &dir);
+    bool fileExists(const std::string &filename,
+                    const int flags = 0);
+
+    std::string getFilename(const std::string &filename);
+
+    void absolutePathVec(const std::string &dir_,
+                         stringVector_t &pathVec);
+
+    inline stringVector_t absolutePathVec(const std::string &dir){
+      stringVector_t pathVec;
+
+      absolutePathVec(dir, pathVec);
+
+      return pathVec;
+    }
+  };
+
+  // Kernel Caching
+  namespace kc {
+    extern std::string sourceFile;
+    extern std::string binaryFile;
   };
   //==================================
 
@@ -79,27 +132,45 @@ namespace occa {
 
   double currentTime();
 
-  std::string getFilePrefix(const std::string &filename);
+  //---[ File Functions ]-------------------------
+  std::string getOnlyFilename(const std::string &filename);
+  std::string getPlainFilename(const std::string &filename);
+  std::string getFileDirectory(const std::string &filename);
   std::string getFileExtension(const std::string &filename);
 
-  void getFilePrefixAndName(const std::string &fullFilename,
-                            std::string &prefix,
-                            std::string &filename);
+  std::string compressFilename(const std::string &filename);
 
-  std::string getMidCachedBinaryName(const std::string &cachedBinary,
-                                     const std::string &namePrefix);
+  std::string readFile(const std::string &filename,
+                       const bool readingBinary = false);
 
-  std::string getFileLock(const std::string &filename);
+  void writeToFile(const std::string &filename,
+                   const std::string &content);
 
-  bool haveFile(const std::string &filename);
-  void waitForFile(const std::string &filename);
-  void releaseFile(const std::string &filename);
+  std::string getFileLock(const std::string &filename, const int n);
 
-  parsedKernelInfo parseFileForFunction(const std::string &filename,
+  bool haveHash(const std::string &hash, const int depth = 0);
+  void waitForHash(const std::string &hash, const int depth = 0);
+  void releaseHash(const std::string &hash, const int depth = 0);
+
+  bool fileNeedsParser(const std::string &filename);
+
+  parsedKernelInfo parseFileForFunction(const std::string &deviceMode,
+                                        const std::string &filename,
                                         const std::string &cachedBinary,
                                         const std::string &functionName,
                                         const kernelInfo &info);
 
+  std::string removeSlashes(const std::string &str);
+
+  void setupOccaHeaders(const kernelInfo &info);
+
+  void createSourceFileFrom(const std::string &filename,
+                            const std::string &hashDir,
+                            const kernelInfo &info);
+  //==============================================
+
+
+  //---[ Hash Functions ]-------------------------
   fnvOutput_t fnv(const void *ptr, uintptr_t bytes);
 
   template <class TM>
@@ -110,34 +181,28 @@ namespace occa {
   template <>
   fnvOutput_t fnv(const std::string &saltedString);
 
-  bool fileExists(const std::string &filename);
+  std::string getContentHash(const std::string &content,
+                             const std::string &salt);
 
-  std::string readFile(const std::string &filename,
-                       const bool readingBinary = false);
+  std::string getFileContentHash(const std::string &content,
+                                 const std::string &salt);
 
-  void writeToFile(const std::string &filename,
-                   const std::string &content);
+  std::string getLibraryName(const std::string &filename);
 
-  std::string getOCCADir();
-  std::string getCachePath();
+  std::string hashFrom(const std::string &filename);
 
-  std::string removeSlashes(const std::string &str);
+  std::string hashDirFor(const std::string &filename,
+                         const std::string &hash);
+  //==============================================
 
-  bool fileNeedsParser(const std::string &filename);
+  template <class TM>
+  std::string strFrom(const TM &t){
+    std::stringstream ss;
 
-  std::string getCacheHash(const std::string &content,
-                           const std::string &salt);
+    ss << t;
 
-  std::string getCachedName(const std::string &filename,
-                            const std::string &salt);
-
-  std::string getContentCachedName(const std::string &content,
-                                   const std::string &salt);
-
-  std::string createIntermediateSource(const std::string &filename,
-                                       const std::string &cachedBinary,
-                                       const kernelInfo &info,
-                                       const bool useParser = true);
+    return ss.str();
+  }
 
   template <class TM>
   TM strTo(const std::string &str){

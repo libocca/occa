@@ -224,19 +224,22 @@ namespace occa {
                                const size_t contentBytes,
                                const std::string &functionName,
                                const std::string &flags,
-                               const std::string &cachedBinary,
-                               const std::string &iCachedBinary){
+                               const std::string &hash,
+                               const std::string &sourceFile){
       cl_int error;
 
-      data_.program = clCreateProgramWithSource(data_.context, 1, (const char **) &content, &contentBytes, &error);
+      data_.program = clCreateProgramWithSource(data_.context, 1,
+                                                (const char **) &content,
+                                                &contentBytes,
+                                                &error);
 
-      if(error && cachedBinary.size())
-        releaseFile(cachedBinary);
+      if(error && hash.size())
+        releaseHash(hash, 0);
 
       if(verboseCompilation_f){
-        if(iCachedBinary.size()){
+        if(hash.size()){
           std::cout << "OpenCL compiling " << functionName
-                    << " from [" << iCachedBinary << "]";
+                    << " from [" << sourceFile << "]";
 
           if(flags.size())
             std::cout << " with flags [" << flags << "]";
@@ -273,22 +276,22 @@ namespace occa {
           delete[] log;
         }
 
-        if(cachedBinary.size())
-          releaseFile(cachedBinary);
+        if(hash.size())
+          releaseHash(hash, 0);
       }
 
       OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
 
       data_.kernel = clCreateKernel(data_.program, functionName.c_str(), &error);
 
-      if(error && cachedBinary.size())
-        releaseFile(cachedBinary);
+      if(error && hash.size())
+        releaseHash(hash, 0);
 
       OCCA_CL_CHECK("Kernel (" + functionName + "): Creating Kernel", error);
 
       if(verboseCompilation_f){
-        if(iCachedBinary.size()){
-          std::cout << "OpenCL compiled " << functionName << " from [" << iCachedBinary << "]";
+        if(sourceFile.size()){
+          std::cout << "OpenCL compiled " << functionName << " from [" << sourceFile << "]";
 
           if(flags.size())
             std::cout << " with flags [" << flags << "]";
@@ -348,14 +351,15 @@ namespace occa {
     }
 
     void saveProgramBinary(OpenCLKernelData_t &data_,
-                           const std::string &cachedBinary){
-      uintptr_t binarySize;
+                           const std::string &binaryFile,
+                           const std::string &hash){
+      size_t binarySize;
       char *binary;
 
-      cl_int error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(uintptr_t), &binarySize, NULL);
+      cl_int error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARY_SIZES, sizeof(size_t), &binarySize, NULL);
 
-      if(error)
-        releaseFile(cachedBinary);
+      if(error && hash.size())
+        releaseHash(hash, 0);
 
       OCCA_CL_CHECK("saveProgramBinary: Getting Binary Sizes", error);
 
@@ -363,12 +367,12 @@ namespace occa {
 
       error = clGetProgramInfo(data_.program, CL_PROGRAM_BINARIES, sizeof(char*), &binary, NULL);
 
-      if(error)
-        releaseFile(cachedBinary);
+      if(error && hash.size())
+        releaseHash(hash, 0);
 
       OCCA_CL_CHECK("saveProgramBinary: Getting Binary", error);
 
-      FILE *fp = fopen(cachedBinary.c_str(), "wb");
+      FILE *fp = fopen(binaryFile.c_str(), "wb");
       fwrite(binary, 1, binarySize, fp);
       fclose(fp);
 
@@ -382,7 +386,6 @@ namespace occa {
       device_t<OpenCL> &dHandle   = *(new device_t<OpenCL>());
       OpenCLDeviceData_t &devData = *(new OpenCLDeviceData_t);
 
-      dev.strMode = "OpenCL";
       dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
@@ -494,6 +497,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenCL>::kernel_t(){
+    strMode = "OpenCL";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -503,7 +508,8 @@ namespace occa {
 
     nestedKernelCount = 0;
 
-    preferredDimSize_ = 0;
+    maximumInnerDimSize_ = 0;
+    preferredDimSize_    = 0;
   }
 
   template <>
@@ -519,14 +525,15 @@ namespace occa {
 
     nestedKernelCount = k.nestedKernelCount;
 
-    if(nestedKernelCount){
+    if(0 < nestedKernelCount){
       nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
     }
 
-    preferredDimSize_ = k.preferredDimSize_;
+    maximumInnerDimSize_ = k.maximumInnerDimSize_;
+    preferredDimSize_    = k.preferredDimSize_;
   }
 
   template <>
@@ -542,14 +549,15 @@ namespace occa {
 
     nestedKernelCount = k.nestedKernelCount;
 
-    if(nestedKernelCount){
+    if(0 < nestedKernelCount){
       nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
         nestedKernels[i] = k.nestedKernels[i];
     }
 
-    preferredDimSize_ = k.preferredDimSize_;
+    maximumInnerDimSize_ = k.maximumInnerDimSize_;
+    preferredDimSize_    = k.preferredDimSize_;
 
     return *this;
   }
@@ -558,51 +566,51 @@ namespace occa {
   kernel_t<OpenCL>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<OpenCL>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_){
-
-    return getCachedName(filename,
-                         dHandle->getInfoSalt(info_));
+  std::string kernel_t<OpenCL>::fixBinaryName(const std::string &filename){
+    return filename;
   }
 
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromSource(const std::string &filename,
                                                       const std::string &functionName,
                                                       const kernelInfo &info_){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    const std::string hashDir    = hashDirFor(filename, hash);
+    const std::string sourceFile = hashDir + kc::sourceFile;
+    const std::string binaryFile = hashDir + fixBinaryName(kc::binaryFile);
 
-      if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-
-      return buildFromBinary(cachedBinary, functionName);
-    }
-
-    struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
-    std::string cFunction = readFile(iCachedBinary);
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
+
+      return buildFromBinary(binaryFile, functionName);
+    }
+
+    createSourceFileFrom(filename, hashDir, info);
+
+    std::string cFunction = readFile(sourceFile);
 
     std::string catFlags = info.flags + dHandle->compilerFlags;
 
@@ -610,11 +618,11 @@ namespace occa {
                               cFunction.c_str(), cFunction.size(),
                               functionName,
                               catFlags,
-                              cachedBinary, iCachedBinary);
+                              hash, sourceFile);
 
-    cl::saveProgramBinary(data_, cachedBinary);
+    cl::saveProgramBinary(data_, binaryFile, hash);
 
-    releaseFile(cachedBinary);
+    releaseHash(hash, 0);
 
     return this;
   }
@@ -622,6 +630,9 @@ namespace occa {
   template <>
   kernel_t<OpenCL>* kernel_t<OpenCL>::buildFromBinary(const std::string &filename,
                                                       const std::string &functionName){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
     std::string cFile = readFile(filename);
@@ -648,21 +659,41 @@ namespace occa {
   }
 
   template <>
+  uintptr_t kernel_t<OpenCL>::maximumInnerDimSize(){
+    if(maximumInnerDimSize_)
+      return maximumInnerDimSize_;
+
+    OCCA_EXTRACT_DATA(OpenCL, Kernel);
+
+    size_t pds;
+
+    OCCA_CL_CHECK("Kernel: Getting Preferred Dim Size",
+                  clGetKernelWorkGroupInfo(data_.kernel,
+                                           data_.deviceID,
+                                           CL_KERNEL_WORK_GROUP_SIZE,
+                                           sizeof(size_t), &pds, NULL));
+
+    maximumInnerDimSize_ = (uintptr_t) pds;
+
+    return maximumInnerDimSize_;
+  }
+
+  template <>
   int kernel_t<OpenCL>::preferredDimSize(){
     if(preferredDimSize_)
       return preferredDimSize_;
 
     OCCA_EXTRACT_DATA(OpenCL, Kernel);
 
-    uintptr_t pds;
+    size_t pds;
 
     OCCA_CL_CHECK("Kernel: Getting Preferred Dim Size",
                   clGetKernelWorkGroupInfo(data_.kernel,
                                            data_.deviceID,
                                            CL_KERNEL_PREFERRED_WORK_GROUP_SIZE_MULTIPLE,
-                                           sizeof(uintptr_t), &pds, NULL));
+                                           sizeof(size_t), &pds, NULL));
 
-    preferredDimSize_ = pds;
+    preferredDimSize_ = (uintptr_t) pds;
 
     return preferredDimSize_;
   }
@@ -678,6 +709,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<OpenCL>::memory_t(){
+    strMode = "OpenCL";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -1052,6 +1085,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenCL>::device_t() {
+    strMode = "OpenCL";
+
     data = NULL;
 
     uvaEnabled_ = false;
@@ -1113,7 +1148,7 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaOpenCLDefines);
+    info_.mode = OpenCL;
   }
 
   template <>
@@ -1211,7 +1246,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<OpenCL>::createStream(){
+  stream_t device_t<OpenCL>::createStream(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
     cl_int error;
 
@@ -1224,14 +1259,14 @@ namespace occa {
   }
 
   template <>
-  void device_t<OpenCL>::freeStream(stream s){
+  void device_t<OpenCL>::freeStream(stream_t s){
     OCCA_CL_CHECK("Device: freeStream",
                   clReleaseCommandQueue( *((cl_command_queue*) s) ));
     delete (cl_command_queue*) s;
   }
 
   template <>
-  stream device_t<OpenCL>::wrapStream(void *handle_){
+  stream_t device_t<OpenCL>::wrapStream(void *handle_){
     return handle_;
   }
 
@@ -1277,6 +1312,11 @@ namespace occa {
                   clReleaseEvent(endTag.clEvent));
 
     return (double) (1.0e-9 * (double)(end - start));
+  }
+
+  template <>
+  std::string device_t<OpenCL>::fixBinaryName(const std::string &filename){
+    return filename;
   }
 
   template <>
@@ -1331,6 +1371,7 @@ namespace occa {
   void device_t<OpenCL>::cacheKernelInLibrary(const std::string &filename,
                                               const std::string &functionName,
                                               const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -1371,11 +1412,13 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
   kernel_v* device_t<OpenCL>::loadKernelFromLibrary(const char *cache,
                                                     const std::string &functionName){
+#if 0
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
     kernel_v *k = new kernel_t<OpenCL>;
@@ -1394,6 +1437,9 @@ namespace occa {
 
     k->loadFromLibrary(cache, functionName);
     return k;
+#endif
+
+    return NULL;
   }
 
   template <>

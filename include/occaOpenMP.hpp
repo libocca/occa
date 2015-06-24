@@ -57,21 +57,23 @@ namespace occa {
   kernel_t<OpenMP>::kernel_t(const kernel_t<OpenMP> &k);
 
   template <>
-  std::string kernel_t<OpenMP>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_);
+  std::string kernel_t<OpenMP>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_);
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   kernel_t<OpenMP>* kernel_t<OpenMP>::loadFromLibrary(const char *cache,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
+
+  template <>
+  uintptr_t kernel_t<OpenMP>::maximumInnerDimSize();
 
   template <>
   int kernel_t<OpenMP>::preferredDimSize();
@@ -196,13 +198,13 @@ namespace occa {
   void device_t<OpenMP>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<OpenMP>::createStream();
+  stream_t device_t<OpenMP>::createStream();
 
   template <>
-  void device_t<OpenMP>::freeStream(stream s);
+  void device_t<OpenMP>::freeStream(stream_t s);
 
   template <>
-  stream device_t<OpenMP>::wrapStream(void *handle_);
+  stream_t device_t<OpenMP>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<OpenMP>::tagStream();
@@ -211,22 +213,25 @@ namespace occa {
   double device_t<OpenMP>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<OpenMP>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<OpenMP>::buildKernelFromSource(const std::string &filename,
-                                                    const std::string &functionName_,
+                                                    const std::string &functionName,
                                                     const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenMP>::buildKernelFromBinary(const std::string &filename,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   void device_t<OpenMP>::cacheKernelInLibrary(const std::string &filename,
-                                              const std::string &functionName_,
+                                              const std::string &functionName,
                                               const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<OpenMP>::loadKernelFromLibrary(const char *cache,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   memory_v* device_t<OpenMP>::wrapMemory(void *handle_,

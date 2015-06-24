@@ -18,4 +18,6 @@
 
 #include "defines/occaVectorDefines.hpp"
 
+#include "occaMiniLib.hpp"
+
 #endif

@@ -82,12 +82,11 @@ namespace occa {
     void free(void *ptr);
 
     void* dlopen(const std::string &filename,
-                 const bool releaseWithError);
+                 const std::string &hash = "");
 
     void* dlsym(void *dlHandle,
-                const std::string &filename,
                 const std::string &functionName,
-                const bool releaseWithError);
+                const std::string &hash = "");
   };
   //==================================
 
@@ -106,21 +105,23 @@ namespace occa {
   kernel_t<Serial>::kernel_t(const kernel_t<Serial> &k);
 
   template <>
-  std::string kernel_t<Serial>::getCachedBinaryName(const std::string &filename,
-                                                    kernelInfo &info_);
+  std::string kernel_t<Serial>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<Serial>* kernel_t<Serial>::buildFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_);
 
   template <>
   kernel_t<Serial>* kernel_t<Serial>::buildFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   kernel_t<Serial>* kernel_t<Serial>::loadFromLibrary(const char *cache,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
+
+  template <>
+  uintptr_t kernel_t<Serial>::maximumInnerDimSize();
 
   template <>
   int kernel_t<Serial>::preferredDimSize();
@@ -245,13 +246,13 @@ namespace occa {
   void device_t<Serial>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<Serial>::createStream();
+  stream_t device_t<Serial>::createStream();
 
   template <>
-  void device_t<Serial>::freeStream(stream s);
+  void device_t<Serial>::freeStream(stream_t s);
 
   template <>
-  stream device_t<Serial>::wrapStream(void *handle_);
+  stream_t device_t<Serial>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<Serial>::tagStream();
@@ -260,22 +261,25 @@ namespace occa {
   double device_t<Serial>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<Serial>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<Serial>::buildKernelFromSource(const std::string &filename,
-                                                    const std::string &functionName_,
+                                                    const std::string &functionName,
                                                     const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Serial>::buildKernelFromBinary(const std::string &filename,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   void device_t<Serial>::cacheKernelInLibrary(const std::string &filename,
-                                              const std::string &functionName_,
+                                              const std::string &functionName,
                                               const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Serial>::loadKernelFromLibrary(const char *cache,
-                                                    const std::string &functionName_);
+                                                    const std::string &functionName);
 
   template <>
   memory_v* device_t<Serial>::wrapMemory(void *handle_,

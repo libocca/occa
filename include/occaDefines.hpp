@@ -339,4 +339,5 @@
 #  define OCCA_COI_CHECK( _str , _statement ) do { _statement; } while(0);
 #endif
 //======================================
+
 #endif

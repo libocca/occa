@@ -103,21 +103,23 @@ namespace occa {
   kernel_t<Pthreads>::kernel_t(const kernel_t<Pthreads> &k);
 
   template <>
-  std::string kernel_t<Pthreads>::getCachedBinaryName(const std::string &filename,
-                                                      kernelInfo &info_);
+  std::string kernel_t<Pthreads>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromSource(const std::string &filename,
-                                                          const std::string &functionName_,
+                                                          const std::string &functionName,
                                                           const kernelInfo &info_);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::buildFromBinary(const std::string &filename,
-                                                          const std::string &functionName_);
+                                                          const std::string &functionName);
 
   template <>
   kernel_t<Pthreads>* kernel_t<Pthreads>::loadFromLibrary(const char *cache,
-                                                          const std::string &functionName_);
+                                                          const std::string &functionName);
+
+  template <>
+  uintptr_t kernel_t<Pthreads>::maximumInnerDimSize();
 
   template <>
   int kernel_t<Pthreads>::preferredDimSize();
@@ -239,13 +241,13 @@ namespace occa {
   void device_t<Pthreads>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<Pthreads>::createStream();
+  stream_t device_t<Pthreads>::createStream();
 
   template <>
-  void device_t<Pthreads>::freeStream(stream s);
+  void device_t<Pthreads>::freeStream(stream_t s);
 
   template <>
-  stream device_t<Pthreads>::wrapStream(void *handle_);
+  stream_t device_t<Pthreads>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<Pthreads>::tagStream();
@@ -254,22 +256,25 @@ namespace occa {
   double device_t<Pthreads>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<Pthreads>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<Pthreads>::buildKernelFromSource(const std::string &filename,
-                                                      const std::string &functionName_,
+                                                      const std::string &functionName,
                                                       const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Pthreads>::buildKernelFromBinary(const std::string &filename,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   void device_t<Pthreads>::cacheKernelInLibrary(const std::string &filename,
-                                                const std::string &functionName_,
+                                                const std::string &functionName,
                                                 const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<Pthreads>::loadKernelFromLibrary(const char *cache,
-                                                      const std::string &functionName_);
+                                                      const std::string &functionName);
 
   template <>
   void device_t<Pthreads>::free();
@@ -314,7 +319,8 @@ namespace occa {
     CPU_SET(data.pinnedCore, &cpuHandle);
 #else
     // NBN: affinity on hyperthreaded multi-socket systems?
-    fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
+    if(data.rank == 0)
+      fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
     // BOOL SetProcessAffinityMask(HANDLE hProcess,DWORD_PTR dwProcessAffinityMask);
 #endif
 

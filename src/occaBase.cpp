@@ -19,6 +19,10 @@ namespace occa {
   void setVerboseCompilation(const bool value){
     verboseCompilation_f = value;
   }
+
+  namespace flags {
+    const int checkCacheDir = (1 << 0);
+  };
   //==================================
 
 
@@ -286,16 +290,16 @@ namespace occa {
     if(infos.size() == 0)
       return;
 
-    parserNS::strNode *n;
+    parserNS::expNode expRoot = parserNS::createOrganizedExpNodeFrom(infos);
 
-    n = parserNS::splitContent(infos);
-    n = parserNS::labelCode(n);
+    parserNS::expNode &csvFlatRoot = *(expRoot.makeCsvFlatHandle());
 
-    while(n){
-      std::string &info = n->value;
-      std::string value;
+    for(int i = 0; i < csvFlatRoot.leafCount; ++i){
+      parserNS::expNode &leaf = csvFlatRoot[i];
 
-      n = n->right;
+      std::string &info = (leaf.leafCount ?
+                           leaf[0].value  :
+                           leaf.value);
 
       if((info != "mode")        &&
          (info != "UVA")         &&
@@ -308,54 +312,18 @@ namespace occa {
          (info != "pinnedCores")){
 
         std::cout << "Flag [" << info << "] is not available, skipping it\n";
-
-        while(n && (n->value != ","))
-          n = n->right;
-
-        if(n)
-          n = n->right;
-
         continue;
       }
 
-      if(n == NULL)
-        break;
-
-      if(n->value == "=")
-        n = n->right;
-
-      while(n && (n->value != ",")){
-        std::string &v = n->value;
-
-        occa::strip(v);
-
-        if(v.size()){
-          if(segmentPair(v[0]) == 0){
-            value += v;
-            value += ' ';
-          }
-          else if(n->down){
-            std::string dv = n->down->toString();
-            occa::strip(dv);
-
-            value += dv;
-            value += ' ';
-          }
-        }
-
-        n = n->right;
+      if(leaf.value != "="){
+        std::cout << "Flag [" << info << "] was not set, skipping it\n";
+        continue;
       }
 
-      if(n)
-        n = n->right;
-
-      occa::strip(value);
-
-      iMap[info] = value;
-
-      info  = "";
-      value = "";
+      iMap[info] = leaf[1].toString();
     }
+
+    parserNS::expNode::freeFlatHandle(csvFlatRoot);
   }
 
   std::ostream& operator << (std::ostream &out, const argInfoMap &m){
@@ -371,17 +339,17 @@ namespace occa {
 
   //---[ Kernel Info ]--------
   kernelInfo::kernelInfo() :
-    occaKeywords(""),
+    mode(NoMode),
     header(""),
     flags("") {}
 
   kernelInfo::kernelInfo(const kernelInfo &p) :
-    occaKeywords(p.occaKeywords),
+    mode(p.mode),
     header(p.header),
     flags(p.flags) {}
 
   kernelInfo& kernelInfo::operator = (const kernelInfo &p){
-    occaKeywords = p.occaKeywords;
+    mode   = p.mode;
     header = p.header;
     flags  = p.flags;
 
@@ -397,6 +365,18 @@ namespace occa {
 
   std::string kernelInfo::salt() const {
     return (header + flags);
+  }
+
+  std::string kernelInfo::getModeHeaderFilename() const {
+    if(mode & Serial)   return sys::getFilename("[occa]/defines/Serial.hpp");
+    if(mode & OpenMP)   return sys::getFilename("[occa]/defines/OpenMP.hpp");
+    if(mode & OpenCL)   return sys::getFilename("[occa]/defines/OpenCL.hpp");
+    if(mode & CUDA)     return sys::getFilename("[occa]/defines/CUDA.hpp");
+    if(mode & HSA)      return sys::getFilename("[occa]/defines/HSA.hpp");
+    if(mode & Pthreads) return sys::getFilename("[occa]/defines/Pthreads.hpp");
+    if(mode & COI)      return sys::getFilename("[occa]/defines/COI.hpp");
+
+    return "";
   }
 
   bool kernelInfo::isAnOccaDefine(const std::string &name){
@@ -422,12 +402,10 @@ namespace occa {
     return false;
   }
 
-  void kernelInfo::addOCCAKeywords(const std::string &keywords){
-    occaKeywords = keywords;
-  }
-
   void kernelInfo::addIncludeDefine(const std::string &filename){
-    header += "\n#include \"" + filename + "\"\n";
+    header += "\n#include \"";
+    header += filename;
+    header += "\"\n";
   }
 
   void kernelInfo::addInclude(const std::string &filename){
@@ -573,51 +551,30 @@ namespace occa {
 
   //---[ Kernel ]---------------------
   kernel::kernel() :
-    strMode(""),
-
     kHandle(NULL) {}
-  kernel::kernel(kernel_v *kHandle_) :
-    strMode( occa::modeToStr(kHandle_->mode()) ),
 
+  kernel::kernel(kernel_v *kHandle_) :
     kHandle(kHandle_) {}
 
   kernel::kernel(const kernel &k) :
-    strMode(k.strMode),
-
     kHandle(k.kHandle) {}
 
   kernel& kernel::operator = (const kernel &k){
-    strMode = k.strMode;
-
     kHandle = k.kHandle;
 
     return *this;
   }
 
   const std::string& kernel::mode(){
-    return strMode;
+    return kHandle->strMode;
   }
 
-  kernel& kernel::buildFromSource(const std::string &filename,
-                                  const std::string &functionName_,
-                                  const kernelInfo &info_){
-    kHandle->buildFromSource(filename, functionName_, info_);
-
-    return *this;
+  const std::string& kernel::name(){
+    return kHandle->name;
   }
 
-  kernel& kernel::buildFromBinary(const std::string &filename,
-                                  const std::string &functionName_){
-    kHandle->buildFromBinary(filename, functionName_);
-
-    return *this;
-  }
-
-  kernel& kernel::loadFromLibrary(const char *cache,
-                                  const std::string &functionName_){
-    kHandle->loadFromLibrary(cache, functionName_);
-
-    return *this;
+  occa::device kernel::getDevice(){
+    return occa::device(kHandle->dHandle);
   }
 
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
@@ -640,11 +597,15 @@ namespace occa {
     }
   }
 
-  int kernel::preferredDimSize(){
-    OCCA_CHECK(kHandle->nestedKernelCount == 0,
-               "Cannot get preferred size for fused kernels");
+  uintptr_t kernel::maximumInnerDimSize(){
+    return kHandle->maximumInnerDimSize();
+  }
 
-    return 1;
+  int kernel::preferredDimSize(){
+    if(0 < kHandle->nestedKernelCount)
+      return 0;
+
+    return kHandle->preferredDimSize();
   }
 
   void kernel::clearArgumentList(){
@@ -674,7 +635,7 @@ namespace occa {
 #include "operators/occaOperatorDefinitions.cpp"
 
   void kernel::free(){
-    if(kHandle->nestedKernelCount){
+    if(0 < kHandle->nestedKernelCount){
       for(int k = 0; k < kHandle->nestedKernelCount; ++k)
         kHandle->nestedKernels[k].free();
 
@@ -763,7 +724,6 @@ namespace occa {
 
   //---[ Memory ]---------------------
   memory::memory() :
-    strMode(""),
     mHandle(NULL) {}
 
   memory::memory(void *uvaPtr){
@@ -775,28 +735,23 @@ namespace occa {
     if(it != uvaMap.end())
       mHandle_ = it->second;
 
-    strMode = occa::modeToStr(mHandle_->mode());
     mHandle = mHandle_;
   }
 
   memory::memory(memory_v *mHandle_) :
-    strMode( occa::modeToStr(mHandle_->mode()) ),
     mHandle(mHandle_) {}
 
   memory::memory(const memory &m) :
-    strMode(m.strMode),
     mHandle(m.mHandle) {}
 
   memory& memory::operator = (const memory &m){
-    strMode = m.strMode;
-
     mHandle = m.mHandle;
 
     return *this;
   }
 
   const std::string& memory::mode(){
-    return strMode;
+    return mHandle->strMode;
   }
 
   void* memory::textureArg() const {
@@ -915,11 +870,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->copyFrom(srcHandle->getMemoryHandle(),
                              bytes, destOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->copyTo(destHandle->getMemoryHandle(),
                           bytes, srcOffset);
       }
@@ -985,11 +940,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->copyFrom(srcHandle->getMemoryHandle(),
                              bytes, srcOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->copyTo(destHandle->getMemoryHandle(),
                           bytes, destOffset);
       }
@@ -1046,11 +1001,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->asyncCopyFrom(srcHandle->getMemoryHandle(),
                              bytes, destOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->asyncCopyTo(destHandle->getMemoryHandle(),
                           bytes, srcOffset);
       }
@@ -1107,11 +1062,11 @@ namespace occa {
       const occa::mode modeS = srcHandle->mode();
       const occa::mode modeD = destHandle->mode();
 
-      if(modeS & onChipModes){
+      if(modeS & onChipMode){
         destHandle->asyncCopyFrom(srcHandle->getMemoryHandle(),
                                   bytes, destOffset);
       }
-      else if(modeD & onChipModes){
+      else if(modeD & onChipMode){
         srcHandle->asyncCopyTo(destHandle->getMemoryHandle(),
                                bytes, srcOffset);
       }
@@ -1267,10 +1222,6 @@ namespace occa {
   }
 
   void memory::swap(memory &m){
-    std::string strMode2 = m.strMode;
-    m.strMode            = strMode;
-    strMode              = strMode2;
-
     memory_v *mHandle2 = m.mHandle;
     m.mHandle          = mHandle;
     mHandle            = mHandle2;
@@ -1303,8 +1254,9 @@ namespace occa {
 
 
   //---[ Device ]---------------------
-  device::device() :
-    dHandle(NULL) {}
+  device::device(){
+    dHandle = new device_t<Serial>();
+  }
 
   device::device(device_v *dHandle_) :
     dHandle(dHandle_) {}
@@ -1415,7 +1367,8 @@ namespace occa {
     else
       dHandle->uvaEnabled_ = uvaEnabledByDefault_f;
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1458,7 +1411,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1474,7 +1428,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1491,7 +1446,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
   void device::setup(occa::mode m,
@@ -1509,7 +1465,8 @@ namespace occa {
     dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
     dHandle->id_      = library::genDeviceID();
 
-    dHandle->currentStream = createStream();
+    stream newStream = createStream();
+    dHandle->currentStream = newStream.handle;
   }
 
 
@@ -1578,7 +1535,7 @@ namespace occa {
   }
 
   const std::string& device::mode(){
-    return strMode;
+    return dHandle->strMode;
   }
 
   void device::flush(){
@@ -1611,16 +1568,19 @@ namespace occa {
   }
 
   stream device::createStream(){
-    dHandle->streams.push_back( dHandle->createStream() );
-    return dHandle->streams.back();
+    stream newStream(dHandle->createStream());
+
+    dHandle->streams.push_back(newStream.handle);
+
+    return newStream;
   }
 
   stream device::getStream(){
-    return dHandle->currentStream;
+    return stream(dHandle->currentStream);
   }
 
   void device::setStream(stream s){
-    dHandle->currentStream = s;
+    dHandle->currentStream = s.handle;
   }
 
   stream device::wrapStream(void *handle_){
@@ -1639,7 +1599,7 @@ namespace occa {
     const int streamCount = dHandle->streams.size();
 
     for(int i = 0; i < streamCount; ++i){
-      if(dHandle->streams[i] == s){
+      if(dHandle->streams[i] == s.handle){
         dHandle->freeStream(dHandle->streams[i]);
         dHandle->streams.erase(dHandle->streams.begin() + i);
 
@@ -1652,7 +1612,7 @@ namespace occa {
                              const std::string &functionName,
                              const kernelInfo &info_){
 
-    if(fileExists(str))
+    if(sys::fileExists(str, flags::checkCacheDir))
       return buildKernelFromSource(str, functionName, info_);
     else
       return buildKernelFromString(str, functionName, info_);
@@ -1662,7 +1622,10 @@ namespace occa {
                                        const std::string &functionName,
                                        const int language){
 
-    return buildKernelFromString(content, functionName, defaultKernelInfo, language);
+    return buildKernelFromString(content,
+                                 functionName,
+                                 defaultKernelInfo,
+                                 language);
   }
 
   kernel device::buildKernelFromString(const std::string &content,
@@ -1674,103 +1637,117 @@ namespace occa {
 
     dHandle->addOccaHeadersToInfo(info);
 
-    const std::string cachedBinary = getContentCachedName(content, dHandle->getInfoSalt(info));
+    const std::string hash = getContentHash(content,
+                                            dHandle->getInfoSalt(info));
 
-    std::string prefix, cacheName;
+    const std::string hashDir = hashDirFor("", hash);
 
-    getFilePrefixAndName(cachedBinary, prefix, cacheName);
-
-    std::string h_cacheName = prefix + "h_" + cacheName;
+    std::string stringSourceFile = hashDir;
 
     if(language & occa::usingOKL)
-      h_cacheName += ".okl";
+      stringSourceFile += "stringSource.okl";
     else if(language & occa::usingOFL)
-      h_cacheName += ".ofl";
+      stringSourceFile += "stringSource.ofl";
     else
-      h_cacheName += ".occa";
+      stringSourceFile += "stringSource.occa";
 
-    if(!haveFile(h_cacheName)){
-      waitForFile(h_cacheName);
-      waitForFile(cachedBinary);
+    if(!haveHash(hash, 1)){
+      waitForHash(hash, 1);
 
-      return buildKernelFromBinary(cachedBinary, functionName);
+      return buildKernelFromBinary(hashDir +
+                                   dHandle->fixBinaryName(kc::binaryFile),
+                                   functionName);
     }
 
-    writeToFile(h_cacheName, content);
-    releaseFile(h_cacheName);
+    writeToFile(stringSourceFile, content);
 
-    return buildKernelFromSource(h_cacheName, functionName, info_);
+    kernel k = buildKernelFromSource(stringSourceFile,
+                                     functionName,
+                                     info_);
+
+    releaseHash(hash, 1);
+
+    return k;
   }
 
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
 
-    const bool usingParser = fileNeedsParser(filename);
+    const std::string realFilename = sys::getFilename(filename);
+    const bool usingParser         = fileNeedsParser(filename);
 
     kernel ker;
-
-    ker.strMode = strMode;
 
     kernel_v *&k = ker.kHandle;
 
     if(usingParser){
+#if OCCA_OPENMP_ENABLED
+      if(dHandle->mode() != OpenMP){
+        k          = new kernel_t<Serial>;
+        k->dHandle = new device_t<Serial>;
+      }
+      else {
+        k          = new kernel_t<OpenMP>;
+        k->dHandle = dHandle;
+      }
+#else
       k          = new kernel_t<Serial>;
-      k->dHandle = new device_t<Serial>();
+      k->dHandle = new device_t<Serial>;
+#endif
 
-      kernelInfo info = info_;
+      const std::string hash = getFileContentHash(realFilename,
+                                                  dHandle->getInfoSalt(info_));
 
-      const std::string cachedBinary  = k->getCachedBinaryName(filename, info);
-      const std::string iCachedBinary = getMidCachedBinaryName(cachedBinary, "i");
+      const std::string hashDir    = hashDirFor(realFilename, hash);
+      const std::string parsedFile = hashDir + "parsedSource.occa";
 
-      k->metaInfo = parseFileForFunction(filename,
-                                         cachedBinary,
+      k->metaInfo = parseFileForFunction(k->strMode,
+                                         realFilename,
+                                         parsedFile,
                                          functionName,
                                          info_);
 
-      info = defaultKernelInfo;
+      kernelInfo info = defaultKernelInfo;
       info.addDefine("OCCA_LAUNCH_KERNEL", 1);
 
-      struct stat buffer;
-      bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-      if(fileExists){
-        if(verboseCompilation_f)
-          std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-
-        k->buildFromBinary(cachedBinary, functionName);
-      }
-      else
-        k->buildFromSource(iCachedBinary, functionName, info);
+      k->buildFromSource(parsedFile, functionName, info);
 
       k->nestedKernelCount = k->metaInfo.nestedKernels;
 
-      std::stringstream ss;
-      k->nestedKernels = new kernel[k->metaInfo.nestedKernels];
+      if(k->nestedKernelCount){
+        std::stringstream ss;
+        k->nestedKernels = new kernel[k->nestedKernelCount];
 
-      for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
-        ss << ki;
+        const int vc_f = verboseCompilation_f;
+        verboseCompilation_f = false;
 
-        const std::string sKerName = k->metaInfo.baseName + ss.str();
+        for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
+          ss << ki;
 
-        ss.str("");
+          const std::string sKerName = k->metaInfo.baseName + ss.str();
 
-        kernel &sKer = k->nestedKernels[ki];
+          ss.str("");
 
-        sKer.strMode = strMode;
+          kernel &sKer = k->nestedKernels[ki];
 
-        sKer.kHandle = dHandle->buildKernelFromSource(iCachedBinary,
-                                                      sKerName,
-                                                      info_);
+          sKer.kHandle = dHandle->buildKernelFromSource(parsedFile,
+                                                        sKerName,
+                                                        info_);
 
-        sKer.kHandle->metaInfo               = k->metaInfo;
-        sKer.kHandle->metaInfo.name          = sKerName;
-        sKer.kHandle->metaInfo.nestedKernels = 0;
-        sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
+          sKer.kHandle->metaInfo               = k->metaInfo;
+          sKer.kHandle->metaInfo.name          = sKerName;
+          sKer.kHandle->metaInfo.nestedKernels = 0;
+          sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
+        }
+
+        verboseCompilation_f = vc_f;
       }
     }
     else{
-      k          = dHandle->buildKernelFromSource(filename, functionName, info_);
+      k = dHandle->buildKernelFromSource(realFilename,
+                                         functionName,
+                                         info_);
       k->dHandle = dHandle;
     }
 
@@ -1781,9 +1758,8 @@ namespace occa {
                                        const std::string &functionName){
     kernel ker;
 
-    ker.strMode = strMode;
-
-    ker.kHandle          = dHandle->buildKernelFromBinary(filename, functionName);
+    ker.kHandle          = dHandle->buildKernelFromBinary(filename,
+                                                          functionName);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
@@ -1792,16 +1768,18 @@ namespace occa {
   void device::cacheKernelInLibrary(const std::string &filename,
                                     const std::string &functionName,
                                     const kernelInfo &info_){
-    dHandle->cacheKernelInLibrary(filename, functionName, info_);
+
+    dHandle->cacheKernelInLibrary(filename,
+                                  functionName,
+                                  info_);
   }
 
   kernel device::loadKernelFromLibrary(const char *cache,
                                        const std::string &functionName){
     kernel ker;
 
-    ker.strMode = strMode;
-
-    ker.kHandle          = dHandle->loadKernelFromLibrary(cache, functionName);
+    ker.kHandle          = dHandle->loadKernelFromLibrary(cache,
+                                                          functionName);
     ker.kHandle->dHandle = dHandle;
 
     return ker;
@@ -1822,24 +1800,23 @@ namespace occa {
                                       const kernelInfo &info_,
                                       const int useLoopyOrFloopy){
 
-    std::string cachedBinary = getCachedName(filename, dHandle->getInfoSalt(info_));
+    const std::string realFilename = sys::getFilename(filename);
 
-    struct stat buffer;
-    bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
+    const std::string hash = getFileContentHash(realFilename,
+                                                dHandle->getInfoSalt(info_));
 
-    if(fileExists){
+    const std::string hashDir    = hashDirFor("", hash);
+    const std::string binaryFile = hashDir + "binary";
+
+    if(!haveHash(hash, 2)){
       if(verboseCompilation_f)
-        std::cout << "Found loo.py cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found loo.py cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
-      return buildKernelFromBinary(cachedBinary, functionName);
+      return buildKernelFromBinary(binaryFile, functionName);
     }
 
-    std::string prefix, cacheName;
-
-    getFilePrefixAndName(cachedBinary, prefix, cacheName);
-
-    const std::string defsFile = prefix + "loopy1_" + cacheName + ".defs";
-    const std::string clFile = prefix + "loopy2_" + cacheName + ".ocl";
+    const std::string defsFile = hashDir + "loopy.defs";
+    const std::string clFile   = hashDir + "loopy.cl";
 
     writeToFile(defsFile, info_.header);
 
@@ -1850,10 +1827,11 @@ namespace occa {
 
     std::stringstream command;
 
-    command << "loopy --lang=" << loopyLang
+    command << "loopy"
+            << " --lang="         << loopyLang
             << " --occa-defines=" << defsFile << ' '
             << " --occa-add-dummy-arg "
-            << filename << ' ' << clFile;
+            << realFilename << ' ' << clFile;
 
     const std::string &sCommand = command.str();
 
@@ -1869,14 +1847,16 @@ namespace occa {
     if(compileError)
       OCCA_CHECK(false, "Compilation error");
 
-    return buildKernelFromSource(clFile, functionName);
+    kernel k = buildKernelFromSource(clFile, functionName);
+
+    releaseHash(hash, 2);
+
+    return k;
   }
 
   memory device::wrapMemory(void *handle_,
                             const uintptr_t bytes){
     memory mem;
-
-    mem.strMode = strMode;
 
     mem.mHandle = dHandle->wrapMemory(handle_, bytes);
     mem.mHandle->dHandle = dHandle;
@@ -1903,8 +1883,6 @@ namespace occa {
 
     memory mem;
 
-    mem.strMode = strMode;
-
     mem.mHandle = dHandle->wrapTexture(handle_,
                                        dim, dims,
                                        type, permissions);
@@ -1927,8 +1905,6 @@ namespace occa {
   memory device::malloc(const uintptr_t bytes,
                         void *src){
     memory mem;
-
-    mem.strMode = strMode;
 
     mem.mHandle          = dHandle->malloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
@@ -1977,8 +1953,6 @@ namespace occa {
 
     memory mem;
 
-    mem.strMode = strMode;
-
     mem.mHandle      = dHandle->textureAlloc(dim, dims, src, type, permissions);
     mem.mHandle->dHandle = dHandle;
 
@@ -2004,8 +1978,6 @@ namespace occa {
   memory device::mappedAlloc(const uintptr_t bytes,
                              void *src){
     memory mem;
-
-    mem.strMode = strMode;
 
     mem.mHandle          = dHandle->mappedAlloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
@@ -2037,6 +2009,22 @@ namespace occa {
 
   int device::simdWidth(){
     return dHandle->simdWidth();
+  }
+
+  //   ---[ Device Functions ]----------
+  device currentDevice;
+
+  void setDevice(device d){
+    currentDevice = d;
+  }
+
+  void setDevice(const std::string &infos){
+    device newDevice(infos);
+    currentDevice = newDevice;
+  }
+
+  device getCurrentDevice(){
+    return currentDevice;
   }
 
   mutex_t deviceListMutex;
@@ -2073,6 +2061,250 @@ namespace occa {
 
     return deviceList;
   }
+
+  void setCompiler(const std::string &compiler_){
+    currentDevice.setCompiler(compiler_);
+  }
+
+  void setCompilerEnvScript(const std::string &compilerEnvScript_){
+    currentDevice.setCompilerEnvScript(compilerEnvScript_);
+  }
+
+  void setCompilerFlags(const std::string &compilerFlags_){
+    currentDevice.setCompilerFlags(compilerFlags_);
+  }
+
+  std::string& getCompiler(){
+    return currentDevice.getCompiler();
+  }
+
+  std::string& getCompilerEnvScript(){
+    return currentDevice.getCompilerEnvScript();
+  }
+
+  std::string& getCompilerFlags(){
+    return currentDevice.getCompilerFlags();
+  }
+
+  void flush(){
+    currentDevice.flush();
+  }
+
+  void finish(){
+    currentDevice.finish();
+  }
+
+  void waitFor(streamTag tag){
+    currentDevice.waitFor(tag);
+  }
+
+  stream createStream(){
+    return currentDevice.createStream();
+  }
+
+  stream getStream(){
+    return currentDevice.getStream();
+  }
+
+  void setStream(stream s){
+    currentDevice.setStream(s);
+  }
+
+  stream wrapStream(void *handle_){
+    return currentDevice.wrapStream(handle_);
+  }
+
+  streamTag tagStream(){
+    return currentDevice.tagStream();
+  }
+
+  //   ---[ Kernel Functions ]----------
+
+  kernel buildKernel(const std::string &str,
+                     const std::string &functionName,
+                     const kernelInfo &info_){
+
+    return currentDevice.buildKernel(str,
+                                     functionName,
+                                     info_);
+  }
+
+  kernel buildKernelFromString(const std::string &content,
+                               const std::string &functionName,
+                               const int language){
+
+    return currentDevice.buildKernelFromString(content,
+                                               functionName,
+                                               language);
+  }
+
+  kernel buildKernelFromString(const std::string &content,
+                               const std::string &functionName,
+                               const kernelInfo &info_,
+                               const int language){
+
+    return currentDevice.buildKernelFromString(content,
+                                               functionName,
+                                               info_,
+                                               language);
+  }
+
+  kernel buildKernelFromSource(const std::string &filename,
+                               const std::string &functionName,
+                               const kernelInfo &info_){
+
+    return currentDevice.buildKernelFromSource(filename,
+                                               functionName,
+                                               info_);
+  }
+
+  kernel buildKernelFromBinary(const std::string &filename,
+                               const std::string &functionName){
+
+    return currentDevice.buildKernelFromBinary(filename,
+                                               functionName);
+  }
+
+  void cacheKernelInLibrary(const std::string &filename,
+                            const std::string &functionName,
+                            const kernelInfo &info_){
+
+    return currentDevice.cacheKernelInLibrary(filename,
+                                              functionName,
+                                              info_);
+  }
+
+  kernel loadKernelFromLibrary(const char *cache,
+                               const std::string &functionName){
+
+    return currentDevice.loadKernelFromLibrary(cache,
+                                               functionName);
+  }
+
+  kernel buildKernelFromLoopy(const std::string &filename,
+                              const std::string &functionName,
+                              const int loopyOrFloopy){
+
+    return currentDevice.buildKernelFromLoopy(filename,
+                                              functionName,
+                                              loopyOrFloopy);
+  }
+
+  kernel buildKernelFromLoopy(const std::string &filename,
+                              const std::string &functionName,
+                              const kernelInfo &info_,
+                              const int loopyOrFloopy){
+
+    return currentDevice.buildKernelFromLoopy(filename,
+                                              functionName,
+                                              info_,
+                                              loopyOrFloopy);
+  }
+
+  //   ---[ Memory Functions ]----------
+  memory wrapMemory(void *handle_,
+                    const uintptr_t bytes){
+
+    return currentDevice.wrapMemory(handle_, bytes);
+  }
+
+  void* wrapManagedMemory(void *handle_,
+                          const uintptr_t bytes){
+
+    return currentDevice.wrapManagedMemory(handle_, bytes);
+  }
+
+  memory wrapTexture(void *handle_,
+                     const int dim, const occa::dim &dims,
+                     occa::formatType type, const int permissions){
+
+    return currentDevice.wrapTexture(handle_,
+                                     dim, dims,
+                                     type, permissions);
+  }
+
+  void* wrapManagedTexture(void *handle_,
+                           const int dim, const occa::dim &dims,
+                           occa::formatType type, const int permissions){
+
+    return currentDevice.wrapManagedTexture(handle_,
+                                            dim, dims,
+                                            type, permissions);
+  }
+
+  memory malloc(const uintptr_t bytes,
+                void *src){
+
+    return currentDevice.malloc(bytes, src);
+  }
+
+  void* managedAlloc(const uintptr_t bytes,
+                     void *src){
+
+    return currentDevice.managedAlloc(bytes, src);
+  }
+
+  void* uvaAlloc(const uintptr_t bytes,
+                 void *src){
+
+    return currentDevice.uvaAlloc(bytes, src);
+  }
+
+  void* managedUvaAlloc(const uintptr_t bytes,
+                        void *src){
+
+    return currentDevice.managedUvaAlloc(bytes, src);
+  }
+
+  memory textureAlloc(const int dim, const occa::dim &dims,
+                      void *src,
+                      occa::formatType type, const int permissions){
+
+    return currentDevice.textureAlloc(dim, dims,
+                                      src,
+                                      type, permissions);
+  }
+
+  void* managedTextureAlloc(const int dim, const occa::dim &dims,
+                            void *src,
+                            occa::formatType type, const int permissions){
+
+    return currentDevice.managedTextureAlloc(dim, dims,
+                                             src,
+                                             type, permissions);
+  }
+
+  memory mappedAlloc(const uintptr_t bytes,
+                     void *src){
+
+    return currentDevice.mappedAlloc(bytes, src);
+  }
+
+  void* managedMappedAlloc(const uintptr_t bytes,
+                           void *src){
+
+    return currentDevice.managedMappedAlloc(bytes, src);
+  }
+  //   =================================
+
+  //   ---[ Free Functions ]------------
+  void free(device d){
+    d.free();
+  }
+
+  void free(stream s){
+    currentDevice.freeStream(s);
+  }
+
+  void free(kernel k){
+    k.free();
+  }
+
+  void free(memory m){
+    m.free();
+  }
+  //   =================================
+
   void printAvailableDevices(){
     std::stringstream ss;
     ss << "==============o=======================o==========================================\n";

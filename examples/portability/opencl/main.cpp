@@ -58,31 +58,15 @@ int main(int argc, char **argv){
   o_b  = device.wrapMemory(&cl_b , entries*sizeof(float));
   o_ab = device.wrapMemory(&cl_ab, entries*sizeof(float));
 
-  addVectors = device.buildKernelFromSource("addVectors.occa",
+  addVectors = device.buildKernelFromSource("addVectors.okl",
                                             "addVectors");
-
-  int dims = 1;
-  int itemsPerGroup(2);
-  int groups((entries + itemsPerGroup - 1)/itemsPerGroup);
-
-  addVectors.setWorkingDims(dims, itemsPerGroup, groups);
 
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
-  occa::initTimer(device);
-
-  occa::tic("addVectors");
-
   addVectors(entries, o_a, o_b, o_ab);
 
-  double elapsedTime = occa::toc("addVectors", addVectors);
-
   o_ab.copyTo(ab);
-
-  std::cout << "Elapsed time = " << elapsedTime << " s" << std::endl;
-
-  occa::printTimer();
 
   for(int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';

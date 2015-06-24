@@ -1,10 +1,5 @@
 * C
-  [ ] Switch
-  [ ] Typdef
 * Fortran
-  [ ] Type
-  [ ] N-Dimensional arrays
-  [ ] 1-Offset array access
 * OKL
   [ ] Fix OpenCL/CUDA -> OCCA
   [ ] Fix out-of-order loops
@@ -25,3 +20,35 @@
 ** Get Started
    [ ] Specialized options
 ** Home Page
+* Features missing
+  - Variadic macros
+  - ## macros (with spaces)
+  - ## inside arguments
+  - __PRETTY_FUNCTION__
+  - __cplusplus
+  - __FILE__
+  - __LINE__
+
+  - extern
+  - inline
+  - class
+  - this
+  - public, private
+  - sizeof()
+  - union, enum, struct, class prototypes
+  - extern "C"
+  - typedef struct t_ {} *t;
+
+  - funcInfo
+  - Propagate casting
+
+  - enum (valued + value-less)
+
+  - Variadic functions
+  - Functions with default values
+  - template <typename or class>
+  - operator [->] ?
+  - operator overloading
+  - initializer lists
+  - constructor/destructor
+  - [::] member variables

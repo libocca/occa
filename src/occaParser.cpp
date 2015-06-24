@@ -2,10 +2,30 @@
 
 namespace occa {
   namespace parserNS {
+    intVector_t loadedLanguageVec;
+
+    int loadedLanguage(){
+      return loadedLanguageVec.back();
+    }
+
+    void pushLanguage(const int language){
+      loadedLanguageVec.push_back(language);
+      loadKeywords(language);
+    }
+
+    int popLanguage(){
+      const int ret = loadedLanguageVec.back();
+
+      loadedLanguageVec.pop_back();
+      loadKeywords(loadedLanguageVec.back());
+
+      return ret;
+    }
+
     parserBase::parserBase(){
       env::initialize();
 
-      parsingC = true;
+      parsingLanguage = parserInfo::parsingC;
 
       macrosAreInitialized = false;
       globalScope = new statement(*this);
@@ -15,42 +35,75 @@ namespace occa {
       magicEnabled               = false;
     }
 
-    const std::string parserBase::parseFile(const std::string &filename_,
-                                            const bool parsingC_){
+    const std::string parserBase::parseFile(const std::string &header,
+                                            const std::string &filename_,
+                                            const strToStrMap_t &compilerFlags_){
 
       filename = filename_;
 
-      parsingC = parsingC_;
+      compilerFlags = compilerFlags_;
 
-      const char *cRoot = cReadFile(filename);
+      //---[ Language ]-------
+      strToStrMapIterator it = compilerFlags.find("language");
 
-      const std::string parsedContent = parseSource(cRoot);
+      if((it          == compilerFlags.end()) ||
+         (it->second) != "Fortran"){
 
-      delete [] cRoot;
+        parsingLanguage = parserInfo::parsingC;
+      }
+      else {
+        parsingLanguage = parserInfo::parsingFortran;
+      }
 
-      return parsedContent;
+      pushLanguage(parsingLanguage);
+
+      //---[ Mode ]-----------
+      it = compilerFlags.find("mode");
+
+      OCCA_CHECK(it != compilerFlags.end(),
+                 "Compilation mode must be passed to the parser");
+
+      std::string &modeStr = (it->second);
+
+      cpuMode = ((modeStr == "Serial") ||
+                 (modeStr == "OpenMP"));
+
+      //---[ Magic ]----------
+      it = compilerFlags.find("magic");
+
+      magicEnabled = (( it          != compilerFlags.end()) &&
+                      ((it->second) == "enabled"));
+
+      std::string content = header;
+      content += readFile(filename);
+
+      return parseSource(content.c_str());
     }
 
     const std::string parserBase::parseSource(const char *cRoot){
-      strNode *nodeRoot = splitAndPreprocessContent(cRoot);
+      expNode allExp = splitAndPreprocessContent(cRoot, parsingLanguage);
+      // allExp.print();
+      // throw 1;
 
       loadLanguageTypes();
 
-      globalScope->loadAllFromNode(nodeRoot, parsingC);
+      globalScope->loadAllFromNode(allExp, parsingLanguage);
       // std::cout << (std::string) *globalScope;
       // throw 1;
+
+      reorderLoops();
+      retagOccaLoops();
 
       applyToAllStatements(*globalScope, &parserBase::splitTileOccaFors);
 
       markKernelFunctions();
+      labelNativeKernels();
 
       if(magicEnabled){
         magician::castMagicOn(*this);
         std::cout << (std::string) *globalScope;
         throw 1;
       }
-
-      labelNativeKernels();
 
       applyToAllStatements(*globalScope, &parserBase::setupCudaVariables);
       applyToAllStatements(*globalScope, &parserBase::setupOccaVariables);
@@ -71,6 +124,8 @@ namespace occa {
       modifyTextureVariables();
 
       addArgQualifiers();
+      // std::cout << (std::string) *globalScope;
+      // throw 1;
 
       loadKernelInfos();
 
@@ -135,34 +190,14 @@ namespace occa {
       return iFilename.substr(skipFirst, chars - (skipFirst + skipLast));
     }
 
-    typeHolder parserBase::evaluateMacroStatement(const char *&c){
-      skipWhitespace(c);
-
-      if(*c == '\0')
-        return typeHolder("false");
-
-      strNode *lineNode = new strNode(c);
-      applyMacros(lineNode->value);
-      strip(lineNode->value);
-
-      strNode *labelNodeRoot = labelCode(lineNode);
-      strNode *labelNodePos  = labelNodeRoot;
-
-      // Check if a variable snuck in
-      while(labelNodePos){
-        if(labelNodePos->info & unknownVariable)
-          return typeHolder("false");
-
-        labelNodePos = labelNodePos->right;
-      }
-
-      return evaluateNode(labelNodeRoot);
+    typeHolder parserBase::evaluateMacroStatement(const char *c){
+      return evaluateString(c, this);
     }
 
-    bool parserBase::evaluateMacroBoolStatement(const char *&c){
+    bool parserBase::evaluateMacroBoolStatement(const char *c){
       typeHolder th = evaluateMacroStatement(c);
 
-      return (th.doubleValue() != 0);
+      return th.to<bool>();
     }
 
     void parserBase::loadMacroInfo(macroInfo &info, const char *&c){
@@ -224,7 +259,7 @@ namespace occa {
         const char *cStart = c;
 
         if(isAString(c)){
-          skipString(c, parsingC);
+          skipString(c, parsingLanguage);
 
           info.parts[partPos] += std::string(cStart, (c - cStart));
           continue;
@@ -257,18 +292,20 @@ namespace occa {
       }
     }
 
-    int parserBase::loadMacro(strNode *nodePos, const int state){
-      return loadMacro(nodePos, nodePos->value, state);
+    int parserBase::loadMacro(expNode &allExp, int leafPos, const int state){
+      return loadMacro(allExp, leafPos, allExp[leafPos].value, state);
     }
 
     int parserBase::loadMacro(const std::string &line, const int state){
-      return loadMacro(NULL, line, state);
+      expNode dummyExpRoot;
+
+      return loadMacro(dummyExpRoot, -1, line, state);
     }
 
-    int parserBase::loadMacro(strNode *nodePos,
+    int parserBase::loadMacro(expNode &allExp, int leafPos,
                               const std::string &line, const int state){
 
-      const char *c = (line.c_str() + 1); // 1 = #
+      const char *c = (line.c_str() + 1); // line[0] = #
 
       while(*c != '\0'){
         skipWhitespace(c);
@@ -281,52 +318,52 @@ namespace occa {
           bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
-            return (startHash | readUntilNextHash);
+            return (startHash | readUntilNextHash | forceLineRemoval);
           else
-            return (startHash | ignoreUntilNextHash);
+            return (startHash | ignoreUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "elif")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
-            return ignoreUntilEnd;
+            return (ignoreUntilEnd | forceLineRemoval);
 
           c = cEnd;
 
           bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
-            return readUntilNextHash;
+            return (readUntilNextHash | forceLineRemoval);
           else
-            return ignoreUntilNextHash;
+            return (ignoreUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "else")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
-            return ignoreUntilEnd;
+            return (ignoreUntilEnd | forceLineRemoval);
           else
-            return readUntilNextHash;
+            return (readUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "ifdef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | readUntilNextHash);
+            return (startHash | readUntilNextHash | forceLineRemoval);
           else
-            return (startHash | ignoreUntilNextHash);
+            return (startHash | ignoreUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "ifndef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | ignoreUntilNextHash);
+            return (startHash | ignoreUntilNextHash | forceLineRemoval);
           else
-            return (startHash | readUntilNextHash);
+            return (startHash | readUntilNextHash | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "endif")){
-          return doneIgnoring;
+          return (doneIgnoring | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "define")){
@@ -337,8 +374,10 @@ namespace occa {
           int pos;
 
           if(macroMap.find(name) == macroMap.end()){
+            macroInfo tmpMacro;
+
             pos = macros.size();
-            macros.push_back( macroInfo() );
+            macros.push_back(tmpMacro);
             macroMap[name] = pos;
           }
           else
@@ -349,7 +388,7 @@ namespace occa {
 
           loadMacroInfo(info, c);
 
-          return state;
+          return (state | forceLineRemoval);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
@@ -369,46 +408,29 @@ namespace occa {
             return state;
 
           // Nothing to edit, just keep the #include for the compiler
-          if(nodePos == NULL)
+          if(leafPos == -1)
             return (state | keepMacro);
 
           std::string includeFile = getMacroIncludeFile(c);
 
-          if(includeFile[0] == '~'){
-            includeFile = (env::HOME +
-                           includeFile.substr(1, includeFile.size() - 1));
-          }
-          else if(includeFile[0] != '/'){
-            includeFile = findFileInPath(includeFile);
-          }
-          else{
-            std::string prefix = getFilePrefix(filename);
-
-            if(prefix.size())
-              includeFile = findFileInPath(prefix + '/' + includeFile);
-          }
+          includeFile = sys::getFilename(includeFile);
 
           if(includeFile == "")
             return (state | forceLineRemoval);
 
           const char *cRoot = cReadFile(includeFile);
 
-          strNode *includeNodeRoot = splitContent(cRoot, parsingC);
+          expNode includeExpRoot = splitContent(cRoot, parsingLanguage);
 
           delete [] cRoot;
 
           // Empty include file
-          if(includeNodeRoot == NULL)
+          if(includeExpRoot.leafCount == 0)
             return (state | forceLineRemoval);
 
-          strNode *nr = nodePos->right;
-          strNode *ir = lastNode(includeNodeRoot);
+          leafPos = allExp.insertExpAt(includeExpRoot, leafPos + 1);
 
-          nodePos->right        = includeNodeRoot;
-          includeNodeRoot->left = nodePos;
-
-          nr->left  = ir;
-          ir->right = nr;
+          includeExpRoot.free();
 
           return (state | forceLineRemoval);
         }
@@ -435,7 +457,7 @@ namespace occa {
         const char *cStart = c;
 
         if(isAString(c)){
-          skipString(c, parsingC);
+          skipString(c, parsingLanguage);
 
           newLine += std::string(cStart, (c - cStart));
           continue;
@@ -548,8 +570,9 @@ namespace occa {
             newLine += info.applyArgs(args);
           }
         }
-        else
+        else{
           newLine += word;
+        }
 
         cStart = c;
         c += delimiterChars;
@@ -569,31 +592,30 @@ namespace occa {
         applyMacros(line);
     }
 
-    strNode* parserBase::preprocessMacros(strNode *nodeRoot){
-      strNode *nodePos  = nodeRoot;
-
+    void parserBase::preprocessMacros(expNode &allExp){
       std::stack<int> statusStack;
+      std::vector<int> linesIgnored;
 
       int currentState = doNothing;
 
-      while(nodePos){
-        std::string &line = nodePos->value;
+      for(int linePos = 0; linePos < (allExp.leafCount); ++linePos){
+        std::string &line = allExp[linePos].value;
         bool ignoreLine = false;
 
         if(line[0] == '#'){
           const int oldState = currentState;
 
-          currentState = loadMacro(nodePos, currentState);
+          currentState = loadMacro(allExp, linePos, currentState);
 
-          if(currentState & keepMacro)
+          if(currentState & keepMacro){
             currentState &= ~keepMacro;
+          }
           else if(currentState & forceLineRemoval){
             currentState &= ~forceLineRemoval;
             ignoreLine = true;
           }
-          // // Let's keep all the macros for now
-          // else
-          //   ignoreLine = true;
+          else
+            ignoreLine = false; // Keep macros for now
 
           // Nested #if's
           if(currentState & startHash){
@@ -617,44 +639,62 @@ namespace occa {
             ignoreLine = true;
         }
 
-        if(ignoreLine){
-          if(nodeRoot == nodePos)
-            nodeRoot = nodePos->right;
-
-          popAndGoRight(nodePos);
-        }
-        else{
-          nodePos->info = macroKeywordType;
-          nodePos       = nodePos->right;
-        }
+        if(ignoreLine)
+          linesIgnored.push_back(linePos);
       }
 
-      return nodeRoot;
+      if(linesIgnored.size() == 0)
+        return;
+
+      if(linesIgnored.back() != (allExp.leafCount - 1))
+        linesIgnored.push_back(allExp.leafCount - 1);
+
+      const int ignoreCount = (int) linesIgnored.size();
+
+      int start = (linesIgnored[0] + 1);
+      int pos   = linesIgnored[0];
+
+      for(int linePos = 1; linePos < ignoreCount; ++linePos){
+        int end = linesIgnored[linePos];
+
+        for(int i = start; i < end; ++i)
+          allExp[pos++].value = allExp[i].value;
+
+        start = (end + 1);
+      }
+
+      allExp.leafCount = pos;
     }
 
-    strNode* parserBase::splitAndPreprocessContent(const std::string &s){
-      return splitAndPreprocessContent(s.c_str());
+    expNode parserBase::splitAndPreprocessContent(const std::string &s,
+                                                  const int parsingLanguage_){
+      return splitAndPreprocessContent(s.c_str(),
+                                       parsingLanguage_);
     }
 
-    strNode* parserBase::splitAndPreprocessContent(const char *cRoot){
-      strNode *nodeRoot;
+    expNode parserBase::splitAndPreprocessContent(const char *cRoot,
+                                                  const int parsingLanguage_){
+      expNode allExp;
 
-      initKeywords(parsingC);
+      pushLanguage(parsingLanguage_);
 
-      nodeRoot = splitContent(cRoot, parsingC);
+      allExp = splitContent(cRoot, parsingLanguage_);
 
-      initMacros(parsingC);
+      initMacros(parsingLanguage_);
+      preprocessMacros(allExp);
 
-      nodeRoot = preprocessMacros(nodeRoot);
+      labelCode(allExp, parsingLanguage_);
 
-      nodeRoot = labelCode(nodeRoot, parsingC);
+      allExp.setNestedSInfo(globalScope);
 
-      return nodeRoot;
+      popLanguage();
+
+      return allExp;
     }
     //====================================
 
-    void parserBase::initMacros(const bool parsingC){
-      if(!parsingC)
+    void parserBase::initMacros(const int parsingLanguage_){
+      if(parsingLanguage_ & parserInfo::parsingFortran)
         initFortranMacros();
 
       if(macrosAreInitialized)
@@ -745,6 +785,16 @@ namespace occa {
     }
 
     void parserBase::loadLanguageTypes(){
+      pushLanguage(parserInfo::parsingC);
+
+      cPodTypes["bool"]   = 0;
+      cPodTypes["char"]   = 0;
+      cPodTypes["short"]  = 0;
+      cPodTypes["int"]    = 0;
+      cPodTypes["long"]   = 0;
+      cPodTypes["float"]  = 0;
+      cPodTypes["double"] = 0;
+
       int parts[6]            = {1, 2, 3, 4, 8, 16};
       std::string suffix[6]   = {"", "2", "3", "4", "8", "16"};
       std::string baseType[7] = {"int"  ,
@@ -796,8 +846,10 @@ namespace occa {
 
             ss << "};";
 
-            expNode &typeExp = *(globalScope->createPlainExpNodeFrom(ss.str()));
-            type.loadFrom(typeExp);
+            expNode typeExp = globalScope->createPlainExpNodeFrom(ss.str());
+
+            type.loadFrom(*globalScope, typeExp);
+            // typeExp.free(); [<>] Errors out
 
             globalScope->scopeTypeMap[type.name] = &type;
 
@@ -808,6 +860,8 @@ namespace occa {
 
       globalScope->addTypedef("void");
       globalScope->addTypedef("__builtin_va_list");
+
+      popLanguage();
     }
 
     void parserBase::initFortranMacros(){
@@ -844,23 +898,8 @@ namespace occa {
       }
     }
 
-    void parserBase::applyToStatementsUsingVar(varInfo &info,
-                                               applyToStatementsUsingVar_t func){
-      varUsedMapIterator it = varUsedMap.find(&info);
-
-      if(it != varUsedMap.end()){
-        statementNode *sn = it->second.right;
-
-        while(sn){
-          (this->*func)(info, *(sn->value));
-
-          sn = sn->right;
-        }
-      }
-    }
-
     bool parserBase::statementIsAKernel(statement &s){
-      if(s.info & functionStatementType){
+      if(s.info & smntType::functionStatement){
         if(s.hasQualifier("occaKernel"))
           return true;
       }
@@ -883,20 +922,6 @@ namespace occa {
 
       return sUp;
     }
-    statement* parserBase::getStatementOuterMostLoop(statement &s){
-      statement *ret = ((s.info == occaForType) ? &s : NULL);
-
-      statement *sUp = &s;
-
-      while(sUp){
-        if(sUp->info == occaForType)
-          ret = sUp;
-
-        sUp = sUp->up;
-      }
-
-      return ret;
-    }
 
     bool parserBase::statementKernelUsesNativeOCCA(statement &s){
       statement *sKernel = getStatementKernel(s);
@@ -904,13 +929,7 @@ namespace occa {
       if(sKernel == NULL)
         return false;
 
-      std::string check = obfuscate("native", "occa");
-      varInfo *info = sKernel->hasVariableInScope(check);
-
-      if(info != NULL)
-        return true;
-      else
-        return false;
+      return sKernel->hasAttribute("__occa__native");
     }
 
     bool parserBase::statementKernelUsesNativeOKL(statement &s){
@@ -919,13 +938,7 @@ namespace occa {
       if(sKernel == NULL)
         return false;
 
-      std::string check = obfuscate("native", "okl");
-      varInfo *info = sKernel->hasVariableInScope(check);
-
-      if(info != NULL)
-        return true;
-      else
-        return false;
+      return sKernel->hasAttribute("__okl__native");
     }
 
     bool parserBase::statementKernelUsesNativeLanguage(statement &s){
@@ -938,52 +951,12 @@ namespace occa {
       return false;
     }
 
-    void parserBase::addOccaForCounter(statement &s,
-                                       const std::string &ioLoop,
-                                       const std::string &loopNest,
-                                       const std::string &loopIters){
-      //---[ Add loop counter ]---------
-      varInfo ioDimVar;
-      ioDimVar.name = obfuscate(ioLoop);
-      ioDimVar.addQualifier(loopNest);
-
-      varInfo *ioDimVar2 = s.hasVariableInScope(ioDimVar.name);
-
-      if(ioDimVar2 == NULL){
-        statement *sPlace = getStatementOuterMostLoop(s);
-
-        if(sPlace == NULL)
-          sPlace = getStatementKernel(s);
-
-        sPlace->addVariable(ioDimVar);
-      }
-      else{
-        if(!ioDimVar2->hasQualifier(loopNest))
-          ioDimVar2->addQualifier(loopNest);
-      }
-
-      //---[ Add loop iterations ]------
-      if(loopIters.size()){
-        varInfo ioIterVar;
-        ioIterVar.name = obfuscate("loop", "iters");
-
-        varInfo *ioIterVar2 = s.hasVariableInScope(ioIterVar.name);
-
-        if(ioIterVar2 == NULL){
-          statement &sOuterLoop = *(getStatementOuterMostLoop(s));
-          ioIterVar2 = &(sOuterLoop.addVariable(ioIterVar));
-        }
-
-        ioIterVar2->addQualifier(loopIters);
-      }
-    }
-
     void parserBase::setupOccaFors(statement &s){
-      if( !(s.info & forStatementType) ||
-          (s.getForStatementCount() <= 3) ){
-
+      if(cpuMode)
         return;
-      }
+
+      if(s.info != smntType::occaFor)
+        return;
 
       statement *spKernel = getStatementKernel(s);
 
@@ -993,20 +966,27 @@ namespace occa {
       if(statementKernelUsesNativeOCCA(s))
         return;
 
-      occaLoopInfo loopInfo(s, parsingC);
+      occaLoopInfo loopInfo(s, parsingLanguage);
 
-      std::string ioLoopVar, ioLoop, loopNest;
+      std::string loopTag, capLoopTag, loopNest;
       std::string iter, start;
       std::string bound, iterCheck;
       std::string opStride, opSign, iterOp;
 
-      loopInfo.getLoopInfo(ioLoopVar, ioLoop, loopNest);
+      loopInfo.getLoopInfo(loopTag, loopNest);
+
+      // Capitalized tag
+      capLoopTag = loopTag;
+      capLoopTag[0] += ('A' - 'a');
 
       loopInfo.getLoopNode1Info(iter, start);
       loopInfo.getLoopNode2Info(bound, iterCheck);
       loopInfo.getLoopNode3Info(opStride, opSign, iterOp);
 
       std::string setupExp = loopInfo.getSetupExpression();
+
+      std::string occaIdName  = "occa" + capLoopTag + "Id"  + loopNest;
+      std::string occaForName = "occa" + capLoopTag + "For" + loopNest;
 
       std::string stride = ((opSign[0] == '-') ? "-(" : "(");
       stride += opStride;
@@ -1016,52 +996,112 @@ namespace occa {
       std::stringstream ss;
 
       // Working Dim
-      ss << ioLoopVar << '[' << loopNest << "] = "
-         << '('
+      ss << "@(occaIterExp = "
+         << "("
          <<   "((" << bound << ") - (" << start << ") + (" << stride << " - 1))"
          <<   " / (" << stride << ")"
-         << ");";
+         << "))";
 
-      addOccaForCounter(s, ioLoop, loopNest, ss.str());
-
+      s.addAttribute(ss.str());
       ss.str("");
+
+      removeIntraLoopDepsFromIterExp(s);
+
+      std::string setupAttr = "@isAnOccaIterExp";
 
       if(opStride != "1"){
         ss << setupExp;
 
         ss << ' '
            << opSign
-           << " (occa" << ioLoop << "Id" << loopNest
-           << " * (" << opStride << "));";
+           << " (" << occaIdName << " * (" << opStride << ")) " << setupAttr << ";";
       }
       else{
         ss << setupExp;
 
-        ss << ' '
-           << opSign
-           << " occa" << ioLoop << "Id" << loopNest << ";";
+        ss << ' ' << opSign << ' ' << occaIdName << ' ' << setupAttr << ';';
       }
 
       varInfo &iterVar = *(s.hasVariableInScope(iter));
 
-      s.removeFromUpdateMapFor(iterVar);
-      s.removeFromUsedMapFor(iterVar);
+      varOriginMap[&iterVar] = NULL;
 
       s.scopeVarMap.erase(iter);
 
       s.pushSourceLeftOf(s.statementStart, ss.str());
 
-      std::string occaForName = "occa" + ioLoop + "For" + loopNest;
-
       s.expRoot.info  = expType::occaFor;
       s.expRoot.value = occaForName;
       s.expRoot.free();
 
-      s.info = occaForType;
+      s.info = smntType::occaFor;
+
+      // Change the origin of the iteration variable
+      statement &newIterS = *(s.statementStart->value);
+      expNode &initNode   = newIterS.expRoot;
+
+      expNode *newVarNode = ((initNode.info & expType::declaration) ?
+                             initNode.getVariableInfoNode(0) :
+                             initNode.getUpdatedVariableInfoNode(0));
+
+      if(newVarNode){
+        newVarNode->freeThis();
+        newVarNode->putVarInfo(iterVar);
+
+        newVarNode->info |= expType::type;
+
+        newIterS.addVariable(&iterVar, newIterS.up);
+      }
+    }
+
+    void parserBase::removeIntraLoopDepsFromIterExp(statement &s){
+      expNode &occaIterExp = s.attribute("occaIterExp").valueExp();
+      expNode &flatRoot = *(occaIterExp.makeFlatHandle());
+
+      varOriginMap_t deps;
+
+      findDependenciesFor(occaIterExp, deps);
+
+      varOriginMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        varInfo   &var       = *(it->first);
+        statement &varOrigin = *(it->second);
+
+        if(!varOrigin.hasAttribute("isAnOccaIterExp")){
+          ++it;
+          continue;
+        }
+
+        expNode &initNode = *(varOrigin.getDeclarationVarInitNode(0));
+
+        for(int i = 0; i < flatRoot.leafCount; ++i){
+          expNode &leaf = flatRoot[i];
+
+          // [---] Temporary fix
+          if(((leaf.info & expType::varInfo) == 0) ||
+             (leaf.getVarInfo().name != var.name)){
+
+            continue;
+          }
+
+          expNode &leafUp   = *(leaf.up);
+          const int leafPos = leaf.whichLeafAmI();
+
+          // leaf.free();
+
+          expNode &newLeaf = *(initNode.clonePtr());
+          zeroOccaIdsFrom(newLeaf);
+
+          leafUp.setLeaf(newLeaf, leafPos);
+        }
+
+        ++it;
+      }
     }
 
     bool parserBase::statementIsOccaOuterFor(statement &s){
-      if(s.info == occaForType){
+      if(s.info == smntType::occaFor){
         std::string &forName = s.expRoot.value;
 
         if((forName.find("occaOuterFor") != std::string::npos) &&
@@ -1077,7 +1117,7 @@ namespace occa {
     }
 
     bool parserBase::statementIsOccaInnerFor(statement &s){
-      if(s.info == occaForType){
+      if(s.info == smntType::occaFor){
         std::string &forName = s.expRoot.value;
 
         if((forName.find("occaInnerFor") != std::string::npos) &&
@@ -1109,8 +1149,11 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaFor(statement &s){
-      if(s.info == occaForType)
+      if((s.info == smntType::occaFor) &&
+         (s.getForStatementCount() == 0)){
+
         return true;
+      }
 
       statementNode *statementPos = s.statementStart;
 
@@ -1125,8 +1168,8 @@ namespace occa {
     }
 
     bool parserBase::statementHasOklFor(statement &s){
-      if((s.info == forStatementType) &&
-         (s.getForStatementCount() == 4)){
+      if((s.info == smntType::occaFor) &&
+         (0 < s.getForStatementCount())){
 
         return true;
       }
@@ -1162,21 +1205,231 @@ namespace occa {
       return false;
     }
 
+    void parserBase::reorderLoops(){
+      statementVector_t loopsToReorder; // ltr
+
+      placeLoopsToReorder(*globalScope, loopsToReorder);
+
+      const int ltrCount = (int) loopsToReorder.size();
+
+      if(ltrCount < 2)
+        return;
+
+      int start = 0;
+      statement *sRoot = loopsToReorder[0];
+
+      for(int i = 1; i < ltrCount; ++i){
+        statement &s = *(loopsToReorder[i]);
+
+        if(!s.insideOf(*sRoot)){
+          if((i - start) < 2){
+            start = i;
+            sRoot = &s;
+
+            continue;
+          }
+
+          reorderLoops(loopsToReorder, start, i);
+
+          start = i;
+          sRoot = &s;
+        }
+      }
+
+      if(2 <= (ltrCount - start))
+        reorderLoops(loopsToReorder, start, ltrCount);
+    }
+
+    void parserBase::reorderLoops(statementVector_t &loopsToReorder,
+                                  const int start,
+                                  const int end){
+
+      if((end - start) < 2)
+        return;
+
+      intVector_t relatedLoops = relatedReorderLoops(loopsToReorder,
+                                                     start,
+                                                     end);
+
+      const int rlCount = (int) relatedLoops.size();
+
+      intVector_t oldTo(rlCount);
+      intVector_t newFrom(rlCount);
+
+      for(int i = 0; i < rlCount; ++i){
+        statement &s      = *(loopsToReorder[relatedLoops[i]]);
+        attribute_t &attr = *(s.hasAttribute("loopOrder"));
+
+        s.removeAttribute("loopOrder");
+
+        const int loopPos   = atoi(attr[attr.argCount - 1].value);
+        oldTo[i]            = (rlCount - loopPos - 1);
+        newFrom[ oldTo[i] ] = i;
+      }
+
+      for(int i = 0; i < rlCount; ++i){
+        const int to   = i;
+        const int from = newFrom[i];
+
+        if(from == to)
+          continue;
+
+        newFrom[ oldTo[i] ] = from;
+        oldTo[ from ]       = oldTo[i];
+
+        statement::swapStatementNodesFor(*(loopsToReorder[relatedLoops[to]]),
+                                         *(loopsToReorder[relatedLoops[from]]));
+
+        swapValues(relatedLoops[to], relatedLoops[from]);
+      }
+
+      for(int i = start; i < end; ++i){
+        if(loopsToReorder[i]->hasAttribute("loopOrder"))
+          reorderLoops(loopsToReorder, i, end);
+      }
+    }
+
+    intVector_t parserBase::relatedReorderLoops(statementVector_t &loopsToReorder,
+                                                const int start,
+                                                const int end){
+
+      intVector_t relatedLoops;
+      relatedLoops.push_back(start);
+
+      statement &sRoot      = *(loopsToReorder[start]);
+      attribute_t &rootAttr = sRoot.attribute("loopOrder");
+
+      for(int i = (start + 1); i < end; ++i){
+        statement &s       = *(loopsToReorder[i]);
+        attribute_t *attr_ = s.hasAttribute("loopOrder");
+
+        // This statement is already taken
+        if(attr_ == NULL)
+          continue;
+
+        attribute_t &attr = *(attr_);
+
+        if(attr.argCount != rootAttr.argCount)
+          continue;
+
+        if(rootAttr.argCount == 1){
+          relatedLoops.push_back(i);
+        }
+        else if((rootAttr.argCount == 2) &&
+                (rootAttr[0].value == attr[0].value)){
+
+          relatedLoops.push_back(i);
+        }
+      }
+
+      return relatedLoops;
+    }
+
+    void parserBase::placeLoopsToReorder(statement &s,
+                                         statementVector_t &loopsToReorder){
+
+      if((s.info & smntType::forStatement) &&
+         s.hasAttribute("loopOrder")){
+
+        loopsToReorder.push_back(&s);
+      }
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        placeLoopsToReorder(*(statementPos->value),
+                            loopsToReorder);
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    void parserBase::retagOccaLoops(){
+      retagOccaLoops(*globalScope);
+    }
+
+    void parserBase::retagOccaLoops(statement &s){
+      if(s.info == smntType::occaFor){
+        statementVector_t occaLoops = findOccaLoops(s);
+        const int occaLoopCount     = (int) occaLoops.size();
+
+        int outerCount = 0;
+
+        // Count outer/inner loops
+        for(int i = 0; i < occaLoopCount; ++i){
+          statement &occaLoop = *(occaLoops[i]);
+
+          attribute_t &occaTagAttr = occaLoop.attribute("occaTag");
+          std::string occaTag      = occaTagAttr.valueStr();
+
+          if(occaTag == "tile")
+            return;
+
+          if(occaTag == "outer")
+            ++outerCount;
+        }
+
+        // Reorder tags
+        for(int i = 0; i < occaLoopCount; ++i){
+          statement &occaLoop = *(occaLoops[i]);
+
+          occaLoop.removeAttribute("occaTag");
+          occaLoop.removeAttribute("occaNest");
+          occaLoop.removeAttribute("occaMaxNest_inner");
+          occaLoop.removeAttribute("occaMaxNest_outer");
+
+          if(outerCount){
+            std::string nestStr = occa::toString(--outerCount);
+
+            occaLoop.addAttribute("@(occaTag = outer,"
+                                  " occaNest = " + nestStr + ")");
+          }
+          else{
+            // innerCount includes itself
+            const int innerCount = (findOccaLoops(occaLoop).size() - 1);
+            std::string nestStr = occa::toString(innerCount);
+
+            occaLoop.addAttribute("@(occaTag = inner,"
+                                  " occaNest = " + nestStr + ")");
+          }
+        }
+
+        // Update max outer/inner dims
+        for(int i = 0; i < occaLoopCount; ++i){
+          statement &occaLoop = *(occaLoops[i]);
+
+          attribute_t &occaTagAttr  = occaLoop.attribute("occaTag");
+          attribute_t &occaNestAttr = occaLoop.attribute("occaNest");
+
+          occaLoop.updateOccaOMLoopAttributes(occaTagAttr.valueStr(),
+                                              occaNestAttr.valueStr());
+        }
+
+        return;
+      }
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        retagOccaLoops(*(statementPos->value));
+
+        statementPos = statementPos->right;
+      }
+    }
+
     void parserBase::splitTileOccaFors(statement &s){
-      if((s.info != forStatementType) ||
-         (s.getForStatementCount() < 4)){
+      if(s.info != smntType::occaFor)
+        return;
+
+      attribute_t *occaTagAttr_ = s.hasAttribute("occaTag");
+
+      if((occaTagAttr_ == NULL) ||
+         (occaTagAttr_->valueStr() != "tile")){
 
         return;
       }
 
-      expNode &tagNode = *(s.getForStatement(3));
-
-      if((tagNode.leafCount != 2)     ||
-         (tagNode[0].value != "tile") ||
-         (tagNode[1].value != "(")){
-
-        return;
-      }
+      attribute_t &occaTagDim = s.attribute("tileDim");
 
       expNode &initNode   = *(s.getForStatement(0));
       expNode &checkNode  = *(s.getForStatement(1));
@@ -1185,11 +1438,9 @@ namespace occa {
       expNode &csvCheckNode  = *(checkNode.makeCsvFlatHandle());
       expNode &csvUpdateNode = *(updateNode.makeCsvFlatHandle());
 
-      expNode &csvTileDims = *(tagNode[1][0].makeCsvFlatHandle());
-
       //---[ Checks ]---------------------------
       //  ---[ Tile Dim ]-------------
-      const int tileDim = csvTileDims.leafCount;
+      const int tileDim = occaTagDim.argCount;
 
       OCCA_CHECK((1 <= tileDim) && (tileDim <= 3),
                  "Only 1D, 2D, and 3D tiling are supported:\n" << s.onlyThisToString());
@@ -1364,7 +1615,6 @@ namespace occa {
       }
 
       // Place s's statementNode's in inner-most for-loop
-      iStatements[0]->statementCount = s.statementCount;
       iStatements[0]->statementStart = s.statementStart;
       iStatements[0]->statementEnd   = s.statementEnd;
 
@@ -1381,8 +1631,8 @@ namespace occa {
         statement &os = *(oStatements[dim]);
         statement &is = *(iStatements[dim]);
 
-        os.info = forStatementType;
-        is.info = forStatementType;
+        os.info = smntType::forStatement;
+        is.info = smntType::forStatement;
 
         expNode &check  = csvCheckNode[dim];
         expNode &update = csvUpdateNode[dim];
@@ -1403,12 +1653,12 @@ namespace occa {
 
         if(update.info != expType::LR){
           if(update.value == "++")
-            ss << oTileVar << " += " << csvTileDims[dim] << "; ";
+            ss << oTileVar << " += " << occaTagDim[dim] << "; ";
           else
-            ss << oTileVar << " -= " << csvTileDims[dim] << "; ";
+            ss << oTileVar << " -= " << occaTagDim[dim] << "; ";
         }
         else {
-          ss << oTileVar << update.value << csvTileDims[dim] << "; ";
+          ss << oTileVar << update.value << occaTagDim[dim] << "; ";
         }
 
         ss << "outer" << dim << ')';
@@ -1424,15 +1674,13 @@ namespace occa {
 
         ss << "for(";
 
-        if(1 < tileDim)
-          ss << varType << ' ';
-
-        ss << varName << " = " << oTileVar << "; ";
+        ss << varType << ' '
+           << varName << " = " << oTileVar << "; ";
 
         if(checkIterOnLeft[dim])
-          ss << varName << check.value << '(' << oTileVar << " + " << csvTileDims[dim] << "); ";
+          ss << varName << check.value << '(' << oTileVar << " + " << occaTagDim[dim] << "); ";
         else
-          ss << '(' << oTileVar << " + " << csvTileDims[dim] << ')' << check.value << varName << "; ";
+          ss << '(' << oTileVar << " + " << occaTagDim[dim] << ')' << check.value << varName << "; ";
 
         csvUpdateNode[dim][0].free();
         csvUpdateNode[dim][0].info  = expType::printValue;
@@ -1446,31 +1694,41 @@ namespace occa {
 
         ss.str("");
 
-        expNode &outerExp = *(s.createExpNodeFrom(outerForSource));
-        expNode &innerExp = *(s.createExpNodeFrom(innerForSource));
+        os.expRoot.free();
+        is.expRoot.free();
 
-        expNode::swap(os.expRoot, outerExp);
-        expNode::swap(is.expRoot, innerExp);
+        if((dim == 0) &&
+           (varIsDeclared)){
 
-        outerExp.free();
-        innerExp.free();
+          varOriginMap[&var] = NULL;
+
+          iStatements[0]->scopeVarMap.erase(var);
+        }
+
+        os.reloadFromSource(outerForSource);
+        is.reloadFromSource(innerForSource);
+
+        // [--] Nasty, fix later
+        if((dim == 0) &&
+           (varIsDeclared)){
+
+          varOriginMap[&var] = &is;
+        }
+
+        os.updateOccaOMLoopAttributes("outer", toString(dim));
+        is.updateOccaOMLoopAttributes("inner", toString(dim));
       }
 
       // Add variable declaration if needed
       if(tileDim == 1){
         if(varIsDeclared){
           expNode &newInitNode = *(iStatements[0]->getForStatement(0));
+          expNode &varNode     = *(newInitNode.getVariableInfoNode(0));
 
-          expNode &ph = *(new expNode( *(newInitNode.sInfo) ));
+          varNode.freeThis();
+          varNode.putVarInfo(var);
 
-          expNode::swap(newInitNode, ph);
-
-          newInitNode.reserve(1);
-          newInitNode.setLeaf(ph, 0);
-
-          newInitNode.info = expType::declaration;
-          newInitNode.getVariableInfoNode(0)->info |= (expType::declaration |
-                                                       expType::type);
+          varNode.info |= expType::type;
         }
       }
       else { // (1 < tileDim)
@@ -1497,7 +1755,6 @@ namespace occa {
       expNode::freeFlatHandle(csvCheckNode);
       expNode::freeFlatHandle(csvInitValueNode);
       expNode::freeFlatHandle(csvUpdateNode);
-      expNode::freeFlatHandle(csvTileDims);
 
       delete [] checkIterOnLeft;
     }
@@ -1508,7 +1765,7 @@ namespace occa {
       while(snPos){
         statement &s2 = *(snPos->value);
 
-        if( !(s2.info & functionStatementType) ||
+        if( !(s2.info & smntType::functionStatement) ||
             statementIsAKernel(s2) ){
 
           snPos = snPos->right;
@@ -1537,17 +1794,14 @@ namespace occa {
           bool hasOklFor  = statementHasOklFor(s);
 
           if(hasOccaFor | hasOklFor){
-            varInfo nativeCheckVar;
-
-            if(hasOccaFor)
-              nativeCheckVar.name = obfuscate("native", "occa");
-            else
-              nativeCheckVar.name = obfuscate("native", "okl");
-
-            varInfo *nativeCheckVar2 = s.hasVariableInScope(nativeCheckVar.name);
-
-            if(nativeCheckVar2 == NULL)
-              s.addVariable(nativeCheckVar);
+            if(hasOccaFor){
+              if(!s.hasAttribute("__occa__native"))
+                s.addAttributeTag("__occa__native");
+            }
+            else {
+              if(!s.hasAttribute("__okl__native"))
+                s.addAttributeTag("__okl__native");
+            }
           }
         }
 
@@ -1556,11 +1810,11 @@ namespace occa {
     }
 
     void parserBase::setupCudaVariables(statement &s){
-      if((!(s.info & simpleStatementType)    &&
-          !(s.info & forStatementType)       &&
-          !(s.info & functionStatementType)) ||
+      if((!(s.info & smntType::simpleStatement)    &&
+          !(s.info & smntType::forStatement)       &&
+          !(s.info & smntType::functionStatement)) ||
          // OCCA for's don't have arguments
-         (s.info == occaForType))
+         (s.info == smntType::occaFor))
         return;
 
       if(getStatementKernel(s) == NULL)
@@ -1599,7 +1853,7 @@ namespace occa {
           expNode &leaf    = *(flatRoot[i].up);
           const char coord = (leaf[1].value[0] + ('0' - 'x'));
 
-          leaf.info  = expType::presetValue;
+          leaf.info  = (expType::presetValue | expType::occaKeyword);
           leaf.value = occaValue + coord;
 
           leaf.leafCount = 0;
@@ -1617,7 +1871,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if(s.info & functionPrototypeType)
+        if(s.info & smntType::functionPrototype)
           prototypes[s.getFunctionName()] = true;
 
         statementPos = statementPos->right;
@@ -1628,7 +1882,7 @@ namespace occa {
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if(s.info & functionStatementType){
+        if(s.info & smntType::functionStatement){
           if(s.hasQualifier("occaKernel")){
             statementPos = statementPos->right;
             continue;
@@ -1637,7 +1891,7 @@ namespace occa {
           if(!s.hasQualifier("occaFunction"))
             s.addQualifier("occaFunction");
 
-          if( !(s.info & functionDefinitionType) ){
+          if( !(s.info & smntType::functionDefinition) ){
             statementPos = statementPos->right;
             continue;
           }
@@ -1652,42 +1906,13 @@ namespace occa {
       }
     }
 
-    int parserBase::statementOccaForNest(statement &s){
-      if((s.info != forStatementType) ||
-         (s.getForStatementCount() != 4)){
-
-        return notAnOccaFor;
-      }
-
-      int ret = notAnOccaFor;
-
-      expNode &labelNode = *(s.getForStatement(3));
-
-      const std::string &forName = (std::string) labelNode;
-
-      if(isAnOccaOuterTag(forName)){
-        ret = ((1 + forName[5] - '0') << occaOuterForShift);
-      }
-      else if(isAnOccaInnerTag(forName)){
-        ret = ((1 + forName[5] - '0') << occaInnerForShift);
-      }
-
-      return ret;
-    }
-
-    bool parserBase::statementIsAnOccaFor(statement &s){
-      const int nest = statementOccaForNest(s);
-
-      return !(nest & notAnOccaFor);
-    }
-
     void parserBase::checkOccaBarriers(statement &s){
       statementNode *statementPos = s.statementStart;
 
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        if(s2.info & ifStatementType){
+        if(s2.info & smntType::ifStatement){
           if(s2.hasStatementWithBarrier()){
             OCCA_CHECK(false,
                        "Barriers are not allowed in conditional statements:\n" << s2);
@@ -1724,10 +1949,10 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        int occaType = statementOccaForNest(s2);
+        attribute_t *occaTagAttr = s2.hasAttribute("occaTag");
 
-        if((occaType == notAnOccaFor) ||
-           !(occaType & occaInnerForMask)){
+        if((occaTagAttr == NULL) ||
+           occaTagAttr->valueStr() != "inner"){
 
           addOccaBarriersToStatement(s2);
         }
@@ -1777,7 +2002,7 @@ namespace occa {
       while(snPos){
         statement &s = *(snPos->value);
 
-        if((s.info & declareStatementType) &&
+        if((s.info & smntType::declareStatement) &&
            (s.hasQualifier("occaConst"))){
 
           s.removeQualifier("occaConst");
@@ -1788,102 +2013,55 @@ namespace occa {
       }
     }
 
-    strNode* parserBase::occaExclusiveStrNode(varInfo &var,
-                                              const int depth,
-                                              const int sideDepth){
-      strNode *nodeRoot;
-
-      if(var.stackPointerCount)
-        nodeRoot = new strNode("occaPrivateArray");
-      else
-        nodeRoot = new strNode("occaPrivate");
-
-      nodeRoot->info      = presetValue;
-      nodeRoot->depth     = depth;
-      nodeRoot->sideDepth = sideDepth;
-
-      strNode *nodePos = nodeRoot->pushDown("(");
-
-      nodePos->info  = keywordType["("];
-      nodePos->depth = depth + 1;
-
-      var.removeQualifier("exclusive");
-
-      for(int i = 0; i < var.leftQualifiers.qualifierCount; ++i){
-        nodePos       = nodePos->push(var.leftQualifiers.qualifiers[i]);
-        nodePos->info = qualifierType;
-      }
-
-      nodePos       = nodePos->push(var.baseType->name);
-      nodePos->info = specifierType;
-
-      for(int i = 0; i < var.rightQualifiers.qualifierCount; ++i){
-        nodePos       = nodePos->push(var.rightQualifiers.qualifiers[i]);
-        nodePos->info = keywordType[var.rightQualifiers.qualifiers[i]];
-      }
-
-      nodePos       = nodePos->push(",");
-      nodePos->info = keywordType[","];
-
-      nodePos       = nodePos->push(var.name);
-      nodePos->info = unknownVariable;
-
-      if(var.stackPointerCount){
-        OCCA_CHECK(var.stackPointerCount < 2,
-                   "Only 1D exclusive variables are currently supported [" << var << "]");
-
-        nodePos       = nodePos->push(",");
-        nodePos->info = keywordType[","];
-
-        nodePos       = nodePos->push((std::string) var.stackExpRoots[0]);
-        nodePos->info = presetValue;
-      }
-
-      nodePos       = nodePos->push(")");
-      nodePos->info = keywordType[")"];
-
-      nodePos       = nodePos->push(";");
-      nodePos->info = keywordType[";"];
-
-      return nodeRoot;
-    }
-
     void parserBase::addArgQualifiers(){
       statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
         statement &s = *(statementPos->value);
 
-        if((s.info & functionDefinitionType) &&
+        if((s.info & smntType::functionDefinition) &&
            (s.functionHasQualifier("occaKernel"))){
 
-          const int argc = s.getFunctionArgCount();
-
-          for(int i = 0; i < argc; ++i){
-            varInfo &argVar = *(s.getFunctionArgVar(i));
-
-            if(argVar.pointerCount){
-              if(!argVar.hasQualifier("occaPointer"))
-                argVar.addQualifier("occaPointer", 0);
-            }
-            else{
-              if(!argVar.hasRightQualifier("occaVariable"))
-                argVar.addRightQualifier("occaVariable");
-              if(argVar.hasRightQualifier("&"))
-                argVar.removeRightQualifier("&");
-            }
-          }
-
-          if(s.getFunctionArgName(0) != "occaKernelInfoArg"){
-            varInfo &arg0 = *(new varInfo());
-
-            arg0.name = "occaKernelInfoArg";
-
-            s.addFunctionArg(0, arg0);
-          }
+          addArgQualifiersTo(s);
         }
 
         statementPos = statementPos->right;
+      }
+    }
+
+    void parserBase::addArgQualifiersTo(statement &s){
+      const int argc = s.getFunctionArgCount();
+
+      for(int i = 0; i < argc; ++i){
+        varInfo &argVar = *(s.getFunctionArgVar(i));
+
+        if(argVar.name == "occaKernelInfoArg")
+          continue;
+
+        if(argVar.pointerCount){
+          if(!argVar.hasQualifier("occaPointer"))
+            argVar.addQualifier("occaPointer", 0);
+        }
+        else{
+          if(!argVar.hasQualifier("occaConst"))
+            argVar.addQualifier("occaConst");
+
+          if(!argVar.hasRightQualifier("occaVariable"))
+            argVar.addRightQualifier("occaVariable");
+
+          if(argVar.hasRightQualifier("&"))
+            argVar.removeRightQualifier("&");
+        }
+      }
+
+      if((s.getFunctionArgCount() == 0) ||
+         (s.getFunctionArgName(0) != "occaKernelInfoArg")){
+
+        varInfo &arg0 = *(new varInfo());
+
+        arg0.name = "occaKernelInfoArg";
+
+        s.addFunctionArg(0, arg0);
       }
     }
 
@@ -1910,7 +2088,7 @@ namespace occa {
 
         // Find inner-most outer-for loop
         while(sUp){
-          if((sUp->info == occaForType) &&
+          if((sUp->info == smntType::occaFor) &&
              statementIsOccaOuterFor(*sUp)){
 
             break;
@@ -1926,7 +2104,7 @@ namespace occa {
           while(sn3){
             statement &s3 = *(sn3->value);
 
-            if((!(s3.info & declareStatementType)) ||
+            if((!(s3.info & smntType::declareStatement)) ||
                (!s3.hasQualifier("exclusive") &&
                 !s3.hasQualifier("occaShared"))){
 
@@ -1970,7 +2148,7 @@ namespace occa {
       while(statementPos){
         statement &s2 = *(statementPos->value);
 
-        if((s2.info & declareStatementType)){
+        if((s2.info & smntType::declareStatement)){
           if(isAppending &&
              (s2.hasQualifier("exclusive") ||
               s2.hasQualifier("occaShared"))){
@@ -1992,7 +2170,7 @@ namespace occa {
     }
 
     void parserBase::modifyExclusiveVariables(statement &s){
-      if( !(s.info & declareStatementType)   ||
+      if( !(s.info & smntType::declareStatement)   ||
           (getStatementKernel(s) == NULL)    ||
           (statementKernelUsesNativeOCCA(s)) ||
           (!s.hasQualifier("exclusive")) ){
@@ -2005,7 +2183,7 @@ namespace occa {
       const int argc = s.getDeclarationVarCount();
 
       //---[ Setup update statement ]---
-      expNode &newRoot = *(s.expRoot.clone());
+      expNode newRoot = s.expRoot.clone();
       varInfo &newVar0 = newRoot.getVariableInfoNode(0)->getVarInfo();
 
       newVar0.leftQualifiers.clear();
@@ -2042,7 +2220,6 @@ namespace occa {
       }
       else{
         newRoot.free();
-        delete &newRoot;
       }
       //================================
 
@@ -2074,15 +2251,14 @@ namespace occa {
                      "Only 1D exclusive arrays are supported:\n"
                      << "exclusive " << s);
 
-          ss << var.stackExpRoots[0][0];
+          ss << var.stackExpRoots[0];
         }
 
         ss << ");";
 
-        s.loadFromNode(labelCode( splitContent(ss.str()) ));
+        s.loadFromNode( splitAndLabelContent(ss.str()) );
 
-        s.statementEnd->value->up    = s.up;
-        s.statementEnd->value->depth = s.depth;
+        s.statementEnd->value->up = s.up;
 
         ss.str("");
       }
@@ -2101,10 +2277,7 @@ namespace occa {
       if(sn->right)
         sn->right->left = s.statementEnd;
 
-      s.up->statementCount += (argc - 1);
-
       s.statementStart = s.statementEnd = NULL;
-      s.statementCount = 0;
     }
 
     // [-] Missing
@@ -2112,513 +2285,14 @@ namespace occa {
       /*
 
         kernel void kern(texture float **tex){
-          tex[j][i];
+        tex[j][i];
         }
 
         CPU:
         kernel void kern(int64 offsets[argc],
-                         texture float tex,
-                         sampler/textureInfo tex_info)
-       */
-    }
-
-    statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
-                                                    kernelInfo &info){
-      statement &sKernel = *(snKernel->value);
-
-      statementIdMap_t idMap;
-      statementVector_t sVec;
-      idDepMap_t hostDepMap;
-
-      statementVector_t loopStatements;
-      intVector_t loopStatementIDs, loopOffsets, innerDims, outerDims;
-
-      std::stringstream ss;
-
-      sKernel.setStatementIdMap(idMap);
-      sKernel.setStatementVector(idMap, sVec);
-
-      statementNode *occaLoopRoot = getOccaLoopsInStatement(sKernel);
-      statementNode *occaLoopPos  = occaLoopRoot;
-
-      statementNode *outerLoopRoot = getOuterLoopsInStatement(sKernel);
-      statementNode *outerLoopPos  = outerLoopRoot;
-
-      const int kernelCount = length(outerLoopRoot);
-
-      globalScope->createUniqueSequentialVariables(info.baseName,
-                                                   kernelCount);
-
-      info.nestedKernels.clear();
-
-      // Create empty kernels
-      statementNode *newSNEnd = createNestedKernelsFromLoops(snKernel,
-                                                             info,
-                                                             outerLoopRoot);
-
-      // Get argument string
-      std::string argsStr = getNestedKernelArgsFromLoops(sKernel);
-
-      // Add nestedKernels argument
-      setupHostKernelArgsFromLoops(sKernel);
-
-      int kID = 0;
-
-      // Loop through outer-loops to find statement dependencies
-      //   and create the kernel
-      while(occaLoopPos){
-        statement &sOuter = *(occaLoopPos->value);
-
-        varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
-
-        loopOffsets.push_back(loopStatements.size());
-
-        if(loopIter == NULL){
-          while(occaLoopPos->value != outerLoopPos->value)
-            occaLoopPos = occaLoopPos->right;
-
-          outerLoopPos = outerLoopPos->right;
-
-          if(outerLoopPos == NULL)
-            occaLoopPos = NULL;
-
-          continue;
-        }
-
-        qualifierInfo &loopBounds = loopIter->leftQualifiers;
-        int loopPos = 0;
-
-        const int outerDim = getOuterMostForDim(sOuter);
-        const int innerDim = getInnerMostForDim(sOuter);
-
-        outerDims.push_back(outerDim + 1);
-        innerDims.push_back(innerDim + 1);
-
-        // Break after each outer-most outer-loop (between kernels)
-        // Break after each outer-most inner-loop (One work-group size (for now))
-        bool lastOuter  = false;
-        bool firstInner = true;
-
-        //---[ Add kernel body ]----------
-        if(info.nestedKernels.size() <= kID)
-          break;
-
-        statement &ks = *(info.nestedKernels[kID]);
-
-        // Kernel's outer-most outer-loop
-        statementNode *ksnOuter = ks.statementEnd;
-
-        // Loop through all the loops inside new kernel
-        while(occaLoopPos){
-          statement &s2 = *(occaLoopPos->value);
-
-          const int forInfo = s2.occaForInfo();
-          const int nest    = s2.occaForNest(forInfo);
-
-          // Only goes through first outer and inner sets
-          if(s2.isOccaInnerFor(forInfo) &&
-             (nest == innerDim)){
-
-            if(firstInner == false)
-              break;
-
-            firstInner = false;
-          }
-          else if(s2.isOccaOuterFor(forInfo)){
-            if(lastOuter){
-              lastOuter = false;
-              break;
-            }
-
-            if(nest == 0)
-              lastOuter = true;
-          }
-
-          statement &ls = s2.createStatementFromSource(loopBounds[loopPos]);
-
-          ls.addStatementDependencies(s2,
-                                      idMap, sVec, hostDepMap);
-
-          loopStatements.push_back(&ls);
-          loopStatementIDs.push_back(idMap[&s2]);
-
-          ++loopPos;
-          occaLoopPos = occaLoopPos->right;
-        }
-
-        idDepMap_t depMap;
-
-        // Get kernel dependencies
-        sOuter.addNestedDependencies(idMap, sVec, depMap);
-
-        idDepMapIterator depIt = depMap.begin();
-
-        while(depIt != depMap.end()){
-          statement &depS  = *(sVec[depIt->first]);
-
-          if(depIt->first < idMap[&sOuter]){
-            statement &depS2 = *(depS.clone());
-
-            zeroOccaIdsFrom(depS2);
-
-            ks.addStatement(&depS2);
-          }
-
-          ++depIt;
-        }
-
-        // Move dependencies to the front
-        if(ksnOuter && ksnOuter->right){
-          statementNode *oldFirst = ks.statementStart;
-          statementNode *oldEnd   = ksnOuter;
-
-          statementNode *firstExtra = ksnOuter->right;
-          statementNode *lastExtra  = ks.statementEnd;
-
-          ks.statementStart       = firstExtra;
-          ks.statementStart->left = NULL;
-
-          ks.statementEnd        = oldEnd;
-          ks.statementEnd->right = NULL;
-
-          lastExtra->right = oldFirst;
-          oldFirst->left   = lastExtra;
-        }
-
-        // Go to next outer-loop
-        while(occaLoopPos){
-          statement &s2 = *(occaLoopPos->value);
-
-          const int forInfo = s2.occaForInfo();
-
-          if(s2.isOccaOuterFor(forInfo))
-            break;
-
-          occaLoopPos = occaLoopPos->right;
-        }
-
-        ++kID;
-      }
-
-      loopOffsets.push_back(loopStatements.size());
-
-      // Build host kernel
-      const int loopCount = loopStatements.size();
-      kID = 0;
-
-      idDepMapIterator depIt = hostDepMap.begin();
-
-      statement *blockStatement = NULL;
-      statementNode newStatementStart;
-      statementNode *newSNPos = &newStatementStart;
-
-      if(loopCount == 0){
-        ss << "  nestedKernels[0](" << argsStr << ");\n";
-
-        statement &body = sKernel.createStatementFromSource(ss.str());
-
-        newStatementStart.push(&body);
-
-        ss.str("");
-      }
-
-      for(int loopPos = 0; loopPos < loopCount; ++loopPos){
-        const int loopID = loopStatementIDs[loopPos];
-        statement &ls    = *(loopStatements[loopPos]);
-
-        zeroOccaIdsFrom(ls);
-
-        while(depIt != hostDepMap.end()){
-          const int sID = (depIt->first);
-
-          if(loopID < sID)
-            break;
-
-          statement &depS = *(sVec[sID]);
-
-          zeroOccaIdsFrom(depS);
-
-          if(blockStatement)
-            blockStatement->addStatement(&depS);
-          else
-            newSNPos = newSNPos->push(&depS);
-
-          ++depIt;
-        }
-
-        if(loopPos == loopOffsets[kID]){
-          blockStatement = new statement(ls.depth - 1,
-                                         blockStatementType,
-                                         &sKernel);
-
-          newSNPos = newSNPos->push(blockStatement);
-
-          const int outerDim = outerDims[kID];
-          const int innerDim = innerDims[kID];
-          const int dims     = ((outerDim < innerDim) ? innerDim : outerDim);
-
-          ss << "const int dims = " << dims << ";\n"
-             << "int outer, inner;\n";
-
-          blockStatement->addStatementsFromSource(ss.str());
-
-          varInfo &outerVar    = *(blockStatement->hasVariableInScope("outer"));
-          statement &outerVarS = *(varUpdateMap[&outerVar].value);
-
-          typeInfo &type = *(new typeInfo);
-          type.name = "occa::dim";
-
-          outerVarS.getDeclarationVarInfo(0).baseType = &type;
-
-          ss.str("");
-
-          ++kID;
-        }
-
-        blockStatement->addStatement(&ls);
-
-        if(loopPos == (loopOffsets[kID] - 1)){
-          ss << "nestedKernels[" << (kID - 1) << "].setWorkingDims(dims, inner, outer);\n"
-             << "  nestedKernels[" << (kID - 1) << "](" << argsStr << ");\n";
-
-          blockStatement->addStatementsFromSource(ss.str());
-
-          ss.str("");
-
-          blockStatement = NULL;
-        }
-      }
-
-      sKernel.statementStart = newStatementStart.right;
-      sKernel.statementEnd   = lastNode(sKernel.statementStart);
-
-      //---[ Add kernel guards ]--------
-      statementNode *ret = newSNEnd->right;
-
-      sKernel.up->pushSourceLeftOf(snKernel , "#ifdef OCCA_LAUNCH_KERNEL");
-      sKernel.up->pushSourceRightOf(snKernel, "#else");
-      sKernel.up->pushSourceRightOf(newSNEnd, "#endif");
-
-      return ret;
-    }
-
-    statementNode* parserBase::getOuterLoopsInStatement(statement &s){
-      return getOccaLoopsInStatement(s, false);
-    }
-
-    statementNode* parserBase::getOccaLoopsInStatement(statement &s,
-                                                       const bool getNestedLoops){
-      statementNode *snPos = s.statementStart;
-
-      statementNode root;
-      statementNode *tail = &root;
-
-      while(snPos){
-        statement &s2 = *(snPos->value);
-
-        if(s2.info == occaForType)
-          tail = tail->push(new statementNode(&s2));
-
-        if(getNestedLoops ||
-           (s2.info != occaForType)){
-
-          tail->right = getOccaLoopsInStatement(s2, getNestedLoops);
-
-          if(tail->right)
-            tail = lastNode(tail);
-        }
-
-        snPos = snPos->right;
-      }
-
-      return root.right;
-    }
-
-    int parserBase::kernelCountInOccaLoops(statementNode *occaLoops){
-      int kernelCount = 0;
-
-      while(occaLoops){
-        ++kernelCount;
-
-        statement &sOuter = *(occaLoops->value);
-
-        varInfo *loopIter = sOuter.hasVariableInScope( obfuscate("loop", "iters") );
-
-        if(loopIter == NULL){
-          occaLoops = occaLoops->right;
-          continue;
-        }
-
-        const int outerDim = getOuterMostForDim(sOuter) + 1;
-
-        // Break after each outer-most outer-loop (between kernels)
-        bool firstOuter = true;
-
-        // Loop through all the loops inside new kernel
-        while(occaLoops){
-          statement &s2 = *(occaLoops->value);
-
-          const int forInfo = s2.occaForInfo();
-          const int nest    = s2.occaForNest(forInfo);
-
-          if(s2.isOccaOuterFor(forInfo) &&
-             (nest == (outerDim - 1))){
-
-            if(firstOuter == false)
-              break;
-
-            firstOuter = false;
-          }
-
-          occaLoops = occaLoops->right;
-        }
-
-        // Go to next outer-loop
-        while(occaLoops){
-          statement &s2 = *(occaLoops->value);
-
-          const int forInfo = s2.occaForInfo();
-
-          if(s2.isOccaOuterFor(forInfo))
-            break;
-
-          occaLoops = occaLoops->right;
-        }
-      }
-
-      return kernelCount;
-    }
-
-    void parserBase::zeroOccaIdsFrom(statement &s){
-      expNode &flatRoot = *(s.expRoot.makeFlatHandle());
-
-      for(int i = 0; i < flatRoot.leafCount; ++i){
-        if((flatRoot[i].info & expType::presetValue) &&
-           isAnOccaID(flatRoot[i].value)){
-
-          flatRoot[i].value = "0";
-        }
-      }
-
-      expNode::freeFlatHandle(flatRoot);
-    }
-
-    statementNode* parserBase::createNestedKernelsFromLoops(statementNode *snKernel,
-                                                            kernelInfo &info,
-                                                            statementNode *outerLoopRoot){
-      statement &sKernel = *(snKernel->value);
-
-      statementNode *newSNRoot, *newSNEnd;
-      std::stringstream ss;
-
-      statementNode *outerLoopPos = outerLoopRoot;
-
-      const std::string kernelName = sKernel.getFunctionVar()->name;
-      int kID = 0;
-
-      while(outerLoopPos){
-        // Create nested kernels
-        statement &ks  = *(outerLoopPos->value);
-        statement &ks2 = *(new statement(ks.depth - 1,
-                                         varUpdateMap,
-                                         varUsedMap));
-
-        // [occaOuterFor][#]
-        // const int outerDim = atoi(ks.expRoot.value.c_str() + 12);
-
-        ks2.info = sKernel.info;
-
-        info.nestedKernels.push_back(&ks2);
-
-        sKernel.expRoot.cloneTo(ks2.expRoot);
-
-        varInfo &kernelVar = *(new varInfo( ks2.getFunctionVar()->clone() ));
-        ks2.setFunctionVar(kernelVar);
-
-        ss << kernelName << kID;
-
-        kernelVar.name = ss.str();
-
-        ss.str("");
-
-        // Add kernel body
-        ks2.addStatement(ks.clone());
-
-        // [--] Hard-code the OpenMP pragma without collapsing for now
-        ss << "occaParallelFor0";
-        // ss << "occaParallelFor" << outerDim;
-
-        // Add the parallel-for loops
-        ks2.pushSourceLeftOf(ks2.statementStart,
-                             ss.str());
-
-        ss.str("");
-
-        // Set ks2.up and add the kernel variable
-        ks2.up = sKernel.up;
-        ks2.up->addVariable(&kernelVar);
-
-        if(kID)
-          newSNEnd = newSNEnd->push(new statementNode(&ks2));
-        else
-          newSNRoot = newSNEnd = new statementNode(&ks2);
-
-        ++kID;
-        outerLoopPos = outerLoopPos->right;
-      }
-
-      // Squeeze new kernels after original kernel
-      if(sKernel.up->statementEnd == snKernel)
-        sKernel.up->statementEnd = newSNEnd;
-
-      newSNRoot->left = snKernel;
-      newSNEnd->right = snKernel->right;
-
-      if(newSNEnd->right)
-        newSNEnd->right->left = newSNEnd;
-
-      snKernel->right = newSNRoot;
-
-      if(sKernel.up->statementEnd == snKernel)
-        sKernel.up->statementEnd = newSNEnd;
-
-      return newSNEnd;
-    }
-
-    std::string parserBase::getNestedKernelArgsFromLoops(statement &sKernel){
-      // Append arguments (occaKernelInfoArg doesn't count)
-      const int argc = (sKernel.getFunctionArgCount() - 1);
-
-      std::stringstream ss;
-      std::string argsStr;
-
-      if(argc){
-        ss << sKernel.getFunctionArgName(1);
-
-        for(int i = 1; i < argc; ++i)
-          ss << ", " << sKernel.getFunctionArgName(i + 1);
-
-        argsStr = ss.str();
-
-        ss.str("");
-      }
-      else
-        argsStr = "";
-
-      return argsStr;
-    }
-
-    void parserBase::setupHostKernelArgsFromLoops(statement &sKernel){
-      // Add nestedKernels argument
-      varInfo &arg = *(new varInfo());
-      arg.loadFrom(sKernel, labelCode( splitContent("int *nestedKernels") ));
-
-      typeInfo &type = *(new typeInfo);
-      type.name = "occa::kernel";
-
-      arg.baseType = &type;
-
-      sKernel.addFunctionArg(1, arg);
+        texture float tex,
+        sampler/textureInfo tex_info)
+      */
     }
 
     void parserBase::loadKernelInfos(){
@@ -2635,7 +2309,6 @@ namespace occa {
 
           info.name     = kernel.name;
           info.baseName = info.name;
-          info.nestedKernels.push_back(&s);
 
           if(kernel.argumentCount){
             info.argumentInfos.reserve(kernel.argumentCount);
@@ -2660,196 +2333,565 @@ namespace occa {
       }
     }
 
-    void parserBase::stripOccaFromKernel(statement &s){
-      // expNode &argsNode = *(s.getFunctionArgsNode());
+    statementNode* parserBase::splitKernelStatement(statementNode *snKernel,
+                                                    kernelInfo &info){
 
-      // argsNode.removeNode(0);
+      statement &sKernel       = *(snKernel->value);
+      statementNode *lastNewSN = snKernel->right;
 
-      // std::cout
-      //   << "s = " << s << '\n';
-    }
+      // [O]uter [M]ost [Loops]
+      statementVector_t omLoops = findOuterLoopSets(sKernel);
+      int kernelCount = (int) omLoops.size();
 
-    std::string parserBase::occaScope(statement &s){
-      statement *currentS = &s;
+      statementVector_t newKernels;
 
-      while(currentS){
-        if(currentS->info == occaForType)
-          break;
+      // Add parallel for's
+      if(cpuMode){
+        for(int k = 0; k < kernelCount; ++k){
+          statement &omLoop  = *(omLoops[k]);
 
-        currentS = currentS->up;
+          sKernel.pushSourceLeftOf(omLoop.getStatementNode(),
+                                   "occaParallelFor0");
+        }
+
+        kernelCount = 0;
       }
 
-      if(currentS == NULL)
-        return "";
+      if(0 < kernelCount){
+        varOriginMapVector_t varDeps(kernelCount);
 
-      return (std::string) s.expRoot;
+        for(int k = 0; k < kernelCount; ++k)
+          varDeps[k] = findKernelDependenciesFor(sKernel,
+                                                 *(omLoops[k]));
+
+        newKernels = newKernelsFromLoops(sKernel,
+                                         omLoops,
+                                         varDeps);
+
+        addNestedKernelArgTo(sKernel);
+
+        applyToAllStatements(sKernel, &parserBase::zeroOccaIdsFrom);
+
+        for(int k = (kernelCount - 1); 0 <= k; --k)
+          sKernel.up->pushRightOf(&sKernel, newKernels[k]);
+
+        lastNewSN = newKernels[kernelCount - 1]->getStatementNode();
+      }
+
+      sKernel.up->pushSourceLeftOf(snKernel, "#ifdef OCCA_LAUNCH_KERNEL");
+
+      if(kernelCount){
+        sKernel.up->pushSourceRightOf(snKernel , "#else");
+        sKernel.up->pushSourceRightOf(lastNewSN, "#endif");
+      }
+      else {
+        sKernel.up->pushSourceRightOf(snKernel, "#endif");
+        sKernel.up->pushSourceRightOf(snKernel, "#else");
+
+        if(lastNewSN)
+          lastNewSN = lastNewSN->left;
+      }
+
+      storeKernelInfo(info, sKernel, newKernels);
+
+      return ((lastNewSN != NULL) ?
+              lastNewSN->right    :
+              NULL);
     }
 
-    void parserBase::incrementDepth(statement &s){
-      ++s.depth;
+    statementVector_t parserBase::findOuterLoopSets(statement &sKernel){
+      statementVector_t omLoops;
+
+      findOuterLoopSets(sKernel, omLoops);
+
+      return omLoops;
     }
 
-    void parserBase::decrementDepth(statement &s){
-      --s.depth;
-    }
+    void parserBase::findOuterLoopSets(statement &s,
+                                       statementVector_t &omLoops){
 
-    statementNode* parserBase::findStatementWith(statement &s,
-                                                 findStatementWith_t func){
-      statementNode *ret     = new statementNode(&s);
-      statementNode *retDown = NULL;
+      if(s.info == smntType::occaFor){
+        attribute_t &occaTagAttr = s.attribute("occaTag");
 
-      if((this->*func)(s))
-        return ret;
+        if(occaTagAttr.valueStr() == "outer"){
+          omLoops.push_back(&s);
+          return;
+        }
+      }
 
       statementNode *statementPos = s.statementStart;
 
       while(statementPos){
-        statementNode *ret2 = findStatementWith(*(statementPos->value), func);
+        statement &s2 = *(statementPos->value);
 
-        if(ret2 != NULL){
-          if(retDown){
-            retDown = retDown->push(ret2);
-          }
-          else{
-            ret->down = ret2;
-            retDown   = ret2;
-          }
-        }
+        findOuterLoopSets(s2, omLoops);
 
         statementPos = statementPos->right;
       }
+    }
 
-      if(retDown)
-        return ret;
+    statementVector_t parserBase::findOccaLoops(statement &sKernel){
+      statementVector_t occaLoops;
 
-      delete ret;
+      findOccaLoops(sKernel, occaLoops);
 
-      return NULL;
+      return occaLoops;
+    }
+
+    void parserBase::findOccaLoops(statement &s,
+                                   statementVector_t &occaLoops){
+
+      if(s.info == smntType::occaFor)
+        occaLoops.push_back(&s);
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        findOccaLoops(s2, occaLoops);
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    varOriginMap_t parserBase::findKernelDependenciesFor(statement &sKernel,
+                                                         statement &omLoop){
+      varInfoVector_t depsIgnored;
+      varOriginMap_t deps;
+
+      findDependenciesFor(omLoop, deps);
+
+      varOriginMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        statement &varOrigin = *(it->second);
+
+        if((&varOrigin   == &sKernel)    ||
+           (varOrigin.up == globalScope) ||
+           (&varOrigin   == &omLoop)     ||
+           (varOrigin.insideOf(omLoop))){
+
+          depsIgnored.push_back(it->first);
+        }
+
+        ++it;
+      }
+
+      const int ignoredCount = depsIgnored.size();
+
+      for(int i = 0; i < ignoredCount; ++i)
+        deps.erase(depsIgnored[i]);
+
+      return deps;
+    }
+
+    varOriginMap_t parserBase::findDependenciesFor(statement &s,
+                                                   const int flags){
+      varOriginMap_t deps;
+
+      findDependenciesFor(s, deps, flags);
+
+      return deps;
+    }
+
+    void parserBase::findDependenciesFor(statement &s,
+                                         varOriginMap_t &deps,
+                                         const int flags){
+
+      findDependenciesFor(s.expRoot, deps);
+
+      if((flags & parserInfo::checkSubStatements) == 0)
+        return;
+
+      statementNode *statementPos = s.statementStart;
+
+      while(statementPos){
+        statement &s2 = *(statementPos->value);
+
+        findDependenciesFor(s2, deps, flags);
+
+        statementPos = statementPos->right;
+      }
+    }
+
+    varOriginMap_t parserBase::findDependenciesFor(expNode &e){
+      varOriginMap_t deps;
+
+      findDependenciesFor(e, deps);
+
+      return deps;
+    }
+
+    void parserBase::findDependenciesFor(expNode &e,
+                                         varOriginMap_t &deps){
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(flatRoot[i].info & expType::varInfo){
+          varInfo &var = flatRoot[i].getVarInfo();
+
+          // varInfo is also used for casts
+          if(var.name.size() == 0)
+            continue;
+
+          varOriginMapIterator it = deps.find(&var);
+
+          if(it != deps.end())
+            continue;
+
+          deps[&var] = varOriginMap[&var];
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
+
+    statementVector_t parserBase::newKernelsFromLoops(statement &sKernel,
+                                                      statementVector_t &omLoops,
+                                                      varOriginMapVector_t &varDeps){
+      statementVector_t newKernels;
+
+      const int kernelCount = (int) omLoops.size();
+
+      varInfo &kernelVar         = *(sKernel.getFunctionVar());
+      std::string kernelBaseName = kernelVar.name;
+
+      globalScope->createUniqueSequentialVariables(kernelBaseName,
+                                                   kernelCount);
+
+      for(int k = 0; k < kernelCount; ++k){
+        // Copy newSKernel from sKernel
+        statement &newSKernel = *(globalScope->makeSubStatement());
+
+        newSKernel.info = sKernel.info;
+        sKernel.expRoot.cloneTo(newSKernel.expRoot);
+
+        newKernels.push_back(&newSKernel);
+
+        statement &omLoop  = *(omLoops[k]);
+        varOriginMap_t &deps = varDeps[k];
+
+        varInfo &newKernelVar = *(new varInfo(kernelVar.clone()));
+        newSKernel.setFunctionVar(newKernelVar);
+
+        newKernelVar.name = kernelBaseName + occa::toString(k);
+
+        addDepStatementsToKernel(newSKernel, deps);
+        addDepsToKernelArguments(newSKernel, deps);
+        addArgQualifiersTo(newSKernel);
+
+        statement &sLaunch = launchStatementForKernel(sKernel,
+                                                      omLoop,
+                                                      k,
+                                                      newKernelVar);
+
+        newSKernel.addStatement(&sLaunch);
+
+        // Swap positions for:
+        //   outer-most-loop <--> host kernel
+        statement::swapPlaces(omLoop, sLaunch);
+
+        newSKernel.pushSourceLeftOf(omLoop.getStatementNode(),
+                                    "occaParallelFor0");
+      }
+
+      return newKernels;
+    }
+
+    void parserBase::addDepStatementsToKernel(statement &sKernel,
+                                              varOriginMap_t &deps){
+
+      varOriginMapIterator it = deps.begin();
+
+      statementIdMap_t placedStatements;
+      varInfoVector_t usedVars;
+
+      while(it != deps.end()){
+        varInfo &var         = *(it->first);
+        statement &varOrigin = *(it->second);
+
+        if(var.hasQualifier("exclusive") ||
+           var.hasQualifier("occaShared")){
+
+          usedVars.push_back(&var);
+          placedStatements[&varOrigin];
+        }
+
+        ++it;
+      }
+
+      const int usedVarCount = (int) usedVars.size();
+
+      for(int i = 0; i < usedVarCount; ++i)
+        deps.erase(usedVars[i]);
+
+      statementIdMapIterator sIt = placedStatements.begin();
+
+      while(sIt != placedStatements.end()){
+        statement *firstS = ((sKernel.statementStart == NULL) ?
+                             NULL :
+                             sKernel.statementStart->value);
+
+        statement *s2 = sIt->first->clone(&sKernel);
+
+        sKernel.pushLeftOf(firstS, s2);
+
+        ++sIt;
+      }
+    }
+
+    void parserBase::addDepsToKernelArguments(statement &sKernel,
+                                              varOriginMap_t &deps){
+
+      varInfo &kernelVar = *(sKernel.getFunctionVar());
+      int argPos         = kernelVar.argumentCount;
+
+      varToVarMap_t v2v;
+
+      varOriginMapIterator it = deps.begin();
+
+      while(it != deps.end()){
+        varInfo &var  = *(it->first);
+        varInfo &var2 = *(var.clonePtr());
+
+        v2v[&var] = &var2;
+        kernelVar.addArgument(argPos++, var2);
+
+        ++it;
+      }
+
+      sKernel.replaceVarInfos(v2v);
+    }
+
+    statement& parserBase::launchStatementForKernel(statement &sKernel,
+                                                    statement &omLoop,
+                                                    const int newKernelPos,
+                                                    varInfo &newKernelVar){
+      statement &sHost = *(sKernel.makeSubStatement());
+      sHost.info = smntType::blockStatement;
+
+      std::stringstream ss;
+
+      statementVector_t occaLoops = findOccaLoops(omLoop);
+      const int occaLoopCount     = (int) occaLoops.size();
+
+      attribute_t &maxOuterAttr = omLoop.attribute("occaMaxNest_outer");
+      attribute_t &maxInnerAttr = omLoop.attribute("occaMaxNest_inner");
+
+      const int outerDim = 1 + occa::atoi(maxOuterAttr.valueStr());
+      const int innerDim = 1 + occa::atoi(maxInnerAttr.valueStr());
+      const int maxDim   = ((outerDim > innerDim) ?
+                            outerDim              :
+                            innerDim);
+
+      // [outer/inner][dim]
+      std::string iterExps[2][3];
+
+      ss << "const int dims = " << maxDim << ";\n"
+         << "int outer, inner;\n";
+
+      for(int i = 0; i < occaLoopCount; ++i){
+        statement &loop = *(occaLoops[i]);
+
+        attribute_t &occaTagAttr  = loop.attribute("occaTag");
+        attribute_t &occaNestAttr = loop.attribute("occaNest");
+
+        const int occaTag  = (occaTagAttr.valueStr()  == "inner");
+        const int occaNest = occa::atoi(occaNestAttr.valueStr());
+
+        std::string &iterExp = iterExps[occaTag][occaNest];
+
+        if(iterExp.size() == 0)
+          iterExp = loop.attribute("occaIterExp").valueStr();
+      }
+
+      for(int o = 0; o < outerDim; ++o)
+        ss << "outer[" << o << "] = " << iterExps[0][o] << ";\n";
+
+      for(int i = 0; i < innerDim; ++i)
+        ss << "inner[" << i << "] = " << iterExps[1][i] << ";\n";
+
+      ss << "nestedKernels[" << newKernelPos << "].setWorkingDims(dims, inner, outer);\n"
+         << "nestedKernels[" << newKernelPos << "](";
+
+      const int argCount = newKernelVar.argumentCount;
+
+      // Skip occaKernelInfoArg
+      for(int i = 1; i < argCount; ++i){
+        if(1 < i)
+          ss << ", ";
+
+        ss << newKernelVar.getArgument(i).name;
+      }
+
+      ss << ");";
+
+      pushLanguage(parserInfo::parsingC);
+
+      expNode allExp = splitAndPreprocessContent(ss.str());
+
+      sHost.loadAllFromNode(allExp);
+
+      // Change outer and inner types to occa::dim
+      varInfo &outerVar = *(sHost.hasVariableInScope("outer"));
+      varInfo &innerVar = *(sHost.hasVariableInScope("inner"));
+
+      typeInfo &occaDimType = *(new typeInfo);
+      occaDimType.name      = "occa::dim";
+
+      outerVar.baseType = &occaDimType;
+      innerVar.baseType = &occaDimType;
+
+      popLanguage();
+
+      return sHost;
+    }
+
+    void parserBase::storeKernelInfo(kernelInfo &info,
+                                     statement &sKernel,
+                                     statementVector_t &newKernels){
+
+      const int kernelCount = (int) newKernels.size();
+
+      varInfo &kernelVar    = *(sKernel.getFunctionVar());
+      varInfo *newKernelVar = (kernelCount                     ?
+                               newKernels[0]->getFunctionVar() :
+                               NULL);
+
+      const int argCount = kernelVar.argumentCount;
+
+      // Remove the 0 in the first new kernel
+      //   to get the baseName
+      info.name     = kernelVar.name;
+      info.baseName = ((newKernelVar != NULL)                                      ?
+                       newKernelVar->name.substr(0, newKernelVar->name.size() - 1) :
+                       kernelVar.name);
+
+      for(int k = 0; k < kernelCount; ++k)
+        info.nestedKernels.push_back(newKernels[k]);
+
+      for(int i = 0; i < argCount; ++i){
+        argumentInfo argInfo;
+        varInfo &arg = kernelVar.getArgument(i);
+
+        argInfo.pos     = i;
+        argInfo.isConst = (arg.hasQualifier("occaConst") ||
+                           arg.hasQualifier("occaConstant"));
+
+        info.argumentInfos.push_back(argInfo);
+      }
+    }
+
+    void parserBase::zeroOccaIdsFrom(statement &s){
+      zeroOccaIdsFrom(s.expRoot);
+    }
+
+    void parserBase::zeroOccaIdsFrom(expNode &e){
+      expNode &flatRoot = *(e.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        if(((flatRoot[i].info & expType::presetValue) &&
+            isAnOccaID(flatRoot[i].value))               ||
+           (flatRoot[i].value.find("__occa_oTileVar") != std::string::npos)){
+
+          flatRoot[i].freeThis();
+
+          flatRoot[i].info  = expType::presetValue;
+          flatRoot[i].value = "0";
+        }
+      }
+
+      expNode::freeFlatHandle(flatRoot);
+    }
+
+    void parserBase::addNestedKernelArgTo(statement &sKernel){
+      // Add nestedKernels argument
+      varInfo &nestedKernelsArg = *(new varInfo());
+      expNode nkNode = sKernel.createPlainExpNodeFrom("int *nestedKernels");
+      nestedKernelsArg.loadFrom(nkNode);
+
+      typeInfo &occaKernelType = *(new typeInfo);
+      occaKernelType.name      = "occa::kernel";
+
+      nestedKernelsArg.baseType = &occaKernelType;
+
+      sKernel.addFunctionArg(1, nestedKernelsArg);
     }
 
     int parserBase::getKernelOuterDim(statement &s){
-      statementNode *statementPos = s.statementStart;
-
-      std::string outerStr = obfuscate("Outer");
-      int outerDim = -1;
-
-      varInfo *info = s.hasVariableInScope(outerStr);
-
-      if(info != NULL){
-        const int extras = info->leftQualifierCount();
-
-        for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
-
-          if(outerDim < loopNest)
-            outerDim = loopNest;
-
-          // Max Dim
-          if(outerDim == 2)
-            return outerDim;
-        }
-      }
-
-      while(statementPos){
-        const int outerDim2 = getKernelOuterDim( *(statementPos->value) );
-
-        if(outerDim < outerDim2)
-          outerDim = outerDim2;
-
-        // Max Dim
-        if(outerDim == 2)
-          return outerDim;
-
-        statementPos = statementPos->right;
-      }
-
-      return outerDim;
+      return getKernelDimFor(s, "outer");
     }
 
     int parserBase::getKernelInnerDim(statement &s){
+      return getKernelDimFor(s, "inner");
+    }
+
+    int parserBase::getKernelDimFor(statement &s,
+                                    const std::string &tag){
       statementNode *statementPos = s.statementStart;
+      int dim = -1;
 
-      std::string innerStr = obfuscate("Inner");
-      int innerDim = -1;
+      attribute_t *occaTagAttr = s.hasAttribute("occaTag");
 
-      varInfo *info = s.hasVariableInScope(innerStr);
+      const int passes = (1 + ((occaTagAttr != NULL) &&
+                               occaTagAttr->valueStr() == tag));
 
-      if(info != NULL){
-        const int extras = info->leftQualifierCount();
+      for(int pass = 0; pass < passes; ++pass){
+        attribute_t *occaNestAttr = ((pass == 0)                         ?
+                                     s.hasAttribute("occaMaxNest_" + tag) :
+                                     s.hasAttribute("occaNest"));
 
-        for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
+        if(occaTagAttr){
+          const std::string nestStr = occaNestAttr->valueStr();
+          dim = ::atoi(nestStr.c_str());
 
-          if(innerDim < loopNest)
-            innerDim = loopNest;
-
-          // Max Dim
-          if(innerDim == 2)
-            return innerDim;
+          break;
         }
       }
 
       while(statementPos){
-        const int innerDim2 = getKernelInnerDim( *(statementPos->value) );
+        const int dim2 = getKernelDimFor(*(statementPos->value), tag);
 
-        if(innerDim < innerDim2)
-          innerDim = innerDim2;
+        if(dim < dim2)
+          dim = dim2;
 
-        // Max Dim
-        if(innerDim == 2)
-          return innerDim;
+        // Max dim
+        if(dim == 2)
+          return dim;
 
         statementPos = statementPos->right;
       }
 
-      return innerDim;
+      return dim;
     }
 
     int parserBase::getOuterMostForDim(statement &s){
-      return getForDim(s, "Outer");
+      return getForDim(s, "outer");
     }
 
     int parserBase::getInnerMostForDim(statement &s){
-      return getForDim(s, "Inner");
+      return getForDim(s, "inner");
     }
 
     int parserBase::getForDim(statement &s,
                               const std::string &tag){
 
-      std::string outerStr = obfuscate(tag);
-      int outerDim = -1;
+      attribute_t *occaNestAttr = s.hasAttribute("occaMaxNest_" + tag);
 
-      varInfo *info = s.hasVariableInScope(outerStr);
+      OCCA_CHECK((occaNestAttr != NULL) &&
+                 (occaNestAttr->valueStr() == tag),
+                 "Error, outer-most loop doesn't contain [" << tag << "] loops");
 
-      if(info != NULL){
-        const int extras = info->leftQualifierCount();
-
-        for(int i = 0; i < extras; ++i){
-          const int loopNest = (info->getLeftQualifier(i)[0] - '0');
-
-          if(outerDim < loopNest)
-            outerDim = loopNest;
-
-          // Max Dim
-          if(outerDim == 2)
-            return outerDim;
-        }
-
-        return outerDim;
-      }
-
-      OCCA_CHECK(false,
-                 "Error, outer-most loop doesn't contain obfuscate(\"" << tag << "\"):\n"
-                 << s.expRoot);
-
-      return -1;
+      const std::string tagStr = occaNestAttr->valueStr();
+      return ::atoi(tagStr.c_str());
     }
 
     void parserBase::splitDefineForVariable(varInfo &var){
-      statement &origin = *(varUpdateMap[&var].value);
+      statement &origin = *(varOriginMap[&var]);
 
       // Ignore kernel arguments
-      if(origin.info & functionStatementType)
+      if(origin.info & smntType::functionStatement)
         return;
 
       int argc   = origin.getDeclarationVarCount();
@@ -2865,7 +2907,7 @@ namespace occa {
       }
 
       if(argPos){
-        statement &s        = origin.pushNewStatementLeft(declareStatementType);
+        statement &s        = origin.pushNewStatementLeft(smntType::declareStatement);
         s.expRoot.info      = origin.expRoot.info;
         s.expRoot.leaves    = new expNode*[argPos];
         s.expRoot.leafCount = argPos;
@@ -2873,15 +2915,15 @@ namespace occa {
         for(int i = 0; i < argPos; ++i){
           varInfo &argVar = origin.getDeclarationVarInfo(i);
 
-          s.expRoot.leaves[i]         = origin.expRoot.leaves[i];
-          varUpdateMap[&argVar].value = &s;
+          s.expRoot.leaves[i]   = origin.expRoot.leaves[i];
+          varOriginMap[&argVar] = &s;
         }
       }
 
       if((argPos + 1) < argc){
         const int newLeafCount = (argc - (argPos + 1));
 
-        statement &s        = origin.pushNewStatementRight(declareStatementType);
+        statement &s        = origin.pushNewStatementRight(smntType::declareStatement);
         s.expRoot.info      = origin.expRoot.info;
         s.expRoot.leaves    = new expNode*[newLeafCount];
         s.expRoot.leafCount = newLeafCount;
@@ -2889,8 +2931,8 @@ namespace occa {
         for(int i = 0; i < newLeafCount; ++i){
           varInfo &argVar = origin.getDeclarationVarInfo(argPos + 1 + i);
 
-          s.expRoot.leaves[i]         = origin.expRoot.leaves[argPos + 1 + i];
-          varUpdateMap[&argVar].value = &s;
+          s.expRoot.leaves[i]   = origin.expRoot.leaves[argPos + 1 + i];
+          varOriginMap[&argVar] = &s;
 
           // Print out type for the new statement
           if(i == 0)
@@ -2906,10 +2948,10 @@ namespace occa {
     }
 
     void parserBase::splitDefineAndInitForVariable(varInfo &var){
-      statement &origin = *(varUpdateMap[&var].value);
+      statement &origin = *(varOriginMap[&var]);
 
       // Ignore kernel arguments
-      if(origin.info & functionStatementType)
+      if(origin.info & smntType::functionStatement)
         return;
 
       int argc = origin.getDeclarationVarCount();
@@ -2922,14 +2964,14 @@ namespace occa {
       if(!origin.expRoot.variableHasInit(0))
         return;
 
-      statement &s = origin.pushNewStatementRight(updateStatementType);
+      statement &s = origin.pushNewStatementRight(smntType::updateStatement);
 
       //---[ Swap Variables ]----------
       expNode &varNode = *(origin.expRoot.getVariableInfoNode(0));
 
       expNode &varNode2 = *(new expNode(s));
-      varNode2.info  = expType::variable;
-      varNode2.value = var.name;
+      varNode2.addVarInfoNode(0);
+      varNode2.setVarInfo(var);
 
       expNode::swap(varNode, varNode2);
       //================================
@@ -2943,25 +2985,25 @@ namespace occa {
       s.expRoot[0].info |= expType::type;
 
       // Swap and free old expNode
-      expNode *tmp = &(origin.expRoot[0]);
+      // expNode *tmp = &(origin.expRoot[0]); [--]
 
       expNode::swap(origin.expRoot, origin.expRoot[0]);
       expNode::swap(origin.expRoot, s.expRoot);
 
-      delete tmp;
+      // delete tmp; [--] ?
       //================================
 
       if(s.expRoot.lastLeaf()->value != ";")
-        s.expRoot.addNode(expType::operator_, ";");
+        s.expRoot.addNode(expType::endStatement, ";");
 
-      s.addVariableToUpdateMap(var);
+      varOriginMap[&var] = &s;
     }
 
     void parserBase::addInnerFors(statement &s){
       int innerDim = getKernelInnerDim(s);
 
-      OCCA_CHECK(0 <= innerDim,
-                 "OCCA Inner for-loop count could not be calculated");
+      if(innerDim < 0)
+        return;
 
       varInfoIdMap_t varInfoIdMap;
       int currentInnerID = 0;
@@ -2989,8 +3031,8 @@ namespace occa {
         statement &s2 = *(statementPos->value);
 
         // Add inner-for inside the for/while loop
-        if(s2.info & (forStatementType |
-                      whileStatementType)){
+        if(s2.info & (smntType::forStatement |
+                      smntType::whileStatement)){
 
           addInnerForsTo(s2, varInfoIdMap, currentInnerID, innerDim);
           sBreaks.push_back(&s2);
@@ -3056,8 +3098,7 @@ namespace occa {
         for(int i = 0; i <= innerDim; ++i){
           const int innerID = (innerDim - i);
 
-          statement *newInnerS = new statement(s.depth + i + 1,
-                                               occaForType,
+          statement *newInnerS = new statement(smntType::occaFor,
                                                (outerInnerS ? outerInnerS : &s));
 
           if(outerInnerS == NULL){
@@ -3165,14 +3206,13 @@ namespace occa {
     void parserBase::addOuterFors(statement &s){
       int outerDim = getKernelOuterDim(s);
 
-      OCCA_CHECK(0 <= outerDim,
-                 "OCCA Outer for-loop count could not be calculated");
+      if(outerDim < 0)
+        return;
 
       statement *sPos = &s;
 
       for(int o = outerDim; 0 <= o; --o){
-        statement *newStatement = new statement(sPos->depth + 1,
-                                                occaForType, &s);
+        statement *newStatement = new statement(smntType::occaFor, &s);
 
         newStatement->expRoot.info   = expType::printValue;
         newStatement->expRoot.value  = "occaOuterFor";
@@ -3186,14 +3226,12 @@ namespace occa {
           newStatement->addStatement(sn->value);
 
           sn->value->up = newStatement;
-          applyToAllStatements(*(sn->value), &parserBase::incrementDepth);
 
           statementNode *sn2 = sn->right;
           delete sn;
           sn = sn2;
         }
 
-        sPos->statementCount = 0;
         sPos->statementStart = sPos->statementEnd = NULL;
         sPos->scopeVarMap.clear();
 
@@ -3209,14 +3247,13 @@ namespace occa {
       // Get rid of empty blocks
       //  kernel void blah(){{  -->  kernel void blah(){
       //  }}                    -->  }
-      while(sPos->statementCount == 1){
+      while(sPos->statementCount() == 1){
         statement *sDown = sPos->statementStart->value;
 
-        if(sDown->info == blockStatementType){
+        if(sDown->info == smntType::blockStatement){
           sPos->scopeVarMap.insert(sDown->scopeVarMap.begin(),
                                    sDown->scopeVarMap.end());
 
-          sPos->statementCount = 0;
           sPos->statementStart = sPos->statementEnd = NULL;
 
           statementNode *sn = sDown->statementStart;
@@ -3225,7 +3262,6 @@ namespace occa {
             sPos->addStatement(sn->value);
 
             sn->value->up = sPos;
-            applyToAllStatements(*(sn->value), &parserBase::decrementDepth);
 
             statementNode *sn2 = sn->right;
             delete sn;
@@ -3279,40 +3315,47 @@ namespace occa {
         const bool isDim = (isInnerDim || isOuterDim || isGlobalDim);
 
         if(isId || isDim){
-          std::string ioLoop, loopNest;
+          std::string loopTag, loopNest;
 
           if(isId){
+            // ioLoop is not capitalized to be consistent with
+            //   attribute names
+
             if(isInnerId || isOuterId){
               // [occa][-----][Id#]
-              ioLoop = value.substr(4,5);
+              loopTag     = value.substr(4,5);
+              loopTag[0] -= ('A' - 'a');
+
               // [occa][-----Id][#]
               loopNest = value.substr(11,1);
 
-              addOccaForCounter(s, ioLoop, loopNest);
+              s.updateOccaOMLoopAttributes(loopTag, loopNest);
             }
             else { // isGlobalId
               // [occa][------Id][#]
               loopNest = value.substr(12,1);
 
-              addOccaForCounter(s, "Inner", loopNest);
-              addOccaForCounter(s, "Outer", loopNest);
+              s.updateOccaOMLoopAttributes("inner", loopNest);
+              s.updateOccaOMLoopAttributes("outer", loopNest);
             }
           }
           else { // isDim
             if(isInnerDim || isOuterDim){
               // [occa][-----][Dim#]
-              ioLoop = value.substr(4,5);
+              loopTag     = value.substr(4,5);
+              loopTag[0] -= ('A' - 'a');
+
               // [occa][-----Dim][#]
               loopNest = value.substr(12,1);
 
-              addOccaForCounter(s, ioLoop, loopNest);
+              s.updateOccaOMLoopAttributes(loopTag, loopNest);
             }
             else { // isGlobalDim
               // [occa][------Dim][#]
               loopNest = value.substr(13,1);
 
-              addOccaForCounter(s, "Inner", loopNest);
-              addOccaForCounter(s, "Outer", loopNest);
+              s.updateOccaOMLoopAttributes("inner", loopNest);
+              s.updateOccaOMLoopAttributes("outer", loopNest);
             }
           }
 
@@ -3321,6 +3364,89 @@ namespace occa {
 
       expNode::freeFlatHandle(flatRoot);
     }
+
+    //---[ Operator Information ]-----------------
+    varInfo* parserBase::hasOperator(const info_t expInfo,
+                                     const std::string &op,
+                                     varInfo &var){
+      return NULL;
+    }
+
+    varInfo* parserBase::hasOperator(const info_t expInfo,
+                                     const std::string &op,
+                                     varInfo &varL,
+                                     varInfo &varR){
+      return NULL;
+    }
+
+    varInfo parserBase::thVarInfo(const info_t thType){
+      varInfo var;
+
+      const std::string str = typeHolder::typeToBaseTypeStr(thType);
+
+      var.baseType = globalScope->hasTypeInScope(str);
+
+      return var;
+    }
+
+    varInfo parserBase::thOperatorReturnType(const info_t expInfo,
+                                             const std::string &op,
+                                             const info_t thType){
+      typeHolder th, ret;
+      varInfo var;
+
+      th.type = thType;
+
+      if(expInfo & expType::L)
+        ret = applyLOperator(op, th);
+      else
+        ret = applyROperator(th, op);
+
+      var.baseType = globalScope->hasTypeInScope(ret.baseTypeStr());
+
+      if(ret.isUnsigned())
+        var.addQualifier("unsigned");
+
+      if(ret.isALongLongInt())
+        var.addQualifier("long");
+
+      return var;
+    }
+
+    varInfo parserBase::thOperatorReturnType(const info_t expInfo,
+                                             const std::string &op,
+                                             const info_t thTypeL,
+                                             const info_t thTypeR){
+      varInfo var;
+
+      if(op == "("){
+        OCCA_CHECK(false,
+                   "Cannot use () operator with void* (Example: 10(10))");
+      }
+      else if(op == "["){
+        OCCA_CHECK(false,
+                   "Cannot use [] operator with void* (Example: 10[10])");
+      }
+      else {
+        typeHolder l, r;
+
+        l.type = thTypeL;
+        r.type = thTypeR;
+
+        typeHolder ret = applyLROperator(l, op, r);
+
+        var.baseType = globalScope->hasTypeInScope(ret.baseTypeStr());
+
+        if(ret.isUnsigned())
+          var.addQualifier("unsigned");
+
+        if(ret.isALongLongInt())
+          var.addQualifier("long");
+      }
+
+      return var;
+    }
+    //============================================
 
     bool isAnOccaID(const std::string &s){
       return (isAnOccaInnerID(s) ||
@@ -3372,78 +3498,114 @@ namespace occa {
 
     //==============================================
 
-    strNode* splitContent(const std::string &str, const bool parsingC){
-      return splitContent(str.c_str(), parsingC);
+    expNode splitContent(const std::string &str, const int parsingLanguage_){
+      return splitContent(str.c_str(), parsingLanguage_);
     }
 
-    strNode* splitContent(const char *cRoot, const bool parsingC){
-      initKeywords(parsingC);
+    expNode splitContent(const char *cRoot, const int parsingLanguage_){
+      pushLanguage(parsingLanguage_);
+
+      const bool parsingFortran = (parsingLanguage_ & parserInfo::parsingFortran);
 
       const char *c = cRoot;
 
-      strNode *nodeRoot = new strNode();
-      strNode *nodePos  = nodeRoot;
+      int lineCount = 1 + countDelimiters(c, '\n');
 
-      int status = readingCode;
+      info_t status = readingCode;
 
-      int lineCount = 0;
+      expNode allExp;
+      allExp.addNodes(lineCount);
+      int expPos = 0;
 
       while(*c != '\0'){
-        const char *cEnd = readLine(c, parsingC);
+        const char *cEnd = readLine(c, parsingLanguage_);
 
-        std::string line = strip(c, cEnd - c, parsingC);
+        std::string line = strip(c, cEnd - c, parsingLanguage_);
 
         if(line.size()){
-          if(!parsingC &&
+          if(parsingFortran &&
              (*c == 'c')){
+
             c = cEnd;
             continue;
           }
 
           if(status != insideCommentBlock){
-            status = stripComments(line, parsingC);
+            status = stripComments(line, parsingLanguage_);
 
-            strip(line, parsingC);
+            strip(line, parsingLanguage_);
 
             if(line.size()){
-              nodePos->originalLine = lineCount;
-              nodePos = nodePos->push(line);
+              allExp[expPos].value = line;
+              ++expPos;
             }
           }
           else{
-            status = stripComments(line, parsingC);
+            status = stripComments(line, parsingLanguage_);
 
-            strip(line, parsingC);
+            strip(line, parsingLanguage_);
 
             if((status == finishedCommentBlock) && line.size()){
-              nodePos->originalLine = lineCount;
-              nodePos = nodePos->push(line);
+              allExp[expPos].value = line;
+              ++expPos;
             }
           }
         }
 
         c = cEnd;
-        ++lineCount;
       }
 
-      popAndGoRight(nodeRoot);
+      allExp.leafCount = expPos;
 
-      return nodeRoot;
+      popLanguage();
+
+      return allExp;
     }
 
-    strNode* labelCode(strNode *lineNodeRoot, const bool parsingC){
-      initKeywords(parsingC);
+    expNode splitAndLabelContent(const std::string &str, const int parsingLanguage_){
+      return splitAndLabelContent(str.c_str(), parsingLanguage_);
+    }
 
-      strNode *nodeRoot = new strNode();
-      strNode *nodePos  = nodeRoot;
+    expNode splitAndLabelContent(const char *cRoot, const int parsingLanguage_){
+      expNode allExp = splitContent(cRoot, parsingLanguage_);
 
-      strNode *lineNodePos = lineNodeRoot;
+      return labelCode(allExp);
+    }
 
-      int depth = 0;
-      bool firstSectionNode = false;
+    expNode splitAndOrganizeContent(const std::string &str, const int parsingLanguage_){
+      return splitAndOrganizeContent(str.c_str(), parsingLanguage_);
+    }
 
-      while(lineNodePos){
-        const std::string &line = lineNodePos->value;
+    expNode splitAndOrganizeContent(const char *cRoot, const int parsingLanguage_){
+      expNode tmpExp, retExp;
+
+      tmpExp = splitContent(cRoot, parsingLanguage_);
+      tmpExp = labelCode(tmpExp, parsingLanguage_);
+
+      retExp.loadFromNode(tmpExp);
+
+      return retExp;
+    }
+
+    expNode& labelCode(expNode &allExp, const int parsingLanguage_){
+      pushLanguage(parsingLanguage_);
+
+      const bool parsingC       = (parsingLanguage_ & parserInfo::parsingC      );
+      const bool parsingFortran = (parsingLanguage_ & parserInfo::parsingFortran);
+
+      const bool usingLeaves = (allExp.leafCount != 0);
+      const int lineCount    = (usingLeaves      ?
+                                allExp.leafCount :
+                                1);
+
+      const bool addSpace = true; // For readability
+
+      expNode node, *cNode = &node;
+
+      for(int linePos = 0; linePos < lineCount; ++linePos){
+        expNode &lineNode = (usingLeaves ? allExp[linePos] : allExp);
+
+        const std::string &line = lineNode.value;
         const char *cLeft = line.c_str();
 
         while(*cLeft != '\0'){
@@ -3452,48 +3614,38 @@ namespace occa {
           const char *cRight = cLeft;
 
           bool loadString = isAString(cLeft);
-          bool loadNumber = isANumber(cLeft) && ((cLeft[0] != '+') &&
-                                                 (cLeft[0] != '-'));
+          bool loadNumber = ((*cLeft != '-') &&
+                             (*cLeft != '+') &&
+                             isANumber(cLeft));
 
-          if(loadString){ //-------------------------------------[ 1 ]
-            skipString(cRight, parsingC);
+          if(loadString){ //-----------------------------------------------[ 1 ]
+            skipString(cRight, parsingLanguage_);
 
-            if(!firstSectionNode){
-              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-            }
-            else{
-              nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
-              firstSectionNode = false;
-            }
-
-            nodePos->info  = presetValue;
-            nodePos->depth = depth;
+            cNode->addNode(expType::presetValue);
+            cNode->lastNode().value = std::string(cLeft, (cRight - cLeft));
 
             cLeft = cRight;
           }
-          else if(loadNumber){ //--------------------------------[ 2 ]
-            skipNumber(cRight, parsingC);
+          else if(loadNumber){ //------------------------------------------[ 2 ]
+            typeHolder th;
+            th.load(cLeft);
+            // skipNumber(cRight, parsingLanguage); [---]
 
-            if(!firstSectionNode){
-              nodePos = nodePos->push( std::string(cLeft, (cRight - cLeft)) );
-            }
-            else{
-              nodePos = nodePos->pushDown( std::string(cLeft, (cRight - cLeft)) );
-              firstSectionNode = false;
-            }
+            cNode->addNode(expType::presetValue);
 
-            nodePos->info  = presetValue;
-            nodePos->depth = depth;
-
-            cLeft = cRight;
+            cNode->lastNode().value = (std::string) th;
+            cNode->lastNode().info  = expType::firstPass | expType::presetValue;
           }
-          else{ //-----------------------------------------------[ 3 ]
-            const int delimiterChars = isAWordDelimiter(cLeft, parsingC);
+          else{ //---------------------------------------------------------[ 3 ]
+            const int delimiterChars = isAWordDelimiter(cLeft, parsingLanguage_);
 
-            if(delimiterChars){ //-----------------------------[ 3.1 ]
-              strNode *newNode;
+            cNode->addNode();
 
-              if(!parsingC){ //------------------------------[ 3.1.1 ]
+            expNode &lastExpNode     = (*cNode)[-1];
+            std::string &lastNodeStr = lastExpNode.value;
+
+            if(delimiterChars){ //---------------------------------------[ 3.1 ]
+              if(parsingFortran){ //-------------------------------------[ 3.1.1 ]
                 // Translate Fortran keywords
                 std::string op(cLeft, delimiterChars);
                 std::string upOp = upString(op);
@@ -3514,411 +3666,391 @@ namespace occa {
                   else if(upOp == ".EQV.")   upOp = "==";
                   else if(upOp == ".NEQV.")  upOp = "!=";
 
-                  newNode = new strNode(upOp);
+                  lastNodeStr = upOp;
                 }
                 else if(upOp == "/="){
-                  newNode = new strNode("!=");
+                  lastNodeStr = "!=";
                 }
                 else {
-                  newNode = new strNode(op);
+                  lastNodeStr = op;
                 }
-              }  //==========================================[ 3.1.1 ]
-              else { //--------------------------------------[ 3.1.2 ]
-                newNode = new strNode(std::string(cLeft, delimiterChars));
-              } //===========================================[ 3.1.2 ]
+              }  //======================================================[ 3.1.1 ]
+              else { //--------------------------------------------------[ 3.1.2 ]
+                lastNodeStr = std::string(cLeft, delimiterChars);
+              } //=======================================================[ 3.1.2 ]
 
-              newNode->info  = keywordType[newNode->value];
-              newNode->depth = depth;
+              lastExpNode.info = (*keywordType)[lastExpNode.value];
 
-              if(newNode->info & startSection){ //-----------[ 3.1.3 ]
-                if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
-                else
-                  nodePos = nodePos->pushDown(newNode);
-
-                ++depth;
-
-                firstSectionNode = true;
-              } //===========================================[ 3.1.3 ]
-              else if(newNode->info & endSection){ //--------[ 3.1.4 ]
-                if(!firstSectionNode)
-                  nodePos = nodePos->up;
-
-                delete newNode;
-
-                --depth;
-
-                firstSectionNode = false;
-              } //===========================================[ 3.1.4 ]
-              else if(newNode->info & macroKeywordType){ //--[ 3.1.5 ]
-                newNode->value = line;
-
-                if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
+              if(lastExpNode.info & expType::C){ //----------------------[ 3.1.3 ]
+                if(charStartsSection(lastExpNode.value[0])){
+                  cNode = &(cNode->lastNode());
+                }
                 else{
-                  nodePos = nodePos->pushDown(newNode);
-                  firstSectionNode = false;
+                  cNode->removeNode(-1);
+                  cNode = cNode->up;
                 }
+              } //=======================================================[ 3.1.3 ]
+              else if(lastExpNode.info & expType::macroKeyword){ //------[ 3.1.4 ]
+                lastNodeStr = line;
 
                 cLeft = line.c_str() + strlen(line.c_str()) - delimiterChars;
-              } //===========================================[ 3.1.5 ]
-              else{ //---------------------------------------[ 3.1.6 ]
-                if(!firstSectionNode)
-                  nodePos = nodePos->push(newNode);
-                else{
-                  nodePos = nodePos->pushDown(newNode);
-                  firstSectionNode = false;
-                }
-              } //===========================================[ 3.1.6 ]
+              } //=======================================================[ 3.1.4 ]
 
               cLeft += delimiterChars;
-            } //===============================================[ 3.1 ]
-            else{ //-------------------------------------------[ 3.2 ]
-              skipWord(cRight, parsingC);
+            } //=========================================================[ 3.1 ]
+            else{ //-----------------------------------------------------[ 3.2 ]
+              skipWord(cRight, parsingLanguage_);
 
-              std::string nodeValue(cLeft, (cRight - cLeft));
+              std::string str(cLeft, (cRight - cLeft));
               keywordTypeMapIterator it;
 
-              if(!parsingC){
-                std::string upNodeValue = upString(nodeValue);
+              if(parsingFortran){
+                std::string upStr = upString(str);
 
-                it = keywordType.find(upNodeValue);
+                it = keywordType->find(upStr);
 
-                if(it != keywordType.end())
-                  nodeValue = upNodeValue;
+                if(it != keywordType->end())
+                  str = upStr;
               }
               else{
-                it = keywordType.find(nodeValue);
+                it = keywordType->find(str);
               }
 
-              if(!firstSectionNode){
-                nodePos = nodePos->push(nodeValue);
-              }
-              else{
-                nodePos = nodePos->pushDown(nodeValue);
-                firstSectionNode = false;
-              }
+              lastNodeStr = str;
 
-              if(it == keywordType.end())
-                nodePos->info = unknownVariable;
+              if(it == keywordType->end())
+                lastExpNode.info = expType::firstPass | expType::unknown;
               else{
-                nodePos->info = it->second;
+                lastExpNode.info = it->second;
 
                 if(parsingC){
-                  if(checkWithLeft(nodePos, "else", "if")){
-                    mergeNodeWithLeft(nodePos);
-                  }
-                  else if((nodePos->info & specialKeywordType) &&
-                          (nodePos->value == "__attribute__")){
-
-                    skipWhitespace(cRight);
-                    skipPair(cRight);
-
-                    // [-] Early fix
-                    if(nodePos->left){
-                      nodePos = nodePos->left;
-
-                      delete nodePos->right;
-                      nodePos->right = NULL;
-                    }
-                    else if(nodePos->up){
-                      nodePos = nodePos->up;
-
-                      delete nodePos->down;
-                      nodePos->down = NULL;
-                    }
+                  if(checkLastTwoNodes(*cNode, "else", "if")){
+                    mergeLastTwoNodes(*cNode);
                   }
                 }
                 else{
-                  if(checkWithLeft(nodePos, "else", "if"   , parsingC) ||
-                     checkWithLeft(nodePos, "do"  , "while", parsingC)){
+                  if(checkLastTwoNodes(*cNode, "else", "if"   , parsingLanguage_) ||
+                     checkLastTwoNodes(*cNode, "do"  , "while", parsingLanguage_)){
 
-                    mergeNodeWithLeft(nodePos, true, parsingC);
+                    mergeLastTwoNodes(*cNode, addSpace, parsingLanguage_);
                   }
-                  else if(checkWithLeft(nodePos, "end" , "do"        , parsingC) ||
-                          checkWithLeft(nodePos, "end" , "if"        , parsingC) ||
-                          checkWithLeft(nodePos, "end" , "function"  , parsingC) ||
-                          checkWithLeft(nodePos, "end" , "subroutine", parsingC)){
+                  else if(checkLastTwoNodes(*cNode, "end" , "do"        , parsingLanguage_) ||
+                          checkLastTwoNodes(*cNode, "end" , "if"        , parsingLanguage_) ||
+                          checkLastTwoNodes(*cNode, "end" , "function"  , parsingLanguage_) ||
+                          checkLastTwoNodes(*cNode, "end" , "subroutine", parsingLanguage_)){
 
-                    mergeNodeWithLeft(nodePos, false, parsingC);
+                    mergeLastTwoNodes(*cNode, !addSpace, parsingLanguage_);
+
+                    expNode &mergedNode = (*cNode)[-1];
+
+                    mergedNode.info = (*keywordType)[mergedNode.value];
                   }
                 }
               }
 
-              nodePos->depth = depth;
-
               cLeft = cRight;
-            } //===============================================[ 3.2 ]
-          } //===================================================[ 3 ]
+            } //=========================================================[ 3.2 ]
+          } //===========================================================[ 3 ]
         }
 
-        if(!parsingC){
-          nodePos       = nodePos->push("\\n");
-          nodePos->info = endStatement;
+        if(parsingFortran){
+          cNode->addNode();
+          cNode->lastNode().value = "\\n";
+          cNode->lastNode().info  = expType::firstPass | expType::endStatement;
         }
-
-        lineNodePos = lineNodePos->right;
       }
 
-      if(nodePos != nodeRoot)
-        popAndGoRight(nodeRoot);
+      expNode::swap(allExp, node);
 
-      free(lineNodeRoot);
+      node.free();
 
-      return nodeRoot;
+      popLanguage();
+
+      return allExp;
     }
 
-    bool checkWithLeft(strNode *nodePos,
-                       const std::string &leftValue,
-                       const std::string &rightValue,
-                       const bool parsingC){
+    bool checkLastTwoNodes(expNode &node,
+                           const std::string &leftValue,
+                           const std::string &rightValue,
+                           const int parsingLanguage_){
 
-      if(parsingC){
-        return ((nodePos->left)                      &&
-                (nodePos->value       == rightValue) &&
-                (nodePos->left->value == leftValue));
+      if(parsingLanguage_ & parserInfo::parsingC){
+        return ((2 <= node.leafCount)   &&
+                (node[-2].value == leftValue) &&
+                (node[-1].value == rightValue));
       }
 
-      return ((nodePos->left)                                 &&
-              upStringCheck(nodePos->value      , rightValue) &&
-              upStringCheck(nodePos->left->value, leftValue));
+      return ((2 <= node.leafCount)              &&
+              upStringCheck(node[-2].value, leftValue) &&
+              upStringCheck(node[-1].value, rightValue));
     }
 
-    void mergeNodeWithLeft(strNode *&nodePos,
+    void mergeLastTwoNodes(expNode &node,
                            const bool addSpace,
-                           const bool parsingC){
+                           const int parsingLanguage_){
 
-      if((nodePos->left) == NULL)
+      if(node.leafCount < 2)
         return;
 
-      strNode *leftNode = nodePos->left;
+      if(addSpace)
+        node[-2].value += ' ';
 
-      if(addSpace){
-        leftNode->value += " ";
-        leftNode->value += (nodePos->value);
-        nodePos->value   = (leftNode->value);
-      }
-      else{
-        nodePos->value = ((leftNode->value) + (nodePos->value));
-      }
+      node[-2].value += node[-1].value;
 
-      if(!parsingC)
-        nodePos->value = upString(nodePos->value);
+      if(parsingLanguage_ & parserInfo::parsingFortran)
+        node[-2].value = upString(node[-2].value);
 
-      nodePos->left = nodePos->left->left;
-
-      if(nodePos->left)
-        nodePos->left->right = nodePos;
-
-      delete leftNode->pop();
+      node.removeNode(-1);
     }
 
-    void initKeywords(const bool parsingC){
-      if(!parsingC){
-        initFortranKeywords();
-        return;
-      }
+    expNode createExpNodeFrom(const std::string &source){
+      return statement::createExpNodeFrom(source);
+    }
 
-      if(cKeywordsAreInitialized){
-        keywordType = cKeywordType;
+    expNode createOrganizedExpNodeFrom(const std::string &source){
+      expNode ret = statement::createExpNodeFrom(source);
+      ret.organize();
 
-        return;
+      return ret;
+    }
+
+    void loadKeywords(const int parsingLanguage_){
+      if(parsingLanguage_ & parserInfo::parsingC)
+        loadCKeywords();
+      else
+        loadFortranKeywords();
+    }
+
+    void loadCKeywords(){
+      initCKeywords();
+
+      keywordType  = &cKeywordType;
+      opPrecedence = &cOpPrecedence;
+
+      for(int i = 0; i < maxOpLevels; ++i){
+        opLevelMap[i] = &cOpLevelMap[i];
+        opLevelL2R[i] = &cOpLevelL2R[i];
       }
+    }
+
+    void loadFortranKeywords(){
+      initFortranKeywords();
+
+      keywordType  = &fortranKeywordType;
+      opPrecedence = &fortranOpPrecedence;
+
+      for(int i = 0; i < maxOpLevels; ++i){
+        opLevelMap[i] = &fortranOpLevelMap[i];
+        opLevelL2R[i] = &fortranOpLevelL2R[i];
+      }
+    }
+
+    void initCKeywords(){
+      if(cKeywordsAreInitialized)
+        return;
 
       cKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
-      cKeywordType["!"]  = lUnitaryOperatorType;
-      cKeywordType["%"]  = binaryOperatorType;
-      cKeywordType["&"]  = (lUnitaryOperatorType | binaryOperatorType | qualifierType);
-      cKeywordType["("]  = startParentheses;
-      cKeywordType[")"]  = endParentheses;
-      cKeywordType["*"]  = (lUnitaryOperatorType | binaryOperatorType | qualifierType);
-      cKeywordType["+"]  = (lUnitaryOperatorType | binaryOperatorType);
-      cKeywordType[","]  = binaryOperatorType;
-      cKeywordType["-"]  = (lUnitaryOperatorType | binaryOperatorType);
-      cKeywordType["."]  = binaryOperatorType;
-      cKeywordType["/"]  = binaryOperatorType;
-      cKeywordType[":"]  = endStatement;
-      cKeywordType[";"]  = endStatement;
-      cKeywordType["<"]  = binaryOperatorType;
-      cKeywordType["="]  = binaryOperatorType;
-      cKeywordType[">"]  = binaryOperatorType;
-      cKeywordType["?"]  = ternaryOperatorType;
-      cKeywordType["["]  = startBracket;
-      cKeywordType["]"]  = endBracket;
-      cKeywordType["^"]  = (binaryOperatorType | qualifierType);
-      cKeywordType["{"]  = startBrace;
-      cKeywordType["|"]  = binaryOperatorType;
-      cKeywordType["}"]  = endBrace;
-      cKeywordType["~"]  = lUnitaryOperatorType;
-      cKeywordType["!="] = assOperatorType;
-      cKeywordType["%="] = assOperatorType;
-      cKeywordType["&&"] = binaryOperatorType;
-      cKeywordType["&="] = assOperatorType;
-      cKeywordType["*="] = assOperatorType;
-      cKeywordType["+="] = assOperatorType;
-      cKeywordType["++"] = unitaryOperatorType;
-      cKeywordType["-="] = assOperatorType;
-      cKeywordType["--"] = unitaryOperatorType;
-      cKeywordType["->"] = binaryOperatorType;
-      cKeywordType["/="] = assOperatorType;
-      cKeywordType["::"] = binaryOperatorType;
-      cKeywordType["<<"] = binaryOperatorType;
-      cKeywordType["<="] = binaryOperatorType;
-      cKeywordType["=="] = binaryOperatorType;
-      cKeywordType[">="] = binaryOperatorType;
-      cKeywordType[">>"] = binaryOperatorType;
-      cKeywordType["^="] = assOperatorType;
-      cKeywordType["|="] = assOperatorType;
-      cKeywordType["||"] = binaryOperatorType;
+      cKeywordType["!"]                  = expType::L;
+      cKeywordType["%"]                  = expType::LR;
+      cKeywordType["&"]                  = (expType::L | expType::LR | expType::qualifier);
+      cKeywordType["("]                  = expType::C;
+      cKeywordType[")"]                  = expType::C;
+      cKeywordType["*"]                  = (expType::L | expType::LR | expType::qualifier);
+      cKeywordType["+"]                  = (expType::L | expType::LR);
+      cKeywordType[","]                  = expType::LR;
+      cKeywordType["-"]                  = (expType::L | expType::LR);
+      cKeywordType["."]                  = expType::LR;
+      cKeywordType["/"]                  = expType::LR;
+      cKeywordType[":"]                  = expType::LR;
+      cKeywordType[";"]                  = expType::endStatement;
+      cKeywordType["<"]                  = expType::LR;
+      cKeywordType["="]                  = expType::LR;
+      cKeywordType[">"]                  = expType::LR;
+      cKeywordType["?"]                  = expType::LCR;
+      cKeywordType["["]                  = expType::C;
+      cKeywordType["]"]                  = expType::C;
+      cKeywordType["^"]                  = (expType::LR | expType::qualifier);
+      cKeywordType["{"]                  = expType::C;
+      cKeywordType["|"]                  = expType::LR;
+      cKeywordType["}"]                  = expType::C;
+      cKeywordType["~"]                  = expType::L;
+      cKeywordType["!="]                 = expType::LR;
+      cKeywordType["%="]                 = expType::LR;
+      cKeywordType["&&"]                 = expType::LR;
+      cKeywordType["&="]                 = expType::LR;
+      cKeywordType["*="]                 = expType::LR;
+      cKeywordType["+="]                 = expType::LR;
+      cKeywordType["++"]                 = expType::L_R;
+      cKeywordType["-="]                 = expType::LR;
+      cKeywordType["--"]                 = expType::L_R;
+      cKeywordType["->"]                 = expType::LR;
+      cKeywordType["/="]                 = expType::LR;
+      cKeywordType["::"]                 = expType::LR;
+      cKeywordType["<<"]                 = expType::LR;
+      cKeywordType["<="]                 = expType::LR;
+      cKeywordType["=="]                 = expType::LR;
+      cKeywordType[">="]                 = expType::LR;
+      cKeywordType[">>"]                 = expType::LR;
+      cKeywordType["^="]                 = expType::LR;
+      cKeywordType["|="]                 = expType::LR;
+      cKeywordType["||"]                 = expType::LR;
 
-      cKeywordType["#"] = macroKeywordType;
+      cKeywordType["#"]                  = expType::macroKeyword;
 
-      cKeywordType["void"]          = specifierType;
-      cKeywordType["__attribute__"] = specifierType; // [--]
+      cKeywordType["void"]               = expType::type;
 
-      cKeywordType["long"]     = (qualifierType | specifierType);
-      cKeywordType["short"]    = (qualifierType | specifierType);
-      cKeywordType["signed"]   = (qualifierType | specifierType);
-      cKeywordType["unsigned"] = (qualifierType | specifierType);
+      cKeywordType["long"]               = (expType::qualifier | expType::type);
+      cKeywordType["short"]              = (expType::qualifier | expType::type);
+      cKeywordType["signed"]             = (expType::qualifier | expType::type);
+      cKeywordType["unsigned"]           = (expType::qualifier | expType::type);
 
-      cKeywordType["inline"] = qualifierType;
-      cKeywordType["static"] = qualifierType;
-      cKeywordType["extern"] = qualifierType;
+      cKeywordType["inline"]             = expType::qualifier;
+      cKeywordType["static"]             = expType::qualifier;
+      cKeywordType["extern"]             = expType::qualifier;
 
-      cKeywordType["const"]    = (qualifierType | occaKeywordType);
-      cKeywordType["restrict"] = (qualifierType | occaKeywordType);
-      cKeywordType["volatile"] = (qualifierType | occaKeywordType);
-      cKeywordType["aligned"]  = (qualifierType | occaKeywordType);
-      cKeywordType["register"] = qualifierType;
+      cKeywordType["const"]              = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["restrict"]           = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["volatile"]           = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["aligned"]            = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["register"]           = expType::qualifier;
 
-      cKeywordType["occaConst"]    = (qualifierType | occaKeywordType);
-      cKeywordType["occaRestrict"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaVolatile"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaAligned"]  = (qualifierType | occaKeywordType);
-      cKeywordType["occaConstant"] = (qualifierType | occaKeywordType);
+      cKeywordType["occaConst"]          = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaRestrict"]       = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaVolatile"]       = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaAligned"]        = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaConstant"]       = (expType::qualifier | expType::occaKeyword);
 
-      cKeywordType["class"]   = (structType);
-      cKeywordType["enum"]    = (structType | qualifierType);
-      cKeywordType["union"]   = (structType | qualifierType);
-      cKeywordType["struct"]  = (structType | qualifierType);
-      cKeywordType["typedef"] = (typedefType | qualifierType);
+      cKeywordType["class"]              = (expType::struct_ | expType::qualifier);
+      cKeywordType["enum"]               = (expType::struct_ | expType::qualifier);
+      cKeywordType["union"]              = (expType::struct_ | expType::qualifier);
+      cKeywordType["struct"]             = (expType::struct_ | expType::qualifier);
+      cKeywordType["typedef"]            = expType::qualifier;
 
       //---[ Non-standard ]-------------
-      cKeywordType["__attribute__"] = (qualifierType | specialKeywordType);
+      cKeywordType["@"]                  = expType::L;
+      cKeywordType["__attribute__"]      = expType::L;
+      cKeywordType["__asm"]              = expType::specialKeyword;
 
       //---[ C++ ]----------------------
-      cKeywordType["virtual"]   = qualifierType;
+      cKeywordType["virtual"]            = expType::qualifier;
 
-      cKeywordType["namespace"] = (specifierType | structType);
+      cKeywordType["namespace"]          = (expType::type | expType::struct_);
 
       //---[ Constants ]------------------
-      cKeywordType["..."]   = presetValue;
-      cKeywordType["true"]  = presetValue;
-      cKeywordType["false"] = presetValue;
+      cKeywordType["..."]                = expType::printValue;
+      cKeywordType["true"]               = expType::presetValue;
+      cKeywordType["false"]              = expType::presetValue;
 
       //---[ Flow Control ]---------------
-      cKeywordType["if"]   = flowControlType;
-      cKeywordType["else"] = flowControlType;
+      cKeywordType["if"]                 = expType::flowControl;
+      cKeywordType["else"]               = expType::flowControl;
 
-      cKeywordType["for"] = flowControlType;
+      cKeywordType["for"]                = expType::flowControl;
 
-      cKeywordType["do"]    = flowControlType;
-      cKeywordType["while"] = flowControlType;
+      cKeywordType["do"]                 = expType::flowControl;
+      cKeywordType["while"]              = expType::flowControl;
 
-      cKeywordType["switch"]  = flowControlType;
-      cKeywordType["case"]    = specialKeywordType;
-      cKeywordType["default"] = specialKeywordType;
+      cKeywordType["switch"]             = expType::flowControl;
+      cKeywordType["case"]               = expType::specialKeyword;
+      cKeywordType["default"]            = expType::specialKeyword;
 
-      cKeywordType["break"]    = specialKeywordType;
-      cKeywordType["continue"] = specialKeywordType;
-      cKeywordType["return"]   = specialKeywordType;
-      cKeywordType["goto"]     = specialKeywordType;
+      cKeywordType["break"]              = expType::specialKeyword;
+      cKeywordType["continue"]           = expType::specialKeyword;
+      cKeywordType["return"]             = expType::specialKeyword;
+      cKeywordType["goto"]               = expType::specialKeyword;
 
       //---[ OCCA Keywords ]--------------
-      cKeywordType["kernel"]    = (qualifierType | occaKeywordType);
-      cKeywordType["texture"]   = (qualifierType | occaKeywordType);
-      cKeywordType["shared"]    = (qualifierType | occaKeywordType);
-      cKeywordType["exclusive"] = (qualifierType | occaKeywordType);
+      cKeywordType["kernel"]             = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["texture"]            = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["shared"]             = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["exclusive"]          = (expType::qualifier | expType::occaKeyword);
 
-      cKeywordType["occaKernel"]   = (qualifierType | occaKeywordType);
-      cKeywordType["occaFunction"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaDeviceFunction"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaPointer"]  = (qualifierType | occaKeywordType);
-      cKeywordType["occaVariable"] = (qualifierType | occaKeywordType);
-      cKeywordType["occaShared"]   = (qualifierType | occaKeywordType);
+      cKeywordType["occaKernel"]         = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaFunction"]       = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaDeviceFunction"] = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaPointer"]        = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaVariable"]       = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaShared"]         = (expType::qualifier | expType::occaKeyword);
+      cKeywordType["occaFunctionShared"] = (expType::qualifier | expType::occaKeyword);
 
-      cKeywordType["occaKernelInfoArg"] = (presetValue | occaKeywordType);
-      cKeywordType["occaKernelInfo"]    = (presetValue | occaKeywordType);
+      cKeywordType["occaKernelInfoArg"]  = (expType::printValue | expType::occaKeyword);
+      cKeywordType["occaKernelInfo"]     = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["occaPrivate"]      = (presetValue | occaKeywordType);
-      cKeywordType["occaPrivateArray"] = (presetValue | occaKeywordType);
+      cKeywordType["occaPrivate"]        = (expType::printValue | expType::occaKeyword);
+      cKeywordType["occaPrivateArray"]   = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["barrier"]        = (presetValue | occaKeywordType);
-      cKeywordType["localMemFence"]  = (presetValue | occaKeywordType);
-      cKeywordType["globalMemFence"] = (presetValue | occaKeywordType);
+      cKeywordType["barrier"]            = (expType::printValue | expType::occaKeyword);
+      cKeywordType["localMemFence"]      = (expType::printValue | expType::occaKeyword);
+      cKeywordType["globalMemFence"]     = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["occaBarrier"]        = (presetValue | occaKeywordType);
-      cKeywordType["occaLocalMemFence"]  = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalMemFence"] = (presetValue | occaKeywordType);
+      cKeywordType["occaBarrier"]        = (expType::printValue | expType::occaKeyword);
+      cKeywordType["occaLocalMemFence"]  = (expType::printValue | expType::occaKeyword);
+      cKeywordType["occaGlobalMemFence"] = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["directLoad"]  = (presetValue | occaKeywordType);
+      cKeywordType["directLoad"]         = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["atomicAdd"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSub"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSwap"] = (presetValue | occaKeywordType);
-      cKeywordType["atomicInc"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicDec"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicMin"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicMax"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicAnd"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicOr"]   = (presetValue | occaKeywordType);
-      cKeywordType["atomicXor"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicAdd"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicSub"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicSwap"]         = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicInc"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicDec"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicMin"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicMax"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicAnd"]          = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicOr"]           = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicXor"]          = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["atomicAdd64"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSub64"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicSwap64"] = (presetValue | occaKeywordType);
-      cKeywordType["atomicInc64"]  = (presetValue | occaKeywordType);
-      cKeywordType["atomicDec64"]  = (presetValue | occaKeywordType);
+      cKeywordType["atomicAdd64"]        = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicSub64"]        = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicSwap64"]       = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicInc64"]        = (expType::printValue | expType::occaKeyword);
+      cKeywordType["atomicDec64"]        = (expType::printValue | expType::occaKeyword);
 
-      cKeywordType["occaInnerFor0"] = occaForType;
-      cKeywordType["occaInnerFor1"] = occaForType;
-      cKeywordType["occaInnerFor2"] = occaForType;
+      cKeywordType["occaInnerFor0"]      = expType::occaFor;
+      cKeywordType["occaInnerFor1"]      = expType::occaFor;
+      cKeywordType["occaInnerFor2"]      = expType::occaFor;
 
-      cKeywordType["occaOuterFor0"] = occaForType;
-      cKeywordType["occaOuterFor1"] = occaForType;
-      cKeywordType["occaOuterFor2"] = occaForType;
+      cKeywordType["occaOuterFor0"]      = expType::occaFor;
+      cKeywordType["occaOuterFor1"]      = expType::occaFor;
+      cKeywordType["occaOuterFor2"]      = expType::occaFor;
 
-      cKeywordType["occaInnerId0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerId1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerId2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaInnerId0"]       = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaInnerId1"]       = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaInnerId2"]       = (expType::presetValue | expType::occaKeyword);
 
-      cKeywordType["occaOuterId0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterId1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterId2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaOuterId0"]       = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaOuterId1"]       = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaOuterId2"]       = (expType::presetValue | expType::occaKeyword);
 
-      cKeywordType["occaGlobalId0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalId1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalId2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaGlobalId0"]      = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaGlobalId1"]      = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaGlobalId2"]      = (expType::presetValue | expType::occaKeyword);
 
-      cKeywordType["occaInnerDim0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerDim1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaInnerDim2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaInnerDim0"]      = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaInnerDim1"]      = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaInnerDim2"]      = (expType::presetValue | expType::occaKeyword);
 
-      cKeywordType["occaOuterDim0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterDim1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaOuterDim2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaOuterDim0"]      = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaOuterDim1"]      = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaOuterDim2"]      = (expType::presetValue | expType::occaKeyword);
 
-      cKeywordType["occaGlobalDim0"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalDim1"] = (presetValue | occaKeywordType);
-      cKeywordType["occaGlobalDim2"] = (presetValue | occaKeywordType);
+      cKeywordType["occaGlobalDim0"]     = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaGlobalDim1"]     = (expType::presetValue | expType::occaKeyword);
+      cKeywordType["occaGlobalDim2"]     = (expType::presetValue | expType::occaKeyword);
+
+      cKeywordType["occaParallelFor0"]   = expType::specialKeyword;
+      cKeywordType["occaParallelFor1"]   = expType::specialKeyword;
+      cKeywordType["occaParallelFor2"]   = expType::specialKeyword;
+
+      cKeywordType["occaUnroll"]         = expType::specialKeyword;
 
       //---[ CUDA Keywords ]--------------
-      cKeywordType["threadIdx"] = (unknownVariable | cudaKeywordType);
-      cKeywordType["blockDim"]  = (unknownVariable | cudaKeywordType);
-      cKeywordType["blockIdx"]  = (unknownVariable | cudaKeywordType);
-      cKeywordType["gridDim"]   = (unknownVariable | cudaKeywordType);
+      cKeywordType["threadIdx"]          = (expType::unknown | expType::cudaKeyword);
+      cKeywordType["blockDim"]           = (expType::unknown | expType::cudaKeyword);
+      cKeywordType["blockIdx"]           = (expType::unknown | expType::cudaKeyword);
+      cKeywordType["gridDim"]            = (expType::unknown | expType::cudaKeyword);
 
       std::string mathFunctions[16] = {
         "sqrt", "sin"  , "asin" ,
@@ -3934,280 +4066,271 @@ namespace occa {
         std::string cmf = mf;
         cmf[0] += ('A' - 'a');
 
-        cKeywordType["occa"       + cmf] = presetValue;
-        cKeywordType["occaFast"   + cmf] = presetValue;
-        cKeywordType["occaNative" + cmf] = presetValue;
+        cKeywordType["occa"       + cmf] = expType::printValue;
+        cKeywordType["occaFast"   + cmf] = expType::printValue;
+        cKeywordType["occaNative" + cmf] = expType::printValue;
       }
 
       //---[ Operator Precedence ]--------
-      opLevelL2R[0] = true;
-      opPrecedence[opHolder("::", binaryOperatorType)]   = 0;
+      cOpPrecedence[opHolder("::", expType::LR)]   = 0;
 
       // class(...), class{1,2,3}, static_cast<>(), func(), arr[]
-      opLevelL2R[1] = true;
-      opPrecedence[opHolder("++", rUnitaryOperatorType)] = 1;
-      opPrecedence[opHolder("--", rUnitaryOperatorType)] = 1;
-      opPrecedence[opHolder("." , binaryOperatorType)]   = 1;
-      opPrecedence[opHolder("->", binaryOperatorType)]   = 1;
+      cOpPrecedence[opHolder("++", expType::R)]    = 1;
+      cOpPrecedence[opHolder("--", expType::R)]    = 1;
+      cOpPrecedence[opHolder("." , expType::LR)]   = 1;
+      cOpPrecedence[opHolder("->", expType::LR)]   = 1;
 
       // (int) x, sizeof, new, new [], delete, delete []
-      opLevelL2R[2] = false;
-      opPrecedence[opHolder("++", lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("--", lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("!" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("~" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("+" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("-" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("*" , lUnitaryOperatorType)] = 2;
-      opPrecedence[opHolder("&" , lUnitaryOperatorType)] = 2;
+      cOpPrecedence[opHolder("++", expType::L)]    = 2;
+      cOpPrecedence[opHolder("--", expType::L)]    = 2;
+      cOpPrecedence[opHolder("+" , expType::L)]    = 2;
+      cOpPrecedence[opHolder("-" , expType::L)]    = 2;
+      cOpPrecedence[opHolder("!" , expType::L)]    = 2;
+      cOpPrecedence[opHolder("~" , expType::L)]    = 2;
+      cOpPrecedence[opHolder("*" , expType::L)]    = 2;
+      cOpPrecedence[opHolder("&" , expType::L)]    = 2;
 
-      opLevelL2R[3] = true;
-      opPrecedence[opHolder(".*" , binaryOperatorType)]  = 3;
-      opPrecedence[opHolder("->*", binaryOperatorType)]  = 3;
+      cOpPrecedence[opHolder(".*" , expType::LR)]  = 3;
+      cOpPrecedence[opHolder("->*", expType::LR)]  = 3;
 
-      opLevelL2R[4] = true;
-      opPrecedence[opHolder("*" , binaryOperatorType)]   = 4;
-      opPrecedence[opHolder("/" , binaryOperatorType)]   = 4;
-      opPrecedence[opHolder("%" , binaryOperatorType)]   = 4;
+      cOpPrecedence[opHolder("*" , expType::LR)]   = 4;
+      cOpPrecedence[opHolder("/" , expType::LR)]   = 4;
+      cOpPrecedence[opHolder("%" , expType::LR)]   = 4;
 
-      opLevelL2R[5] = true;
-      opPrecedence[opHolder("+" , binaryOperatorType)]   = 5;
-      opPrecedence[opHolder("-" , binaryOperatorType)]   = 5;
+      cOpPrecedence[opHolder("+" , expType::LR)]   = 5;
+      cOpPrecedence[opHolder("-" , expType::LR)]   = 5;
 
-      opLevelL2R[6] = true;
-      opPrecedence[opHolder("<<", binaryOperatorType)]   = 6;
-      opPrecedence[opHolder(">>", binaryOperatorType)]   = 6;
+      cOpPrecedence[opHolder("<<", expType::LR)]   = 6;
+      cOpPrecedence[opHolder(">>", expType::LR)]   = 6;
 
-      opLevelL2R[7] = true;
-      opPrecedence[opHolder("<" , binaryOperatorType)]   = 7;
-      opPrecedence[opHolder("<=", binaryOperatorType)]   = 7;
-      opPrecedence[opHolder(">=", binaryOperatorType)]   = 7;
-      opPrecedence[opHolder(">" , binaryOperatorType)]   = 7;
+      cOpPrecedence[opHolder("<" , expType::LR)]   = 7;
+      cOpPrecedence[opHolder("<=", expType::LR)]   = 7;
+      cOpPrecedence[opHolder(">=", expType::LR)]   = 7;
+      cOpPrecedence[opHolder(">" , expType::LR)]   = 7;
 
-      opLevelL2R[8] = true;
-      opPrecedence[opHolder("==", binaryOperatorType)]   = 8;
-      opPrecedence[opHolder("!=", binaryOperatorType)]   = 8;
+      cOpPrecedence[opHolder("==", expType::LR)]   = 8;
+      cOpPrecedence[opHolder("!=", expType::LR)]   = 8;
 
-      opLevelL2R[9] = true;
-      opPrecedence[opHolder("&" , binaryOperatorType)]   = 9;
+      cOpPrecedence[opHolder("&" , expType::LR)]   = 9;
 
-      opLevelL2R[10] = true;
-      opPrecedence[opHolder("^" , binaryOperatorType)]   = 10;
+      cOpPrecedence[opHolder("^" , expType::LR)]   = 10;
 
-      opLevelL2R[11] = true;
-      opPrecedence[opHolder("|" , binaryOperatorType)]   = 11;
+      cOpPrecedence[opHolder("|" , expType::LR)]   = 11;
 
-      opLevelL2R[12] = true;
-      opPrecedence[opHolder("&&", binaryOperatorType)]   = 12;
+      cOpPrecedence[opHolder("&&", expType::LR)]   = 12;
 
-      opLevelL2R[13] = true;
-      opPrecedence[opHolder("||", binaryOperatorType)]   = 13;
+      cOpPrecedence[opHolder("||", expType::LR)]   = 13;
 
-      opLevelL2R[14] = true;
-      opPrecedence[opHolder("?" , ternaryOperatorType)]  = 14;
-      opPrecedence[opHolder("=" , assOperatorType)]      = 14;
-      opPrecedence[opHolder("+=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("-=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("*=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("/=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("%=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("<<=", assOperatorType)]     = 14;
-      opPrecedence[opHolder(">>=", assOperatorType)]     = 14;
-      opPrecedence[opHolder("&=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("^=", assOperatorType)]      = 14;
-      opPrecedence[opHolder("|=", assOperatorType)]      = 14;
+      cOpPrecedence[opHolder("?" , expType::LCR)]  = 14;
+      cOpPrecedence[opHolder("=" , expType::LR)]   = 14;
+      cOpPrecedence[opHolder("+=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("-=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("*=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("/=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("%=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("<<=", expType::LR)]  = 14;
+      cOpPrecedence[opHolder(">>=", expType::LR)]  = 14;
+      cOpPrecedence[opHolder("&=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("^=", expType::LR)]   = 14;
+      cOpPrecedence[opHolder("|=", expType::LR)]   = 14;
 
       // 15: throw x
 
-      opLevelL2R[16] = true;
-      opPrecedence[opHolder("," , binaryOperatorType)]   = 16;
+      cOpPrecedence[opHolder("," , expType::LR)]   = 16;
 
-      opLevelMap[ 0]["::"]  = binaryOperatorType;
-      opLevelMap[ 1]["++"]  = rUnitaryOperatorType;
-      opLevelMap[ 1]["--"]  = rUnitaryOperatorType;
-      opLevelMap[ 1]["." ]  = binaryOperatorType;
-      opLevelMap[ 1]["->"]  = binaryOperatorType;
-      opLevelMap[ 2]["++"]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["--"]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["+" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["-" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["!" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["~" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["*" ]  = lUnitaryOperatorType;
-      opLevelMap[ 2]["&" ]  = lUnitaryOperatorType;
-      opLevelMap[ 3][".*" ] = binaryOperatorType;
-      opLevelMap[ 3]["->*"] = binaryOperatorType;
-      opLevelMap[ 4]["*" ]  = binaryOperatorType;
-      opLevelMap[ 4]["/" ]  = binaryOperatorType;
-      opLevelMap[ 4]["%" ]  = binaryOperatorType;
-      opLevelMap[ 5]["+" ]  = binaryOperatorType;
-      opLevelMap[ 5]["-" ]  = binaryOperatorType;
-      opLevelMap[ 6]["<<"]  = binaryOperatorType;
-      opLevelMap[ 6][">>"]  = binaryOperatorType;
-      opLevelMap[ 7]["<" ]  = binaryOperatorType;
-      opLevelMap[ 7]["<="]  = binaryOperatorType;
-      opLevelMap[ 7][">="]  = binaryOperatorType;
-      opLevelMap[ 7][">" ]  = binaryOperatorType;
-      opLevelMap[ 8]["=="]  = binaryOperatorType;
-      opLevelMap[ 8]["!="]  = binaryOperatorType;
-      opLevelMap[ 9]["&" ]  = binaryOperatorType;
-      opLevelMap[10]["^" ]  = binaryOperatorType;
-      opLevelMap[11]["|" ]  = binaryOperatorType;
-      opLevelMap[12]["&&"]  = binaryOperatorType;
-      opLevelMap[13]["||"]  = binaryOperatorType;
-      opLevelMap[14]["?" ]  = ternaryOperatorType;
-      opLevelMap[14]["=" ]  = assOperatorType;
-      opLevelMap[14]["+="]  = assOperatorType;
-      opLevelMap[14]["-="]  = assOperatorType;
-      opLevelMap[14]["*="]  = assOperatorType;
-      opLevelMap[14]["/="]  = assOperatorType;
-      opLevelMap[14]["%="]  = assOperatorType;
-      opLevelMap[14]["<<="] = assOperatorType;
-      opLevelMap[14][">>="] = assOperatorType;
-      opLevelMap[14]["&="]  = assOperatorType;
-      opLevelMap[14]["^="]  = assOperatorType;
-      opLevelMap[14]["|="]  = assOperatorType;
-      opLevelMap[16][","]   = binaryOperatorType;
+      cOpLevelMap[ 0]["::"]  = expType::LR;
+      cOpLevelMap[ 1]["++"]  = expType::R;
+      cOpLevelMap[ 1]["--"]  = expType::R;
+      cOpLevelMap[ 1]["." ]  = expType::LR;
+      cOpLevelMap[ 1]["->"]  = expType::LR;
+      cOpLevelMap[ 2]["++"]  = expType::L;
+      cOpLevelMap[ 2]["--"]  = expType::L;
+      cOpLevelMap[ 2]["+" ]  = expType::L;
+      cOpLevelMap[ 2]["-" ]  = expType::L;
+      cOpLevelMap[ 2]["!" ]  = expType::L;
+      cOpLevelMap[ 2]["~" ]  = expType::L;
+      cOpLevelMap[ 2]["*" ]  = expType::L;
+      cOpLevelMap[ 2]["&" ]  = expType::L;
+      cOpLevelMap[ 3][".*" ] = expType::LR;
+      cOpLevelMap[ 3]["->*"] = expType::LR;
+      cOpLevelMap[ 4]["*" ]  = expType::LR;
+      cOpLevelMap[ 4]["/" ]  = expType::LR;
+      cOpLevelMap[ 4]["%" ]  = expType::LR;
+      cOpLevelMap[ 5]["+" ]  = expType::LR;
+      cOpLevelMap[ 5]["-" ]  = expType::LR;
+      cOpLevelMap[ 6]["<<"]  = expType::LR;
+      cOpLevelMap[ 6][">>"]  = expType::LR;
+      cOpLevelMap[ 7]["<" ]  = expType::LR;
+      cOpLevelMap[ 7]["<="]  = expType::LR;
+      cOpLevelMap[ 7][">="]  = expType::LR;
+      cOpLevelMap[ 7][">" ]  = expType::LR;
+      cOpLevelMap[ 8]["=="]  = expType::LR;
+      cOpLevelMap[ 8]["!="]  = expType::LR;
+      cOpLevelMap[ 9]["&" ]  = expType::LR;
+      cOpLevelMap[10]["^" ]  = expType::LR;
+      cOpLevelMap[11]["|" ]  = expType::LR;
+      cOpLevelMap[12]["&&"]  = expType::LR;
+      cOpLevelMap[13]["||"]  = expType::LR;
+      cOpLevelMap[14]["?" ]  = expType::LCR;
+      cOpLevelMap[14]["=" ]  = expType::LR;
+      cOpLevelMap[14]["+="]  = expType::LR;
+      cOpLevelMap[14]["-="]  = expType::LR;
+      cOpLevelMap[14]["*="]  = expType::LR;
+      cOpLevelMap[14]["/="]  = expType::LR;
+      cOpLevelMap[14]["%="]  = expType::LR;
+      cOpLevelMap[14]["<<="] = expType::LR;
+      cOpLevelMap[14][">>="] = expType::LR;
+      cOpLevelMap[14]["&="]  = expType::LR;
+      cOpLevelMap[14]["^="]  = expType::LR;
+      cOpLevelMap[14]["|="]  = expType::LR;
+      cOpLevelMap[16][","]   = expType::LR;
 
       /*---[ Future Ones ]----------------
-        cKeywordType["using"] = ;
+        cKeywordType["using"]     = ;
         cKeywordType["namespace"] = ;
-        cKeywordType["template"] = ;
+        cKeywordType["template"]  = ;
         ================================*/
 
-      keywordType = cKeywordType;
+      keywordTypeMapIterator it = cKeywordType.begin();
+
+      while(it != cKeywordType.end()){
+        it->second |= expType::firstPass;
+        ++it;
+      }
     }
 
     void initFortranKeywords(){
-      if(fortranKeywordsAreInitialized){
-        keywordType = fortranKeywordType;
+      if(fortranKeywordsAreInitialized)
         return;
-      }
 
       fortranKeywordsAreInitialized = true;
 
       //---[ Operator Info ]--------------
-      fortranKeywordType["%"]  = binaryOperatorType;
-      fortranKeywordType["("]  = startParentheses;
-      fortranKeywordType[")"]  = endParentheses;
-      fortranKeywordType["(/"] = startParentheses;
-      fortranKeywordType["/)"] = endParentheses;
-      fortranKeywordType["**"] = (binaryOperatorType);
-      fortranKeywordType["*"]  = (binaryOperatorType);
-      fortranKeywordType["+"]  = (lUnitaryOperatorType | binaryOperatorType);
-      fortranKeywordType[","]  = binaryOperatorType;
-      fortranKeywordType["-"]  = (lUnitaryOperatorType | binaryOperatorType);
-      fortranKeywordType["/"]  = binaryOperatorType;
-      fortranKeywordType[";"]  = endStatement;
-      fortranKeywordType["<"]  = binaryOperatorType;
-      fortranKeywordType["="]  = binaryOperatorType;
-      fortranKeywordType[">"]  = binaryOperatorType;
-      fortranKeywordType["=>"] = binaryOperatorType;
-      fortranKeywordType["::"] = binaryOperatorType;
-      fortranKeywordType["<="] = binaryOperatorType;
-      fortranKeywordType["=="] = binaryOperatorType;
-      fortranKeywordType["/="] = binaryOperatorType;
-      fortranKeywordType[">="] = binaryOperatorType;
+      fortranKeywordType["@"]  = expType::L;
 
-      fortranKeywordType["#"]  = macroKeywordType;
+      fortranKeywordType["%"]  = expType::LR;
+      fortranKeywordType["("]  = expType::C;
+      fortranKeywordType[")"]  = expType::C;
+      fortranKeywordType["(/"] = expType::C;
+      fortranKeywordType["/)"] = expType::C;
+      fortranKeywordType["**"] = (expType::LR);
+      fortranKeywordType["*"]  = (expType::LR);
+      fortranKeywordType["+"]  = (expType::L | expType::LR);
+      fortranKeywordType[","]  = expType::LR;
+      fortranKeywordType["-"]  = (expType::L | expType::LR);
+      fortranKeywordType["/"]  = expType::LR;
+      fortranKeywordType[";"]  = expType::endStatement;
+      fortranKeywordType["<"]  = expType::LR;
+      fortranKeywordType["="]  = expType::LR;
+      fortranKeywordType[">"]  = expType::LR;
+      fortranKeywordType["=>"] = expType::LR;
+      fortranKeywordType["::"] = expType::LR;
+      fortranKeywordType["<="] = expType::LR;
+      fortranKeywordType["=="] = expType::LR;
+      fortranKeywordType["/="] = expType::LR;
+      fortranKeywordType[">="] = expType::LR;
+
+      fortranKeywordType["#"]  = expType::macroKeyword;
 
       //---[ Types & Specifiers ]---------
-      fortranKeywordType["int"]    = specifierType;
-      fortranKeywordType["bool"]   = specifierType;
-      fortranKeywordType["char"]   = specifierType;
-      fortranKeywordType["long"]   = specifierType;
-      fortranKeywordType["short"]  = specifierType;
-      fortranKeywordType["float"]  = specifierType;
-      fortranKeywordType["double"] = specifierType;
+      fortranKeywordType["int"]    = expType::type;
+      fortranKeywordType["bool"]   = expType::type;
+      fortranKeywordType["char"]   = expType::type;
+      fortranKeywordType["long"]   = expType::type;
+      fortranKeywordType["short"]  = expType::type;
+      fortranKeywordType["float"]  = expType::type;
+      fortranKeywordType["double"] = expType::type;
 
-      fortranKeywordType["void"]   = specifierType;
+      fortranKeywordType["void"]   = expType::type;
 
-      fortranKeywordType["true"]  = presetValue;
-      fortranKeywordType["false"] = presetValue;
+      fortranKeywordType["true"]  = expType::presetValue;
+      fortranKeywordType["false"] = expType::presetValue;
 
       //---[ Types and Specifiers ]-----
-      fortranKeywordType["INTEGER"]   = specifierType;
-      fortranKeywordType["LOGICAL"]   = specifierType;
-      fortranKeywordType["REAL"]      = specifierType;
-      fortranKeywordType["PRECISION"] = specifierType;
-      fortranKeywordType["COMPLEX"]   = specifierType;
-      fortranKeywordType["CHARACTER"] = specifierType;
+      fortranKeywordType["INTEGER"]   = expType::type;
+      fortranKeywordType["LOGICAL"]   = expType::type;
+      fortranKeywordType["REAL"]      = expType::type;
+      fortranKeywordType["PRECISION"] = expType::type;
+      fortranKeywordType["COMPLEX"]   = expType::type;
+      fortranKeywordType["CHARACTER"] = expType::type;
 
       std::string suffix[5] = {"2", "3", "4", "8", "16"};
 
       for(int i = 0; i < 5; ++i){
-        fortranKeywordType[std::string("INTEGER") + suffix[i]] = specifierType;
-        fortranKeywordType[std::string("REAL")    + suffix[i]] = specifierType;
+        fortranKeywordType[std::string("INTEGER") + suffix[i]] = expType::type;
+        fortranKeywordType[std::string("REAL")    + suffix[i]] = expType::type;
       }
 
-      fortranKeywordType["FUNCTION"]   = specialKeywordType;
-      fortranKeywordType["SUBROUTINE"] = specialKeywordType;
-      fortranKeywordType["CALL"]       = specialKeywordType;
+      fortranKeywordType["FUNCTION"]      = expType::specialKeyword;
+      fortranKeywordType["SUBROUTINE"]    = expType::specialKeyword;
+      fortranKeywordType["CALL"]          = expType::specialKeyword;
 
-      fortranKeywordType["DOUBLE"] = qualifierType;
+      fortranKeywordType["DOUBLE"]        = expType::qualifier;
 
-      fortranKeywordType["ALLOCATABLE"] = qualifierType;
-      fortranKeywordType["AUTOMATIC"]   = qualifierType;
-      fortranKeywordType["DIMENSION"]   = qualifierType;
-      fortranKeywordType["EXTERNAL"]    = qualifierType;
-      fortranKeywordType["IMPLICIT"]    = qualifierType;
-      fortranKeywordType["INTENT"]      = qualifierType;
-      fortranKeywordType["INTRINSIC"]   = qualifierType;
-      fortranKeywordType["OPTIONAL"]    = qualifierType;
-      fortranKeywordType["PARAMETER"]   = qualifierType;
-      fortranKeywordType["POINTER"]     = qualifierType;
-      fortranKeywordType["PRIVATE"]     = qualifierType;
-      fortranKeywordType["PUBLIC"]      = qualifierType;
-      fortranKeywordType["RECURSIVE"]   = qualifierType;
-      fortranKeywordType["SAVE"]        = qualifierType;
-      fortranKeywordType["STATIC"]      = qualifierType;
-      fortranKeywordType["TARGET"]      = qualifierType;
-      fortranKeywordType["VOLATILE"]    = qualifierType;
+      fortranKeywordType["ALLOCATABLE"]   = expType::qualifier;
+      fortranKeywordType["AUTOMATIC"]     = expType::qualifier;
+      fortranKeywordType["DIMENSION"]     = expType::qualifier;
+      fortranKeywordType["EXTERNAL"]      = expType::qualifier;
+      fortranKeywordType["IMPLICIT"]      = expType::qualifier;
+      fortranKeywordType["INTENT"]        = expType::qualifier;
+      fortranKeywordType["INTRINSIC"]     = expType::qualifier;
+      fortranKeywordType["OPTIONAL"]      = expType::qualifier;
+      fortranKeywordType["PARAMETER"]     = expType::qualifier;
+      fortranKeywordType["POINTER"]       = expType::qualifier;
+      fortranKeywordType["PRIVATE"]       = expType::qualifier;
+      fortranKeywordType["PUBLIC"]        = expType::qualifier;
+      fortranKeywordType["RECURSIVE"]     = expType::qualifier;
+      fortranKeywordType["SAVE"]          = expType::qualifier;
+      fortranKeywordType["STATIC"]        = expType::qualifier;
+      fortranKeywordType["TARGET"]        = expType::qualifier;
+      fortranKeywordType["VOLATILE"]      = expType::qualifier;
 
-      fortranKeywordType["NONE"] = specialKeywordType;
+      fortranKeywordType["NONE"]          = expType::specialKeyword;
 
-      fortranKeywordType["KERNEL"]    = qualifierType;
-      fortranKeywordType["DEVICE"]    = qualifierType;
-      fortranKeywordType["SHARED"]    = qualifierType;
-      fortranKeywordType["EXCLUSIVE"] = qualifierType;
+      fortranKeywordType["KERNEL"]        = expType::qualifier;
+      fortranKeywordType["DEVICE"]        = expType::qualifier;
+      fortranKeywordType["SHARED"]        = expType::qualifier;
+      fortranKeywordType["EXCLUSIVE"]     = expType::qualifier;
 
-      fortranKeywordType["DIRECTLOAD"] = (presetValue | occaKeywordType);
+      fortranKeywordType["DIRECTLOAD"]    = (expType::printValue | expType::occaKeyword);
 
       //---[ Atomics ]--------------------
-      fortranKeywordType["ATOMICADD"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSUB"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSWAP"] = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICINC"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICDEC"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICMIN"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICMAX"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICAND"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICOR"]   = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICXOR"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICADD"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICSUB"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICSWAP"]    = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICINC"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICDEC"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICMIN"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICMAX"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICAND"]     = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICOR"]      = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICXOR"]     = (expType::printValue | expType::occaKeyword);
 
-      fortranKeywordType["ATOMICADD64"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSUB64"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICSWAP64"] = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICINC64"]  = (presetValue | occaKeywordType);
-      fortranKeywordType["ATOMICDEC64"]  = (presetValue | occaKeywordType);
+      fortranKeywordType["ATOMICADD64"]   = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICSUB64"]   = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICSWAP64"]  = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICINC64"]   = (expType::printValue | expType::occaKeyword);
+      fortranKeywordType["ATOMICDEC64"]   = (expType::printValue | expType::occaKeyword);
 
       //---[ Constants ]------------------
-      fortranKeywordType[":"]       = presetValue;
+      fortranKeywordType[":"]             = expType::printValue;
 
       //---[ Flow Control ]---------------
-      fortranKeywordType["DO"]       = flowControlType;
-      fortranKeywordType["WHILE"]    = flowControlType;
-      fortranKeywordType["DO WHILE"] = flowControlType;
+      fortranKeywordType["DO"]            = expType::flowControl;
+      fortranKeywordType["WHILE"]         = expType::flowControl;
+      fortranKeywordType["DO WHILE"]      = expType::flowControl;
 
-      fortranKeywordType["IF"]       = flowControlType;
-      fortranKeywordType["THEN"]     = flowControlType;
-      fortranKeywordType["ELSE IF"]  = flowControlType;
-      fortranKeywordType["ELSE"]     = flowControlType;
+      fortranKeywordType["IF"]            = expType::flowControl;
+      fortranKeywordType["THEN"]          = expType::flowControl;
+      fortranKeywordType["ELSE IF"]       = expType::flowControl;
+      fortranKeywordType["ELSE"]          = expType::flowControl;
 
-      fortranKeywordType["ENDDO"]         = endStatement;
-      fortranKeywordType["ENDIF"]         = endStatement;
-      fortranKeywordType["ENDFUNCTION"]   = endStatement;
-      fortranKeywordType["ENDSUBROUTINE"] = endStatement;
+      fortranKeywordType["ENDDO"]         = expType::endStatement;
+      fortranKeywordType["ENDIF"]         = expType::endStatement;
+      fortranKeywordType["ENDFUNCTION"]   = expType::endStatement;
+      fortranKeywordType["ENDSUBROUTINE"] = expType::endStatement;
+
+      fortranKeywordType["RETURN"]        = expType::specialKeyword;
 
       std::string mathFunctions[16] = {
         "SQRT", "SIN"  , "ASIN" ,
@@ -4219,74 +4342,75 @@ namespace occa {
       };
 
       for(int i = 0; i < 16; ++i)
-        fortranKeywordType[ mathFunctions[i] ] = presetValue;
+        fortranKeywordType[ mathFunctions[i] ] = expType::printValue;
 
       //---[ Operator Precedence ]--------
-      opPrecedence[opHolder("%" , binaryOperatorType)]     = 0;
-      opPrecedence[opHolder("=>", binaryOperatorType)]     = 0;
+      fortranOpPrecedence[opHolder("%" , expType::LR)]  = 0;
+      fortranOpPrecedence[opHolder("=>", expType::LR)]  = 0;
 
-      opPrecedence[opHolder("**", binaryOperatorType)]     = 1;
-      opPrecedence[opHolder("//", binaryOperatorType)]     = 1;
+      fortranOpPrecedence[opHolder("**", expType::LR)]  = 1;
+      fortranOpPrecedence[opHolder("//", expType::LR)]  = 1;
 
-      opPrecedence[opHolder("+", lUnitaryOperatorType)]    = 2;
-      opPrecedence[opHolder("-", lUnitaryOperatorType)]    = 2;
+      fortranOpPrecedence[opHolder("+", expType::L)]    = 2;
+      fortranOpPrecedence[opHolder("-", expType::L)]    = 2;
 
-      opPrecedence[opHolder("*", binaryOperatorType)]      = 3;
-      opPrecedence[opHolder("/", binaryOperatorType)]      = 3;
+      fortranOpPrecedence[opHolder("*", expType::LR)]   = 3;
+      fortranOpPrecedence[opHolder("/", expType::LR)]   = 3;
 
-      opPrecedence[opHolder("+", binaryOperatorType)]      = 4;
-      opPrecedence[opHolder("-", binaryOperatorType)]      = 4;
+      fortranOpPrecedence[opHolder("+", expType::LR)]   = 4;
+      fortranOpPrecedence[opHolder("-", expType::LR)]   = 4;
 
-      opPrecedence[opHolder("<" , binaryOperatorType)]     = 5;
-      opPrecedence[opHolder("<=", binaryOperatorType)]     = 5;
-      opPrecedence[opHolder(">=", binaryOperatorType)]     = 5;
-      opPrecedence[opHolder(">" , binaryOperatorType)]     = 5;
+      fortranOpPrecedence[opHolder("<" , expType::LR)]  = 5;
+      fortranOpPrecedence[opHolder("<=", expType::LR)]  = 5;
+      fortranOpPrecedence[opHolder(">=", expType::LR)]  = 5;
+      fortranOpPrecedence[opHolder(">" , expType::LR)]  = 5;
 
-      opPrecedence[opHolder("!", binaryOperatorType)]      = 6;
-      opPrecedence[opHolder("&&", binaryOperatorType)]     = 7;
-      opPrecedence[opHolder("||", binaryOperatorType)]     = 8;
+      fortranOpPrecedence[opHolder("!", expType::LR)]   = 6;
+      fortranOpPrecedence[opHolder("&&", expType::LR)]  = 7;
+      fortranOpPrecedence[opHolder("||", expType::LR)]  = 8;
 
-      opPrecedence[opHolder("==" , binaryOperatorType)]    = 9;
-      opPrecedence[opHolder("!=", binaryOperatorType)]     = 9;
+      fortranOpPrecedence[opHolder("==" , expType::LR)] = 9;
+      fortranOpPrecedence[opHolder("!=", expType::LR)]  = 9;
 
-      opPrecedence[opHolder("=" , binaryOperatorType)]     = 10;
+      fortranOpPrecedence[opHolder("=" , expType::LR)]  = 10;
 
-      opPrecedence[opHolder("," , binaryOperatorType)]     = 11;
+      fortranOpPrecedence[opHolder("," , expType::LR)]  = 11;
 
-      opLevelMap[0]["%"]   = binaryOperatorType;
-      opLevelMap[0]["=>"]  = binaryOperatorType;
-      opLevelMap[1]["**"]  = binaryOperatorType;
-      opLevelMap[1]["//"]  = binaryOperatorType;
-      opLevelMap[2]["+"]   = lUnitaryOperatorType;
-      opLevelMap[2]["-"]   = lUnitaryOperatorType;
-      opLevelMap[3]["*"]   = binaryOperatorType;
-      opLevelMap[3]["/"]   = binaryOperatorType;
-      opLevelMap[4]["+"]   = binaryOperatorType;
-      opLevelMap[4]["-"]   = binaryOperatorType;
-      opLevelMap[5]["<"]   = binaryOperatorType;
-      opLevelMap[5]["<="]  = binaryOperatorType;
-      opLevelMap[5][">="]  = binaryOperatorType;
-      opLevelMap[5][">"]   = binaryOperatorType;
-      opLevelMap[6]["!"]   = binaryOperatorType;
-      opLevelMap[7]["&&"]  = binaryOperatorType;
-      opLevelMap[8]["||"]  = binaryOperatorType;
-      opLevelMap[9]["=="]  = binaryOperatorType;
-      opLevelMap[9]["!="]  = binaryOperatorType;
-      opLevelMap[10]["="]  = binaryOperatorType;
-      opLevelMap[11][","]  = binaryOperatorType;
+      fortranOpLevelMap[0]["%"]   = expType::LR;
+      fortranOpLevelMap[0]["=>"]  = expType::LR;
+      fortranOpLevelMap[1]["**"]  = expType::LR;
+      fortranOpLevelMap[1]["//"]  = expType::LR;
+      fortranOpLevelMap[2]["+"]   = expType::L;
+      fortranOpLevelMap[2]["-"]   = expType::L;
+      fortranOpLevelMap[3]["*"]   = expType::LR;
+      fortranOpLevelMap[3]["/"]   = expType::LR;
+      fortranOpLevelMap[4]["+"]   = expType::LR;
+      fortranOpLevelMap[4]["-"]   = expType::LR;
+      fortranOpLevelMap[5]["<"]   = expType::LR;
+      fortranOpLevelMap[5]["<="]  = expType::LR;
+      fortranOpLevelMap[5][">="]  = expType::LR;
+      fortranOpLevelMap[5][">"]   = expType::LR;
+      fortranOpLevelMap[6]["!"]   = expType::LR;
+      fortranOpLevelMap[7]["&&"]  = expType::LR;
+      fortranOpLevelMap[8]["||"]  = expType::LR;
+      fortranOpLevelMap[9]["=="]  = expType::LR;
+      fortranOpLevelMap[9]["!="]  = expType::LR;
+      fortranOpLevelMap[10]["="]  = expType::LR;
+      fortranOpLevelMap[11][","]  = expType::LR;
 
-      keywordType = fortranKeywordType;
+      keywordTypeMapIterator it = fortranKeywordType.begin();
+
+      while(it != fortranKeywordType.end()){
+        it->second |= expType::firstPass;
+        ++it;
+      }
     }
 
     //---[ OCCA Loop Info ]-------------
-    occaLoopInfo::occaLoopInfo() :
-      sInfo(NULL),
-      parsingC(true) {}
-
     occaLoopInfo::occaLoopInfo(statement &s,
-                               const bool parsingC_,
+                               const int parsingLanguage_,
                                const std::string &tag){
-      parsingC = parsingC_;
+      parsingLanguage = parsingLanguage_;
 
       lookForLoopFrom(s, tag);
     }
@@ -4296,44 +4420,25 @@ namespace occa {
       sInfo = &s;
 
       while(sInfo){
-        if((sInfo->info & forStatementType) &&
-           (sInfo->getForStatementCount() > 3)){
+        if(sInfo->info == smntType::occaFor){
+          attribute_t *occaTagAttr = sInfo->hasAttribute("occaTag");
 
-          OCCA_CHECK(sInfo->getForStatementCount() <= 4,
-                     "More than 4 statements for:\n  " << sInfo->expRoot);
-
-          if(tag.size()){
-            std::string arg4 = (std::string) *(sInfo->getForStatement(3));
-
-            if(arg4 == tag)
-              break;
-          }
-          else
+          if(occaTagAttr != NULL)
             break;
         }
 
         sInfo = sInfo->up;
       }
 
+      if(s.parser.parsingLanguage & parserInfo::parsingFortran)
+        return;
+
       //---[ Overload iter vars ]---
       setIterDefaultValues();
-
-      sInfo->info = occaForType;
 
       expNode &node1   = *(sInfo->getForStatement(0));
       expNode &node2   = *(sInfo->getForStatement(1));
       expNode &node3   = *(sInfo->getForStatement(2));
-      std::string arg4 = (std::string) *(sInfo->getForStatement(3));
-
-      // Fortran-loading is easier
-      if(!parsingC){
-        //---[ Node 4 Check ]---
-        // If it has a fourth argument, make sure it's the correct one
-        OCCA_CHECK(isAnOccaTag(arg4),
-                   "Wrong 4th statement for:\n  " << sInfo->expRoot);
-
-        return;
-      }
 
       //---[ Node 1 Check ]---
       OCCA_CHECK((node1.info == expType::declaration) &&
@@ -4343,6 +4448,8 @@ namespace occa {
                  "Wrong 1st statement for:\n  " << sInfo->expRoot);
 
       varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
+
+      std::string &iter = iterVar.name;
 
       if( !iterVar.hasQualifier("occaConst") )
         iterVar.addQualifier("occaConst");
@@ -4356,15 +4463,10 @@ namespace occa {
 
                  "Wrong 2nd statement for:\n  " << sInfo->expRoot);
 
-      if(parsingC){
-        const bool varIn0 = (node2[0][0].info & expType::varInfo);
-        const bool varIn1 = (node2[0][1].info & expType::varInfo);
+      if(parsingLanguage & parserInfo::parsingC){
+        OCCA_CHECK((node2[0][0].value == iter) ||
+                   (node2[0][1].value == iter),
 
-        varInfo *var0 = (varIn0 ? &(node2[0][0].getVarInfo()) : NULL);
-        varInfo *var1 = (varIn1 ? &(node2[0][1].getVarInfo()) : NULL);
-
-        OCCA_CHECK((var0 && (var0->name == iterVar.name)) ||
-                   (var1 && (var1->name == iterVar.name)),
                    "Wrong 2nd statement for:\n  " << sInfo->expRoot);
       }
 
@@ -4377,24 +4479,10 @@ namespace occa {
 
                  "Wrong 3rd statement for:\n  " << sInfo->expRoot);
 
-      bool varIn0 = (node3[0][0].info & expType::varInfo);
-      bool varIn1 = false;
-
-      if(node3[0].info == expType::LR)
-        varIn1 = (node3[0][1].info & expType::varInfo);
-
-      varInfo *var0 = (varIn0 ? &(node3[0][0].getVarInfo()) : NULL);
-      varInfo *var1 = (varIn1 ? &(node3[0][1].getVarInfo()) : NULL);
-
-      OCCA_CHECK((var0 && (var0->name == iterVar.name)) ||
-                 (var1 && (var1->name == iterVar.name)),
+      OCCA_CHECK((node3[0][0].value == iter) ||
+                 (node3[0][1].value == iter),
 
                  "Wrong 3rd statement for:\n  " << sInfo->expRoot);
-
-      //---[ Node 4 Check ]---
-      // If it has a fourth argument, make sure it's the correct one
-      OCCA_CHECK(isAnOccaTag(arg4),
-                 "Wrong 4th statement for:\n  " << sInfo->expRoot);
     }
 
     // [-] Missing
@@ -4403,18 +4491,15 @@ namespace occa {
                                        std::string *outerIters){
     }
 
-    void occaLoopInfo::getLoopInfo(std::string &ioLoopVar,
-                                   std::string &ioLoop,
+    void occaLoopInfo::getLoopInfo(std::string &loopTag,
                                    std::string &loopNest){
 
-      std::string arg4 = (std::string) *(sInfo->getForStatement(3));
+      attribute_t &occaTagAttr  = sInfo->attribute("occaTag");
+      attribute_t &occaNestAttr = sInfo->attribute("occaNest");
 
       // [-----][#]
-      ioLoopVar = arg4.substr(0,5);
-      ioLoop    = ioLoopVar;
-      loopNest  = arg4.substr(5,1);
-
-      ioLoop[0] += ('A' - 'a');
+      loopTag  = occaTagAttr.valueStr();
+      loopNest = occaNestAttr.valueStr();
     }
 
     void occaLoopInfo::getLoopNode1Info(std::string &iter,
@@ -4422,7 +4507,7 @@ namespace occa {
 
       expNode &node1 = *(sInfo->getForStatement(0));
 
-      if(parsingC){
+      if(parsingLanguage & parserInfo::parsingC){
         varInfo &iterVar = node1.getVariableInfoNode(0)->getVarInfo();
 
         iter  = iterVar.name;
@@ -4441,7 +4526,7 @@ namespace occa {
 
       iterCheck = node2[0].value;
 
-      if(parsingC){
+      if(parsingLanguage & parserInfo::parsingC){
         if((iterCheck == "<=") || (iterCheck == "<"))
           bound = (std::string) node2[0][1];
         else
@@ -4495,7 +4580,8 @@ namespace occa {
       expNode &node1 = *(sInfo->getForStatement(0));
 
       std::stringstream ss;
-      node1.printOn(ss, "", expFlag::noSemicolon);
+      node1.printOn(ss, "", (expFlag::noSemicolon |
+                             expFlag::noNewline));
 
       return ss.str();
     }

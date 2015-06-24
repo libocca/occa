@@ -295,8 +295,6 @@ namespace occa {
     public:
       parserBase &parser;
       statement &globalScope;
-      varUsedMap_t &varUpdateMap;
-      varUsedMap_t &varUsedMap;
 
       intVector_t testedTileSizes;
 
@@ -377,9 +375,9 @@ namespace occa {
       void addExpressionRead(expNode &e);
 
       //---[ Helper Functions ]---------
-      static void placeAddedExps(infoDB_t &db, expNode &e, expVec_t &sumNodes);
-      static void placeMultExps(infoDB_t &db, expNode &e, expVec_t &sumNodes);
-      static void placeExps(infoDB_t &db, expNode &e, expVec_t &sumNodes, const std::string &delimiters);
+      static void placeAddedExps(infoDB_t &db, expNode &e, expVector_t &sumNodes);
+      static void placeMultExps(infoDB_t &db, expNode &e, expVector_t &sumNodes);
+      static void placeExps(infoDB_t &db, expNode &e, expVector_t &sumNodes, const std::string &delimiters);
       static bool expHasOp(expNode &e, const std::string &delimiters);
 
       static void simplify(infoDB_t &db, expNode &e);
@@ -396,12 +394,12 @@ namespace occa {
       static void expandMult(infoDB_t &db, expNode &e);
       static void removeParentheses(infoDB_t &db, expNode &e);
 
-      static expVec_t iteratorsIn(infoDB_t &db, expVec_t &v);
-      static bool iteratorsMatch(expVec_t &a, expVec_t &b);
-      static expVec_t removeItersFromExpVec(expVec_t &a, expVec_t &b);
-      static void multiplyExpVec(expVec_t &v, expNode &e);
-      static void sumExpVec(expVec_t &v, expNode &e);
-      static void applyOpToExpVec(expVec_t &v, expNode &e, const std::string &op);
+      static expVector_t iteratorsIn(infoDB_t &db, expVector_t &v);
+      static bool iteratorsMatch(expVector_t &a, expVector_t &b);
+      static expVector_t removeItersFromExpVec(expVector_t &a, expVector_t &b);
+      static void multiplyExpVec(expVector_t &v, expNode &e);
+      static void sumExpVec(expVector_t &v, expNode &e);
+      static void applyOpToExpVec(expVector_t &v, expNode &e, const std::string &op);
     };
   };
 };

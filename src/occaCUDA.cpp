@@ -156,7 +156,6 @@ namespace occa {
       device_t<CUDA> &dHandle   = *(new device_t<CUDA>());
       CUDADeviceData_t &devData = *(new CUDADeviceData_t);
 
-      dev.strMode = "CUDA";
       dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
@@ -198,6 +197,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<CUDA>::kernel_t(){
+    strMode = "CUDA";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -207,7 +208,8 @@ namespace occa {
 
     nestedKernelCount = 0;
 
-    preferredDimSize_ = 0;
+    maximumInnerDimSize_ = 0;
+    preferredDimSize_    = 0;
   }
 
   template <>
@@ -223,7 +225,7 @@ namespace occa {
 
     nestedKernelCount = k.nestedKernelCount;
 
-    if(nestedKernelCount){
+    if(0 < nestedKernelCount){
       nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
@@ -246,7 +248,7 @@ namespace occa {
 
     nestedKernelCount = k.nestedKernelCount;
 
-    if(nestedKernelCount){
+    if(0 < nestedKernelCount){
       nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
@@ -260,53 +262,50 @@ namespace occa {
   kernel_t<CUDA>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
-                                                  kernelInfo &info_){
-
-    return getCachedName(filename, dHandle->getInfoSalt(info_));
+  std::string kernel_t<CUDA>::fixBinaryName(const std::string &filename){
+    return filename;
   }
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromSource(const std::string &filename,
                                                   const std::string &functionName,
                                                   const kernelInfo &info_){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 
     kernelInfo info = info_;
 
     dHandle->addOccaHeadersToInfo(info);
 
-    std::string cachedBinary = getCachedBinaryName(filename, info);
+    const std::string hash = getFileContentHash(filename,
+                                                dHandle->getInfoSalt(info));
 
-    if(!haveFile(cachedBinary)){
-      waitForFile(cachedBinary);
+    const std::string hashDir       = hashDirFor(filename, hash);
+    const std::string sourceFile    = hashDir + kc::sourceFile;
+    const std::string binaryFile    = hashDir + fixBinaryName(kc::binaryFile);
+    const std::string ptxBinaryFile = hashDir + "ptxBinary.o";
 
-      if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
-
-      return buildFromBinary(cachedBinary, functionName);
-    }
-
-    struct stat buffer;
-    const bool fileExists = (stat(cachedBinary.c_str(), &buffer) == 0);
-
-    if(fileExists){
-      releaseFile(cachedBinary);
+    if(!haveHash(hash, 0)){
+      waitForHash(hash, 0);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
-      return buildFromBinary(cachedBinary, functionName);
+      return buildFromBinary(binaryFile, functionName);
     }
 
-    std::string iCachedBinary = createIntermediateSource(filename,
-                                                         cachedBinary,
-                                                         info);
+    if(sys::fileExists(binaryFile)){
+      releaseHash(hash, 0);
 
-    std::string libPath, soname;
-    getFilePrefixAndName(cachedBinary, libPath, soname);
+      if(verboseCompilation_f)
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(binaryFile) << "]\n";
 
-    std::string oCachedBinary = libPath + "o_" + soname + ".o";
+      return buildFromBinary(binaryFile, functionName);
+    }
+
+    createSourceFileFrom(filename, hashDir, info);
 
     std::string archSM = "";
 
@@ -335,8 +334,8 @@ namespace occa {
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
             << ' '          << info.flags
-            << " -x cu -c " << iCachedBinary
-            << " -o "       << oCachedBinary;
+            << " -x cu -c " << sourceFile
+            << " -o "       << ptxBinaryFile;
 
     const std::string &ptxCommand = command.str();
 
@@ -353,12 +352,12 @@ namespace occa {
     command.str("");
 
     command << dHandle->compiler
-            << " -o "       << cachedBinary
+            << " -o "       << binaryFile
             << " -ptx -I."
             << ' '          << dHandle->compilerFlags
             << archSM
             << ' '          << info.flags
-            << " -x cu "    << iCachedBinary;
+            << " -x cu "    << sourceFile;
 
     const std::string &sCommand = command.str();
 
@@ -368,15 +367,15 @@ namespace occa {
     const int compileError = system(sCommand.c_str());
 
     if(compileError){
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
       OCCA_CHECK(false, "Compilation error");
     }
 
     const CUresult moduleLoadError = cuModuleLoad(&data_.module,
-                                                  cachedBinary.c_str());
+                                                  binaryFile.c_str());
 
     if(moduleLoadError)
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
                     moduleLoadError);
@@ -386,12 +385,12 @@ namespace occa {
                                                                 functionName.c_str());
 
     if(moduleGetFunctionError)
-      releaseFile(cachedBinary);
+      releaseHash(hash, 0);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Function",
                     moduleGetFunctionError);
 
-    releaseFile(cachedBinary);
+    releaseHash(hash, 0);
 
     return this;
   }
@@ -399,6 +398,9 @@ namespace occa {
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromBinary(const std::string &filename,
                                                  const std::string &functionName){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 
     OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Loading Module",
@@ -425,6 +427,23 @@ namespace occa {
   }
 
   template <>
+  uintptr_t kernel_t<CUDA>::maximumInnerDimSize(){
+    if(maximumInnerDimSize_)
+      return maximumInnerDimSize_;
+
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    int maxSize;
+
+    OCCA_CUDA_CHECK("Kernel: Getting Maximum Inner-Dim Size",
+                    cuFuncGetAttribute(&maxSize, CU_FUNC_ATTRIBUTE_MAX_THREADS_PER_BLOCK, data_.function));
+
+    maximumInnerDimSize_ = (uintptr_t) maxSize;
+
+    return maximumInnerDimSize_;
+  }
+
+  template <>
   int kernel_t<CUDA>::preferredDimSize(){
     preferredDimSize_ = 32;
     return 32;
@@ -441,6 +460,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<CUDA>::memory_t(){
+    strMode = "CUDA";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -875,6 +896,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<CUDA>::device_t() {
+    strMode = "CUDA";
+
     data = NULL;
 
     uvaEnabled_ = false;
@@ -936,7 +959,7 @@ namespace occa {
 
   template <>
   void device_t<CUDA>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaCUDADefines);
+    info_.mode = CUDA;
   }
 
   template <>
@@ -1062,7 +1085,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<CUDA>::createStream(){
+  stream_t device_t<CUDA>::createStream(){
     CUstream *retStream = new CUstream;
 
     OCCA_CUDA_CHECK("Device: createStream",
@@ -1072,14 +1095,14 @@ namespace occa {
   }
 
   template <>
-  void device_t<CUDA>::freeStream(stream s){
+  void device_t<CUDA>::freeStream(stream_t s){
     OCCA_CUDA_CHECK("Device: freeStream",
                     cuStreamDestroy( *((CUstream*) s) ));
     delete (CUstream*) s;
   }
 
   template <>
-  stream device_t<CUDA>::wrapStream(void *handle_){
+  stream_t device_t<CUDA>::wrapStream(void *handle_){
     return handle_;
   }
 
@@ -1106,6 +1129,11 @@ namespace occa {
                     cuEventElapsedTime(&msTimeTaken, startTag.cuEvent, endTag.cuEvent));
 
     return (double) (1.0e-3 * (double) msTimeTaken);
+  }
+
+  template <>
+  std::string device_t<CUDA>::fixBinaryName(const std::string &filename){
+    return filename;
   }
 
   template <>
@@ -1152,6 +1180,7 @@ namespace occa {
   void device_t<CUDA>::cacheKernelInLibrary(const std::string &filename,
                                             const std::string &functionName,
                                             const kernelInfo &info_){
+#if 0
     //---[ Creating shared library ]----
     kernel tmpK = occa::device(this).buildKernelFromSource(filename, functionName, info_);
     tmpK.free();
@@ -1184,11 +1213,13 @@ namespace occa {
 
     header.kernelNameOffset = library::addToScratchPad(functionName);
     header.kernelNameBytes  = functionName.size();
+#endif
   }
 
   template <>
   kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
                                                   const std::string &functionName){
+#if 0
     OCCA_EXTRACT_DATA(CUDA, Device);
 
     kernel_v *k = new kernel_t<CUDA>;
@@ -1203,6 +1234,8 @@ namespace occa {
 
     k->loadFromLibrary(cache, functionName);
     return k;
+#endif
+    return NULL;
   }
 
   template <>
@@ -1210,10 +1243,12 @@ namespace occa {
                                        const uintptr_t bytes){
     memory_v *mem = new memory_t<CUDA>;
 
-    // CUdeviceptr ~ void*
+    CUdeviceptr &cuPtr = *(new CUdeviceptr);
+    mem->handle  = &cuPtr;
+
     mem->dHandle = this;
     mem->size    = bytes;
-    mem->handle = &handle_;
+    cuPtr        = (CUdeviceptr) handle_;
 
     mem->isAWrapper = true;
 

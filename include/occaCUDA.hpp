@@ -100,21 +100,23 @@ namespace occa {
   kernel_t<CUDA>::kernel_t(const kernel_t<CUDA> &k);
 
   template <>
-  std::string kernel_t<CUDA>::getCachedBinaryName(const std::string &filename,
-                                                  kernelInfo &info_);
+  std::string kernel_t<CUDA>::fixBinaryName(const std::string &filename);
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromSource(const std::string &filename,
-                                                  const std::string &functionName_,
+                                                  const std::string &functionName,
                                                   const kernelInfo &info_);
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::buildFromBinary(const std::string &filename,
-                                                  const std::string &functionName_);
+                                                  const std::string &functionName);
 
   template <>
   kernel_t<CUDA>* kernel_t<CUDA>::loadFromLibrary(const char *cache,
-                                                  const std::string &functionName_);
+                                                  const std::string &functionName);
+
+  template <>
+  uintptr_t kernel_t<CUDA>::maximumInnerDimSize();
 
   template <>
   int kernel_t<CUDA>::preferredDimSize();
@@ -239,13 +241,13 @@ namespace occa {
   void device_t<CUDA>::waitFor(streamTag tag);
 
   template <>
-  stream device_t<CUDA>::createStream();
+  stream_t device_t<CUDA>::createStream();
 
   template <>
-  void device_t<CUDA>::freeStream(stream s);
+  void device_t<CUDA>::freeStream(stream_t s);
 
   template <>
-  stream device_t<CUDA>::wrapStream(void *handle_);
+  stream_t device_t<CUDA>::wrapStream(void *handle_);
 
   template <>
   streamTag device_t<CUDA>::tagStream();
@@ -254,22 +256,25 @@ namespace occa {
   double device_t<CUDA>::timeBetween(const streamTag &startTag, const streamTag &endTag);
 
   template <>
+  std::string device_t<CUDA>::fixBinaryName(const std::string &filename);
+
+  template <>
   kernel_v* device_t<CUDA>::buildKernelFromSource(const std::string &filename,
-                                                  const std::string &functionName_,
+                                                  const std::string &functionName,
                                                   const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<CUDA>::buildKernelFromBinary(const std::string &filename,
-                                                  const std::string &functionName_);
+                                                  const std::string &functionName);
 
   template <>
   void device_t<CUDA>::cacheKernelInLibrary(const std::string &filename,
-                                            const std::string &functionName_,
+                                            const std::string &functionName,
                                             const kernelInfo &info_);
 
   template <>
   kernel_v* device_t<CUDA>::loadKernelFromLibrary(const char *cache,
-                                                  const std::string &functionName_);
+                                                  const std::string &functionName);
 
   template <>
   memory_v* device_t<CUDA>::wrapMemory(void *handle_,

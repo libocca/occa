@@ -66,6 +66,11 @@ namespace occa {
   kernel_t<HSA>::~kernel_t(){}
 
   template <>
+  std::string kernel_t<HSA>::fixBinaryName(const std::string &filename){
+    return filename;
+  }
+
+  template <>
   std::string kernel_t<HSA>::getCachedBinaryName(const std::string &filename,
                                                  kernelInfo &info_){}
 
@@ -81,6 +86,10 @@ namespace occa {
   template <>
   kernel_t<HSA>* kernel_t<HSA>::loadFromLibrary(const char *cache,
                                                 const std::string &functionName){}
+
+  template <>
+  uintptr_t kernel_t<HSA>::maximumInnerDimSize(){
+  }
 
   template <>
   int kernel_t<HSA>::preferredDimSize(){}
@@ -177,7 +186,9 @@ namespace occa {
   void device_t<HSA>::setup(argInfoMap &aim){}
 
   template <>
-  void device_t<HSA>::addOccaHeadersToInfo(kernelInfo &info_){}
+  void device_t<HSA>::addOccaHeadersToInfo(kernelInfo &info_){
+    info_.mode = HSA;
+  }
 
   template <>
   std::string device_t<HSA>::getInfoSalt(const kernelInfo &info_){}
@@ -213,13 +224,13 @@ namespace occa {
   void device_t<HSA>::waitFor(streamTag tag){}
 
   template <>
-  stream device_t<HSA>::createStream(){}
+  stream_t device_t<HSA>::createStream(){}
 
   template <>
-  void device_t<HSA>::freeStream(stream s){}
+  void device_t<HSA>::freeStream(stream_t s){}
 
   template <>
-  stream device_t<HSA>::wrapStream(void *handle_){}
+  stream_t device_t<HSA>::wrapStream(void *handle_){}
 
   template <>
   streamTag device_t<HSA>::tagStream(){}

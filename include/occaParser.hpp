@@ -2,7 +2,7 @@
 #define OCCA_PARSER_HEADER
 
 #include "occaParserDefines.hpp"
-#include "occaParserMacro.hpp"
+#include "occaParserPreprocessor.hpp"
 #include "occaParserTools.hpp"
 #include "occaParserNodes.hpp"
 #include "occaParserTypes.hpp"
@@ -14,35 +14,53 @@ namespace occa {
   namespace parserNS {
     class occaLoopInfo;
 
+    extern intVector_t loadedLanguageVec;
+
+    int loadedLanguage();
+
+    void pushLanguage(const int language);
+    int popLanguage();
+
     class parserBase {
     public:
       std::string filename;
 
-      bool parsingC;
+      int parsingLanguage;
+
+      strToStrMap_t compilerFlags;
 
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
 
       bool macrosAreInitialized;
 
-      varUsedMap_t varUpdateMap;
-      varUsedMap_t varUsedMap;     // Statements are placed backwards
+      varOriginMap_t varOriginMap;
 
       kernelInfoMap_t kernelInfoMap;
 
       statement *globalScope;
 
-      //---[ Warnings ]-----------------
+      //---[ Flags ]--------------------
+      int cpuMode;
+      bool magicEnabled;
+
+      // Warnings
       bool warnForMissingBarriers;
       bool warnForBarrierConditionals;
-      bool magicEnabled;
       //================================
 
       parserBase();
       inline ~parserBase(){}
 
-      const std::string parseFile(const std::string &filename,
-                                  const bool parsingC_ = true);
+      inline const std::string parseFile(const std::string &filename_,
+                                         const strToStrMap_t &compilerFlags_ = strToStrMap_t()){
+
+        return parseFile("", filename_, compilerFlags_);
+      }
+
+      const std::string parseFile(const std::string &header,
+                                  const std::string &filename,
+                                  const strToStrMap_t &compilerFlags_ = strToStrMap_t());
 
       const std::string parseSource(const char *cRoot);
 
@@ -50,26 +68,26 @@ namespace occa {
       std::string getMacroName(const char *&c);
       std::string getMacroIncludeFile(const char *&c);
 
-      typeHolder evaluateMacroStatement(const char *&c);
-      bool evaluateMacroBoolStatement(const char *&c);
-      static typeHolder evaluateLabelNode(strNode *labelNodeRoot);
+      typeHolder evaluateMacroStatement(const char *c);
+      bool evaluateMacroBoolStatement(const char *c);
 
       void loadMacroInfo(macroInfo &info, const char *&c);
 
-      int loadMacro(strNode *nodePos, const int state = doNothing);
+      int loadMacro(expNode &allExp, int leafPos, const int state = doNothing);
       int loadMacro(const std::string &line, const int state = doNothing);
-      int loadMacro(strNode *nodePos, const std::string &line, const int state = doNothing);
+      int loadMacro(expNode &allExp, int leafPos, const std::string &line, const int state = doNothing);
 
       void applyMacros(std::string &line);
 
-      strNode* preprocessMacros(strNode *nodeRoot);
+      void preprocessMacros(expNode &allExp);
 
-      strNode* splitAndPreprocessContent(const std::string &s);
-      strNode* splitAndPreprocessContent(const char *cRoot);
-      strNode* splitAndPreprocessFortranContent(const char *cRoot);
+      expNode splitAndPreprocessContent(const std::string &s,
+                                        const int parsingLanguage_ = parserInfo::parsingC);
+      expNode splitAndPreprocessContent(const char *cRoot,
+                                        const int parsingLanguage_ = parserInfo::parsingC);
       //====================================
 
-      void initMacros(const bool parsingC = true);
+      void initMacros(const int parsingLanguage_ = parserInfo::parsingC);
       void initFortranMacros();
 
       void loadLanguageTypes();
@@ -80,15 +98,9 @@ namespace occa {
       void applyToAllKernels(statement &s,
                              applyToAllStatements_t func);
 
-      void applyToStatementsDefiningVar(applyToStatementsDefiningVar_t func);
-
-      void applyToStatementsUsingVar(varInfo &info,
-                                     applyToStatementsUsingVar_t func);
-
       static bool statementIsAKernel(statement &s);
 
       static statement* getStatementKernel(statement &s);
-      statement* getStatementOuterMostLoop(statement &s);
 
       bool statementKernelUsesNativeOCCA(statement &s);
 
@@ -96,12 +108,14 @@ namespace occa {
 
       bool statementKernelUsesNativeLanguage(statement &s);
 
-      void addOccaForCounter(statement &s,
-                             const std::string &ioLoop,
-                             const std::string &loopNest,
-                             const std::string &loopIters = "");
+
+      void updateOccaOMLoopAttributes(statement &s,
+                                      const std::string &loopTag,
+                                      const std::string &loopNest);
 
       void setupOccaFors(statement &s);
+
+      void removeIntraLoopDepsFromIterExp(statement &s);
 
       bool statementIsOccaOuterFor(statement &s);
       bool statementIsOccaInnerFor(statement &s);
@@ -113,17 +127,33 @@ namespace occa {
 
       bool statementHasOccaStuff(statement &s);
 
+      //   ---[ Loop Reordering ]-------
+      void reorderLoops();
+
+      void reorderLoops(statementVector_t &loopsToReorder,
+                        const int start,
+                        const int end);
+
+      intVector_t relatedReorderLoops(statementVector_t &loopsToReorder,
+                                      const int start,
+                                      const int end);
+
+      void placeLoopsToReorder(statement &s,
+                               statementVector_t &loopsToReorder);
+      //   =============================
+
+      void retagOccaLoops();
+      void retagOccaLoops(statement &s);
+
       void splitTileOccaFors(statement &s);
 
       void markKernelFunctions();
+
       void labelNativeKernels();
 
       void setupCudaVariables(statement &s);
 
       void addFunctionPrototypes();
-
-      int statementOccaForNest(statement &s);
-      bool statementIsAnOccaFor(statement &s);
 
       void checkOccaBarriers(statement &s);
       void addOccaBarriers();
@@ -135,11 +165,8 @@ namespace occa {
 
       void updateConstToConstant();
 
-      strNode* occaExclusiveStrNode(varInfo &info,
-                                    const int depth,
-                                    const int sideDepth);
-
       void addArgQualifiers();
+      void addArgQualifiersTo(statement &s);
 
       void floatSharedAndExclusivesUp(statement &s);
       statementNode* appendSharedAndExclusives(statement &s,
@@ -150,40 +177,61 @@ namespace occa {
 
       void modifyTextureVariables();
 
+      //   ---[ Load Kernels ]----------
+      void loadKernelInfos();
+
       statementNode* splitKernelStatement(statementNode *snKernel,
                                           kernelInfo &info);
 
-      statementNode* getOuterLoopsInStatement(statement &s);
-      statementNode* getOccaLoopsInStatement(statement &s,
-                                             const bool getNestedLoops = true);
+      statementVector_t findOuterLoopSets(statement &sKernel);
+      void findOuterLoopSets(statement &s, statementVector_t &omLoops);
 
-      int kernelCountInOccaLoops(statementNode *occaLoops);
+      statementVector_t findOccaLoops(statement &sKernel);
+      void findOccaLoops(statement &s, statementVector_t &occaLoops);
+
+      varOriginMap_t findKernelDependenciesFor(statement &sKernel,
+                                               statement &omLoop);
+
+      varOriginMap_t findDependenciesFor(statement &s,
+                                         const int flags = parserInfo::checkSubStatements);
+
+      void findDependenciesFor(statement &s,
+                               varOriginMap_t &deps,
+                               const int flags = parserInfo::checkSubStatements);
+
+      varOriginMap_t findDependenciesFor(expNode &e);
+
+      void findDependenciesFor(expNode &e,
+                               varOriginMap_t &deps);
+
+      statementVector_t newKernelsFromLoops(statement &sKernel,
+                                            statementVector_t &omLoops,
+                                            varOriginMapVector_t &varDeps);
+
+      void addDepStatementsToKernel(statement &sKernel,
+                                    varOriginMap_t &deps);
+
+      void addDepsToKernelArguments(statement &sKernel,
+                                    varOriginMap_t &deps);
+
+      statement& launchStatementForKernel(statement &sKernel,
+                                          statement &omLoop,
+                                          const int newKernelPos,
+                                          varInfo &newKernelVar);
+
+      void storeKernelInfo(kernelInfo &info,
+                           statement &sKernel,
+                           statementVector_t &newKernels);
 
       void zeroOccaIdsFrom(statement &s);
+      void zeroOccaIdsFrom(expNode &e);
 
-      statementNode* createNestedKernelsFromLoops(statementNode *snKernel,
-                                                  kernelInfo &info,
-                                                  statementNode *outerLoopRoot);
-
-      std::string getNestedKernelArgsFromLoops(statement &sKernel);
-
-      void setupHostKernelArgsFromLoops(statement &sKernel);
-
-      void loadKernelInfos();
-
-      void stripOccaFromKernel(statement &s);
-
-      std::string occaScope(statement &s);
-
-      void incrementDepth(statement &s);
-
-      void decrementDepth(statement &s);
-
-      statementNode* findStatementWith(statement &s,
-                                       findStatementWith_t func);
+      void addNestedKernelArgTo(statement &sKernel);
+      //   =============================
 
       static int getKernelOuterDim(statement &s);
       static int getKernelInnerDim(statement &s);
+      static int getKernelDimFor(statement &s, const std::string &tag);
 
       int getOuterMostForDim(statement &s);
       int getInnerMostForDim(statement &s);
@@ -210,6 +258,28 @@ namespace occa {
       void addOccaFors();
 
       void setupOccaVariables(statement &s);
+
+      //---[ Operator Information ]---------------
+      varInfo* hasOperator(const info_t expInfo,
+                           const std::string &op,
+                           varInfo &var);
+
+      varInfo* hasOperator(const info_t expInfo,
+                           const std::string &op,
+                           varInfo &varL,
+                           varInfo &varR);
+
+      varInfo thVarInfo(const info_t thType);
+
+      varInfo thOperatorReturnType(const info_t expInfo,
+                                   const std::string &op,
+                                   const info_t thType);
+
+      varInfo thOperatorReturnType(const info_t expInfo,
+                                   const std::string &op,
+                                   const info_t thTypeL,
+                                   const info_t thTypeR);
+      //==========================================
     };
 
     bool isAnOccaID(const std::string &s);
@@ -222,34 +292,49 @@ namespace occa {
     bool isAnOccaOuterDim(const std::string &s);
     bool isAnOccaGlobalDim(const std::string &s);
 
-    strNode* splitContent(const std::string &str, const bool parsingC = true);
-    strNode* splitContent(const char *cRoot, const bool parsingC = true);
+    expNode splitContent(const std::string &str,
+                         const int parsingLanguage_ = parserInfo::parsingC);
+    expNode splitContent(const char *cRoot,
+                         const int parsingLanguage_ = parserInfo::parsingC);
 
-    bool checkWithLeft(strNode *nodePos,
-                       const std::string &leftValue,
-                       const std::string &rightValue,
-                       const bool parsingC = true);
+    expNode splitAndLabelContent(const std::string &str,
+                                 const int parsingLanguage_ = parserInfo::parsingC);
+    expNode splitAndLabelContent(const char *cRoot,
+                                 const int parsingLanguage_ = parserInfo::parsingC);
+    expNode splitAndOrganizeContent(const std::string &str,
+                                    const int parsingLanguage_ = parserInfo::parsingC);
+    expNode splitAndOrganizeContent(const char *cRoot,
+                                    const int parsingLanguage_ = parserInfo::parsingC);
 
-    void mergeNodeWithLeft(strNode *&nodePos,
+    expNode& labelCode(expNode &allExp,
+                       const int parsingLanguage_ = parserInfo::parsingC);
+
+    bool checkLastTwoNodes(expNode &node,
+                           const std::string &leftValue,
+                           const std::string &rightValue,
+                           const int parsingLanguage_ = parserInfo::parsingC);
+
+    void mergeLastTwoNodes(expNode &node,
                            const bool addSpace = true,
-                           const bool parsingC = true);
+                           const int parsingLanguage_ = parserInfo::parsingC);
 
-    strNode* labelCode(strNode *lineNodeRoot, const bool parsingC = true);
+    expNode createExpNodeFrom(const std::string &source);
+    expNode createOrganizedExpNodeFrom(const std::string &source);
 
-    void initKeywords(const bool parsingC = true);
+    void loadKeywords(const int parsingLanguage_ = parserInfo::parsingC);
+    void loadCKeywords();
+    void loadFortranKeywords();
+    void initCKeywords();
     void initFortranKeywords();
-    //==============================================
 
     //---[ OCCA Loop Info ]-------------
     class occaLoopInfo {
     public:
       statement *sInfo;
-      bool parsingC;
-
-      occaLoopInfo();
+      int parsingLanguage;
 
       occaLoopInfo(statement &s,
-                   const bool parsingC_ = true,
+                   const int parsingLanguage_ = parserInfo::parsingC,
                    const std::string &tag = "");
 
       void lookForLoopFrom(statement &s,
@@ -259,8 +344,7 @@ namespace occa {
                            std::string *innerIters,
                            std::string *outerIters);
 
-      void getLoopInfo(std::string &ioLoopVar,
-                       std::string &ioLoop,
+      void getLoopInfo(std::string &loopTag,
                        std::string &loopNest);
 
       void getLoopNode1Info(std::string &iter,
@@ -278,6 +362,7 @@ namespace occa {
       std::string getSetupExpression();
     };
     //==================================
+    //==============================================
   };
 
   // Just to ignore the namespace

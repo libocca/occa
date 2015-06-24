@@ -51,19 +51,9 @@ int main(int argc, char **argv){
   o_a.copyFrom(a);
   o_b.copyFrom(b);
 
-  occa::initTimer(device);
-
-  occa::tic("addVectors");
-
   addVectors(entries, o_a, o_b, o_ab);
 
-  double elapsedTime = occa::toc("addVectors", addVectors);
-
   o_ab.copyTo(ab);
-
-  std::cout<<"Elapsed time = " << elapsedTime << " s" << std::endl;
-
-  occa::printTimer();
 
   for(int i = 0; i < 5; ++i)
     std::cout << i << ": " << ab[i] << '\n';

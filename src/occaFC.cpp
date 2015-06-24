@@ -152,6 +152,8 @@
 #define  OCCADEVICESTREAMFREE_FC         OCCA_F2C_GLOBAL_(occadevicestreamfree_fc       , OCCADEVICESTREAMFREE_FC)
 #define  OCCADEVICEFREE_FC               OCCA_F2C_GLOBAL_(occadevicefree_fc             , OCCADEVICEFREE_FC)
 #define  OCCAKERNELMODE_FC               OCCA_F2C_GLOBAL_(occakernelmode_fc             , OCCAKERNELMODE_FC)
+#define  OCCAKERNELNAME_FC               OCCA_F2C_GLOBAL_(occakernelname_fc             , OCCAKERNELNAME_FC)
+#define  OCCAKERNELGETDEVICE_FC          OCCA_F2C_GLOBAL_(occakernelgetdevice_fc        , OCCAKERNELGETDEVICE_FC)
 #define  OCCAKERNELPREFERREDDIMSIZE_FC   OCCA_F2C_GLOBAL_(occakernelpreferreddimsize_fc , OCCAKERNELPREFERREDDIMSIZE_FC)
 // #define  OCCAKERNELSETWORKINGDIMS_FC     OCCA_F2C_GLOBAL_(occakernelsetworkingdims_fc   , OCCAKERNELSETWORKINGDIMS_FC)
 #define  OCCAKERNELSETALLWORKINGDIMS_FC  OCCA_F2C_GLOBAL_(occakernelsetallworkingdims_fc, OCCAKERNELSETALLWORKINGDIMS_FC)
@@ -630,8 +632,18 @@ extern "C" {
 
 
   //---[ Kernel ]-----------------------
-  const char* OCCAKERNELMODE_FC(occaKernel* kernel){ //[-]
-    return occaKernelMode(kernel);
+  const char* OCCAKERNELMODE_FC(occaKernel *kernel){ //[-]
+    return occaKernelMode(*kernel);
+  }
+
+  const char* OCCAKERNELNAME_FC(occaKernel *kernel){ //[-]
+    return occaKernelName(*kernel);
+  }
+
+  void OCCAKERNELGETDEVICE_FC(occaDevice *device,
+                              occaKernel *kernel){
+
+    *device = occaKernelGetDevice(*kernel);
   }
 
   void OCCAKERNELPREFERREDDIMSIZE_FC(int32_t *sz, occaKernel *kernel){

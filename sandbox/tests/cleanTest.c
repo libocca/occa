@@ -139,7 +139,7 @@
 #define __core2__ 1
 #define __tune_core2__ 1
 #define __LITTLE_ENDIAN__ 1
-#define __REGISTER_PREFIX__ 
+#define __REGISTER_PREFIX__
 #define __NO_MATH_INLINES 1
 #define __GCC_HAVE_SYNC_COMPARE_AND_SWAP_16 1
 #define __SSSE3__ 1
@@ -159,8 +159,8 @@
 #define OBJC_NEW_PROPERTIES 1
 #define __apple_build_version__ 5030040
 #define __weak __attribute__((objc_gc(weak)))
-#define __strong 
-#define __unsafe_unretained 
+#define __strong
+#define __unsafe_unretained
 #define __DYNAMIC__ 1
 #define __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__ 1090
 #define __STDC__ 1
@@ -169,10 +169,10 @@
 #define __STDC_UTF_16__ 1
 #define __STDC_UTF_32__ 1
 
-#define _STDLIB_H_ 
+#define _STDLIB_H_
 
 
-#define __AVAILABILITY__ 
+#define __AVAILABILITY__
 #define __MAC_10_0 1000
 #define __MAC_10_1 1010
 #define __MAC_10_2 1020
@@ -203,14 +203,14 @@
 
 
 
-#define __AVAILABILITY_INTERNAL__ 
+#define __AVAILABILITY_INTERNAL__
 #define __AVAILABILITY_INTERNAL_DEPRECATED __attribute__((deprecated))
 
 
 #define __AVAILABILITY_INTERNAL_DEPRECATED_MSG(_msg) __attribute__((deprecated(_msg)))
 #define __AVAILABILITY_INTERNAL_UNAVAILABLE __attribute__((unavailable))
 #define __AVAILABILITY_INTERNAL_WEAK_IMPORT __attribute__((weak_import))
-#define __AVAILABILITY_INTERNAL_REGULAR 
+#define __AVAILABILITY_INTERNAL_REGULAR
 #define __MAC_OS_X_VERSION_MIN_REQUIRED __ENVIRONMENT_MAC_OS_X_VERSION_MIN_REQUIRED__
 
 
@@ -588,20 +588,20 @@
 
 #define __OSX_AVAILABLE_BUT_DEPRECATED_MSG(_osxIntro,_osxDep,_iosIntro,_iosDep,_msg) __AVAILABILITY_INTERNAL##_osxIntro##_DEP##_osxDep##_MSG(_msg)
 
-#define __TYPES_H_ 
+#define __TYPES_H_
 
 
-#define _SYS__TYPES_H_ 
+#define _SYS__TYPES_H_
 
 
-#define _CDEFS_H_ 
+#define _CDEFS_H_
 
 
 
 
 
-#define __BEGIN_DECLS 
-#define __END_DECLS 
+#define __BEGIN_DECLS
+#define __END_DECLS
 #define __P(protos) protos
 #define __CONCAT(x,y) x ## y
 #define __STRING(x) #x
@@ -631,8 +631,8 @@
 
 
 
-#define __dead 
-#define __pure 
+#define __dead
+#define __pure
 #define __restrict restrict
 #define __header_inline inline
 #define __header_always_inline __header_inline __attribute__ ((__always_inline__))
@@ -661,7 +661,7 @@
 
 
 
-#define __FBSDID(s) 
+#define __FBSDID(s)
 
 
 
@@ -693,10 +693,10 @@
 
 
 
-#define __DARWIN_SUF_UNIX03 
+#define __DARWIN_SUF_UNIX03
 #define __DARWIN_SUF_64_BIT_INO_T "$INODE64"
 #define __DARWIN_SUF_1050 "$1050"
-#define __DARWIN_SUF_NON_CANCELABLE 
+#define __DARWIN_SUF_NON_CANCELABLE
 #define __DARWIN_SUF_EXTSN "$DARWIN_EXTSN"
 
 
@@ -720,91 +720,91 @@
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_2(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_2_2(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_2(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_3_2(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_2(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_2(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_3(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_4_3(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_5_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_0(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_1(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_6_1(x)
 
 
 
 
 
-#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_7_0(x) 
+#define __DARWIN_ALIAS_STARTING_IPHONE___IPHONE_7_0(x)
 
 
 
@@ -868,43 +868,43 @@
 
 
 #define __DARWIN_ALIAS_STARTING(_mac,_iphone,x) __DARWIN_ALIAS_STARTING_MAC_##_mac(x)
-#define ___POSIX_C_DEPRECATED_STARTING_198808L 
+#define ___POSIX_C_DEPRECATED_STARTING_198808L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199009L 
+#define ___POSIX_C_DEPRECATED_STARTING_199009L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199209L 
+#define ___POSIX_C_DEPRECATED_STARTING_199209L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199309L 
+#define ___POSIX_C_DEPRECATED_STARTING_199309L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_199506L 
+#define ___POSIX_C_DEPRECATED_STARTING_199506L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_200112L 
+#define ___POSIX_C_DEPRECATED_STARTING_200112L
 
 
 
 
 
-#define ___POSIX_C_DEPRECATED_STARTING_200809L 
+#define ___POSIX_C_DEPRECATED_STARTING_200809L
 
 #define __POSIX_C_DEPRECATED(ver) ___POSIX_C_DEPRECATED_STARTING_##ver
 
@@ -943,11 +943,11 @@
 
 
 #define __XNU_PRIVATE_EXTERN __attribute__((visibility("hidden")))
-#define _BSD_MACHINE__TYPES_H_ 
+#define _BSD_MACHINE__TYPES_H_
 
 
 
-#define _BSD_I386__TYPES_H_ 
+#define _BSD_I386__TYPES_H_
 
 
 
@@ -1131,7 +1131,7 @@ typedef __uint32_t __darwin_wctype_t;
 
 #define _FORTIFY_SOURCE 2
 
-#define _SYS_WAIT_H_ 
+#define _SYS_WAIT_H_
 typedef enum {
  P_ALL,
  P_PID,
@@ -1143,41 +1143,41 @@ typedef enum {
 
 
 
-#define _PID_T 
+#define _PID_T
 typedef __darwin_pid_t pid_t;
-#define _ID_T 
+#define _ID_T
 typedef __darwin_id_t id_t;
-#define _SYS_SIGNAL_H_ 
+#define _SYS_SIGNAL_H_
 
 
 
-#define __SYS_APPLEAPIOPTS_H__ 
+#define __SYS_APPLEAPIOPTS_H__
 
 
 
-#define __APPLE_API_STANDARD 
+#define __APPLE_API_STANDARD
 
 
 
-#define __APPLE_API_STABLE 
+#define __APPLE_API_STABLE
 
 
 
 
 
-#define __APPLE_API_EVOLVING 
+#define __APPLE_API_EVOLVING
 
 
 
-#define __APPLE_API_UNSTABLE 
+#define __APPLE_API_UNSTABLE
 
 
 
-#define __APPLE_API_PRIVATE 
+#define __APPLE_API_PRIVATE
 
 
 
-#define __APPLE_API_OBSOLETE 
+#define __APPLE_API_OBSOLETE
 
 #define __DARWIN_NSIG 32
 
@@ -1186,7 +1186,7 @@ typedef __darwin_id_t id_t;
 
 
 
-#define _BSD_MACHINE_SIGNAL_H_ 
+#define _BSD_MACHINE_SIGNAL_H_
 
 
 
@@ -1248,11 +1248,11 @@ typedef int sig_atomic_t;
 #define SIG_IGN (void (*)(int))1
 #define SIG_HOLD (void (*)(int))5
 #define SIG_ERR ((void (*)(int))-1)
-#define __I386_MCONTEXT_H_ 
+#define __I386_MCONTEXT_H_
 
 
 
-#define _MACH_I386__STRUCTS_H_ 
+#define _MACH_I386__STRUCTS_H_
 #define _STRUCT_X86_THREAD_STATE32 struct __darwin_i386_thread_state
 struct __darwin_i386_thread_state
 {
@@ -1632,7 +1632,7 @@ struct __darwin_mcontext_avx64
  struct __darwin_x86_thread_state64 __ss;
  struct __darwin_x86_avx_state64 __fs;
 };
-#define _MCONTEXT_T 
+#define _MCONTEXT_T
 
 typedef struct __darwin_mcontext64 *mcontext_t;
 #define _STRUCT_MCONTEXT _STRUCT_MCONTEXT64
@@ -1669,13 +1669,13 @@ struct __darwin_ucontext
 typedef struct __darwin_ucontext ucontext_t;
 
 
-#define _PTHREAD_ATTR_T 
+#define _PTHREAD_ATTR_T
 typedef __darwin_pthread_attr_t pthread_attr_t;
-#define _SIGSET_T 
+#define _SIGSET_T
 typedef __darwin_sigset_t sigset_t;
-#define _SIZE_T 
+#define _SIZE_T
 typedef __darwin_size_t size_t;
-#define _UID_T 
+#define _UID_T
 typedef __darwin_uid_t uid_t;
 
 union sigval {
@@ -1885,7 +1885,7 @@ struct sigstack {
 
 #define BADSIG SIG_ERR
 void (*signal(int, void (*)(int)))(int);
-#define _SYS_RESOURCE_H_ 
+#define _SYS_RESOURCE_H_
 
 
 
@@ -1893,14 +1893,14 @@ void (*signal(int, void (*)(int)))(int);
 
 
 
-#define __CLANG_STDINT_H 
+#define __CLANG_STDINT_H
 
 
 
 
 
 
-#define _STDINT_H_ 
+#define _STDINT_H_
 
 
 #define __WORDSIZE 64
@@ -1912,22 +1912,22 @@ void (*signal(int, void (*)(int)))(int);
 
 
 
-#define _INT8_T 
+#define _INT8_T
 typedef signed char int8_t;
-#define _INT16_T 
+#define _INT16_T
 typedef short int16_t;
-#define _INT32_T 
+#define _INT32_T
 typedef int int32_t;
-#define _INT64_T 
+#define _INT64_T
 typedef long long int64_t;
 
-#define _UINT8_T 
+#define _UINT8_T
 typedef unsigned char uint8_t;
-#define _UINT16_T 
+#define _UINT16_T
 typedef unsigned short uint16_t;
-#define _UINT32_T 
+#define _UINT32_T
 typedef unsigned int uint32_t;
-#define _UINT64_T 
+#define _UINT64_T
 typedef unsigned long long uint64_t;
 
 
@@ -1956,17 +1956,17 @@ typedef uint64_t uint_fast64_t;
 
 
 
-#define _INTPTR_T 
+#define _INTPTR_T
 typedef __darwin_intptr_t intptr_t;
-#define _UINTPTR_T 
+#define _UINTPTR_T
 typedef unsigned long uintptr_t;
 
 
 
-#define _INTMAX_T 
+#define _INTMAX_T
 
 typedef long int intmax_t;
-#define _UINTMAX_T 
+#define _UINTMAX_T
 
 typedef long unsigned int uintmax_t;
 
@@ -1997,7 +1997,6 @@ typedef long unsigned int uintmax_t;
 #define UINT16_MAX 65535
 #define UINT32_MAX 4294967295U
 #define UINT64_MAX 18446744073709551615ULL
-
 
 #define INT_LEAST8_MIN INT8_MIN
 #define INT_LEAST16_MIN INT16_MIN
@@ -2359,11 +2358,11 @@ int setrlimit(int, const struct rlimit *) __asm("_" "setrlimit") ;
 #define WAIT_MYPGRP 0
 
 
-#define _BSD_MACHINE_ENDIAN_H_ 
+#define _BSD_MACHINE_ENDIAN_H_
 
 
 
-#define _I386__ENDIAN_H_ 
+#define _I386__ENDIAN_H_
 #define _QUAD_HIGHWORD 1
 #define _QUAD_LOWWORD 0
 
@@ -2386,8 +2385,8 @@ int setrlimit(int, const struct rlimit *) __asm("_" "setrlimit") ;
 #define BYTE_ORDER __DARWIN_BYTE_ORDER
 
 
-#define _SYS__ENDIAN_H_ 
-#define _OS__OSBYTEORDER_H 
+#define _SYS__ENDIAN_H_
+#define _OS__OSBYTEORDER_H
 #define __DARWIN_OSSwapConstInt16(x) ((__uint16_t)((((__uint16_t)(x) & 0xff00) >> 8) | (((__uint16_t)(x) & 0x00ff) << 8)))
 
 
@@ -2399,7 +2398,7 @@ int setrlimit(int, const struct rlimit *) __asm("_" "setrlimit") ;
 
 
 #define __DARWIN_OSSwapConstInt64(x) ((__uint64_t)((((__uint64_t)(x) & 0xff00000000000000ULL) >> 56) | (((__uint64_t)(x) & 0x00ff000000000000ULL) >> 40) | (((__uint64_t)(x) & 0x0000ff0000000000ULL) >> 24) | (((__uint64_t)(x) & 0x000000ff00000000ULL) >> 8) | (((__uint64_t)(x) & 0x00000000ff000000ULL) << 8) | (((__uint64_t)(x) & 0x0000000000ff0000ULL) << 24) | (((__uint64_t)(x) & 0x000000000000ff00ULL) << 40) | (((__uint64_t)(x) & 0x00000000000000ffULL) << 56)))
-#define _OS__OSBYTEORDERI386_H 
+#define _OS__OSBYTEORDERI386_H
 
 
 
@@ -2517,7 +2516,7 @@ int waitid(idtype_t, id_t, siginfo_t *, int) __asm("_" "waitid") ;
 pid_t wait3(int *, int, struct rusage *);
 pid_t wait4(pid_t, int *, int, struct rusage *);
 
-#define _ALLOCA_H_ 
+#define _ALLOCA_H_
 
 
 
@@ -2541,13 +2540,13 @@ void *alloca(size_t);
 
 
 
-#define _CT_RUNE_T 
+#define _CT_RUNE_T
 typedef __darwin_ct_rune_t ct_rune_t;
-#define _RUNE_T 
+#define _RUNE_T
 typedef __darwin_rune_t rune_t;
 
 
-#define _WCHAR_T 
+#define _WCHAR_T
 typedef __darwin_wchar_t wchar_t;
 
 typedef struct {
@@ -2687,11 +2686,11 @@ int unsetenv(const char *) __asm("_" "unsetenv") ;
 
 
 
-#define _BSD_MACHINE_TYPES_H_ 
+#define _BSD_MACHINE_TYPES_H_
 
 
 
-#define _MACHTYPES_H_ 
+#define _MACHTYPES_H_
 typedef unsigned char u_int8_t;
 typedef unsigned short u_int16_t;
 typedef unsigned int u_int32_t;
@@ -2718,9 +2717,9 @@ typedef u_int64_t syscall_arg_t;
 
 #define __offsetof(type,field) ((size_t)(&((type *)0)->field))
 
-#define _DEV_T 
+#define _DEV_T
 typedef __darwin_dev_t dev_t;
-#define _MODE_T 
+#define _MODE_T
 typedef __darwin_mode_t mode_t;
 
 u_int32_t arc4random(void);
@@ -2730,9 +2729,9 @@ void arc4random_stir(void);
 u_int32_t
   arc4random_uniform(u_int32_t ) __attribute__((availability(macosx,introduced=10.7)));
 
-int atexit_b(void (^)(void)) __attribute__((availability(macosx,introduced=10.6)));
-void *bsearch_b(const void *, const void *, size_t,
-     size_t, int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* int atexit_b(void (^)(void)) __attribute__((availability(macosx,introduced=10.6))); */
+/* void *bsearch_b(const void *, const void *, size_t, */
+/*      size_t, int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
 
 
@@ -2758,26 +2757,26 @@ const char
 int heapsort(void *, size_t, size_t,
      int (*)(const void *, const void *));
 
-int heapsort_b(void *, size_t, size_t,
-     int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* int heapsort_b(void *, size_t, size_t, */
+/*      int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
-int mergesort(void *, size_t, size_t,
-     int (*)(const void *, const void *));
+/* int mergesort(void *, size_t, size_t, */
+/*      int (*)(const void *, const void *)); */
 
-int mergesort_b(void *, size_t, size_t,
-     int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* int mergesort_b(void *, size_t, size_t, */
+/*      int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
-void psort(void *, size_t, size_t,
-     int (*)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* void psort(void *, size_t, size_t, */
+/*      int (*)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
-void psort_b(void *, size_t, size_t,
-     int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* void psort_b(void *, size_t, size_t, */
+/*      int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
-void psort_r(void *, size_t, size_t, void *,
-     int (*)(void *, const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* void psort_r(void *, size_t, size_t, void *, */
+/*      int (*)(void *, const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
-void qsort_b(void *, size_t, size_t,
-     int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6)));
+/* void qsort_b(void *, size_t, size_t, */
+/*      int (^)(const void *, const void *)) __attribute__((availability(macosx,introduced=10.6))); */
 
 void qsort_r(void *, size_t, size_t, void *,
      int (*)(void *, const void *, const void *));
@@ -2797,15 +2796,15 @@ unsigned long long
 
 extern char *suboptarg;
 void *valloc(size_t);
-#define _STDIO_H_ 
-#define _VA_LIST_T 
+#define _STDIO_H_
+#define _VA_LIST_T
 typedef __darwin_va_list va_list;
 
 
 
 typedef __darwin_off_t fpos_t;
 
-#define _FSTDIO 
+#define _FSTDIO
 
 
 
@@ -3028,7 +3027,7 @@ char *tempnam(const char *, const char *) __asm("_" "tempnam") ;
 
 #define getchar_unlocked() getc_unlocked(stdin)
 #define putchar_unlocked(x) putc_unlocked(x, stdout)
-#define _OFF_T 
+#define _OFF_T
 typedef __darwin_off_t off_t;
 
 
@@ -3044,7 +3043,7 @@ int vfscanf(FILE * restrict, const char * restrict, va_list) __attribute__((__fo
 int vscanf(const char * restrict, va_list) __attribute__((__format__ (__scanf__, 1, 0)));
 int vsnprintf(char * restrict, size_t, const char * restrict, va_list) __attribute__((__format__ (__printf__, 3, 0)));
 int vsscanf(const char * restrict, const char * restrict, va_list) __attribute__((__format__ (__scanf__, 2, 0)));
-#define _SSIZE_T 
+#define _SSIZE_T
 typedef __darwin_ssize_t ssize_t;
 
 
@@ -3082,10 +3081,10 @@ FILE *funopen(const void *,
 #define ferror_unlocked(p) __sferror(p)
 #define clearerr_unlocked(p) __sclearerr(p)
 #define fileno_unlocked(p) __sfileno(p)
-#define _SECURE__STDIO_H_ 
+#define _SECURE__STDIO_H_
 
 
-#define _SECURE__COMMON_H_ 
+#define _SECURE__COMMON_H_
 
 #undef _USE_FORTIFY_LEVEL
 
@@ -3139,3 +3138,5 @@ int main(int argc, char **argv){
 
   return 0;
 }
+
+#endif

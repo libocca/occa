@@ -51,19 +51,9 @@ int main(int argc, char **argv){
 
   o_a.copyFrom(a);
 
-  occa::initTimer(device);
-
-  occa::tic("reduction");
-
   reduction(entries, o_a, o_aRed);
 
-  double elapsedTime = occa::toc("reduction", reduction);
-
   o_aRed.copyTo(aRed);
-
-  std::cout << "Elapsed time = " << elapsedTime << " s" << std::endl;
-
-  occa::printTimer();
 
   for(int i = 1; i < reducedEntries; ++i)
     aRed[0] += aRed[i];

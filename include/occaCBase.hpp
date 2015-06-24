@@ -223,8 +223,12 @@ extern "C" {
 
   //---[ Kernel ]-----------------------
   OCCA_LFUNC const char* OCCA_RFUNC occaKernelMode(occaKernel kernel);
+  OCCA_LFUNC const char* OCCA_RFUNC occaKernelName(occaKernel kernel);
 
-  OCCA_LFUNC int OCCA_RFUNC occaKernelPreferredDimSize(occaKernel kernel);
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel);
+
+  OCCA_LFUNC uintptr_t OCCA_RFUNC occaKernelMaximumInnerDimSize(occaKernel kernel);
+  OCCA_LFUNC int       OCCA_RFUNC occaKernelPreferredDimSize(occaKernel kernel);
 
   OCCA_LFUNC void OCCA_RFUNC occaKernelSetWorkingDims(occaKernel kernel,
                                                       int dims,

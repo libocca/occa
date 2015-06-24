@@ -6,9 +6,6 @@
 
 namespace occa {
   //---[ Helper Functions ]-----------------------
-  std::string obfuscate(const std::string s1);
-  std::string obfuscate(const std::string s1, const std::string s2);
-
   bool stringsAreEqual(const char *cStart, const size_t chars,
                        const char *c2);
 
@@ -45,41 +42,66 @@ namespace occa {
   bool isAFloat(const char *c);
   bool isANumber(const char *c);
 
-  inline bool isANumber(const char c){
+  bool isAString(const std::string &str);
+  bool isAnInt(const std::string &str);
+  bool isAFloat(const std::string &str);
+  bool isANumber(const std::string &str);
+
+  inline bool isADigit(const char c){
     return (('0' <= c) && (c <= '9'));
   }
 
   void skipInt(const char *&c);
 
-  void skipNumber(const char *&c, const bool parsingC = true);
+  void skipNumber(const char *&c,
+                  const int parsingLanguage_ = parserInfo::parsingC);
   void skipFortranNumber(const char *&c);
 
-  void skipString(const char *&c, const bool parsingC = true);
+  void skipString(const char *&c,
+                  const int parsingLanguage_ = parserInfo::parsingC);
 
-  char isAWordDelimiter(const char *c, const bool parsingC = true);
+  char isAWordDelimiter(const char *c,
+                        const int parsingLanguage_ = parserInfo::parsingC);
   char isAFortranWordDelimiter(const char *c);
 
-  int skipWord(const char *&c, const bool parsingC = true);
+  int skipWord(const char *&c,
+               const int parsingLanguage_ = parserInfo::parsingC);
 
-  bool isAnUpdateOperator(const std::string &s, const bool parsingC = true);
-  bool isAnAssOperator(const std::string &s, const bool parsingC = true); // hehe
-  bool isAnInequalityOperator(const std::string &s, const bool parsingC = true);
+  bool isAnUpdateOperator(const std::string &s,
+                          const int parsingLanguage_ = parserInfo::parsingC);
+  bool isAnAssOperator(const std::string &s,
+                       const int parsingLanguage_ = parserInfo::parsingC); // hehe
+  bool isAnInequalityOperator(const std::string &s,
+                              const int parsingLanguage_ = parserInfo::parsingC);
 
-  const char* readLine(const char *c, const bool parsingC = true);
+  const char* readLine(const char *c,
+                       const int parsingLanguage_ = parserInfo::parsingC);
   const char* readFortranLine(const char *c);
 
   std::string compressWhitespace(const std::string &str);
 
-  std::string strip(const char *c, const size_t chars, const bool parsingC = true);
-  void strip(std::string &str, const bool parsingC = true);
+  std::string strip(const char *c, const size_t chars,
+                    const int parsingLanguage_ = parserInfo::parsingC);
+  void strip(std::string &str,
+             const int parsingLanguage_ = parserInfo::parsingC);
 
   char* cReadFile(const std::string &filename);
 
-  int stripComments(std::string &line, const bool parsingC = true);
+  int stripComments(std::string &line,
+                    const int parsingLanguage_ = parserInfo::parsingC);
   int stripFortranComments(std::string &line);
 
+  bool charStartsSection(const char c);
+  bool charEndsSection(const char c);
+
+  bool startsSection(const std::string &str);
+  bool endsSection(const std::string &str);
+
   char segmentPair(const char c);
+  char segmentPair(const std::string &str);
   void skipPair(const char *&c);
+
+  int countDelimiters(const char *c, const char delimiter);
 
   void skipTo(const char *&c, const char delimiter);
   void skipTo(const char *&c, std::string delimiters);
@@ -95,7 +117,7 @@ namespace occa {
   }
   //==============================================
 
-  std::string getBits(const int value);
+  std::string getBits(const info_t value);
 };
 
 #endif

@@ -119,7 +119,6 @@ namespace occa {
       device_t<COI> &dHandle   = *(new device_t<COI>());
       COIDeviceData_t &devData = *(new COIDeviceData_t);
 
-      dev.strMode = "COI";
       dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
@@ -144,6 +143,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<COI>::kernel_t(){
+    strMode = "COI";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -169,7 +170,7 @@ namespace occa {
 
     nestedKernelCount = k.nestedKernelCount;
 
-    if(nestedKernelCount){
+    if(0 < nestedKernelCount){
       nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
@@ -192,7 +193,7 @@ namespace occa {
 
     nestedKernelCount = k.nestedKernelCount;
 
-    if(nestedKernelCount){
+    if(0 < nestedKernelCount){
       nestedKernels = new kernel[nestedKernelCount];
 
       for(int i = 0; i < nestedKernelCount; ++i)
@@ -208,25 +209,20 @@ namespace occa {
   kernel_t<COI>::~kernel_t(){}
 
   template <>
-  std::string kernel_t<COI>::getCachedBinaryName(const std::string &filename,
-                                                 kernelInfo &info_){
-
-    std::string cachedBinary = getCachedName(filename,
-                                             dHandle->getInfoSalt(info_));
-
-    std::string libPath, soname;
-
-    getFilePrefixAndName(cachedBinary, libPath, soname);
-
-    std::string libName = "lib" + soname + ".so";
-
-    return (libPath + libName);
+  std::string kernel_t<COI>::fixBinaryName(const std::string &filename){
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+    return ("lib" + filename + ".so");
+#else
+    return (filename + ".dll");
+#endif
   }
 
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromSource(const std::string &filename,
                                                           const std::string &functionName,
                                                           const kernelInfo &info_){
+
+    name = functionName;
 
     kernelInfo info = info_;
 
@@ -238,7 +234,7 @@ namespace occa {
       waitForFile(cachedBinary);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(cachedBinary) << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -250,7 +246,7 @@ namespace occa {
       releaseFile(cachedBinary);
 
       if(verboseCompilation_f)
-        std::cout << "Found cached binary of [" << filename << "] in [" << cachedBinary << "]\n";
+        std::cout << "Found cached binary of [" << compressFilename(filename) << "] in [" << compressFilename(cachedBinary) << "]\n";
 
       return buildFromBinary(cachedBinary, functionName);
     }
@@ -336,6 +332,9 @@ namespace occa {
   template <>
   kernel_t<COI>* kernel_t<COI>::buildFromBinary(const std::string &filename,
                                                 const std::string &functionName){
+
+    name = functionName;
+
     OCCA_EXTRACT_DATA(COI, Kernel);
 
     std::string libPath, soname;
@@ -373,6 +372,11 @@ namespace occa {
     return buildFromBinary(cache, functionName);
   }
 
+  template <>
+  uintptr_t kernel_t<COI>::maximumInnerDimSize(){
+    return ((uintptr_t) -1);
+  }
+
   // [-] Missing
   template <>
   int kernel_t<COI>::preferredDimSize(){
@@ -392,6 +396,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<COI>::memory_t(){
+    strMode = "COI";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -736,6 +742,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<COI>::device_t() {
+    strMode = "COI";
+
     data = NULL;
 
     uvaEnabled_ = false;
@@ -799,7 +807,7 @@ namespace occa {
 
   template <>
   void device_t<COI>::addOccaHeadersToInfo(kernelInfo &info_){
-    info_.addOCCAKeywords(occaCOIDefines);
+    info_.mode = COI;
   }
 
   template <>
@@ -919,7 +927,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<COI>::createStream(){
+  stream_t device_t<COI>::createStream(){
     OCCA_EXTRACT_DATA(COI, Device);
 
     coiStream *retStream = new coiStream;
@@ -933,7 +941,7 @@ namespace occa {
   }
 
   template <>
-  void device_t<COI>::freeStream(stream s){
+  void device_t<COI>::freeStream(stream_t s){
     if(s == NULL)
       return;
 
@@ -946,7 +954,7 @@ namespace occa {
   }
 
   template <>
-  stream device_t<COI>::wrapStream(void *handle_){
+  stream_t device_t<COI>::wrapStream(void *handle_){
     coiStream *retStream = new coiStream;
     retStream->handle = *((COIPIPELINE*) handle_);
 
