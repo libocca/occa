@@ -563,6 +563,21 @@ extern "C" {
     return kernel_.mode().c_str();
   }
 
+  const char* OCCA_RFUNC occaKernelName(occaKernel kernel){
+    occa::kernel &kernel_ = *((occa::kernel*) kernel);
+
+    return kernel_.name().c_str();
+  }
+
+  occaDevice OCCA_RFUNC occaKernelGetDevice(occaKernel kernel){
+    occa::kernel &kernel_ = *((occa::kernel*) kernel);
+    occa::device &device  = *(new occa::device());
+
+    device = kernel_.getDevice();
+
+    return (occaDevice) &device;
+  }
+
   uintptr_t OCCA_RFUNC occaKernelMaximumInnerDimSize(occaKernel kernel){
     occa::kernel &kernel_ = *((occa::kernel*) kernel);
 

@@ -709,6 +709,8 @@ namespace occa {
     const std::string& mode();
     const std::string& name();
 
+    occa::device getDevice();
+
     uintptr_t maximumInnerDimSize();
     int preferredDimSize();
 

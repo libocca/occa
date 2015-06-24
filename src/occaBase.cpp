@@ -580,6 +580,10 @@ namespace occa {
     return kHandle->name;
   }
 
+  occa::device kernel::getDevice(){
+    return occa::device(kHandle->dHandle);
+  }
+
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
     for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
