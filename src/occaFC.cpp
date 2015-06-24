@@ -217,7 +217,6 @@
 #define  OCCAASYNCCOPYPTRTOMEMAUTO_FC    OCCA_F2C_GLOBAL_(occaasynccopyptrtomemauto_fc  , OCCAASYNCCOPYPTRTOMEMAUTO_FC)
 #define  OCCAASYNCCOPYMEMTOPTR_FC        OCCA_F2C_GLOBAL_(occaasynccopymemtoptr_fc      , OCCAASYNCCOPYMEMTOPTR_FC)
 #define  OCCAASYNCCOPYMEMTOPTRAUTO_FC    OCCA_F2C_GLOBAL_(occaasynccopymemtoptrauto_fc  , OCCAASYNCCOPYMEMTOPTRAUTO_FC)
-#define  OCCAMEMORYSWAP_FC               OCCA_F2C_GLOBAL_(occamemoryswap_fc             , OCCAMEMORYSWAP_FC)
 #define  OCCAMEMORYFREE_FC               OCCA_F2C_GLOBAL_(occamemoryfree_fc             , OCCAMEMORYFREE_FC)
 
 
@@ -1155,11 +1154,6 @@ extern "C" {
 
   void OCCAASYNCCOPYMEMTOPTRAUTO_FC(void *dest, occaMemory *src){
     occaAsyncCopyMemToPtr(dest, *src, occaAutoSize, occaNoOffset);
-  }
-
-
-  void OCCAMEMORYSWAP_FC(occaMemory *memoryA, occaMemory *memoryB){
-    occaMemorySwap(*memoryA, *memoryB);
   }
 
   void OCCAMEMORYFREE_FC(occaMemory *memory){

@@ -350,19 +350,20 @@ def cOperatorDefinition(N):
     argsContent = ', '.join('(occaMemory_t*) arg' + str(n) for n in xrange(N))
 
     return ('    void OCCA_RFUNC occaKernelRun{0}(occaKernel kernel, {1}){{\n'.format(N, ' '.join(['void *arg' + str(n) + nlc(n, N) for n in xrange(N)]) ) + \
-            '      occa::kernel &kernel_ = *((occa::kernel*) kernel);\n'          + \
+            '      occa::kernel kernel_((occa::kernel_v*) kernel);\n'             + \
             '      kernel_.clearArgumentList();\n'                                + \
             '      \n'                                                            + \
             '      occaMemory_t *args[' + str(N) + '] = {' + argsContent + '};\n' + \
             '      \n'                                                            + \
             '      for(int i = 0; i < ' + str(N) + '; ++i){\n'                    + \
-            '        occaMemory_t &memory_ = *(args[i]);\n'                       + \
-            '        if(memory_.type == 0){\n'                                    + \
-            '          kernel_.addArgument(i, occa::kernelArg(memory_.mem));\n'   + \
+            '        occaMemory_t &memory = *(args[i]);\n'                        + \
+            '        if(memory.type == OCCA_TYPE_MEMORY){\n'                      + \
+            '          occa::memory memory_((occa::memory_v*) memory.mHandle);\n' + \
+            '          kernel_.addArgument(i, occa::kernelArg(memory_));\n'       + \
             '        }\n'                                                         + \
             '        else{\n'                                                     + \
             '          occaType_t &type_ = *((occaType_t*) args[i]);\n'           + \
-            '          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory_.type == 1)));\n' + \
+            '          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));\n' + \
             '          delete (occaType_t*) args[i];\n'                           + \
             '        }\n'                                                         + \
             '      }\n'                                                           + \

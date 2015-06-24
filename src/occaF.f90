@@ -61,7 +61,6 @@ module occa
     occaAsyncCopyMemToMem,         &
     occaAsyncCopyPtrToMem,         &
     occaAsyncCopyMemToPtr,         &
-    occaMemorySwap,                &
     occaMemoryFree
 
   integer(C_INT), bind(C, name="occaUsingOKL")    :: occaUsingOKL
@@ -875,15 +874,6 @@ module occa
     module procedure occaAsyncCopyMemToPtrAuto_real8
     module procedure occaAsyncCopyMemToPtrAuto_char
   end interface occaAsyncCopyMemToPtr
-
-  interface occaMemorySwap
-    subroutine occaMemorySwap_fc(memoryA, memoryB)
-      use occaFTypes_m
-      implicit none
-      type(occaMemory), intent(inout) :: memoryA
-      type(occaMemory), intent(inout) :: memoryB
-    end subroutine occaMemorySwap_fc
-  end interface occaMemorySwap
 
   interface occaMemoryFree
     subroutine occaMemoryFree_fc(memory)
