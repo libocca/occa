@@ -3,7 +3,7 @@
 
 #include "stdlib.h"
 
-#if (OCCA_OPENCL_ENABLED)
+#if OCCA_OPENCL_ENABLED
 #  if   (OCCA_OS & LINUX_OS)
 #    include <CL/cl.h>
 #    include <CL/cl_gl.h>
@@ -18,7 +18,7 @@
 #  include <cuda.h>
 #endif
 
-#if (OCCA_HSA_ENABLED)
+#if OCCA_HSA_ENABLED
 #  if   (OCCA_OS & LINUX_OS)
 #  elif (OCCA_OS & OSX_OS)
 #  else
@@ -348,8 +348,6 @@ extern "C" {
 
   OCCA_LFUNC void OCCA_RFUNC occaAsyncCopyMemToPtr(void *dest, occaMemory src,
                                                    const uintptr_t bytes, const uintptr_t offset);
-
-  OCCA_LFUNC void OCCA_RFUNC occaMemorySwap(occaMemory memoryA, occaMemory memoryB);
 
   OCCA_LFUNC void OCCA_RFUNC occaMemoryFree(occaMemory memory);
   //====================================

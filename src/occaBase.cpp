@@ -565,6 +565,10 @@ namespace occa {
     return *this;
   }
 
+  kernel_v* kernel::getKHandle(){
+    return kHandle;
+  }
+
   const std::string& kernel::mode(){
     return kHandle->strMode;
   }
@@ -748,6 +752,10 @@ namespace occa {
     mHandle = m.mHandle;
 
     return *this;
+  }
+
+  memory_v* memory::getMHandle(){
+    return mHandle;
   }
 
   const std::string& memory::mode(){
@@ -1276,6 +1284,10 @@ namespace occa {
     dHandle = d.dHandle;
 
     return *this;
+  }
+
+  device_v* device::getDHandle(){
+    return dHandle;
   }
 
   void device::setupHandle(occa::mode m){

@@ -706,6 +706,8 @@ namespace occa {
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
 
+    kernel_v* getKHandle();
+
     const std::string& mode();
     const std::string& name();
 
@@ -974,6 +976,8 @@ namespace occa {
 
     memory(const memory &m);
     memory& operator = (const memory &m);
+
+    memory_v* getMHandle();
 
     const std::string& mode();
 
@@ -1359,6 +1363,8 @@ namespace occa {
 
     device(const device &d);
     device& operator = (const device &d);
+
+    device_v* getDHandle();
 
     void setupHandle(occa::mode m);
     void setupHandle(const std::string &m);
