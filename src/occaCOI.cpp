@@ -119,7 +119,6 @@ namespace occa {
       device_t<COI> &dHandle   = *(new device_t<COI>());
       COIDeviceData_t &devData = *(new COIDeviceData_t);
 
-      dev.strMode = "COI";
       dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
@@ -144,6 +143,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<COI>::kernel_t(){
+    strMode = "COI";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -395,6 +396,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<COI>::memory_t(){
+    strMode = "COI";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -739,6 +742,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<COI>::device_t() {
+    strMode = "COI";
+
     data = NULL;
 
     uvaEnabled_ = false;

@@ -5,6 +5,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<Pthreads>::kernel_t(){
+    strMode = "Pthreads";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -248,6 +250,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<Pthreads>::memory_t(){
+    strMode = "Pthreads";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -501,6 +505,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<Pthreads>::device_t(){
+    strMode = "Pthreads";
+
     data = NULL;
 
     uvaEnabled_ = false;

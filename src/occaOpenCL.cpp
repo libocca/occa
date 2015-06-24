@@ -386,7 +386,6 @@ namespace occa {
       device_t<OpenCL> &dHandle   = *(new device_t<OpenCL>());
       OpenCLDeviceData_t &devData = *(new OpenCLDeviceData_t);
 
-      dev.strMode = "OpenCL";
       dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
@@ -498,6 +497,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenCL>::kernel_t(){
+    strMode = "OpenCL";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -708,6 +709,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<OpenCL>::memory_t(){
+    strMode = "OpenCL";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -1082,6 +1085,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenCL>::device_t() {
+    strMode = "OpenCL";
+
     data = NULL;
 
     uvaEnabled_ = false;

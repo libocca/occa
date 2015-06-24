@@ -511,6 +511,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<Serial>::kernel_t(){
+    strMode = "Serial";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -730,6 +732,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<Serial>::memory_t(){
+    strMode = "Serial";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -983,6 +987,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<Serial>::device_t(){
+    strMode = "Serial";
+
     data = NULL;
 
     uvaEnabled_ = false;

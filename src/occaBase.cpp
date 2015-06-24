@@ -551,29 +551,22 @@ namespace occa {
 
   //---[ Kernel ]---------------------
   kernel::kernel() :
-    strMode(""),
-
     kHandle(NULL) {}
-  kernel::kernel(kernel_v *kHandle_) :
-    strMode( occa::modeToStr(kHandle_->mode()) ),
 
+  kernel::kernel(kernel_v *kHandle_) :
     kHandle(kHandle_) {}
 
   kernel::kernel(const kernel &k) :
-    strMode(k.strMode),
-
     kHandle(k.kHandle) {}
 
   kernel& kernel::operator = (const kernel &k){
-    strMode = k.strMode;
-
     kHandle = k.kHandle;
 
     return *this;
   }
 
   const std::string& kernel::mode(){
-    return strMode;
+    return kHandle->strMode;
   }
 
   const std::string& kernel::name(){
@@ -731,7 +724,6 @@ namespace occa {
 
   //---[ Memory ]---------------------
   memory::memory() :
-    strMode(""),
     mHandle(NULL) {}
 
   memory::memory(void *uvaPtr){
@@ -743,28 +735,23 @@ namespace occa {
     if(it != uvaMap.end())
       mHandle_ = it->second;
 
-    strMode = occa::modeToStr(mHandle_->mode());
     mHandle = mHandle_;
   }
 
   memory::memory(memory_v *mHandle_) :
-    strMode( occa::modeToStr(mHandle_->mode()) ),
     mHandle(mHandle_) {}
 
   memory::memory(const memory &m) :
-    strMode(m.strMode),
     mHandle(m.mHandle) {}
 
   memory& memory::operator = (const memory &m){
-    strMode = m.strMode;
-
     mHandle = m.mHandle;
 
     return *this;
   }
 
   const std::string& memory::mode(){
-    return strMode;
+    return mHandle->strMode;
   }
 
   void* memory::textureArg() const {
@@ -1235,10 +1222,6 @@ namespace occa {
   }
 
   void memory::swap(memory &m){
-    std::string strMode2 = m.strMode;
-    m.strMode            = strMode;
-    strMode              = strMode2;
-
     memory_v *mHandle2 = m.mHandle;
     m.mHandle          = mHandle;
     mHandle            = mHandle2;
@@ -1272,7 +1255,6 @@ namespace occa {
 
   //---[ Device ]---------------------
   device::device(){
-    strMode = "Serial";
     dHandle = new device_t<Serial>();
   }
 
@@ -1300,13 +1282,11 @@ namespace occa {
     switch(m){
 
     case Serial:{
-      strMode = "Serial";
       dHandle = new device_t<Serial>();
       break;
     }
     case OpenMP:{
 #if OCCA_OPENMP_ENABLED
-      strMode = "OpenMP";
       dHandle = new device_t<OpenMP>();
 #else
       std::cout << "OCCA mode [OpenMP] is not enabled, defaulting to [Serial] mode\n";
@@ -1316,7 +1296,6 @@ namespace occa {
     }
     case OpenCL:{
 #if OCCA_OPENCL_ENABLED
-      strMode = "OpenCL";
       dHandle = new device_t<OpenCL>();
 #else
       std::cout << "OCCA mode [OpenCL] is not enabled, defaulting to [Serial] mode\n";
@@ -1326,7 +1305,6 @@ namespace occa {
     }
     case CUDA:{
 #if OCCA_CUDA_ENABLED
-      strMode = "CUDA";
       dHandle = new device_t<CUDA>();
 #else
       std::cout << "OCCA mode [CUDA] is not enabled, defaulting to [Serial] mode\n";
@@ -1336,14 +1314,12 @@ namespace occa {
     }
     case Pthreads:{
       std::cout << "OCCA mode [Pthreads] is still in development-mode (unstable)\n";
-      strMode = "Pthreads";
       dHandle = new device_t<Pthreads>();
       break;
     }
     case COI:{
 #if OCCA_COI_ENABLED
       std::cout << "OCCA mode [COI] is deprecated (unstable)\n";
-      strMode = "COI";
       dHandle = new device_t<COI>();
 #else
       std::cout << "OCCA mode [COI] is not enabled, defaulting to [Serial] mode\n";
@@ -1559,7 +1535,7 @@ namespace occa {
   }
 
   const std::string& device::mode(){
-    return strMode;
+    return dHandle->strMode;
   }
 
   void device::flush(){
@@ -1703,8 +1679,6 @@ namespace occa {
 
     kernel ker;
 
-    ker.strMode = strMode;
-
     kernel_v *&k = ker.kHandle;
 
     if(usingParser){
@@ -1728,7 +1702,7 @@ namespace occa {
       const std::string hashDir    = hashDirFor(realFilename, hash);
       const std::string parsedFile = hashDir + "parsedSource.occa";
 
-      k->metaInfo = parseFileForFunction(strMode,
+      k->metaInfo = parseFileForFunction(k->strMode,
                                          realFilename,
                                          parsedFile,
                                          functionName,
@@ -1757,8 +1731,6 @@ namespace occa {
 
           kernel &sKer = k->nestedKernels[ki];
 
-          sKer.strMode = strMode;
-
           sKer.kHandle = dHandle->buildKernelFromSource(parsedFile,
                                                         sKerName,
                                                         info_);
@@ -1786,8 +1758,6 @@ namespace occa {
                                        const std::string &functionName){
     kernel ker;
 
-    ker.strMode = strMode;
-
     ker.kHandle          = dHandle->buildKernelFromBinary(filename,
                                                           functionName);
     ker.kHandle->dHandle = dHandle;
@@ -1807,8 +1777,6 @@ namespace occa {
   kernel device::loadKernelFromLibrary(const char *cache,
                                        const std::string &functionName){
     kernel ker;
-
-    ker.strMode = strMode;
 
     ker.kHandle          = dHandle->loadKernelFromLibrary(cache,
                                                           functionName);
@@ -1890,8 +1858,6 @@ namespace occa {
                             const uintptr_t bytes){
     memory mem;
 
-    mem.strMode = strMode;
-
     mem.mHandle = dHandle->wrapMemory(handle_, bytes);
     mem.mHandle->dHandle = dHandle;
 
@@ -1917,8 +1883,6 @@ namespace occa {
 
     memory mem;
 
-    mem.strMode = strMode;
-
     mem.mHandle = dHandle->wrapTexture(handle_,
                                        dim, dims,
                                        type, permissions);
@@ -1941,8 +1905,6 @@ namespace occa {
   memory device::malloc(const uintptr_t bytes,
                         void *src){
     memory mem;
-
-    mem.strMode = strMode;
 
     mem.mHandle          = dHandle->malloc(bytes, src);
     mem.mHandle->dHandle = dHandle;
@@ -1991,8 +1953,6 @@ namespace occa {
 
     memory mem;
 
-    mem.strMode = strMode;
-
     mem.mHandle      = dHandle->textureAlloc(dim, dims, src, type, permissions);
     mem.mHandle->dHandle = dHandle;
 
@@ -2018,8 +1978,6 @@ namespace occa {
   memory device::mappedAlloc(const uintptr_t bytes,
                              void *src){
     memory mem;
-
-    mem.strMode = strMode;
 
     mem.mHandle          = dHandle->mappedAlloc(bytes, src);
     mem.mHandle->dHandle = dHandle;

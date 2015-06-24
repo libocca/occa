@@ -156,7 +156,6 @@ namespace occa {
       device_t<CUDA> &dHandle   = *(new device_t<CUDA>());
       CUDADeviceData_t &devData = *(new CUDADeviceData_t);
 
-      dev.strMode = "CUDA";
       dev.dHandle = &dHandle;
 
       //---[ Setup ]----------
@@ -198,6 +197,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<CUDA>::kernel_t(){
+    strMode = "CUDA";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -459,6 +460,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<CUDA>::memory_t(){
+    strMode = "CUDA";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -893,6 +896,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<CUDA>::device_t() {
+    strMode = "CUDA";
+
     data = NULL;
 
     uvaEnabled_ = false;

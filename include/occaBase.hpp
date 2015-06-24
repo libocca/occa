@@ -610,6 +610,8 @@ namespace occa {
     friend class occa::device;
 
   private:
+    std::string strMode;
+
     void* data;
     occa::device_v *dHandle;
 
@@ -692,8 +694,6 @@ namespace occa {
     friend class occa::device;
 
   private:
-    std::string strMode;
-
     kernel_v *kHandle;
 
     int argumentCount;
@@ -815,6 +815,8 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
+    std::string strMode;
+
     void *handle, *mappedPtr, *uvaPtr;
     occa::device_v *dHandle;
 
@@ -963,8 +965,6 @@ namespace occa {
     friend class occa::kernelArg;
 
   private:
-    std::string strMode;
-
     memory_v *mHandle;
 
   public:
@@ -1116,6 +1116,8 @@ namespace occa {
     friend class occa::kernelDatabase;
 
   private:
+    std::string strMode;
+
     int modelID_, id_;
 
     void* data;
@@ -1346,8 +1348,6 @@ namespace occa {
     friend class occa::kernelDatabase;
 
   private:
-    std::string strMode;
-
     device_v *dHandle;
 
   public:

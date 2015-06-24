@@ -118,6 +118,8 @@ namespace occa {
   //---[ Kernel ]---------------------
   template <>
   kernel_t<OpenMP>::kernel_t(){
+    strMode = "OpenMP";
+
     data    = NULL;
     dHandle = NULL;
 
@@ -347,6 +349,8 @@ namespace occa {
   //---[ Memory ]---------------------
   template <>
   memory_t<OpenMP>::memory_t(){
+    strMode = "OpenMP";
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -600,6 +604,8 @@ namespace occa {
   //---[ Device ]---------------------
   template <>
   device_t<OpenMP>::device_t(){
+    strMode = "OpenMP";
+
     data = NULL;
 
     uvaEnabled_ = false;
