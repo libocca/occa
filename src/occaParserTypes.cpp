@@ -26,6 +26,29 @@ namespace occa {
       return isAnAttribute(expRoot[leafPos].value);
     }
 
+    int skipAttribute(expNode &expRoot, int leafPos){
+      if(!isAnAttribute(expRoot, leafPos))
+        return leafPos;
+
+      const std::string &attrTag = expRoot[leafPos].value;
+      ++leafPos;
+
+      if((attrTag == "@")              &&
+         (leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value != "(")){
+
+        ++leafPos;
+      }
+
+      if((leafPos < expRoot.leafCount) &&
+         (expRoot[leafPos].value == "(")){
+
+        ++leafPos;
+      }
+
+      return leafPos;
+    }
+
     //---[ Attribute Class ]----------------------
     attribute_t::attribute_t() :
       argCount(0),
@@ -178,12 +201,16 @@ namespace occa {
         ++leafPos;
 
         if(leafPos < expRoot.leafCount){
-          expRoot[leafPos].organize();
+          expNode &tmp = *(expRoot[leafPos].clonePtr());
+          tmp.changeExpTypes();
+          tmp.organize();
 
           attribute_t &attr = *(new attribute_t());
-          attr.name = expRoot[leafPos].toString();
+          attr.name = tmp.toString();
 
           attributeMap["__attribute__"] = &attr;
+
+          tmp.free();
 
           ++leafPos;
         }
@@ -368,41 +395,37 @@ namespace occa {
       if(expRoot.leafCount <= leafPos)
         return leafPos;
 
+      qualifierCount = 0;
+
       const int leafRoot = leafPos;
 
-      int usedLeavesCount = 0;
-      int attributeCount  = 0;
-
-      while(leafPos < expRoot.leafCount){
-        if(expRoot[leafPos].info & expType::qualifier){
-          ++leafPos;
+      for(int pass = 0; pass < 2; ++pass){
+        if(pass == 1){
+          if(qualifierCount)
+            qualifiers = new std::string[qualifierCount];
         }
-        else if(isAnAttribute(expRoot, leafPos)){
-          ++leafPos;
-          ++attributeCount;
-        }
-        else
-          break;
-      }
 
-      usedLeavesCount = (leafPos - leafRoot);
-      qualifierCount  = (usedLeavesCount - attributeCount);
+        qualifierCount = 0;
+        leafPos = leafRoot;
 
-      if(qualifierCount){
-        qualifiers = new std::string[qualifierCount];
+        while(leafPos < expRoot.leafCount){
+          if(expRoot[leafPos].info & expType::qualifier){
+            if(pass == 1)
+              qualifiers[qualifierCount] = expRoot[leafPos].value;
 
-        int qPos = 0;
-
-        for(int i = 0; i < usedLeavesCount; ++i){
-          if(!isAnAttribute(expRoot, leafRoot + i))
-            qualifiers[qPos++] = expRoot[leafRoot + i].value;
-        }
-      }
-
-      if(attributeCount){
-        for(int i = 0; i < usedLeavesCount; ++i){
-          if(isAnAttribute(expRoot, leafRoot + i))
-            setAttributeMap(var.attributeMap, expRoot, leafRoot + i);
+            ++qualifierCount;
+            ++leafPos;
+          }
+          else if(isAnAttribute(expRoot, leafPos)){
+            if(pass == 0){
+              leafPos = skipAttribute(expRoot, leafPos);
+            }
+            else {
+              leafPos = setAttributeMap(var.attributeMap, expRoot, leafPos);
+            }
+          }
+          else
+            break;
         }
       }
 

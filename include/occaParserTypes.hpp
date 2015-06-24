@@ -21,6 +21,8 @@ namespace occa {
     bool isAnAttribute(const std::string &attrName);
     bool isAnAttribute(expNode &expRoot, int leafPos);
 
+    int skipAttribute(expNode &expRoot, int leafPos);
+
     class attribute_t {
     public:
       std::string name;
