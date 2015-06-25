@@ -683,10 +683,10 @@ namespace occa {
           varNode->info &= ~expType::type;
       }
 
-      // typeInfo &type2 = addTypeInfoNode(0);
-      // type2 = type;
+      typeInfo &type2 = addTypeInfoNode(0);
+      type2 = type;
 
-      // newExp.free();
+      newExp.free();
     }
 
     void expNode::organizeCaseStatement(const int parsingLanguage){
@@ -3511,10 +3511,23 @@ namespace occa {
 
       case (expType::declaration):{
         if(leafCount){
-          out << tab << leaves[0]->leaves[0]->toString(tab);
+          // Case where a struct-type is loaded with variables:
+          //   union {} a, b;
+          if(leaves[0]->info & expType::typeInfo){
+            out << leaves[0]->toString(tab, (expFlag::noSemicolon |
+                                             expFlag::noNewline));
 
-          for(int i = 1; i < leafCount; ++i)
-            out << ", " << leaves[i]->toString();
+            out << ' ' << leaves[1]->toString();
+
+            for(int i = 2; i < leafCount; ++i)
+              out << ", " << leaves[i]->toString();
+          }
+          else {
+            out << tab << leaves[0]->toString();
+
+            for(int i = 1; i < leafCount; ++i)
+              out << ", " << leaves[i]->toString();
+          }
 
           if( !(flags & expFlag::noSemicolon) )
             out << ';';
@@ -3560,7 +3573,13 @@ namespace occa {
       }
 
       case (expType::typeInfo):{
-        out << getTypeInfo().toString(tab) << ";\n";
+        out << getTypeInfo().toString(tab);
+
+        if( !(flags & expFlag::noSemicolon) )
+          out << ';';
+
+        if( !(flags & expFlag::noNewline) )
+          out << '\n';
 
         break;
       }
