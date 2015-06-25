@@ -1,44 +1,5 @@
 #include "occaParser.hpp"
 
-/*
-Errors:
-      // Output: [typedef long unsigned ;]
-      typedef long unsigned int __darwin_size_t;
-
-      // Output: [long ;]
-      long long atoll(const char *);
-
-      // Output: unsigned -> nothing
-      char *initstate(unsigned, char *, size_t);
-
-      // Output: Missing ...
-      int fprintf(FILE * restrict, const char * restrict, ...) __attribute__((__format__ (__printf__, 2, 3)));
-
-      // Output: Missing w_T, w_S
-      union wait {
-       int w_status;
-
-       struct {
-        unsigned int w_Termsig:7,
-          w_Coredump:1,
-          w_Retcode:8,
-          w_Filler:16;
-       } w_T;
-
-       struct {
-        unsigned int w_Stopval:8,
-          w_Stopsig:8,
-          w_Filler:16;
-       } w_S;
-      };
-
-      // Output: Missed __attribute__ and messed up the loading
-      __attribute__((deprecated("This function is provided for compatibility reasons only.  Due to security concerns inherent in the design of tempnam(3), it is highly recommended that you use mkstemp(3) instead.")))
-
-      char *tempnam(const char *, const char *) __asm("_" "tempnam") ;
- */
-
-
 using namespace occa;
 using namespace occa::parserNS;
 
@@ -72,7 +33,7 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/addVectors_loopy.cl", compilerFlags);
 
   //---[ Fortran ]----------------------
-  compilerFlags["language"] = "Fortran";
+  // compilerFlags["language"] = "Fortran";
 
   // parsedContent = parser.parseFile("tests/scratch.ofl"   , compilerFlags);
   // parsedContent = parser.parseFile("tests/addVectors.ofl", compilerFlags);

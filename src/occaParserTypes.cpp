@@ -665,7 +665,11 @@ namespace occa {
 
       // short and long can be both:
       //    specifiers and qualifiers
-      if(allExp[expPos].info == (*keywordType)["long"]){
+      keywordTypeMapIterator it = keywordType->find(allExp[expPos].value);
+
+      if((it != keywordType->end()) &&
+         (it->second == (*keywordType)["long"])){
+
         if(((expPos + 1) < allExp.leafCount) &&
            (cPodTypes.find(allExp[expPos + 1].value) != cPodTypes.end())){
 
@@ -2106,10 +2110,10 @@ namespace occa {
         ret += leftQualifiers.toString();
 
         if(baseType){
-          if(baseType->typedefing)
+          // if(baseType->typedefing)
             ret += baseType->name;
-          else
-            ret += baseType->toString();
+          // else
+          //   ret += baseType->toString();
         }
 
         addSpaceBeforeName = !((rightQualifiers.qualifierCount) ||
