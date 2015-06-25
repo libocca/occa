@@ -320,6 +320,9 @@ namespace occa {
       typeInfo& getTypeInfo();
       typeInfo& getTypeInfo(const int pos);
 
+      void setTypeInfo(typeInfo &type);
+      void setTypeInfo(const int pos, typeInfo &type);
+
       varInfo typeInfoOf(const std::string &str);
 
       varInfo evaluateType();

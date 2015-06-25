@@ -3900,10 +3900,10 @@ namespace occa {
 
       cKeywordType["#"]                  = expType::macroKeyword;
 
-      cKeywordType["long"]               = (expType::qualifier | expType::type);
-      cKeywordType["short"]              = (expType::qualifier | expType::type);
-      cKeywordType["signed"]             = (expType::qualifier | expType::type);
-      cKeywordType["unsigned"]           = (expType::qualifier | expType::type);
+      cKeywordType["long"]               = expType::qualifier;
+      cKeywordType["short"]              = expType::qualifier;
+      cKeywordType["signed"]             = expType::qualifier;
+      cKeywordType["unsigned"]           = expType::qualifier;
 
       cKeywordType["inline"]             = expType::qualifier;
       cKeywordType["static"]             = expType::qualifier;

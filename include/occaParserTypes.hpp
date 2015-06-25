@@ -136,6 +136,8 @@ namespace occa {
       void remove(const int pos, const int count = 1);
 
       void clear();
+
+      bool hasImplicitInt();
       //================================
 
       std::string toString();
@@ -208,6 +210,8 @@ namespace occa {
 
       void addQualifier(const std::string &qName,
                         int pos = -1);
+
+      bool hasImplicitInt();
 
       int pointerDepth();
       //================================

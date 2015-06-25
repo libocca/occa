@@ -680,8 +680,13 @@ namespace occa {
         var.baseType = &type;
 
         if(i == 0)
-          varNode->info |= expType::type;
+          varNode->info &= ~expType::type;
       }
+
+      // typeInfo &type2 = addTypeInfoNode(0);
+      // type2 = type;
+
+      // newExp.free();
     }
 
     void expNode::organizeCaseStatement(const int parsingLanguage){
@@ -2756,6 +2761,19 @@ namespace occa {
       typeInfo *&typeLeaf   = typeLeaves[0];
 
       return *typeLeaf;
+    }
+
+    void expNode::setTypeInfo(typeInfo &type){
+      leaves[0] = (expNode*) &type;
+    }
+
+    void expNode::setTypeInfo(const int pos_, typeInfo &type){
+      const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+      typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
+      typeInfo *&typeLeaf   = typeLeaves[0];
+
+      typeLeaf = &type;
     }
 
     varInfo expNode::typeInfoOf(const std::string &str){

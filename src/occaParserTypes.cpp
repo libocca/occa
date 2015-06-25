@@ -403,6 +403,8 @@ namespace occa {
         if(pass == 1){
           if(qualifierCount)
             qualifiers = new std::string[qualifierCount];
+          else
+            break;
         }
 
         qualifierCount = 0;
@@ -410,8 +412,14 @@ namespace occa {
 
         while(leafPos < expRoot.leafCount){
           if(expHasQualifier(expRoot, leafPos)){
-            if(pass == 1)
+            if(pass == 1){
+              if((expRoot[leafPos].value == "*") &&
+                 hasImplicitInt()){
+                break;
+              }
+
               qualifiers[qualifierCount] = expRoot[leafPos].value;
+            }
 
             ++qualifierCount;
             ++leafPos;
@@ -629,6 +637,13 @@ namespace occa {
         qualifiers = NULL;
       }
     }
+
+    bool qualifierInfo::hasImplicitInt(){
+      return (has("unsigned") ||
+              has("signed")   ||
+              has("short")    ||
+              has("long"));
+    }
     //==================================
 
     std::string qualifierInfo::toString(){
@@ -659,27 +674,9 @@ namespace occa {
 
       return out;
     }
+
     bool expHasQualifier(expNode &allExp, int expPos){
-      if( !(allExp[expPos].info & expType::qualifier) )
-        return false;
-
-      // short and long can be both:
-      //    specifiers and qualifiers
-      keywordTypeMapIterator it = keywordType->find(allExp[expPos].value);
-
-      if((it != keywordType->end()) &&
-         (it->second == (*keywordType)["long"])){
-
-        if(((expPos + 1) < allExp.leafCount) &&
-           (cPodTypes.find(allExp[expPos + 1].value) != cPodTypes.end())){
-
-          return true;
-        }
-        else
-          return false;
-      }
-
-      return true;
+      return (allExp[expPos].info & expType::qualifier);
     }
     //============================================
 
@@ -812,6 +809,10 @@ namespace occa {
         }
 
         updateThType();
+      }
+      else if(hasImplicitInt()){
+        name     = "int";
+        baseType = s.hasTypeInScope("int");
       }
 
       if((leafPos < expRoot.leafCount) &&
@@ -982,6 +983,9 @@ namespace occa {
       if(qualifiers.has("typedef"))
         return true;
 
+      if(qualifiers.hasImplicitInt())
+        return false;
+
       if(leafPos < expRoot.leafCount){
         if((expRoot[leafPos].info & expType::unknown) &&
            (!s.hasTypeInScope(expRoot[leafPos].value))){
@@ -1029,6 +1033,10 @@ namespace occa {
     void typeInfo::addQualifier(const std::string &qName,
                                 int pos){
       leftQualifiers.add(qName, pos);
+    }
+
+    bool typeInfo::hasImplicitInt(){
+      return leftQualifiers.hasImplicitInt();
     }
 
     int typeInfo::pointerDepth(){
@@ -1342,6 +1350,8 @@ namespace occa {
           if(baseType)
             ++leafPos;
         }
+        else if(leftQualifiers.has("unsigned"))
+          baseType = s.hasTypeInScope("int");
       }
       else{
         leftQualifiers = varHasType->leftQualifiers.clone();

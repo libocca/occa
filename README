@@ -194,6 +194,6 @@
 |  Setting it:
 |    export OCCA_FORTRAN_ENABLED="1"
 |    export FC="gfortran"
-|    export FCFLAGS="-O3 -wAll"
+|    export FCFLAGS="-O3 -Wall"
 |
 +===========================================================
