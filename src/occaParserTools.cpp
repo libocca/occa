@@ -214,16 +214,14 @@ namespace occa {
     if(!(parsingLanguage_ & parserInfo::parsingC))
       return isAFortranWordDelimiter(c);
 
-    if(charIsIn(c[0], parserNS::cWordDelimiter)){
-      if(charIsIn2(c, parserNS::cWordDelimiter2)){
-        if(charIsIn3(c, parserNS::cWordDelimiter3))
-          return 3;
+    if(charIsIn3(c, parserNS::cWordDelimiter3))
+      return 3;
 
-        return 2;
-      }
+    if(charIsIn2(c, parserNS::cWordDelimiter2))
+      return 2;
 
+    if(charIsIn(c[0], parserNS::cWordDelimiter))
       return 1;
-    }
 
     return 0;
   }

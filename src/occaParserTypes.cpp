@@ -409,7 +409,7 @@ namespace occa {
         leafPos = leafRoot;
 
         while(leafPos < expRoot.leafCount){
-          if(expRoot[leafPos].info & expType::qualifier){
+          if(expHasQualifier(expRoot, leafPos)){
             if(pass == 1)
               qualifiers[qualifierCount] = expRoot[leafPos].value;
 
@@ -645,6 +645,24 @@ namespace occa {
 
       return out;
     }
+    bool expHasQualifier(expNode &allExp, int expPos){
+      if( !(allExp[expPos].info & expType::qualifier) )
+        return false;
+
+      // short and long can be both:
+      //    specifiers and qualifiers
+      if(allExp[expPos].info == (*keywordType)["long"]){
+        if(((expPos + 1) < allExp.leafCount) &&
+           (cPodTypes.find(allExp[expPos + 1].value) != cPodTypes.end())){
+
+          return true;
+        }
+        else
+          return false;
+      }
+
+      return true;
+    }
     //============================================
 
 
@@ -783,17 +801,23 @@ namespace occa {
 
         expNode &leaf = expRoot[leafPos++];
 
-        const bool usesSemicolon = !leftQualifiers.has("enum");
-        const char *delimiter = (usesSemicolon ? ";" : ",");
+        if(leftQualifiers.has("enum")){
+          nestedInfoCount = 1;
+          nestedExps      = new expNode[nestedInfoCount];
 
-        // [enum] doesn't end with a semicolon, so we add one more info
-        nestedInfoCount = delimiterCount(leaf, delimiter) + !usesSemicolon;
+          nestedExps[0] = leaf.clone();
+          nestedExps[0].organizeDeclareStatement(expFlag::none);
+
+          return leafPos;
+        }
+
+        nestedInfoCount = delimiterCount(leaf, ";");
         nestedExps      = new expNode[nestedInfoCount];
 
         int sLeafPos = 0;
 
         for(int i = 0; i < nestedInfoCount; ++i){
-          int sNextLeafPos = nextDelimiter(leaf, sLeafPos, delimiter);
+          int sNextLeafPos = nextDelimiter(leaf, sLeafPos, ";");
 
           // Empty statements
           if(sNextLeafPos != sLeafPos){
@@ -1021,6 +1045,8 @@ namespace occa {
         ret += typedefVar->toString(false);
       }
       else{
+        const bool isAnEnum = leftQualifiers.has("enum");
+
         ret += tab;
         ret += leftQualifiers.toString();
         ret += name;
@@ -1033,7 +1059,18 @@ namespace occa {
           ret += '\n';
 
           for(int i = 0; i < nestedInfoCount; ++i){
-            ret += nestedExps[i].toString(tab + "  ");
+            if(!isAnEnum){
+              ret += nestedExps[i].toString(tab + "  ");
+            }
+            else {
+              if(i < (nestedInfoCount - 1)){
+                ret += nestedExps[i].toString(tab + "  ", (expFlag::noSemicolon |
+                                                           expFlag::endWithComma));
+              }
+              else {
+                ret += nestedExps[i].toString(tab + "  ", expFlag::noSemicolon);
+              }
+            }
 
             if(back(ret) != '\n')
               ret += '\n';
@@ -1518,6 +1555,17 @@ namespace occa {
         argumentVarInfos = new varInfo*[argumentCount];
 
         for(int i = 0; i < argumentCount; ++i){
+          if(leaf[sLeafPos].value == "..."){
+            OCCA_CHECK(i == (argumentCount - 1),
+                       "Variadic argument [...] has to be the last argument");
+
+            info |= varType::variadic;
+
+            --argumentCount;
+            break;
+          }
+
+
           argumentVarInfos[i] = new varInfo();
           sLeafPos = argumentVarInfos[i]->loadFrom(s, leaf, sLeafPos);
           sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
@@ -2114,6 +2162,13 @@ namespace occa {
             ret += ", ";
             ret += argumentVarInfos[i]->toString();
           }
+        }
+
+        if(info & varType::variadic){
+          if(argumentCount)
+            ret += ", ";
+
+          ret += "...";
         }
 
         ret += ')';

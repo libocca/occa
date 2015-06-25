@@ -75,9 +75,10 @@ namespace occa {
     };
 
     namespace expFlag {
-      static const info_t none        = 0;
-      static const info_t noNewline   = (1 << 0);
-      static const info_t noSemicolon = (1 << 1);
+      static const info_t none         = 0;
+      static const info_t noNewline    = (1 << 0);
+      static const info_t noSemicolon  = (1 << 1);
+      static const info_t endWithComma = (1 << 2);
 
       static const info_t addVarToScope  = (1 << 0);
       static const info_t addTypeToScope = (1 << 1);
@@ -282,12 +283,11 @@ namespace occa {
 
       void addNode(const info_t info_ = 0, const int pos = -1);
       void addNode(const info_t info_, const std::string &value_, const int pos = -1);
+      void addNode(expNode &node_, const int pos_ = -1);
 
       void addNodes(const int count);
       void addNodes(const int pos_, const int count);
       void addNodes(const info_t info_, const int pos_, const int count);
-
-      void addNode(expNode &node_, const int pos_ = -1);
 
       void reserve(const int count);
       int insertExpAt(expNode &exp, int pos);
@@ -375,8 +375,9 @@ namespace occa {
 
       static void printVec(expVector_t &v);
 
-      std::string toString(const std::string &tab = "");
       std::string toString(const int leafPos, const int printLeafCount);
+      std::string toString(const std::string &tab = "",
+                           const info_t flags = expFlag::none);
 
       operator std::string ();
 
@@ -512,7 +513,6 @@ namespace occa {
       void addType(typeInfo &type);
       void addTypedef(const std::string &typedefName);
 
-      bool expHasQualifier(expNode &allExp, int expPos);
       bool expHasSpecifier(expNode &allExp, int expPos);
       bool expHasDescriptor(expNode &allExp, int expPos);
 

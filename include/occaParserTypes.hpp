@@ -143,6 +143,8 @@ namespace occa {
 
       friend std::ostream& operator << (std::ostream &out, qualifierInfo &type);
     };
+
+    bool expHasQualifier(expNode &allExp, int expPos);
     //============================================
 
 
@@ -231,7 +233,8 @@ namespace occa {
       static const int functionDec     = (1 << 2);
       static const int functionDef     = (1 << 3);
 
-      static const int block           = (1 << 4);
+      static const int variadic        = (1 << 4);
+      static const int block           = (1 << 5);
     };
 
     class varInfo {

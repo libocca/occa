@@ -3939,7 +3939,7 @@ namespace occa {
       cKeywordType["namespace"]          = (expType::type | expType::struct_);
 
       //---[ Constants ]------------------
-      cKeywordType["..."]                = expType::printValue;
+      cKeywordType["..."]                = expType::presetValue;
       cKeywordType["true"]               = expType::presetValue;
       cKeywordType["false"]              = expType::presetValue;
 

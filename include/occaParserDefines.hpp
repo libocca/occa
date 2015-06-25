@@ -154,7 +154,7 @@ namespace occa {
     static const char whitespace[]      = " \t\r\n\v\f\0";
 
     static const char cWordDelimiter[]  = " \t\r\n\v\f!\"#%&'()*+,-./:;<=>?[]^{|}~@\0";
-    static const char cWordDelimiter2[] = "!=###<#>%=&&&=*=+++=-=--->.*../=::<<<===>=>>^=|=||\0";
+    static const char cWordDelimiter2[] = "!=###<#>%=&&&=*=+++=-=--->.*/=::<<<===>=>>^=|=||\0";
     static const char cWordDelimiter3[] = "->*...<<=>>=\0";
 
     static const char fortranWordDelimiter[]  = " \t\r\n\v\f\"#%'()*+,-./;<=>\0";

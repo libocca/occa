@@ -325,8 +325,8 @@ namespace occa {
       else
         organizeFortranNode();
 
-      // if(sInfo)
-      //   sInfo->printDebugInfo();
+      if(sInfo)
+        sInfo->printDebugInfo();
     }
 
     // @(attributes)
@@ -648,6 +648,8 @@ namespace occa {
     void expNode::organizeStructStatement(){
       info = expType::struct_;
 
+      int leafPos = 0;
+
       // Store type
       expNode newExp(*sInfo);
       newExp.info = info;
@@ -656,7 +658,17 @@ namespace occa {
       const bool addTypeToScope = true;
 
       typeInfo &type = newExp.addTypeInfoNode(0);
-      type.loadFrom(*this, 0, addTypeToScope);
+      leafPos = type.loadFrom(*this, leafPos, addTypeToScope);
+
+      if(leafCount <= leafPos){
+        expNode::swap(*this, newExp);
+        return;
+      }
+
+      removeNodes(0, leafPos);
+      addNode(newExp[0], 0);
+
+#error "HERE"
 
       // if(sInfo->up != NULL)
       //   sInfo->up->addType(type);
@@ -1032,8 +1044,6 @@ namespace occa {
                                                          pos[2],
                                                          (pos[3] - pos[2] - 1));
 
-        exp2.print();
-
         const std::string exp2Str = exp2.toString();
 
         const std::string decl2 = "const int " + doStride + " = " + exp2Str;
@@ -1193,19 +1203,13 @@ namespace occa {
           translateOccaKeyword(*this, preInfo, true);
 
         if(preInfo & expType::descriptor){
-          if(preInfo == (*keywordType)["long"]){
-
-            if((up != NULL)                    &&
-               ((leafPos + 1) < up->leafCount) &&
-               (cPodTypes.find((*up)[leafPos + 1].value) != cPodTypes.end())){
-
+          if(up != NULL){
+            if(expHasQualifier(*up, leafPos))
               info = expType::qualifier;
-            }
             else
-              info = expType::type;
-
+              info = expType::qualifier;
           }
-          else if(preInfo & (expType::qualifier | expType::struct_)){
+          else if(preInfo & expType::struct_){
             info = expType::qualifier;
           }
           else {
@@ -1695,9 +1699,6 @@ namespace occa {
 
           expNode &csvFlatRoot = *(arrNode.makeCsvFlatHandle());
           expVector_t indices;
-
-          if(dims == 0)
-            print();
 
           OCCA_CHECK(dims != 0,
                      "Variable use [" << toString() << "] cannot be used without the @(dim(...)) attribute");
@@ -3502,7 +3503,12 @@ namespace occa {
       case (expType::struct_):{
         if(leafCount){
           typeInfo &type = *((typeInfo*) leaves[0]->leaves[0]);
-          out << type.toString(tab) << ';';
+          out << type.toString(tab);
+
+          if(flags & expFlag::endWithComma)
+            out << ',';
+          else if( !(flags & expFlag::noSemicolon) )
+            out << ';';
         }
 
         break;
@@ -3749,10 +3755,11 @@ namespace occa {
       return ret;
     }
 
-    std::string expNode::toString(const std::string &tab){
+    std::string expNode::toString(const std::string &tab,
+                                  const info_t flags){
       std::stringstream ss;
 
-      printOn(ss, tab);
+      printOn(ss, tab, flags);
 
       return ss.str();
     }
@@ -3938,6 +3945,12 @@ namespace occa {
 
       if(allExp[expPos].info & expType::macroKeyword)
         return checkMacroStatementType(allExp, expPos);
+
+      if(isAnAttribute(allExp, expPos)){
+        expPos = skipAttribute(allExp, expPos);
+
+        return findStatementType(allExp, expPos, parsingLanguage);
+      }
 
       else if(allExp[expPos].info == 0)
         return 0;
@@ -4322,25 +4335,6 @@ namespace occa {
       typeInfo &type = *(new typeInfo);
       type.name = typedefName;
       scopeTypeMap[typedefName] = &type;
-    }
-
-    bool statement::expHasQualifier(expNode &allExp, int expPos){
-      if( !(allExp[expPos].info & expType::qualifier) )
-        return false;
-
-      // short and long can be both:
-      //    specifiers and qualifiers
-      if(allExp[expPos].info == (*keywordType)["long"]){
-        if(((expPos + 1) < allExp.leafCount) &&
-           (cPodTypes.find(allExp[expPos + 1].value) != cPodTypes.end())){
-
-          return true;
-        }
-        else
-          return false;
-      }
-
-      return true;
     }
 
     bool statement::expHasSpecifier(expNode &allExp, int expPos){
