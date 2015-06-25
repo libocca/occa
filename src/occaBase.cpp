@@ -1714,7 +1714,7 @@ namespace occa {
       const std::string hashDir    = hashDirFor(realFilename, hash);
       const std::string parsedFile = hashDir + "parsedSource.occa";
 
-      k->metaInfo = parseFileForFunction(k->strMode,
+      k->metaInfo = parseFileForFunction(mode(),
                                          realFilename,
                                          parsedFile,
                                          functionName,
