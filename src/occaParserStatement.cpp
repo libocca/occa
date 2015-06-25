@@ -325,8 +325,8 @@ namespace occa {
       else
         organizeFortranNode();
 
-      if(sInfo)
-        sInfo->printDebugInfo();
+      // if(sInfo)
+      //   sInfo->printDebugInfo();
     }
 
     // @(attributes)
@@ -660,20 +660,28 @@ namespace occa {
       typeInfo &type = newExp.addTypeInfoNode(0);
       leafPos = type.loadFrom(*this, leafPos, addTypeToScope);
 
-      if(leafCount <= leafPos){
+      if((leafCount <= leafPos) ||
+         ((*this)[leafPos].value == ";")){
+
         expNode::swap(*this, newExp);
         return;
       }
 
       removeNodes(0, leafPos);
-      addNode(newExp[0], 0);
 
-#error "HERE"
+      organizeDeclareStatement();
 
-      // if(sInfo->up != NULL)
-      //   sInfo->up->addType(type);
+      const int varCount = getVariableCount();
 
-      expNode::swap(*this, newExp);
+      for(int i = 0; i < varCount; ++i){
+        expNode *varNode = getVariableInfoNode(i);
+        varInfo &var     = varNode->getVarInfo();
+
+        var.baseType = &type;
+
+        if(i == 0)
+          varNode->info |= expType::type;
+      }
     }
 
     void expNode::organizeCaseStatement(const int parsingLanguage){
@@ -3485,7 +3493,7 @@ namespace occa {
 
       case (expType::declaration):{
         if(leafCount){
-          out << tab << leaves[0]->toString();
+          out << tab << leaves[0]->leaves[0]->toString(tab);
 
           for(int i = 1; i < leafCount; ++i)
             out << ", " << leaves[i]->toString();
@@ -3516,7 +3524,7 @@ namespace occa {
 
       case (expType::varInfo | expType::declaration | expType::type):
       case (expType::varInfo | expType::type):{
-        out << getVarInfo();
+        out << getVarInfo().toString(true, tab);
 
         break;
       }

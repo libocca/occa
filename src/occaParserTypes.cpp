@@ -417,12 +417,26 @@ namespace occa {
             ++leafPos;
           }
           else if(isAnAttribute(expRoot, leafPos)){
+            const bool is__attribute__ = (expRoot[leafPos].value == "__attribute__");
+
             if(pass == 0){
               leafPos = skipAttribute(expRoot, leafPos);
             }
             else {
               leafPos = setAttributeMap(var.attributeMap, expRoot, leafPos);
+
+              if(is__attribute__){
+                attributeMapIterator it = var.attributeMap.find("__attribute__");
+                attribute_t &attr       = *(it->second);
+
+                qualifiers[qualifierCount] = ("__attribute__" + attr.name);
+
+                var.attributeMap.erase(it);
+              }
             }
+
+            if(is__attribute__)
+              ++qualifierCount;
           }
           else
             break;
@@ -2083,7 +2097,7 @@ namespace occa {
       std::cout << toString(true) << ' ' << attributeMapToString(attributeMap) << '\n';
     }
 
-    std::string varInfo::toString(const bool printType){
+    std::string varInfo::toString(const bool printType, const std::string &tab){
       std::string ret;
 
       bool addSpaceBeforeName = false;
@@ -2091,8 +2105,12 @@ namespace occa {
       if(printType){
         ret += leftQualifiers.toString();
 
-        if(baseType)
-          ret += baseType->name;
+        if(baseType){
+          if(baseType->typedefing)
+            ret += baseType->name;
+          else
+            ret += baseType->toString();
+        }
 
         addSpaceBeforeName = !((rightQualifiers.qualifierCount) ||
                                (name.size()));

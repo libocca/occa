@@ -400,7 +400,8 @@ namespace occa {
       bool isConst();
 
       void printDebugInfo();
-      std::string toString(const bool printType = true);
+      std::string toString(const bool printType = true,
+                           const std::string &tab = "");
 
       operator std::string ();
 
