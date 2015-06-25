@@ -882,18 +882,25 @@ namespace occa {
       if((leafPos < expRoot.leafCount) &&
          (expRoot[leafPos].value != "{")){
 
-        typeInfo *tmp = s.hasTypeInScope(expRoot[leafPos].value);
+        typeInfo *leafType = s.hasTypeInScope(expRoot[leafPos].value);
 
-        if(tmp){
-          typedefing = tmp;
+        if(leafType){
+          typedefing = leafType;
+
+          ++leafPos;
         }
         else{
-          typedefing           = new typeInfo;
-          typedefing->name     = expRoot[leafPos].value;
-          typedefing->baseType = typedefing;
-        }
+          if(!leftQualifiers.hasImplicitInt()){
+            typedefing           = new typeInfo;
+            typedefing->name     = expRoot[leafPos].value;
+            typedefing->baseType = typedefing;
 
-        ++leafPos;
+            ++leafPos;
+          }
+          else {
+            typedefing = s.hasTypeInScope("int");
+          }
+        }
       }
 
       if((leafPos < expRoot.leafCount) &&
