@@ -11,6 +11,12 @@ iPath = include
 debugEnabled   = 0
 checkEnabled   = 1
 
+flags   =
+osFlags =
+cFlags  =
+fFlags  =
+cfFlags =
+
 # CXX      : C++ Compiler
 # CXXFLAGS : C++ Compiler Flags
 
@@ -33,7 +39,7 @@ usingOSX     = 0
 usingWinux   = 0
 usingWindows = 0
 
-flags = -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS) -D WINUX_OS=$(WINUX_OS)
+osFlags += -D LINUX_OS=$(LINUX_OS) -D OSX_OS=$(OSX_OS) -D WINDOWS_OS=$(WINDOWS_OS) -D WINUX_OS=$(WINUX_OS)
 
 UNAME = $(shell uname)
 
@@ -141,6 +147,9 @@ fCompilerModuleDirFlag = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; fCompilerM
 
 compilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(compiler))
 compilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(compiler))
+
+fCompilerSupportsOpenMP = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerSupportsOpenMP $(fCompiler))
+fCompilerOpenMPFlags    = $(shell . ${OCCA_DIR}/scripts/shellTools.sh; compilerOpenMPFlags    $(fCompiler))
 #=================================================
 
 
@@ -157,24 +166,24 @@ fModDirFlag  = $(call fCompilerModuleDirFlag)
 ifeq ($(usingLinux),1)
 
   ifeq ($(usingWinux),0)
-    flags += -D OCCA_OS=LINUX_OS
+    osFlags += -D OCCA_OS=LINUX_OS
   else
-    flags += -D OCCA_OS=WINUX_OS
+    osFlags += -D OCCA_OS=WINUX_OS
   endif
 
   links += -lm -lrt -ldl
 
 else ifeq ($(usingOSX),1)
 
-  flags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
+  osFlags += -D OCCA_OS=OSX_OS -Wno-deprecated-declarations
   links += -framework accelerate -framework CoreServices
 
 else ifeq ($(usingWindows),1)
 
   ifeq ($(usingWinux),0)
-    flags += -D OCCA_OS=WINDOWS_OS -D OCCA_USING_VS=1
+    osFlags += -D OCCA_OS=WINDOWS_OS -D OCCA_USING_VS=1
   else
-    flags += -D OCCA_OS=WINDOWS_OS -D OCCA_USING_VS=0
+    osFlags += -D OCCA_OS=WINDOWS_OS -D OCCA_USING_VS=0
   endif
 
   links +=
@@ -191,12 +200,15 @@ hsaEnabled    = 0
 coiEnabled    = 0
 
 ifdef OCCA_OPENMP_ENABLED
-  openmpEnabled = $(OCCA_OPENMP_ENABLED)
+  openmpEnabled  = $(OCCA_OPENMP_ENABLED)
+  fOpenmpEnabled = $(OCCA_OPENMP_ENABLED)
 else
-  openmpEnabled = $(call compilerSupportsOpenMP)
+  openmpEnabled  = $(call compilerSupportsOpenMP)
+  fOpenmpEnabled = $(call fCompilerSupportsOpenMP)
 
   ifeq ($(openmpEnabled), 1)
-    flags += $(call compilerOpenMPFlags)
+    cFlags += $(call compilerOpenMPFlags)
+    fFlags += $(call fCompilerOpenMPFlags)
   endif
 endif
 
@@ -310,8 +322,6 @@ else
   endif
 endif
 
-cfFlags =
-
 ifeq ($(debugEnabled), 1)
   cfFlags += $(debugFlags)
   cfFlags += -DOCCA_DEBUG_ENABLED=1
@@ -321,12 +331,14 @@ else
 endif
 
 ifeq ($(checkEnabled), 1)
-  cfFlags  += -DOCCA_CHECK_ENABLED=1
+  cfFlags += -DOCCA_CHECK_ENABLED=1
 else
-  cfFlags  += -DOCCA_CHECK_ENABLED=0
+  cfFlags += -DOCCA_CHECK_ENABLED=0
 endif
 
-cfFlags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
+cFlags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
+fFlags += -DOCCA_OPENMP_ENABLED=$(fOpenmpEnabled)
+
 cfFlags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
 cfFlags += -DOCCA_CUDA_ENABLED=$(cudaEnabled)
 cfFlags += -DOCCA_HSA_ENABLED=$(hsaEnabled)
@@ -336,6 +348,6 @@ ifdef COMPILING_WITH_JULIA
   cfFlags += -DOCCA_COMPILED_FOR_JULIA=1
 endif
 
-flags  += $(cfFlags)
-fFlags += $(cfFlags)
+flags  += $(cfFlags) $(osFlags)
+fFlags += $(cfFlags) $(osFlags)
 #=================================================
