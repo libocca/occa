@@ -54,7 +54,10 @@ namespace occa {
     }
 
     template<class TM>
-    node<TM>* node<TM>::push(node <TM> *n){
+    node<TM>* node<TM>::push(node<TM> *n){
+      // Copy up
+      n->up = up;
+
       node *rr = right;
 
       right = n;
@@ -69,8 +72,8 @@ namespace occa {
     }
 
     template<class TM>
-    node<TM>* node<TM>::push(node <TM> *nStart,
-                             node <TM> *nEnd){
+    node<TM>* node<TM>::push(node<TM> *nStart,
+                             node<TM> *nEnd){
       node *rr = right;
 
       right = nStart;
@@ -80,6 +83,14 @@ namespace occa {
 
       if(rr)
         rr->left = nEnd;
+
+      // Copy up
+      rr = nStart;
+
+      while(rr != nEnd){
+        rr->up = up;
+        rr = rr->right;
+      }
 
       return nEnd;
     }

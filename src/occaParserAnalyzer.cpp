@@ -1,8 +1,17 @@
+#if 0
+
 #include "occaParserAnalyzer.hpp"
+#include "occaParser.hpp"
 
 namespace occa {
   namespace parserNS {
     //---[ Variable Dependencies ]----------------
+    varDepInfo::varDepInfo() :
+      info(depType::none),
+      var(NULL),
+      myNode(NULL),
+      subNode(NULL) {}
+
     void varDepInfo::setup(int info_,
                            varInfo &var_,
                            varDepInfoNode &myNode_){
@@ -12,26 +21,26 @@ namespace occa {
     }
 
     int varDepInfo::startInfo(){
-      varDepInfoNode *startNode = myNode->down;
-
-      if(startNode == NULL)
+      if(subNode == NULL)
         return info;
 
-      return (startNode ? startNode->value->startInfo() : depType::none);
+      return subNode->value->info;
     }
 
     int varDepInfo::endInfo(){
-      varDepInfoNode *endNode = myNode->down;
-
-      if(endNode == NULL)
+      if(subNode == NULL)
         return info;
 
-      return (endNode ? endNode->value->endInfo() : depType::none);
+      return lastNode(subNode)->value->info;
     }
     //============================================
 
 
     //---[ Statement Dependencies ]---------------
+    smntDepInfo::smntDepInfo() :
+      s(NULL),
+      myNode(NULL) {}
+
     void smntDepInfo::setup(statement &s_, smntDepInfoNode &myNode_){
       s      = &s_;
       myNode = &myNode_;
@@ -58,21 +67,56 @@ namespace occa {
 
         if(vdNode == NULL){
           vdNode = newVdInfo.myNode;
+
+          setupNestedVdInfos(s_, var, vdNode);
         }
         else {
-          if(vdNode->down == NULL){
-            vdNode->pushDown(vdNode->value);
-            vdNode->value = NULL;
+          if(vdNode->subNode == NULL){
+            vdNode->subNode       = new varDepInfoNode(vdNode->value);
+            vdNode->value->myNode = vdNode->subNode
+            vdNode->value         = NULL;
           }
 
-          varDepInfoNode &downNode = *(vdNode->down);
-          varDepInfoNode &endNode  = *(lastNode(&downNode));
+          varDepInfoNode *endNode = lastNode(vdNode->subNode);
 
-          endNode.push(&newVdInfo);
+          endNode->push(new varDepInfoNode(&newVdInfo));
         }
       }
 
       expNode::freeFlatHandle(flatRoot);
+    }
+
+    void smntDepInfo::setupNestedVdInfos(statement &s_,
+                                         varInfo &var,
+                                         varDepInfoNode *vdNode){
+
+      statement &sOrigin = *(s_.parser.varOriginMap[&var]);
+
+      smntDepInfoNode *sdNode = myNode;
+
+      while((sdNode           != NULL) &&
+            (sdNode->value->s != &sOrigin)){
+
+        smntDepInfo &sdInfo = (sdNode->value);
+
+        varDepInfo *vdInfo2 = sdInfo.has(var);
+
+        if(vdInfo != NULL){
+          varDepInfoNode &vdNode2 = *(vdInfo2->myNode);
+
+          if(vdNode2.down == NULL)
+            vdNode2.pushDown(vdNode);
+          else
+            lastNode(vdNode2.down)->push(vdNode);
+
+          break;
+        }
+        else {
+
+        }
+
+        sdNode = sdNode->up;
+      }
     }
 
     int smntDepInfo::getDepTypeFrom(expNode &e){
@@ -165,3 +209,5 @@ namespace occa {
     //============================================
   };
 };
+
+#endif
