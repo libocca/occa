@@ -864,6 +864,10 @@ namespace occa {
     if(isMapped){
       OCCA_CUDA_CHECK("Device: mappedFree()",
                       cuMemFreeHost(mappedPtr));
+
+      delete (CUdeviceptr*) handle;
+
+      size = 0;
     }
   }
 
