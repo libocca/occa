@@ -449,68 +449,6 @@ namespace occa {
     //============================================
 
 
-    //---[ Var Dependency Graph ]-----------------
-    class varDepInfo;
-    class smntDepInfo;
-
-    typedef node<varDepInfo*>                  varDepInfoNode;
-    typedef node<smntDepInfo*>                 smntDepInfoNode;
-
-    typedef std::map<varInfo*,varDepInfoNode*> varToDepMap;
-    typedef varToDepMap::iterator              varToDepMapIterator;
-
-    typedef std::map<statement*,smntDepInfo*>  smntToVarDepMap;
-    typedef smntToVarDepMap::iterator          smntToVarDepMapIterator;
-
-    namespace depType {
-      static const int none   = 0;
-      static const int set    = (1 << 0);
-      static const int update = (1 << 1);
-    }
-
-    class varDepInfo {
-    public:
-      int info;
-
-      varInfo *var;
-      varDepInfoNode *myNode;
-
-      void setup(int info_,
-                 varInfo &var_,
-                 varDepInfoNode &myNode_);
-
-      int startInfo();
-      int endInfo();
-    };
-
-    class smntDepInfo {
-    public:
-      varToDepMap v2dMap;
-
-      statement *s;
-      smntDepInfoNode *myNode;
-
-      void setup(statement &s_, smntDepInfoNode &myNode_);
-
-      int getDepTypeFrom(expNode &e);
-
-      varDepInfo* has(varInfo &var);
-      varDepInfo& operator () (varInfo &var);
-    };
-
-    class depMap_t {
-    public:
-      smntToVarDepMap s2vdMap;
-
-      void setup(statement &s);
-      void setup(statement &s, smntDepInfo &sdInfo);
-
-      varDepInfo* has(statement &s, varInfo &var);
-      varDepInfo& operator () (statement &s, varInfo &var);
-    };
-    //============================================
-
-
     //---[ Kernel Info ]--------------------------
     class argumentInfo {
     public:

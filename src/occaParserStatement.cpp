@@ -2440,6 +2440,7 @@ namespace occa {
         }
 
         case (expType::LR):{
+          // Assignments happen from R -> L
           const bool isUpdating = isAnAssOperator(value);
 
           const int a = (isUpdating ? 1 : 0);
