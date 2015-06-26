@@ -526,18 +526,11 @@ namespace occa {
       if(fortranVarNeedsUpdate(var, expPos[leafPos].value))
         return (leafPos + 1);
 
-      std::cout << "Loading: expPos[leafPos]\n";
-      std::cout << "expPos[leafPos] = " << expPos[leafPos] << '\n';
-
       if(expPos[leafPos].info & expType::type){
         int nextLeafPos = leafPos;
 
         std::string typeName = varInfo::getFullFortranType(expPos, nextLeafPos);
         var.baseType = s.hasTypeInScope(typeName);
-
-        std::cout << "typeName        = " << typeName << '\n'
-                  << "nextLeafPos     = " << nextLeafPos << '\n'
-                  << "expPos[leafPos] = " << expPos[leafPos] << '\n';
 
         return nextLeafPos;
       }

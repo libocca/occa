@@ -192,8 +192,8 @@ namespace occa {
         value = allExp[expStart].value;
       }
 
-      printf("Copied expNode:\n");
-      print();
+      // printf("Copied expNode:\n");
+      // print();
 
       // Don't need to load stuff
       if((sInfo->info & (smntType::skipStatement   |
@@ -325,8 +325,8 @@ namespace occa {
       else
         organizeFortranNode();
 
-      if(sInfo)
-        sInfo->printDebugInfo();
+      // if(sInfo)
+      //   sInfo->printDebugInfo();
     }
 
     // @(attributes)
@@ -1094,8 +1094,6 @@ namespace occa {
       varInfo &var = addVarInfoNode(0);
       int leafPos  = var.loadFromFortran(*this, 1);
 
-      std::cout << "2. var = " << var << '\n';
-
       if((sInfo->up != NULL)              &&
          (sInfo->up->scopeVarMap.find(var.name) ==
           sInfo->up->scopeVarMap.end())){
@@ -1222,7 +1220,7 @@ namespace occa {
             if(expHasQualifier(*up, leafPos))
               info = expType::qualifier;
             else
-              info = expType::qualifier;
+              info = expType::type;
           }
           else if(preInfo & expType::struct_){
             info = expType::qualifier;
@@ -4899,8 +4897,6 @@ namespace occa {
 
       varInfo var;
       var.loadFromFortran(*this, allExp, expPos);
-
-      std::cout << "1. var = " << var << '\n';
 
       if( !(var.info & varType::functionDef) )
         skipUntilFortranStatementEnd(allExp, expPos);
