@@ -2440,11 +2440,16 @@ namespace occa {
         }
 
         case (expType::LR):{
-          leaves[i]->leaves[0]->makeFlatHandle(offset, flatLeaves);
-          leaves[i]->leaves[1]->makeFlatHandle(offset, flatLeaves);
-          flatLeaves[offset++] = leaves[i]->leaves[0];
+          const bool isUpdating = isAnAssOperator(value);
+
+          const int a = (isUpdating ? 1 : 0);
+          const int b = (isUpdating ? 0 : 1);
+
+          leaves[i]->leaves[a]->makeFlatHandle(offset, flatLeaves);
+          leaves[i]->leaves[b]->makeFlatHandle(offset, flatLeaves);
+          flatLeaves[offset++] = leaves[i]->leaves[a];
           flatLeaves[offset++] = leaves[i];
-          flatLeaves[offset++] = leaves[i]->leaves[1];
+          flatLeaves[offset++] = leaves[i]->leaves[b];
 
           break;
         }

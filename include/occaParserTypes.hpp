@@ -450,15 +450,17 @@ namespace occa {
 
 
     //---[ Var Dependency Graph ]-----------------
-#if 0
     class varDepInfo;
     class smntDepInfo;
 
-    typedef node<varDepInfo*>                     varDepInfoNode;
-    typedef node<smntDepInfo*>                    smntDepInfoNode;
+    typedef node<varDepInfo*>                  varDepInfoNode;
+    typedef node<smntDepInfo*>                 smntDepInfoNode;
 
-    typedef std::map<varInfo*,depInfo*>           varToDepMap;
-    typedef std::map<statement*,smntDepInfoNode*> smntToVarDepMap;
+    typedef std::map<varInfo*,varDepInfoNode*> varToDepMap;
+    typedef varToDepMap::iterator              varToDepMapIterator;
+
+    typedef std::map<statement*,smntDepInfo*>  smntToVarDepMap;
+    typedef smntToVarDepMap::iterator          smntToVarDepMapIterator;
 
     namespace depType {
       static const int none   = 0;
@@ -473,6 +475,10 @@ namespace occa {
       varInfo *var;
       varDepInfoNode *myNode;
 
+      void setup(int info_,
+                 varInfo &var_,
+                 varDepInfoNode &myNode_);
+
       int startInfo();
       int endInfo();
     };
@@ -484,18 +490,24 @@ namespace occa {
       statement *s;
       smntDepInfoNode *myNode;
 
+      void setup(statement &s_, smntDepInfoNode &myNode_);
+
+      int getDepTypeFrom(expNode &e);
+
       varDepInfo* has(varInfo &var);
       varDepInfo& operator () (varInfo &var);
     };
 
     class depMap_t {
     public:
-      smntToVarDepMap map;
+      smntToVarDepMap s2vdMap;
+
+      void setup(statement &s);
+      void setup(statement &s, smntDepInfo &sdInfo);
 
       varDepInfo* has(statement &s, varInfo &var);
       varDepInfo& operator () (statement &s, varInfo &var);
     };
-#endif
     //============================================
 
 
