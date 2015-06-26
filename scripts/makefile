@@ -11,9 +11,8 @@ iPath = include
 debugEnabled   = 0
 checkEnabled   = 1
 
-flags   =
 osFlags =
-cFlags  =
+flags   =
 fFlags  =
 cfFlags =
 
@@ -207,7 +206,7 @@ else
   fOpenmpEnabled = $(call fCompilerSupportsOpenMP)
 
   ifeq ($(openmpEnabled), 1)
-    cFlags += $(call compilerOpenMPFlags)
+    flags  += $(call compilerOpenMPFlags)
     fFlags += $(call fCompilerOpenMPFlags)
   endif
 endif
@@ -336,7 +335,7 @@ else
   cfFlags += -DOCCA_CHECK_ENABLED=0
 endif
 
-cFlags += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
+flags  += -DOCCA_OPENMP_ENABLED=$(openmpEnabled)
 fFlags += -DOCCA_OPENMP_ENABLED=$(fOpenmpEnabled)
 
 cfFlags += -DOCCA_OPENCL_ENABLED=$(openclEnabled)
