@@ -37,6 +37,8 @@ namespace occa {
   void skipWhitespace(const char *&c);
   void skipToWhitespace(const char *&c);
 
+  int charsBeforeNewline(const std::string &str);
+
   bool isAString(const char *c);
   bool isAnInt(const char *c);
   bool isAFloat(const char *c);

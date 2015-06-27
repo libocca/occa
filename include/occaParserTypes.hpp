@@ -140,8 +140,19 @@ namespace occa {
       bool hasImplicitInt();
       //================================
 
-      std::string toString();
-      operator std::string ();
+      void printOnString(std::string &str);
+
+      inline std::string toString(){
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
+
+      inline operator std::string () {
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
 
       friend std::ostream& operator << (std::ostream &out, qualifierInfo &type);
     };
@@ -220,8 +231,20 @@ namespace occa {
       varInfo* hasOperator(const std::string &op);
       //================================
 
-      std::string toString(const std::string &tab = "");
-      operator std::string ();
+      void printOnString(std::string &str,
+                         const std::string &tab = "");
+
+      inline std::string toString(const std::string &tab = ""){
+        std::string ret;
+        printOnString(ret, tab);
+        return ret;
+      }
+
+      inline operator std::string () {
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
 
       friend std::ostream& operator << (std::ostream &out, typeInfo &type);
     };
@@ -404,10 +427,21 @@ namespace occa {
       bool isConst();
 
       void printDebugInfo();
-      std::string toString(const bool printType = true,
-                           const std::string &tab = "");
 
-      operator std::string ();
+      void printOnString(std::string &str,
+                         const bool printType = true);
+
+      inline std::string toString(const bool printType = true){
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
+
+      inline operator std::string () {
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
 
       friend std::ostream& operator << (std::ostream &out, varInfo &var);
     };

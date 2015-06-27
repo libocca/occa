@@ -12,9 +12,12 @@ namespace occa {
 
     void varDepInfo::setup(int info_,
                            varInfo &var_,
+                           smntDepInfo &sdInfo_,
                            varDepInfoNode &myNode_){
       info = info_;
       var  = &var_;
+
+      sdInfo = &sdInfo_;
 
       myNode        = &myNode_;
       myNode->value = this;
@@ -65,7 +68,7 @@ namespace occa {
         varDepInfoNode *&vdNode = v2dMap[&var];
 
         varDepInfo &newVdInfo = *(new varDepInfo);
-        newVdInfo.setup(leafDepInfo, var, *(new varDepInfoNode));
+        newVdInfo.setup(leafDepInfo, var, *this, *(new varDepInfoNode));
 
         if(vdNode == NULL){
           vdNode = newVdInfo.myNode;
@@ -78,7 +81,7 @@ namespace occa {
           // Copy vdInfo to the first subNode
           if(vdInfo.subNode == NULL){
             varDepInfo &vdInfo2 = *(new varDepInfo);
-            vdInfo2.setup(vdInfo.info, var, *(new varDepInfoNode));
+            vdInfo2.setup(vdInfo.info, var, *this, *(new varDepInfoNode));
 
             vdInfo.info    = depType::none;
             vdInfo.subNode = vdInfo2.myNode;
@@ -121,7 +124,7 @@ namespace occa {
           varDepInfoNode *&vdNodeUp = sdInfo.v2dMap[&var];
 
           varDepInfo &vdInfoUp = *(new varDepInfo);
-          vdInfoUp.setup(depType::none, var, *(new varDepInfoNode));
+          vdInfoUp.setup(depType::none, var, sdInfo, *(new varDepInfoNode));
 
           vdNodeUp = vdInfoUp.myNode;
 
@@ -186,9 +189,8 @@ namespace occa {
 
 
     //---[ Dependency Map ]-----------------------
-    depMap_t::depMap_t(){}
-
-    depMap_t::depMap_t(statement &s){
+    depMap_t::depMap_t(statement &s) :
+      parser(s.parser) {
       setup(s);
     }
 
@@ -213,6 +215,20 @@ namespace occa {
 
         sn = sn->right;
       }
+    }
+
+    varDepInfo* depMap_t::has(varInfo &var){
+      statement   &s      = *(parser.varOriginMap[&var]);
+      smntDepInfo *sdInfo = has(s);
+
+      if(sdInfo == NULL)
+        return NULL;
+
+      return sdInfo->has(var);
+    }
+
+    varDepInfo& depMap_t::operator () (varInfo &var){
+      return *(has(var));
     }
 
     smntDepInfo* depMap_t::has(statement &s){

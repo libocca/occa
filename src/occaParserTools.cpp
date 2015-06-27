@@ -111,6 +111,19 @@ namespace occa {
       ++c;
   }
 
+  int charsBeforeNewline(const std::string &str){
+    const int chars = (int) str.size();
+    const char *c0  = str.c_str();
+    const char *c;
+
+    for(c = (c0 + chars - 1); c0 <= c; --c){
+      if(*c == '\n')
+        break;
+    }
+
+    return (chars - (c - c0) - 1);
+  }
+
   bool isAString(const char *c){
     return ((*c == '\'') || (*c == '"'));
   }

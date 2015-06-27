@@ -3561,7 +3561,7 @@ namespace occa {
 
       case (expType::varInfo | expType::declaration | expType::type):
       case (expType::varInfo | expType::type):{
-        out << getVarInfo().toString(true, tab);
+        out << getVarInfo().toString(true);
 
         break;
       }

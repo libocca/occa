@@ -646,11 +646,9 @@ namespace occa {
     }
     //==================================
 
-    std::string qualifierInfo::toString(){
-      std::string ret;
-
+    void qualifierInfo::printOnString(std::string &str){
       for(int i = 0; i < qualifierCount; ++i){
-        ret += qualifiers[i];
+        str += qualifiers[i];
 
         if(((qualifiers[i][0] != '*') &&
             (qualifiers[i][0] != '&')) ||
@@ -658,15 +656,9 @@ namespace occa {
              ((qualifiers[i + 1][0] != '*') &&
               (qualifiers[i + 1][0] != '&')))){
 
-          ret += ' ';
+          str += ' ';
         }
       }
-
-      return ret;
-    }
-
-    qualifierInfo::operator std::string () {
-      return toString();
     }
 
     std::ostream& operator << (std::ostream &out, qualifierInfo &q){
@@ -1061,64 +1053,58 @@ namespace occa {
     }
     //================================
 
-    std::string typeInfo::toString(const std::string &tab){
-      std::string ret;
+    void typeInfo::printOnString(std::string &str,
+                                 const std::string &tab){
 
       if(typedefing){
-        ret += tab;
-        ret += "typedef ";
-        ret += leftQualifiers.toString();
+        str += tab;
+        str += "typedef ";
+        leftQualifiers.printOnString(str);
 
         if(typedefHasDefinition)
-          ret += typedefing->toString();
+          typedefing->printOnString(str);
         else
-          ret += typedefing->name;
+          str += typedefing->name;
 
-        ret += ' ';
-        ret += typedefVar->toString(false);
+        str += ' ';
+        typedefVar->printOnString(str, false);
       }
       else{
         const bool isAnEnum = leftQualifiers.has("enum");
 
-        ret += tab;
-        ret += leftQualifiers.toString();
-        ret += name;
+        str += tab;
+        leftQualifiers.printOnString(str);
+        str += name;
 
         if(nestedInfoCount){
           if(name.size())
-            ret += ' ';
+            str += ' ';
 
-          ret += '{';
-          ret += '\n';
+          str += '{';
+          str += '\n';
 
           for(int i = 0; i < nestedInfoCount; ++i){
             if(!isAnEnum){
-              ret += nestedExps[i].toString(tab + "  ");
+              str += nestedExps[i].toString(tab + "  ");
             }
             else {
               if(i < (nestedInfoCount - 1)){
-                ret += nestedExps[i].toString(tab + "  ", (expFlag::noSemicolon |
+                str += nestedExps[i].toString(tab + "  ", (expFlag::noSemicolon |
                                                            expFlag::endWithComma));
               }
               else {
-                ret += nestedExps[i].toString(tab + "  ", expFlag::noSemicolon);
+                str += nestedExps[i].toString(tab + "  ", expFlag::noSemicolon);
               }
             }
 
-            if(back(ret) != '\n')
-              ret += '\n';
+            if(back(str) != '\n')
+              str += '\n';
           }
 
-          ret += tab;
-          ret += '}';
+          str += tab;
+          str += '}';
         }
       }
-
-      return ret;
-    }
-
-    typeInfo::operator std::string (){
-      return toString();
     }
 
     std::ostream& operator << (std::ostream &out, typeInfo &type){
@@ -2118,16 +2104,16 @@ namespace occa {
       std::cout << toString(true) << ' ' << attributeMapToString(attributeMap) << '\n';
     }
 
-    std::string varInfo::toString(const bool printType, const std::string &tab){
-      std::string ret;
+    void varInfo::printOnString(std::string &str,
+                                const bool printType){
 
       bool addSpaceBeforeName = false;
 
       if(printType){
-        ret += leftQualifiers.toString();
+        leftQualifiers.printOnString(str);
 
         if(baseType)
-          ret += baseType->name;
+          str += baseType->name;
 
         addSpaceBeforeName = !((rightQualifiers.qualifierCount) ||
                                (name.size()));
@@ -2143,94 +2129,94 @@ namespace occa {
         }
 
         if(!addSpaceBeforeName && baseType)
-          ret += ' ';
+          str += ' ';
       }
 
-      ret += rightQualifiers.toString();
+      rightQualifiers.printOnString(str);
 
       for(int i = 0; i < (functionNestCount - 1); ++i)
-        ret += "(*";
+        str += "(*";
 
       if(functionNestCount){
         if((info & varType::block) == 0)
-          ret += "(*";
+          str += "(*";
         else
-          ret += "(^";
+          str += "(^";
       }
 
       if(addSpaceBeforeName &&
          (name.size() != 0))
-        ret += ' ';
+        str += ' ';
 
-      ret += name;
+      str += name;
 
       if(stackPointerCount && stackPointersUsed){
         if(stackPointersUsed == stackPointerCount){
           for(int i = 0; i < stackPointerCount; ++i){
-            ret += '[';
-            ret += (std::string) stackExpRoots[i];
-            ret += ']';
+            str += '[';
+            str += (std::string) stackExpRoots[i];
+            str += ']';
           }
         }
         else{
-          ret += "[(";
-          ret += (std::string) stackSizeExpNode(0);
-          ret += ')';
+          str += "[(";
+          str += (std::string) stackSizeExpNode(0);
+          str += ')';
 
           for(int i = 1; i < stackPointerCount; ++i){
-            ret += "*(";
-            ret += (std::string) stackSizeExpNode(i);
-            ret += ")";
+            str += "*(";
+            str += (std::string) stackSizeExpNode(i);
+            str += ")";
           }
 
-          ret += ']';
+          str += ']';
         }
       }
 
       if(info & varType::function){
-        ret += '(';
+        str += '(';
+
+        const int argTabSpaces = charsBeforeNewline(str);
+        const std::string argTab(argTabSpaces, ' ');
 
         if(argumentCount){
-          ret += argumentVarInfos[0]->toString();
+          argumentVarInfos[0]->printOnString(str);
 
           for(int i = 1; i < argumentCount; ++i){
-            ret += ", ";
-            ret += argumentVarInfos[i]->toString();
+            str += ",\n";
+            str += argTab;
+            argumentVarInfos[i]->printOnString(str);
           }
         }
 
         if(info & varType::variadic){
-          if(argumentCount)
-            ret += ", ";
+          if(argumentCount){
+            str += ",\n";
+            str += argTab;
+          }
 
-          ret += "...";
+          str += "...";
         }
 
-        ret += ')';
+        str += ')';
       }
 
       for(int i = (functionNestCount - 1); 0 <= i; --i){
-        ret += ')';
-        ret += functionNests[i].toString();
+        str += ')';
+        functionNests[i].printOnString(str);
       }
 
       if(0 <= bitfieldSize){
-        ret += " : ";
-        ret += occa::toString(bitfieldSize);
+        str += " : ";
+        str += occa::toString(bitfieldSize);
       }
 
       attribute_t *attr = hasAttribute("__attribute__");
 
       if(attr != NULL){
-        ret += " __attribute__";
-        ret += attr->name;
+        str += " __attribute__";
+        str += attr->name;
       }
-
-      return ret;
-    }
-
-    varInfo::operator std::string () {
-      return toString();
     }
 
     std::ostream& operator << (std::ostream &out, varInfo &var){

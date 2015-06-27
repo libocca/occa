@@ -29,13 +29,15 @@ namespace occa {
       int info;
 
       varInfo *var;
-      varDepInfoNode *myNode;
-      varDepInfoNode *subNode;
+
+      smntDepInfo *sdInfo;
+      varDepInfoNode *myNode, *subNode;
 
       varDepInfo();
 
       void setup(int info_,
                  varInfo &var_,
+                 smntDepInfo &sdInfo_,
                  varDepInfoNode &myNode_);
 
       int startInfo();
@@ -74,9 +76,9 @@ namespace occa {
     //---[ Dependency Map ]-----------------------
     class depMap_t {
     public:
+      parserBase &parser;
       smntToVarDepMap s2vdMap;
 
-      depMap_t();
       depMap_t(statement &s);
 
       void setup(statement &s);
@@ -84,6 +86,9 @@ namespace occa {
 
       smntDepInfo* has(statement &s);
       smntDepInfo& operator () (statement &s);
+
+      varDepInfo* has(varInfo &var);
+      varDepInfo& operator () (varInfo &var);
 
       varDepInfo* has(statement &s, varInfo &var);
       varDepInfo& operator () (statement &s, varInfo &var);

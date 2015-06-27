@@ -1219,6 +1219,13 @@ namespace occa {
       int start = 0;
       statement *sRoot = loopsToReorder[0];
 
+      depMap_t depMap(*sRoot);
+
+      varInfo &ai        = *(sRoot->hasVariableInScope("ai"));
+      varDepInfo &vdInfo = depMap(ai);
+
+      // std::cout << "vdInfo = " << vdInfo << '\n';
+
       for(int i = 1; i < ltrCount; ++i){
         statement &s = *(loopsToReorder[i]);
 
