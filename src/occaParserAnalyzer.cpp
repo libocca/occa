@@ -215,6 +215,19 @@ namespace occa {
       }
     }
 
+    smntDepInfo* depMap_t::has(statement &s){
+      smntToVarDepMapIterator it = s2vdMap.find(&s);
+
+      if(it == s2vdMap.end())
+        return NULL;
+
+      return (it->second);
+    }
+
+    smntDepInfo& depMap_t::operator () (statement &s){
+      return *(has(s));
+    }
+
     varDepInfo* depMap_t::has(statement &s, varInfo &var){
       smntToVarDepMapIterator it = s2vdMap.find(&s);
 

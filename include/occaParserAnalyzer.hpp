@@ -82,6 +82,9 @@ namespace occa {
       void setup(statement &s);
       void setup(statement &s, smntDepInfo &sdInfo);
 
+      smntDepInfo* has(statement &s);
+      smntDepInfo& operator () (statement &s);
+
       varDepInfo* has(statement &s, varInfo &var);
       varDepInfo& operator () (statement &s, varInfo &var);
     };
