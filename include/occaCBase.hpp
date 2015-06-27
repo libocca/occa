@@ -114,7 +114,7 @@ extern "C" {
 
   OCCA_LFUNC occaType OCCA_RFUNC occaStruct(void *value, uintptr_t bytes);
 
-  OCCA_LFUNC occaType OCCA_RFUNC occaString(char *str);
+  OCCA_LFUNC occaType OCCA_RFUNC occaString(const char *str);
   //====================================
 
 

@@ -183,12 +183,12 @@ extern "C" {
     return (occaType) type;
   }
 
-  occaType OCCA_RFUNC occaString(char *value){
+  occaType OCCA_RFUNC occaString(const char *value){
     occaType_t *type = new occaType_t;
 
     type->type        = OCCA_TYPE_STRING;
     type->bytes       = sizeof(char *);
-    type->value.void_ = value;
+    type->value.void_ = const_cast<char*>(value);
 
     return (occaType) type;
   }
