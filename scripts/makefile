@@ -307,18 +307,18 @@ ifdef OCCA_COI_ENABLED
     endif
   endif
 else
-  ifeq ($(usingLinux),1)
-    coiLibFlags = $(call libraryFlagsFor,coi_host)
-    ifneq (,$(coiLibFlags))
+  # ifeq ($(usingLinux),1)
+  #   coiLibFlags = $(call libraryFlagsFor,coi_host)
+  #   ifneq (,$(coiLibFlags))
 
-      coiIncFlags = $(call includeFlagsFor,intel-coi/source/COIProcess_source.h)
-      ifneq (,$(coiIncFlags))
-        coiEnabled = 1
-        paths += $(coiIncFlags)
-        links += $(coiLibFlags)
-      endif
-    endif
-  endif
+  #     coiIncFlags = $(call includeFlagsFor,intel-coi/source/COIProcess_source.h)
+  #     ifneq (,$(coiIncFlags))
+  #       coiEnabled = 1
+  #       paths += $(coiIncFlags)
+  #       links += $(coiLibFlags)
+  #     endif
+  #   endif
+  # endif
 endif
 
 ifeq ($(debugEnabled), 1)
