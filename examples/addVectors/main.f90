@@ -38,7 +38,7 @@ program main
   o_b  = occaDeviceMalloc(device, int(entries,8)*4_8)
   o_ab = occaDeviceMalloc(device, int(entries,8)*4_8)
 
-  addVectors = occaBuildKernelFromSource(device, "addVectors.ofl", "addVectors")
+  addVectors = occaBuildKernelFromSource(device, "addVectors.okl", "addVectors")
 
 
   call occaCopyPtrToMem(o_a, a(1), int(entries,8)*4_8, 0_8);
