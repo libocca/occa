@@ -1,5 +1,3 @@
-#if 0
-
 #include "occaParserAnalyzer.hpp"
 #include "occaParser.hpp"
 
@@ -71,15 +69,20 @@ namespace occa {
           setupNestedVdInfos(s_, var, vdNode);
         }
         else {
-          if(vdNode->subNode == NULL){
-            vdNode->subNode       = new varDepInfoNode(vdNode->value);
-            vdNode->value->myNode = vdNode->subNode
-            vdNode->value         = NULL;
+          varDepInfo &vdInfo = *(vdNode->value);
+
+          // Copy vdInfo to the first subNode
+          if(vdInfo.subNode == NULL){
+            varDepInfo &vdInfo2 = *(new varDepInfo);
+            vdInfo2.setup(vdInfo.info, var, *(new varDepInfoNode));
+
+            vdInfo.info    = depType::none;
+            vdInfo.subNode = vdInfo2.myNode;
           }
 
-          varDepInfoNode *endNode = lastNode(vdNode->subNode);
+          varDepInfoNode *endNode = lastNode(vdInfo.subNode);
 
-          endNode->push(new varDepInfoNode(&newVdInfo));
+          endNode->push(newVdInfo.myNode);
         }
       }
 
@@ -97,11 +100,10 @@ namespace occa {
       while((sdNode           != NULL) &&
             (sdNode->value->s != &sOrigin)){
 
-        smntDepInfo &sdInfo = (sdNode->value);
-
+        smntDepInfo &sdInfo = *(sdNode->value);
         varDepInfo *vdInfo2 = sdInfo.has(var);
 
-        if(vdInfo != NULL){
+        if(vdInfo2 != NULL){
           varDepInfoNode &vdNode2 = *(vdInfo2->myNode);
 
           if(vdNode2.down == NULL)
@@ -112,7 +114,16 @@ namespace occa {
           break;
         }
         else {
+          varDepInfoNode *&vdNodeUp = sdInfo.v2dMap[&var];
 
+          varDepInfo &vdInfoUp = *(new varDepInfo);
+          vdInfoUp.setup(depType::none, var, *(new varDepInfoNode));
+
+          vdNodeUp = vdInfoUp.myNode;
+
+          vdNodeUp->pushDown(vdNode);
+
+          vdNode = vdNodeUp;
         }
 
         sdNode = sdNode->up;
@@ -209,5 +220,3 @@ namespace occa {
     //============================================
   };
 };
-
-#endif

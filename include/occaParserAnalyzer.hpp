@@ -1,8 +1,6 @@
 #ifndef OCCA_PARSER_ANALYZER_HEADER
 #define OCCA_PARSER_ANALYZER_HEADER
 
-#if 0
-
 #include "occaParserStatement.hpp"
 
 namespace occa {
@@ -60,7 +58,7 @@ namespace occa {
 
       void setupNestedVdInfos(statement &s_,
                               varInfo &var,
-                              varDepInfoNode *&vdNode);
+                              varDepInfoNode *vdNode);
 
       int getDepTypeFrom(expNode &e);
 
@@ -87,7 +85,5 @@ namespace occa {
     //============================================
   };
 };
-
-#endif
 
 #endif
