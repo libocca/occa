@@ -6071,8 +6071,9 @@ namespace occa {
 
           return ret;
         }
-        else if(info & smntType::functionPrototype)
-          return expRoot.toString(tab);
+        else if(info & smntType::functionPrototype){
+          return (expRoot.toString(tab) + '\n');
+        }
       }
       else if(info & smntType::blockStatement){
         if( !(flags & statementFlag::printSubStatements) )
