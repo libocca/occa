@@ -13,9 +13,11 @@ namespace occa {
     void varDepInfo::setup(int info_,
                            varInfo &var_,
                            varDepInfoNode &myNode_){
-      info   = info_;
-      var    = &var_;
-      myNode = &myNode_;
+      info = info_;
+      var  = &var_;
+
+      myNode        = &myNode_;
+      myNode->value = this;
     }
 
     int varDepInfo::startInfo(){
@@ -40,8 +42,10 @@ namespace occa {
       myNode(NULL) {}
 
     void smntDepInfo::setup(statement &s_, smntDepInfoNode &myNode_){
-      s      = &s_;
-      myNode = &myNode_;
+      s = &s_;
+
+      myNode        = &myNode_;
+      myNode->value = this;
 
       expNode &flatRoot = *(s_.expRoot.makeFlatHandle());
 
@@ -182,6 +186,12 @@ namespace occa {
 
 
     //---[ Dependency Map ]-----------------------
+    depMap_t::depMap_t(){}
+
+    depMap_t::depMap_t(statement &s){
+      setup(s);
+    }
+
     void depMap_t::setup(statement &s){
       setup(s, *(new smntDepInfo));
     }

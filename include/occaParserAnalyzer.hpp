@@ -76,6 +76,9 @@ namespace occa {
     public:
       smntToVarDepMap s2vdMap;
 
+      depMap_t();
+      depMap_t(statement &s);
+
       void setup(statement &s);
       void setup(statement &s, smntDepInfo &sdInfo);
 

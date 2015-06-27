@@ -7,6 +7,7 @@
 #include "occaParserNodes.hpp"
 #include "occaParserTypes.hpp"
 #include "occaParserStatement.hpp"
+#include "occaParserAnalyzer.hpp"
 #include "occaParserMagic.hpp"
 #include "occaTools.hpp"
 
