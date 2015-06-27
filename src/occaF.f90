@@ -770,6 +770,14 @@ module occa
       character(len=*),     intent(in)    :: macro
       character,            intent(in)    :: val
     end subroutine occaKernelInfoAddDefineChar_fc
+
+    subroutine occaKernelInfoAddDefineString_fc(info, macro, val)
+      use occaFTypes_m
+      implicit none
+      type(occaKernelInfo), intent(inout) :: info
+      character(len=*),     intent(in)    :: macro
+      character(len=*),     intent(in)    :: val
+    end subroutine occaKernelInfoAddDefineString_fc
   end interface occaKernelInfoAddDefine
 
   interface occaKernelInfoAddInclude
