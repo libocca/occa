@@ -849,7 +849,7 @@ namespace occa {
 
   template <>
   void memory_t<CUDA>::mappedFree(){
-    if(isMapped){
+    if(isMapped()){
       OCCA_CUDA_CHECK("Device: mappedFree()",
                       cuMemFreeHost(mappedPtr));
 
@@ -1366,7 +1366,8 @@ namespace occa {
     mem->dHandle  = this;
     mem->handle   = new CUdeviceptr*;
     mem->size     = bytes;
-    mem->isMapped = true;
+
+    mem->memInfo |= memFlag::isMapped;
 
     OCCA_CUDA_CHECK("Device: malloc host",
                     cuMemAllocHost((void**) &(mem->mappedPtr), bytes));
