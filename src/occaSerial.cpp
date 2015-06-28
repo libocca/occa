@@ -747,6 +747,8 @@ namespace occa {
   memory_t<Serial>::memory_t(){
     strMode = "Serial";
 
+    memInfo = memFlag::none;
+
     handle    = NULL;
     mappedPtr = NULL;
     uvaPtr    = NULL;
@@ -754,17 +756,9 @@ namespace occa {
     dHandle = NULL;
     size    = 0;
 
-    isTexture = false;
     textureInfo.arg = NULL;
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
-
-    uva_inDevice = false;
-    uva_isDirty  = false;
-
-    isManaged  = false;
-    isMapped   = false;
-    isAWrapper = false;
   }
 
   template <>
@@ -774,6 +768,8 @@ namespace occa {
 
   template <>
   memory_t<Serial>& memory_t<Serial>::operator = (const memory_t<Serial> &m){
+    memInfo = m.memInfo;
+
     handle    = m.handle;
     mappedPtr = m.mappedPtr;
     uvaPtr    = m.uvaPtr;
@@ -781,7 +777,6 @@ namespace occa {
     dHandle = m.dHandle;
     size    = m.size;
 
-    isTexture = m.isTexture;
     textureInfo.arg  = m.textureInfo.arg;
     textureInfo.dim  = m.textureInfo.dim;
 
@@ -789,15 +784,8 @@ namespace occa {
     textureInfo.h = m.textureInfo.h;
     textureInfo.d = m.textureInfo.d;
 
-    if(isTexture)
+    if(isATexture())
       handle = &textureInfo;
-
-    uva_inDevice = m.uva_inDevice;
-    uva_isDirty  = m.uva_isDirty;
-
-    isManaged  = m.isManaged;
-    isMapped   = m.isMapped;
-    isAWrapper = m.isAWrapper;
 
     return *this;
   }
@@ -827,7 +815,7 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    void *destPtr      = ((char*) (isATexture() ? textureInfo.arg : handle)) + offset;
     const void *srcPtr = src;
 
     ::memcpy(destPtr, srcPtr, bytes_);
@@ -850,8 +838,8 @@ namespace occa {
                "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (isTexture      ? textureInfo.arg      : handle))      + destOffset;
-    const void *srcPtr = ((char*) (src->isTexture ? src->textureInfo.arg : src->handle)) + srcOffset;
+    void *destPtr      = ((char*) (isATexture()      ? textureInfo.arg      : handle))      + destOffset;
+    const void *srcPtr = ((char*) (src->isATexture() ? src->textureInfo.arg : src->handle)) + srcOffset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -869,7 +857,7 @@ namespace occa {
                << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = dest;
-    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    const void *srcPtr = ((char*) (isATexture() ? textureInfo.arg : handle)) + offset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -891,8 +879,8 @@ namespace occa {
                "Destination has size [" << dest->size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
-    const void *srcPtr = ((char*) (isTexture       ? textureInfo.arg       : handle))       + srcOffset;
+    void *destPtr      = ((char*) (dest->isATexture() ? dest->textureInfo.arg : dest->handle)) + destOffset;
+    const void *srcPtr = ((char*) (isATexture()       ? textureInfo.arg       : handle))       + srcOffset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -907,7 +895,7 @@ namespace occa {
                "Memory has size [" << size << "],"
                << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    void *destPtr      = ((char*) (isATexture() ? textureInfo.arg : handle)) + offset;
     const void *srcPtr = src;
 
 
@@ -929,8 +917,8 @@ namespace occa {
                "Source has size [" << src->size << "],"
                << "trying to access [ " << srcOffset << " , " << (srcOffset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (isTexture      ? textureInfo.arg      : handle))         + destOffset;
-    const void *srcPtr = ((char*) (src->isTexture ? src->textureInfo.arg : src->handle)) + srcOffset;;
+    void *destPtr      = ((char*) (isATexture()      ? textureInfo.arg      : handle))         + destOffset;
+    const void *srcPtr = ((char*) (src->isATexture() ? src->textureInfo.arg : src->handle)) + srcOffset;;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -946,7 +934,7 @@ namespace occa {
                << "trying to access [ " << offset << " , " << (offset + bytes_) << " ]");
 
     void *destPtr      = dest;
-    const void *srcPtr = ((char*) (isTexture ? textureInfo.arg : handle)) + offset;
+    const void *srcPtr = ((char*) (isATexture() ? textureInfo.arg : handle)) + offset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -966,8 +954,8 @@ namespace occa {
                "Destination has size [" << dest->size << "],"
                << "trying to access [ " << destOffset << " , " << (destOffset + bytes_) << " ]");
 
-    void *destPtr      = ((char*) (dest->isTexture ? dest->textureInfo.arg : dest->handle)) + destOffset;
-    const void *srcPtr = ((char*) (isTexture       ? textureInfo.arg       : handle))       + srcOffset;
+    void *destPtr      = ((char*) (dest->isATexture() ? dest->textureInfo.arg : dest->handle)) + destOffset;
+    const void *srcPtr = ((char*) (isATexture()       ? textureInfo.arg       : handle))       + srcOffset;
 
     ::memcpy(destPtr, srcPtr, bytes_);
   }
@@ -983,7 +971,7 @@ namespace occa {
 
   template <>
   void memory_t<Serial>::free(){
-    if(isTexture){
+    if(isATexture()){
       cpu::free(textureInfo.arg);
       textureInfo.arg = NULL;
     }
@@ -1334,7 +1322,7 @@ namespace occa {
     mem->size    = bytes;
     mem->handle  = handle_;
 
-    mem->isAWrapper = true;
+    mem->memInfo |= memFlag::isAWrapper;
 
     return mem;
   }
@@ -1348,7 +1336,9 @@ namespace occa {
     mem->dHandle = this;
     mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
-    mem->isTexture = true;
+    mem->memInfo |= (memFlag::isATexture |
+                     memFlag::isAWrapper);
+
     mem->textureInfo.dim  = dim;
 
     mem->textureInfo.w = dims.x;
@@ -1358,8 +1348,6 @@ namespace occa {
     mem->textureInfo.arg = handle_;
 
     mem->handle = &(mem->textureInfo);
-
-    mem->isAWrapper = true;
 
     return mem;
   }
@@ -1389,7 +1377,8 @@ namespace occa {
     mem->dHandle = this;
     mem->size    = ((dim == 1) ? dims.x : (dims.x * dims.y)) * type.bytes();
 
-    mem->isTexture = true;
+    mem->memInfo |= memFlag::isATexture;
+
     mem->textureInfo.dim  = dim;
 
     mem->textureInfo.w = dims.x;

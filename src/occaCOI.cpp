@@ -410,12 +410,7 @@ namespace occa {
     textureInfo.dim = 1;
     textureInfo.w = textureInfo.h = textureInfo.d = 0;
 
-    uva_inDevice = false;
-    uva_isDirty  = false;
-
-    isManaged  = false;
-    isMapped   = false;
-    isAWrapper = false;
+    memInfo = memFlag::none;
   }
 
   template <>
@@ -443,12 +438,7 @@ namespace occa {
     if(isTexture)
       handle = &textureInfo;
 
-    uva_inDevice = m.uva_inDevice;
-    uva_isDirty  = m.uva_isDirty;
-
-    isManaged  = m.isManaged;
-    isMapped   = m.isMapped;
-    isAWrapper = m.isAWrapper;
+    memInfo = m.memInfo;
 
     return *this;
   }

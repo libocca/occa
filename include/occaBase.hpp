@@ -751,6 +751,21 @@ namespace occa {
                    const uintptr_t destOffset = 0,
                    const uintptr_t srcOffset = 0);
 
+  //---[ Typedefs ]---------------------
+  namespace memFlag {
+    static const int none       = 0;
+    static const int isATexture = (1 << 0);
+    static const int isManaged  = (1 << 1);
+    static const int isMapped   = (1 << 2);
+    static const int isAWrapper = (1 << 3);
+  };
+
+  namespace uvaFlag {
+    static const int inDevice   = (1 << 4);
+    static const int isDirty    = (1 << 5);
+  };
+  //====================================
+
   class memory_v {
     template <occa::mode> friend class occa::memory_t;
     template <occa::mode> friend class occa::device_t;
@@ -761,22 +776,34 @@ namespace occa {
   private:
     std::string strMode;
 
+    int memInfo;
+
     void *handle, *mappedPtr, *uvaPtr;
     occa::device_v *dHandle;
 
     uintptr_t size;
 
-    bool isTexture;
     occa::textureInfo_t textureInfo;
-
-    bool uva_inDevice, uva_isDirty;
-    bool isManaged;
-    bool isMapped;
-    bool isAWrapper;
 
   public:
     virtual inline occa::mode mode(){ return 0; }
     virtual inline ~memory_v(){}
+
+    inline bool isATexture() const {
+      return (memInfo & memFlag::isATexture);
+    }
+
+    inline bool isManaged() const {
+      return (memInfo & memFlag::isManaged);
+    }
+
+    inline bool isMapped() const {
+      return (memInfo & memFlag::isMapped);
+    }
+
+    inline bool isAWrapper() const {
+      return (memInfo & memFlag::isAWrapper);
+    }
 
     virtual void* getMemoryHandle() = 0;
     virtual void* getTextureHandle() = 0;
@@ -928,6 +955,22 @@ namespace occa {
         return 0;
 
       return mHandle->size;
+    }
+
+    inline bool isATexture() const {
+      return (mHandle->memInfo & memFlag::isATexture);
+    }
+
+    inline bool isManaged() const {
+      return (mHandle->memInfo & memFlag::isManaged);
+    }
+
+    inline bool isMapped() const {
+      return (mHandle->memInfo & memFlag::isMapped);
+    }
+
+    inline bool isAWrapper() const {
+      return (mHandle->memInfo & memFlag::isAWrapper);
     }
 
     void* textureArg() const;
@@ -1651,7 +1694,7 @@ namespace occa {
       size      = sizeof(void*);
 
       pointer    = true;
-      hasTwoArgs = m.mHandle->isTexture;
+      hasTwoArgs = (m.isATexture());
 
       if(hasTwoArgs)
         arg2.void_ = m.textureArg();
@@ -1673,19 +1716,22 @@ namespace occa {
   }
 
   inline void kernelArg::setupForKernelCall(const bool isConst) const {
-    if(mHandle                      &&
-       mHandle->isManaged           &&
+    if(mHandle                                 &&
+       (mHandle->memInfo & memFlag::isManaged) &&
        mHandle->dHandle->fakesUva() &&
        mHandle->dHandle->hasUvaEnabled()){
 
-      if(!(mHandle->uva_inDevice)){
+      if((mHandle->memInfo & uvaFlag::inDevice) == 0){
+
         mHandle->copyFrom(mHandle->uvaPtr);
-        mHandle->uva_inDevice = true;
+        mHandle->memInfo |= uvaFlag::inDevice;
       }
 
-      if(!isConst && !(mHandle->uva_isDirty)){
+      if(!isConst &&
+         ((mHandle->memInfo & uvaFlag::isDirty) == 0)){
+
         uvaDirtyMemory.push_back(mHandle);
-        mHandle->uva_isDirty = true;
+        mHandle->memInfo |= uvaFlag::isDirty;
       }
     }
   }

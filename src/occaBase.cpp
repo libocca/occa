@@ -609,7 +609,7 @@ namespace occa {
     if( !(mHandle->dHandle->fakesUva()) ){
       mHandle->uvaPtr = mHandle->handle;
     }
-    else if(mHandle->isMapped){
+    else if(mHandle->memInfo & memFlag::isMapped){
       mHandle->uvaPtr = mHandle->mappedPtr;
     }
     else{
@@ -632,7 +632,7 @@ namespace occa {
   void memory::manage(){
     placeInUva();
 
-    mHandle->isManaged = true;
+    mHandle->memInfo |= memFlag::isManaged;
   }
 
   void memory::syncToDevice(const uintptr_t bytes){
@@ -641,8 +641,8 @@ namespace occa {
 
       copyTo(mHandle->uvaPtr, bytes_);
 
-      mHandle->uva_inDevice = true;
-      mHandle->uva_isDirty  = false;
+      mHandle->memInfo |=  uvaFlag::inDevice;
+      mHandle->memInfo &= ~uvaFlag::isDirty;
 
       removeFromDirtyMap(mHandle);
     }
@@ -654,25 +654,26 @@ namespace occa {
 
       copyFrom(mHandle->uvaPtr, bytes_);
 
-      mHandle->uva_inDevice = false;
-      mHandle->uva_isDirty  = false;
+      mHandle->memInfo &= ~uvaFlag::inDevice;
+      mHandle->memInfo &= ~uvaFlag::isDirty;
 
       removeFromDirtyMap(mHandle);
     }
   }
 
   bool memory::uvaIsDirty(){
-    return (mHandle && (mHandle->uva_isDirty));
+    return ((mHandle != NULL) &&
+            (mHandle->memInfo & uvaFlag::isDirty));
   }
 
   void memory::uvaMarkDirty(){
-    if(mHandle)
-      mHandle->uva_isDirty = true;
+    if(mHandle != NULL)
+      mHandle->memInfo |= uvaFlag::isDirty;
   }
 
   void memory::uvaMarkClean(){
-    if(mHandle)
-      mHandle->uva_isDirty = false;
+    if(mHandle != NULL)
+      mHandle->memInfo &= ~uvaFlag::isDirty;
   }
 
   void memory::copyFrom(const void *src,
@@ -968,8 +969,11 @@ namespace occa {
     const uintptr_t srcOff  = (srcMem  ? (((char*) src)  - ((char*) srcMem->uvaPtr))  : 0);
     const uintptr_t destOff = (destMem ? (((char*) dest) - ((char*) destMem->uvaPtr)) : 0);
 
-    const bool usingSrcPtr  = ((srcMem  == NULL) || (srcMem->isManaged));
-    const bool usingDestPtr = ((destMem == NULL) || (destMem->isManaged));
+    const bool usingSrcPtr  = ((srcMem  == NULL) ||
+                               (srcMem->memInfo & memFlag::isManaged));
+
+    const bool usingDestPtr = ((destMem == NULL) ||
+                               (destMem->memInfo & memFlag::isManaged));
 
     if(usingSrcPtr && usingDestPtr){
       ::memcpy(dest, src, bytes);
@@ -1070,7 +1074,7 @@ namespace occa {
       }
     }
 
-    if( !(mHandle->isMapped) )
+    if((mHandle->memInfo & memFlag::isMapped) == 0)
       mHandle->free();
     else
       mHandle->mappedFree();
@@ -1383,8 +1387,8 @@ namespace occa {
 
           mem->asyncCopyTo(mem->uvaPtr);
 
-          mem->uva_inDevice = false;
-          mem->uva_isDirty  = false;
+          mem->memInfo &= ~uvaFlag::inDevice;
+          mem->memInfo &= ~uvaFlag::isDirty;
         }
 
         uvaDirtyMemory.clear();

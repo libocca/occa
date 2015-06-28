@@ -18,7 +18,6 @@ namespace occa {
   template <occa::mode> class device_t;
   class device;
 
-  //---[ UVA ]------------------------------------
   bool hasUvaEnabledByDefault();
   void enableUvaByDefault();
   void disableUvaByDefault();
