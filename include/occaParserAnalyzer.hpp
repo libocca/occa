@@ -21,6 +21,7 @@ namespace occa {
       static const int none   = 0;
       static const int set    = (1 << 0);
       static const int update = (1 << 1);
+      static const int used   = (1 << 2);
     }
 
     //---[ Variable Dependencies ]----------------

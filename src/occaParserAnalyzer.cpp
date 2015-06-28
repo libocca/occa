@@ -141,18 +141,29 @@ namespace occa {
       if((e.up == NULL) ||
          ((e.up->info & expType::operator_) == 0)){
 
-        return depType::none;
+        return depType::used;
       }
 
       expNode &eUp = *(e.up);
 
-      if(eUp.value == "=")
-        return depType::set;
+      const bool isUpdated = isAnUpdateOperator(eUp.value);
 
-      if(isAnUpdateOperator(eUp.value))
-        return depType::update;
+      if(isUpdated){
+        const bool varIsUpdated = (eUp.leaves[0] == &e);
 
-      return depType::none;
+        if(varIsUpdated){
+          const bool isSet = (eUp.value == "=");
+
+          if(isSet)
+            return depType::set;
+          else
+            return depType::used;
+        }
+        else
+          return depType::update;
+      }
+
+      return depType::used;
     }
 
     varDepInfo* smntDepInfo::has(varInfo &var){
