@@ -1,4 +1,4 @@
-#include "occaKernelDefines.hpp"
+#include "occaVarFiles.hpp"
 #include "occaTools.hpp"
 #include "occaBase.hpp"
 
