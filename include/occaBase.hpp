@@ -628,6 +628,9 @@ namespace occa {
     int nestedKernelCount;
     kernel *nestedKernels;
 
+    int argumentCount;
+    kernelArg arguments[OCCA_MAX_ARGS];
+
   public:
     virtual occa::mode mode() = 0;
 
@@ -695,9 +698,6 @@ namespace occa {
 
   private:
     kernel_v *kHandle;
-
-    int argumentCount;
-    kernelArg arguments[OCCA_MAX_ARGS];
 
   public:
     kernel();

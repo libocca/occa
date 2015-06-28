@@ -613,23 +613,26 @@ namespace occa {
   }
 
   void kernel::clearArgumentList(){
-    argumentCount = 0;
+    kHandle->argumentCount = 0;
   }
 
   void kernel::addArgument(const int argPos,
                            const kernelArg &arg){
-    if(argumentCount < (argPos + 1)){
+    if(kHandle->argumentCount < (argPos + 1)){
       OCCA_CHECK(argPos < OCCA_MAX_ARGS,
                  "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
                  << " [" << argPos << "] arguments were set");
 
-      argumentCount = (argPos + 1);
+      kHandle->argumentCount = (argPos + 1);
     }
 
-    arguments[argPos] = arg;
+    kHandle->arguments[argPos] = arg;
   }
 
   void kernel::runFromArguments(){
+    const int argumentCount = kHandle->argumentCount;
+    kernelArg *arguments    = kHandle->arguments;
+
     // [-] OCCA_MAX_ARGS = 25
 #include "operators/occaRunFromArguments.cpp"
 
