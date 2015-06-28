@@ -1824,6 +1824,8 @@ namespace occa {
     const std::string binaryFile = hashDir + "binary";
 
     if(!haveHash(hash, 2)){
+      waitForHash(hash, 2);
+
       if(verboseCompilation_f)
         std::cout << "Found loo.py cached binary of [" << filename << "] in [" << binaryFile << "]\n";
 
