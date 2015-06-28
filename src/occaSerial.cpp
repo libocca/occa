@@ -6,9 +6,22 @@ namespace occa {
     std::string getFieldFrom(const std::string &command,
                              const std::string &field){
 #if (OCCA_OS & LINUX_OS)
+      std::string shellToolsFile = sys::getFilename("[occa]/scripts/shellTools.sh");
+
+      if(!sys::fileExists(shellToolsFile)){
+        sys::mkpath(getFileDirectory(shellToolsFile));
+
+        std::ofstream fs2;
+        fs2.open(shellToolsFile.c_str());
+
+        fs2 << occaShellTools;
+
+        fs2.close();
+      }
+
       std::stringstream ss;
 
-      ss << "echo \"(. " << env::OCCA_DIR << "/scripts/shellTools.sh; " << command << " '" << field << "')\" | bash";
+      ss << "echo \"(. " << shellToolsFile << "; " << command << " '" << field << "')\" | bash";
 
       std::string sCommand = ss.str();
 

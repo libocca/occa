@@ -21,7 +21,7 @@
 #include "occaBase.hpp"
 #include "occaLibrary.hpp"
 
-#include "occaKernelDefines.hpp"
+#include "occaVarFiles.hpp"
 
 namespace occa {
   //---[ Data Structs ]---------------

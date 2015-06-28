@@ -10,7 +10,7 @@
 #include "occaBase.hpp"
 #include "occaLibrary.hpp"
 
-#include "occaKernelDefines.hpp"
+#include "occaVarFiles.hpp"
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  include <dlfcn.h>
