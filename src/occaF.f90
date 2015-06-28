@@ -731,14 +731,6 @@ module occa
   end interface occaCreateKernelInfo
 
   interface occaKernelInfoAddDefine
-    ! subroutine occaKernelInfoAddDefine_fc(info, macro, val)
-    !   use occaFTypes_m
-    !   implicit none
-    !   type(occaKernelInfo), intent(inout) :: info
-    !   character(len=*),     intent(in)    :: macro
-    !   type(occaType),       intent(in)    :: val
-    ! end subroutine occaKernelInfoAddDefine_fc
-
     subroutine occaKernelInfoAddDefineInt4_fc(info, macro, val)
       use occaFTypes_m
       implicit none
@@ -762,14 +754,6 @@ module occa
       character(len=*),     intent(in)    :: macro
       real(8),              intent(in)    :: val
     end subroutine occaKernelInfoAddDefineReal8_fc
-
-    subroutine occaKernelInfoAddDefineChar_fc(info, macro, val)
-      use occaFTypes_m
-      implicit none
-      type(occaKernelInfo), intent(inout) :: info
-      character(len=*),     intent(in)    :: macro
-      character,            intent(in)    :: val
-    end subroutine occaKernelInfoAddDefineChar_fc
 
     subroutine occaKernelInfoAddDefineString_fc(info, macro, val)
       use occaFTypes_m

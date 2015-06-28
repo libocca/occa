@@ -465,6 +465,8 @@ namespace occa {
     ss << "#define " << macro << " " << value2 << '\n';
 
     header = ss.str() + header;
+
+    std::cout << "header = " << header << '\n';
   }
 
   template <>
