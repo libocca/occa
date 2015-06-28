@@ -8,6 +8,6 @@ program main
 
   call occaKernelInfoAddDefine(kInfo, "A", 0);
   call occaKernelInfoAddDefine(kInfo, "B", 0.0);
-  call occaKernelInfoAddDefine(kInfo, "D", "This is a String");
+  call occaKernelInfoAddDefine(kInfo, "D", "This is a string");
 
 end program main

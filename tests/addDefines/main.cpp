@@ -6,7 +6,7 @@ int main(int argc, char **argv){
   kInfo.addDefine("A", (int)    0);
   kInfo.addDefine("B", (double) 0.0);
   kInfo.addDefine("C", (char)   'C');
-  kInfo.addDefine("D", "D");
+  kInfo.addDefine("D", "This is a string");
 
   return 0;
 }

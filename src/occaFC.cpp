@@ -1057,7 +1057,7 @@ extern "C" {
     OCCA_F2C_ALLOC_STR(macro, macro_l, macro_c);
     OCCA_F2C_ALLOC_STR(value, value_l, value_c);
 
-    occaKernelInfoAddDefine(*info, macro_c, occaString(value));
+    occaKernelInfoAddDefine(*info, macro_c, occaString(value_c));
 
     OCCA_F2C_FREE_STR(macro, macro_c);
     OCCA_F2C_FREE_STR(value, value_c);
