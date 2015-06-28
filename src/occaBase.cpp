@@ -609,7 +609,7 @@ namespace occa {
     if( !(mHandle->dHandle->fakesUva()) ){
       mHandle->uvaPtr = mHandle->handle;
     }
-    else if(mHandle->memInfo & memFlag::isMapped){
+    else if(mHandle->isMapped()){
       mHandle->uvaPtr = mHandle->mappedPtr;
     }
     else{
@@ -662,8 +662,7 @@ namespace occa {
   }
 
   bool memory::uvaIsDirty(){
-    return ((mHandle != NULL) &&
-            (mHandle->memInfo & uvaFlag::isDirty));
+    return (mHandle && mHandle->isDirty());
   }
 
   void memory::uvaMarkDirty(){
@@ -969,11 +968,8 @@ namespace occa {
     const uintptr_t srcOff  = (srcMem  ? (((char*) src)  - ((char*) srcMem->uvaPtr))  : 0);
     const uintptr_t destOff = (destMem ? (((char*) dest) - ((char*) destMem->uvaPtr)) : 0);
 
-    const bool usingSrcPtr  = ((srcMem  == NULL) ||
-                               (srcMem->memInfo & memFlag::isManaged));
-
-    const bool usingDestPtr = ((destMem == NULL) ||
-                               (destMem->memInfo & memFlag::isManaged));
+    const bool usingSrcPtr  = ((srcMem  == NULL) || srcMem->isManaged());
+    const bool usingDestPtr = ((destMem == NULL) || destMem->isManaged());
 
     if(usingSrcPtr && usingDestPtr){
       ::memcpy(dest, src, bytes);
@@ -1074,7 +1070,7 @@ namespace occa {
       }
     }
 
-    if((mHandle->memInfo & memFlag::isMapped) == 0)
+    if(!mHandle->isMapped())
       mHandle->free();
     else
       mHandle->mappedFree();

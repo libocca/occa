@@ -805,6 +805,14 @@ namespace occa {
       return (memInfo & memFlag::isAWrapper);
     }
 
+    inline bool inDevice() const {
+      return (memInfo & uvaFlag::inDevice);
+    }
+
+    inline bool isDirty() const {
+      return (memInfo & uvaFlag::isDirty);
+    }
+
     virtual void* getMemoryHandle() = 0;
     virtual void* getTextureHandle() = 0;
 
@@ -971,6 +979,14 @@ namespace occa {
 
     inline bool isAWrapper() const {
       return (mHandle->memInfo & memFlag::isAWrapper);
+    }
+
+    inline bool inDevice() const {
+      return (mHandle->memInfo & uvaFlag::inDevice);
+    }
+
+    inline bool isDirty() const {
+      return (mHandle->memInfo & uvaFlag::isDirty);
     }
 
     void* textureArg() const;
@@ -1716,20 +1732,17 @@ namespace occa {
   }
 
   inline void kernelArg::setupForKernelCall(const bool isConst) const {
-    if(mHandle                                 &&
-       (mHandle->memInfo & memFlag::isManaged) &&
+    if(mHandle                      &&
+       mHandle->isManaged()         &&
        mHandle->dHandle->fakesUva() &&
        mHandle->dHandle->hasUvaEnabled()){
 
-      if((mHandle->memInfo & uvaFlag::inDevice) == 0){
-
+      if(!mHandle->inDevice()){
         mHandle->copyFrom(mHandle->uvaPtr);
         mHandle->memInfo |= uvaFlag::inDevice;
       }
 
-      if(!isConst &&
-         ((mHandle->memInfo & uvaFlag::isDirty) == 0)){
-
+      if(!isConst && !mHandle->isDirty()){
         uvaDirtyMemory.push_back(mHandle);
         mHandle->memInfo |= uvaFlag::isDirty;
       }
