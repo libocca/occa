@@ -42,10 +42,24 @@ namespace occa {
     if(negative)
       ret = ((~ret) + 1);
 
-    if(longs == 0)
-      ret = ((uintptr_t) ((int) ret));
-    else if(longs == 1)
-      ret = ((uintptr_t) ((long) ret));
+    if(longs == 0){
+      if(!unsigned_)
+        ret = ((uintptr_t) ((int) ret));
+      else
+        ret = ((uintptr_t) ((unsigned int) ret));
+    }
+    else if(longs == 1){
+      if(!unsigned_)
+        ret = ((uintptr_t) ((long) ret));
+      else
+        ret = ((uintptr_t) ((unsigned long) ret));
+    }
+    else {
+      if(!unsigned_)
+        ret = ((uintptr_t) ((long long) ret));
+      else
+        ret = ((uintptr_t) ((unsigned long long) ret));
+    }
 
     return ret;
   }
@@ -343,6 +357,9 @@ namespace occa {
           }
         }
       }
+
+      // Remove warning for not using negative
+      ignoreResult(negative);
     }
 
     void typeHolder::load(const std::string &str){
