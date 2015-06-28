@@ -23,18 +23,6 @@ def nlc(n, N):
 
     return ret;
 
-def functionPointerTypeDefs(N):
-    return '\n\n'.join([functionPointerTypeDef(n + 1) for n in xrange(N)])
-
-def functionPointerTypeDef(N):
-    return 'typedef void (*functionPointer' + str(N) + ' )(int *occaKernelInfoArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2, ' +  ' '.join(['void *arg' + str(n) + vnlc(n, N) for n in xrange(N)]) + ');'
-
-def coiFunctionPointerTypeDefs(N):
-    return '\n\n'.join([coiFunctionPointerTypeDef(n + 1) for n in xrange(N)])
-
-def coiFunctionPointerTypeDef(N):
-    return 'typedef void (*functionPointer' + str(N) + ' )(int *occaKernelInfoArgs, ' +  ' '.join(['void *arg' + str(n) + vnlc(n, N) for n in xrange(N)]) + ');'
-
 def runFromArguments(N):
     return 'switch(argumentCount){\n' + '\n'.join([runFromArgument(n + 1) for n in xrange(N)]) + '}'
 
@@ -131,7 +119,7 @@ def pthreadOperatorDefinition(N):
   }
 
   void launchKernel""" + str(N) + """(PthreadKernelArg_t &args){
-    functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -176,7 +164,7 @@ def pthreadOperatorDefinition(N):
 def serialOperatorDefinition(N):
     return """
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -195,7 +183,7 @@ def serialOperatorDefinition(N):
 def ompOperatorDefinition(N):
     return """
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
-    functionPointer""" + str(N) + """ tmpKernel = (functionPointer""" + str(N) + """) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -386,14 +374,6 @@ hpp.close()
 
 hpp = open(occaDir + '/include/operators/occaOperatorDeclarations.hpp', 'w')
 hpp.write(operatorDeclarations('Base', maxN));
-hpp.close()
-
-hpp = open(occaDir + '/include/operators/occaFunctionPointerTypeDefs.hpp', 'w')
-hpp.write(functionPointerTypeDefs(maxN));
-hpp.close()
-
-hpp = open(occaDir + '/include/operators/occaCOIFunctionPointerTypeDefs.hpp', 'w')
-hpp.write(coiFunctionPointerTypeDefs(maxN));
 hpp.close()
 
 hpp = open(occaDir + '/src/operators/occaOperatorDefinitions.cpp', 'w')

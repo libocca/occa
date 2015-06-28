@@ -305,7 +305,6 @@ namespace occa {
   int device_t<Pthreads>::simdWidth();
   //==================================
 
-#include "operators/occaFunctionPointerTypeDefs.hpp"
 #include "operators/occaPthreadsKernelOperators.hpp"
 
   //---[ Pthreads ]-------------------

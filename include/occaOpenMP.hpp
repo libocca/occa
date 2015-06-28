@@ -262,7 +262,6 @@ namespace occa {
   int device_t<OpenMP>::simdWidth();
   //==================================
 
-#include "operators/occaFunctionPointerTypeDefs.hpp"
 #include "operators/occaOpenMPKernelOperators.hpp"
 
 };

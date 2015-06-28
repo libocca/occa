@@ -28,7 +28,7 @@
   }
 
   void launchKernel1(PthreadKernelArg_t &args){
-    functionPointer1 tmpKernel = (functionPointer1) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -102,7 +102,7 @@
   }
 
   void launchKernel2(PthreadKernelArg_t &args){
-    functionPointer2 tmpKernel = (functionPointer2) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -178,7 +178,7 @@
   }
 
   void launchKernel3(PthreadKernelArg_t &args){
-    functionPointer3 tmpKernel = (functionPointer3) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -257,7 +257,7 @@
   }
 
   void launchKernel4(PthreadKernelArg_t &args){
-    functionPointer4 tmpKernel = (functionPointer4) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -338,7 +338,7 @@
   }
 
   void launchKernel5(PthreadKernelArg_t &args){
-    functionPointer5 tmpKernel = (functionPointer5) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -421,7 +421,7 @@
   }
 
   void launchKernel6(PthreadKernelArg_t &args){
-    functionPointer6 tmpKernel = (functionPointer6) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -507,7 +507,7 @@
   }
 
   void launchKernel7(PthreadKernelArg_t &args){
-    functionPointer7 tmpKernel = (functionPointer7) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -595,7 +595,7 @@
   }
 
   void launchKernel8(PthreadKernelArg_t &args){
-    functionPointer8 tmpKernel = (functionPointer8) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -685,7 +685,7 @@
   }
 
   void launchKernel9(PthreadKernelArg_t &args){
-    functionPointer9 tmpKernel = (functionPointer9) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -778,7 +778,7 @@
   }
 
   void launchKernel10(PthreadKernelArg_t &args){
-    functionPointer10 tmpKernel = (functionPointer10) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -873,7 +873,7 @@
   }
 
   void launchKernel11(PthreadKernelArg_t &args){
-    functionPointer11 tmpKernel = (functionPointer11) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -970,7 +970,7 @@
   }
 
   void launchKernel12(PthreadKernelArg_t &args){
-    functionPointer12 tmpKernel = (functionPointer12) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1070,7 +1070,7 @@
   }
 
   void launchKernel13(PthreadKernelArg_t &args){
-    functionPointer13 tmpKernel = (functionPointer13) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1172,7 +1172,7 @@
   }
 
   void launchKernel14(PthreadKernelArg_t &args){
-    functionPointer14 tmpKernel = (functionPointer14) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1276,7 +1276,7 @@
   }
 
   void launchKernel15(PthreadKernelArg_t &args){
-    functionPointer15 tmpKernel = (functionPointer15) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1383,7 +1383,7 @@
   }
 
   void launchKernel16(PthreadKernelArg_t &args){
-    functionPointer16 tmpKernel = (functionPointer16) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1492,7 +1492,7 @@
   }
 
   void launchKernel17(PthreadKernelArg_t &args){
-    functionPointer17 tmpKernel = (functionPointer17) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1603,7 +1603,7 @@
   }
 
   void launchKernel18(PthreadKernelArg_t &args){
-    functionPointer18 tmpKernel = (functionPointer18) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1717,7 +1717,7 @@
   }
 
   void launchKernel19(PthreadKernelArg_t &args){
-    functionPointer19 tmpKernel = (functionPointer19) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1833,7 +1833,7 @@
   }
 
   void launchKernel20(PthreadKernelArg_t &args){
-    functionPointer20 tmpKernel = (functionPointer20) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -1951,7 +1951,7 @@
   }
 
   void launchKernel21(PthreadKernelArg_t &args){
-    functionPointer21 tmpKernel = (functionPointer21) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2072,7 +2072,7 @@
   }
 
   void launchKernel22(PthreadKernelArg_t &args){
-    functionPointer22 tmpKernel = (functionPointer22) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2195,7 +2195,7 @@
   }
 
   void launchKernel23(PthreadKernelArg_t &args){
-    functionPointer23 tmpKernel = (functionPointer23) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2320,7 +2320,7 @@
   }
 
   void launchKernel24(PthreadKernelArg_t &args){
-    functionPointer24 tmpKernel = (functionPointer24) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2448,7 +2448,7 @@
   }
 
   void launchKernel25(PthreadKernelArg_t &args){
-    functionPointer25 tmpKernel = (functionPointer25) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2578,7 +2578,7 @@
   }
 
   void launchKernel26(PthreadKernelArg_t &args){
-    functionPointer26 tmpKernel = (functionPointer26) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2710,7 +2710,7 @@
   }
 
   void launchKernel27(PthreadKernelArg_t &args){
-    functionPointer27 tmpKernel = (functionPointer27) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2845,7 +2845,7 @@
   }
 
   void launchKernel28(PthreadKernelArg_t &args){
-    functionPointer28 tmpKernel = (functionPointer28) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -2982,7 +2982,7 @@
   }
 
   void launchKernel29(PthreadKernelArg_t &args){
-    functionPointer29 tmpKernel = (functionPointer29) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -3121,7 +3121,7 @@
   }
 
   void launchKernel30(PthreadKernelArg_t &args){
-    functionPointer30 tmpKernel = (functionPointer30) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -3263,7 +3263,7 @@
   }
 
   void launchKernel31(PthreadKernelArg_t &args){
-    functionPointer31 tmpKernel = (functionPointer31) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -3407,7 +3407,7 @@
   }
 
   void launchKernel32(PthreadKernelArg_t &args){
-    functionPointer32 tmpKernel = (functionPointer32) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -3553,7 +3553,7 @@
   }
 
   void launchKernel33(PthreadKernelArg_t &args){
-    functionPointer33 tmpKernel = (functionPointer33) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -3702,7 +3702,7 @@
   }
 
   void launchKernel34(PthreadKernelArg_t &args){
-    functionPointer34 tmpKernel = (functionPointer34) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -3853,7 +3853,7 @@
   }
 
   void launchKernel35(PthreadKernelArg_t &args){
-    functionPointer35 tmpKernel = (functionPointer35) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4006,7 +4006,7 @@
   }
 
   void launchKernel36(PthreadKernelArg_t &args){
-    functionPointer36 tmpKernel = (functionPointer36) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4162,7 +4162,7 @@
   }
 
   void launchKernel37(PthreadKernelArg_t &args){
-    functionPointer37 tmpKernel = (functionPointer37) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4320,7 +4320,7 @@
   }
 
   void launchKernel38(PthreadKernelArg_t &args){
-    functionPointer38 tmpKernel = (functionPointer38) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4480,7 +4480,7 @@
   }
 
   void launchKernel39(PthreadKernelArg_t &args){
-    functionPointer39 tmpKernel = (functionPointer39) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4643,7 +4643,7 @@
   }
 
   void launchKernel40(PthreadKernelArg_t &args){
-    functionPointer40 tmpKernel = (functionPointer40) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4808,7 +4808,7 @@
   }
 
   void launchKernel41(PthreadKernelArg_t &args){
-    functionPointer41 tmpKernel = (functionPointer41) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -4975,7 +4975,7 @@
   }
 
   void launchKernel42(PthreadKernelArg_t &args){
-    functionPointer42 tmpKernel = (functionPointer42) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -5145,7 +5145,7 @@
   }
 
   void launchKernel43(PthreadKernelArg_t &args){
-    functionPointer43 tmpKernel = (functionPointer43) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -5317,7 +5317,7 @@
   }
 
   void launchKernel44(PthreadKernelArg_t &args){
-    functionPointer44 tmpKernel = (functionPointer44) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -5491,7 +5491,7 @@
   }
 
   void launchKernel45(PthreadKernelArg_t &args){
-    functionPointer45 tmpKernel = (functionPointer45) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -5668,7 +5668,7 @@
   }
 
   void launchKernel46(PthreadKernelArg_t &args){
-    functionPointer46 tmpKernel = (functionPointer46) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -5847,7 +5847,7 @@
   }
 
   void launchKernel47(PthreadKernelArg_t &args){
-    functionPointer47 tmpKernel = (functionPointer47) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -6028,7 +6028,7 @@
   }
 
   void launchKernel48(PthreadKernelArg_t &args){
-    functionPointer48 tmpKernel = (functionPointer48) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -6212,7 +6212,7 @@
   }
 
   void launchKernel49(PthreadKernelArg_t &args){
-    functionPointer49 tmpKernel = (functionPointer49) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;
@@ -6398,7 +6398,7 @@
   }
 
   void launchKernel50(PthreadKernelArg_t &args){
-    functionPointer50 tmpKernel = (functionPointer50) args.kernelHandle;
+    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
 
     int dp = args.dims - 1;
     occa::dim &outer = args.outer;

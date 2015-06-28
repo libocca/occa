@@ -282,7 +282,6 @@ namespace occa {
   int device_t<COI>::simdWidth();
   //==================================
 
-#include "operators/occaCOIFunctionPointerTypeDefs.hpp"
 #include "operators/occaCOIKernelOperators.hpp"
 
   //---[ Error Handling ]-------------

@@ -310,7 +310,6 @@ namespace occa {
   int device_t<Serial>::simdWidth();
   //==================================
 
-#include "operators/occaFunctionPointerTypeDefs.hpp"
 #include "operators/occaSerialKernelOperators.hpp"
 
 };

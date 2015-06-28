@@ -221,6 +221,8 @@ namespace occa {
 
   static const int useLoopy  = (1 << 0);
   static const int useFloopy = (1 << 1);
+
+  typedef void (*handleFunction_t)(int *occaKernelInfoArgs, ...);
   //==============================================
 
   //---[ Mode ]-----------------------------------

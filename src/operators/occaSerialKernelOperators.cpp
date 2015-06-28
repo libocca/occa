@@ -1,7 +1,7 @@
   template <>
   void kernel_t<Serial>::operator () (const kernelArg &arg0){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer1 tmpKernel = (functionPointer1) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -21,7 +21,7 @@
   template <>
   void kernel_t<Serial>::operator () (const kernelArg &arg0,  const kernelArg &arg1){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer2 tmpKernel = (functionPointer2) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -42,7 +42,7 @@
   template <>
   void kernel_t<Serial>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer3 tmpKernel = (functionPointer3) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -65,7 +65,7 @@
   void kernel_t<Serial>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer4 tmpKernel = (functionPointer4) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -89,7 +89,7 @@
   void kernel_t<Serial>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer5 tmpKernel = (functionPointer5) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -114,7 +114,7 @@
   void kernel_t<Serial>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer6 tmpKernel = (functionPointer6) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -141,7 +141,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer7 tmpKernel = (functionPointer7) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -169,7 +169,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer8 tmpKernel = (functionPointer8) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -198,7 +198,7 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer9 tmpKernel = (functionPointer9) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -229,7 +229,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer10 tmpKernel = (functionPointer10) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -261,7 +261,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer11 tmpKernel = (functionPointer11) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -294,7 +294,7 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer12 tmpKernel = (functionPointer12) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -329,7 +329,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer13 tmpKernel = (functionPointer13) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -365,7 +365,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer14 tmpKernel = (functionPointer14) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -402,7 +402,7 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer15 tmpKernel = (functionPointer15) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -441,7 +441,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer16 tmpKernel = (functionPointer16) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -481,7 +481,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer17 tmpKernel = (functionPointer17) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -522,7 +522,7 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer18 tmpKernel = (functionPointer18) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -565,7 +565,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer19 tmpKernel = (functionPointer19) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -609,7 +609,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer20 tmpKernel = (functionPointer20) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -654,7 +654,7 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer21 tmpKernel = (functionPointer21) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -701,7 +701,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer22 tmpKernel = (functionPointer22) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -749,7 +749,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer23 tmpKernel = (functionPointer23) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -798,7 +798,7 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer24 tmpKernel = (functionPointer24) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -849,7 +849,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer25 tmpKernel = (functionPointer25) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -901,7 +901,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer26 tmpKernel = (functionPointer26) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -954,7 +954,7 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer27 tmpKernel = (functionPointer27) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1009,7 +1009,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer28 tmpKernel = (functionPointer28) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1065,7 +1065,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer29 tmpKernel = (functionPointer29) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1122,7 +1122,7 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer30 tmpKernel = (functionPointer30) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1181,7 +1181,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer31 tmpKernel = (functionPointer31) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1241,7 +1241,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer32 tmpKernel = (functionPointer32) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1302,7 +1302,7 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer33 tmpKernel = (functionPointer33) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1365,7 +1365,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer34 tmpKernel = (functionPointer34) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1429,7 +1429,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer35 tmpKernel = (functionPointer35) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1494,7 +1494,7 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer36 tmpKernel = (functionPointer36) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1561,7 +1561,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer37 tmpKernel = (functionPointer37) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1629,7 +1629,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer38 tmpKernel = (functionPointer38) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1698,7 +1698,7 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer39 tmpKernel = (functionPointer39) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1769,7 +1769,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer40 tmpKernel = (functionPointer40) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1841,7 +1841,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer41 tmpKernel = (functionPointer41) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1914,7 +1914,7 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer42 tmpKernel = (functionPointer42) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -1989,7 +1989,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer43 tmpKernel = (functionPointer43) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2065,7 +2065,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer44 tmpKernel = (functionPointer44) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2142,7 +2142,7 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer45 tmpKernel = (functionPointer45) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2221,7 +2221,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer46 tmpKernel = (functionPointer46) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2301,7 +2301,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer47 tmpKernel = (functionPointer47) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2382,7 +2382,7 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer48 tmpKernel = (functionPointer48) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2465,7 +2465,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer49 tmpKernel = (functionPointer49) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
@@ -2549,7 +2549,7 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
     SerialKernelData_t &data_ = *((SerialKernelData_t*) data);
-    functionPointer50 tmpKernel = (functionPointer50) data_.handle;
+    handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
     int occaKernelArgs[6];
 
     occaKernelArgs[0] = outer.z;
