@@ -61,10 +61,17 @@ namespace occa {
 
   occa::memory_v* uvaToMemory(void *ptr);
 
+  void startManaging(void *ptr);
+  void stopManaging(void *ptr);
+
   void syncToDevice(void *ptr, const uintptr_t bytes = 0);
   void syncFromDevice(void *ptr, const uintptr_t bytes = 0);
 
+  void syncMemToDevice(occa::memory_v *mem, const uintptr_t bytes = 0);
+  void syncMemFromDevice(occa::memory_v *mem, const uintptr_t bytes = 0);
+
   bool needsSync(void *ptr);
+  void sync(void *ptr);
   void dontSync(void *ptr);
 
   void removeFromDirtyMap(void *ptr);
@@ -72,6 +79,5 @@ namespace occa {
 
   void setupMagicFor(void *ptr);
 
-  // More free() functions below, in [Device Functions]
   void free(void *ptr);
 };

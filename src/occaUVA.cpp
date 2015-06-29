@@ -90,16 +90,31 @@ namespace occa {
     return it->second;
   }
 
+  void startManaging(void *ptr){
+    occa::memory_v *mem = uvaToMemory(ptr);
+
+    if(mem == NULL)
+      return;
+
+    mem->memInfo &= ~uvaFlag::leftInDevice;
+  }
+
+  void stopManaging(void *ptr){
+    occa::memory_v *mem = uvaToMemory(ptr);
+
+    if(mem == NULL)
+      return;
+
+    mem->memInfo |= uvaFlag::leftInDevice;
+  }
+
   void syncToDevice(void *ptr, const uintptr_t bytes){
     occa::memory_v *mem = uvaToMemory(ptr);
 
     if(mem == NULL)
       return;
 
-    if(!mem->dHandle->fakesUva())
-      memcpy(mem->handle, mem->uvaPtr, bytes);
-    else
-      occa::memory(mem).syncToDevice(bytes);
+    syncMemToDevice(mem, bytes);
   }
 
   void syncFromDevice(void *ptr, const uintptr_t bytes){
@@ -108,6 +123,17 @@ namespace occa {
     if(mem == NULL)
       return;
 
+    syncMemFromDevice(mem, bytes);
+  }
+
+  void syncMemToDevice(occa::memory_v *mem, const uintptr_t bytes){
+    if(!mem->dHandle->fakesUva())
+      memcpy(mem->handle, mem->uvaPtr, bytes);
+    else
+      occa::memory(mem).syncToDevice(bytes);
+  }
+
+  void syncMemFromDevice(occa::memory_v *mem, const uintptr_t bytes){
     if(!mem->dHandle->fakesUva())
       memcpy(mem->uvaPtr, mem->handle, bytes);
     else
@@ -115,9 +141,24 @@ namespace occa {
   }
 
   bool needsSync(void *ptr){
-    occa::memory m(ptr);
+    occa::memory_v *mem = uvaToMemory(ptr);
 
-    return m.uvaIsDirty();
+    if(mem == NULL)
+      return false;
+
+    return mem->isDirty();
+  }
+
+  void sync(void *ptr){
+    occa::memory_v *mem = uvaToMemory(ptr);
+
+    if(mem == NULL)
+      return;
+
+    if(mem->inDevice())
+      syncMemFromDevice(mem);
+    else
+      syncMemToDevice(mem);
   }
 
   void dontSync(void *ptr){

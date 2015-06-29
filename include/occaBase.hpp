@@ -753,16 +753,17 @@ namespace occa {
 
   //---[ Typedefs ]---------------------
   namespace memFlag {
-    static const int none       = 0;
-    static const int isATexture = (1 << 0);
-    static const int isManaged  = (1 << 1);
-    static const int isMapped   = (1 << 2);
-    static const int isAWrapper = (1 << 3);
+    static const int none         = 0;
+    static const int isATexture   = (1 << 0);
+    static const int isManaged    = (1 << 1);
+    static const int isMapped     = (1 << 2);
+    static const int isAWrapper   = (1 << 3);
   };
 
   namespace uvaFlag {
-    static const int inDevice   = (1 << 4);
-    static const int isDirty    = (1 << 5);
+    static const int inDevice     = (1 << 4);
+    static const int leftInDevice = (1 << 5);
+    static const int isDirty      = (1 << 6);
   };
   //====================================
 
@@ -807,6 +808,10 @@ namespace occa {
 
     inline bool inDevice() const {
       return (memInfo & uvaFlag::inDevice);
+    }
+
+    inline bool leftInDevice() const {
+      return (memInfo & uvaFlag::leftInDevice);
     }
 
     inline bool isDirty() const {
@@ -872,8 +877,14 @@ namespace occa {
                        const int flags,
                        const bool isAsync);
 
+    friend void startManaging(void *ptr);
+    friend void stopManaging(void *ptr);
+
     friend void syncToDevice(void *ptr, const uintptr_t bytes);
     friend void syncFromDevice(void *ptr, const uintptr_t bytes);
+
+    friend void syncMemToDevice(occa::memory_v *mem, const uintptr_t bytes);
+    friend void syncMemFromDevice(occa::memory_v *mem, const uintptr_t bytes);
 
     friend void setupMagicFor(void *ptr);
   };
@@ -983,6 +994,10 @@ namespace occa {
 
     inline bool inDevice() const {
       return (mHandle->memInfo & uvaFlag::inDevice);
+    }
+
+    inline bool leftInDevice() const {
+      return (mHandle->memInfo & uvaFlag::leftInDevice);
     }
 
     inline bool isDirty() const {
@@ -1734,6 +1749,7 @@ namespace occa {
   inline void kernelArg::setupForKernelCall(const bool isConst) const {
     if(mHandle                      &&
        mHandle->isManaged()         &&
+       !mHandle->leftInDevice()     &&
        mHandle->dHandle->fakesUva() &&
        mHandle->dHandle->hasUvaEnabled()){
 
