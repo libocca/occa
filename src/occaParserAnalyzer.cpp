@@ -70,6 +70,12 @@ namespace occa {
         varDepInfo &newVdInfo = *(new varDepInfo);
         newVdInfo.setup(leafDepInfo, var, *this, *(new varDepInfoNode));
 
+        if(leafDepInfo & (depType::set |
+                          depType::update)){
+
+          linkDependenciesFor(newVdInfo, leaf[1]);
+        }
+
         if(vdNode == NULL){
           vdNode = newVdInfo.myNode;
 
@@ -157,13 +163,17 @@ namespace occa {
           if(isSet)
             return depType::set;
           else
-            return depType::used;
+            return depType::update;
         }
         else
-          return depType::update;
+          return depType::used;
       }
 
       return depType::used;
+    }
+
+    void smntDepInfo::linkDependenciesFor(varDepInfo &vdInfo,
+                                          expNode &e){
     }
 
     varDepInfo* smntDepInfo::has(varInfo &var){

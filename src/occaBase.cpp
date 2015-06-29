@@ -1431,6 +1431,9 @@ namespace occa {
 
     for(int i = 0; i < streamCount; ++i){
       if(dHandle->streams[i] == s.handle){
+        if(dHandle->currentStream == s.handle)
+          dHandle->currentStream = NULL;
+
         dHandle->freeStream(dHandle->streams[i]);
         dHandle->streams.erase(dHandle->streams.begin() + i);
 
