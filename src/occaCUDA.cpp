@@ -1392,9 +1392,6 @@ namespace occa {
   void device_t<CUDA>::free(){
     OCCA_EXTRACT_DATA(CUDA, Device);
 
-    if(currentStream)
-      freeStream(currentStream);
-
     OCCA_CUDA_CHECK("Device: Freeing Context",
                     cuCtxDestroy(data_.context) );
 

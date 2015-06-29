@@ -1756,9 +1756,6 @@ namespace occa {
   void device_t<OpenCL>::free(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
-    if(currentStream)
-      freeStream(currentStream);
-
     OCCA_CL_CHECK("Device: Freeing Context",
                   clReleaseContext(data_.context) );
 
