@@ -3836,38 +3836,6 @@ namespace occa {
         v[i]->print();
     }
 
-    // std::string expNode::toString(const int leafPos,
-    //                               const int printLeafCount){
-    //   if(leafCount <= leafPos)
-    //     return "";
-
-    //   const info_t trueInfo = info;
-    //   info = expType::root;
-
-    //   int trueLeafCount = leafCount;
-
-    //   leafCount = ((leafPos + printLeafCount <= leafCount) ?
-    //                (printLeafCount) :
-    //                (leafCount - leafPos));
-
-    //   expNode **trueLeaves = leaves;
-    //   leaves = new expNode*[leafCount];
-
-    //   for(int i = 0; i < leafCount; ++i)
-    //     leaves[i] = trueLeaves[leafPos + i];
-
-    //   std::string ret = (std::string) *this;
-
-    //   delete [] leaves;
-
-    //   info = trueInfo;
-
-    //   leaves    = trueLeaves;
-    //   leafCount = trueLeafCount;
-
-    //   return ret;
-    // }
-
     std::ostream& operator << (std::ostream &out, expNode &n){
       out << (std::string) n;
 
@@ -6001,7 +5969,8 @@ namespace occa {
       expRoot.print();
     }
 
-    std::string statement::toString(const info_t flags){
+    void statement::printOnString(std::string &str,
+                                  const info_t flags){
       std::string tab;
 
       if(flags & statementFlag::printSubStatements)
@@ -6013,164 +5982,175 @@ namespace occa {
       if((info == smntType::occaFor) &&
          (expRoot.leafCount == 0)){
 
-        if( !(flags & statementFlag::printSubStatements) )
-          return expRoot.value;
+        if( !(flags & statementFlag::printSubStatements) ){
+          str += expRoot.value;
+          return;
+        }
 
-        std::string ret = tab + expRoot.value + " {\n";
+        str += tab + expRoot.value + " {\n";
 
         while(statementPos){
-          ret += (std::string) *(statementPos->value);
+          statementPos->value->printOnString(str);
           statementPos = statementPos->right;
         }
 
-        ret += tab + "}\n";
-
-        return ret;
+        str += tab;
+        str += "}\n";
       }
 
       else if(info & smntType::declareStatement){
-        return expRoot.toString(tab);
+        expRoot.printOnString(str, tab);
       }
 
       else if(info & (smntType::simpleStatement | smntType::gotoStatement)){
-        if(flags & statementFlag::printSubStatements)
-          return expRoot.toString(tab) + "\n";
-        else
-          return expRoot.toString();
+        if(flags & statementFlag::printSubStatements){
+          expRoot.printOnString(str, tab);
+          str += '\n';
+        }
+        else {
+          expRoot.printOnString(str);
+        }
       }
 
       else if(info & smntType::flowStatement){
-        if( !(flags & statementFlag::printSubStatements) )
-          return expRoot.toString();
-
-        std::string ret;
+        if( !(flags & statementFlag::printSubStatements) ){
+          expRoot.printOnString(str);
+          return;
+        }
 
         if(info != smntType::doWhileStatement){
-          ret += expRoot.toString(tab);
+          str += expRoot.toString(tab);
 
-          if(statementStart != NULL)
-            ret += " {";
-          else
-            ret += "\n" + tab + "  ;";
+          if(statementStart != NULL){
+            str += " {";
+          }
+          else {
+            str += '\n';
+            str += tab;
+            str += "  ;";
+          }
 
-          ret += '\n';
+          str += '\n';
         }
         else{
-          ret += tab;
-          ret += "do {\n";
+          str += tab;
+          str += "do {\n";
         }
 
         while(statementPos){
-          ret += (std::string) *(statementPos->value);
+          statementPos->value->printOnString(str);
           statementPos = statementPos->right;
         }
 
-        if(statementStart != NULL)
-            ret += tab + "}";
+        if(statementStart != NULL){
+          str += tab;
+          str += '}';
+        }
 
         if(info != smntType::doWhileStatement){
-          ret += '\n';
+          str += '\n';
         }
         else {
-          ret += ' ';
-          ret += expRoot.toString();
-          ret += ";\n";
+          str += ' ';
+          expRoot.printOnString(str);
+          str += ";\n";
         }
-
-        return ret;
       }
 
       else if(info & smntType::caseStatement){
-        if(flags & statementFlag::printSubStatements)
-          return expRoot.toString(tab) + "\n";
-        else
-          return expRoot.toString();
+        if(flags & statementFlag::printSubStatements){
+          expRoot.printOnString(str, tab);
+          str += '\n';
+        }
+        else {
+          expRoot.printOnString(str);
+        }
       }
 
       else if(info & smntType::functionStatement){
         if(info & smntType::functionDefinition){
-          if( !(flags & statementFlag::printSubStatements) )
-            return expRoot.toString();
+          if( !(flags & statementFlag::printSubStatements) ){
+            expRoot.printOnString(str);
+            return;
+          }
 
-          std::string ret = expRoot.toString(tab);
+          expRoot.printOnString(str, tab);
 
           if(statementCount() == 1){
             expNode &e = statementStart->value->expRoot;
 
             if(e.info & expType::asm_){
-              ret += " ";
-              ret += e.toString();
-              ret += ";\n";
+              str += ' ';
+              e.printOnString(str);
+              str += ";\n";
 
-              return ret;
+              return;
             }
           }
 
-          ret += " {\n";
+          str += " {\n";
 
           while(statementPos){
-            ret += (std::string) *(statementPos->value);
+            statementPos->value->printOnString(str);
             statementPos = statementPos->right;
           }
 
-          if(back(ret) != '\n')
-            ret += tab + "\n}\n\n";
-          else
-            ret += tab + "}\n\n";
+          str += tab;
 
-          return ret;
+          if(back(str) != '\n')
+            str += "\n}\n\n";
+          else
+            str += "}\n\n";
         }
         else if(info & smntType::functionPrototype){
-          return (expRoot.toString(tab) + '\n');
+          expRoot.printOnString(str, tab);
+          str += '\n';
         }
       }
       else if(info & smntType::blockStatement){
-        if( !(flags & statementFlag::printSubStatements) )
-          return "{}";
+        if( !(flags & statementFlag::printSubStatements) ){
+          str += "{}";
+          return;
+        }
 
-        std::string ret  = "";
         const int depth_ = depth();
 
-        if(0 <= depth_)
-          ret += tab + "{\n";
+        if(0 <= depth_){
+          str += tab;
+          str += "{\n";
+        }
 
         while(statementPos){
-          ret += (std::string) *(statementPos->value);
+          statementPos->value->printOnString(str);
           statementPos = statementPos->right;
         }
 
         if(0 <= depth_){
-          if(back(ret) != '\n')
-            ret += "\n" + tab + "}\n";
-          else
-            ret += tab + "}\n";
-        }
+          if(back(str) != '\n')
+            str += '\n';
 
-        return ret;
+          str += tab;
+          str += "}\n";
+        }
       }
       else if(info & smntType::structStatement){
-        if(flags & statementFlag::printSubStatements)
-          return expRoot.toString(tab) + "\n";
-        else
-          return expRoot.toString();
+        if(flags & statementFlag::printSubStatements){
+          expRoot.printOnString(str, tab);
+          str += '\n';
+        }
+        else {
+          expRoot.printOnString(str);
+        }
       }
       else if(info & smntType::macroStatement){
+        str += expRoot.value;
+
         if(flags & statementFlag::printSubStatements)
-          return expRoot.value + "\n";
-        else
-          return expRoot.value;
+          str += '\n';
       }
-
-      return expRoot.toString(tab);
-    }
-
-    std::string statement::onlyThisToString(){
-      return toString(statementFlag::printEverything &
-                      ~statementFlag::printSubStatements);
-    }
-
-    statement::operator std::string() {
-      return toString();
+      else {
+        expRoot.printOnString(str, tab);
+      }
     }
 
     std::ostream& operator << (std::ostream &out, statement &s){

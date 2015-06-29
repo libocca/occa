@@ -379,7 +379,6 @@ namespace occa {
 
       static void printVec(expVector_t &v);
 
-
       inline std::string toString(const std::string &tab = "",
                                   const info_t flags = expFlag::none){
         std::string ret;
@@ -759,10 +758,28 @@ namespace occa {
       //================================
 
       void printDebugInfo();
-      std::string toString(const info_t flags = (statementFlag::printSubStatements));
-      std::string onlyThisToString();
 
-      operator std::string();
+      void printOnString(std::string &str,
+                         const info_t flags = (statementFlag::printSubStatements));
+
+      inline std::string toString(const info_t flags = (statementFlag::printSubStatements)){
+        std::string ret;
+        printOnString(ret, flags);
+        return ret;
+      }
+
+      inline std::string onlyThisToString(){
+        std::string ret;
+        printOnString(ret, (statementFlag::printEverything &
+                            ~statementFlag::printSubStatements));
+        return ret;
+      }
+
+      inline operator std::string () {
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
     };
 
     std::ostream& operator << (std::ostream &out, statement &s);
