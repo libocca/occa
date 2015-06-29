@@ -4585,11 +4585,8 @@ namespace occa {
     std::string occaLoopInfo::getSetupExpression(){
       expNode &node1 = *(sInfo->getForStatement(0));
 
-      std::stringstream ss;
-      node1.printOn(ss, "", (expFlag::noSemicolon |
-                             expFlag::noNewline));
-
-      return ss.str();
+      return node1.toString("", (expFlag::noSemicolon |
+                                 expFlag::noNewline));
     }
     //==================================
   };

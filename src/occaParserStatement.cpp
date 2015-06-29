@@ -3343,53 +3343,75 @@ namespace occa {
       }
     }
 
-    void expNode::printOn(std::ostream &out,
-                          const std::string &tab,
-                          const info_t flags){
+    void expNode::printOnString(std::string &str,
+                                const std::string &tab,
+                                const info_t flags){
 
       const bool hasSemicolon = (info & expType::hasSemicolon);
-      const info_t info_      = info & expType::removeFlags;
+      const info_t info_      = (info & expType::removeFlags);
 
       switch(info_){
       case (expType::root):{
-        out << tab;
+        str += tab;
 
         for(int i = 0; i < leafCount; ++i)
-          out << *(leaves[i]);
+          leaves[i]->printOnString(str);
 
         if(hasSemicolon)
-          out << ';';
+          str += ';';
 
         break;
       }
 
       case (expType::L):{
-        out << value << *(leaves[0]);
+        str += value;
+        leaves[0]->printOnString(str);
 
         break;
       }
 
       case (expType::R):{
-        out << *(leaves[0]) << value;
+        leaves[0]->printOnString(str);
+        str += value;
 
         break;
       }
 
       case (expType::LR):{
-        if(startsSection(value))
-          out << *(leaves[0]) << value << *(leaves[1]) << segmentPair(value);
-        else if((value != ".") && (value != "->") && (value != ","))
-          out << *(leaves[0]) << ' ' << value << ' ' << *(leaves[1]);
-        else if(value == ",")
-          out << *(leaves[0]) << value << ' ' << *(leaves[1]);
-        else
-          out << *(leaves[0]) << value << *(leaves[1]);
+        if(startsSection(value)){
+          leaves[0]->printOnString(str);
+          str += value;
+          leaves[1]->printOnString(str);
+          str += segmentPair(value);
+        }
+        else if((value != ".") && (value != "->") && (value != ",")){
+          leaves[0]->printOnString(str);
+          str += ' ';
+          str += value;
+          str += ' ';
+          leaves[1]->printOnString(str);
+        }
+        else if(value == ","){
+          leaves[0]->printOnString(str);
+          str += value;
+          str += ' ';
+          leaves[1]->printOnString(str);
+        }
+        else{
+          leaves[0]->printOnString(str);
+          str += value;
+          leaves[1]->printOnString(str);
+        }
 
         break;
       }
 
       case (expType::LCR):{
-        out << *(leaves[0]) << " ? " << *(leaves[1]) << " : " << *(leaves[2]);
+        leaves[0]->printOnString(str);
+        str += " ? ";
+        leaves[1]->printOnString(str);
+        str += " : ";
+        leaves[2]->printOnString(str);
 
         break;
       }
@@ -3397,29 +3419,29 @@ namespace occa {
       case (expType::C):{
         const char startChar = value[0];
 
-        out << startChar;
+        str += startChar;
 
         for(int i = 0; i < leafCount; ++i)
-          out << *(leaves[i]);
+          leaves[i]->printOnString(str);
 
-        out << segmentPair(startChar);
+        str += segmentPair(startChar);
 
         break;
       }
 
       case (expType::qualifier):{
         if(leafCount){
-          out << *(leaves[0]);
+          leaves[0]->printOnString(str);
 
           for(int i = 1; i < leafCount; ++i){
             if( !hasAnArrayQualifier(i) )
-              out << ' ';
+              str += ' ';
 
-            out << *(leaves[i]);
+            leaves[i]->printOnString(str);
           }
         }
         else{
-          out << value;
+          str += value;
         }
 
         break;
@@ -3428,21 +3450,21 @@ namespace occa {
       case (expType::type):{
         // [const] [int] [*]
         if(leafCount){
-          out << *(leaves[0]);
+          leaves[0]->printOnString(str);
 
           for(int i = 1; i < leafCount; ++i){
             if( !leaves[i - 1]->hasAnArrayQualifier() )
-              out << ' ';
+              str += ' ';
 
-            out << *(leaves[i]);
+            leaves[i]->printOnString(str);
           }
 
           if(leaves[leafCount - 1]->info & expType::type)
-            out << ' ';
+            str += ' ';
         }
         // [int]
         else{
-          out << value;
+          str += value;
         }
 
         break;
@@ -3450,37 +3472,37 @@ namespace occa {
 
       case (expType::type | expType::namespace_):{
         for(int i = 0; i < leafCount; ++i)
-          out << *(leaves[i]);
+          leaves[i]->printOnString(str);
 
         break;
       }
 
       case (expType::presetValue):{
-        out << value;
+        str += value;
 
         break;
       }
 
       case (expType::presetValue | expType::occaKeyword):{
-        out << value;
+        str += value;
 
         break;
       }
 
       case (expType::operator_):{
-        out << value;
+        str += value;
 
         break;
       }
 
       case (expType::unknown):{
-        out << value;
+        str += value;
 
         break;
       }
 
       case (expType::unknown | expType::attribute):{
-        out << value;
+        str += value;
 
         break;
       }
@@ -3493,24 +3515,29 @@ namespace occa {
       }
 
       case (expType::function | expType::prototype):{
-        if(leafCount)
-          out << tab << getVarInfo(0) << ";\n";
+        if(leafCount){
+          str += tab;
+          getVarInfo(0).printOnString(str);
+          str += ";\n";
+        }
 
         break;
       }
 
       case (expType::function | expType::declaration):{
-        if(leafCount)
-          out << tab << getVarInfo(0);
+        if(leafCount){
+          str += tab;
+          getVarInfo(0).printOnString(str);
+        }
 
         break;
       }
 
       case (expType::function):{
-        out << value;
+        str += value;
 
         if(leafCount)
-          out << *(leaves[0]);
+          leaves[0]->printOnString(str);
 
         break;
       }
@@ -3520,26 +3547,32 @@ namespace occa {
           // Case where a struct-type is loaded with variables:
           //   union {} a, b;
           if(leaves[0]->info & expType::typeInfo){
-            out << leaves[0]->toString(tab, (expFlag::noSemicolon |
-                                             expFlag::noNewline));
+            leaves[0]->printOnString(str, tab, (expFlag::noSemicolon |
+                                                expFlag::noNewline));
 
-            out << ' ' << leaves[1]->toString();
+            str += ' ';
+            leaves[1]->printOnString(str);
 
-            for(int i = 2; i < leafCount; ++i)
-              out << ", " << leaves[i]->toString();
+            for(int i = 2; i < leafCount; ++i){
+              str += ", ";
+              leaves[i]->printOnString(str);
+            }
           }
           else {
-            out << tab << leaves[0]->toString();
+            str += tab;
+            leaves[0]->printOnString(str);
 
-            for(int i = 1; i < leafCount; ++i)
-              out << ", " << leaves[i]->toString();
+            for(int i = 1; i < leafCount; ++i){
+              str += ", ";
+              leaves[i]->printOnString(str);
+            }
           }
 
           if( !(flags & expFlag::noSemicolon) )
-            out << ';';
+            str += ';';
 
           if( !(flags & expFlag::noNewline) )
-            out << '\n';
+            str += '\n';
         }
 
         break;
@@ -3548,12 +3581,12 @@ namespace occa {
       case (expType::struct_):{
         if(leafCount){
           typeInfo &type = *((typeInfo*) leaves[0]->leaves[0]);
-          out << type.toString(tab);
+          type.printOnString(str, tab);
 
           if(flags & expFlag::endWithComma)
-            out << ',';
+            str += ',';
           else if( !(flags & expFlag::noSemicolon) )
-            out << ';';
+            str += ';';
         }
 
         break;
@@ -3561,42 +3594,44 @@ namespace occa {
 
       case (expType::varInfo | expType::declaration | expType::type):
       case (expType::varInfo | expType::type):{
-        out << getVarInfo().toString(true);
+        getVarInfo().printOnString(str, true);
 
         break;
       }
 
       case (expType::varInfo | expType::declaration):{
-        out << getVarInfo().toString(false);
+        getVarInfo().printOnString(str, false);
 
         break;
       }
 
       case (expType::varInfo):{
-        out << getVarInfo().name;
+        str += getVarInfo().name;
 
         break;
       }
 
       case (expType::typeInfo):{
-        out << getTypeInfo().toString(tab);
+        getTypeInfo().printOnString(str, tab);
 
         if( !(flags & expFlag::noSemicolon) )
-          out << ';';
+          str += ';';
 
         if( !(flags & expFlag::noNewline) )
-          out << '\n';
+          str += '\n';
 
         break;
       }
 
       case (expType::cast_):{
-        out << '('
-            << *(leaves[0])
-            << ')';
+        str += '(';
+        leaves[0]->printOnString(str);
+        str += ')';
 
-        if(1 < leafCount)
-          out << ' ' << *(leaves[1]);
+        if(1 < leafCount){
+          str += ' ';
+          leaves[1]->printOnString(str);
+        }
 
         break;
       }
@@ -3606,110 +3641,131 @@ namespace occa {
       }
 
       case (expType::macro_):{
-        out << tab << value << '\n';
+        str += tab;
+        str += value;
+        str += '\n';
+
         break;
       }
 
       case (expType::goto_):{
-        out << tab << "goto " << value << ";\n";
+        str += tab;
+        str += "goto ";
+        str += value;
+        str += ";\n";
+
         break;
       }
 
       case (expType::gotoLabel_):{
-        out << tab << value << ':';
+        str += tab;
+        str += value;
+        str += ':';
+
         break;
       }
 
       case (expType::return_):{
-        out << tab << "return";
+        str += tab;
+        str += "return";
 
         if(leafCount)
-          out << ' ';
+          str += ' ';
 
         for(int i = 0; i < leafCount; ++i)
-          out << *(leaves[i]);
+          leaves[i]->printOnString(str);
 
-        out << ';';
+        str += ';';
 
         break;
       }
 
       case (expType::transfer_):{
-        out << tab << value;
+        str += tab;
+        str += value;
 
         if(leafCount){
-          out << ' ';
+          str += ' ';
 
           for(int i = 0; i < leafCount; ++i)
-            out << *(leaves[i]);
+            leaves[i]->printOnString(str);
         }
 
-        out << ";\n";
+        str += ";\n";
 
         break;
       }
 
       case (expType::occaFor):{
-        out << value << ' ';
+        str += value;
+        str += ' ';
+
         break;
       }
 
       case (expType::checkSInfo):{
         if(sInfo->info & smntType::updateStatement){
           if(leafCount){
-            leaves[0]->printOn(out, tab, (expFlag::noNewline |
-                                          expFlag::noSemicolon));
+            leaves[0]->printOnString(str, tab, (expFlag::noNewline |
+                                                expFlag::noSemicolon));
 
             for(int i = 1; i < leafCount; ++i){
-              out << ", ";
+              str += ", ";
 
-              leaves[i]->printOn(out, "", (expFlag::noNewline |
-                                           expFlag::noSemicolon));
+              leaves[i]->printOnString(str, "", (expFlag::noNewline |
+                                                 expFlag::noSemicolon));
             }
 
-            out << ";";
+            str += ';';
           }
-          else
-            out << tab << ";";
+          else{
+            str += tab;
+            str += ';';
+          }
 
           break;
         }
 
         else if(sInfo->info & smntType::flowStatement){
-          out << tab;
+          str += tab;
 
           if(sInfo->info & smntType::forStatement)
-            out << "for(";
+            str += "for(";
           else if(sInfo->info & smntType::whileStatement)
-            out << "while(";
+            str += "while(";
           else if(sInfo->info & smntType::ifStatement){
             if(sInfo->info == smntType::ifStatement)
-              out << "if(";
+              str += "if(";
             else if(sInfo->info == smntType::elseIfStatement)
-              out << "else if(";
+              str += "else if(";
             else
-              out << "else";
+              str += "else";
           }
           else if(sInfo->info & smntType::switchStatement)
-            out << "switch(";
+            str += "switch(";
 
           if(leafCount){
-            if(leaves[0]->info == expType::declaration)
-              leaves[0]->printOn(out, "", (expFlag::noNewline |
-                                           expFlag::noSemicolon));
-            else
-              out << *(leaves[0]);
+            if(leaves[0]->info == expType::declaration){
+              leaves[0]->printOnString(str, "", (expFlag::noNewline |
+                                                 expFlag::noSemicolon));
+            }
+            else {
+              leaves[0]->printOnString(str);
+            }
 
-            for(int i = 1; i < leafCount; ++i)
-              out << "; " << *(leaves[i]);
+            for(int i = 1; i < leafCount; ++i){
+              str += "; ";
+              leaves[i]->printOnString(str);
+            }
           }
 
           if( !(sInfo->info & smntType::gotoStatement) &&
               (sInfo->info != smntType::elseStatement) ){
-            out << ")";
+
+            str += ')';
           }
           else if(sInfo->info & smntType::gotoStatement){
-            out << ":";
+            str += ":";
           }
 
         }
@@ -3717,52 +3773,58 @@ namespace occa {
           const size_t tabChars = tab.size();
 
           if(2 < tabChars)
-            out << tab.substr(0, tabChars - 2);
+            str += tab.substr(0, tabChars - 2);
 
-          if(leafCount)
-            out << "case " << *(leaves[0]) << ':';
-          else
-            out << "default:";
+          if(leafCount){
+            str += "case ";
+            leaves[0]->printOnString(str);
+            str += ':';
+          }
+          else {
+            str += "default:";
+          }
         }
 
         break;
       }
 
       case (expType::asm_):{
-
-        out << value;
+        str += value;
 
         if(leafCount){
           const char startSeg = (*this)[0].value[0];
           const char endSeg   = segmentPair(startSeg);
 
-          out << startSeg;
-          out << (*this)[0][1].value;
-          out << endSeg;
+          str += startSeg;
+          str += (*this)[0][1].value;
+          str += endSeg;
         }
 
         break;
       }
 
       case (expType::printValue):{
-        out << value;
+        str += value;
 
         break;
       }
 
       case (expType::printLeaves):{
         if(leafCount){
-          for(int i = 0; i < leafCount; ++i)
-            out << leaves[i]->value << ' ';
+          for(int i = 0; i < leafCount; ++i){
+            leaves[i]->printOnString(str);
+            str += ' ';
+          }
 
-          out << '\n';
+          str += '\n';
         }
 
         break;
       }
 
       default:{
-        out << value << ' ';
+        str += value;
+        str += ' ';
       }
       };
     }
@@ -3774,53 +3836,40 @@ namespace occa {
         v[i]->print();
     }
 
-    std::string expNode::toString(const int leafPos,
-                                  const int printLeafCount){
-      if(leafCount <= leafPos)
-        return "";
+    // std::string expNode::toString(const int leafPos,
+    //                               const int printLeafCount){
+    //   if(leafCount <= leafPos)
+    //     return "";
 
-      const info_t trueInfo = info;
-      info = expType::root;
+    //   const info_t trueInfo = info;
+    //   info = expType::root;
 
-      int trueLeafCount = leafCount;
+    //   int trueLeafCount = leafCount;
 
-      leafCount = ((leafPos + printLeafCount <= leafCount) ?
-                   (printLeafCount) :
-                   (leafCount - leafPos));
+    //   leafCount = ((leafPos + printLeafCount <= leafCount) ?
+    //                (printLeafCount) :
+    //                (leafCount - leafPos));
 
-      expNode **trueLeaves = leaves;
-      leaves = new expNode*[leafCount];
+    //   expNode **trueLeaves = leaves;
+    //   leaves = new expNode*[leafCount];
 
-      for(int i = 0; i < leafCount; ++i)
-        leaves[i] = trueLeaves[leafPos + i];
+    //   for(int i = 0; i < leafCount; ++i)
+    //     leaves[i] = trueLeaves[leafPos + i];
 
-      std::string ret = (std::string) *this;
+    //   std::string ret = (std::string) *this;
 
-      delete [] leaves;
+    //   delete [] leaves;
 
-      info = trueInfo;
+    //   info = trueInfo;
 
-      leaves    = trueLeaves;
-      leafCount = trueLeafCount;
+    //   leaves    = trueLeaves;
+    //   leafCount = trueLeafCount;
 
-      return ret;
-    }
-
-    std::string expNode::toString(const std::string &tab,
-                                  const info_t flags){
-      std::stringstream ss;
-
-      printOn(ss, tab, flags);
-
-      return ss.str();
-    }
-
-    expNode::operator std::string (){
-      return toString();
-    }
+    //   return ret;
+    // }
 
     std::ostream& operator << (std::ostream &out, expNode &n){
-      n.printOn(out);
+      out << (std::string) n;
 
       return out;
     }

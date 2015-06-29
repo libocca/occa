@@ -34,7 +34,8 @@ namespace occa {
       smntDepInfo *sdInfo;
 
       varDepInfoNode *myNode, *subNode;
-      varDepInfoNode *dependenciesNode;
+
+      varToDepMap varDeps;
 
       varDepInfo();
 
@@ -68,7 +69,7 @@ namespace occa {
       int getDepTypeFrom(expNode &e);
 
       void linkDependenciesFor(varDepInfo &vdInfo,
-                               expNode &e);
+                               expNode &updateExp);
 
       varDepInfo* has(varInfo &var);
       varDepInfo& operator () (varInfo &var);

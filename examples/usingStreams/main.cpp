@@ -15,17 +15,14 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  std::string mode = "CUDA";
-  int platformID = 0;
-  int deviceID   = 0;
-
   occa::device device;
   occa::kernel addVectors;
   occa::memory o_a, o_b, o_ab;
 
   occa::stream streamA, streamB;
 
-  device.setup(mode, platformID, deviceID);
+  device.setup("mode = CUDA, deviceID = 0");
+  // device.setup("mode = OpenCL, platformID = 0, deviceID = 0");
 
   streamA = device.getStream();
   streamB = device.createStream();

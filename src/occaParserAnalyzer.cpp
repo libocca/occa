@@ -173,7 +173,27 @@ namespace occa {
     }
 
     void smntDepInfo::linkDependenciesFor(varDepInfo &vdInfo,
-                                          expNode &e){
+                                          expNode &updateExp){
+
+      expNode &flatRoot = *(updateExp.makeFlatHandle());
+
+      for(int i = 0; i < flatRoot.leafCount; ++i){
+        expNode &leaf = flatRoot[i];
+
+        if((leaf.info & expType::varInfo) == 0)
+          continue;
+
+        varInfo &var = leaf.getVarInfo();
+
+        varDepInfoNode *&vdNode2 = vdInfo.varDeps[&var];
+
+        if(vdNode2 != NULL)
+          continue;
+
+        vdNode2 = has(var)->myNode;
+      }
+
+      expNode::freeFlatHandle(flatRoot);
     }
 
     varDepInfo* smntDepInfo::has(varInfo &var){

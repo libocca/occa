@@ -372,17 +372,26 @@ namespace occa {
       void freeThis();
 
       void print(const std::string &tab = "");
-      void printOn(std::ostream &out,
-                   const std::string &tab = "",
-                   const info_t flags = expFlag::none);
+
+      void printOnString(std::string &str,
+                         const std::string &tab = "",
+                         const info_t flags = expFlag::none);
 
       static void printVec(expVector_t &v);
 
-      std::string toString(const int leafPos, const int printLeafCount);
-      std::string toString(const std::string &tab = "",
-                           const info_t flags = expFlag::none);
 
-      operator std::string ();
+      inline std::string toString(const std::string &tab = "",
+                                  const info_t flags = expFlag::none){
+        std::string ret;
+        printOnString(ret, tab, flags);
+        return ret;
+      }
+
+      inline operator std::string () {
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
 
       friend std::ostream& operator << (std::ostream &out, expNode &n);
     };
