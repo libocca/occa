@@ -453,6 +453,10 @@ namespace occa {
 
   template <>
   void kernel_t<CUDA>::free(){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Unloading Module",
+                    cuModuleUnload(data_.module));
   }
   //==================================
 
@@ -1090,6 +1094,7 @@ namespace occa {
   void device_t<CUDA>::freeStream(stream_t s){
     OCCA_CUDA_CHECK("Device: freeStream",
                     cuStreamDestroy( *((CUstream*) s) ));
+
     delete (CUstream*) s;
   }
 
@@ -1386,6 +1391,9 @@ namespace occa {
   template <>
   void device_t<CUDA>::free(){
     OCCA_EXTRACT_DATA(CUDA, Device);
+
+    if(currentStream)
+      freeStream(currentStream);
 
     OCCA_CUDA_CHECK("Device: Freeing Context",
                     cuCtxDestroy(data_.context) );

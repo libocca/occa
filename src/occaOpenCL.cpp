@@ -702,6 +702,10 @@ namespace occa {
 
   template <>
   void kernel_t<OpenCL>::free(){
+    OCCA_EXTRACT_DATA(OpenCL, Kernel);
+
+    OCCA_CL_CHECK("Kernel: Free",
+                  clReleaseKernel(data_.kernel));
   }
   //==================================
 
@@ -1037,7 +1041,7 @@ namespace occa {
     cl_command_queue &stream = *((cl_command_queue*) dHandle->currentStream);
     cl_int error;
 
-    // Unmap pointer
+    // Un-map pointer
     error = clEnqueueUnmapMemObject(stream,
                                     *((cl_mem*) handle),
                                     mappedPtr,
@@ -1250,6 +1254,7 @@ namespace occa {
   void device_t<OpenCL>::freeStream(stream_t s){
     OCCA_CL_CHECK("Device: freeStream",
                   clReleaseCommandQueue( *((cl_command_queue*) s) ));
+
     delete (cl_command_queue*) s;
   }
 
@@ -1750,6 +1755,9 @@ namespace occa {
   template <>
   void device_t<OpenCL>::free(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    if(currentStream)
+      freeStream(currentStream);
 
     OCCA_CL_CHECK("Device: Freeing Context",
                   clReleaseContext(data_.context) );
