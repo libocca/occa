@@ -70,8 +70,9 @@ namespace occa {
         varDepInfo &newVdInfo = *(new varDepInfo);
         newVdInfo.setup(leafDepInfo, var, *this, *(new varDepInfoNode));
 
-        if(leafDepInfo & (depType::set |
-                          depType::update)){
+        if((leafDepInfo & (depType::set |
+                           depType::update)) &&
+           (1 < leaf.leafCount)){
 
           linkDependenciesFor(newVdInfo, leaf[1]);
         }

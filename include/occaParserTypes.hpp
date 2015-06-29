@@ -140,7 +140,8 @@ namespace occa {
       bool hasImplicitInt();
       //================================
 
-      void printOnString(std::string &str);
+      void printOnString(std::string &str,
+                         varInfo *var = NULL);
 
       inline std::string toString(){
         std::string ret;

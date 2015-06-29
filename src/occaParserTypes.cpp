@@ -646,17 +646,32 @@ namespace occa {
     }
     //==================================
 
-    void qualifierInfo::printOnString(std::string &str){
+    void qualifierInfo::printOnString(std::string &str,
+                                      varInfo *var){
+
       for(int i = 0; i < qualifierCount; ++i){
         str += qualifiers[i];
 
-        if(((qualifiers[i][0] != '*') &&
-            (qualifiers[i][0] != '&')) ||
-           ( ((i + 1) < qualifierCount) &&
-             ((qualifiers[i + 1][0] != '*') &&
-              (qualifiers[i + 1][0] != '&')))){
+        // Don't put the space if the variable doesn't have a name
+        if((i == (qualifierCount - 1)) &&
+           (var != NULL)               &&
+           (var->name.size() == 0)){
 
+          return;
+        }
+
+        const bool referenceType = ((qualifiers[i][0] == '*') ||
+                                    (qualifiers[i][0] == '&'));
+
+        if(!referenceType){
           str += ' ';
+        }
+        else if((i + 1) < qualifierCount){
+          const bool referenceType2 = ((qualifiers[i + 1][0] == '*') ||
+                                       (qualifiers[i + 1][0] == '&'));
+
+          if(!referenceType2)
+            str += ' ';
         }
       }
     }
@@ -2132,7 +2147,7 @@ namespace occa {
           str += ' ';
       }
 
-      rightQualifiers.printOnString(str);
+      rightQualifiers.printOnString(str, this);
 
       for(int i = 0; i < (functionNestCount - 1); ++i)
         str += "(*";
