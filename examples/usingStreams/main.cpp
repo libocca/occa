@@ -21,8 +21,8 @@ int main(int argc, char **argv){
 
   occa::stream streamA, streamB;
 
-  device.setup("mode = CUDA, deviceID = 0");
-  // device.setup("mode = OpenCL, platformID = 0, deviceID = 0");
+  // device.setup("mode = CUDA, deviceID = 0");
+  device.setup("mode = OpenCL, platformID = 0, deviceID = 1");
 
   streamA = device.getStream();
   streamB = device.createStream();
@@ -38,10 +38,10 @@ int main(int argc, char **argv){
   o_b.copyFrom(b);
 
   device.setStream(streamA);
-  addVectors(entries, 0, o_a, o_b, o_ab);
+  addVectors(entries, o_a, o_b, o_ab);
 
   device.setStream(streamB);
-  addVectors(entries, 4, o_a, o_b, o_ab);
+  addVectors(entries, o_a, o_b, o_ab);
 
   o_ab.copyTo(ab);
 
