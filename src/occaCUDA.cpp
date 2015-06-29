@@ -455,7 +455,7 @@ namespace occa {
   void kernel_t<CUDA>::free(){
     OCCA_EXTRACT_DATA(CUDA, Kernel);
 
-    OCCA_CUDA_CHECK("Kernel (" + functionName + ") : Unloading Module",
+    OCCA_CUDA_CHECK("Kernel (" + name + ") : Unloading Module",
                     cuModuleUnload(data_.module));
   }
   //==================================
