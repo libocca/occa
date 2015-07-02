@@ -1,7 +1,7 @@
 <a name="logo"/>
 <div align="center">
   <a href="http://libocca.org/">
-    <img src="http://libocca.org/images/logo/blueOccaLogo.png" alt="OCCA"></img>
+    <img src="http://libocca.org/images/logo/squareBlueOccaLogo.png" alt="OCCA"></img>
   </a>
 </div>
 
