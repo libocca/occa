@@ -1,3 +1,4 @@
+<a name="logo"/>
 <div align="center">
   <a href="http://libocca.org/">
     <img src="http://libocca.org/images/logo/blueOccaLogo.png" alt="OCCA"></img>
@@ -6,7 +7,8 @@
 
 Build Status: [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
-=====
+<a name="README"/>
+## README
 
 ```
 +---[ (0) README ]------------------------------------------
