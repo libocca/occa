@@ -1,7 +1,7 @@
 OCCA (http://libocca.org)
 =====
 
-[![Build Status](https://travis-ci.org/tcew/OCCA2.svg?branch=master)](https://travis-ci.org/tcew/OCCA2)
+[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/tcew/OCCA2)
 
 ```
 +---[ (0) README ]------------------------------------------
