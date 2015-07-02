@@ -14,6 +14,23 @@ namespace occa {
       return isInlinedASM(expRoot[leafPos].value);
     }
 
+
+    //---[ Scope Info Class ]---------------------
+    scopeInfo::scopeInfo() :
+      up(NULL) {}
+
+    void scopeInfo::printOnString(std::string &str){
+      if(up){
+        up->printOnString(str);
+        str += "::";
+      }
+
+      str += name;
+    }
+    //============================================
+
+
+    //---[ Attribute Class ]----------------------
     bool isAnAttribute(const std::string &attrName){
       return ((attrName == "@") ||
               (attrName == "__attribute__"));
@@ -49,7 +66,6 @@ namespace occa {
       return leafPos;
     }
 
-    //---[ Attribute Class ]----------------------
     attribute_t::attribute_t() :
       argCount(0),
       args(NULL),
@@ -157,12 +173,6 @@ namespace occa {
       }
 
       return ret;
-    }
-
-    std::ostream& operator << (std::ostream &out, attribute_t &attr){
-      out << (std::string) attr;
-
-      return out;
     }
 
     void setAttributeMap(attributeMap_t &attributeMap,
@@ -676,12 +686,6 @@ namespace occa {
       }
     }
 
-    std::ostream& operator << (std::ostream &out, qualifierInfo &q){
-      out << q.toString();
-
-      return out;
-    }
-
     bool expHasQualifier(expNode &allExp, int expPos){
       return (allExp[expPos].info & expType::qualifier);
     }
@@ -690,6 +694,8 @@ namespace occa {
 
     //---[ Type Info Class ]----------------------
     typeInfo::typeInfo() :
+      scope(NULL),
+
       leftQualifiers(),
 
       name(""),
@@ -706,6 +712,8 @@ namespace occa {
       typedefVar(NULL) {}
 
     typeInfo::typeInfo(const typeInfo &type) :
+      scope(type.scope),
+
       leftQualifiers(type.leftQualifiers),
 
       name(type.name),
@@ -724,6 +732,8 @@ namespace occa {
       opOverloadMaps(type.opOverloadMaps) {}
 
     typeInfo& typeInfo::operator = (const typeInfo &type){
+      scope = type.scope;
+
       leftQualifiers = type.leftQualifiers;
 
       name = type.name;
@@ -1121,18 +1131,14 @@ namespace occa {
         }
       }
     }
-
-    std::ostream& operator << (std::ostream &out, typeInfo &type){
-      out << type.toString();
-
-      return out;
-    }
     //============================================
 
 
     //---[ Variable Info Class ]------------------
     varInfo::varInfo() :
       info(0),
+
+      scope(NULL),
 
       leftQualifiers(),
       rightQualifiers(),
@@ -1161,6 +1167,8 @@ namespace occa {
 
     varInfo::varInfo(const varInfo &var) :
       info(var.info),
+
+      scope(var.scope),
 
       attributeMap(var.attributeMap),
       leftQualifiers(var.leftQualifiers),
@@ -1193,6 +1201,8 @@ namespace occa {
 
     varInfo& varInfo::operator = (const varInfo &var){
       info = var.info;
+
+      scope = var.scope;
 
       attributeMap    = var.attributeMap;
       leftQualifiers  = var.leftQualifiers;
@@ -2232,11 +2242,6 @@ namespace occa {
         str += " __attribute__";
         str += attr->name;
       }
-    }
-
-    std::ostream& operator << (std::ostream &out, varInfo &var){
-      out << var.toString();
-      return out;
     }
     //============================================
 

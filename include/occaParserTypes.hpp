@@ -17,6 +17,41 @@ namespace occa {
     bool isInlinedASM(const std::string &attrName);
     bool isInlinedASM(expNode &expRoot, int leafPos);
 
+    //---[ Scope Info Class ]---------------------
+    class scopeInfo {
+    public:
+      scopeInfo *up;
+
+      std::string name;
+
+      scopeTypeMap_t scopeTypeMap;
+      scopeVarMap_t  scopeVarMap;
+
+      scopeInfo();
+
+      void printOnString(std::string &str);
+
+      inline std::string toString(){
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
+
+      inline operator std::string () {
+        std::string ret;
+        printOnString(ret);
+        return ret;
+      }
+
+      friend inline std::ostream& operator << (std::ostream &out, scopeInfo &scope){
+        out << (std::string) scope;
+
+        return out;
+      }
+    };
+    //============================================
+
+
     //---[ Attribute Class ]----------------------
     bool isAnAttribute(const std::string &attrName);
     bool isAnAttribute(expNode &expRoot, int leafPos);
@@ -49,9 +84,13 @@ namespace occa {
       std::string valueStr();
 
       operator std::string();
-    };
 
-    std::ostream& operator << (std::ostream &out, attribute_t &attr);
+      friend inline std::ostream& operator << (std::ostream &out, attribute_t &attr){
+        out << (std::string) attr;
+
+        return out;
+      }
+    };
 
     void setAttributeMap(attributeMap_t &attributeMap,
                          const std::string &attrName);
@@ -155,7 +194,11 @@ namespace occa {
         return ret;
       }
 
-      friend std::ostream& operator << (std::ostream &out, qualifierInfo &type);
+      friend inline std::ostream& operator << (std::ostream &out, qualifierInfo &type){
+        out << (std::string) type;
+
+        return out;
+      }
     };
 
     bool expHasQualifier(expNode &allExp, int expPos);
@@ -165,6 +208,8 @@ namespace occa {
     //---[ Type Info Class ]----------------------
     class typeInfo {
     public:
+      scopeInfo *scope;
+
       qualifierInfo leftQualifiers;
 
       std::string name;
@@ -247,7 +292,11 @@ namespace occa {
         return ret;
       }
 
-      friend std::ostream& operator << (std::ostream &out, typeInfo &type);
+      friend inline std::ostream& operator << (std::ostream &out, typeInfo &type){
+        out << (std::string) type;
+
+        return out;
+      }
     };
     //============================================
 
@@ -268,6 +317,8 @@ namespace occa {
     class varInfo {
     public:
       int info;
+
+      scopeInfo *scope;
 
       attributeMap_t attributeMap;
       qualifierInfo leftQualifiers, rightQualifiers;
@@ -444,7 +495,11 @@ namespace occa {
         return ret;
       }
 
-      friend std::ostream& operator << (std::ostream &out, varInfo &var);
+      friend inline std::ostream& operator << (std::ostream &out, varInfo &var){
+        out << (std::string) var;
+
+        return out;
+      }
     };
     //============================================
 

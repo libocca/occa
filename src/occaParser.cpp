@@ -28,7 +28,11 @@ namespace occa {
       parsingLanguage = parserInfo::parsingC;
 
       macrosAreInitialized = false;
+
       globalScope = new statement(*this);
+
+      // globalScope->info = expType::namespace_;
+      // globalScope->expRoot
 
       warnForMissingBarriers     = true;
       warnForBarrierConditionals = true;

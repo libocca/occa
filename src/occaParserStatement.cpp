@@ -2672,49 +2672,103 @@ namespace occa {
       removeNodes(pos, 1);
     }
 
-    varInfo& expNode::addVarInfoNode(){
-      addNode(0);
-
-      varInfo **varLeaves = (varInfo**) leaves;
-      varInfo *&varLeaf   = varLeaves[0];
-
-      varLeaf = new varInfo();
-      return *varLeaf;
+    // scopeInfo
+    scopeInfo& expNode::addScopeInfoNode(){
+      return addInfoNode<scopeInfo>();
     }
 
-    varInfo& expNode::addVarInfoNode(const int pos_){
-      const int pos = ((0 <= pos_) ? pos_ : leafCount);
-
-      addNode(expType::varInfo, pos);
-
-      return leaves[pos]->addVarInfoNode();
+    scopeInfo& expNode::addScopeInfoNode(const int pos){
+      return addInfoNode<scopeInfo>(expType::scopeInfo, pos);
     }
 
-    void expNode::putVarInfo(varInfo &var){
-      addNode(0);
-      leaves[0] = (expNode*) &var;
-
-      info = expType::varInfo;
+    void expNode::putScopeInfo(scopeInfo &scope){
+      putInfo<scopeInfo>(expType::scopeInfo, scope);
     }
 
-    void expNode::putVarInfo(const int pos, varInfo &var){
-      addNode(expType::varInfo, pos);
-      leaves[pos]->putVarInfo(var);
+    void expNode::putScopeInfo(const int pos, scopeInfo &scope){
+      putInfo<scopeInfo>(expType::scopeInfo, pos, scope);
     }
 
+    scopeInfo& expNode::getScopeInfo(){
+      return getInfo<scopeInfo>();
+    }
+
+    scopeInfo& expNode::getScopeInfo(const int pos){
+      return getInfo<scopeInfo>(pos);
+    }
+
+    void expNode::setScopeInfo(scopeInfo &scope){
+      setInfo<scopeInfo>(scope);
+    }
+
+    void expNode::setScopeInfo(const int pos, scopeInfo &scope){
+      setInfo<scopeInfo>(pos, scope);
+    }
+
+    // typeInfo
     typeInfo& expNode::addTypeInfoNode(){
-      addNode(0);
-
-      typeInfo **typeLeaves = (typeInfo**) leaves;
-      typeInfo *&typeLeaf   = typeLeaves[0];
-
-      typeLeaf = new typeInfo();
-      return *typeLeaf;
+      return addInfoNode<typeInfo>();
     }
 
     typeInfo& expNode::addTypeInfoNode(const int pos){
-      addNode(expType::typeInfo, pos);
-      return leaves[pos]->addTypeInfoNode();
+      return addInfoNode<typeInfo>(expType::typeInfo, pos);
+    }
+
+    void expNode::putTypeInfo(typeInfo &type){
+      putInfo<typeInfo>(expType::typeInfo, type);
+    }
+
+    void expNode::putTypeInfo(const int pos, typeInfo &type){
+      putInfo<typeInfo>(expType::typeInfo, pos, type);
+    }
+
+    typeInfo& expNode::getTypeInfo(){
+      return getInfo<typeInfo>();
+    }
+
+    typeInfo& expNode::getTypeInfo(const int pos){
+      return getInfo<typeInfo>(pos);
+    }
+
+    void expNode::setTypeInfo(typeInfo &type){
+      setInfo<typeInfo>(type);
+    }
+
+    void expNode::setTypeInfo(const int pos, typeInfo &type){
+      setInfo<typeInfo>(pos, type);
+    }
+
+    // varInfo
+    varInfo& expNode::addVarInfoNode(){
+      return addInfoNode<varInfo>();
+    }
+
+    varInfo& expNode::addVarInfoNode(const int pos){
+      return addInfoNode<varInfo>(expType::varInfo, pos);
+    }
+
+    void expNode::putVarInfo(varInfo &var){
+      putInfo<varInfo>(expType::varInfo, var);
+    }
+
+    void expNode::putVarInfo(const int pos, varInfo &var){
+      putInfo<varInfo>(expType::varInfo, pos, var);
+    }
+
+    varInfo& expNode::getVarInfo(){
+      return getInfo<varInfo>();
+    }
+
+    varInfo& expNode::getVarInfo(const int pos){
+      return getInfo<varInfo>(pos);
+    }
+
+    void expNode::setVarInfo(varInfo &var){
+      setInfo<varInfo>(var);
+    }
+
+    void expNode::setVarInfo(const int pos, varInfo &var){
+      setInfo<varInfo>(pos, var);
     }
 
     bool expNode::hasVariable(){
@@ -2730,56 +2784,6 @@ namespace occa {
       }
 
       return false;
-    }
-
-    varInfo& expNode::getVarInfo(){
-      return *((varInfo*) leaves[0]);
-    }
-
-    varInfo& expNode::getVarInfo(const int pos_){
-      const int pos = ((0 <= pos_) ? pos_ : leafCount);
-
-      varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
-      varInfo *&varLeaf   = varLeaves[0];
-
-      return *varLeaf;
-    }
-
-    void expNode::setVarInfo(varInfo &var){
-      leaves[0] = (expNode*) &var;
-    }
-
-    void expNode::setVarInfo(const int pos_, varInfo &var){
-      const int pos = ((0 <= pos_) ? pos_ : leafCount);
-
-      varInfo **varLeaves = (varInfo**) leaves[pos]->leaves;
-      varInfo *&varLeaf   = varLeaves[0];
-
-      varLeaf = &var;
-    }
-
-    typeInfo& expNode::getTypeInfo(){
-      return *((typeInfo*) leaves[0]);
-    }
-
-    typeInfo& expNode::getTypeInfo(const int pos){
-      typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
-      typeInfo *&typeLeaf   = typeLeaves[0];
-
-      return *typeLeaf;
-    }
-
-    void expNode::setTypeInfo(typeInfo &type){
-      leaves[0] = (expNode*) &type;
-    }
-
-    void expNode::setTypeInfo(const int pos_, typeInfo &type){
-      const int pos = ((0 <= pos_) ? pos_ : leafCount);
-
-      typeInfo **typeLeaves = (typeInfo**) leaves[pos]->leaves;
-      typeInfo *&typeLeaf   = typeLeaves[0];
-
-      typeLeaf = &type;
     }
 
     varInfo expNode::typeInfoOf(const std::string &str){

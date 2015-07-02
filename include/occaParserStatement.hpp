@@ -49,29 +49,30 @@ namespace occa {
       static const info_t checkSInfo      = (((info_t) 1)  << 23);
       static const info_t attribute       = (((info_t) 1)  << 24);
 
-      static const info_t hasInfo         = (((info_t) 3)  << 25);
+      static const info_t hasInfo         = (((info_t) 7)  << 25);
       static const info_t varInfo         = (((info_t) 1)  << 25);
       static const info_t typeInfo        = (((info_t) 1)  << 26);
+      static const info_t scopeInfo       = (((info_t) 1)  << 27);
 
-      static const info_t asm_            = (((info_t) 1)  << 27);
+      static const info_t asm_            = (((info_t) 1)  << 28);
 
-      static const info_t printValue      = (((info_t) 1)  << 28);
-      static const info_t printLeaves     = (((info_t) 1)  << 29);
+      static const info_t printValue      = (((info_t) 1)  << 29);
+      static const info_t printLeaves     = (((info_t) 1)  << 30);
 
-      static const info_t flowControl     = (((info_t) 1)  << 30);
+      static const info_t flowControl     = (((info_t) 1)  << 31);
 
-      static const info_t specialKeyword  = (((info_t) 1)  << 31);
+      static const info_t specialKeyword  = (((info_t) 1)  << 32);
 
-      static const info_t macroKeyword    = (((info_t) 1)  << 32);
+      static const info_t macroKeyword    = (((info_t) 1)  << 33);
 
-      static const info_t apiKeyword      = (((info_t) 7)  << 33);
-      static const info_t occaKeyword     = (((info_t) 1)  << 33);
-      static const info_t cudaKeyword     = (((info_t) 1)  << 34);
-      static const info_t openclKeyword   = (((info_t) 1)  << 35);
+      static const info_t apiKeyword      = (((info_t) 7)  << 34);
+      static const info_t occaKeyword     = (((info_t) 1)  << 34);
+      static const info_t cudaKeyword     = (((info_t) 1)  << 35);
+      static const info_t openclKeyword   = (((info_t) 1)  << 36);
 
-      static const info_t hasFlag         = (((info_t) 1)  << 36);
+      static const info_t hasFlag         = (((info_t) 1)  << 37);
       static const info_t removeFlags     = ~expType::hasFlag;
-      static const info_t hasSemicolon    = (((info_t) 1)  << 36);
+      static const info_t hasSemicolon    = (((info_t) 1)  << 37);
     };
 
     namespace expFlag {
@@ -300,16 +301,104 @@ namespace occa {
       void removeNodes(const int pos, const int count = 1);
       void removeNode(const int pos = -1);
 
+      template <class TM>
+      TM& addInfoNode(){
+        addNode(0);
+
+        TM **tmLeaves = (TM**) leaves;
+        TM *&tmLeaf   = tmLeaves[0];
+
+        tmLeaf = new TM();
+        return *tmLeaf;
+      }
+
+      template <class TM>
+      TM& addInfoNode(const info_t info_, const int pos_){
+        const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+        addNode(info_, pos);
+
+        return leaves[pos]->addInfoNode<TM>();
+      }
+
+      template <class TM>
+      void putInfo(const info_t info_, TM &t){
+        addNode(0);
+        leaves[0] = (expNode*) &t;
+
+        info = info_;
+      }
+
+      template <class TM>
+      void putInfo(const info_t info_, const int pos_, TM &t){
+        const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+        addNode(info_, pos);
+        leaves[pos]->putInfo<TM>(info_, t);
+      }
+
+      template <class TM>
+      TM& getInfo(){
+        return *((TM*) leaves[0]);
+      }
+
+      template <class TM>
+      TM& getInfo(const int pos_){
+        const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+        TM **tmLeaves = (TM**) leaves[pos]->leaves;
+        TM *&tmLeaf   = tmLeaves[0];
+
+        return *tmLeaf;
+      }
+
+      template <class TM>
+      void setInfo(TM &tm){
+        leaves[0] = (expNode*) &tm;
+      }
+
+      template <class TM>
+      void setInfo(const int pos_, TM &tm){
+        const int pos = ((0 <= pos_) ? pos_ : leafCount);
+
+        TM **tmLeaves = (TM**) leaves[pos]->leaves;
+        TM *&tmLeaf   = tmLeaves[0];
+
+        tmLeaf = &tm;
+      }
+
+      // scopeInfo
+      scopeInfo& addScopeInfoNode();
+      scopeInfo& addScopeInfoNode(const int pos);
+
+      void putScopeInfo(scopeInfo &scope);
+      void putScopeInfo(const int pos, scopeInfo &scope);
+
+      scopeInfo& getScopeInfo();
+      scopeInfo& getScopeInfo(const int pos);
+
+      void setScopeInfo(scopeInfo &scope);
+      void setScopeInfo(const int pos, scopeInfo &scope);
+
+      // typeInfo
+      typeInfo& addTypeInfoNode();
+      typeInfo& addTypeInfoNode(const int pos);
+
+      void putTypeInfo(typeInfo &type);
+      void putTypeInfo(const int pos, typeInfo &type);
+
+      typeInfo& getTypeInfo();
+      typeInfo& getTypeInfo(const int pos);
+
+      void setTypeInfo(typeInfo &type);
+      void setTypeInfo(const int pos, typeInfo &type);
+
+      // varInfo
       varInfo& addVarInfoNode();
       varInfo& addVarInfoNode(const int pos);
 
       void putVarInfo(varInfo &var);
       void putVarInfo(const int pos, varInfo &var);
-
-      typeInfo& addTypeInfoNode();
-      typeInfo& addTypeInfoNode(const int pos);
-
-      bool hasVariable();
 
       varInfo& getVarInfo();
       varInfo& getVarInfo(const int pos);
@@ -317,11 +406,7 @@ namespace occa {
       void setVarInfo(varInfo &var);
       void setVarInfo(const int pos, varInfo &var);
 
-      typeInfo& getTypeInfo();
-      typeInfo& getTypeInfo(const int pos);
-
-      void setTypeInfo(typeInfo &type);
-      void setTypeInfo(const int pos, typeInfo &type);
+      bool hasVariable();
 
       varInfo typeInfoOf(const std::string &str);
 
@@ -438,7 +523,7 @@ namespace occa {
       parserBase &parser;
 
       scopeTypeMap_t scopeTypeMap;
-      scopeVarMap_t scopeVarMap;
+      scopeVarMap_t  scopeVarMap;
 
       info_t info;
 
