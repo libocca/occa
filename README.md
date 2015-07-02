@@ -1,7 +1,12 @@
-OCCA (http://libocca.org)
+<div align="center">
+  <a href="http://libocca.org/">
+    <img src="http://libocca.org/images/logo/blueOccaLogo.png" alt="OCCA"></img>
+  </a>
+</div>
+
 =====
 
-[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/tcew/OCCA2)
+[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
 ```
 +---[ (0) README ]------------------------------------------
