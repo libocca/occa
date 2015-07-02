@@ -4,9 +4,9 @@
   </a>
 </div>
 
-=====
+Build Status: [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
-[![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
+=====
 
 ```
 +---[ (0) README ]------------------------------------------
