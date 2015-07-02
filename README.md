@@ -1,5 +1,5 @@
-<a name="OCCA [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)"></a>
-## OCCA
+<a name="OCCA"></a>
+## OCCA [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
 OCCA is an open-source (MIT license) library used to program current multi-core/many-core architectures.
 Devices (such as CPUs, GPUs, Intel's Xeon Phi, FPGAs, etc) are abstracted using an offload-model for application development and programming for the devices is done through a C-based (OKL) or Fortran-based kernel language (OFL).
