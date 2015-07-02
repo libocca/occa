@@ -1,9 +1,11 @@
 <a name="logo"/>
-<div align="center" style="height: 300px">
+<div align="center">
   <a href="http://libocca.org/">
     <img src="http://libocca.org/images/logo/blueOccaLogo.png" alt="OCCA"></img>
   </a>
 </div>
+
+</br></br>
 
 Build Status: [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
