@@ -74,7 +74,7 @@ namespace occa {
                            depType::update)) &&
            (1 < leaf.leafCount)){
 
-          linkDependenciesFor(newVdInfo, leaf[1]);
+          updateDependenciesFor(newVdInfo, leaf[1]);
         }
 
         if(vdNode == NULL){
@@ -173,8 +173,8 @@ namespace occa {
       return depType::used;
     }
 
-    void smntDepInfo::linkDependenciesFor(varDepInfo &vdInfo,
-                                          expNode &updateExp){
+    void smntDepInfo::updateDependenciesFor(varDepInfo &vdInfo,
+                                            expNode &updateExp){
 
       expNode &flatRoot = *(updateExp.makeFlatHandle());
 
@@ -186,12 +186,7 @@ namespace occa {
 
         varInfo &var = leaf.getVarInfo();
 
-        varDepInfoNode *&vdNode2 = vdInfo.varDeps[&var];
-
-        if(vdNode2 != NULL)
-          continue;
-
-        vdNode2 = has(var)->myNode;
+        vdInfo.varDeps[&var] = 0;
       }
 
       expNode::freeFlatHandle(flatRoot);
