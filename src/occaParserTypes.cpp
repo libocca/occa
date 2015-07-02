@@ -694,7 +694,7 @@ namespace occa {
 
     //---[ Type Info Class ]----------------------
     typeInfo::typeInfo() :
-      scope(NULL),
+      typeScope(NULL),
 
       leftQualifiers(),
 
@@ -712,7 +712,7 @@ namespace occa {
       typedefVar(NULL) {}
 
     typeInfo::typeInfo(const typeInfo &type) :
-      scope(type.scope),
+      typeScope(type.typeScope),
 
       leftQualifiers(type.leftQualifiers),
 
@@ -732,7 +732,7 @@ namespace occa {
       opOverloadMaps(type.opOverloadMaps) {}
 
     typeInfo& typeInfo::operator = (const typeInfo &type){
-      scope = type.scope;
+      typeScope = type.typeScope;
 
       leftQualifiers = type.leftQualifiers;
 
@@ -1136,9 +1136,9 @@ namespace occa {
 
     //---[ Variable Info Class ]------------------
     varInfo::varInfo() :
-      info(0),
-
       scope(NULL),
+
+      info(0),
 
       leftQualifiers(),
       rightQualifiers(),
@@ -1166,9 +1166,9 @@ namespace occa {
       functionNests(NULL) {}
 
     varInfo::varInfo(const varInfo &var) :
-      info(var.info),
-
       scope(var.scope),
+
+      info(var.info),
 
       attributeMap(var.attributeMap),
       leftQualifiers(var.leftQualifiers),
@@ -1200,9 +1200,9 @@ namespace occa {
       functionNests(var.functionNests) {}
 
     varInfo& varInfo::operator = (const varInfo &var){
-      info = var.info;
-
       scope = var.scope;
+
+      info = var.info;
 
       attributeMap    = var.attributeMap;
       leftQualifiers  = var.leftQualifiers;

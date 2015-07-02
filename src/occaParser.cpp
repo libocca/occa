@@ -31,8 +31,8 @@ namespace occa {
 
       globalScope = new statement(*this);
 
-      // globalScope->info = expType::namespace_;
-      // globalScope->expRoot
+      globalScope->info    = smntType::namespaceStatement;
+      globalScope->expRoot.addScopeInfoNode();
 
       warnForMissingBarriers     = true;
       warnForBarrierConditionals = true;

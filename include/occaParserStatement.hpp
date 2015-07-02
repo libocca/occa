@@ -38,41 +38,40 @@ namespace occa {
       static const info_t function        = (((info_t) 1)  << 12);
       static const info_t prototype       = (((info_t) 1)  << 13);
       static const info_t declaration     = (((info_t) 1)  << 14);
-      static const info_t namespace_      = (((info_t) 1)  << 15);
-      static const info_t cast_           = (((info_t) 1)  << 16);
-      static const info_t macro_          = (((info_t) 1)  << 17);
-      static const info_t goto_           = (((info_t) 1)  << 18);
-      static const info_t gotoLabel_      = (((info_t) 1)  << 19);
-      static const info_t return_         = (((info_t) 1)  << 20);
-      static const info_t transfer_       = (((info_t) 1)  << 21);
-      static const info_t occaFor         = (((info_t) 1)  << 22);
-      static const info_t checkSInfo      = (((info_t) 1)  << 23);
-      static const info_t attribute       = (((info_t) 1)  << 24);
+      static const info_t cast_           = (((info_t) 1)  << 15);
+      static const info_t macro_          = (((info_t) 1)  << 16);
+      static const info_t goto_           = (((info_t) 1)  << 17);
+      static const info_t gotoLabel_      = (((info_t) 1)  << 18);
+      static const info_t return_         = (((info_t) 1)  << 19);
+      static const info_t transfer_       = (((info_t) 1)  << 20);
+      static const info_t occaFor         = (((info_t) 1)  << 21);
+      static const info_t checkSInfo      = (((info_t) 1)  << 22);
+      static const info_t attribute       = (((info_t) 1)  << 23);
 
-      static const info_t hasInfo         = (((info_t) 7)  << 25);
-      static const info_t varInfo         = (((info_t) 1)  << 25);
-      static const info_t typeInfo        = (((info_t) 1)  << 26);
-      static const info_t scopeInfo       = (((info_t) 1)  << 27);
+      static const info_t hasInfo         = (((info_t) 7)  << 24);
+      static const info_t varInfo         = (((info_t) 1)  << 24);
+      static const info_t typeInfo        = (((info_t) 1)  << 25);
+      static const info_t scopeInfo       = (((info_t) 1)  << 26);
 
-      static const info_t asm_            = (((info_t) 1)  << 28);
+      static const info_t asm_            = (((info_t) 1)  << 27);
 
-      static const info_t printValue      = (((info_t) 1)  << 29);
-      static const info_t printLeaves     = (((info_t) 1)  << 30);
+      static const info_t printValue      = (((info_t) 1)  << 28);
+      static const info_t printLeaves     = (((info_t) 1)  << 29);
 
-      static const info_t flowControl     = (((info_t) 1)  << 31);
+      static const info_t flowControl     = (((info_t) 1)  << 30);
 
-      static const info_t specialKeyword  = (((info_t) 1)  << 32);
+      static const info_t specialKeyword  = (((info_t) 1)  << 31);
 
-      static const info_t macroKeyword    = (((info_t) 1)  << 33);
+      static const info_t macroKeyword    = (((info_t) 1)  << 32);
 
-      static const info_t apiKeyword      = (((info_t) 7)  << 34);
-      static const info_t occaKeyword     = (((info_t) 1)  << 34);
-      static const info_t cudaKeyword     = (((info_t) 1)  << 35);
-      static const info_t openclKeyword   = (((info_t) 1)  << 36);
+      static const info_t apiKeyword      = (((info_t) 7)  << 33);
+      static const info_t occaKeyword     = (((info_t) 1)  << 33);
+      static const info_t cudaKeyword     = (((info_t) 1)  << 34);
+      static const info_t openclKeyword   = (((info_t) 1)  << 35);
 
-      static const info_t hasFlag         = (((info_t) 1)  << 37);
+      static const info_t hasFlag         = (((info_t) 1)  << 36);
       static const info_t removeFlags     = ~expType::hasFlag;
-      static const info_t hasSemicolon    = (((info_t) 1)  << 37);
+      static const info_t hasSemicolon    = (((info_t) 1)  << 36);
     };
 
     namespace expFlag {
@@ -502,20 +501,21 @@ namespace occa {
       static const info_t gotoStatement      = (1   << 11);
 
       static const info_t caseStatement      = (1 << 12);
-      static const info_t blankStatement     = (1 << 13);
+      static const info_t namespaceStatement = (1 << 13);
+      static const info_t blankStatement     = (1 << 14);
 
-      static const info_t functionStatement  = (3 << 14);
-      static const info_t functionDefinition = (1 << 14);
-      static const info_t functionPrototype  = (1 << 15);
-      static const info_t blockStatement     = (1 << 16);
-      static const info_t structStatement    = (1 << 17);
+      static const info_t functionStatement  = (3 << 15);
+      static const info_t functionDefinition = (1 << 15);
+      static const info_t functionPrototype  = (1 << 16);
+      static const info_t blockStatement     = (1 << 17);
+      static const info_t structStatement    = (1 << 18);
 
-      static const info_t occaStatement      = (1 << 18);
+      static const info_t occaStatement      = (1 << 19);
       static const info_t occaFor            = (occaStatement |
                                                 forStatement);
 
-      static const info_t macroStatement     = (1 << 19);
-      static const info_t skipStatement      = (1 << 20);
+      static const info_t macroStatement     = (1 << 20);
+      static const info_t skipStatement      = (1 << 21);
     };
 
     class statement {
@@ -846,6 +846,8 @@ namespace occa {
 
       void printOnString(std::string &str,
                          const info_t flags = (statementFlag::printSubStatements));
+
+      void printSubsOnString(std::string &str);
 
       inline std::string toString(const info_t flags = (statementFlag::printSubStatements)){
         std::string ret;

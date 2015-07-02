@@ -1466,6 +1466,7 @@ namespace occa {
 
     // [a][::][b]
     void expNode::mergeNamespaces(){
+#if 0
       int leafPos = 0;
 
       while(leafPos < leafCount){
@@ -1489,6 +1490,7 @@ namespace occa {
         else
           ++leafPos;
       }
+#endif
     }
 
     // const int [*] x
@@ -3474,13 +3476,6 @@ namespace occa {
         break;
       }
 
-      case (expType::type | expType::namespace_):{
-        for(int i = 0; i < leafCount; ++i)
-          leaves[i]->printOnString(str);
-
-        break;
-      }
-
       case (expType::presetValue):{
         str += value;
 
@@ -3627,6 +3622,12 @@ namespace occa {
         break;
       }
 
+      case (expType::scopeInfo):{
+        getScopeInfo().printOnString(str);
+
+        break;
+      }
+
       case (expType::cast_):{
         str += '(';
         leaves[0]->printOnString(str);
@@ -3637,10 +3638,6 @@ namespace occa {
           leaves[1]->printOnString(str);
         }
 
-        break;
-      }
-
-      case (expType::namespace_):{
         break;
       }
 
@@ -5980,8 +5977,6 @@ namespace occa {
       if(flags & statementFlag::printSubStatements)
         tab = getTab();
 
-      statementNode *statementPos = statementStart;
-
       // OCCA For's
       if((info == smntType::occaFor) &&
          (expRoot.leafCount == 0)){
@@ -5993,10 +5988,7 @@ namespace occa {
 
         str += tab + expRoot.value + " {\n";
 
-        while(statementPos){
-          statementPos->value->printOnString(str);
-          statementPos = statementPos->right;
-        }
+        printSubsOnString(str);
 
         str += tab;
         str += "}\n";
@@ -6041,10 +6033,7 @@ namespace occa {
           str += "do {\n";
         }
 
-        while(statementPos){
-          statementPos->value->printOnString(str);
-          statementPos = statementPos->right;
-        }
+        printSubsOnString(str);
 
         if(statementStart != NULL){
           str += tab;
@@ -6094,10 +6083,7 @@ namespace occa {
 
           str += " {\n";
 
-          while(statementPos){
-            statementPos->value->printOnString(str);
-            statementPos = statementPos->right;
-          }
+          printSubsOnString(str);
 
           str += tab;
 
@@ -6117,25 +6103,16 @@ namespace occa {
           return;
         }
 
-        const int depth_ = depth();
+        str += tab;
+        str += "{\n";
 
-        if(0 <= depth_){
-          str += tab;
-          str += "{\n";
-        }
+        printSubsOnString(str);
 
-        while(statementPos){
-          statementPos->value->printOnString(str);
-          statementPos = statementPos->right;
-        }
+        if(back(str) != '\n')
+          str += '\n';
 
-        if(0 <= depth_){
-          if(back(str) != '\n')
-            str += '\n';
-
-          str += tab;
-          str += "}\n";
-        }
+        str += tab;
+        str += "}\n";
       }
       else if(info & smntType::structStatement){
         if(flags & statementFlag::printSubStatements){
@@ -6146,6 +6123,32 @@ namespace occa {
           expRoot.printOnString(str);
         }
       }
+      else if(info & smntType::namespaceStatement){
+        scopeInfo &scope = expRoot.getScopeInfo();
+
+        if(scope.isTheGlobalScope()){
+          printSubsOnString(str);
+          return;
+        }
+
+        if(back(str) != '\n')
+          str += '\n';
+
+        str += tab;
+        str += "namespace ";
+
+        if(0 < scope.name.size()){
+          str += scope.name;
+          str += ' ';
+        }
+
+        str += "{\n";
+
+        printSubsOnString(str);
+
+        str += tab;
+        str += "};\n";
+      }
       else if(info & smntType::macroStatement){
         str += expRoot.value;
 
@@ -6154,6 +6157,15 @@ namespace occa {
       }
       else {
         expRoot.printOnString(str, tab);
+      }
+    }
+
+    void statement::printSubsOnString(std::string &str){
+      statementNode *statementPos = statementStart;
+
+      while(statementPos){
+        statementPos->value->printOnString(str);
+        statementPos = statementPos->right;
       }
     }
 

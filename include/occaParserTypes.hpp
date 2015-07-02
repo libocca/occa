@@ -29,6 +29,10 @@ namespace occa {
 
       scopeInfo();
 
+      inline bool isTheGlobalScope(){
+        return (up == NULL);
+      }
+
       void printOnString(std::string &str);
 
       inline std::string toString(){
@@ -208,7 +212,7 @@ namespace occa {
     //---[ Type Info Class ]----------------------
     class typeInfo {
     public:
-      scopeInfo *scope;
+      scopeInfo *typeScope;
 
       qualifierInfo leftQualifiers;
 
@@ -316,9 +320,9 @@ namespace occa {
 
     class varInfo {
     public:
-      int info;
-
       scopeInfo *scope;
+
+      int info;
 
       attributeMap_t attributeMap;
       qualifierInfo leftQualifiers, rightQualifiers;
