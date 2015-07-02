@@ -5,7 +5,7 @@
   </a>
 </div>
 
-</br></br>
+</br>
 
 Build Status: [![Build Status](https://travis-ci.org/libocca/occa.svg?branch=master)](https://travis-ci.org/libocca/occa)
 
