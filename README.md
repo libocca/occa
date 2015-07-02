@@ -9,7 +9,7 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 ## README
 
 ```
-+---[ (0) README ]------------------------------------------
+  +---[ (0) README ]------------------------------------------
 |   Installing:
 |      Using a terminal, go to your OCCA directory
 |         You should see: this README, include, src, lib
@@ -205,7 +205,7 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 |  Setting it:
 |    export OCCA_FORTRAN_ENABLED="1"
 |    export FC="gfortran"
-|    export FCFLAGS="-O3 -wAll"
+|    export FCFLAGS="-O3 -Wall"
 |
 +===========================================================
 ```
