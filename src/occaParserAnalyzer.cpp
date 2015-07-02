@@ -42,7 +42,9 @@ namespace occa {
     //---[ Statement Dependencies ]---------------
     smntDepInfo::smntDepInfo() :
       s(NULL),
-      myNode(NULL) {}
+
+      myNode(NULL),
+      subNode(NULL) {}
 
     void smntDepInfo::setup(statement &s_, smntDepInfoNode &myNode_){
       s = &s_;
@@ -59,9 +61,6 @@ namespace occa {
           continue;
 
         int leafDepInfo = getDepTypeFrom(leaf);
-
-        if(leafDepInfo == depType::none)
-          continue;
 
         varInfo &var = leaf.getVarInfo();
 

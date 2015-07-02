@@ -56,7 +56,7 @@ namespace occa {
       varToDepMap v2dMap;
 
       statement *s;
-      smntDepInfoNode *myNode;
+      smntDepInfoNode *myNode, *subNode;
 
       smntDepInfo();
 
