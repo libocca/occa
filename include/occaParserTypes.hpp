@@ -24,14 +24,28 @@ namespace occa {
 
       std::string name;
 
-      scopeTypeMap_t scopeTypeMap;
-      scopeVarMap_t  scopeVarMap;
+      scopeTypeMap_t typeMap;
+      scopeVarMap_t  varMap;
 
       scopeInfo();
 
       inline bool isTheGlobalScope(){
         return (up == NULL);
       }
+
+      void appendVariablesFrom(scopeInfo *scope);
+
+      void add(typeInfo &type);
+      void add(varInfo &var);
+
+      typeInfo* hasLocalType(const std::string &typeName);
+      varInfo*  hasLocalVariable(const std::string &varName);
+
+      bool removeLocalType(const std::string &typeName);
+      bool removeLocalVariable(const std::string &varName);
+
+      bool removeLocalType(typeInfo &type);
+      bool removeLocalVariable(varInfo &var);
 
       void printOnString(std::string &str);
 

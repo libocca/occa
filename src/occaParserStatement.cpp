@@ -629,8 +629,7 @@ namespace occa {
       int leafPos  = var.loadFrom(*this, 1);
 
       if((sInfo->up != NULL)              &&
-         (sInfo->up->scopeVarMap.find(var.name) ==
-          sInfo->up->scopeVarMap.end())){
+         (!sInfo->up->scope->hasLocalVariable(var.name))){
 
         sInfo->up->addVariable(&var);
       }
@@ -1095,8 +1094,7 @@ namespace occa {
       int leafPos  = var.loadFromFortran(*this, 1);
 
       if((sInfo->up != NULL)              &&
-         (sInfo->up->scopeVarMap.find(var.name) ==
-          sInfo->up->scopeVarMap.end())){
+         !sInfo->up->scope->hasLocalVariable(var.name)){
 
         sInfo->up->addVariable(&var);
 
@@ -2674,39 +2672,6 @@ namespace occa {
       removeNodes(pos, 1);
     }
 
-    // scopeInfo
-    scopeInfo& expNode::addScopeInfoNode(){
-      return addInfoNode<scopeInfo>();
-    }
-
-    scopeInfo& expNode::addScopeInfoNode(const int pos){
-      return addInfoNode<scopeInfo>(expType::scopeInfo, pos);
-    }
-
-    void expNode::putScopeInfo(scopeInfo &scope){
-      putInfo<scopeInfo>(expType::scopeInfo, scope);
-    }
-
-    void expNode::putScopeInfo(const int pos, scopeInfo &scope){
-      putInfo<scopeInfo>(expType::scopeInfo, pos, scope);
-    }
-
-    scopeInfo& expNode::getScopeInfo(){
-      return getInfo<scopeInfo>();
-    }
-
-    scopeInfo& expNode::getScopeInfo(const int pos){
-      return getInfo<scopeInfo>(pos);
-    }
-
-    void expNode::setScopeInfo(scopeInfo &scope){
-      setInfo<scopeInfo>(scope);
-    }
-
-    void expNode::setScopeInfo(const int pos, scopeInfo &scope){
-      setInfo<scopeInfo>(pos, scope);
-    }
-
     // typeInfo
     typeInfo& expNode::addTypeInfoNode(){
       return addInfoNode<typeInfo>();
@@ -3622,12 +3587,6 @@ namespace occa {
         break;
       }
 
-      case (expType::scopeInfo):{
-        getScopeInfo().printOnString(str);
-
-        break;
-      }
-
       case (expType::cast_):{
         str += '(';
         leaves[0]->printOnString(str);
@@ -3848,6 +3807,7 @@ namespace occa {
     //---[ Statement Functions ]--------------------
     statement::statement(parserBase &pb) :
       parser(pb),
+      scope(NULL),
 
       info(smntType::blockStatement),
 
@@ -3860,9 +3820,7 @@ namespace occa {
 
     statement::statement(const statement &s) :
       parser(s.parser),
-
-      scopeTypeMap(s.scopeTypeMap),
-      scopeVarMap(s.scopeVarMap),
+      scope(s.scope),
 
       info(s.info),
 
@@ -3879,6 +3837,7 @@ namespace occa {
     statement::statement(const info_t info_,
                          statement *up_) :
       parser(up_->parser),
+      scope(NULL),
 
       info(info_),
 
@@ -4000,6 +3959,15 @@ namespace occa {
                                    const int parsingLanguage){
 
       info = findStatementType(allExp, expPos, parsingLanguage);
+
+      if(info & (smntType::flowStatement      |
+                 smntType::namespaceStatement |
+                 smntType::blockStatement     |
+                 smntType::functionDefinition |
+                 smntType::occaFor)){
+
+        scope = new scopeInfo();
+      }
     }
 
     info_t statement::findStatementType(expNode &allExp,
@@ -4397,13 +4365,14 @@ namespace occa {
     //==================================
 
     void statement::addType(typeInfo &type){
-      scopeTypeMap[type.name] = &type;
+      scope->add(type);
     }
 
     void statement::addTypedef(const std::string &typedefName){
       typeInfo &type = *(new typeInfo);
-      type.name = typedefName;
-      scopeTypeMap[typedefName] = &type;
+      type.name      = typedefName;
+
+      scope->add(type);
     }
 
     bool statement::expHasSpecifier(expNode &allExp, int expPos){
@@ -4424,37 +4393,36 @@ namespace occa {
     }
 
     typeInfo* statement::hasTypeInScope(const std::string &typeName){
-      cScopeTypeMapIterator it = scopeTypeMap.find(typeName);
+      if(scope != NULL){
+        typeInfo *type = scope->hasLocalType(typeName);
 
-      if(it != scopeTypeMap.end())
-        return it->second;
+        if(type != NULL)
+          return type;
+      }
 
-      if(up)
-        return up->hasTypeInScope(typeName);
+      if(up == NULL)
+        return NULL;
 
-      return NULL;
+      return up->hasTypeInScope(typeName);
     }
 
     varInfo* statement::hasVariableInScope(const std::string &varName){
-      const statement *sPos = this;
+      if(scope != NULL){
+        varInfo *var = scope->hasLocalVariable(varName);
 
-      while(sPos){
-        cScopeVarMapIterator it = sPos->scopeVarMap.find(varName);
-
-        if(it != sPos->scopeVarMap.end())
-          return it->second;
-
-        sPos = sPos->up;
+        if(var != NULL)
+          return var;
       }
 
-      return NULL;
+      if(up == NULL)
+        return NULL;
+
+      return up->hasVariableInScope(varName);
     }
 
     varInfo* statement::hasVariableInLocalScope(const std::string &varName){
-      scopeVarMapIterator it = scopeVarMap.find(varName);
-
-      if(it != scopeVarMap.end())
-        return it->second;
+      if(scope != NULL)
+        return scope->hasLocalVariable(varName);
 
       return NULL;
     }
@@ -4471,6 +4439,50 @@ namespace occa {
         return up->hasDescriptorVariable(descriptor);
 
       return false;
+    }
+
+    void statement::removeFromScope(typeInfo &type){
+      if((scope != NULL) &&
+         scope->removeLocalType(type)){
+
+        return;
+      }
+
+      if(up)
+        up->removeFromScope(type);
+    }
+
+    void statement::removeFromScope(varInfo &var){
+      if((scope != NULL) &&
+         scope->removeLocalVariable(var)){
+
+        return;
+      }
+
+      if(up)
+        up->removeFromScope(var);
+    }
+
+    void statement::removeTypeFromScope(const std::string &typeName){
+      if((scope != NULL) &&
+         scope->removeLocalType(typeName)){
+
+        return;
+      }
+
+      if(up)
+        up->removeTypeFromScope(typeName);
+    }
+
+    void statement::removeVarFromScope(const std::string &varName){
+      if((scope != NULL) &&
+         scope->removeLocalVariable(varName)){
+
+        return;
+      }
+
+      if(up)
+        up->removeVarFromScope(varName);
     }
 
     //---[ Loading ]--------------------
@@ -5403,15 +5415,17 @@ namespace occa {
 
     void statement::checkIfVariableIsDefined(varInfo &var,
                                              statement *origin){
-      if(var.name.size() == 0)
+      if((scope == NULL)            ||
+         (var.name.size() == 0)     ||
+         var.hasQualifier("extern") ||
+         (var.info & varType::functionDef)){
+
         return;
+      }
 
-      scopeVarMapIterator it = scopeVarMap.find(var.name);
+      varInfo *scopeVar = scope->hasLocalVariable(var.name);
 
-      OCCA_CHECK((it == scopeVarMap.end())  ||
-                 var.hasQualifier("extern") ||
-                 (var.info & varType::functionDef),
-
+      OCCA_CHECK(scopeVar == NULL,
                  "Variable [" << var.name << "] defined in:\n"
                  << *origin
                  << "is already defined in:\n"
@@ -5437,7 +5451,7 @@ namespace occa {
 
       checkIfVariableIsDefined(*var, origin);
 
-      scopeVarMap[var->name] = var;
+      scope->add(*var);
 
       parser.varOriginMap[var] = origin;
     }
@@ -5518,9 +5532,7 @@ namespace occa {
 
       expNode::swap(a.expRoot, b.expRoot);
 
-
-      a.scopeTypeMap.swap(b.scopeTypeMap);
-      a.scopeVarMap.swap(b.scopeVarMap);
+      swapValues(a.scope, b.scope);
 
       a.attributeMap.swap(b.attributeMap);
     }
@@ -5609,18 +5621,6 @@ namespace occa {
         sn = sn->right;
       }
 
-      // Add ninja-variables (nin-nin)
-      scopeVarMapIterator it = scopeVarMap.begin();
-
-      while(it != scopeVarMap.end()){
-        varInfo &var = *(it->second);
-
-        if(!newStatement->hasVariableInLocalScope(var.name))
-          newStatement->addVariable(var);
-
-        ++it;
-      }
-
       newStatement->attributeMap = attributeMap;
 
       return newStatement;
@@ -5634,9 +5634,12 @@ namespace occa {
     }
 
     void statement::printVariablesInLocalScope(){
-      scopeVarMapIterator it = scopeVarMap.begin();
+      if(scope == NULL)
+        return;
 
-      while(it != scopeVarMap.end()){
+      scopeVarMapIterator it = scope->varMap.begin();
+
+      while(it != scope->varMap.end()){
         std::cout << "  " << *(it->second) << '\n';
 
         ++it;
@@ -5651,20 +5654,13 @@ namespace occa {
     }
 
     void statement::printTypesInStatement(){
-      scopeTypeMapIterator it = scopeTypeMap.begin();
+      if(scope == NULL)
+        return;
 
-      while(it != scopeTypeMap.end()){
+      scopeTypeMapIterator it = scope->typeMap.begin();
+
+      while(it != scope->typeMap.end()){
         std::cout << (it->first) << '\n';
-
-        ++it;
-      }
-    }
-
-    void statement::printTypeDefsInStatement(){
-      scopeTypeMapIterator it = scopeTypeMap.begin();
-
-      while(it != scopeTypeMap.end()){
-        std::cout << (it->second)->toString("  ") << '\n';
 
         ++it;
       }
@@ -6124,9 +6120,7 @@ namespace occa {
         }
       }
       else if(info & smntType::namespaceStatement){
-        scopeInfo &scope = expRoot.getScopeInfo();
-
-        if(scope.isTheGlobalScope()){
+        if(scope->isTheGlobalScope()){
           printSubsOnString(str);
           return;
         }
@@ -6137,8 +6131,8 @@ namespace occa {
         str += tab;
         str += "namespace ";
 
-        if(0 < scope.name.size()){
-          str += scope.name;
+        if(0 < scope->name.size()){
+          str += scope->name;
           str += ' ';
         }
 

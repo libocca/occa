@@ -31,8 +31,8 @@ namespace occa {
 
       globalScope = new statement(*this);
 
-      globalScope->info    = smntType::namespaceStatement;
-      globalScope->expRoot.addScopeInfoNode();
+      globalScope->info  = smntType::namespaceStatement;
+      globalScope->scope = new scopeInfo();
 
       warnForMissingBarriers     = true;
       warnForBarrierConditionals = true;
@@ -820,7 +820,7 @@ namespace occa {
             type.name     = baseType[t] + suffix[n];
             type.baseType = &type;
 
-            globalScope->scopeTypeMap[type.name] = &type;
+            globalScope->addType(type);
           }
           else{
             ss << "struct " << baseType[t] << parts[n] << " {\n";
@@ -856,7 +856,7 @@ namespace occa {
             type.loadFrom(*globalScope, typeExp);
             // typeExp.free(); [<>] Errors out
 
-            globalScope->scopeTypeMap[type.name] = &type;
+            globalScope->addType(type);
 
             ss.str("");
           }
@@ -1031,7 +1031,7 @@ namespace occa {
 
       varOriginMap[&iterVar] = NULL;
 
-      s.scopeVarMap.erase(iter);
+      s.removeFromScope(iterVar);
 
       s.pushSourceLeftOf(s.statementStart, ss.str());
 
@@ -1714,7 +1714,7 @@ namespace occa {
 
           varOriginMap[&var] = NULL;
 
-          iStatements[0]->scopeVarMap.erase(var);
+          iStatements[0]->removeFromScope(var);
         }
 
         os.reloadFromSource(outerForSource);
@@ -2093,7 +2093,7 @@ namespace occa {
         if(sUp){
           varInfo &var = s2.getDeclarationVarInfo(0);
 
-          sUp->scopeVarMap.erase(var.name);
+          sUp->removeVarFromScope(var.name);
 
           sUp->removeStatement(s2);
         }
@@ -3230,7 +3230,7 @@ namespace occa {
         newStatement->expRoot.value  = "occaOuterFor";
         newStatement->expRoot.value += ('0' + o);
 
-        newStatement->scopeVarMap = sPos->scopeVarMap;
+        newStatement->scope = sPos->scope;
 
         statementNode *sn = sPos->statementStart;
 
@@ -3240,12 +3240,13 @@ namespace occa {
           sn->value->up = newStatement;
 
           statementNode *sn2 = sn->right;
+
           delete sn;
           sn = sn2;
         }
 
         sPos->statementStart = sPos->statementEnd = NULL;
-        sPos->scopeVarMap.clear();
+        sPos->scope = NULL;
 
         sPos->addStatement(newStatement);
 
@@ -3263,8 +3264,7 @@ namespace occa {
         statement *sDown = sPos->statementStart->value;
 
         if(sDown->info == smntType::blockStatement){
-          sPos->scopeVarMap.insert(sDown->scopeVarMap.begin(),
-                                   sDown->scopeVarMap.end());
+          sPos->scope->appendVariablesFrom(sDown->scope);
 
           sPos->statementStart = sPos->statementEnd = NULL;
 

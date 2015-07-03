@@ -19,6 +19,76 @@ namespace occa {
     scopeInfo::scopeInfo() :
       up(NULL) {}
 
+    void scopeInfo::appendVariablesFrom(scopeInfo *scope){
+      if(scope == NULL)
+        return;
+
+      varMap.insert(scope->varMap.begin(),
+                    scope->varMap.end());
+    }
+
+    void scopeInfo::add(typeInfo &type){
+      typeMap[type.name] = &type;
+    }
+
+    void scopeInfo::add(varInfo &var){
+      varMap[var.name] = &var;
+    }
+
+    typeInfo* scopeInfo::hasLocalType(const std::string &typeName){
+      cScopeTypeMapIterator it = typeMap.find(typeName);
+
+      if(it != typeMap.end())
+        return it->second;
+
+      return NULL;
+    }
+
+    varInfo* scopeInfo::hasLocalVariable(const std::string &varName){
+      cScopeVarMapIterator it = varMap.find(varName);
+
+      if(it != varMap.end())
+        return it->second;
+
+      return NULL;
+    }
+
+    bool scopeInfo::removeLocalType(const std::string &typeName){
+      // For readability
+      const bool removedType = true;
+
+      scopeTypeMapIterator it = typeMap.find(typeName);
+
+      if(it != typeMap.end()){
+        typeMap.erase(it);
+        return removedType;
+      }
+
+      return !removedType;
+    }
+
+    bool scopeInfo::removeLocalVariable(const std::string &varName){
+      // For readability
+      const bool removedVar = true;
+
+      scopeVarMapIterator it = varMap.find(varName);
+
+      if(it != varMap.end()){
+        varMap.erase(it);
+        return removedVar;
+      }
+
+      return !removedVar;
+    }
+
+    bool scopeInfo::removeLocalType(typeInfo &type){
+      return removeLocalType(type.name);
+    }
+
+    bool scopeInfo::removeLocalVariable(varInfo &var){
+      return removeLocalVariable(var.name);
+    }
+
     void scopeInfo::printOnString(std::string &str){
       if(up){
         up->printOnString(str);

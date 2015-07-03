@@ -51,27 +51,26 @@ namespace occa {
       static const info_t hasInfo         = (((info_t) 7)  << 24);
       static const info_t varInfo         = (((info_t) 1)  << 24);
       static const info_t typeInfo        = (((info_t) 1)  << 25);
-      static const info_t scopeInfo       = (((info_t) 1)  << 26);
 
-      static const info_t asm_            = (((info_t) 1)  << 27);
+      static const info_t asm_            = (((info_t) 1)  << 26);
 
-      static const info_t printValue      = (((info_t) 1)  << 28);
-      static const info_t printLeaves     = (((info_t) 1)  << 29);
+      static const info_t printValue      = (((info_t) 1)  << 27);
+      static const info_t printLeaves     = (((info_t) 1)  << 28);
 
-      static const info_t flowControl     = (((info_t) 1)  << 30);
+      static const info_t flowControl     = (((info_t) 1)  << 29);
 
-      static const info_t specialKeyword  = (((info_t) 1)  << 31);
+      static const info_t specialKeyword  = (((info_t) 1)  << 30);
 
-      static const info_t macroKeyword    = (((info_t) 1)  << 32);
+      static const info_t macroKeyword    = (((info_t) 1)  << 31);
 
-      static const info_t apiKeyword      = (((info_t) 7)  << 33);
-      static const info_t occaKeyword     = (((info_t) 1)  << 33);
-      static const info_t cudaKeyword     = (((info_t) 1)  << 34);
-      static const info_t openclKeyword   = (((info_t) 1)  << 35);
+      static const info_t apiKeyword      = (((info_t) 7)  << 32);
+      static const info_t occaKeyword     = (((info_t) 1)  << 32);
+      static const info_t cudaKeyword     = (((info_t) 1)  << 33);
+      static const info_t openclKeyword   = (((info_t) 1)  << 34);
 
-      static const info_t hasFlag         = (((info_t) 1)  << 36);
+      static const info_t hasFlag         = (((info_t) 1)  << 35);
       static const info_t removeFlags     = ~expType::hasFlag;
-      static const info_t hasSemicolon    = (((info_t) 1)  << 36);
+      static const info_t hasSemicolon    = (((info_t) 1)  << 35);
     };
 
     namespace expFlag {
@@ -366,19 +365,6 @@ namespace occa {
         tmLeaf = &tm;
       }
 
-      // scopeInfo
-      scopeInfo& addScopeInfoNode();
-      scopeInfo& addScopeInfoNode(const int pos);
-
-      void putScopeInfo(scopeInfo &scope);
-      void putScopeInfo(const int pos, scopeInfo &scope);
-
-      scopeInfo& getScopeInfo();
-      scopeInfo& getScopeInfo(const int pos);
-
-      void setScopeInfo(scopeInfo &scope);
-      void setScopeInfo(const int pos, scopeInfo &scope);
-
       // typeInfo
       typeInfo& addTypeInfoNode();
       typeInfo& addTypeInfoNode(const int pos);
@@ -490,15 +476,15 @@ namespace occa {
       static const info_t declareStatement   = (1 << 2);
       static const info_t updateStatement    = (1 << 3);
 
-      static const info_t flowStatement      = (255 <<  4);
-      static const info_t forStatement       = (1   <<  4);
-      static const info_t whileStatement     = (1   <<  5);
-      static const info_t doWhileStatement   = (3   <<  5);
-      static const info_t ifStatement        = (1   <<  7);
-      static const info_t elseIfStatement    = (3   <<  7);
-      static const info_t elseStatement      = (5   <<  7);
-      static const info_t switchStatement    = (1   << 10);
-      static const info_t gotoStatement      = (1   << 11);
+      static const info_t flowStatement      = (0xFF <<  4);
+      static const info_t forStatement       = (1    <<  4);
+      static const info_t whileStatement     = (1    <<  5);
+      static const info_t doWhileStatement   = (3    <<  5);
+      static const info_t ifStatement        = (1    <<  7);
+      static const info_t elseIfStatement    = (3    <<  7);
+      static const info_t elseStatement      = (5    <<  7);
+      static const info_t switchStatement    = (1    << 10);
+      static const info_t gotoStatement      = (1    << 11);
 
       static const info_t caseStatement      = (1 << 12);
       static const info_t namespaceStatement = (1 << 13);
@@ -521,9 +507,7 @@ namespace occa {
     class statement {
     public:
       parserBase &parser;
-
-      scopeTypeMap_t scopeTypeMap;
-      scopeVarMap_t  scopeVarMap;
+      scopeInfo *scope;
 
       info_t info;
 
@@ -620,6 +604,12 @@ namespace occa {
 
       bool hasDescriptorVariable(const std::string descriptor);
       bool hasDescriptorVariableInScope(const std::string descriptor);
+
+      void removeFromScope(typeInfo &type);
+      void removeFromScope(varInfo &var);
+
+      void removeTypeFromScope(const std::string &typeName);
+      void removeVarFromScope(const std::string &varName);
 
       //---[ Loading ]------------------
       void loadAllFromNode(expNode allExp, const int parsingLanguage_ = parserInfo::parsingC);
@@ -802,7 +792,6 @@ namespace occa {
 
       void printTypesInScope();
       void printTypesInStatement();
-      void printTypeDefsInStatement();
 
       //---[ Statement Info ]-----------
       void createUniqueVariables(std::vector<std::string> &names,
