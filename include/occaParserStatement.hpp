@@ -38,39 +38,40 @@ namespace occa {
       static const info_t function        = (((info_t) 1)  << 12);
       static const info_t prototype       = (((info_t) 1)  << 13);
       static const info_t declaration     = (((info_t) 1)  << 14);
-      static const info_t cast_           = (((info_t) 1)  << 15);
-      static const info_t macro_          = (((info_t) 1)  << 16);
-      static const info_t goto_           = (((info_t) 1)  << 17);
-      static const info_t gotoLabel_      = (((info_t) 1)  << 18);
-      static const info_t return_         = (((info_t) 1)  << 19);
-      static const info_t transfer_       = (((info_t) 1)  << 20);
-      static const info_t occaFor         = (((info_t) 1)  << 21);
-      static const info_t checkSInfo      = (((info_t) 1)  << 22);
-      static const info_t attribute       = (((info_t) 1)  << 23);
+      static const info_t namespace_      = (((info_t) 1)  << 15);
+      static const info_t cast_           = (((info_t) 1)  << 16);
+      static const info_t macro_          = (((info_t) 1)  << 17);
+      static const info_t goto_           = (((info_t) 1)  << 18);
+      static const info_t gotoLabel_      = (((info_t) 1)  << 19);
+      static const info_t return_         = (((info_t) 1)  << 20);
+      static const info_t transfer_       = (((info_t) 1)  << 21);
+      static const info_t occaFor         = (((info_t) 1)  << 22);
+      static const info_t checkSInfo      = (((info_t) 1)  << 23);
+      static const info_t attribute       = (((info_t) 1)  << 24);
 
-      static const info_t hasInfo         = (((info_t) 7)  << 24);
-      static const info_t varInfo         = (((info_t) 1)  << 24);
-      static const info_t typeInfo        = (((info_t) 1)  << 25);
+      static const info_t hasInfo         = (((info_t) 7)  << 25);
+      static const info_t varInfo         = (((info_t) 1)  << 25);
+      static const info_t typeInfo        = (((info_t) 1)  << 26);
 
-      static const info_t asm_            = (((info_t) 1)  << 26);
+      static const info_t asm_            = (((info_t) 1)  << 27);
 
-      static const info_t printValue      = (((info_t) 1)  << 27);
-      static const info_t printLeaves     = (((info_t) 1)  << 28);
+      static const info_t printValue      = (((info_t) 1)  << 28);
+      static const info_t printLeaves     = (((info_t) 1)  << 29);
 
-      static const info_t flowControl     = (((info_t) 1)  << 29);
+      static const info_t flowControl     = (((info_t) 1)  << 30);
 
-      static const info_t specialKeyword  = (((info_t) 1)  << 30);
+      static const info_t specialKeyword  = (((info_t) 1)  << 31);
 
-      static const info_t macroKeyword    = (((info_t) 1)  << 31);
+      static const info_t macroKeyword    = (((info_t) 1)  << 32);
 
-      static const info_t apiKeyword      = (((info_t) 7)  << 32);
-      static const info_t occaKeyword     = (((info_t) 1)  << 32);
-      static const info_t cudaKeyword     = (((info_t) 1)  << 33);
-      static const info_t openclKeyword   = (((info_t) 1)  << 34);
+      static const info_t apiKeyword      = (((info_t) 7)  << 33);
+      static const info_t occaKeyword     = (((info_t) 1)  << 33);
+      static const info_t cudaKeyword     = (((info_t) 1)  << 34);
+      static const info_t openclKeyword   = (((info_t) 1)  << 35);
 
-      static const info_t hasFlag         = (((info_t) 1)  << 35);
+      static const info_t hasFlag         = (((info_t) 1)  << 36);
       static const info_t removeFlags     = ~expType::hasFlag;
-      static const info_t hasSemicolon    = (((info_t) 1)  << 35);
+      static const info_t hasSemicolon    = (((info_t) 1)  << 36);
     };
 
     namespace expFlag {
@@ -562,6 +563,7 @@ namespace occa {
       info_t checkDescriptorStatementType(expNode &allExp, int &expPos);
       info_t checkGotoStatementType(expNode &allExp, int &expPos);
       info_t checkFlowStatementType(expNode &allExp, int &expPos);
+      info_t checkNamespaceStatementType(expNode &allExp, int &expPos);
       info_t checkSpecialStatementType(expNode &allExp, int &expPos);
       info_t checkBlockStatementType(expNode &allExp, int &expPos);
 
@@ -663,12 +665,12 @@ namespace occa {
                               int &expPos,
                               const int parsingLanguage_ = parserInfo::parsingC);
 
-      void loadCaseFromNode(const info_t st,
+      void loadGotoFromNode(const info_t st,
                             expNode &allExp,
                             int &expPos,
                             const int parsingLanguage_ = parserInfo::parsingC);
 
-      void loadGotoFromNode(const info_t st,
+      void loadCaseFromNode(const info_t st,
                             expNode &allExp,
                             int &expPos,
                             const int parsingLanguage_ = parserInfo::parsingC);
@@ -687,6 +689,11 @@ namespace occa {
                              expNode &allExp,
                              int &expPos,
                              const int parsingLanguage_ = parserInfo::parsingC);
+
+      void loadNamespaceFromNode(const info_t st,
+                                 expNode &allExp,
+                                 int &expPos,
+                                 const int parsingLanguage_ = parserInfo::parsingC);
 
       // [-] Missing
       void loadStructFromNode(const info_t st,
@@ -717,6 +724,8 @@ namespace occa {
       //================================
 
       statement* getGlobalScope();
+      scopeInfo* getNamespace();
+
       statementNode* getStatementNode();
 
       void pushLastStatementLeftOf(statement *target);

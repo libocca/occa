@@ -196,9 +196,10 @@ namespace occa {
       // print();
 
       // Don't need to load stuff
-      if((sInfo->info & (smntType::skipStatement   |
-                         smntType::macroStatement  |
-                         smntType::gotoStatement   |
+      if((sInfo->info & (smntType::skipStatement      |
+                         smntType::macroStatement     |
+                         smntType::namespaceStatement |
+                         smntType::gotoStatement      |
                          smntType::blockStatement))      ||
          (sInfo->info == smntType::occaFor)              ||
          (sInfo->info == smntType::elseStatement)        ||
@@ -3961,12 +3962,12 @@ namespace occa {
       info = findStatementType(allExp, expPos, parsingLanguage);
 
       if(info & (smntType::flowStatement      |
-                 smntType::namespaceStatement |
                  smntType::blockStatement     |
                  smntType::functionDefinition |
                  smntType::occaFor)){
 
-        scope = new scopeInfo();
+        if(scope == NULL)
+          scope = new scopeInfo();
       }
     }
 
@@ -4026,6 +4027,9 @@ namespace occa {
 
       else if(allExp[expPos].info & expType::flowControl)
         return checkFlowStatementType(allExp, expPos);
+
+      else if(allExp[expPos].info & expType::namespace_)
+        return checkNamespaceStatementType(allExp, expPos);
 
       else if(allExp[expPos].info & expType::specialKeyword)
         return checkSpecialStatementType(allExp, expPos);
@@ -4171,6 +4175,42 @@ namespace occa {
                  << allExp.toString("  "));
 
       return 0;
+    }
+
+    info_t statement::checkNamespaceStatementType(expNode &allExp, int &expPos){
+      scope = new scopeInfo();
+
+      // [namespace] A::B::C {
+      ++expPos;
+
+      while(expPos < allExp.leafCount){
+        expNode &leaf = allExp[expPos];
+
+        // namespace [A::B::C] {
+        if(leaf.info & expType::unknown){
+          ++expPos;
+
+          if((allExp.leafCount <= expPos) ||
+             (allExp[expPos].value != "::")){
+
+            break;
+          }
+
+          ++expPos;
+        }
+        // namespace A::B::C [{]
+        else if((leaf.info  == expType::C) &&
+           (leaf.value == "{")){
+
+          break;
+        }
+        else {
+          OCCA_CHECK(false,
+                     "Wrong namespace format");
+        }
+      }
+
+      return smntType::namespaceStatement;
     }
 
     info_t statement::checkSpecialStatementType(expNode &allExp, int &expPos){
@@ -4575,6 +4615,12 @@ namespace occa {
                                         expPos,
                                         parsingLanguage);
 
+      else if(st & smntType::namespaceStatement)
+        newStatement->loadNamespaceFromNode(st,
+                                            allExp,
+                                            expPos,
+                                            parsingLanguage);
+
       else if(st & smntType::functionStatement){
         if(st & smntType::functionDefinition)
           newStatement->loadFunctionDefinitionFromNode(st,
@@ -4886,6 +4932,46 @@ namespace occa {
       }
     }
 
+    void statement::loadNamespaceFromNode(const info_t st,
+                                          expNode &allExp,
+                                          int &expPos,
+                                          const int parsingLanguage){
+
+      // [namespace] [A::] [B::] [C]
+      // 1            2     2     1    =   6 -> 3 (A,B,C)
+      const int namespaceCount = (expRoot.leafCount / 2);
+      statement *s = this;
+
+      if(0 < namespaceCount){
+        scope = getNamespace()->addNamespace(expRoot[1].value);
+      }
+
+      if(1 < namespaceCount){
+        for(int i = 1; i < namespaceCount; ++i){
+          scopeInfo *upScope = s->scope;
+
+          s->addStatement(s->makeSubStatement());
+          s = s->statementStart->value;
+
+          s->scope = upScope->addNamespace(expRoot[1 + 2*i].value);
+        }
+      }
+
+      expRoot.free();
+
+      if(expPos < allExp.leafCount){
+        s->loadAllFromNode(allExp[expPos], parsingLanguage);
+        ++expPos;
+
+        if((expPos < allExp.leafCount)                   &&
+           (allExp[expPos].info & expType::endStatement) &&
+           (allExp[expPos].value == ";")){
+
+          ++expPos;
+        }
+      }
+    }
+
     // [-] Missing Fortran
     void statement::loadStructFromNode(const info_t st,
                                        expNode &allExp,
@@ -5088,6 +5174,16 @@ namespace occa {
         globalScope = globalScope->up;
 
       return globalScope;
+    }
+
+    scopeInfo* statement::getNamespace(){
+      if(scope != NULL)
+        return scope;
+
+      if(up != NULL)
+        return up->getNamespace();
+
+      return NULL;
     }
 
     statementNode* statement::getStatementNode(){
@@ -5637,7 +5733,7 @@ namespace occa {
       if(scope == NULL)
         return;
 
-      scopeVarMapIterator it = scope->varMap.begin();
+      varMapIterator it = scope->varMap.begin();
 
       while(it != scope->varMap.end()){
         std::cout << "  " << *(it->second) << '\n';
@@ -5657,7 +5753,7 @@ namespace occa {
       if(scope == NULL)
         return;
 
-      scopeTypeMapIterator it = scope->typeMap.begin();
+      typeMapIterator it = scope->typeMap.begin();
 
       while(it != scope->typeMap.end()){
         std::cout << (it->first) << '\n';

@@ -38,6 +38,7 @@ namespace occa {
     class attribute_t;
     class overloadedOp_t;
 
+    class scopeInfo;
     class typeInfo;
     class varInfo;
     class kernelInfo;
@@ -75,13 +76,17 @@ namespace occa {
 
   typedef std::vector<parserNS::typeInfo*>                  anonymousTypeMap_t;
 
-  typedef std::map<std::string,parserNS::typeInfo*>         scopeTypeMap_t;
-  typedef scopeTypeMap_t::iterator                          scopeTypeMapIterator;
-  typedef scopeTypeMap_t::const_iterator                    cScopeTypeMapIterator;
+  typedef std::map<std::string,parserNS::typeInfo*>         typeMap_t;
+  typedef typeMap_t::iterator                               typeMapIterator;
+  typedef typeMap_t::const_iterator                         cTypeMapIterator;
 
-  typedef std::map<std::string,parserNS::varInfo*>          scopeVarMap_t;
-  typedef scopeVarMap_t::iterator                           scopeVarMapIterator;
-  typedef scopeVarMap_t::const_iterator                     cScopeVarMapIterator;
+  typedef std::map<std::string,parserNS::varInfo*>          varMap_t;
+  typedef varMap_t::iterator                                varMapIterator;
+  typedef varMap_t::const_iterator                          cVarMapIterator;
+
+  typedef std::map<std::string,parserNS::scopeInfo*>        scopeMap_t;
+  typedef scopeMap_t::iterator                              scopeMapIterator;
+  typedef scopeMap_t::const_iterator                        cScopeMapIterator;
 
   typedef std::map<std::string,parserNS::overloadedOp_t*>   opOverloadMaps_t;
   typedef opOverloadMaps_t::iterator                        opOverloadMapsIterator;

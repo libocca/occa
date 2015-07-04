@@ -24,8 +24,9 @@ namespace occa {
 
       std::string name;
 
-      scopeTypeMap_t typeMap;
-      scopeVarMap_t  varMap;
+      scopeMap_t scopeMap;
+      typeMap_t  typeMap;
+      varMap_t   varMap;
 
       scopeInfo();
 
@@ -35,11 +36,14 @@ namespace occa {
 
       void appendVariablesFrom(scopeInfo *scope);
 
+      void add(scopeInfo &scope);
       void add(typeInfo &type);
       void add(varInfo &var);
 
-      typeInfo* hasLocalType(const std::string &typeName);
-      varInfo*  hasLocalVariable(const std::string &varName);
+      scopeInfo* addNamespace(const std::string &namespaceName);
+
+      typeInfo*  hasLocalType(const std::string &typeName);
+      varInfo*   hasLocalVariable(const std::string &varName);
 
       bool removeLocalType(const std::string &typeName);
       bool removeLocalVariable(const std::string &varName);

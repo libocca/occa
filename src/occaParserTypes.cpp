@@ -27,6 +27,10 @@ namespace occa {
                     scope->varMap.end());
     }
 
+    void scopeInfo::add(scopeInfo &scope){
+      scopeMap[scope.name] = &scope;
+    }
+
     void scopeInfo::add(typeInfo &type){
       typeMap[type.name] = &type;
     }
@@ -35,8 +39,21 @@ namespace occa {
       varMap[var.name] = &var;
     }
 
+    scopeInfo* scopeInfo::addNamespace(const std::string &namespaceName){
+      scopeInfo *&scope = scopeMap[namespaceName];
+
+      if(scope != NULL)
+        return scope;
+
+      scope       = new scopeInfo();
+      scope->up   = this;
+      scope->name = namespaceName;
+
+      return scope;
+    }
+
     typeInfo* scopeInfo::hasLocalType(const std::string &typeName){
-      cScopeTypeMapIterator it = typeMap.find(typeName);
+      typeMapIterator it = typeMap.find(typeName);
 
       if(it != typeMap.end())
         return it->second;
@@ -45,7 +62,7 @@ namespace occa {
     }
 
     varInfo* scopeInfo::hasLocalVariable(const std::string &varName){
-      cScopeVarMapIterator it = varMap.find(varName);
+      varMapIterator it = varMap.find(varName);
 
       if(it != varMap.end())
         return it->second;
@@ -57,7 +74,7 @@ namespace occa {
       // For readability
       const bool removedType = true;
 
-      scopeTypeMapIterator it = typeMap.find(typeName);
+      typeMapIterator it = typeMap.find(typeName);
 
       if(it != typeMap.end()){
         typeMap.erase(it);
@@ -71,7 +88,7 @@ namespace occa {
       // For readability
       const bool removedVar = true;
 
-      scopeVarMapIterator it = varMap.find(varName);
+      varMapIterator it = varMap.find(varName);
 
       if(it != varMap.end()){
         varMap.erase(it);

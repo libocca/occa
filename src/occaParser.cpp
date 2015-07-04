@@ -3946,7 +3946,7 @@ namespace occa {
       //---[ C++ ]----------------------
       cKeywordType["virtual"]            = expType::qualifier;
 
-      cKeywordType["namespace"]          = (expType::type | expType::struct_);
+      cKeywordType["namespace"]          = expType::namespace_;
 
       //---[ Constants ]------------------
       cKeywordType["..."]                = expType::presetValue;
