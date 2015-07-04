@@ -29,10 +29,8 @@ namespace occa {
 
       macrosAreInitialized = false;
 
-      globalScope = new statement(*this);
-
-      globalScope->info  = smntType::namespaceStatement;
-      globalScope->scope = new scopeInfo();
+      globalScope       = new statement(*this);
+      globalScope->info = smntType::namespaceStatement;
 
       warnForMissingBarriers     = true;
       warnForBarrierConditionals = true;
@@ -3246,7 +3244,7 @@ namespace occa {
         }
 
         sPos->statementStart = sPos->statementEnd = NULL;
-        sPos->scope = NULL;
+        sPos->scope = new scopeInfo();
 
         sPos->addStatement(newStatement);
 

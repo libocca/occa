@@ -167,6 +167,7 @@ namespace occa {
     void expNode::loadFromNode(expNode &allExp,
                                int &expPos,
                                const int parsingLanguage){
+
       if(allExp.leafCount <= expPos){
         sInfo->info = smntType::invalidStatement;
         return;
@@ -3808,7 +3809,7 @@ namespace occa {
     //---[ Statement Functions ]--------------------
     statement::statement(parserBase &pb) :
       parser(pb),
-      scope(NULL),
+      scope(new scopeInfo()),
 
       info(smntType::blockStatement),
 
@@ -3838,7 +3839,7 @@ namespace occa {
     statement::statement(const info_t info_,
                          statement *up_) :
       parser(up_->parser),
-      scope(NULL),
+      scope(new scopeInfo()),
 
       info(info_),
 
@@ -3960,15 +3961,6 @@ namespace occa {
                                    const int parsingLanguage){
 
       info = findStatementType(allExp, expPos, parsingLanguage);
-
-      if(info & (smntType::flowStatement      |
-                 smntType::blockStatement     |
-                 smntType::functionDefinition |
-                 smntType::occaFor)){
-
-        if(scope == NULL)
-          scope = new scopeInfo();
-      }
     }
 
     info_t statement::findStatementType(expNode &allExp,
@@ -4178,8 +4170,6 @@ namespace occa {
     }
 
     info_t statement::checkNamespaceStatementType(expNode &allExp, int &expPos){
-      scope = new scopeInfo();
-
       // [namespace] A::B::C {
       ++expPos;
 
@@ -4433,12 +4423,10 @@ namespace occa {
     }
 
     typeInfo* statement::hasTypeInScope(const std::string &typeName){
-      if(scope != NULL){
-        typeInfo *type = scope->hasLocalType(typeName);
+      typeInfo *type = scope->hasLocalType(typeName);
 
-        if(type != NULL)
-          return type;
-      }
+      if(type != NULL)
+        return type;
 
       if(up == NULL)
         return NULL;
@@ -4447,12 +4435,10 @@ namespace occa {
     }
 
     varInfo* statement::hasVariableInScope(const std::string &varName){
-      if(scope != NULL){
-        varInfo *var = scope->hasLocalVariable(varName);
+      varInfo *var = scope->hasLocalVariable(varName);
 
-        if(var != NULL)
-          return var;
-      }
+      if(var != NULL)
+        return var;
 
       if(up == NULL)
         return NULL;
@@ -4461,10 +4447,7 @@ namespace occa {
     }
 
     varInfo* statement::hasVariableInLocalScope(const std::string &varName){
-      if(scope != NULL)
-        return scope->hasLocalVariable(varName);
-
-      return NULL;
+      return scope->hasLocalVariable(varName);
     }
 
     bool statement::hasDescriptorVariable(const std::string descriptor){
@@ -4482,44 +4465,32 @@ namespace occa {
     }
 
     void statement::removeFromScope(typeInfo &type){
-      if((scope != NULL) &&
-         scope->removeLocalType(type)){
-
+      if(scope->removeLocalType(type))
         return;
-      }
 
       if(up)
         up->removeFromScope(type);
     }
 
     void statement::removeFromScope(varInfo &var){
-      if((scope != NULL) &&
-         scope->removeLocalVariable(var)){
-
+      if(scope->removeLocalVariable(var))
         return;
-      }
 
       if(up)
         up->removeFromScope(var);
     }
 
     void statement::removeTypeFromScope(const std::string &typeName){
-      if((scope != NULL) &&
-         scope->removeLocalType(typeName)){
-
+      if(scope->removeLocalType(typeName))
         return;
-      }
 
       if(up)
         up->removeTypeFromScope(typeName);
     }
 
     void statement::removeVarFromScope(const std::string &varName){
-      if((scope != NULL) &&
-         scope->removeLocalVariable(varName)){
-
+      if(scope->removeLocalVariable(varName))
         return;
-      }
 
       if(up)
         up->removeVarFromScope(varName);
@@ -4943,6 +4914,7 @@ namespace occa {
       statement *s = this;
 
       if(0 < namespaceCount){
+        delete scope;
         scope = getNamespace()->addNamespace(expRoot[1].value);
       }
 
@@ -5177,7 +5149,7 @@ namespace occa {
     }
 
     scopeInfo* statement::getNamespace(){
-      if(scope != NULL)
+      if(info & smntType::namespaceStatement)
         return scope;
 
       if(up != NULL)
@@ -5511,8 +5483,7 @@ namespace occa {
 
     void statement::checkIfVariableIsDefined(varInfo &var,
                                              statement *origin){
-      if((scope == NULL)            ||
-         (var.name.size() == 0)     ||
+      if((var.name.size() == 0)     ||
          var.hasQualifier("extern") ||
          (var.info & varType::functionDef)){
 
@@ -5730,9 +5701,6 @@ namespace occa {
     }
 
     void statement::printVariablesInLocalScope(){
-      if(scope == NULL)
-        return;
-
       varMapIterator it = scope->varMap.begin();
 
       while(it != scope->varMap.end()){
@@ -5750,9 +5718,6 @@ namespace occa {
     }
 
     void statement::printTypesInStatement(){
-      if(scope == NULL)
-        return;
-
       typeMapIterator it = scope->typeMap.begin();
 
       while(it != scope->typeMap.end()){

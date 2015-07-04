@@ -11,11 +11,12 @@ int main(int argc, char **argv){
   parser.warnForBarrierConditionals = false;
 
   strToStrMap_t compilerFlags;
-  compilerFlags["mode"] = "Serial";
+  // compilerFlags["mode"] = "Serial";
+  compilerFlags["mode"] = "OpenCL";
 
   compilerFlags["language"] = "C";
   // parsedContent = parser.parseFile("tests/easy.c"             , compilerFlags);
-  parsedContent = parser.parseFile("tests/test.cpp"           , compilerFlags);
+  // parsedContent = parser.parseFile("tests/test.cpp"           , compilerFlags);
   // parsedContent = parser.parseFile("tests/test2.cpp"          , compilerFlags);
   // parsedContent = parser.parseFile("tests/scratch.okl"        , compilerFlags);
   // parsedContent = parser.parseFile("tests/pwdg.okl"           , compilerFlags);
@@ -25,7 +26,7 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/midg.okl"           , compilerFlags);
   // parsedContent = parser.parseFile("tests/cleanTest.c"        , compilerFlags);
   // parsedContent = parser.parseFile("tests/clangTest2.c"       , compilerFlags);
-  // parsedContent = parser.parseFile("tests/addVectors.okl"     , compilerFlags);
+  parsedContent = parser.parseFile("tests/addVectors.okl"     , compilerFlags);
   // parsedContent = parser.parseFile("tests/PCGpart1.cl"        , compilerFlags);
   // parsedContent = parser.parseFile("tests/lookup_kernel.okl"  , compilerFlags);
   // parsedContent = parser.parseFile("tests/reduction.cl"       , compilerFlags);
