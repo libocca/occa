@@ -1554,7 +1554,6 @@ namespace occa {
         k->nestedKernels = new kernel[k->nestedKernelCount];
 
         const int vc_f = verboseCompilation_f;
-        verboseCompilation_f = false;
 
         for(int ki = 0; ki < k->metaInfo.nestedKernels; ++ki){
           ss << ki;
@@ -1573,6 +1572,10 @@ namespace occa {
           sKer.kHandle->metaInfo.name          = sKerName;
           sKer.kHandle->metaInfo.nestedKernels = 0;
           sKer.kHandle->metaInfo.removeArg(0); // remove nestedKernels **
+
+          // Only show compilation the first time
+          if(ki == 0)
+            verboseCompilation_f = false;
         }
 
         verboseCompilation_f = vc_f;
