@@ -2,6 +2,7 @@
 #define OCCA_TOOLS_HEADER
 
 #include <iostream>
+
 #include <stdlib.h>
 #include <stdint.h>
 
@@ -195,25 +196,33 @@ namespace occa {
                          const std::string &hash);
   //==============================================
 
-  template <class TM>
-  std::string strFrom(const TM &t){
-    std::stringstream ss;
 
-    ss << t;
+  //---[ String Functions ]-----------------------
+  uintptr_t atoi(const char *c);
+  uintptr_t atoiBase2(const char *c);
 
-    return ss.str();
+  inline uintptr_t atoi(const std::string &str){
+    return occa::atoi((const char*) str.c_str());
   }
 
-  template <class TM>
-  TM strTo(const std::string &str){
-    std::stringstream ss;
-    TM ret;
+  inline double atof(const char *c){
+    return ::atof(c);
+  }
 
-    ss << str;
-    ss >> ret;
+  inline double atof(const std::string &str){
+    return ::atof(str.c_str());
+  }
 
+  inline double atod(const char *c){
+    double ret;
+    sscanf(c, "%lf", &ret);
     return ret;
   }
+
+  inline double atod(const std::string &str){
+    return occa::atod(str.c_str());
+  }
+  //==============================================
 
   template <class TM>
   void ignoreResult(const TM &t){}

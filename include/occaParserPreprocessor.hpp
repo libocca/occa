@@ -6,21 +6,6 @@
 #include "occaParserNodes.hpp"
 
 namespace occa {
-  uintptr_t atoi(const char *c);
-  uintptr_t atoiBase2(const char *c);
-
-  inline uintptr_t atoi(const std::string &str){
-    return occa::atoi((const char*) str.c_str());
-  }
-
-  inline double atof(const char *c){
-    return ::atof(c);
-  }
-
-  inline double atof(const std::string &str){
-    return ::atof(str.c_str());
-  }
-
   namespace parserNS {
     //---[ Op(erator) Holder ]----------------------
     class opHolder {

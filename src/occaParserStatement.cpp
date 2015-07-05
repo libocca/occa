@@ -2784,7 +2784,7 @@ namespace occa {
 
         var.stackExpRoots        = new expNode();
         var.stackExpRoots->info  = expType::presetValue;
-        var.stackExpRoots->value = strFrom<size_t>(str.size() - 2);
+        var.stackExpRoots->value = occa::toString<size_t>(str.size() - 2);
       }
       else if(str == "NULL"){
         var.baseType = sInfo->hasTypeInScope("void");

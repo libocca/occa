@@ -3639,6 +3639,7 @@ namespace occa {
           else if(loadNumber){ //------------------------------------------[ 2 ]
             typeHolder th;
             th.load(cLeft);
+
             // skipNumber(cRight, parsingLanguage); [---]
 
             cNode->addNode(expType::presetValue);

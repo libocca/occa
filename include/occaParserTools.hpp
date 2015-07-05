@@ -29,6 +29,26 @@ namespace occa {
     return ss.str();
   }
 
+  template <>
+  inline std::string toString<float>(const float &t){
+    std::stringstream ss;
+    ss.precision(7);
+
+    ss << t;
+
+    return ss.str();
+  }
+
+  template <>
+  inline std::string toString<double>(const double &t){
+    std::stringstream ss;
+    ss.precision(14);
+
+    ss << t;
+
+    return ss.str();
+  }
+
   inline char back(std::string &s){
     return s[s.size() - 1];
   }
