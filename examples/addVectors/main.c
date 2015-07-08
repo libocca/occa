@@ -31,7 +31,7 @@ int main(int argc, char **argv){
   /* const char *deviceInfo = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"; */
   /* const char *deviceInfo = "mode = COI     , deviceID = 0"; */
 
-  device = occaGetDevice(deviceInfo);
+  device = occaCreateDevice(deviceInfo);
 
   o_a  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
   o_b  = occaDeviceMalloc(device, entries*sizeof(float), NULL);
@@ -40,9 +40,9 @@ int main(int argc, char **argv){
   occaKernelInfo info = occaCreateKernelInfo();
   occaKernelInfoAddDefine(info, "DIMENSION", occaInt(10));
 
-  addVectors = occaBuildKernelFromSource(device,
-                                         "addVectors.occa", "addVectors",
-                                         info);
+  addVectors = occaDeviceBuildKernel(device,
+                                     "addVectors.occa", "addVectors",
+                                     info);
 
   /* addVectors = occaBuildKernelFromSource(device, */
   /*                                        "addVectors.occa", "addVectors", */

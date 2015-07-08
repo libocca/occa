@@ -32,14 +32,13 @@ program main
     ab(i) = 0
   end do
 
-  device = occaGetDevice(Serial_Info)
+  device = occaCreateDevice(Serial_Info)
 
   o_a  = occaDeviceMalloc(device, int(entries,8)*4_8)
   o_b  = occaDeviceMalloc(device, int(entries,8)*4_8)
   o_ab = occaDeviceMalloc(device, int(entries,8)*4_8)
 
-  addVectors = occaBuildKernelFromSource(device, "addVectors.okl", "addVectors")
-
+  addVectors = occaDeviceBuildKernel(device, "addVectors.okl", "addVectors")
 
   call occaCopyPtrToMem(o_a, a(1), int(entries,8)*4_8, 0_8);
   call occaCopyPtrToMem(o_b, b(1));
