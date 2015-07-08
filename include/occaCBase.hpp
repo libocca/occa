@@ -118,6 +118,85 @@ extern "C" {
   //====================================
 
 
+  //---[ Hidden-Device Calls ]----------
+  //  |---[ Device Functions ]----------
+  OCCA_LFUNC void OCCA_RFUNC occaSetDevice(occaDevice device);
+  OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos);
+
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetCurrentDevice();
+
+  OCCA_LFUNC void OCCA_RFUNC occaSetCompiler(const char *compiler_);
+  OCCA_LFUNC void OCCA_RFUNC occaSetCompilerEnvScript(const char *compilerEnvScript_);
+  OCCA_LFUNC void OCCA_RFUNC occaSetCompilerFlags(const char *compilerFlags_);
+
+  OCCA_LFUNC const char* OCCA_RFUNC occaGetCompiler();
+  OCCA_LFUNC const char* OCCA_RFUNC occaGetCompilerEnvScript();
+  OCCA_LFUNC const char* OCCA_RFUNC occaGetCompilerFlags();
+
+  OCCA_LFUNC void OCCA_RFUNC occaFlush();
+  OCCA_LFUNC void OCCA_RFUNC occaFinish();
+
+  OCCA_LFUNC void OCCA_RFUNC occaWaitFor(occaStreamTag tag);
+
+  OCCA_LFUNC occaStream OCCA_RFUNC occaCreateStream();
+  OCCA_LFUNC occaStream OCCA_RFUNC occaGetStream();
+  OCCA_LFUNC void OCCA_RFUNC occaSetStream(occaStream stream);
+  OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_);
+
+  OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
+
+  //  |---[ Kernel Functions ]----------
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *str,
+                                                   const char *functionName,
+                                                   occaKernelInfo info);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromSource(const char *filename,
+                                                             const char *functionName,
+                                                             occaKernelInfo info);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
+                                                             const char *functionName,
+                                                             occaKernelInfo info,
+                                                             const int language);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
+                                                             const char *functionName);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromLoopy(const char *filename,
+                                                            const char *functionName,
+                                                            occaKernelInfo info);
+
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromFloopy(const char *filename,
+                                                             const char *functionName,
+                                                             occaKernelInfo info);
+
+  //  |---[ Memory Functions ]----------
+  OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
+                                                  const uintptr_t bytes);
+
+  OCCA_LFUNC void* OCCA_RFUNC occaWrapManagedMemory(void *handle_,
+                                                    const uintptr_t bytes);
+
+  OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const uintptr_t bytes,
+                                              void *src);
+
+  OCCA_LFUNC void* OCCA_RFUNC occaManagedAlloc(const uintptr_t bytes,
+                                               void *src);
+
+  OCCA_LFUNC void* OCCA_RFUNC occaUvaAlloc(const uintptr_t bytes,
+                                           void *src);
+
+  OCCA_LFUNC void* OCCA_RFUNC occaManagedUvaAlloc(const uintptr_t bytes,
+                                                  void *src);
+
+  OCCA_LFUNC occaMemory OCCA_RFUNC occaMappedAlloc(const uintptr_t bytes,
+                                                   void *src);
+
+  OCCA_LFUNC void* OCCA_RFUNC occaManagedMappedAlloc(const uintptr_t bytes,
+                                                     void *src);
+  //====================================
+
+
   //---[ Device ]-----------------------
   OCCA_LFUNC void OCCA_RFUNC occaPrintAvailableDevices();
 
@@ -212,6 +291,8 @@ extern "C" {
   OCCA_LFUNC void       OCCA_RFUNC occaDeviceSetStream(occaDevice device, occaStream stream);
 
   OCCA_LFUNC occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device);
+  OCCA_LFUNC void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,
+                                                  occaStreamTag tag);
   OCCA_LFUNC double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
                                                          occaStreamTag startTag, occaStreamTag endTag);
 

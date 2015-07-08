@@ -1566,8 +1566,8 @@ namespace occa {
   stream wrapStream(void *handle_);
 
   streamTag tagStream();
-  //   ---[ Kernel Functions ]----------
 
+  //   ---[ Kernel Functions ]----------
   kernel buildKernel(const std::string &str,
                      const std::string &functionName,
                      const kernelInfo &info_ = defaultKernelInfo);
