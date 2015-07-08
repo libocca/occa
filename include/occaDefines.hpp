@@ -228,7 +228,7 @@
     mHandle = NULL;                               \
                                                   \
     arg.TYPE##_ = arg_;                           \
-    size      = sizeof(TYPE);                     \
+    size        = sizeof(TYPE);                   \
                                                   \
     pointer    = false;                           \
     hasTwoArgs = false;                           \

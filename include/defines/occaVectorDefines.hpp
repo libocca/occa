@@ -1626,7 +1626,7 @@ occaFunction inline char2 operator + (const char2 &a){
                                 +a.y);
 }
 
-occaFunction inline char2 operator ++ (char2 &a, int unused){
+occaFunction inline char2 operator ++ (char2 &a, int){
   return OCCA_CHAR2_CONSTRUCTOR(a.x++,
                                 a.y++);
 }
@@ -1641,7 +1641,7 @@ occaFunction inline char2 operator - (const char2 &a){
                                 -a.y);
 }
 
-occaFunction inline char2 operator -- (char2 &a, int unused){
+occaFunction inline char2 operator -- (char2 &a, int){
   return OCCA_CHAR2_CONSTRUCTOR(a.x--,
                                 a.y--);
 }
@@ -1828,7 +1828,7 @@ occaFunction inline char4 operator + (const char4 &a){
                                 +a.w);
 }
 
-occaFunction inline char4 operator ++ (char4 &a, int unused){
+occaFunction inline char4 operator ++ (char4 &a, int){
   return OCCA_CHAR4_CONSTRUCTOR(a.x++,
                                 a.y++,
                                 a.z++,
@@ -1849,7 +1849,7 @@ occaFunction inline char4 operator - (const char4 &a){
                                 -a.w);
 }
 
-occaFunction inline char4 operator -- (char4 &a, int unused){
+occaFunction inline char4 operator -- (char4 &a, int){
   return OCCA_CHAR4_CONSTRUCTOR(a.x--,
                                 a.y--,
                                 a.z--,
@@ -2173,7 +2173,7 @@ occaFunction inline char8 operator + (const char8 &a){
                                 +a.s7);
 }
 
-occaFunction inline char8 operator ++ (char8 &a, int unused){
+occaFunction inline char8 operator ++ (char8 &a, int){
   return OCCA_CHAR8_CONSTRUCTOR(a.x++,
                                 a.y++,
                                 a.z++,
@@ -2206,7 +2206,7 @@ occaFunction inline char8 operator - (const char8 &a){
                                 -a.s7);
 }
 
-occaFunction inline char8 operator -- (char8 &a, int unused){
+occaFunction inline char8 operator -- (char8 &a, int){
   return OCCA_CHAR8_CONSTRUCTOR(a.x--,
                                 a.y--,
                                 a.z--,
@@ -2939,7 +2939,7 @@ occaFunction inline char16 operator + (const char16 &a){
                                  +a.s15);
 }
 
-occaFunction inline char16 operator ++ (char16 &a, int unused){
+occaFunction inline char16 operator ++ (char16 &a, int){
   return OCCA_CHAR16_CONSTRUCTOR(a.x++,
                                  a.y++,
                                  a.z++,
@@ -2996,7 +2996,7 @@ occaFunction inline char16 operator - (const char16 &a){
                                  -a.s15);
 }
 
-occaFunction inline char16 operator -- (char16 &a, int unused){
+occaFunction inline char16 operator -- (char16 &a, int){
   return OCCA_CHAR16_CONSTRUCTOR(a.x--,
                                  a.y--,
                                  a.z--,
@@ -3478,7 +3478,7 @@ occaFunction inline short2 operator + (const short2 &a){
                                  +a.y);
 }
 
-occaFunction inline short2 operator ++ (short2 &a, int unused){
+occaFunction inline short2 operator ++ (short2 &a, int){
   return OCCA_SHORT2_CONSTRUCTOR(a.x++,
                                  a.y++);
 }
@@ -3493,7 +3493,7 @@ occaFunction inline short2 operator - (const short2 &a){
                                  -a.y);
 }
 
-occaFunction inline short2 operator -- (short2 &a, int unused){
+occaFunction inline short2 operator -- (short2 &a, int){
   return OCCA_SHORT2_CONSTRUCTOR(a.x--,
                                  a.y--);
 }
@@ -3680,7 +3680,7 @@ occaFunction inline short4 operator + (const short4 &a){
                                  +a.w);
 }
 
-occaFunction inline short4 operator ++ (short4 &a, int unused){
+occaFunction inline short4 operator ++ (short4 &a, int){
   return OCCA_SHORT4_CONSTRUCTOR(a.x++,
                                  a.y++,
                                  a.z++,
@@ -3701,7 +3701,7 @@ occaFunction inline short4 operator - (const short4 &a){
                                  -a.w);
 }
 
-occaFunction inline short4 operator -- (short4 &a, int unused){
+occaFunction inline short4 operator -- (short4 &a, int){
   return OCCA_SHORT4_CONSTRUCTOR(a.x--,
                                  a.y--,
                                  a.z--,
@@ -4025,7 +4025,7 @@ occaFunction inline short8 operator + (const short8 &a){
                                  +a.s7);
 }
 
-occaFunction inline short8 operator ++ (short8 &a, int unused){
+occaFunction inline short8 operator ++ (short8 &a, int){
   return OCCA_SHORT8_CONSTRUCTOR(a.x++,
                                  a.y++,
                                  a.z++,
@@ -4058,7 +4058,7 @@ occaFunction inline short8 operator - (const short8 &a){
                                  -a.s7);
 }
 
-occaFunction inline short8 operator -- (short8 &a, int unused){
+occaFunction inline short8 operator -- (short8 &a, int){
   return OCCA_SHORT8_CONSTRUCTOR(a.x--,
                                  a.y--,
                                  a.z--,
@@ -4791,7 +4791,7 @@ occaFunction inline short16 operator + (const short16 &a){
                                   +a.s15);
 }
 
-occaFunction inline short16 operator ++ (short16 &a, int unused){
+occaFunction inline short16 operator ++ (short16 &a, int){
   return OCCA_SHORT16_CONSTRUCTOR(a.x++,
                                   a.y++,
                                   a.z++,
@@ -4848,7 +4848,7 @@ occaFunction inline short16 operator - (const short16 &a){
                                   -a.s15);
 }
 
-occaFunction inline short16 operator -- (short16 &a, int unused){
+occaFunction inline short16 operator -- (short16 &a, int){
   return OCCA_SHORT16_CONSTRUCTOR(a.x--,
                                   a.y--,
                                   a.z--,
@@ -5330,7 +5330,7 @@ occaFunction inline int2 operator + (const int2 &a){
                                +a.y);
 }
 
-occaFunction inline int2 operator ++ (int2 &a, int unused){
+occaFunction inline int2 operator ++ (int2 &a, int){
   return OCCA_INT2_CONSTRUCTOR(a.x++,
                                a.y++);
 }
@@ -5345,7 +5345,7 @@ occaFunction inline int2 operator - (const int2 &a){
                                -a.y);
 }
 
-occaFunction inline int2 operator -- (int2 &a, int unused){
+occaFunction inline int2 operator -- (int2 &a, int){
   return OCCA_INT2_CONSTRUCTOR(a.x--,
                                a.y--);
 }
@@ -5532,7 +5532,7 @@ occaFunction inline int4 operator + (const int4 &a){
                                +a.w);
 }
 
-occaFunction inline int4 operator ++ (int4 &a, int unused){
+occaFunction inline int4 operator ++ (int4 &a, int){
   return OCCA_INT4_CONSTRUCTOR(a.x++,
                                a.y++,
                                a.z++,
@@ -5553,7 +5553,7 @@ occaFunction inline int4 operator - (const int4 &a){
                                -a.w);
 }
 
-occaFunction inline int4 operator -- (int4 &a, int unused){
+occaFunction inline int4 operator -- (int4 &a, int){
   return OCCA_INT4_CONSTRUCTOR(a.x--,
                                a.y--,
                                a.z--,
@@ -5877,7 +5877,7 @@ occaFunction inline int8 operator + (const int8 &a){
                                +a.s7);
 }
 
-occaFunction inline int8 operator ++ (int8 &a, int unused){
+occaFunction inline int8 operator ++ (int8 &a, int){
   return OCCA_INT8_CONSTRUCTOR(a.x++,
                                a.y++,
                                a.z++,
@@ -5910,7 +5910,7 @@ occaFunction inline int8 operator - (const int8 &a){
                                -a.s7);
 }
 
-occaFunction inline int8 operator -- (int8 &a, int unused){
+occaFunction inline int8 operator -- (int8 &a, int){
   return OCCA_INT8_CONSTRUCTOR(a.x--,
                                a.y--,
                                a.z--,
@@ -6643,7 +6643,7 @@ occaFunction inline int16 operator + (const int16 &a){
                                 +a.s15);
 }
 
-occaFunction inline int16 operator ++ (int16 &a, int unused){
+occaFunction inline int16 operator ++ (int16 &a, int){
   return OCCA_INT16_CONSTRUCTOR(a.x++,
                                 a.y++,
                                 a.z++,
@@ -6700,7 +6700,7 @@ occaFunction inline int16 operator - (const int16 &a){
                                 -a.s15);
 }
 
-occaFunction inline int16 operator -- (int16 &a, int unused){
+occaFunction inline int16 operator -- (int16 &a, int){
   return OCCA_INT16_CONSTRUCTOR(a.x--,
                                 a.y--,
                                 a.z--,
@@ -7182,7 +7182,7 @@ occaFunction inline long2 operator + (const long2 &a){
                                 +a.y);
 }
 
-occaFunction inline long2 operator ++ (long2 &a, int unused){
+occaFunction inline long2 operator ++ (long2 &a, int){
   return OCCA_LONG2_CONSTRUCTOR(a.x++,
                                 a.y++);
 }
@@ -7197,7 +7197,7 @@ occaFunction inline long2 operator - (const long2 &a){
                                 -a.y);
 }
 
-occaFunction inline long2 operator -- (long2 &a, int unused){
+occaFunction inline long2 operator -- (long2 &a, int){
   return OCCA_LONG2_CONSTRUCTOR(a.x--,
                                 a.y--);
 }
@@ -7384,7 +7384,7 @@ occaFunction inline long4 operator + (const long4 &a){
                                 +a.w);
 }
 
-occaFunction inline long4 operator ++ (long4 &a, int unused){
+occaFunction inline long4 operator ++ (long4 &a, int){
   return OCCA_LONG4_CONSTRUCTOR(a.x++,
                                 a.y++,
                                 a.z++,
@@ -7405,7 +7405,7 @@ occaFunction inline long4 operator - (const long4 &a){
                                 -a.w);
 }
 
-occaFunction inline long4 operator -- (long4 &a, int unused){
+occaFunction inline long4 operator -- (long4 &a, int){
   return OCCA_LONG4_CONSTRUCTOR(a.x--,
                                 a.y--,
                                 a.z--,
@@ -7729,7 +7729,7 @@ occaFunction inline long8 operator + (const long8 &a){
                                 +a.s7);
 }
 
-occaFunction inline long8 operator ++ (long8 &a, int unused){
+occaFunction inline long8 operator ++ (long8 &a, int){
   return OCCA_LONG8_CONSTRUCTOR(a.x++,
                                 a.y++,
                                 a.z++,
@@ -7762,7 +7762,7 @@ occaFunction inline long8 operator - (const long8 &a){
                                 -a.s7);
 }
 
-occaFunction inline long8 operator -- (long8 &a, int unused){
+occaFunction inline long8 operator -- (long8 &a, int){
   return OCCA_LONG8_CONSTRUCTOR(a.x--,
                                 a.y--,
                                 a.z--,
@@ -8495,7 +8495,7 @@ occaFunction inline long16 operator + (const long16 &a){
                                  +a.s15);
 }
 
-occaFunction inline long16 operator ++ (long16 &a, int unused){
+occaFunction inline long16 operator ++ (long16 &a, int){
   return OCCA_LONG16_CONSTRUCTOR(a.x++,
                                  a.y++,
                                  a.z++,
@@ -8552,7 +8552,7 @@ occaFunction inline long16 operator - (const long16 &a){
                                  -a.s15);
 }
 
-occaFunction inline long16 operator -- (long16 &a, int unused){
+occaFunction inline long16 operator -- (long16 &a, int){
   return OCCA_LONG16_CONSTRUCTOR(a.x--,
                                  a.y--,
                                  a.z--,
@@ -12355,7 +12355,7 @@ inline std::ostream& operator << (std::ostream &out, const double16& a){
 
 
 #  ifndef OCCA_IN_KERNEL
-};
+}
 #  endif
 
 #endif

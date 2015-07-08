@@ -2213,7 +2213,7 @@ namespace occa {
     }
 
     void varInfo::printDebugInfo(){
-      std::cout << toString(true) << ' ' << attributeMapToString(attributeMap) << '\n';
+      std::cout << toString() << ' ' << attributeMapToString(attributeMap) << '\n';
     }
 
     void varInfo::printOnString(std::string &str,

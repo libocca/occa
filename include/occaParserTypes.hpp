@@ -505,7 +505,7 @@ namespace occa {
       void printOnString(std::string &str,
                          const bool printType = true);
 
-      inline std::string toString(const bool printType = true){
+      inline std::string toString(){
         std::string ret;
         printOnString(ret);
         return ret;

@@ -45,30 +45,30 @@ extern "C" {
 #  ifdef __cplusplus
 }
 #  endif
-  std::string typeToStr(occaType value){
-    occa::kernelArg_t &value_ = ((occaType_t*) value)->value;
-    const int valueType       = ((occaType_t*) value)->type;
+std::string typeToStr(occaType value){
+  occa::kernelArg_t &value_ = ((occaType_t*) value)->value;
+  const int valueType       = ((occaType_t*) value)->type;
 
-    switch(valueType){
-    case OCCA_TYPE_INT    : return occa::toString(value_.int_);
-    case OCCA_TYPE_UINT   : return occa::toString(value_.uint_);
-    case OCCA_TYPE_CHAR   : return occa::toString(value_.char_);
-    case OCCA_TYPE_UCHAR  : return occa::toString(value_.uchar_);
-    case OCCA_TYPE_SHORT  : return occa::toString(value_.short_);
-    case OCCA_TYPE_USHORT : return occa::toString(value_.ushort_);
-    case OCCA_TYPE_LONG   : return occa::toString(value_.long_);
-    case OCCA_TYPE_ULONG  : return occa::toString(value_.uintptr_t_);
+  switch(valueType){
+  case OCCA_TYPE_INT    : return occa::toString(value_.int_);
+  case OCCA_TYPE_UINT   : return occa::toString(value_.uint_);
+  case OCCA_TYPE_CHAR   : return occa::toString(value_.char_);
+  case OCCA_TYPE_UCHAR  : return occa::toString(value_.uchar_);
+  case OCCA_TYPE_SHORT  : return occa::toString(value_.short_);
+  case OCCA_TYPE_USHORT : return occa::toString(value_.ushort_);
+  case OCCA_TYPE_LONG   : return occa::toString(value_.long_);
+  case OCCA_TYPE_ULONG  : return occa::toString(value_.uintptr_t_);
 
-    case OCCA_TYPE_FLOAT  : return occa::toString(value_.float_);
-    case OCCA_TYPE_DOUBLE : return occa::toString(value_.double_);
+  case OCCA_TYPE_FLOAT  : return occa::toString(value_.float_);
+  case OCCA_TYPE_DOUBLE : return occa::toString(value_.double_);
 
-    case OCCA_TYPE_STRING : return std::string((char*) value_.void_);
-    default:
-      std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
-    }
-
-    return "";
+  case OCCA_TYPE_STRING : return std::string((char*) value_.void_);
+  default:
+    std::cout << "Wrong type input in [occaKernelInfoAddDefine]\n";
   }
+
+  return "";
+}
 
 #  ifdef __cplusplus
 extern "C" {
@@ -230,20 +230,20 @@ extern "C" {
     delete (occa::deviceInfo*) info;
   }
 
-  occaDevice OCCA_RFUNC occaGetDevice(const char *infos){
+  occaDevice OCCA_RFUNC occaCreateDevice(const char *infos){
     occa::device device(infos);
 
     return (occaDevice) device.getDHandle();
   }
 
-  occaDevice OCCA_RFUNC occaGetDeviceFromInfo(occaDeviceInfo dInfo){
+  occaDevice OCCA_RFUNC occaCreateDeviceFromInfo(occaDeviceInfo dInfo){
     occa::device device(*((occa::deviceInfo*) dInfo));
 
     return (occaDevice) device.getDHandle();
   }
 
-  occaDevice OCCA_RFUNC occaGetDeviceFromArgs(const char *mode,
-                                              int arg1, int arg2){
+  occaDevice OCCA_RFUNC occaCreateDeviceFromArgs(const char *mode,
+                                                 int arg1, int arg2){
     occa::device device;
     device.setup(mode, arg1, arg2);
 
@@ -276,10 +276,10 @@ extern "C" {
     return device_.bytesAllocated();
   }
 
-  occaKernel OCCA_RFUNC occaBuildKernel(occaDevice device,
-                                        const char *str,
-                                        const char *functionName,
-                                        occaKernelInfo info){
+  occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
+                                              const char *str,
+                                              const char *functionName,
+                                              occaKernelInfo info){
     occa::device device_((occa::device_v*) device);
     occa::kernel kernel;
 
@@ -298,10 +298,10 @@ extern "C" {
     return (occaKernel) kernel.getKHandle();
   }
 
-  occaKernel OCCA_RFUNC occaBuildKernelFromSource(occaDevice device,
-                                                  const char *filename,
-                                                  const char *functionName,
-                                                  occaKernelInfo info){
+  occaKernel OCCA_RFUNC occaDeviceBuildKernelFromSource(occaDevice device,
+                                                        const char *filename,
+                                                        const char *functionName,
+                                                        occaKernelInfo info){
     occa::device device_((occa::device_v*) device);
     occa::kernel kernel;
 
@@ -320,11 +320,11 @@ extern "C" {
     return (occaKernel) kernel.getKHandle();
   }
 
-  occaKernel OCCA_RFUNC occaBuildKernelFromString(occaDevice device,
-                                                  const char *str,
-                                                  const char *functionName,
-                                                  occaKernelInfo info,
-                                                  const int language){
+  occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
+                                                        const char *str,
+                                                        const char *functionName,
+                                                        occaKernelInfo info,
+                                                        const int language){
     occa::device device_((occa::device_v*) device);
     occa::kernel kernel;
 
@@ -345,9 +345,9 @@ extern "C" {
     return (occaKernel) kernel.getKHandle();
   }
 
-  occaKernel OCCA_RFUNC occaBuildKernelFromBinary(occaDevice device,
-                                                  const char *filename,
-                                                  const char *functionName){
+  occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
+                                                        const char *filename,
+                                                        const char *functionName){
     occa::device device_((occa::device_v*) device);
     occa::kernel kernel;
 
@@ -356,10 +356,10 @@ extern "C" {
     return (occaKernel) kernel.getKHandle();
   }
 
-  occaKernel OCCA_RFUNC occaBuildKernelFromLoopy(occaDevice device,
-                                                 const char *filename,
-                                                 const char *functionName,
-                                                 occaKernelInfo info){
+  occaKernel OCCA_RFUNC occaDeviceBuildKernelFromLoopy(occaDevice device,
+                                                       const char *filename,
+                                                       const char *functionName,
+                                                       occaKernelInfo info){
     occa::device device_((occa::device_v*) device);
     occa::kernel kernel;
 
@@ -373,10 +373,10 @@ extern "C" {
     return (occaKernel) kernel.getKHandle();
   }
 
-  occaKernel OCCA_RFUNC occaBuildKernelFromFloopy(occaDevice device,
-                                                  const char *filename,
-                                                  const char *functionName,
-                                                  occaKernelInfo info){
+  occaKernel OCCA_RFUNC occaDeviceBuildKernelFromFloopy(occaDevice device,
+                                                        const char *filename,
+                                                        const char *functionName,
+                                                        occaKernelInfo info){
     occa::device device_((occa::device_v*) device);
     occa::kernel kernel;
 

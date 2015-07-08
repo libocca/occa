@@ -225,7 +225,9 @@ namespace occa {
   //==============================================
 
   template <class TM>
-  void ignoreResult(const TM &t){}
+  void ignoreResult(const TM &t){
+    (void) t;
+  }
 }
 
 #endif

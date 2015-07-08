@@ -133,12 +133,12 @@ extern "C" {
 
   OCCA_LFUNC void OCCA_RFUNC occaDeviceInfoFree(occaDeviceInfo info);
 
-  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDevice(const char *infos);
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDevice(const char *infos);
 
-  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromInfo(occaDeviceInfo dInfo);
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDeviceFromInfo(occaDeviceInfo dInfo);
 
-  OCCA_LFUNC occaDevice OCCA_RFUNC occaGetDeviceFromArgs(const char *mode,
-                                                         int arg1, int arg2);
+  OCCA_LFUNC occaDevice OCCA_RFUNC occaCreateDeviceFromArgs(const char *mode,
+                                                            int arg1, int arg2);
 
   OCCA_LFUNC const char* OCCA_RFUNC occaDeviceMode(occaDevice device);
 
@@ -150,35 +150,35 @@ extern "C" {
 
   OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 
-  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(occaDevice device,
-                                                   const char *str,
-                                                   const char *functionName,
-                                                   occaKernelInfo info);
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,
+                                                         const char *str,
+                                                         const char *functionName,
+                                                         occaKernelInfo info);
 
-  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromSource(occaDevice device,
-                                                             const char *filename,
-                                                             const char *functionName,
-                                                             occaKernelInfo info);
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromSource(occaDevice device,
+                                                                   const char *filename,
+                                                                   const char *functionName,
+                                                                   occaKernelInfo info);
 
-  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(occaDevice device,
-                                                             const char *str,
-                                                             const char *functionName,
-                                                             occaKernelInfo info,
-                                                             const int language);
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice device,
+                                                                   const char *str,
+                                                                   const char *functionName,
+                                                                   occaKernelInfo info,
+                                                                   const int language);
 
-  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(occaDevice device,
-                                                             const char *filename,
-                                                             const char *functionName);
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
+                                                                   const char *filename,
+                                                                   const char *functionName);
 
-  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromLoopy(occaDevice device,
-                                                            const char *filename,
-                                                            const char *functionName,
-                                                            occaKernelInfo info);
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromLoopy(occaDevice device,
+                                                                  const char *filename,
+                                                                  const char *functionName,
+                                                                  occaKernelInfo info);
 
-  OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromFloopy(occaDevice device,
-                                                             const char *filename,
-                                                             const char *functionName,
-                                                             occaKernelInfo info);
+  OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromFloopy(occaDevice device,
+                                                                   const char *filename,
+                                                                   const char *functionName,
+                                                                   occaKernelInfo info);
 
   OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                                     uintptr_t bytes,

@@ -137,7 +137,7 @@ def unaryOpDef(type_, n, op):
     ops = [op, op2, op2]
 
     defines = ['occaFunction inline ' + typeN + ' operator '  + ops[0] + ' (const ' + typeN + ' &a){\n',
-               'occaFunction inline ' + typeN + ' operator '  + ops[1] + ' (' + typeN + ' &a, int unused){\n',
+               'occaFunction inline ' + typeN + ' operator '  + ops[1] + ' (' + typeN + ' &a, int){\n',
                'occaFunction inline ' + typeN + '& operator ' + ops[2] + ' (' + typeN + ' &a){\n']
 
     maxDefs = (1 if isFloat else 3)
@@ -260,7 +260,7 @@ def defineAllTypes():
         define += defineType(type_)
 
     define += '#  ifndef OCCA_IN_KERNEL\n'
-    define += '};\n'
+    define += '}\n'
     define += '#  endif\n\n'
 
     define += '#endif\n'

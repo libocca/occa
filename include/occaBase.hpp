@@ -350,13 +350,7 @@ namespace occa {
 
   class dim {
   public:
-    union {
-      struct {
-        uintptr_t x, y, z;
-      };
-
-      uintptr_t data[3];
-    };
+    uintptr_t x, y, z;
 
     inline dim();
     inline dim(uintptr_t x_);
@@ -468,20 +462,20 @@ namespace occa {
     inline void setupForKernelCall(const bool isConst) const;
   };
 
-  OCCA_KERNEL_ARG_CONSTRUCTOR(int);
-  OCCA_KERNEL_ARG_CONSTRUCTOR(char);
-  OCCA_KERNEL_ARG_CONSTRUCTOR(short);
-  OCCA_KERNEL_ARG_CONSTRUCTOR(long);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(int)
+  OCCA_KERNEL_ARG_CONSTRUCTOR(char)
+  OCCA_KERNEL_ARG_CONSTRUCTOR(short)
+  OCCA_KERNEL_ARG_CONSTRUCTOR(long)
 
-  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned int  , uint);
-  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned char , uchar);
-  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned short, ushort);
+  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned int  , uint)
+  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned char , uchar)
+  OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(unsigned short, ushort)
 
-  OCCA_KERNEL_ARG_CONSTRUCTOR(float);
-  OCCA_KERNEL_ARG_CONSTRUCTOR(double);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(float)
+  OCCA_KERNEL_ARG_CONSTRUCTOR(double)
   // 32 bit: uintptr_t == unsigned int
 #if OCCA_64_BIT
-  OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t);
+  OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t)
 #endif
 
   union streamTag {
@@ -618,14 +612,14 @@ namespace occa {
     std::string fixBinaryName(const std::string &filename);
 
     kernel_t<mode_>* buildFromSource(const std::string &filename,
-                                    const std::string &functionName,
-                                    const kernelInfo &info_ = defaultKernelInfo);
+                                     const std::string &functionName,
+                                     const kernelInfo &info_ = defaultKernelInfo);
 
     kernel_t<mode_>* buildFromBinary(const std::string &filename,
-                                    const std::string &functionName);
+                                     const std::string &functionName);
 
     kernel_t<mode_>* loadFromLibrary(const char *cache,
-                                    const std::string &functionName);
+                                     const std::string &functionName);
 
     uintptr_t maximumInnerDimSize();
     int preferredDimSize();
@@ -1105,7 +1099,7 @@ namespace occa {
     occa::device wrapDevice(cl_platform_id platformID,
                             cl_device_id deviceID,
                             cl_context context);
-  };
+  }
 #endif
 
 #if OCCA_CUDA_ENABLED
@@ -1915,11 +1909,19 @@ namespace occa {
   }
 
   inline uintptr_t& dim::operator [] (int i){
-    return data[i];
+    switch(i){
+    case 0 : return x;
+    case 1 : return y;
+    default: return z;
+    }
   }
 
   inline uintptr_t dim::operator [] (int i) const {
-    return data[i];
+    switch(i){
+    case 0 : return x;
+    case 1 : return y;
+    default: return z;
+    }
   }
 }
 
