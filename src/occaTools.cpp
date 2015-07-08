@@ -103,7 +103,7 @@ namespace occa {
     }
 
     envInitializer_t envInitializer;
-  };
+  }
 
   namespace sys {
     std::string echo(const std::string &var){
@@ -294,13 +294,13 @@ namespace occa {
           ++c;
       }
     }
-  };
+  }
 
   // Kernel Caching
   namespace kc {
     std::string sourceFile = "source.occa";
     std::string binaryFile = "binary";
-  };
+  }
   //==================================
 
   mutex_t::mutex_t(){
@@ -977,4 +977,4 @@ namespace occa {
     return ret;
   }
   //==============================================
-};
+}

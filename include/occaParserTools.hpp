@@ -140,6 +140,6 @@ namespace occa {
   //==============================================
 
   std::string getBits(const info_t value);
-};
+}
 
 #endif

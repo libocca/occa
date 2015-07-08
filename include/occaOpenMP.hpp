@@ -39,7 +39,7 @@ namespace occa {
     std::string baseCompilerFlag(const int vendor_);
     std::string compilerFlag(const int vendor_,
                              const std::string &compiler);
-  };
+  }
   //==================================
 
 
@@ -264,7 +264,7 @@ namespace occa {
 
 #include "operators/occaOpenMPKernelOperators.hpp"
 
-};
+}
 
 #  endif
 #endif

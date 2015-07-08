@@ -22,7 +22,7 @@ namespace occa {
 
   namespace flags {
     const int checkCacheDir = (1 << 0);
-  };
+  }
   //==================================
 
   //---[ Helper Classes ]-------------
@@ -2264,4 +2264,4 @@ namespace occa {
     return 0;
   }
   //==================================
-};
+}

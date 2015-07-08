@@ -72,7 +72,7 @@ namespace occa {
       static const info_t hasFlag         = (((info_t) 1)  << 36);
       static const info_t removeFlags     = ~expType::hasFlag;
       static const info_t hasSemicolon    = (((info_t) 1)  << 36);
-    };
+    }
 
     namespace expFlag {
       static const info_t none         = 0;
@@ -83,7 +83,7 @@ namespace occa {
       static const info_t addVarToScope  = (1 << 0);
       static const info_t addTypeToScope = (1 << 1);
       static const info_t addToParent    = (1 << 2);
-    };
+    }
 
     namespace statementFlag {
       static const info_t updateByNumber     = (1 << 0);
@@ -91,7 +91,7 @@ namespace occa {
 
       static const info_t printEverything    = (info_t) -1;
       static const info_t printSubStatements = (1 << 0);
-    };
+    }
 
     class expNode {
     public:
@@ -503,7 +503,7 @@ namespace occa {
 
       static const info_t macroStatement     = (1 << 20);
       static const info_t skipStatement      = (1 << 21);
-    };
+    }
 
     class statement {
     public:
@@ -873,7 +873,7 @@ namespace occa {
     bool isAnOccaTag(const std::string &tag);
     bool isAnOccaInnerTag(const std::string &tag);
     bool isAnOccaOuterTag(const std::string &tag);
-  };
-};
+  }
+}
 
 #endif

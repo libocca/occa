@@ -290,7 +290,7 @@ namespace occa {
 
     std::ostream& operator << (std::ostream &out, const macroInfo &info);
     //==============================================
-  };
-};
+  }
+}
 
 #endif

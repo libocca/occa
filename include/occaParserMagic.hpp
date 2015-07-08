@@ -23,7 +23,7 @@ namespace occa {
       static const int isComplex        = (1 << 4);
 
       std::string infoToStr(const int info);
-    };
+    }
 
     namespace analyzeInfo {
       // Statement Info
@@ -41,7 +41,7 @@ namespace occa {
       static const int LB = 0;
       static const int UB = 1;
       static const int S  = 2;
-    };
+    }
 
     class atomInfo_t {
     public:
@@ -401,7 +401,7 @@ namespace occa {
       static void sumExpVec(expVector_t &v, expNode &e);
       static void applyOpToExpVec(expVector_t &v, expNode &e, const std::string &op);
     };
-  };
-};
+  }
+}
 
 #endif

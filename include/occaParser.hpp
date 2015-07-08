@@ -364,10 +364,10 @@ namespace occa {
     };
     //==================================
     //==============================================
-  };
+  }
 
   // Just to ignore the namespace
   class parser : public parserNS::parserBase {};
-};
+}
 
 #endif

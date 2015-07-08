@@ -46,7 +46,7 @@ namespace occa {
     class parserBase;
 
     template <class TM> class node;
-  };
+  }
 
   //---[ Info ]-----------------------------------
   typedef uint64_t info_t;
@@ -145,7 +145,7 @@ namespace occa {
 
     //---[ Check Flags ]------
     static const int checkSubStatements = (1 << 0);
-  };
+  }
 
   namespace parserNS {
 
@@ -201,7 +201,7 @@ namespace occa {
     static const info_t insideCommentBlock   = 1;
     static const info_t finishedCommentBlock = 2;
     //==============================================
-  };
-};
+  }
+}
 
 #endif

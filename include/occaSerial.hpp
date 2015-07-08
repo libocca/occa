@@ -58,7 +58,7 @@ namespace occa {
       static const int HP           = (1 << b_HP);           // aCC
       static const int VisualStudio = (1 << b_VisualStudio); // cl.exe
       static const int Cray         = (1 << b_Cray);         // cc     , CC
-    };
+    }
 
     std::string getFieldFrom(const std::string &command,
                              const std::string &field);
@@ -87,7 +87,7 @@ namespace occa {
     void* dlsym(void *dlHandle,
                 const std::string &functionName,
                 const std::string &hash = "");
-  };
+  }
   //==================================
 
 
@@ -312,6 +312,6 @@ namespace occa {
 
 #include "operators/occaSerialKernelOperators.hpp"
 
-};
+}
 
 #endif

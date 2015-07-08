@@ -111,7 +111,7 @@ namespace occa {
       return "/openmp"; // VS Compilers support OpenMP
 #endif
     }
-  };
+  }
   //==================================
 
 
@@ -1048,6 +1048,6 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
   //==================================
-};
+}
 
 #endif

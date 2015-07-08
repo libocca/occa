@@ -334,7 +334,7 @@ namespace occa {
 
       static const int variadic        = (1 << 4);
       static const int block           = (1 << 5);
-    };
+    }
 
     class varInfo {
     public:
@@ -589,7 +589,7 @@ namespace occa {
       occa::parsedKernelInfo makeParsedKernelInfo();
     };
     //==============================================
-  };
+  }
 
   //---[ Parsed Kernel Info ]---------------------
   typedef parserNS::argumentInfo argumentInfo;
@@ -616,6 +616,6 @@ namespace occa {
     }
   };
   //==============================================
-};
+}
 
 #endif

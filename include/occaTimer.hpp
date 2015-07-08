@@ -99,5 +99,4 @@ namespace occa {
 
   void printTimer();
 }
-
 #endif

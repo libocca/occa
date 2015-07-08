@@ -29,4 +29,4 @@ namespace occa {
 
   template <>
   void memset<double>(void *ptr, const double &value, uintptr_t count);
-};
+}

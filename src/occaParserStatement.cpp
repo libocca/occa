@@ -6202,7 +6202,7 @@ namespace occa {
         printSubsOnString(str);
 
         str += tab;
-        str += "};\n";
+        str += "}\n";
       }
       else if(info & smntType::macroStatement){
         str += expRoot.value;
@@ -6261,5 +6261,5 @@ namespace occa {
 
       return true;
     }
-  };
-};
+  }
+}

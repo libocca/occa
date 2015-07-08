@@ -95,7 +95,7 @@ namespace occa {
 
   namespace flags {
     extern const int checkCacheDir;
-  };
+  }
   //==============================================
 
 
@@ -758,13 +758,13 @@ namespace occa {
     static const int isManaged    = (1 << 1);
     static const int isMapped     = (1 << 2);
     static const int isAWrapper   = (1 << 3);
-  };
+  }
 
   namespace uvaFlag {
     static const int inDevice     = (1 << 4);
     static const int leftInDevice = (1 << 5);
     static const int isDirty      = (1 << 6);
-  };
+  }
   //====================================
 
   class memory_v {
@@ -1111,19 +1111,19 @@ namespace occa {
 #if OCCA_CUDA_ENABLED
   namespace cuda {
     occa::device wrapDevice(CUdevice device, CUcontext context);
-  };
+  }
 #endif
 
 #if OCCA_HSA_ENABLED
   namespace hsa {
     occa::device wrapDevice();
-  };
+  }
 #endif
 
 #if OCCA_COI_ENABLED
   namespace coi {
     occa::device wrapDevice(COIENGINE coiDevice);
-  };
+  }
 #endif
 
   class device_v {
@@ -1921,6 +1921,6 @@ namespace occa {
   inline uintptr_t dim::operator [] (int i) const {
     return data[i];
   }
-};
+}
 
 #endif

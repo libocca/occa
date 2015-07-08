@@ -8,5 +8,5 @@ namespace occa {
     bool usingCKeywords                = false;
     bool cKeywordsAreInitialized       = false;
     bool fortranKeywordsAreInitialized = false;
-  };
-};
+  }
+}

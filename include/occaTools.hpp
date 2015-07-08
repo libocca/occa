@@ -68,7 +68,7 @@ namespace occa {
     };
 
     extern envInitializer_t envInitializer;
-  };
+  }
 
   namespace sys {
     std::string echo(const std::string &var);
@@ -93,13 +93,13 @@ namespace occa {
 
       return pathVec;
     }
-  };
+  }
 
   // Kernel Caching
   namespace kc {
     extern std::string sourceFile;
     extern std::string binaryFile;
-  };
+  }
   //==================================
 
   class mutex_t {
@@ -226,6 +226,6 @@ namespace occa {
 
   template <class TM>
   void ignoreResult(const TM &t){}
-};
+}
 
 #endif

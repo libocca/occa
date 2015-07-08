@@ -173,4 +173,4 @@ namespace occa {
       verboseCompilation_f = vc;
     }
   }
-};
+}

@@ -80,4 +80,4 @@ namespace occa {
   void setupMagicFor(void *ptr);
 
   void free(void *ptr);
-};
+}

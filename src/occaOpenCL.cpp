@@ -476,7 +476,7 @@ namespace occa {
 
       std::cout << "========================================\n";
     }
-  };
+  }
 
   const cl_channel_type clFormats[8] = {CL_UNSIGNED_INT8,
                                         CL_UNSIGNED_INT16,
@@ -1868,6 +1868,6 @@ namespace occa {
     };
   }
   //==================================
-};
+}
 
 #endif

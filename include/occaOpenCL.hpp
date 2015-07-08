@@ -89,7 +89,7 @@ namespace occa {
                                 const int formatCount);
 
     void printImageFormat(cl_image_format &imageFormat);
-  };
+  }
 
   extern const cl_channel_type clFormats[8];
 
@@ -322,7 +322,7 @@ namespace occa {
   //---[ Error Handling ]-------------
   std::string openclError(int e);
   //==================================
-};
+}
 
 #  endif
 #endif

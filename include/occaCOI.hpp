@@ -62,7 +62,7 @@ namespace occa {
     void initDevice(COIENGINE &device, COIPROCESS &chief);
 
     occa::device wrapDevice(COIENGINE device);
-  };
+  }
   //==================================
 
 
@@ -287,7 +287,7 @@ namespace occa {
   //---[ Error Handling ]-------------
   std::string coiError(coiStatus e);
   //==================================
-};
+}
 
 #  endif
 #endif

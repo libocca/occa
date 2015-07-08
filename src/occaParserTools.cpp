@@ -757,4 +757,4 @@ namespace occa {
 
     return ret.str();
   }
-};
+}

@@ -42,7 +42,7 @@ namespace occa {
 
       return filename;
     }
-  };
+  }
 
   namespace library {
     mutex_t headerMutex, kernelMutex;
@@ -297,5 +297,5 @@ namespace occa {
 
       return k;
     }
-  };
-};
+  }
+}

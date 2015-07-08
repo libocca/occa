@@ -365,6 +365,6 @@ namespace occa {
     return NULL;
   }
   //==================================
-};
+}
 
 #endif

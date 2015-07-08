@@ -173,7 +173,7 @@ namespace occa {
 
       return dev;
     }
-  };
+  }
 
   const CUarray_format cudaFormats[8] = {CU_AD_FORMAT_UNSIGNED_INT8,
                                          CU_AD_FORMAT_UNSIGNED_INT16,
@@ -1471,6 +1471,6 @@ namespace occa {
     };
     //==================================
   }
-};
+}
 
 #endif

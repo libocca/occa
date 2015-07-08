@@ -280,7 +280,7 @@ namespace occa {
   //---[ Error Handling ]-------------
   std::string hsaError(int e);
   //==================================
-};
+}
 
 #  endif
 #endif

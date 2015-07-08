@@ -1045,4 +1045,4 @@ namespace occa {
   //==================================
 
 #include "operators/occaPthreadsKernelOperators.cpp"
-};
+}

@@ -2493,7 +2493,7 @@ namespace occa {
       return kInfo;
     }
     //==============================================
-  };
+  }
 
   //---[ Parsed Kernel Info ]---------------------
   parsedKernelInfo::parsedKernelInfo() :
@@ -2521,4 +2521,4 @@ namespace occa {
     argumentInfos.erase(argumentInfos.begin() + pos);
   }
   //==============================================
-};
+}

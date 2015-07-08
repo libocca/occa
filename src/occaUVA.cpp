@@ -222,4 +222,4 @@ namespace occa {
     else
       ::free(ptr);
   }
-};
+}

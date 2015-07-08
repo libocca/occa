@@ -136,7 +136,7 @@ namespace occa {
 
       return dev;
     }
-  };
+  }
   //==================================
 
 
@@ -1172,6 +1172,6 @@ namespace occa {
     return std::string( COIResultGetName(e) );
   }
   //==================================
-};
+}
 
 #endif

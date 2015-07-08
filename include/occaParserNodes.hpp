@@ -47,8 +47,8 @@ namespace occa {
     template <class TM>
     int length(node<TM> *n);
     //==============================================
-  };
-};
+  }
+}
 
 #include "occaParserNodes.tpp"
 

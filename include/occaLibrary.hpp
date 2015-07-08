@@ -23,7 +23,7 @@ namespace occa {
 
     int getFileID(const std::string &filename);
     std::string getFilename(const int id);
-  };
+  }
 
   namespace library {
     class infoID_t {
@@ -95,7 +95,7 @@ namespace occa {
 
     occa::kernel loadKernel(occa::device_v *dHandle,
                             const std::string &kernelName);
-  };
-};
+  }
+}
 
 #endif

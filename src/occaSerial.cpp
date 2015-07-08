@@ -517,7 +517,7 @@ namespace occa {
 
       return sym;
     }
-  };
+  }
   //==================================
 
 
@@ -1413,4 +1413,4 @@ namespace occa {
     return OCCA_SIMD_WIDTH;
   }
   //==================================
-};
+}

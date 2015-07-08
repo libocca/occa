@@ -101,7 +101,7 @@ namespace occa {
       varDepInfo& operator () (statement &s, varInfo &var);
     };
     //============================================
-  };
-};
+  }
+}
 
 #endif

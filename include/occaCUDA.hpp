@@ -74,7 +74,7 @@ namespace occa {
                           const uintptr_t bytes,
                           CUstream usingStream,
                           const bool isAsync);
-  };
+  }
 
   extern const CUarray_format cudaFormats[8];
 
@@ -310,7 +310,7 @@ namespace occa {
   //---[ Error Handling ]-------------
   std::string cudaError(const CUresult errorCode);
   //==================================
-};
+}
 
 #  endif
 #endif

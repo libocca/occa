@@ -22,7 +22,7 @@ namespace occa {
 
         return tag;
       }
-    };
+    }
 
     atomInfo_t::atomInfo_t(infoDB_t *db_) :
       db(db_),
@@ -3204,5 +3204,5 @@ namespace occa {
           cNode = cNode->leaves[1];
       }
     }
-  };
-};
+  }
+}
