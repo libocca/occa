@@ -227,30 +227,30 @@
                                                                             OCCADEVICEMALLOCNULL_FC)
 #define  OCCADEVICEMALLOC_FC                               OCCA_F2C_GLOBAL_(occadevicemalloc_fc,\
                                                                             OCCADEVICEMALLOC_FC)
-// #define  OCCADEVICEMANAGEDALLOCNULL_FC                     OCCA_F2C_GLOBAL_(occadevicemanagedallocnull_fc, \
-//                                                                             OCCADEVICEMANAGEDALLOCNULL_FC)
-// #define  OCCADEVICEMANAGEDALLOC_FC                         OCCA_F2C_GLOBAL_(occadevicemanagedalloc_fc, \
-//                                                                             OCCADEVICEMANAGEDALLOC_FC)
-// #define  OCCADEVICEUVAALLOCNULL_FC                         OCCA_F2C_GLOBAL_(occadeviceuvaallocnull_fc, \
-//                                                                             OCCADEVICEUVAALLOCNULL_FC)
-// #define  OCCADEVICEUVAALLOC_FC                             OCCA_F2C_GLOBAL_(occadeviceuvaalloc_fc, \
-//                                                                             OCCADEVICEUVAALLOC_FC)
-// #define  OCCADEVICEMANAGEDUVAALLOCNULL_FC                  OCCA_F2C_GLOBAL_(occadevicemanageduvaallocnull_fc, \
-//                                                                             OCCADEVICEMANAGEDUVAALLOCNULL_FC)
-// #define  OCCADEVICEMANAGEDUVAALLOC_FC                      OCCA_F2C_GLOBAL_(occadevicemanageduvaalloc_fc, \
-//                                                                             OCCADEVICEMANAGEDUVAALLOC_FC)
+#define  OCCADEVICEMANAGEDALLOCNULL_FC                     OCCA_F2C_GLOBAL_(occadevicemanagedallocnull_fc, \
+                                                                            OCCADEVICEMANAGEDALLOCNULL_FC)
+#define  OCCADEVICEMANAGEDALLOC_FC                         OCCA_F2C_GLOBAL_(occadevicemanagedalloc_fc, \
+                                                                            OCCADEVICEMANAGEDALLOC_FC)
+#define  OCCADEVICEUVAALLOCNULL_FC                         OCCA_F2C_GLOBAL_(occadeviceuvaallocnull_fc, \
+                                                                            OCCADEVICEUVAALLOCNULL_FC)
+#define  OCCADEVICEUVAALLOC_FC                             OCCA_F2C_GLOBAL_(occadeviceuvaalloc_fc, \
+                                                                            OCCADEVICEUVAALLOC_FC)
+#define  OCCADEVICEMANAGEDUVAALLOCNULL_FC                  OCCA_F2C_GLOBAL_(occadevicemanageduvaallocnull_fc, \
+                                                                            OCCADEVICEMANAGEDUVAALLOCNULL_FC)
+#define  OCCADEVICEMANAGEDUVAALLOC_FC                      OCCA_F2C_GLOBAL_(occadevicemanageduvaalloc_fc, \
+                                                                            OCCADEVICEMANAGEDUVAALLOC_FC)
 #define  OCCADEVICETEXTUREALLOC_FC                         OCCA_F2C_GLOBAL_(occadevicetexturealloc_fc,\
                                                                             OCCADEVICETEXTUREALLOC_FC)
-// #define  OCCADEVICEMANAGEDTEXTUREALLOC_FC                  OCCA_F2C_GLOBAL_(occadevicemanagedtexturealloc_fc,\
-//                                                                             OCCADEVICEMANAGEDTEXTUREALLOC_FC)
+#define  OCCADEVICEMANAGEDTEXTUREALLOC_FC                  OCCA_F2C_GLOBAL_(occadevicemanagedtexturealloc_fc,\
+                                                                            OCCADEVICEMANAGEDTEXTUREALLOC_FC)
 #define  OCCADEVICEMAPPEDALLOCNULL_FC                      OCCA_F2C_GLOBAL_(occadevicemappedallocnull_fc,\
                                                                             OCCADEVICEMAPPEDALLOCNULL_FC)
 #define  OCCADEVICEMAPPEDALLOC_FC                          OCCA_F2C_GLOBAL_(occadevicemappedalloc_fc,\
                                                                             OCCADEVICEMAPPEDALLOC_FC)
-// #define  OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC               OCCA_F2C_GLOBAL_(occadevicemanagedmappedallocnull_fc,\
-//                                                                             OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC)
-// #define  OCCADEVICEMANAGEDMAPPEDALLOC_FC                   OCCA_F2C_GLOBAL_(occadevicemanagedmappedalloc_fc,\
-//                                                                             OCCADEVICEMANAGEDMAPPEDALLOC_FC)
+#define  OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC               OCCA_F2C_GLOBAL_(occadevicemanagedmappedallocnull_fc,\
+                                                                            OCCADEVICEMANAGEDMAPPEDALLOCNULL_FC)
+#define  OCCADEVICEMANAGEDMAPPEDALLOC_FC                   OCCA_F2C_GLOBAL_(occadevicemanagedmappedalloc_fc,\
+                                                                            OCCADEVICEMANAGEDMAPPEDALLOC_FC)
 #define  OCCADEVICEFLUSH_FC                                OCCA_F2C_GLOBAL_(occadeviceflush_fc,\
                                                                             OCCADEVICEFLUSH_FC)
 #define  OCCADEVICEFINISH_FC                               OCCA_F2C_GLOBAL_(occadevicefinish_fc,\
