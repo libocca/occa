@@ -84,8 +84,12 @@
 
 #define OCCA_F2C_GLOBAL_(name,NAME) name##_
 
+//---[ Globals & Flags ]----------------
 #define  OCCASETVERBOSECOMPILATION_FC                      OCCA_F2C_GLOBAL_(occasetverbosecompilation_fc,\
                                                                             OCCASETVERBOSECOMPILATION_FC)
+//======================================
+
+//---[ TypeCasting ]--------------------
 #define  OCCAINT_FC                                        OCCA_F2C_GLOBAL_(occaint_fc,\
                                                                             OCCAINT_FC)
 #define  OCCAINT32_FC                                      OCCA_F2C_GLOBAL_(occaint32_fc,\
@@ -110,6 +114,79 @@
                                                                             OCCADOUBLE_FC)
 #define  OCCASTRING_FC                                     OCCA_F2C_GLOBAL_(occastring_fc,\
                                                                             OCCASTRING_FC)
+//======================================
+
+//---[ Hidden-Device Calls ]------------
+//  |---[ Device Functions ]------------
+#define OCCASETDEVICE                                      OCCA_F2C_GLOBAL_(occasetdevice_fc, \
+                                                                            OCCASETDEVICE_FC)
+#define OCCASETDEVICEFROMINFO                              OCCA_F2C_GLOBAL_(occasetdevicefrominfo_fc, \
+                                                                            OCCASETDEVICEFROMINFO_FC)
+#define OCCAGETCURRENTDEVICE                               OCCA_F2C_GLOBAL_(occagetcurrentdevice_fc, \
+                                                                            OCCAGETCURRENTDEVICE_FC)
+#define OCCASETCOMPILER                                    OCCA_F2C_GLOBAL_(occasetcompiler_fc, \
+                                                                            OCCASETCOMPILER_FC)
+#define OCCASETCOMPILERENVSCRIPT                           OCCA_F2C_GLOBAL_(occasetcompilerenvscript_fc, \
+                                                                            OCCASETCOMPILERENVSCRIPT_FC)
+#define OCCASETCOMPILERFLAGS                               OCCA_F2C_GLOBAL_(occasetcompilerflags_fc, \
+                                                                            OCCASETCOMPILERFLAGS_FC)
+#define OCCAGETCOMPILER                                    OCCA_F2C_GLOBAL_(occagetcompiler_fc, \
+                                                                            OCCAGETCOMPILER_FC)
+#define OCCAGETCOMPILERENVSCRIPT                           OCCA_F2C_GLOBAL_(occagetcompilerenvscript_fc, \
+                                                                            OCCAGETCOMPILERENVSCRIPT_FC)
+#define OCCAGETCOMPILERFLAGS                               OCCA_F2C_GLOBAL_(occagetcompilerflags_fc, \
+                                                                            OCCAGETCOMPILERFLAGS_FC)
+#define OCCAFLUSH                                          OCCA_F2C_GLOBAL_(occaflush_fc, \
+                                                                            OCCAFLUSH_FC)
+#define OCCAFINISH                                         OCCA_F2C_GLOBAL_(occafinish_fc,  \
+                                                                            OCCAFINISH_FC)
+#define OCCAWAITFOR                                        OCCA_F2C_GLOBAL_(occawaitfor_fc, \
+                                                                            OCCAWAITFOR_FC)
+#define OCCACREATESTREAM                                   OCCA_F2C_GLOBAL_(occacreatestream_fc,  \
+                                                                            OCCACREATESTREAM_FC)
+#define OCCAGETSTREAM                                      OCCA_F2C_GLOBAL_(occagetstream_fc, \
+                                                                            OCCAGETSTREAM_FC)
+#define OCCASETSTREAM                                      OCCA_F2C_GLOBAL_(occasetstream_fc, \
+                                                                            OCCASETSTREAM_FC)
+#define OCCAWRAPSTREAM                                     OCCA_F2C_GLOBAL_(occawrapstream_fc,  \
+                                                                            OCCAWRAPSTREAM_FC)
+#define OCCATAGSTREAM                                      OCCA_F2C_GLOBAL_(occatagstream_fc, \
+                                                                            OCCATAGSTREAM_FC)
+
+//  |---[ Kernel Functions ]------------
+#define OCCABUILDKERNEL                                    OCCA_F2C_GLOBAL_(occabuildkernel_fc,  \
+                                                                            OCCABUILDKERNEL_FC)
+#define OCCABUILDKERNELFROMSOURCE                          OCCA_F2C_GLOBAL_(occabuildkernelfromsource_fc, \
+                                                                            OCCABUILDKERNELFROMSOURCE_FC)
+#define OCCABUILDKERNELFROMSTRING                          OCCA_F2C_GLOBAL_(occabuildkernelfromstring_fc, \
+                                                                            OCCABUILDKERNELFROMSTRING_FC)
+#define OCCABUILDKERNELFROMBINARY                          OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc, \
+                                                                            OCCABUILDKERNELFROMBINARY_FC)
+#define OCCABUILDKERNELFROMLOOPY                           OCCA_F2C_GLOBAL_(occabuildkernelfromloopy_fc, \
+                                                                            OCCABUILDKERNELFROMLOOPY_FC)
+#define OCCABUILDKERNELFROMFLOOPY                          OCCA_F2C_GLOBAL_(occabuildkernelfromfloopy_fc, \
+                                                                            OCCABUILDKERNELFROMFLOOPY_FC)
+
+//  |---[ Memory Functions ]------------
+#define OCCAWRAPMEMORY                                     OCCA_F2C_GLOBAL_(occawrapmemory_fc,  \
+                                                                            OCCAWRAPMEMORY_FC)
+#define OCCAWRAPMANAGEDMEMORY                              OCCA_F2C_GLOBAL_(occawrapmanagedmemory_fc, \
+                                                                            OCCAWRAPMANAGEDMEMORY_FC)
+#define OCCAMALLOC                                         OCCA_F2C_GLOBAL_(occamalloc_fc,  \
+                                                                            OCCAMALLOC_FC)
+#define OCCAMANAGEDALLOC                                   OCCA_F2C_GLOBAL_(occamanagedalloc_fc,  \
+                                                                            OCCAMANAGEDALLOC_FC)
+#define OCCAUVAALLOC                                       OCCA_F2C_GLOBAL_(occauvaalloc_fc,  \
+                                                                            OCCAUVAALLOC_FC)
+#define OCCAMANAGEDUVAALLOC                                OCCA_F2C_GLOBAL_(occamanageduvaalloc_fc, \
+                                                                            OCCAMANAGEDUVAALLOC_FC)
+#define OCCAMAPPEDALLOC                                    OCCA_F2C_GLOBAL_(occamappedalloc_fc, \
+                                                                            OCCAMAPPEDALLOC_FC)
+#define OCCAMANAGEDMAPPEDALLOC                             OCCA_F2C_GLOBAL_(occamanagedmappedalloc_fc, \
+                                                                            OCCAMANAGEDMAPPEDALLOC_FC)
+//======================================
+
+//---[ Device ]-------------------------
 #define  OCCAPRINTAVAILABLEDEVICES_FC                      OCCA_F2C_GLOBAL_(occaprintavailabledevices_fc,\
                                                                             OCCAPRINTAVAILABLEDEVICES_FC)
 #define  OCCADEVICEMODE_FC                                 OCCA_F2C_GLOBAL_(occadevicemode_fc,\
@@ -192,6 +269,9 @@
                                                                             OCCADEVICESTREAMFREE_FC)
 #define  OCCADEVICEFREE_FC                                 OCCA_F2C_GLOBAL_(occadevicefree_fc,\
                                                                             OCCADEVICEFREE_FC)
+//======================================
+
+//---[ Kernel ]-------------------------
 #define  OCCAKERNELMODE_FC                                 OCCA_F2C_GLOBAL_(occakernelmode_fc,\
                                                                             OCCAKERNELMODE_FC)
 #define  OCCAKERNELNAME_FC                                 OCCA_F2C_GLOBAL_(occakernelname_fc,\
@@ -296,6 +376,9 @@
                                                                             OCCADEVICEWRAPMEMORY_FC)
 #define  OCCADEVICEWRAPSTREAM_FC                           OCCA_F2C_GLOBAL_(occadevicewrapstream_fc,\
                                                                             OCCADEVICEWRAPSTREAM_FC)
+//======================================
+
+//---[ Memory ]-------------------------
 #define  OCCAMEMORYMODE_FC                                 OCCA_F2C_GLOBAL_(occamemorymode_fc,\
                                                                             OCCAMEMORYMODE_FC)
 #define  OCCACOPYMEMTOMEM_FC                               OCCA_F2C_GLOBAL_(occacopymemtomem_fc,\
@@ -324,3 +407,4 @@
                                                                             OCCAASYNCCOPYMEMTOPTRAUTO_FC)
 #define  OCCAMEMORYFREE_FC                                 OCCA_F2C_GLOBAL_(occamemoryfree_fc,\
                                                                             OCCAMEMORYFREE_FC)
+//======================================
