@@ -2,7 +2,7 @@
 
 #include "occa.hpp"
 
-kernel void addVectors(const int entries,
+__occa__ void addVectors(const int entries,
                        const float *a,
                        const float *b,
                        float *ab){

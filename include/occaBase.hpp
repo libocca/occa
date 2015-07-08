@@ -96,6 +96,54 @@ namespace occa {
   namespace flags {
     extern const int checkCacheDir;
   }
+
+  inline bool hasSerialEnabled(){
+    return true;
+  }
+
+  inline bool hasPthreadsEnabled(){
+    return true;
+  }
+
+  inline bool hasOpenMPEnabled(){
+#if OCCA_OPENMP_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  inline bool hasOpenCLEnabled(){
+#if OCCA_OPENCL_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  inline bool hasCUDAEnabled(){
+#if OCCA_CUDA_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  inline bool hasCOIEnabled(){
+#if OCCA_COI_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  inline bool hasHSAEnabled(){
+#if OCCA_HSA_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
   //==============================================
 
 

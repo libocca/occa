@@ -1,4 +1,6 @@
 import numpy as np
+from np import np.npy_intp as npIntP
+
 import ctypes
 from ctypes import c_bool   as cBool
 from ctypes import c_char   as cChar
@@ -63,6 +65,7 @@ def occaCast(arg):
 
 def sizeof(t):
     return np.dtype(t).itemsize
+#=======================================
 
 #----[ Background Device ]--------------
 #  |---[ Device ]-----------------------
@@ -83,8 +86,16 @@ def managedAlloc(bytes_, source = None):
     global libocca
     loadLibrary()
 
-    return cVoidP(libocca.occaManagedAlloc(cSizeT(bytes_),
-                                           source))
+    ptr = cVoidP(libocca.occaManagedAlloc(cSizeT(bytes_),
+                                          source))
+
+    cdef int cBytes = bytes_
+    cdef npIntP shape[1]
+
+    # shape[0] = <
+
+    return np.PyArray_SimpleNewFromData(1,
+
 #  |====================================
 #=======================================
 
