@@ -23,6 +23,54 @@ namespace occa {
   namespace flags {
     const int checkCacheDir = (1 << 0);
   }
+
+  bool hasSerialEnabled(){
+    return true;
+  }
+
+  bool hasPthreadsEnabled(){
+    return true;
+  }
+
+  bool hasOpenMPEnabled(){
+#if OCCA_OPENMP_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  bool hasOpenCLEnabled(){
+#if OCCA_OPENCL_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  bool hasCUDAEnabled(){
+#if OCCA_CUDA_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  bool hasCOIEnabled(){
+#if OCCA_COI_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
+
+  bool hasHSAEnabled(){
+#if OCCA_HSA_ENABLED
+    return true;
+#else
+    return false;
+#endif
+  }
   //==================================
 
   //---[ Helper Classes ]-------------
