@@ -4,63 +4,6 @@ module occa
 
   implicit none
 
-  public ::                          &
-    occaTypeMem_t,                   &
-    occaSetVerboseCompilation,       &
-    occaPrintAvailableDevices,       &
-    occaDeviceSetCompiler,           &
-    occaDeviceSetCompilerFlags,      &
-    occaCreateDevice,                &
-    occaDeviceBytesAllocated,        &
-    occaDeviceBuildKernel,           &
-    occaDeviceBuildKernelFromSource, &
-    occaDeviceBuildKernelFromString, &
-    occaDeviceBuildKernelFromBinary, &
-    occaDeviceBuildKernelFromLoopy,  &
-    occaDeviceBuildKernelFromFloopy, &
-    occaDeviceMalloc,                &
-    ! occaDeviceManagedAlloc,        &
-    ! occaDeviceUvaAlloc,            &
-    ! occaDeviceManagedUvaAlloc,     &
-    occaDeviceTextureAlloc,          &
-    ! occaDeviceManagedTextureAlloc, &
-    occaDeviceMappedAlloc,           &
-    ! occaDeviceManagedMappedAlloc,  &
-    occaDeviceFlush,                 &
-    occaDeviceFinish,                &
-    occaDeviceCreateStream,          &
-    occaDeviceGetStream,             &
-    occaDeviceSetStream,             &
-    occaDeviceTagStream,             &
-    occaDeviceTimeBetweenTags,       &
-    occaDeviceStreamFree,            &
-    occaDeviceFree,                  &
-    occaKernelPreferredDimSize,      &
-    occaKernelSetAllWorkingDims,     &
-    occaCreateArgumentList,          &
-    occaArgumentListClear,           &
-    occaArgumentListFree,            &
-    occaArgumentListAddArg,          &
-    occaKernelRun,                   &
-    occaKernelRun_,                  &
-    occaKernelFree,                  &
-    occaCreateDeviceInfo,            &
-    occaDeviceInfoAppend,            &
-    occaDeviceInfoFree,              &
-    occaCreateKernelInfo,            &
-    occaKernelInfoAddDefine,         &
-    occaKernelInfoAddInclude,        &
-    occaKernelInfoFree,              &
-    occaDeviceWrapMemory,            &
-    occaDeviceWrapStream,            &
-    occaCopyMemToMem,                &
-    occaCopyPtrToMem,                &
-    occaCopyMemToPtr,                &
-    occaAsyncCopyMemToMem,           &
-    occaAsyncCopyPtrToMem,           &
-    occaAsyncCopyMemToPtr,           &
-    occaMemoryFree
-
   integer(C_INT), bind(C, name="occaUsingOKL")    :: occaUsingOKL
   integer(C_INT), bind(C, name="occaUsingOFL")    :: occaUsingOFL
   integer(C_INT), bind(C, name="occaUsingNative") :: occaUsingNative
@@ -182,19 +125,6 @@ module occa
  !    module procedure occaDeviceManagedUvaAlloc_real8
  !    module procedure occaDeviceManagedUvaAlloc_char
  ! end interface occaDeviceManagedUvaAlloc
-
-    ! integer(4), intent(in) :: v
-
-    ! interface
-    !   subroutine occaInt32_fc(t, v)
-    !     use occaFTypes_m
-    !     implicit none
-    !     type(occaMemory), intent(out) :: t
-    !     integer(4),       intent(in)  :: v
-    !   end subroutine occaInt32_fc
-    ! end interface
-
-    ! call occaInt32_fc(t, v)
 
  interface occaDeviceTextureAlloc
     module procedure occaDeviceTextureAlloc_func
@@ -852,84 +782,9 @@ module occa
     end subroutine occaMemoryFree_fc
   end interface occaMemoryFree
 
-contains
+contains !||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||
 
 ! ---[ TypesCasting ]------------------
-  ! type(occaType) function occaType_int4_c(v) result(t)
-  !   integer(4), intent(in) :: v
-
-  !   interface
-  !     subroutine occaInt32_fc(t, v)
-  !       use occaFTypes_m
-  !       implicit none
-  !       type(occaType), intent(out) :: t
-  !       integer(4),     intent(in)  :: v
-  !     end subroutine occaInt32_fc
-  !   end interface
-
-  !   call occaInt32_fc(t, v)
-  ! end function occaType_int4_c
-
-  ! type(occaType) function occaType_int8_c(v) result(t)
-  !   integer(8), intent(in) :: v
-
-  !   interface
-  !     subroutine occaInt64_fc(t, v)
-  !       use occaFTypes_m
-  !       implicit none
-  !       type(occaType), intent(out) :: t
-  !       integer(8),     intent(in)  :: v
-  !     end subroutine occaInt64_fc
-  !   end interface
-
-  !   call occaInt64_fc(t, v)
-  ! end function occaType_int8_c
-
-  ! type(occaType) function occaType_real4_c(v) result(t)
-  !   real(4), intent(in) :: v
-
-  !   interface
-  !     subroutine occaFloat_fc(t, v)
-  !       use occaFTypes_m
-  !       implicit none
-  !       type(occaType), intent(out) :: t
-  !       real(4),        intent(in)  :: v
-  !     end subroutine occaFloat_fc
-  !   end interface
-
-  !   call occaFloat_fc(t, v)
-  ! end function occaType_real4_c
-
-  ! type(occaType) function occaType_real8_c(v) result(t)
-  !   real(8), intent(in) :: v
-
-  !   interface
-  !     subroutine occaDouble_fc(t, v)
-  !       use occaFTypes_m
-  !       implicit none
-  !       type(occaType), intent(out) :: t
-  !       real(8),        intent(in)  :: v
-  !     end subroutine occaDouble_fc
-  !   end interface
-
-  !   call occaDouble_fc(t, v)
-  ! end function occaType_real8_c
-
-  ! type(occaType) function occaType_str_c(v) result(t)
-  !   character(len=*), intent(in) :: v
-
-  !   interface
-  !     subroutine occaString_fc(t, v)
-  !       use occaFTypes_m
-  !       implicit none
-  !       type(occaType),   intent(out) :: t
-  !       character(len=*), intent(in)  :: v
-  !     end subroutine occaString_fc
-  !   end interface
-
-  !   call occaString_fc(t, v)
-  ! end function occaType_str_c
-
   type(occaMemory) function occaTypeMem_int4_c(v) result(t)
     integer(4), intent(in) :: v
 
