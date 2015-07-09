@@ -323,35 +323,6 @@ static PyObject* py_occaPrintAvailableDevices(PyObject *self, PyObject *args){
   return Py_None;
 }
 
-static PyObject* py_occaCreateDeviceInfo(PyObject *self, PyObject *args){
-  occaDeviceInfo dInfo = occaCreateDeviceInfo();
-
-  return PyLong_FromVoidPtr(dInfo);
-}
-
-static PyObject* py_occaDeviceInfoAppend(PyObject *self, PyObject *args){
-  occaDeviceInfo dInfo;
-  const char *key, *value;
-
-  if(!PyArg_ParseTuple(args, "nss", &dInfo, &key, &value))
-    return NULL;
-
-  occaDeviceInfoAppend(dInfo, key, value);
-
-  return Py_None;
-}
-
-static PyObject* py_occaDeviceInfoFree(PyObject *self, PyObject *args){
-  occaDeviceInfo dInfo;
-
-  if(!PyArg_ParseTuple(args, "n", &dInfo))
-    return NULL;
-
-  occaDeviceInfoFree(dInfo);
-
-  return Py_None;
-}
-
 static PyObject* py_occaCreateDevice(PyObject *self, PyObject *args){
   const char *infos;
 
@@ -359,17 +330,6 @@ static PyObject* py_occaCreateDevice(PyObject *self, PyObject *args){
     return NULL;
 
   occaDevice device = occaCreateDevice(infos);
-
-  return PyLong_FromVoidPtr(device);
-}
-
-static PyObject* py_occaCreateDeviceFromInfo(PyObject *self, PyObject *args){
-  occaDeviceInfo dInfo;
-
-  if(!PyArg_ParseTuple(args, "n", &dInfo))
-    return NULL;
-
-  occaDevice device = occaCreateDeviceFromInfo(dInfo);
 
   return PyLong_FromVoidPtr(device);
 }
@@ -420,6 +380,42 @@ static PyObject* py_occaDeviceSetCompilerFlags(PyObject *self, PyObject *args){
   occaDeviceSetCompilerFlags(device, compilerFlags);
 
   return Py_None;
+}
+
+static PyObject* py_occaDeviceGetCompiler(PyObject *self, PyObject *args){
+  occaDevice device;
+  const char *compiler;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
+    return NULL;
+
+  compiler = occaDeviceGetCompiler(device);
+
+  return PyString_FromString(compiler);
+}
+
+static PyObject* py_occaDeviceGetCompilerEnvScript(PyObject *self, PyObject *args){
+  occaDevice device;
+  const char *compilerEnvScript;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
+    return NULL;
+
+  compilerEnvScript = occaDeviceGetCompilerEnvScript(device);
+
+  return PyString_FromString(compilerEnvScript);
+}
+
+static PyObject* py_occaDeviceGetCompilerFlags(PyObject *self, PyObject *args){
+  occaDevice device;
+  const char *compilerFlags;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
+    return NULL;
+
+  compilerFlags = occaDeviceGetCompilerFlags(device);
+
+  return PyString_FromString(compilerFlags);
 }
 
 static PyObject* py_occaDeviceBytesAllocated(PyObject *self, PyObject *args){
@@ -771,13 +767,12 @@ static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args){
 
 static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args){
   occaKernelInfo kInfo = occaCreateKernelInfo();
-  const char *macro;
-  occaType value;
+  const char *macro, *value;
 
-  if(!PyArg_ParseTuple(args, "nsn", &kInfo, &macro, &value))
+  if(!PyArg_ParseTuple(args, "nss", &kInfo, &macro, &value))
     return NULL;
 
-  occaKernelInfoAddDefine(kInfo, macro, value);
+  occaKernelInfoAddDefine(kInfo, macro, occaString(value));
 
   return Py_None;
 }
@@ -790,6 +785,17 @@ static PyObject* py_occaKernelInfoAddInclude(PyObject *self, PyObject *args){
     return NULL;
 
   occaKernelInfoAddInclude(kInfo, filename);
+
+  return Py_None;
+}
+
+static PyObject* py_occaKernelInfoFree(PyObject *self, PyObject *args){
+  occaKernelInfo kInfo;
+
+  if(!PyArg_ParseTuple(args, "n", &kInfo))
+    return NULL;
+
+  occaKernelInfoFree(kInfo);
 
   return Py_None;
 }

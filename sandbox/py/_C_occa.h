@@ -61,12 +61,7 @@ static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args);
 //---[ Device ]-------------------------
 static PyObject* py_occaPrintAvailableDevices(PyObject *self, PyObject *args);
 
-static PyObject* py_occaCreateDeviceInfo(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceInfoAppend(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceInfoFree(PyObject *self, PyObject *args);
-
 static PyObject* py_occaCreateDevice(PyObject *self, PyObject *args);
-static PyObject* py_occaCreateDeviceFromInfo(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceMode(PyObject *self, PyObject *args);
 
@@ -74,9 +69,9 @@ static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceSetCompilerEnvScript(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceSetCompilerFlags(PyObject *self, PyObject *args);
 
-static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceSetCompilerEnvScript(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceSetCompilerFlags(PyObject *self, PyObject *args);
+static PyObject* py_occaDeviceGetCompiler(PyObject *self, PyObject *args);
+static PyObject* py_occaDeviceGetCompilerEnvScript(PyObject *self, PyObject *args);
+static PyObject* py_occaDeviceGetCompilerFlags(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceBytesAllocated(PyObject *self, PyObject *args);
 
@@ -126,6 +121,7 @@ static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args);
 static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args);
 static PyObject* py_occaKernelInfoAddInclude(PyObject *self, PyObject *args);
 
+static PyObject* py_occaKernelInfoFree(PyObject *self, PyObject *args);
 static PyObject* py_occaKernelFree(PyObject *self, PyObject *args);
 //======================================
 
@@ -208,18 +204,17 @@ static PyMethodDef _C_occaMethods[] = {
   //---[ Device ]-----------------------
   {"printAvailableDevices", py_occaPrintAvailableDevices, METH_VARARGS},
 
-  {"createDeviceInfo"    , py_occaCreateDeviceInfo    , METH_VARARGS},
-  {"deviceInfoAppend"    , py_occaDeviceInfoAppend    , METH_VARARGS},
-  {"deviceInfoFree"      , py_occaDeviceInfoFree      , METH_VARARGS},
+  {"createDevice", py_occaCreateDevice, METH_VARARGS},
 
-  {"createDevice"        , py_occaCreateDevice        , METH_VARARGS},
-  {"createDeviceFromInfo", py_occaCreateDeviceFromInfo, METH_VARARGS},
-
-  {"deviceMode"            , py_occaDeviceMode            , METH_VARARGS},
+  {"deviceMode", py_occaDeviceMode, METH_VARARGS},
 
   {"deviceSetCompiler"         , py_occaDeviceSetCompiler         , METH_VARARGS},
   {"deviceSetCompilerEnvScript", py_occaDeviceSetCompilerEnvScript, METH_VARARGS},
   {"deviceSetCompilerFlags"    , py_occaDeviceSetCompilerFlags    , METH_VARARGS},
+
+  {"deviceGetCompiler"         , py_occaDeviceGetCompiler         , METH_VARARGS},
+  {"deviceGetCompilerEnvScript", py_occaDeviceGetCompilerEnvScript, METH_VARARGS},
+  {"deviceGetCompilerFlags"    , py_occaDeviceGetCompilerFlags    , METH_VARARGS},
 
   {"deviceBytesAllocated", py_occaDeviceBytesAllocated, METH_VARARGS},
 
@@ -269,7 +264,8 @@ static PyMethodDef _C_occaMethods[] = {
   {"kernelInfoAddDefine" , py_occaKernelInfoAddDefine , METH_VARARGS},
   {"kernelInfoAddInclude", py_occaKernelInfoAddInclude, METH_VARARGS},
 
-  {"kernelFree", py_occaKernelFree, METH_VARARGS},
+  {"kernelInfoFree", py_occaKernelInfoFree, METH_VARARGS},
+  {"kernelFree"    , py_occaKernelFree    , METH_VARARGS},
   //====================================
 
   //---[ Memory ]-----------------------
