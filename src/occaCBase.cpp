@@ -76,6 +76,15 @@ namespace occa {
 #  ifdef __cplusplus
 extern "C" {
 #  endif
+  occaType OCCA_RFUNC occaPtr(void *ptr){
+    occaMemory_t *memory = new occaMemory_t();
+
+    memory->type    = OCCA_TYPE_MEMORY;
+    memory->mHandle = ptr;
+
+    return (occaType) memory;
+  }
+
   occaType OCCA_RFUNC occaInt(int value){
     occaType_t *type = new occaType_t;
 

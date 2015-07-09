@@ -97,6 +97,8 @@ extern "C" {
 
 
   //---[ TypeCasting ]------------------
+  OCCA_LFUNC occaType OCCA_RFUNC occaPtr(void *ptr);
+
   OCCA_LFUNC occaType OCCA_RFUNC occaInt(int value);
   OCCA_LFUNC occaType OCCA_RFUNC occaUInt(unsigned int value);
 

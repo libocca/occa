@@ -10,6 +10,8 @@ static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args);
 //======================================
 
 //---[ TypeCasting ]--------------------
+static PyObject* py_occaPtr(PyObject *self, PyObject *args);
+
 static PyObject* py_occaBool(PyObject *self, PyObject *args);
 
 static PyObject* py_occaInt8(PyObject *self, PyObject *args);
@@ -172,19 +174,21 @@ static PyMethodDef _C_occaMethods[] = {
   //====================================
 
   //---[ TypeCasting ]------------------
-  {"bool", py_occaBool, METH_VARARGS},
+  {"ptr"    , py_occaPtr    , METH_VARARGS},
 
-  {"int8" , py_occaInt8 , METH_VARARGS},
-  {"uint8", py_occaUInt8, METH_VARARGS},
+  {"bool"   , py_occaBool   , METH_VARARGS},
 
-  {"int16" , py_occaInt16 , METH_VARARGS},
-  {"uint16", py_occaUInt16, METH_VARARGS},
+  {"int8"   , py_occaInt8   , METH_VARARGS},
+  {"uint8"  , py_occaUInt8  , METH_VARARGS},
 
-  {"int32" , py_occaInt32 , METH_VARARGS},
-  {"uint32", py_occaUInt32, METH_VARARGS},
+  {"int16"  , py_occaInt16  , METH_VARARGS},
+  {"uint16" , py_occaUInt16 , METH_VARARGS},
 
-  {"int64" , py_occaInt64 , METH_VARARGS},
-  {"uint64", py_occaUInt64, METH_VARARGS},
+  {"int32"  , py_occaInt32  , METH_VARARGS},
+  {"uint32" , py_occaUInt32 , METH_VARARGS},
+
+  {"int64"  , py_occaInt64  , METH_VARARGS},
+  {"uint64" , py_occaUInt64 , METH_VARARGS},
 
   {"float32", py_occaFloat32, METH_VARARGS},
   {"float64", py_occaFloat64, METH_VARARGS},

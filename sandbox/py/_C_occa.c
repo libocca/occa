@@ -14,6 +14,17 @@ static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args){
 //======================================
 
 //---[ TypeCasting ]--------------------
+static PyObject* py_occaPtr(PyObject *self, PyObject *args){
+  void *ptr;
+
+  if(!PyArg_ParseTuple(args, "n", &ptr))
+    return NULL;
+
+  occaType type = occaPtr(ptr);
+
+  return PyLong_FromVoidPtr(type);
+}
+
 static PyObject* py_occaBool(PyObject *self, PyObject *args){
   size_t value;
 

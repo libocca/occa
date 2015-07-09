@@ -68,7 +68,7 @@ def wrapStream(handle):
 #  |---[ Kernel ]-----------------------
 def buildKernel(str_, functionName, kInfo = 0):
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
-    return kernel(_C_occa.buildKernel(filename, functionName, kInfo_))
+    return kernel(_C_occa.buildKernel(str_, functionName, kInfo_))
 
 def buildKernelFromSource(filename, functionName, kInfo = 0):
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
@@ -112,13 +112,13 @@ def wrapManagedMemory(handle, entries, type_):
 def malloc(entries, type_):
     return memory(_C_occa.malloc(entries, sizeof(type_)))
 
-def managedAlloc():
+def managedAlloc(entries, type_):
     return _C_occa.managedAlloc(entries, sizeof(type_), typeof(type_))
 
 def malloc(entries, type_):
     return memory(_C_occa.mappedAlloc(entries, sizeof(type_)))
 
-def managedAlloc():
+def managedAlloc(entries, type_):
     return _C_occa.managedMappedAlloc(entries, sizeof(type_), typeof(type_))
 #  |====================================
 #=======================================
@@ -263,13 +263,16 @@ class kernel:
     def __del__(self):
         self.free()
 
-    def __call__(self, args):
+    def __call__(self, *args):
         argList = _C_occa.createArgumentList()
 
         for i in xrange(len(args)):
             arg = args[i]
 
-            if arg.__class__ is memory:
+            if arg.__class__ is np.ndarray:
+                argType = _C_occa.ptr(arg.ctypes.data)
+                _C_occa.argumentListAddArg(argList, i, argType)
+            elif arg.__class__ is memory:
                 _C_occa.argumentListAddArg(argList, i, arg.handle)
             else:
                 argType = getattr(_C_occa, nameof(arg))(arg)
