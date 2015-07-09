@@ -12,6 +12,6 @@ ab = occa.managedAlloc(entries, np.float32)
 for i in xrange(entries):
     a[i]  = i
     b[i]  = 1 - i
-    ab[i] = i
+    ab[i] = 0
 
 addVectors(entries, a, b, ab)

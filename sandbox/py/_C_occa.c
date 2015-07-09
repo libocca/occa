@@ -870,7 +870,7 @@ static PyObject* py_occaArgumentListFree(PyObject *self, PyObject *args){
 static PyObject* py_occaArgumentListAddArg(PyObject *self, PyObject *args){
   occaArgumentList argList;
   int argPos;
-  void *type;
+  occaType type;
 
   if(!PyArg_ParseTuple(args, "nin", &argList, &argPos, &type))
     return NULL;
