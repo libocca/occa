@@ -118,7 +118,7 @@ def managedAlloc(entries, type_):
 def malloc(entries, type_):
     return memory(_C_occa.mappedAlloc(entries, sizeof(type_)))
 
-def managedAlloc(entries, type_):
+def managedMappedAlloc(entries, type_):
     return _C_occa.managedMappedAlloc(entries, sizeof(type_), typeof(type_))
 #  |====================================
 #=======================================
@@ -144,7 +144,7 @@ class device:
             self.isAllocated = False
 
     def __del__(self):
-        ;#self.free()
+        self.free()
 
     def mode(self):
         return _C_occa.deviceMode(self.handle)
