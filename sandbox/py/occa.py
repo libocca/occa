@@ -7,6 +7,9 @@ def sizeof(npType):
 
 def typeof(npType):
     return np.dtype(npType).num
+
+def nameof(npType):
+    return np.dtype(npType).name
 #=======================================
 
 #---[ Globals & Flags ]-----------------
@@ -89,13 +92,13 @@ def buildKernelFromFloopy(filename, functionName, kInfo = 0):
 
 #  |---[ Memory ]-----------------------
 def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
-    if type(dest) is memory:
-        if type(src) is memory:
+    if dest.__class__ is memory:
+        if src.__class__ is memory:
             _C_occa.copyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
         else:
             _C_occa.copyPtrToMem(dest.handle, src, bytes_, offset1)
     else:
-        if type(src) is memory:
+        if src.__class__ is memory:
             _C_occa.copyMemToPtr(dest, src.handle, bytes_, offset1)
         else:
             _C_occa.memcpy(dest, src, bytes_)
@@ -264,11 +267,17 @@ class kernel:
         argList = _C_occa.createArgumentList()
 
         for i in xrange(len(args)):
-            _C_occa.argumentListAddArg(argList, i, 0) # <>
+            arg = args[i]
+
+            if arg.__class__ is memory:
+                _C_occa.argumentListAddArg(argList, i, arg.handle)
+            else:
+                argType = getattr(_C_occa, nameof(arg))(arg)
+                _C_occa.argumentListAddArg(argList, i, argType)
 
         _C_occa.kernelRun(self.handle, argList)
 
-        _C_occa.argumenetListFree(argList)
+        _C_occa.argumentListFree(argList)
 
     def mode(self):
         return _C_occa.kernelMode(self.handle)

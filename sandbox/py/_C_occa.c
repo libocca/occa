@@ -13,6 +13,129 @@ static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args){
 }
 //======================================
 
+//---[ TypeCasting ]--------------------
+static PyObject* py_occaBool(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaChar((char) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaInt8(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaChar((char) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaUInt8(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaUChar((unsigned char) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaInt16(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaShort((short) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaUInt16(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaUShort((unsigned short) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaInt32(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaInt((int) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaUInt32(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaUInt((unsigned int) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaInt64(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaLong((long) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaUInt64(PyObject *self, PyObject *args){
+  size_t value;
+
+  if(!PyArg_ParseTuple(args, "n", &value))
+    return NULL;
+
+  occaType type = occaULong((unsigned long) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaFloat32(PyObject *self, PyObject *args){
+  double value;
+
+  if(!PyArg_ParseTuple(args, "d", &value))
+    return NULL;
+
+  occaType type = occaFloat((float) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+
+static PyObject* py_occaFloat64(PyObject *self, PyObject *args){
+  double value;
+
+  if(!PyArg_ParseTuple(args, "d", &value))
+    return NULL;
+
+  occaType type = occaDouble((double) value);
+
+  return PyLong_FromVoidPtr(type);
+}
+//======================================
+
 //----[ Background Device ]-------------
 //  |---[ Device ]----------------------
 static PyObject* py_occaSetDevice(PyObject *self, PyObject *args){
