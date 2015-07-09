@@ -191,11 +191,11 @@ static PyObject* py_occaBuildKernelFromString(PyObject *self, PyObject *args){
     return NULL;
 
   if(strcmp(language, "OFL") == 0)
-    kernel = occaBuildKernelFromSource(filename, functionName, kInfo, occaUsingOFL);
+    kernel = occaBuildKernelFromString(filename, functionName, kInfo, occaUsingOFL);
   else if(strcmp(language, "Native") == 0)
-    kernel = occaBuildKernelFromSource(filename, functionName, kInfo, occaUsingNative);
+    kernel = occaBuildKernelFromString(filename, functionName, kInfo, occaUsingNative);
   else
-    kernel = occaBuildKernelFromSource(filename, functionName, kInfo, occaUsingOKL);
+    kernel = occaBuildKernelFromString(filename, functionName, kInfo, occaUsingOKL);
 
   return PyLong_FromVoidPtr(kernel);
 }
