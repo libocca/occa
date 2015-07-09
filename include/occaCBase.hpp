@@ -42,19 +42,20 @@
 #endif
 
 #define OCCA_TYPE_MEMORY 0
-#define OCCA_TYPE_STRUCT 1
-#define OCCA_TYPE_INT    2
-#define OCCA_TYPE_UINT   3
-#define OCCA_TYPE_CHAR   4
-#define OCCA_TYPE_UCHAR  5
-#define OCCA_TYPE_SHORT  6
-#define OCCA_TYPE_USHORT 7
-#define OCCA_TYPE_LONG   8
-#define OCCA_TYPE_ULONG  9
-#define OCCA_TYPE_FLOAT  10
-#define OCCA_TYPE_DOUBLE 11
-#define OCCA_TYPE_STRING 12
-#define OCCA_TYPE_COUNT  13
+#define OCCA_TYPE_PTR    1
+#define OCCA_TYPE_STRUCT 2
+#define OCCA_TYPE_INT    3
+#define OCCA_TYPE_UINT   4
+#define OCCA_TYPE_CHAR   5
+#define OCCA_TYPE_UCHAR  6
+#define OCCA_TYPE_SHORT  7
+#define OCCA_TYPE_USHORT 8
+#define OCCA_TYPE_LONG   9
+#define OCCA_TYPE_ULONG  10
+#define OCCA_TYPE_FLOAT  11
+#define OCCA_TYPE_DOUBLE 12
+#define OCCA_TYPE_STRING 13
+#define OCCA_TYPE_COUNT  14
 
 #  ifdef __cplusplus
 extern "C" {

@@ -15,3 +15,7 @@ for i in xrange(entries):
     ab[i] = 0
 
 addVectors(entries, a, b, ab)
+
+occa.finish()
+
+print ab

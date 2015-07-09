@@ -144,7 +144,7 @@ class device:
             self.isAllocated = False
 
     def __del__(self):
-        self.free()
+        ;#self.free()
 
     def mode(self):
         return _C_occa.deviceMode(self.handle)

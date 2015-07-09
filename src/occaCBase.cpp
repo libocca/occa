@@ -79,7 +79,7 @@ extern "C" {
   occaType OCCA_RFUNC occaPtr(void *ptr){
     occaMemory_t *memory = new occaMemory_t();
 
-    memory->type    = OCCA_TYPE_MEMORY;
+    memory->type    = OCCA_TYPE_PTR;
     memory->mHandle = ptr;
 
     return (occaType) memory;
@@ -931,24 +931,28 @@ extern "C" {
 
     for(int i = 0; i < list_.argc; ++i){
       occaMemory_t &memory = *((occaMemory_t*) list_.argv[i]);
-      occa::memory memory_((occa::memory_v*) memory.mHandle);
 
       if(memory.type == OCCA_TYPE_MEMORY){
+        occa::memory memory_((occa::memory_v*) memory.mHandle);
+
         kernel_.addArgument(i, occa::kernelArg(memory_));
       }
-      else if(memory.type != OCCA_TYPE_STRUCT){
+      else {
         occaType_t &type_ = *((occaType_t*) list_.argv[i]);
 
-        kernel_.addArgument(i, occa::kernelArg(type_.value,
-                                               type_.bytes,
-                                               false));
-      }
-      else{ // (memory.type == OCCA_TYPE_STRUCT)
-        occaType_t &type_ = *((occaType_t*) list_.argv[i]);
-
-        kernel_.addArgument(i, occa::kernelArg(type_.value,
-                                               type_.bytes,
-                                               true));
+        if(memory.type == OCCA_TYPE_PTR){
+          kernel_.addArgument(i, occa::kernelArg(type_.value));
+        }
+        else if(memory.type != OCCA_TYPE_STRUCT){
+          kernel_.addArgument(i, occa::kernelArg(type_.value,
+                                                 type_.bytes,
+                                                 false));
+        }
+        else{ // (memory.type == OCCA_TYPE_STRUCT)
+          kernel_.addArgument(i, occa::kernelArg(type_.value,
+                                                 type_.bytes,
+                                                 true));
+        }
       }
     }
 
