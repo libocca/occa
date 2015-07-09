@@ -103,17 +103,6 @@ static PyObject* py_occaFinish(PyObject *self, PyObject *args){
   return Py_None;
 }
 
-/* static PyObject* py_occaWaitFor(PyObject *self, PyObject *args){ */
-/*   occaStreamTag tag; */
-
-/*   if(!PyArg_ParseTuple(args, "n", &tag)) */
-/*     return NULL; */
-
-/*   occaWaitFor(tag); */
-
-/*   return Py_None; */
-/* } */
-
 static PyObject* py_occaCreateStream(PyObject *self, PyObject *args){
   occaStream stream = occaCreateStream();
 
@@ -148,13 +137,6 @@ static PyObject* py_occaWrapStream(PyObject *self, PyObject *args){
 
   return PyLong_FromVoidPtr(stream);
 }
-
-/* static PyObject* py_occaTagStream(PyObject *self, PyObject *args){ */
-/*   occaStreamTag tag = occaTagStream(); */
-
-/*   return PyLong_FromVoidPtr(tag); */
-/* } */
-
 //  |===================================
 
 //  |---[ Kernel ]----------------------
@@ -531,57 +513,89 @@ static PyObject* py_occaDeviceBuildKernelFromFloopy(PyObject *self, PyObject *ar
 }
 
 static PyObject* py_occaDeviceMalloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  size_t entries;
+  int typeSize;
+
+  if(!PyArg_ParseTuple(args, "nni", &device, &entries, &typeSize))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  occaMemory memory = occaDeviceMalloc(device, bytes, NULL);
+
+  return PyLong_FromVoidPtr(memory);
 }
 
 static PyObject* py_occaDeviceManagedAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  size_t entries;
+  int typeSize, typenum;
+
+  if(!PyArg_ParseTuple(args, "nnii", &device, &entries, &typeSize, &typenum))
     return NULL;
 
-  return Py_None;
-}
+  const size_t bytes = (entries * typeSize);
 
-static PyObject* py_occaDeviceUvaAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  int nd         = 1;
+  npy_intp *dims = (npy_intp*) malloc(1*sizeof(npy_intp));
+  dims[0]        = entries;
+  void *data     = occaManagedAlloc(bytes, NULL);
 
-  return Py_None;
-}
-
-static PyObject* py_occaDeviceManagedUvaAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
-
-  return Py_None;
+  return PyArray_SimpleNewFromData(nd, dims, typenum, data);
 }
 
 static PyObject* py_occaDeviceMappedAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  size_t entries;
+  int typeSize;
+
+  if(!PyArg_ParseTuple(args, "nni", &device, &entries, &typeSize))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  occaMemory memory = occaDeviceMappedAlloc(device, bytes, NULL);
+
+  return PyLong_FromVoidPtr(memory);
 }
 
 static PyObject* py_occaDeviceManagedMappedAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  size_t entries;
+  int typeSize, typenum;
+
+  if(!PyArg_ParseTuple(args, "nnii", &device, &entries, &typeSize, &typenum))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  int nd         = 1;
+  npy_intp *dims = (npy_intp*) malloc(1*sizeof(npy_intp));
+  dims[0]        = entries;
+  void *data     = occaDeviceManagedMappedAlloc(device, bytes, NULL);
+
+  return PyArray_SimpleNewFromData(nd, dims, typenum, data);
 }
 
 static PyObject* py_occaDeviceFlush(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
+
+  occaDeviceFlush(device);
 
   return Py_None;
 }
 
 static PyObject* py_occaDeviceFinish(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
+
+  occaDeviceFinish(device);
 
   return Py_None;
 }
@@ -610,27 +624,6 @@ static PyObject* py_occaDeviceSetStream(PyObject *self, PyObject *args){
 
   return Py_None;
 }
-
-/* static PyObject* py_occaDeviceTagStream(PyObject *self, PyObject *args){ */
-/*   if(!PyArg_ParseTuple(args, "")) */
-/*     return NULL; */
-
-/*   return Py_None; */
-/* } */
-
-/* static PyObject* py_occaDeviceWaitForTag(PyObject *self, PyObject *args){ */
-/*   if(!PyArg_ParseTuple(args, "")) */
-/*     return NULL; */
-
-/*   return Py_None; */
-/* } */
-
-/* static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args){ */
-/*   if(!PyArg_ParseTuple(args, "")) */
-/*     return NULL; */
-
-/*   return Py_None; */
-/* } */
 
 static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args){
   if(!PyArg_ParseTuple(args, ""))

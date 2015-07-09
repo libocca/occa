@@ -38,7 +38,7 @@ static PyObject* py_occaWrapStream(PyObject *self, PyObject *args);
 //  |===================================
 
 //  |---[ Kernel ]----------------------
-static PyObject* py_occaBuildKernel(PyObject *self, PyObject *args); // x
+static PyObject* py_occaBuildKernel(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromSource(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromString(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromBinary(PyObject *self, PyObject *args);
@@ -51,7 +51,7 @@ static PyObject* py_occaWrapMemory(PyObject *self, PyObject *args);
 static PyObject* py_occaWrapManagedMemory(PyObject *self, PyObject *args);
 
 static PyObject* py_occaMalloc(PyObject *self, PyObject *args);
-static PyObject* py_occaManagedAlloc(PyObject *self, PyObject *args); // x
+static PyObject* py_occaManagedAlloc(PyObject *self, PyObject *args);
 
 static PyObject* py_occaMappedAlloc(PyObject *self, PyObject *args);
 static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args);
@@ -105,7 +105,7 @@ static PyObject* py_occaDeviceSetStream(PyObject *self, PyObject *args);
 // static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceFree(PyObject *self, PyObject *args); // x
+static PyObject* py_occaDeviceFree(PyObject *self, PyObject *args);
 //======================================
 
 //---[ Kernel ]-------------------------
@@ -125,7 +125,7 @@ static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args);
 static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args);
 static PyObject* py_occaKernelInfoAddInclude(PyObject *self, PyObject *args);
 
-static PyObject* py_occaKernelFree(PyObject *self, PyObject *args); // x
+static PyObject* py_occaKernelFree(PyObject *self, PyObject *args);
 //======================================
 
 //---[ Memory ]-------------------------
@@ -145,7 +145,7 @@ static PyObject* py_occaAsyncCopyMemToMem(PyObject *self, PyObject *args);
 static PyObject* py_occaAsyncCopyPtrToMem(PyObject *self, PyObject *args);
 static PyObject* py_occaAsyncCopyMemToPtr(PyObject *self, PyObject *args);
 
-static PyObject* py_occaMemoryFree(PyObject *self, PyObject *args); // x
+static PyObject* py_occaMemoryFree(PyObject *self, PyObject *args);
 //======================================
 
 // Init stuff
