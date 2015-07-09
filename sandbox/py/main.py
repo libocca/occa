@@ -1,5 +1,6 @@
 import _C_occa
 import numpy as np
+import weakref
 
 #---[ Setup ]---------------------------
 def sizeof(npType):
@@ -32,8 +33,9 @@ class device:
         self.isAllocated = False
 
     def free(self):
+        import _C_occa
         if self.isAllocated:
-            _C_.occa.deviceFree(self.handle)
+            _C_occa.deviceFree(self.handle)
             self.isAllocated = False
 
     def __del__(self):
@@ -51,8 +53,9 @@ class kernel:
         self.isAllocated = True
 
     def free(self):
+        import _C_occa
         if self.isAllocated:
-            _C_.occa.kernelFree(self.handle)
+            _C_occa.kernelFree(self.handle)
             self.isAllocated = False
 
     def __del__(self):
@@ -76,8 +79,9 @@ class memory:
         self.isAllocated = False
 
     def free(self):
+        import _C_occa
         if self.isAllocated:
-            _C_.occa.memoryFree(self.handle)
+            _C_occa.memoryFree(self.handle)
             self.isAllocated = False
 
     def __del__(self):
