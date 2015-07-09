@@ -1,0 +1,2 @@
+_C_occa.so: _C_occa.c
+	clang -shared -fPIC _C_occa.c -o _C_occa.so -I/System/Library/Frameworks/Python.framework//Versions/2.7/include/python2.7/ -I/System/Library/Frameworks/Python.framework//Versions/2.7/Extras/lib/python/numpy/core/include/ -framework Python

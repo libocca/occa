@@ -1,5 +1,4 @@
-import numpy as np
-from np import np.npy_intp as npIntP
+import  numpy as np
 
 import ctypes
 from ctypes import c_bool   as cBool
@@ -11,16 +10,30 @@ from ctypes import c_double as cDouble
 from ctypes import c_size_t as cSizeT
 from ctypes import c_void_p as cVoidP
 
-libocca = None
+libocca       = None
+typeToNpyType = {}
 
 #---[ Setup ]---------------------------
 def loadLibrary():
     global libocca
+    global typeToNpyType
 
     if libocca:
         return
 
     libocca = ctypes.CDLL('libocca.so')
+
+    typeToNpyType = {'bool'   : np.NPY_BOOL   ,\
+                     'int8'   : np.NPY_INT8   ,\
+                     'int16'  : np.NPY_INT16  ,\
+                     'int32'  : np.NPY_INT32  ,\
+                     'int64'  : np.NPY_INT64  ,\
+                     'uInt8'  : np.NPY_UINT8  ,\
+                     'uInt16' : np.NPY_UINT16 ,\
+                     'uInt32' : np.NPY_UINT32 ,\
+                     'uInt64' : np.NPY_UINT64 ,\
+                     'float32': np.NPY_FLOAT32,\
+                     'float64': np.NPY_FLOAT64}
 
     setupFunction(cVoidP, "occaBuildKernel")
     setupFunction(cVoidP, "occaManagedAlloc")
@@ -65,6 +78,9 @@ def occaCast(arg):
 
 def sizeof(t):
     return np.dtype(t).itemsize
+
+def nameof(t):
+    return np.dtype(t).name
 #=======================================
 
 #----[ Background Device ]--------------
@@ -82,19 +98,23 @@ def buildKernel(filename, functionName, info = None):
 #  |====================================
 
 #---[ Memory ]--------------------------
-def managedAlloc(bytes_, source = None):
+def managedAlloc(type_, bytes_, source = None):
     global libocca
+    global typeToNpyType
     loadLibrary()
 
     ptr = cVoidP(libocca.occaManagedAlloc(cSizeT(bytes_),
                                           source))
 
     cdef int cBytes = bytes_
-    cdef npIntP shape[1]
+    cdef np.npy_intp shape[1]
 
-    # shape[0] = <
+    shape[0] = <np.npy_intp> cBytes
 
-    return np.PyArray_SimpleNewFromData(1,
+    return np.PyArray_SimpleNewFromData(1,                           \
+                                        shape,                       \
+                                        typeToNpyType[nameof(type_)],\
+                                        <void*> ptr)
 
 #  |====================================
 #=======================================
@@ -179,4 +199,6 @@ class memory:
 # addVectors = buildKernel('addVectors.okl', 'addVectors')
 # addVectors([cInt(entries)])
 
-managedAlloc(5*sizeof(float))
+# managedAlloc(5*sizeof(float))
+
+print np.dtype(np.float32).name
