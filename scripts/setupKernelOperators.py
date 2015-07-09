@@ -349,6 +349,10 @@ def cOperatorDefinition(N):
             '          occa::memory memory_((occa::memory_v*) memory.mHandle);\n' + \
             '          kernel_.addArgument(i, occa::kernelArg(memory_));\n'       + \
             '        }\n'                                                         + \
+            '        else if(memory.type == OCCA_TYPE_PTR){\n'                    + \
+            '          occa::memory memory_((void*) memory.mHandle);\n'           + \
+            '          kernel_.addArgument(i, occa::kernelArg(memory_));\n'       + \
+            '        }\n'                                                         + \
             '        else{\n'                                                     + \
             '          occaType_t &type_ = *((occaType_t*) args[i]);\n'           + \
             '          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));\n' + \
