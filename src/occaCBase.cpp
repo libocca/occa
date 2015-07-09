@@ -198,8 +198,8 @@ extern "C" {
   //====================================
 
 
-  //---[ Hidden-Device Calls ]----------
-  //  |---[ Device Functions ]----------
+  //---[ Background Device ]------------
+  //  |---[ Device ]--------------------
   void OCCA_RFUNC occaSetDevice(occaDevice device){
     occa::device device_((occa::device_v*) device);
 
@@ -298,8 +298,9 @@ extern "C" {
 
     return newTag;
   }
+  //  |=================================
 
-  //  |---[ Kernel Functions ]----------
+  //  |---[ Kernel ]--------------------
   occaKernel OCCA_RFUNC occaBuildKernel(const char *str,
                                         const char *functionName,
                                         occaKernelInfo info){
@@ -401,8 +402,9 @@ extern "C" {
 
     return (occaKernel) kernel.getKHandle();
   }
+  //  |=================================
 
-  //  |---[ Memory Functions ]----------
+  //  |---[ Memory ]--------------------
   occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
                                        const uintptr_t bytes){
     occa::memory memory_ = occa::wrapMemory(handle_, bytes);
@@ -463,6 +465,7 @@ extern "C" {
 
     return occa::managedMappedAlloc(bytes, src);
   }
+  //  |=================================
   //====================================
 
 

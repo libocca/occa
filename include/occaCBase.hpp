@@ -82,7 +82,7 @@ extern "C" {
     uintptr_t x, y, z;
   } occaDim;
 
-  //---[ Globals & Flags ]------------
+  //---[ Globals & Flags ]--------------
   extern OCCA_LFUNC occaKernelInfo occaNoKernelInfo;
 
   extern OCCA_LFUNC const uintptr_t occaAutoSize;
@@ -93,7 +93,7 @@ extern "C" {
   extern OCCA_LFUNC const int occaUsingNative;
 
   OCCA_LFUNC void OCCA_RFUNC occaSetVerboseCompilation(const int value);
-  //==================================
+  //====================================
 
 
   //---[ TypeCasting ]------------------
@@ -118,8 +118,8 @@ extern "C" {
   //====================================
 
 
-  //---[ Hidden-Device Calls ]----------
-  //  |---[ Device Functions ]----------
+  //---[ Background Device ]------------
+  //  |---[ Device ]--------------------
   OCCA_LFUNC void OCCA_RFUNC occaSetDevice(occaDevice device);
   OCCA_LFUNC void OCCA_RFUNC occaSetDeviceFromInfo(const char *infos);
 
@@ -144,8 +144,9 @@ extern "C" {
   OCCA_LFUNC occaStream OCCA_RFUNC occaWrapStream(void *handle_);
 
   OCCA_LFUNC occaStreamTag OCCA_RFUNC occaTagStream();
+  //  |=================================
 
-  //  |---[ Kernel Functions ]----------
+  //  |---[ Kernel ]--------------------
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernel(const char *str,
                                                    const char *functionName,
                                                    occaKernelInfo info);
@@ -169,8 +170,9 @@ extern "C" {
   OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromFloopy(const char *filename,
                                                              const char *functionName,
                                                              occaKernelInfo info);
+  //  |=================================
 
-  //  |---[ Memory Functions ]----------
+  //  |---[ Memory ]--------------------
   OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
                                                   const uintptr_t bytes);
 
@@ -194,6 +196,7 @@ extern "C" {
 
   OCCA_LFUNC void* OCCA_RFUNC occaManagedMappedAlloc(const uintptr_t bytes,
                                                      void *src);
+  //  |=================================
   //====================================
 
 
