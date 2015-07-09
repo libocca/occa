@@ -53,9 +53,6 @@ static PyObject* py_occaWrapManagedMemory(PyObject *self, PyObject *args);
 static PyObject* py_occaMalloc(PyObject *self, PyObject *args);
 static PyObject* py_occaManagedAlloc(PyObject *self, PyObject *args); // x
 
-static PyObject* py_occaUvaAlloc(PyObject *self, PyObject *args);
-static PyObject* py_occaManagedUvaAlloc(PyObject *self, PyObject *args);
-
 static PyObject* py_occaMappedAlloc(PyObject *self, PyObject *args);
 static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args);
 //  |===================================
@@ -87,9 +84,6 @@ static PyObject* py_occaDeviceBuildKernelFromFloopy(PyObject *self, PyObject *ar
 
 static PyObject* py_occaDeviceMalloc(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceManagedAlloc(PyObject *self, PyObject *args);
-
-static PyObject* py_occaDeviceUvaAlloc(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceManagedUvaAlloc(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceMappedAlloc(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceManagedMappedAlloc(PyObject *self, PyObject *args);
@@ -200,9 +194,6 @@ static PyMethodDef _C_occaMethods[] = {
   {"malloc"      , py_occaMalloc      , METH_VARARGS},
   {"managedAlloc", py_occaManagedAlloc, METH_VARARGS},
 
-  {"uvaAlloc"       , py_occaUvaAlloc       , METH_VARARGS},
-  {"managedUvaAlloc", py_occaManagedUvaAlloc, METH_VARARGS},
-
   {"mappedAlloc"       , py_occaMappedAlloc       , METH_VARARGS},
   {"managedMappedAlloc", py_occaManagedMappedAlloc, METH_VARARGS},
   //  |=================================
@@ -234,9 +225,6 @@ static PyMethodDef _C_occaMethods[] = {
 
   {"deviceMalloc"      , py_occaDeviceMalloc      , METH_VARARGS},
   {"deviceManagedAlloc", py_occaDeviceManagedAlloc, METH_VARARGS},
-
-  {"deviceUvaAlloc"       , py_occaDeviceUvaAlloc       , METH_VARARGS},
-  {"deviceManagedUvaAlloc", py_occaDeviceManagedUvaAlloc, METH_VARARGS},
 
   {"deviceMappedAlloc"       , py_occaDeviceMappedAlloc       , METH_VARARGS},
   {"deviceManagedMappedAlloc", py_occaDeviceManagedMappedAlloc, METH_VARARGS},

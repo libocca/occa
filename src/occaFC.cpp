@@ -320,26 +320,6 @@ extern "C" {
   //   *mem = occaDeviceManagedAlloc(*device, *bytes, NULL);
   // }
 
-  // void OCCADEVICEUVAALLOC_FC(void **ptr, occaDevice *device,
-  //                            int64_t *bytes, void *source){
-  //   *ptr = occaDeviceUvaAlloc(*device, *bytes, source);
-  // }
-
-  // void OCCADEVICEUVAALLOCNULL_FC(void **ptr, occaDevice *device,
-  //                                int64_t *bytes){
-  //   *ptr = occaDeviceUvaAlloc(*device, *bytes, NULL);
-  // }
-
-  // void OCCADEVICEMANAGEDUVAALLOC_FC(void **ptr, occaDevice *device,
-  //                                   int64_t *bytes, void *source){
-  //   *ptr = occaDeviceManagedUvaAlloc(*device, *bytes, source);
-  // }
-
-  // void OCCADEVICEMANAGEDUVAALLOCNULL_FC(void **ptr, occaDevice *device,
-  //                                       int64_t *bytes){
-  //   *ptr = occaDeviceManagedUvaAlloc(*device, *bytes, NULL);
-  // }
-
   void OCCADEVICETEXTUREALLOC_FC(occaMemory *mem,
                                  int32_t    *dim,
                                  int64_t    *dimX, int64_t *dimY, int64_t *dimZ,

@@ -185,12 +185,6 @@ extern "C" {
   OCCA_LFUNC void* OCCA_RFUNC occaManagedAlloc(const uintptr_t bytes,
                                                void *src);
 
-  OCCA_LFUNC void* OCCA_RFUNC occaUvaAlloc(const uintptr_t bytes,
-                                           void *src);
-
-  OCCA_LFUNC void* OCCA_RFUNC occaManagedUvaAlloc(const uintptr_t bytes,
-                                                  void *src);
-
   OCCA_LFUNC occaMemory OCCA_RFUNC occaMappedAlloc(const uintptr_t bytes,
                                                    void *src);
 
@@ -269,14 +263,6 @@ extern "C" {
   OCCA_LFUNC void* OCCA_RFUNC occaDeviceManagedAlloc(occaDevice device,
                                                      uintptr_t bytes,
                                                      void *src);
-
-  OCCA_LFUNC void* OCCA_RFUNC occaDeviceUvaAlloc(occaDevice device,
-                                                 uintptr_t bytes,
-                                                 void *src);
-
-  OCCA_LFUNC void* OCCA_RFUNC occaDeviceManagedUvaAlloc(occaDevice device,
-                                                        uintptr_t bytes,
-                                                        void *src);
 
   OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMappedAlloc(occaDevice device,
                                                          uintptr_t bytes,

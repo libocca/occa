@@ -1515,12 +1515,6 @@ namespace occa {
     void* managedAlloc(const uintptr_t bytes,
                        void *src = NULL);
 
-    void* uvaAlloc(const uintptr_t bytes,
-                   void *src = NULL);
-
-    void* managedUvaAlloc(const uintptr_t bytes,
-                          void *src = NULL);
-
     memory textureAlloc(const int dim, const occa::dim &dims,
                         void *src,
                         occa::formatType type, const int permissions = readWrite);
@@ -1632,12 +1626,6 @@ namespace occa {
 
   void* managedAlloc(const uintptr_t bytes,
                      void *src = NULL);
-
-  void* uvaAlloc(const uintptr_t bytes,
-                 void *src = NULL);
-
-  void* managedUvaAlloc(const uintptr_t bytes,
-                        void *src = NULL);
 
   memory textureAlloc(const int dim, const occa::dim &dims,
                       void *src,

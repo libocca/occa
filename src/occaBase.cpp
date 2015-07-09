@@ -1810,24 +1810,6 @@ namespace occa {
     return mem.mHandle->uvaPtr;
   }
 
-  void* device::uvaAlloc(const uintptr_t bytes,
-                         void *src){
-    memory mem = malloc(bytes, src);
-
-    mem.placeInUva();
-
-    return mem.mHandle->uvaPtr;
-  }
-
-  void* device::managedUvaAlloc(const uintptr_t bytes,
-                                void *src){
-    memory mem = malloc(bytes, src);
-
-    mem.manage();
-
-    return mem.mHandle->uvaPtr;
-  }
-
   memory device::textureAlloc(const int dim, const occa::dim &dims,
                               void *src,
                               occa::formatType type, const int permissions){
@@ -2129,18 +2111,6 @@ namespace occa {
                      void *src){
 
     return currentDevice.managedAlloc(bytes, src);
-  }
-
-  void* uvaAlloc(const uintptr_t bytes,
-                 void *src){
-
-    return currentDevice.uvaAlloc(bytes, src);
-  }
-
-  void* managedUvaAlloc(const uintptr_t bytes,
-                        void *src){
-
-    return currentDevice.managedUvaAlloc(bytes, src);
   }
 
   memory textureAlloc(const int dim, const occa::dim &dims,

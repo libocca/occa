@@ -239,24 +239,47 @@ static PyObject* py_occaBuildKernelFromFloopy(PyObject *self, PyObject *args){
 
 //  |---[ Memory ]----------------------
 static PyObject* py_occaWrapMemory(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  void *handle;
+  size_t entries;
+  int typeSize;
+
+  if(!PyArg_ParseTuple(args, "nni", &handle, &entries, &typeSize))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  occaMemory memory = occaWrapMemory(handle, bytes);
+
+  return PyLong_FromVoidPtr(memory);
 }
 
 static PyObject* py_occaWrapManagedMemory(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  void *handle;
+  size_t entries;
+  int typeSize;
+
+  if(!PyArg_ParseTuple(args, "nni", &handle, &entries, &typeSize))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  occaMemory ptr = occaWrapManagedMemory(handle, bytes);
+
+  return PyLong_FromVoidPtr(ptr);
 }
 
 static PyObject* py_occaMalloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  size_t entries;
+  int typeSize;
+
+  if(!PyArg_ParseTuple(args, "ni", &entries, &typeSize))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  occaMemory memory = occaMalloc(bytes, NULL);
+
+  return PyLong_FromVoidPtr(memory);
 }
 
 static PyObject* py_occaManagedAlloc(PyObject *self, PyObject *args){
@@ -276,34 +299,36 @@ static PyObject* py_occaManagedAlloc(PyObject *self, PyObject *args){
   return PyArray_SimpleNewFromData(nd, dims, typenum, data);
 }
 
-static PyObject* py_occaUvaAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
-
-  return Py_None;
-}
-
-static PyObject* py_occaManagedUvaAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
-
-  return Py_None;
-}
-
 static PyObject* py_occaMappedAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  size_t entries;
+  int typeSize;
+
+  if(!PyArg_ParseTuple(args, "ni", &entries, &typeSize))
     return NULL;
 
-  return Py_None;
+  const size_t bytes = (entries * typeSize);
+
+  occaMemory memory = occaMappedAlloc(bytes, NULL);
+
+  return PyLong_FromVoidPtr(memory);
 }
 
 static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  size_t entries;
+  int typeSize, typenum;
+
+  if(!PyArg_ParseTuple(args, "nii", &entries, &typeSize, &typenum))
     return NULL;
 
-  return Py_None;
-}
+  const size_t bytes = (entries * typeSize);
 
+  int nd         = 1;
+  npy_intp *dims = (npy_intp*) malloc(1*sizeof(npy_intp));
+  dims[0]        = entries;
+  void *data     = occaManagedMappedAlloc(bytes, NULL);
+
+  return PyArray_SimpleNewFromData(nd, dims, typenum, data);
+}
 //  |===================================
 //======================================
 
