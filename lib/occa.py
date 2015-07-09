@@ -103,6 +103,18 @@ def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
         else:
             _C_occa.memcpy(dest, src, bytes_)
 
+def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
+    if dest.__class__ is memory:
+        if src.__class__ is memory:
+            _C_occa.asyncCopyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
+        else:
+            _C_occa.asyncCopyPtrToMem(dest.handle, src, bytes_, offset1)
+    else:
+        if src.__class__ is memory:
+            _C_occa.asyncCopyMemToPtr(dest, src.handle, bytes_, offset1)
+        else:
+            _C_occa.asyncMemcpy(dest, src, bytes_)
+
 def wrapMemory(handle, entries, type_):
     return memory(_C_occa.wrapMemory(handle, entries, sizeof(type_)))
 
@@ -132,8 +144,12 @@ class device:
         self.handle      = 0
         self.isAllocated = False
 
-    def __init__(self, handle_):
-        self.handle      = handle_
+    def __init__(self, arg):
+        if isinstance(arg, basestring):
+            self.handle = _C_occa.createDevice(arg)
+        else:
+            self.handle = handle_
+
         self.isAllocated = True
 
     def free(self):
@@ -341,4 +357,17 @@ class memory:
 
     def getTextureHandle(self):
         return _C_occa.memoryGetTextureHandle(self.handle)
+
+    def copyFrom(self, src, bytes_ = 0, offset1 = 0, offset2 = 0):
+        memcpy(self, src, bytes_, offset1, offset2)
+
+    def copyTo(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
+        memcpy(dest, self, bytes_, offset1, offset2)
+
+    def asyncCopyFrom(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
+        asyncMemcpy(self, src, bytes_, offset1, offset2)
+
+    def asyncCopyTo(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
+        asyncMemcpy(dest, self, bytes_, offset1, offset2)
+
 #=======================================

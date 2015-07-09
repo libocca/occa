@@ -154,6 +154,7 @@ static PyObject* py_occaMemoryGetMappedPointer(PyObject *self, PyObject *args);
 static PyObject* py_occaMemoryGetTextureHandle(PyObject *self, PyObject *args);
 
 static PyObject* py_occaMemcpy(PyObject *self, PyObject *args);
+static PyObject* py_occaAsyncMemcpy(PyObject *self, PyObject *args);
 
 static PyObject* py_occaCopyMemToMem(PyObject *self, PyObject *args);
 static PyObject* py_occaCopyPtrToMem(PyObject *self, PyObject *args);
@@ -317,7 +318,8 @@ static PyMethodDef _C_occaMethods[] = {
   {"memoryGetMappedPointer", py_occaMemoryGetMappedPointer, METH_VARARGS},
   {"memoryGetTextureHandle", py_occaMemoryGetTextureHandle, METH_VARARGS},
 
-  {"memcpy", py_occaMemcpy, METH_VARARGS},
+  {"memcpy"     , py_occaMemcpy     , METH_VARARGS},
+  {"asyncMemcpy", py_occaAsyncMemcpy, METH_VARARGS},
 
   {"copyMemToMem", py_occaCopyMemToMem, METH_VARARGS},
   {"copyPtrToMem", py_occaCopyPtrToMem, METH_VARARGS},

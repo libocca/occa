@@ -1003,6 +1003,18 @@ static PyObject* py_occaMemcpy(PyObject *self, PyObject *args){
   return Py_None;
 }
 
+static PyObject* py_occaAsyncMemcpy(PyObject *self, PyObject *args){
+  void *dest, *str;
+  size_t bytes;
+
+  if(!PyArg_ParseTuple(args, "nnn", &dest, &str, &bytes))
+    return NULL;
+
+  occaAsyncMemcpy(dest, str, bytes);
+
+  return Py_None;
+}
+
 static PyObject* py_occaCopyMemToMem(PyObject *self, PyObject *args){
   occaMemory dest, src;
   size_t bytes, destOffset, srcOffset;

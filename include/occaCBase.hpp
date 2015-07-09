@@ -406,6 +406,9 @@ extern "C" {
   OCCA_LFUNC void OCCA_RFUNC occaMemcpy(void *dest, void *src,
                                         const uintptr_t bytes);
 
+  OCCA_LFUNC void OCCA_RFUNC occaAsyncMemcpy(void *dest, void *src,
+                                             const uintptr_t bytes);
+
   OCCA_LFUNC void OCCA_RFUNC occaCopyMemToMem(occaMemory dest, occaMemory src,
                                               const uintptr_t bytes,
                                               const uintptr_t destOffset,

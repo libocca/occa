@@ -1077,6 +1077,12 @@ extern "C" {
     occa::memcpy(dest, src, bytes, occa::autoDetect);
   }
 
+  void OCCA_RFUNC occaAsyncMemcpy(void *dest, void *src,
+                                  const uintptr_t bytes){
+
+    occa::asyncMemcpy(dest, src, bytes, occa::autoDetect);
+  }
+
   void OCCA_RFUNC occaCopyMemToMem(occaMemory dest, occaMemory src,
                                    const uintptr_t bytes,
                                    const uintptr_t destOffset,
