@@ -334,17 +334,15 @@ static PyObject* py_occaManagedMappedAlloc(PyObject *self, PyObject *args){
 
 //---[ Device ]-------------------------
 static PyObject* py_occaPrintAvailableDevices(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaPrintAvailableDevices();
 
   return Py_None;
 }
 
 static PyObject* py_occaCreateDeviceInfo(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaDeviceInfo dInfo = occaCreateDeviceInfo();
 
-  return Py_None;
+  return PyLong_FromVoidPtr(dInfo);
 }
 
 static PyObject* py_occaDeviceInfoAppend(PyObject *self, PyObject *args){
@@ -369,17 +367,25 @@ static PyObject* py_occaDeviceInfoFree(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaCreateDevice(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *infos;
+
+  if(!PyArg_ParseTuple(args, "s", &infos))
     return NULL;
 
-  return Py_None;
+  occaDevice device = occaCreateDevice(infos);
+
+  return PyLong_FromVoidPtr(device);
 }
 
 static PyObject* py_occaCreateDeviceFromInfo(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDeviceInfo dInfo;
+
+  if(!PyArg_ParseTuple(args, "n", &dInfo))
     return NULL;
 
-  return Py_None;
+  occaDevice device = occaCreateDeviceFromInfo(dInfo);
+
+  return PyLong_FromVoidPtr(device);
 }
 
 static PyObject* py_occaDeviceMode(PyObject *self, PyObject *args){
@@ -509,10 +515,14 @@ static PyObject* py_occaDeviceFinish(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaDeviceCreateStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
 
-  return Py_None;
+  occaStream stream = occaDeviceCreateStream(device);
+
+  return PyLong_FromVoidPtr(device);
 }
 
 static PyObject* py_occaDeviceGetStream(PyObject *self, PyObject *args){
@@ -592,10 +602,9 @@ static PyObject* py_occaKernelGetDevice(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaCreateArgumentList(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaArgumentList argList = occaCreateArgumentList();
 
-  return Py_None;
+  return PyLong_FromVoidPtr(argList);
 }
 
 static PyObject* py_occaArgumentListClear(PyObject *self, PyObject *args){
@@ -627,10 +636,9 @@ static PyObject* py_occaKernelRun_(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaKernelInfo kInfo = occaCreateKernelInfo();
 
-  return Py_None;
+  return PyLong_FromVoidPtr(kInfo);
 }
 
 static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args){
