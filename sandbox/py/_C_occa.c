@@ -169,39 +169,70 @@ static PyObject* py_occaBuildKernel(PyObject *self, PyObject *args){
 
   return PyLong_FromVoidPtr(kernel);
 }
+
 static PyObject* py_occaBuildKernelFromSource(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *filename, *functionName;
+  occaKernelInfo *kInfo;
+
+  if(!PyArg_ParseTuple(args, "ssn", &filename, &functionName, &kInfo))
     return NULL;
 
-  return Py_None;
+  occaKernel kernel = occaBuildKernelFromSource(filename, functionName, kInfo);
+
+  return PyLong_FromVoidPtr(kernel);
 }
 
 static PyObject* py_occaBuildKernelFromString(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *filename, *functionName, *language;
+  occaKernelInfo *kInfo;
+  occaKernel kernel;
+
+  if(!PyArg_ParseTuple(args, "sssn", &filename, &functionName, &kInfo, &language))
     return NULL;
 
-  return Py_None;
+  if(strcmp(language, "OFL") == 0)
+    kernel = occaBuildKernelFromSource(filename, functionName, kInfo, occaUsingOFL);
+  else if(strcmp(language, "Native") == 0)
+    kernel = occaBuildKernelFromSource(filename, functionName, kInfo, occaUsingNative);
+  else
+    kernel = occaBuildKernelFromSource(filename, functionName, kInfo, occaUsingOKL);
+
+  return PyLong_FromVoidPtr(kernel);
 }
 
 static PyObject* py_occaBuildKernelFromBinary(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *filename, *functionName;
+
+  if(!PyArg_ParseTuple(args, "ss", &filename, &functionName))
     return NULL;
 
-  return Py_None;
+  occaKernel kernel = occaBuildKernelFromBinary(filename, functionName);
+
+  return PyLong_FromVoidPtr(kernel);
 }
 
 static PyObject* py_occaBuildKernelFromLoopy(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *filename, *functionName;
+  occaKernelInfo *kInfo;
+
+  if(!PyArg_ParseTuple(args, "ssn", &filename, &functionName, &kInfo))
     return NULL;
 
-  return Py_None;
+  occaKernel kernel = occaBuildKernelFromLoopy(filename, functionName, kInfo);
+
+  return PyLong_FromVoidPtr(kernel);
 }
 
 static PyObject* py_occaBuildKernelFromFloopy(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *filename, *functionName;
+  occaKernelInfo *kInfo;
+
+  if(!PyArg_ParseTuple(args, "ssn", &filename, &functionName, &kInfo))
     return NULL;
 
-  return Py_None;
+  occaKernel kernel = occaBuildKernelFromFloopy(filename, functionName, kInfo);
+
+  return PyLong_FromVoidPtr(kernel);
 }
 
 //  |===================================
