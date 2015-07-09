@@ -64,22 +64,27 @@ def wrapStream(handle):
 
 #  |---[ Kernel ]-----------------------
 def buildKernel(str_, functionName, kInfo = 0):
-    return kernel(_C_occa.buildKernel(filename, functionName, info))
+    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+    return kernel(_C_occa.buildKernel(filename, functionName, kInfo_))
 
 def buildKernelFromSource(filename, functionName, kInfo = 0):
-    return kernel(_C_occa.buildKernelFromSource(filename, functionName, info))
+    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+    return kernel(_C_occa.buildKernelFromSource(filename, functionName, kInfo_))
 
 def buildKernelFromString(source, functionName, kInfo = 0, language = "OKL"):
+    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
     return kernel(_C_occa.buildKernelFromString(source, functionName, kInfo, language))
 
 def buildKernelFromBinary(binary, functionName):
     return kernel(_C_occa.buildKernelFromBinary(filename, functionName))
 
 def buildKernelFromLoopy(filename, functionName, kInfo = 0):
-    return kernel(_C_occa.buildKernelFromLoopy(filename, functionName, info))
+    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+    return kernel(_C_occa.buildKernelFromLoopy(filename, functionName, kInfo_))
 
-def buildKernelFromFloopy():
-    return kernel(_C_occa.buildKernelFromFloopy(filename, functionName, info))
+def buildKernelFromFloopy(filename, functionName, kInfo = 0):
+    kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+    return kernel(_C_occa.buildKernelFromFloopy(filename, functionName, kInfo_))
 #  |====================================
 
 #  |---[ Memory ]-----------------------
@@ -163,22 +168,27 @@ class device:
         return _C_occa.bytesAllocated(self.handle)
 
     def buildKernel(self, str_, functionName, kInfo = 0):
-        return kernel(_C_occa.deviceBuildKernel(self.handle, str_, functionName, kInfo))
+        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+        return kernel(_C_occa.deviceBuildKernel(self.handle, str_, functionName, kInfo_))
 
     def buildKernelFromSource(self, filename, functionName, kInfo = 0):
-        return kernel(_C_occa.deviceBuildKernelFromSource(self.handle, filename, functionName, kInfo))
+        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+        return kernel(_C_occa.deviceBuildKernelFromSource(self.handle, filename, functionName, kInfo_))
 
     def buildKernelFromString(self, source, functionName, kInfo = 0):
-        return kernel(_C_occa.deviceBuildKernelFromString(self.handle, source, functionName, kInfo))
+        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+        return kernel(_C_occa.deviceBuildKernelFromString(self.handle, source, functionName, kInfo_))
 
     def buildKernelFromBinary(self, binary, functionName):
         return kernel(_C_occa.deviceBuildKernelFromBinary(self.handle, binary, functionName))
 
     def buildKernelFromLoopy(self, filename, functionName, kInfo = 0):
-        return kernel(_C_occa.deviceBuildKernelFromLoopy(self.handle, filename, functionName, kInfo))
+        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+        return kernel(_C_occa.deviceBuildKernelFromLoopy(self.handle, filename, functionName, kInfo_))
 
     def buildKernelFromFloopy(self, filename, functionName, kInfo = 0):
-        return kernel(_C_occa.deviceBuildKernelFromFloopy(self.handle, filename, functionName, kInfo))
+        kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
+        return kernel(_C_occa.deviceBuildKernelFromFloopy(self.handle, filename, functionName, kInfo_))
 
     def malloc(self, entries, type_):
         return memory(_C_occa.deviceMalloc(self.handle, entries, sizeof(type_)))
