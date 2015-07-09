@@ -158,52 +158,52 @@ static PyMethodDef _C_occaMethods[] = {
 
   //----[ Background Device ]-----------
   //  |---[ Device ]--------------------
-  {"setDevice", py_occaSetDevice, METH_VARARGS},
+  {"setDevice"        , py_occaSetDevice        , METH_VARARGS},
   {"setDeviceFromInfo", py_occaSetDeviceFromInfo, METH_VARARGS},
 
   {"getCurrentDevice", py_occaGetCurrentDevice, METH_VARARGS},
 
-  {"setCompiler", py_occaSetCompiler, METH_VARARGS},
+  {"setCompiler"         , py_occaSetCompiler         , METH_VARARGS},
   {"setCompilerEnvScript", py_occaSetCompilerEnvScript, METH_VARARGS},
-  {"setCompilerFlags", py_occaSetCompilerFlags, METH_VARARGS},
+  {"setCompilerFlags"    , py_occaSetCompilerFlags    , METH_VARARGS},
 
-  {"getCompiler", py_occaGetCompiler, METH_VARARGS},
+  {"getCompiler"         , py_occaGetCompiler         , METH_VARARGS},
   {"getCompilerEnvScript", py_occaGetCompilerEnvScript, METH_VARARGS},
-  {"getCompilerFlags", py_occaGetCompilerFlags, METH_VARARGS},
+  {"getCompilerFlags"    , py_occaGetCompilerFlags    , METH_VARARGS},
 
-  {"flush", py_occaFlush, METH_VARARGS},
+  {"flush" , py_occaFlush , METH_VARARGS},
   {"finish", py_occaFinish, METH_VARARGS},
 
   // {"waitFor", py_occaWaitFor, METH_VARARGS},
 
   {"createStream", py_occaCreateStream, METH_VARARGS},
-  {"getStream", py_occaGetStream, METH_VARARGS},
-  {"setStream", py_occaSetStream, METH_VARARGS},
-  {"wrapStream", py_occaWrapStream, METH_VARARGS},
+  {"getStream"   , py_occaGetStream   , METH_VARARGS},
+  {"setStream"   , py_occaSetStream   , METH_VARARGS},
+  {"wrapStream"  , py_occaWrapStream  , METH_VARARGS},
 
   // {"tagStream", py_occaTagStream, METH_VARARGS},
   //  |=================================
 
   //  |---[ Kernel ]--------------------
-  {"buildKernel", py_occaBuildKernel, METH_VARARGS},
+  {"buildKernel"          , py_occaBuildKernel          , METH_VARARGS},
   {"buildKernelFromSource", py_occaBuildKernelFromSource, METH_VARARGS},
   {"buildKernelFromString", py_occaBuildKernelFromString, METH_VARARGS},
   {"buildKernelFromBinary", py_occaBuildKernelFromBinary, METH_VARARGS},
-  {"buildKernelFromLoopy", py_occaBuildKernelFromLoopy, METH_VARARGS},
+  {"buildKernelFromLoopy" , py_occaBuildKernelFromLoopy , METH_VARARGS},
   {"buildKernelFromFloopy", py_occaBuildKernelFromFloopy, METH_VARARGS},
   //  |=================================
 
   //  |---[ Memory ]--------------------
-  {"wrapMemory", py_occaWrapMemory, METH_VARARGS},
+  {"wrapMemory"       , py_occaWrapMemory       , METH_VARARGS},
   {"wrapManagedMemory", py_occaWrapManagedMemory, METH_VARARGS},
 
-  {"malloc", py_occaMalloc, METH_VARARGS},
+  {"malloc"      , py_occaMalloc      , METH_VARARGS},
   {"managedAlloc", py_occaManagedAlloc, METH_VARARGS},
 
-  {"uvaAlloc", py_occaUvaAlloc, METH_VARARGS},
+  {"uvaAlloc"       , py_occaUvaAlloc       , METH_VARARGS},
   {"managedUvaAlloc", py_occaManagedUvaAlloc, METH_VARARGS},
 
-  {"mappedAlloc", py_occaMappedAlloc, METH_VARARGS},
+  {"mappedAlloc"       , py_occaMappedAlloc       , METH_VARARGS},
   {"managedMappedAlloc", py_occaManagedMappedAlloc, METH_VARARGS},
   //  |=================================
   //====================================
@@ -211,49 +211,49 @@ static PyMethodDef _C_occaMethods[] = {
   //---[ Device ]-----------------------
   {"printAvailableDevices", py_occaPrintAvailableDevices, METH_VARARGS},
 
-  {"createDeviceInfo", py_occaCreateDeviceInfo, METH_VARARGS},
-  {"deviceInfoAppend", py_occaDeviceInfoAppend, METH_VARARGS},
+  {"createDeviceInfo"    , py_occaCreateDeviceInfo    , METH_VARARGS},
+  {"deviceInfoAppend"    , py_occaDeviceInfoAppend    , METH_VARARGS},
   {"deviceInfoAppendType", py_occaDeviceInfoAppendType, METH_VARARGS},
-  {"deviceInfoFree", py_occaDeviceInfoFree, METH_VARARGS},
+  {"deviceInfoFree"      , py_occaDeviceInfoFree      , METH_VARARGS},
 
-  {"createDevice", py_occaCreateDevice, METH_VARARGS},
+  {"createDevice"        , py_occaCreateDevice        , METH_VARARGS},
   {"createDeviceFromInfo", py_occaCreateDeviceFromInfo, METH_VARARGS},
 
-  {"deviceMode", py_occaDeviceMode, METH_VARARGS},
-  {"deviceSetCompiler", py_occaDeviceSetCompiler, METH_VARARGS},
+  {"deviceMode"            , py_occaDeviceMode            , METH_VARARGS},
+  {"deviceSetCompiler"     , py_occaDeviceSetCompiler     , METH_VARARGS},
   {"deviceSetCompilerFlags", py_occaDeviceSetCompilerFlags, METH_VARARGS},
 
   {"deviceBytesAllocated", py_occaDeviceBytesAllocated, METH_VARARGS},
 
-  {"deviceBuildKernel", py_occaDeviceBuildKernel, METH_VARARGS},
+  {"deviceBuildKernel"          , py_occaDeviceBuildKernel          , METH_VARARGS},
   {"deviceBuildKernelFromSource", py_occaDeviceBuildKernelFromSource, METH_VARARGS},
   {"deviceBuildKernelFromString", py_occaDeviceBuildKernelFromString, METH_VARARGS},
   {"deviceBuildKernelFromBinary", py_occaDeviceBuildKernelFromBinary, METH_VARARGS},
-  {"deviceBuildKernelFromLoopy", py_occaDeviceBuildKernelFromLoopy, METH_VARARGS},
+  {"deviceBuildKernelFromLoopy" , py_occaDeviceBuildKernelFromLoopy , METH_VARARGS},
   {"deviceBuildKernelFromFloopy", py_occaDeviceBuildKernelFromFloopy, METH_VARARGS},
 
-  {"deviceMalloc", py_occaDeviceMalloc, METH_VARARGS},
+  {"deviceMalloc"      , py_occaDeviceMalloc      , METH_VARARGS},
   {"deviceManagedAlloc", py_occaDeviceManagedAlloc, METH_VARARGS},
 
-  {"deviceUvaAlloc", py_occaDeviceUvaAlloc, METH_VARARGS},
+  {"deviceUvaAlloc"       , py_occaDeviceUvaAlloc       , METH_VARARGS},
   {"deviceManagedUvaAlloc", py_occaDeviceManagedUvaAlloc, METH_VARARGS},
 
-  {"deviceMappedAlloc", py_occaDeviceMappedAlloc, METH_VARARGS},
+  {"deviceMappedAlloc"       , py_occaDeviceMappedAlloc       , METH_VARARGS},
   {"deviceManagedMappedAlloc", py_occaDeviceManagedMappedAlloc, METH_VARARGS},
 
-  {"deviceFlush", py_occaDeviceFlush, METH_VARARGS},
+  {"deviceFlush" , py_occaDeviceFlush , METH_VARARGS},
   {"deviceFinish", py_occaDeviceFinish, METH_VARARGS},
 
   {"deviceCreateStream", py_occaDeviceCreateStream, METH_VARARGS},
-  {"deviceGetStream", py_occaDeviceGetStream, METH_VARARGS},
-  {"deviceSetStream", py_occaDeviceSetStream, METH_VARARGS},
+  {"deviceGetStream"   , py_occaDeviceGetStream   , METH_VARARGS},
+  {"deviceSetStream"   , py_occaDeviceSetStream   , METH_VARARGS},
 
   // {"deviceTagStream", py_occaDeviceTagStream, METH_VARARGS},
   // {"deviceWaitForTag", py_occaDeviceWaitForTag, METH_VARARGS},
   // {"deviceTimeBetweenTags", py_occaDeviceTimeBetweenTags, METH_VARARGS},
 
   {"deviceStreamFree", py_occaDeviceStreamFree, METH_VARARGS},
-  {"deviceFree", py_occaDeviceFree, METH_VARARGS},
+  {"deviceFree"      , py_occaDeviceFree      , METH_VARARGS},
   //====================================
 
   //---[ Kernel ]-----------------------
@@ -263,14 +263,14 @@ static PyMethodDef _C_occaMethods[] = {
   {"kernelGetDevice", py_occaKernelGetDevice, METH_VARARGS},
 
   {"createArgumentList", py_occaCreateArgumentList, METH_VARARGS},
-  {"argumentListClear", py_occaArgumentListClear, METH_VARARGS},
-  {"argumentListFree", py_occaArgumentListFree, METH_VARARGS},
+  {"argumentListClear" , py_occaArgumentListClear , METH_VARARGS},
+  {"argumentListFree"  , py_occaArgumentListFree  , METH_VARARGS},
   {"argumentListAddArg", py_occaArgumentListAddArg, METH_VARARGS},
 
   {"kernelRun_", py_occaKernelRun_, METH_VARARGS},
 
-  {"createKernelInfo", py_occaCreateKernelInfo, METH_VARARGS},
-  {"kernelInfoAddDefine", py_occaKernelInfoAddDefine, METH_VARARGS},
+  {"createKernelInfo"    , py_occaCreateKernelInfo    , METH_VARARGS},
+  {"kernelInfoAddDefine" , py_occaKernelInfoAddDefine , METH_VARARGS},
   {"kernelInfoAddInclude", py_occaKernelInfoAddInclude, METH_VARARGS},
 
   {"kernelFree", py_occaKernelFree, METH_VARARGS},
@@ -279,7 +279,7 @@ static PyMethodDef _C_occaMethods[] = {
   //---[ Memory ]-----------------------
   {"memoryMode", py_occaMemoryMode, METH_VARARGS},
 
-  {"memoryGetMemoryHandle", py_occaMemoryGetMemoryHandle, METH_VARARGS},
+  {"memoryGetMemoryHandle" , py_occaMemoryGetMemoryHandle , METH_VARARGS},
   {"memoryGetMappedPointer", py_occaMemoryGetMappedPointer, METH_VARARGS},
   {"memoryGetTextureHandle", py_occaMemoryGetTextureHandle, METH_VARARGS},
 
