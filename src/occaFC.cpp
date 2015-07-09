@@ -391,8 +391,8 @@ extern "C" {
     *time = occaDeviceTimeBetweenTags(*device, *startTag, *endTag);
   }
 
-  void OCCADEVICESTREAMFREE_FC(occaDevice *device, occaStream *stream){
-    occaDeviceStreamFree(*device, *stream);
+  void OCCASTREAMFREE_FC(occaStream *stream){
+    occaStreamFree(*stream);
   }
 
   void OCCADEVICEFREE_FC(occaDevice *device){

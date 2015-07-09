@@ -179,15 +179,14 @@ module occa
     module procedure occaDeviceTagStream_func
   end interface occaDeviceTagStream
 
-  interface occaDeviceStreamFree
-    subroutine occaDeviceStreamFree_fc(device, stream)
+  interface occaStreamFree
+    subroutine occaStreamFree_fc(stream)
       use occaFTypes_m
 
       implicit none
-      type(occaDevice), intent(inout) :: device
       type(occaStream), intent(inout) :: stream
-    end subroutine occaDeviceStreamFree_fc
-  end interface occaDeviceStreamFree
+    end subroutine occaStreamFree_fc
+  end interface occaStreamFree
 
   interface occaDeviceFree
     subroutine occaDeviceFree_fc(device)

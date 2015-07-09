@@ -110,25 +110,6 @@ namespace occa {
   //---[ Typedefs ]-------------------------------
   typedef void* stream_t;
 
-  class stream {
-  public:
-    stream_t handle;
-
-    inline stream() :
-      handle(NULL){}
-
-    inline stream(stream_t handle_) :
-      handle(handle_){}
-
-    inline stream(const stream &s) :
-      handle(s.handle){}
-
-    inline stream& operator = (const stream &s){
-      handle = s.handle;
-      return *this;
-    }
-  };
-
   static const int CPU     = (1 << 0);
   static const int GPU     = (1 << 1);
   static const int FPGA    = (1 << 3);
@@ -1359,6 +1340,33 @@ namespace occa {
     void free();
 
     int simdWidth();
+  };
+
+  class stream {
+  public:
+    device_v *dHandle;
+    stream_t handle;
+
+    inline stream() :
+      dHandle(NULL),
+      handle(NULL) {}
+
+    inline stream(device_v *dHandle_, stream_t handle_) :
+      dHandle(dHandle_),
+      handle(handle_) {}
+
+    inline stream(const stream &s) :
+      dHandle(s.dHandle),
+      handle(s.handle) {}
+
+    inline stream& operator = (const stream &s){
+      dHandle = s.dHandle;
+      handle  = s.handle;
+
+      return *this;
+    }
+
+    void free();
   };
 
   class device {

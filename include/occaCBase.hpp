@@ -294,8 +294,7 @@ extern "C" {
   OCCA_LFUNC double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
                                                          occaStreamTag startTag, occaStreamTag endTag);
 
-  OCCA_LFUNC void OCCA_RFUNC occaDeviceStreamFree(occaDevice device, occaStream stream);
-
+  OCCA_LFUNC void OCCA_RFUNC occaStreamFree(occaStream stream);
   OCCA_LFUNC void OCCA_RFUNC occaDeviceFree(occaDevice device);
   //====================================
 

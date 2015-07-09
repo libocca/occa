@@ -1129,6 +1129,13 @@ namespace occa {
 
 
   //---[ Device ]---------------------
+  void stream::free(){
+    if(dHandle == NULL)
+      return;
+
+    device(dHandle).freeStream(*this);
+  }
+
   device::device(){
     dHandle = new device_t<Serial>();
   }
@@ -1447,7 +1454,7 @@ namespace occa {
   }
 
   stream device::createStream(){
-    stream newStream(dHandle->createStream());
+    stream newStream(dHandle, dHandle->createStream());
 
     dHandle->streams.push_back(newStream.handle);
 
@@ -1455,7 +1462,7 @@ namespace occa {
   }
 
   stream device::getStream(){
-    return stream(dHandle->currentStream);
+    return stream(dHandle, dHandle->currentStream);
   }
 
   void device::setStream(stream s){
@@ -1463,7 +1470,7 @@ namespace occa {
   }
 
   stream device::wrapStream(void *handle_){
-    return dHandle->wrapStream(handle_);
+    return stream(dHandle, dHandle->wrapStream(handle_));
   }
 
   streamTag device::tagStream(){

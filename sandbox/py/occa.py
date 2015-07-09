@@ -17,7 +17,7 @@ def setVerboseCompilation(value):
 #----[ Background Device ]--------------
 #  |---[ Device ]-----------------------
 def setDevice(device):
-    _C_occa.setDevice(device)
+    _C_occa.setDevice(device.handle)
 
 def setDeviceFromInfo(infos):
     _C_occa.setDeviceFromInfo(infos)
@@ -59,7 +59,7 @@ def setStream(stream):
     _C_occa.setStream(stream)
 
 def wrapStream(handle):
-    return _C_occa.wrapStream(handle)
+    return stream(_C_occa.wrapStream(handle))
 #  |====================================
 
 #  |---[ Kernel ]-----------------------
@@ -83,6 +83,18 @@ def buildKernelFromFloopy():
 #  |====================================
 
 #  |---[ Memory ]-----------------------
+def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
+    if type(dest) is memory:
+        if type(src) is memory:
+            _C_occa.copyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
+        else:
+            _C_occa.copyPtrToMem(dest.handle, src, bytes_, offset1)
+    else:
+        if type(src) is memory:
+            _C_occa.copyMemToPtr(dest, src.handle, bytes_, offset1)
+        else:
+            _C_occa.memcpy(dest, src, bytes_)
+
 def wrapMemory(handle, entries, type_):
     return memory(_C_occa.wrapMemory(handle, entries, sizeof(type_)))
 
@@ -112,8 +124,13 @@ class device:
         self.handle      = 0
         self.isAllocated = False
 
+    def __init__(self, handle_):
+        self.handle      = handle_
+        self.isAllocated = True
+
     def free(self):
         import _C_occa
+
         if self.isAllocated:
             _C_occa.deviceFree(self.handle)
             self.isAllocated = False
@@ -192,6 +209,25 @@ class device:
 
     def wrapStream(self, handle):
         return stream(_C_occa.deviceWrapStream(self.handle, handle))
+
+class stream:
+    def __init__(self):
+        self.handle      = 0
+        self.isAllocated = False
+
+    def __init__(self, handle_):
+        self.handle      = handle_
+        self.isAllocated = True
+
+    def free(self):
+        import _C_occa
+
+        if self.isAllocated:
+            _C_occa.deviceStreamFree(self.handle)
+            self.isAllocated = False
+
+    def __del__(self):
+        self.free()
 #=======================================
 
 #---[ Kernel ]--------------------------
@@ -206,6 +242,7 @@ class kernel:
 
     def free(self):
         import _C_occa
+
         if self.isAllocated:
             _C_occa.kernelFree(self.handle)
             self.isAllocated = False
@@ -234,14 +271,16 @@ class kernel:
 
 class kernelInfo:
     def __init__(self):
-        self.handle      = _C_occa.createKernelInfo()
-        self.isAllocated = False
+        self.handle = _C_occa.createKernelInfo()
+
+    def __init__(self, handle_):
+        self.handle = handle_
 
     def free(self):
         import _C_occa
+
         if self.isAllocated:
             _C_occa.kernelInfoFree(self.handle)
-            self.isAllocated = False
 
     def __del__(self):
         self.free()
@@ -261,6 +300,7 @@ class memory:
 
     def free(self):
         import _C_occa
+
         if self.isAllocated:
             _C_occa.memoryFree(self.handle)
             self.isAllocated = False
