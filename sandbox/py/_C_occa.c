@@ -645,14 +645,13 @@ static PyObject* py_occaDeviceWrapStream(PyObject *self, PyObject *args){
   return PyLong_FromVoidPtr(stream);
 }
 
-static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args){
-  occaDevice device;
+static PyObject* py_occaStreamFree(PyObject *self, PyObject *args){
   occaStream stream;
 
-  if(!PyArg_ParseTuple(args, "nn", &device, &stream))
+  if(!PyArg_ParseTuple(args, "n", &stream))
     return NULL;
 
-  occaDeviceStreamFree(device, stream);
+  occaStreamFree(stream);
 
   return Py_None;
 }

@@ -100,7 +100,7 @@ static PyObject* py_occaDeviceWrapStream(PyObject *self, PyObject *args);
 // static PyObject* py_occaDeviceWaitForTag(PyObject *self, PyObject *args);
 // static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args);
 
-static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args);
+static PyObject* py_occaStreamFree(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceFree(PyObject *self, PyObject *args);
 //======================================
 
@@ -243,8 +243,8 @@ static PyMethodDef _C_occaMethods[] = {
   // {"deviceWaitForTag", py_occaDeviceWaitForTag, METH_VARARGS},
   // {"deviceTimeBetweenTags", py_occaDeviceTimeBetweenTags, METH_VARARGS},
 
-  {"deviceStreamFree", py_occaDeviceStreamFree, METH_VARARGS},
-  {"deviceFree"      , py_occaDeviceFree      , METH_VARARGS},
+  {"streamFree", py_occaStreamFree, METH_VARARGS},
+  {"deviceFree", py_occaDeviceFree, METH_VARARGS},
   //====================================
 
   //---[ Kernel ]-----------------------

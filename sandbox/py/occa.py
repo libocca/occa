@@ -223,7 +223,7 @@ class stream:
         import _C_occa
 
         if self.isAllocated:
-            _C_occa.deviceStreamFree(self.handle)
+            _C_occa.streamFree(self.handle)
             self.isAllocated = False
 
     def __del__(self):
