@@ -27,14 +27,14 @@ static PyObject* py_occaGetCompilerFlags(PyObject *self, PyObject *args);
 static PyObject* py_occaFlush(PyObject *self, PyObject *args);
 static PyObject* py_occaFinish(PyObject *self, PyObject *args);
 
-static PyObject* py_occaWaitFor(PyObject *self, PyObject *args);
+// static PyObject* py_occaWaitFor(PyObject *self, PyObject *args);
 
 static PyObject* py_occaCreateStream(PyObject *self, PyObject *args);
 static PyObject* py_occaGetStream(PyObject *self, PyObject *args);
 static PyObject* py_occaSetStream(PyObject *self, PyObject *args);
 static PyObject* py_occaWrapStream(PyObject *self, PyObject *args);
 
-static PyObject* py_occaTagStream(PyObject *self, PyObject *args);
+// static PyObject* py_occaTagStream(PyObject *self, PyObject *args);
 //  |===================================
 
 //  |---[ Kernel ]----------------------
@@ -101,9 +101,9 @@ static PyObject* py_occaDeviceCreateStream(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceGetStream(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceSetStream(PyObject *self, PyObject *args);
 
-static PyObject* py_occaDeviceTagStream(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceWaitForTag(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args);
+// static PyObject* py_occaDeviceTagStream(PyObject *self, PyObject *args);
+// static PyObject* py_occaDeviceWaitForTag(PyObject *self, PyObject *args);
+// static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceFree(PyObject *self, PyObject *args); // x
@@ -174,14 +174,14 @@ static PyMethodDef _C_occaMethods[] = {
   {"flush", py_occaFlush, METH_VARARGS},
   {"finish", py_occaFinish, METH_VARARGS},
 
-  {"waitFor", py_occaWaitFor, METH_VARARGS},
+  // {"waitFor", py_occaWaitFor, METH_VARARGS},
 
   {"createStream", py_occaCreateStream, METH_VARARGS},
   {"getStream", py_occaGetStream, METH_VARARGS},
   {"setStream", py_occaSetStream, METH_VARARGS},
   {"wrapStream", py_occaWrapStream, METH_VARARGS},
 
-  {"tagStream", py_occaTagStream, METH_VARARGS},
+  // {"tagStream", py_occaTagStream, METH_VARARGS},
   //  |=================================
 
   //  |---[ Kernel ]--------------------
@@ -248,9 +248,9 @@ static PyMethodDef _C_occaMethods[] = {
   {"deviceGetStream", py_occaDeviceGetStream, METH_VARARGS},
   {"deviceSetStream", py_occaDeviceSetStream, METH_VARARGS},
 
-  {"deviceTagStream", py_occaDeviceTagStream, METH_VARARGS},
-  {"deviceWaitForTag", py_occaDeviceWaitForTag, METH_VARARGS},
-  {"deviceTimeBetweenTags", py_occaDeviceTimeBetweenTags, METH_VARARGS},
+  // {"deviceTagStream", py_occaDeviceTagStream, METH_VARARGS},
+  // {"deviceWaitForTag", py_occaDeviceWaitForTag, METH_VARARGS},
+  // {"deviceTimeBetweenTags", py_occaDeviceTimeBetweenTags, METH_VARARGS},
 
   {"deviceStreamFree", py_occaDeviceStreamFree, METH_VARARGS},
   {"deviceFree", py_occaDeviceFree, METH_VARARGS},

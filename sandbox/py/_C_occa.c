@@ -2,8 +2,12 @@
 
 //---[ Globals & Flags ]----------------
 static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  int value;
+
+  if(!PyArg_ParseTuple(args, "i", &value))
     return NULL;
+
+  occaSetVerboseCompilation(value);
 
   return Py_None;
 }
@@ -12,123 +16,144 @@ static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args){
 //----[ Background Device ]-------------
 //  |---[ Device ]----------------------
 static PyObject* py_occaSetDevice(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
+
+  occaSetDevice(device);
 
   return Py_None;
 }
 
 static PyObject* py_occaSetDeviceFromInfo(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *infos;
+
+  if(!PyArg_ParseTuple(args, "s", &infos))
     return NULL;
+
+  occaSetDeviceFromInfo(infos);
 
   return Py_None;
 }
 
 static PyObject* py_occaGetCurrentDevice(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaDevice device = occaGetCurrentDevice();
 
-  return Py_None;
+  return PyLong_FromVoidPtr(device);
 }
 
 static PyObject* py_occaSetCompiler(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *compiler;
+
+  if(!PyArg_ParseTuple(args, "s", &compiler))
     return NULL;
+
+  occaSetCompiler(compiler);
 
   return Py_None;
 }
 
 static PyObject* py_occaSetCompilerEnvScript(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *compilerEnvScript;
+
+  if(!PyArg_ParseTuple(args, "s", &compilerEnvScript))
     return NULL;
+
+  occaSetCompilerEnvScript(compilerEnvScript);
 
   return Py_None;
 }
 
 static PyObject* py_occaSetCompilerFlags(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  const char *compilerFlags;
+
+  if(!PyArg_ParseTuple(args, "s", &compilerFlags))
     return NULL;
+
+  occaSetCompilerFlags(compilerFlags);
 
   return Py_None;
 }
 
 static PyObject* py_occaGetCompiler(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
-
-  return Py_None;
+  const char *compiler = occaGetCompiler();
+  return PyString_FromString(compiler);
 }
 
 static PyObject* py_occaGetCompilerEnvScript(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
-
-  return Py_None;
+  const char *compilerEnvScript = occaGetCompilerEnvScript();
+  return PyString_FromString(compilerEnvScript);
 }
 
 static PyObject* py_occaGetCompilerFlags(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
-
-  return Py_None;
+  const char *compilerFlags = occaGetCompilerFlags();
+  return PyString_FromString(compilerFlags);
 }
 
 static PyObject* py_occaFlush(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaFlush();
 
   return Py_None;
 }
 
 static PyObject* py_occaFinish(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaFinish();
 
   return Py_None;
 }
 
-static PyObject* py_occaWaitFor(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+/* static PyObject* py_occaWaitFor(PyObject *self, PyObject *args){ */
+/*   occaStreamTag tag; */
 
-  return Py_None;
-}
+/*   if(!PyArg_ParseTuple(args, "n", &tag)) */
+/*     return NULL; */
+
+/*   occaWaitFor(tag); */
+
+/*   return Py_None; */
+/* } */
 
 static PyObject* py_occaCreateStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaStream stream = occaCreateStream();
 
-  return Py_None;
+  return PyLong_FromVoidPtr(stream);
 }
 
 static PyObject* py_occaGetStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaStream stream = occaGetStream();
 
-  return Py_None;
+  return PyLong_FromVoidPtr(stream);
 }
 
 static PyObject* py_occaSetStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaStream stream;
+
+  if(!PyArg_ParseTuple(args, "n", &stream))
     return NULL;
+
+  occaSetStream(stream);
 
   return Py_None;
 }
 
 static PyObject* py_occaWrapStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaStream stream;
+  void *handle;
+
+  if(!PyArg_ParseTuple(args, "n", &handle))
     return NULL;
 
-  return Py_None;
+  stream = occaWrapStream(handle);
+
+  return PyLong_FromVoidPtr(stream);
 }
 
-static PyObject* py_occaTagStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+/* static PyObject* py_occaTagStream(PyObject *self, PyObject *args){ */
+/*   occaStreamTag tag = occaTagStream(); */
 
-  return Py_None;
-}
+/*   return PyLong_FromVoidPtr(tag); */
+/* } */
 
 //  |===================================
 
@@ -448,26 +473,26 @@ static PyObject* py_occaDeviceSetStream(PyObject *self, PyObject *args){
   return Py_None;
 }
 
-static PyObject* py_occaDeviceTagStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+/* static PyObject* py_occaDeviceTagStream(PyObject *self, PyObject *args){ */
+/*   if(!PyArg_ParseTuple(args, "")) */
+/*     return NULL; */
 
-  return Py_None;
-}
+/*   return Py_None; */
+/* } */
 
-static PyObject* py_occaDeviceWaitForTag(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+/* static PyObject* py_occaDeviceWaitForTag(PyObject *self, PyObject *args){ */
+/*   if(!PyArg_ParseTuple(args, "")) */
+/*     return NULL; */
 
-  return Py_None;
-}
+/*   return Py_None; */
+/* } */
 
-static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+/* static PyObject* py_occaDeviceTimeBetweenTags(PyObject *self, PyObject *args){ */
+/*   if(!PyArg_ParseTuple(args, "")) */
+/*     return NULL; */
 
-  return Py_None;
-}
+/*   return Py_None; */
+/* } */
 
 static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args){
   if(!PyArg_ParseTuple(args, ""))
