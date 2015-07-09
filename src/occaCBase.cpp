@@ -531,11 +531,33 @@ extern "C" {
     device_.setCompiler(compiler);
   }
 
+  void OCCA_RFUNC occaDeviceSetCompilerEnvScript(occaDevice device,
+                                                 const char *compilerEnvScript_){
+    occa::device device_((occa::device_v*) device);
+
+    device_.setCompilerEnvScript(compilerEnvScript_);
+  }
+
   void OCCA_RFUNC occaDeviceSetCompilerFlags(occaDevice device,
                                              const char *compilerFlags){
     occa::device device_((occa::device_v*) device);
 
     device_.setCompilerFlags(compilerFlags);
+  }
+
+  const char* OCCA_RFUNC occaDeviceGetCompiler(occaDevice device){
+    occa::device device_((occa::device_v*) device);
+    return device_.getCompiler().c_str();
+  }
+
+  const char* OCCA_RFUNC occaDeviceGetCompilerEnvScript(occaDevice device){
+    occa::device device_((occa::device_v*) device);
+    return device_.getCompilerFlags().c_str();
+  }
+
+  const char* OCCA_RFUNC occaDeviceGetCompilerFlags(occaDevice device){
+    occa::device device_((occa::device_v*) device);
+    return device_.getCompilerEnvScript().c_str();
   }
 
   uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device){

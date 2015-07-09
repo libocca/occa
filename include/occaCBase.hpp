@@ -221,8 +221,16 @@ extern "C" {
   OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompiler(occaDevice device,
                                                    const char *compiler);
 
+  OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompilerEnvScript(occaDevice device,
+                                                            const char *compilerEnvScript);
+
   OCCA_LFUNC void OCCA_RFUNC occaDeviceSetCompilerFlags(occaDevice device,
                                                         const char *compilerFlags);
+
+  OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompiler(occaDevice device);
+  OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompilerEnvScript(occaDevice device);
+  OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompilerFlags(occaDevice device);
+
 
   OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 

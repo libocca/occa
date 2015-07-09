@@ -346,22 +346,24 @@ static PyObject* py_occaCreateDeviceInfo(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaDeviceInfoAppend(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDeviceInfo dInfo;
+  const char *key, *value;
+
+  if(!PyArg_ParseTuple(args, "nss", &dInfo, &key, &value))
     return NULL;
 
-  return Py_None;
-}
-
-static PyObject* py_occaDeviceInfoAppendType(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
-    return NULL;
+  occaDeviceInfoAppend(dInfo, key, value);
 
   return Py_None;
 }
 
 static PyObject* py_occaDeviceInfoFree(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDeviceInfo dInfo;
+
+  if(!PyArg_ParseTuple(args, "n", &dInfo))
     return NULL;
+
+  occaDeviceInfoFree(dInfo);
 
   return Py_None;
 }
@@ -389,22 +391,49 @@ static PyObject* py_occaCreateDeviceFromInfo(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaDeviceMode(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  const char *mode;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
+
+  mode = occaDeviceMode(device);
+
+  return PyString_FromString(mode);
+}
+
+static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args){
+  occaDevice device;
+  const char *compiler;
+
+  if(!PyArg_ParseTuple(args, "ns", &device, &compiler))
+    return NULL;
+
+  occaDeviceSetCompiler(device, compiler);
 
   return Py_None;
 }
 
-static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+static PyObject* py_occaDeviceSetCompilerEnvScript(PyObject *self, PyObject *args){
+  occaDevice device;
+  const char *compilerEnvScript;
+
+  if(!PyArg_ParseTuple(args, "ns", &device, &compilerEnvScript))
     return NULL;
+
+  occaDeviceSetCompilerEnvScript(device, compilerEnvScript);
 
   return Py_None;
 }
 
 static PyObject* py_occaDeviceSetCompilerFlags(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  const char *compilerFlags;
+
+  if(!PyArg_ParseTuple(args, "ns", &device, &compilerFlags))
     return NULL;
+
+  occaDeviceSetCompilerFlags(device, compilerFlags);
 
   return Py_None;
 }

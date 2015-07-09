@@ -63,14 +63,19 @@ static PyObject* py_occaPrintAvailableDevices(PyObject *self, PyObject *args);
 
 static PyObject* py_occaCreateDeviceInfo(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceInfoAppend(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceInfoAppendType(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceInfoFree(PyObject *self, PyObject *args);
 
 static PyObject* py_occaCreateDevice(PyObject *self, PyObject *args);
 static PyObject* py_occaCreateDeviceFromInfo(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceMode(PyObject *self, PyObject *args);
+
 static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args);
+static PyObject* py_occaDeviceSetCompilerEnvScript(PyObject *self, PyObject *args);
+static PyObject* py_occaDeviceSetCompilerFlags(PyObject *self, PyObject *args);
+
+static PyObject* py_occaDeviceSetCompiler(PyObject *self, PyObject *args);
+static PyObject* py_occaDeviceSetCompilerEnvScript(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceSetCompilerFlags(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceBytesAllocated(PyObject *self, PyObject *args);
@@ -204,15 +209,16 @@ static PyMethodDef _C_occaMethods[] = {
 
   {"createDeviceInfo"    , py_occaCreateDeviceInfo    , METH_VARARGS},
   {"deviceInfoAppend"    , py_occaDeviceInfoAppend    , METH_VARARGS},
-  {"deviceInfoAppendType", py_occaDeviceInfoAppendType, METH_VARARGS},
   {"deviceInfoFree"      , py_occaDeviceInfoFree      , METH_VARARGS},
 
   {"createDevice"        , py_occaCreateDevice        , METH_VARARGS},
   {"createDeviceFromInfo", py_occaCreateDeviceFromInfo, METH_VARARGS},
 
   {"deviceMode"            , py_occaDeviceMode            , METH_VARARGS},
-  {"deviceSetCompiler"     , py_occaDeviceSetCompiler     , METH_VARARGS},
-  {"deviceSetCompilerFlags", py_occaDeviceSetCompilerFlags, METH_VARARGS},
+
+  {"deviceSetCompiler"         , py_occaDeviceSetCompiler         , METH_VARARGS},
+  {"deviceSetCompilerEnvScript", py_occaDeviceSetCompilerEnvScript, METH_VARARGS},
+  {"deviceSetCompilerFlags"    , py_occaDeviceSetCompilerFlags    , METH_VARARGS},
 
   {"deviceBytesAllocated", py_occaDeviceBytesAllocated, METH_VARARGS},
 
