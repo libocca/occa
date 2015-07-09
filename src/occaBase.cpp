@@ -605,8 +605,8 @@ namespace occa {
 
     if(it != uvaMap.end())
       mHandle_ = it->second;
-
-    mHandle = mHandle_;
+    else
+      mHandle = mHandle_;
   }
 
   memory::memory(memory_v *mHandle_) :

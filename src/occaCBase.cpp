@@ -79,7 +79,7 @@ extern "C" {
   occaType OCCA_RFUNC occaPtr(void *ptr){
     occaMemory_t *memory = new occaMemory_t();
 
-    memory->type    = OCCA_TYPE_PTR;
+    memory->type    = OCCA_TYPE_MEMORY;
     memory->mHandle = ptr;
 
     return (occaType) memory;
@@ -940,19 +940,9 @@ extern "C" {
       else {
         occaType_t &type_ = *((occaType_t*) list_.argv[i]);
 
-        if(memory.type == OCCA_TYPE_PTR){
-          kernel_.addArgument(i, occa::kernelArg(type_.value));
-        }
-        else if(memory.type != OCCA_TYPE_STRUCT){
-          kernel_.addArgument(i, occa::kernelArg(type_.value,
-                                                 type_.bytes,
-                                                 false));
-        }
-        else{ // (memory.type == OCCA_TYPE_STRUCT)
-          kernel_.addArgument(i, occa::kernelArg(type_.value,
-                                                 type_.bytes,
-                                                 true));
-        }
+        kernel_.addArgument(i, occa::kernelArg(type_.value,
+                                               type_.bytes,
+                                               (memory.type == OCCA_TYPE_STRUCT)));
       }
     }
 
