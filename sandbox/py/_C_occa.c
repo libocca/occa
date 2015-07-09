@@ -736,15 +736,26 @@ static PyObject* py_occaArgumentListFree(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaArgumentListAddArg(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaArgumentList argList;
+  int argPos;
+  void *type;
+
+  if(!PyArg_ParseTuple(args, "nin", &argList, &argPos, &type))
     return NULL;
+
+  occaArgumentListAddArg(argList, argPos, type);
 
   return Py_None;
 }
 
-static PyObject* py_occaKernelRun_(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+static PyObject* py_occaKernelRun(PyObject *self, PyObject *args){
+  occaKernel kernel;
+  occaArgumentList argList;
+
+  if(!PyArg_ParseTuple(args, "nn", &kernel, &argList))
     return NULL;
+
+  occaKernelRun_(kernel, argList);
 
   return Py_None;
 }
@@ -756,15 +767,26 @@ static PyObject* py_occaCreateKernelInfo(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaKernelInfoAddDefine(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaKernelInfo kInfo = occaCreateKernelInfo();
+  const char *macro;
+  occaType value;
+
+  if(!PyArg_ParseTuple(args, "nsn", &kInfo, &macro, &value))
     return NULL;
+
+  occaKernelInfoAddDefine(kInfo, macro, value);
 
   return Py_None;
 }
 
 static PyObject* py_occaKernelInfoAddInclude(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaKernelInfo kInfo = occaCreateKernelInfo();
+  const char *filename;
+
+  if(!PyArg_ParseTuple(args, "nn", &kInfo, &filename))
     return NULL;
+
+  occaKernelInfoAddInclude(kInfo, filename);
 
   return Py_None;
 }
@@ -795,71 +817,122 @@ static PyObject* py_occaMemoryMode(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaMemoryGetMemoryHandle(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory memory;
+
+  if(!PyArg_ParseTuple(args, "n", &memory))
     return NULL;
 
-  return Py_None;
+  void *handle = occaMemoryGetMemoryHandle(memory);
+
+  return PyLong_FromVoidPtr(handle);
 }
 
 static PyObject* py_occaMemoryGetMappedPointer(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory memory;
+
+  if(!PyArg_ParseTuple(args, "n", &memory))
     return NULL;
 
-  return Py_None;
+  void *ptr = occaMemoryGetMappedPointer(memory);
+
+  return PyLong_FromVoidPtr(ptr);
 }
 
 static PyObject* py_occaMemoryGetTextureHandle(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory memory;
+
+  if(!PyArg_ParseTuple(args, "n", &memory))
     return NULL;
 
-  return Py_None;
+  void *handle = occaMemoryGetTextureHandle(memory);
+
+  return PyLong_FromVoidPtr(handle);
 }
 
 static PyObject* py_occaMemcpy(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  void *dest, *str;
+  size_t bytes;
+
+  if(!PyArg_ParseTuple(args, "nnn", &dest, &str, &bytes))
     return NULL;
+
+  occaMemcpy(dest, str, bytes);
 
   return Py_None;
 }
 
 static PyObject* py_occaCopyMemToMem(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory dest, src;
+  size_t bytes, destOffset, srcOffset;
+
+  if(!PyArg_ParseTuple(args, "nnnnn", &dest, &src, &bytes, &destOffset, &srcOffset))
     return NULL;
+
+  occaCopyMemToMem(dest, src, bytes, destOffset, srcOffset);
 
   return Py_None;
 }
 
 static PyObject* py_occaCopyPtrToMem(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory dest;
+  void *src;
+  size_t bytes, destOffset;
+
+  if(!PyArg_ParseTuple(args, "nnnn", &dest, &src, &bytes, &destOffset))
     return NULL;
+
+  occaCopyPtrToMem(dest, src, bytes, destOffset);
 
   return Py_None;
 }
 
 static PyObject* py_occaCopyMemToPtr(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  void *dest;
+  occaMemory src;
+  size_t bytes, srcOffset;
+
+  if(!PyArg_ParseTuple(args, "nnnn", &dest, &src, &bytes, &srcOffset))
     return NULL;
+
+  occaCopyMemToPtr(dest, src, bytes, srcOffset);
 
   return Py_None;
 }
 
 static PyObject* py_occaAsyncCopyMemToMem(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory dest, src;
+  size_t bytes, destOffset, srcOffset;
+
+  if(!PyArg_ParseTuple(args, "nnnnn", &dest, &src, &bytes, &destOffset, &srcOffset))
     return NULL;
+
+  occaAsyncCopyMemToMem(dest, src, bytes, destOffset, srcOffset);
 
   return Py_None;
 }
 
 static PyObject* py_occaAsyncCopyPtrToMem(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory dest;
+  void *src;
+  size_t bytes, destOffset;
+
+  if(!PyArg_ParseTuple(args, "nnnn", &dest, &src, &bytes, &destOffset))
     return NULL;
+
+  occaAsyncCopyPtrToMem(dest, src, bytes, destOffset);
 
   return Py_None;
 }
 
 static PyObject* py_occaAsyncCopyMemToPtr(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  void *dest;
+  occaMemory src;
+  size_t bytes, srcOffset;
+
+  if(!PyArg_ParseTuple(args, "nnnn", &dest, &src, &bytes, &srcOffset))
     return NULL;
+
+  occaAsyncCopyMemToPtr(dest, src, bytes, srcOffset);
 
   return Py_None;
 }
