@@ -31,10 +31,17 @@ sources  = $(wildcard $(occaSPath)/*.cpp)
 fsources = $(wildcard $(occaSPath)/*.f90)
 
 objects = $(subst $(occaSPath)/,$(occaOPath)/,$(sources:.cpp=.o))
+outputs = $(occaLPath)/libocca.so $(occaBPath)/occa $(occaBPath)/occainfo
 
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
   objects += $(subst $(occaSPath)/,$(occaOPath)/,$(fsources:.f90=.o))
+endif
+endif
+
+ifdef OCCA_PYTHON_ENABLED
+ifeq ($(OCCA_PYTHON_ENABLED), 1)
+  outputs += $(occaLPath)/_C_occa.so
 endif
 endif
 
@@ -49,7 +56,7 @@ else
 
 .SUFFIXES:
 
-all: $(occaLPath)/libocca.so $(occaBPath)/occa $(occaBPath)/occainfo
+all: $(outputs)
 
 $(occaLPath)/libocca.so:$(objects) $(headers)
 	$(compiler) $(compilerFlags) $(sharedFlag) -o $(occaLPath)/libocca.so $(flags) $(objects) $(paths) $(filter-out -locca, $(links))
@@ -66,6 +73,9 @@ $(occaOPath)/occaFTypes.o:$(occaSPath)/occaFTypes.f90
 
 $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOPath)/occaFTypes.o
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ $(fFlags) -c $<
+
+$(occaLPath)/_C_occa.so: $(occaLPath)/libocca.so $(occaIPath)/python/_C_occa.h $(occaSPath)/python/_C_occa.c
+	clang -shared -fPIC $(occaSPath)/python/_C_occa.c -o $(occaLPath)/_C_occa.so -I${OCCA_DIR}/include/ -I${OCCA_DIR}/include/python -L${OCCA_DIR}/lib -I/System/Library/Frameworks/Python.framework//Versions/2.7/include/python2.7/ -I/System/Library/Frameworks/Python.framework//Versions/2.7/Extras/lib/python/numpy/core/include/ -locca -framework Python
 
 # Ingore [-Wl,--enable-new-dtags] warnings if COI isn't being compiled
 ifeq (coiEnabled, 1)
@@ -109,5 +119,6 @@ clean:
 	rm -f ${OCCA_DIR}/scripts/main;
 	rm -f $(occaLPath)/libocca.so;
 	rm -f $(occaLPath)/*.mod;
+	rm -f $(occaLPath)/_C_occa.so
 endif
 #=================================================

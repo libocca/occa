@@ -1,31 +1,21 @@
-from ctypes import *
 import occa
+import numpy as np
 
-entries = 5
+entries = np.int32(10)
 
-a  = [i     for i in xrange(entries)]
-b  = [1 - i for i in xrange(entries)]
-ab = [0     for i in xrange(entries)]
+addVectors = occa.buildKernel('addVectors.okl', 'addVectors')
 
-Serial_Info   = "mode = Serial"
-OpenMP_Info   = 'mode = OpenMP  , schedule = compact, chunk = 10'
-OpenCL_Info   = "mode = OpenCL  , platformID = 0, deviceID = 0"
-CUDA_Info     = "mode = CUDA    , deviceID = 0"
-Pthreads_Info = "mode = Pthreads, threadCount = 4, schedule = compact, pinnedCores = [0, 0, 1, 1]"
-COI_Info      = "mode = COI     , deviceID = 0"
+a  = occa.managedAlloc(entries, np.float32)
+b  = occa.managedAlloc(entries, np.float32)
+ab = occa.managedAlloc(entries, np.float32)
 
-device = occa.device(Serial_Info)
+for i in xrange(entries):
+    a[i]  = i
+    b[i]  = 1 - i
+    ab[i] = 0
 
-o_a  = device.malloc(a , c_float)
-o_b  = device.malloc(b , c_float)
-o_ab = device.malloc(ab, c_float)
+addVectors(entries, a, b, ab)
 
-addVectors = device.buildKernelFromSource("addVectors.okl",
-                                          "addVectors")
-
-addVectors([c_int(entries),
-            o_a, o_b, o_ab])
-
-o_ab.copyTo(ab, c_float)
+occa.finish()
 
 print ab
