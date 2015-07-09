@@ -672,24 +672,39 @@ static PyObject* py_occaDeviceFree(PyObject *self, PyObject *args){
 
 //---[ Kernel ]-------------------------
 static PyObject* py_occaKernelMode(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaKernel kernel;
+  const char *mode;
+
+  if(!PyArg_ParseTuple(args, "n", &kernel))
     return NULL;
 
-  return Py_None;
+  mode = occaKernelMode(kernel);
+
+  return PyString_FromString(mode);
 }
 
 static PyObject* py_occaKernelName(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaKernel kernel;
+  const char *name;
+
+  if(!PyArg_ParseTuple(args, "n", &kernel))
     return NULL;
 
-  return Py_None;
+  name = occaKernelName(kernel);
+
+  return PyString_FromString(name);
 }
 
 static PyObject* py_occaKernelGetDevice(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaKernel kernel;
+  occaDevice device;
+
+  if(!PyArg_ParseTuple(args, "n", &kernel))
     return NULL;
 
-  return Py_None;
+  device = occaKernelGetDevice(kernel);
+
+  return PyLong_FromVoidPtr(device);
 }
 
 static PyObject* py_occaCreateArgumentList(PyObject *self, PyObject *args){
@@ -699,15 +714,23 @@ static PyObject* py_occaCreateArgumentList(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaArgumentListClear(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaArgumentList argList;
+
+  if(!PyArg_ParseTuple(args, "n", &argList))
     return NULL;
+
+  occaArgumentListClear(argList);
 
   return Py_None;
 }
 
 static PyObject* py_occaArgumentListFree(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaArgumentList argList;
+
+  if(!PyArg_ParseTuple(args, "n", &argList))
     return NULL;
+
+  occaArgumentListFree(argList);
 
   return Py_None;
 }
@@ -760,10 +783,15 @@ static PyObject* py_occaKernelFree(PyObject *self, PyObject *args){
 
 //---[ Memory ]-------------------------
 static PyObject* py_occaMemoryMode(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaMemory memory;
+  const char *mode;
+
+  if(!PyArg_ParseTuple(args, "n", &memory))
     return NULL;
 
-  return Py_None;
+  mode = occaMemoryMode(memory);
+
+  return PyString_FromString(mode);
 }
 
 static PyObject* py_occaMemoryGetMemoryHandle(PyObject *self, PyObject *args){
