@@ -612,22 +612,48 @@ static PyObject* py_occaDeviceCreateStream(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaDeviceGetStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+
+  if(!PyArg_ParseTuple(args, "n", &device))
     return NULL;
 
-  return Py_None;
+  occaStream stream = occaDeviceGetStream(device);
+
+  return PyLong_FromVoidPtr(stream);
 }
 
 static PyObject* py_occaDeviceSetStream(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+  occaDevice device;
+  occaStream stream;
+
+  if(!PyArg_ParseTuple(args, "nn", &device, &stream))
     return NULL;
+
+  occaDeviceSetStream(device, stream);
 
   return Py_None;
 }
 
-static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args){
-  if(!PyArg_ParseTuple(args, ""))
+static PyObject* py_occaDeviceWrapStream(PyObject *self, PyObject *args){
+  occaDevice device;
+  void *handle;
+
+  if(!PyArg_ParseTuple(args, "nn", &device, &handle))
     return NULL;
+
+  occaStream stream = occaDeviceWrapStream(device, handle);
+
+  return PyLong_FromVoidPtr(stream);
+}
+
+static PyObject* py_occaDeviceStreamFree(PyObject *self, PyObject *args){
+  occaDevice device;
+  occaStream stream;
+
+  if(!PyArg_ParseTuple(args, "nn", &device, &stream))
+    return NULL;
+
+  occaDeviceStreamFree(device, stream);
 
   return Py_None;
 }

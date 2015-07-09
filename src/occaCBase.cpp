@@ -281,8 +281,7 @@ extern "C" {
   }
 
   occaStream OCCA_RFUNC occaWrapStream(void *handle_){
-    occaStream *stream = new occaStream;
-
+    occaStream *stream     = new occaStream;
     occa::stream newStream = occa::wrapStream(handle_);
 
     *stream = newStream.handle;
@@ -769,6 +768,17 @@ extern "C" {
     device_.setStream(stream_);
   }
 
+  occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device, void *handle_){
+    occa::device device_((occa::device_v*) device);
+
+    occaStream *stream     = new occaStream;
+    occa::stream newStream = device_.wrapStream(handle_);
+
+    *stream = newStream.handle;
+
+    return (occaStream) stream;
+  }
+
   occaStreamTag OCCA_RFUNC occaDeviceTagStream(occaDevice device){
     occa::device device_((occa::device_v*) device);
 
@@ -1050,17 +1060,6 @@ extern "C" {
     memory->mHandle = memory_.getMHandle();
 
     return (occaMemory) memory;
-  }
-
-  occaStream OCCA_RFUNC occaDeviceWrapStream(occaDevice device, void *handle_){
-    occa::device device_((occa::device_v*) device);
-    occaStream *stream = new occaStream;
-
-    occa::stream newStream = device_.wrapStream(handle_);
-
-    *stream = newStream.handle;
-
-    return (occaStream) stream;
   }
   //====================================
 
