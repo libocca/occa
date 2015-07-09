@@ -1,6 +1,5 @@
 import _C_occa
 import numpy as np
-import weakref
 
 #---[ Setup ]---------------------------
 def sizeof(npType):

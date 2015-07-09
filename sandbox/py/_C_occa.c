@@ -165,30 +165,30 @@ static PyObject* py_occaBuildKernelFromSource(PyObject *self, PyObject *args){
 }
 
 static PyObject* py_occaBuildKernelFromString(PyObject *self, PyObject *args){
-  const char *filename, *functionName, *language;
+  const char *source, *functionName, *language;
   occaKernelInfo *kInfo;
   occaKernel kernel;
 
-  if(!PyArg_ParseTuple(args, "sssn", &filename, &functionName, &kInfo, &language))
+  if(!PyArg_ParseTuple(args, "sssn", &source, &functionName, &kInfo, &language))
     return NULL;
 
   if(strcmp(language, "OFL") == 0)
-    kernel = occaBuildKernelFromString(filename, functionName, kInfo, occaUsingOFL);
+    kernel = occaBuildKernelFromString(source, functionName, kInfo, occaUsingOFL);
   else if(strcmp(language, "Native") == 0)
-    kernel = occaBuildKernelFromString(filename, functionName, kInfo, occaUsingNative);
+    kernel = occaBuildKernelFromString(source, functionName, kInfo, occaUsingNative);
   else
-    kernel = occaBuildKernelFromString(filename, functionName, kInfo, occaUsingOKL);
+    kernel = occaBuildKernelFromString(source, functionName, kInfo, occaUsingOKL);
 
   return PyLong_FromVoidPtr(kernel);
 }
 
 static PyObject* py_occaBuildKernelFromBinary(PyObject *self, PyObject *args){
-  const char *filename, *functionName;
+  const char *binary, *functionName;
 
-  if(!PyArg_ParseTuple(args, "ss", &filename, &functionName))
+  if(!PyArg_ParseTuple(args, "ss", &binary, &functionName))
     return NULL;
 
-  occaKernel kernel = occaBuildKernelFromBinary(filename, functionName);
+  occaKernel kernel = occaBuildKernelFromBinary(binary, functionName);
 
   return PyLong_FromVoidPtr(kernel);
 }
@@ -237,16 +237,19 @@ static PyObject* py_occaWrapMemory(PyObject *self, PyObject *args){
 static PyObject* py_occaWrapManagedMemory(PyObject *self, PyObject *args){
   void *handle;
   size_t entries;
-  int typeSize;
+  int typeSize, typenum;
 
-  if(!PyArg_ParseTuple(args, "nni", &handle, &entries, &typeSize))
+  if(!PyArg_ParseTuple(args, "nnii", &handle, &entries, &typeSize, &typenum))
     return NULL;
 
   const size_t bytes = (entries * typeSize);
 
-  occaMemory ptr = occaWrapManagedMemory(handle, bytes);
+  int nd         = 1;
+  npy_intp *dims = (npy_intp*) malloc(1*sizeof(npy_intp));
+  dims[0]        = entries;
+  void *data     = occaWrapManagedMemory(handle, bytes);
 
-  return PyLong_FromVoidPtr(ptr);
+  return PyArray_SimpleNewFromData(nd, dims, typenum, data);
 }
 
 static PyObject* py_occaMalloc(PyObject *self, PyObject *args){
