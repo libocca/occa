@@ -3,8 +3,17 @@ import numpy as np
 import sys
 
 #---[ Setup ]---------------------------
-def isAClass(v):
-    return isinstance(v, (type, types.ClassType))
+def isA(self, class_):
+    return self.__class__ is class_
+
+def isNotA(self, class_):
+    return not(self.__class__ is class_)
+
+def isAString(self):
+    return isinstance(self, basestring)
+
+def isNotAString(self):
+    return (not isinstance(self, basestring))
 
 def sizeof(npType):
     return np.dtype(npType).itemsize
@@ -26,18 +35,19 @@ def setVerboseCompilation(value):
 def setDevice(arg):
     #---[ Arg Testing ]-------
     try:
-        if not isinstance(arg, basestring) and\
-           arg.__class__ is not device:
+        if arg.isNotAString() and \
+           arg.isNotA(device):
 
             raise ValueError('Argument to [occa.setDevice] must be a occa.device or string')
+
     except ValueError as e:
         print(e)
         sys.exit()
     #=========================
 
-    if isinstance(arg, basestring):
+    if arg.isAString():
         _C_occa.setDeviceFromInfo(arg)
-    elif arg.__class__ is device:
+    elif arg.isA(device):
         _C_occa.setDevice(arg.handle)
 
 def getCurrentDevice():
@@ -46,7 +56,7 @@ def getCurrentDevice():
 def setCompiler(compiler):
     #---[ Arg Testing ]-------
     try:
-        if not isinstance(arg, basestring):
+        if arg.isNotAString():
             raise ValueError('Argument to [occa.setCompiler] must be a string')
     except ValueError as e:
         print(e)
@@ -58,7 +68,7 @@ def setCompiler(compiler):
 def setCompilerEnvScript(compilerEnvScript):
     #---[ Arg Testing ]-------
     try:
-        if not isinstance(arg, basestring):
+        if arg.isNotAString():
             raise ValueError('Argument to [occa.setCompilerEnvScript] must be a string')
     except ValueError as e:
         print(e)
@@ -70,7 +80,7 @@ def setCompilerEnvScript(compilerEnvScript):
 def setCompilerFlags(compilerFlags):
     #---[ Arg Testing ]-------
     try:
-        if not isinstance(arg, basestring):
+        if arg.isNotAString():
             raise ValueError('Argument to [occa.setCompilerFlags] must be a string')
     except ValueError as e:
         print(e)
@@ -103,7 +113,7 @@ def getStream():
 def setStream(stream):
     #---[ Arg Testing ]-------
     try:
-        if stream.__class__ is not stream:
+        if stream.isNotA(stream):
             raise ValueError('Argument to [occa.setStream] must be a occa.stream')
     except ValueError as e:
         print(e)
@@ -121,6 +131,9 @@ def buildKernel(str_, functionName, kInfo = 0):
     #---[ Arg Testing ]-------
     try:
         pass
+        # if str_.isNotAString()         or \
+        #    functionName.isNotAString() or \
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -316,7 +329,7 @@ class device:
             sys.exit()
         #=========================
 
-        if isinstance(arg, basestring):
+        if arg.isAString():
             self.handle = _C_occa.createDevice(arg)
         else:
             self.handle = handle_
