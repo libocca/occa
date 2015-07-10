@@ -511,11 +511,13 @@ namespace occa {
         kHandle->nestedKernels[k].free();
 
       delete [] kHandle->nestedKernels;
+      kHandle->nestedKernels = NULL;
     }
 
     kHandle->free();
 
     delete kHandle;
+    kHandle = NULL;
   }
 
   kernelDatabase::kernelDatabase() :
@@ -1115,6 +1117,7 @@ namespace occa {
         mHandle->dHandle->uvaMap.erase(mHandle->uvaPtr);
 
         ::free(mHandle->uvaPtr);
+        mHandle->uvaPtr = NULL;
       }
     }
 
@@ -1124,6 +1127,7 @@ namespace occa {
       mHandle->mappedFree();
 
     delete mHandle;
+    mHandle = NULL;
   }
   //==================================
 
@@ -1881,6 +1885,7 @@ namespace occa {
     dHandle->free();
 
     delete dHandle;
+    dHandle = NULL;
   }
 
   int device::simdWidth(){
