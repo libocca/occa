@@ -15,9 +15,9 @@ int main(int argc, char **argv){
   // Allocate [managed] arrays that will
   //   automatically synchronize between
   //   the process and [device]
-  float *a  = (float*) device.managedUvaAlloc(entries * sizeof(float));
-  float *b  = (float*) device.managedUvaAlloc(entries * sizeof(float));
-  float *ab = (float*) device.managedUvaAlloc(entries * sizeof(float));
+  float *a  = (float*) device.managedAlloc(entries * sizeof(float));
+  float *b  = (float*) device.managedAlloc(entries * sizeof(float));
+  float *ab = (float*) device.managedAlloc(entries * sizeof(float));
 
   for(int i = 0; i < entries; ++i){
     a[i]  = i;
@@ -25,8 +25,13 @@ int main(int argc, char **argv){
     ab[i] = 0;
   }
 
-  occa::kernel addVectors = device.buildKernelFromSource("addVectors.okl",
-                                                         "addVectors");
+  occa::kernelInfo kInfo;
+
+  kInfo.addDefine("P", 10);
+
+  occa::kernel addVectors = device.buildKernel("addVectors.okl",
+                                               "addVectors",
+                                               kInfo);
 
   // Arrays a, b, and ab are now resident
   //   on [device]

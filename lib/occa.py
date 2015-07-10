@@ -1,7 +1,11 @@
 import _C_occa
 import numpy as np
+import sys
 
 #---[ Setup ]---------------------------
+def isAClass(v):
+    return isinstance(v, (type, types.ClassType))
+
 def sizeof(npType):
     return np.dtype(npType).itemsize
 
@@ -19,22 +23,60 @@ def setVerboseCompilation(value):
 
 #----[ Background Device ]--------------
 #  |---[ Device ]-----------------------
-def setDevice(device):
-    _C_occa.setDevice(device.handle)
+def setDevice(arg):
+    #---[ Arg Testing ]-------
+    try:
+        if not isinstance(arg, basestring) and\
+           arg.__class__ is not device:
 
-def setDeviceFromInfo(infos):
-    _C_occa.setDeviceFromInfo(infos)
+            raise ValueError('Argument to [occa.setDevice] must be a occa.device or string')
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
+    if isinstance(arg, basestring):
+        _C_occa.setDeviceFromInfo(arg)
+    elif arg.__class__ is device:
+        _C_occa.setDevice(arg.handle)
 
 def getCurrentDevice():
     return device(_C_occa.getCurrentDevice())
 
 def setCompiler(compiler):
+    #---[ Arg Testing ]-------
+    try:
+        if not isinstance(arg, basestring):
+            raise ValueError('Argument to [occa.setCompiler] must be a string')
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     _C_occa.setCompiler(compiler)
 
 def setCompilerEnvScript(compilerEnvScript):
+    #---[ Arg Testing ]-------
+    try:
+        if not isinstance(arg, basestring):
+            raise ValueError('Argument to [occa.setCompilerEnvScript] must be a string')
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     _C_occa.setCompilerEnvScript(compilerEnvScript)
 
 def setCompilerFlags(compilerFlags):
+    #---[ Arg Testing ]-------
+    try:
+        if not isinstance(arg, basestring):
+            raise ValueError('Argument to [occa.setCompilerFlags] must be a string')
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     _C_occa.setCompilerFlags(compilerFlags)
 
 def getCompiler():
@@ -59,6 +101,15 @@ def getStream():
     return stream(_C_occa.getStream())
 
 def setStream(stream):
+    #---[ Arg Testing ]-------
+    try:
+        if stream.__class__ is not stream:
+            raise ValueError('Argument to [occa.setStream] must be a occa.stream')
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     _C_occa.setStream(stream)
 
 def wrapStream(handle):
@@ -67,31 +118,87 @@ def wrapStream(handle):
 
 #  |---[ Kernel ]-----------------------
 def buildKernel(str_, functionName, kInfo = 0):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
     return kernel(_C_occa.buildKernel(str_, functionName, kInfo_))
 
 def buildKernelFromSource(filename, functionName, kInfo = 0):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
     return kernel(_C_occa.buildKernelFromSource(filename, functionName, kInfo_))
 
 def buildKernelFromString(source, functionName, kInfo = 0, language = "OKL"):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
     return kernel(_C_occa.buildKernelFromString(source, functionName, kInfo, language))
 
 def buildKernelFromBinary(binary, functionName):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return kernel(_C_occa.buildKernelFromBinary(filename, functionName))
 
 def buildKernelFromLoopy(filename, functionName, kInfo = 0):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
     return kernel(_C_occa.buildKernelFromLoopy(filename, functionName, kInfo_))
 
 def buildKernelFromFloopy(filename, functionName, kInfo = 0):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
     return kernel(_C_occa.buildKernelFromFloopy(filename, functionName, kInfo_))
 #  |====================================
 
 #  |---[ Memory ]-----------------------
 def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     if dest.__class__ is memory:
         if src.__class__ is memory:
             _C_occa.copyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
@@ -104,6 +211,14 @@ def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
             _C_occa.memcpy(dest, src, bytes_)
 
 def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     if dest.__class__ is memory:
         if src.__class__ is memory:
             _C_occa.asyncCopyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
@@ -116,21 +231,69 @@ def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
             _C_occa.asyncMemcpy(dest, src, bytes_)
 
 def wrapMemory(handle, entries, type_):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return memory(_C_occa.wrapMemory(handle, entries, sizeof(type_)))
 
 def wrapManagedMemory(handle, entries, type_):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return _C_occa.wrapManagedMemory(handle, entries, sizeof(type_), typeof(type_))
 
 def malloc(entries, type_):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return memory(_C_occa.malloc(entries, sizeof(type_)))
 
 def managedAlloc(entries, type_):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return _C_occa.managedAlloc(entries, sizeof(type_), typeof(type_))
 
 def malloc(entries, type_):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return memory(_C_occa.mappedAlloc(entries, sizeof(type_)))
 
 def managedMappedAlloc(entries, type_):
+    #---[ Arg Testing ]-------
+    try:
+        pass
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return _C_occa.managedMappedAlloc(entries, sizeof(type_), typeof(type_))
 #  |====================================
 #=======================================
@@ -145,6 +308,14 @@ class device:
         self.isAllocated = False
 
     def __init__(self, arg):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         if isinstance(arg, basestring):
             self.handle = _C_occa.createDevice(arg)
         else:
@@ -166,12 +337,36 @@ class device:
         return _C_occa.deviceMode(self.handle)
 
     def setCompiler(self, compiler):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         _C_occa.deviceSetCompiler(self.handle, compiler)
 
     def setCompilerEnvScript(self, compilerEnvScript):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         _C_occa.deviceSetCompiler(self.handle, compilerEnvScript)
 
     def setCompilerFlags(self, compilerFlags):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         _C_occa.deviceSetCompilerFlags(self.handle, compilerFlags)
 
     def getCompiler(self):
@@ -187,38 +382,118 @@ class device:
         return _C_occa.bytesAllocated(self.handle)
 
     def buildKernel(self, str_, functionName, kInfo = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
         return kernel(_C_occa.deviceBuildKernel(self.handle, str_, functionName, kInfo_))
 
     def buildKernelFromSource(self, filename, functionName, kInfo = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
         return kernel(_C_occa.deviceBuildKernelFromSource(self.handle, filename, functionName, kInfo_))
 
     def buildKernelFromString(self, source, functionName, kInfo = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
         return kernel(_C_occa.deviceBuildKernelFromString(self.handle, source, functionName, kInfo_))
 
     def buildKernelFromBinary(self, binary, functionName):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return kernel(_C_occa.deviceBuildKernelFromBinary(self.handle, binary, functionName))
 
     def buildKernelFromLoopy(self, filename, functionName, kInfo = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
         return kernel(_C_occa.deviceBuildKernelFromLoopy(self.handle, filename, functionName, kInfo_))
 
     def buildKernelFromFloopy(self, filename, functionName, kInfo = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
         return kernel(_C_occa.deviceBuildKernelFromFloopy(self.handle, filename, functionName, kInfo_))
 
     def malloc(self, entries, type_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return memory(_C_occa.deviceMalloc(self.handle, entries, sizeof(type_)))
 
     def managedAlloc(self, entries, type_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return _C_occa.deviceManagedAlloc(self.handle, entries, sizeof(type_), typeof(type_))
 
     def mappedAlloc(self, entries, type_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return memory(_C_occa.deviceMappedAlloc(self.handle, entries, sizeof(type_)))
 
     def managedMappedAlloc(self, entries, type_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return _C_occa.deviceManagedMappedAlloc(self.handle, entries, sizeof(type_), typeof(type_))
 
     def flush(self):
@@ -234,6 +509,14 @@ class device:
         return stream(_C_occa.deviceGetStream(self.handle))
 
     def setStream(self, stream):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return stream(_C_occa.deviceSetStream(self.handle, stream))
 
     def wrapStream(self, handle):
@@ -245,6 +528,14 @@ class stream:
         self.isAllocated = False
 
     def __init__(self, handle_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         self.handle      = handle_
         self.isAllocated = True
 
@@ -266,6 +557,14 @@ class kernel:
         self.isAllocated = False
 
     def __init__(self, handle_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         self.handle      = handle_
         self.isAllocated = True
 
@@ -312,6 +611,14 @@ class kernelInfo:
         self.handle = _C_occa.createKernelInfo()
 
     def __init__(self, handle_):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         self.handle = handle_
 
     def free(self):
@@ -324,9 +631,25 @@ class kernelInfo:
         self.free()
 
     def addDefine(self, macro, value):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         _C_occa.kernelInfoAddDefine(self.handle, macro, value.__str__())
 
     def addInclude(self, filename):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         _C_occa.kernelInfoAddInclude(self.handle, filename)
 #=======================================
 
@@ -359,15 +682,46 @@ class memory:
         return _C_occa.memoryGetTextureHandle(self.handle)
 
     def copyFrom(self, src, bytes_ = 0, offset1 = 0, offset2 = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         memcpy(self, src, bytes_, offset1, offset2)
 
     def copyTo(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         memcpy(dest, self, bytes_, offset1, offset2)
 
     def asyncCopyFrom(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         asyncMemcpy(self, src, bytes_, offset1, offset2)
 
     def asyncCopyTo(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
-        asyncMemcpy(dest, self, bytes_, offset1, offset2)
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
 
+        asyncMemcpy(dest, self, bytes_, offset1, offset2)
 #=======================================
