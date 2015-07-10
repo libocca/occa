@@ -58,6 +58,7 @@ def setCompiler(compiler):
     try:
         if arg.isNotAString():
             raise ValueError('Argument to [occa.setCompiler] must be a string')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -70,6 +71,7 @@ def setCompilerEnvScript(compilerEnvScript):
     try:
         if arg.isNotAString():
             raise ValueError('Argument to [occa.setCompilerEnvScript] must be a string')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -82,6 +84,7 @@ def setCompilerFlags(compilerFlags):
     try:
         if arg.isNotAString():
             raise ValueError('Argument to [occa.setCompilerFlags] must be a string')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -115,6 +118,7 @@ def setStream(stream):
     try:
         if stream.isNotA(stream):
             raise ValueError('Argument to [occa.setStream] must be a occa.stream')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -133,6 +137,7 @@ def buildKernel(str_, functionName, kInfo = 0):
         pass
         # if str_.isNotAString()         or \
         #    functionName.isNotAString() or \
+        #    (kInfo != 0)
 
     except ValueError as e:
         print(e)
@@ -316,11 +321,7 @@ def printAvailableDevices():
     _C_occa.printAvailableDevices()
 
 class device:
-    def __init__(self):
-        self.handle      = 0
-        self.isAllocated = False
-
-    def __init__(self, arg):
+    def __init__(self, arg = 0):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -332,7 +333,7 @@ class device:
         if arg.isAString():
             self.handle = _C_occa.createDevice(arg)
         else:
-            self.handle = handle_
+            self.handle = arg
 
         self.isAllocated = True
 
@@ -536,11 +537,7 @@ class device:
         return stream(_C_occa.deviceWrapStream(self.handle, handle))
 
 class stream:
-    def __init__(self):
-        self.handle      = 0
-        self.isAllocated = False
-
-    def __init__(self, handle_):
+    def __init__(self, handle_ = None):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -549,8 +546,12 @@ class stream:
             sys.exit()
         #=========================
 
-        self.handle      = handle_
-        self.isAllocated = True
+        if handle_ is not None:
+            self.handle      = handle_
+            self.isAllocated = True
+        else:
+            self.handle      = 0
+            self.isAllocated = False
 
     def free(self):
         import _C_occa
@@ -565,11 +566,7 @@ class stream:
 
 #---[ Kernel ]--------------------------
 class kernel:
-    def __init__(self):
-        self.handle      = 0
-        self.isAllocated = False
-
-    def __init__(self, handle_):
+    def __init__(self, handle_ = None):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -578,8 +575,12 @@ class kernel:
             sys.exit()
         #=========================
 
-        self.handle      = handle_
-        self.isAllocated = True
+        if handle_ is not None:
+            self.handle      = handle_
+            self.isAllocated = True
+        else:
+            self.handle      = 0
+            self.isAllocated = False
 
     def free(self):
         import _C_occa
@@ -620,10 +621,7 @@ class kernel:
         return device(_C_occa.kernelGetDevice(self.handle))
 
 class kernelInfo:
-    def __init__(self):
-        self.handle = _C_occa.createKernelInfo()
-
-    def __init__(self, handle_):
+    def __init__(self, handle_ = None):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -632,13 +630,19 @@ class kernelInfo:
             sys.exit()
         #=========================
 
-        self.handle = handle_
+        if handle_ is not None:
+            self.handle      = handle_
+        else:
+            self.handle      = _C_occa.createKernelInfo()
+
+        self.isAllocated = True
 
     def free(self):
         import _C_occa
 
         if self.isAllocated:
             _C_occa.kernelInfoFree(self.handle)
+            self.isAllocated = False
 
     def __del__(self):
         self.free()
@@ -668,9 +672,21 @@ class kernelInfo:
 
 #---[ Memory ]--------------------------
 class memory:
-    def __init__(self):
-        self.handle      = 0
-        self.isAllocated = False
+    def __init__(self, handle_ = None):
+        #---[ Arg Testing ]-------
+        try:
+            pass
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
+        if handle_ is not None:
+            self.handle      = handle_
+            self.isAllocated = True
+        else:
+            self.handle      = 0
+            self.isAllocated = False
 
     def free(self):
         import _C_occa
