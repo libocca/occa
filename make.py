@@ -23,14 +23,6 @@ OCCA_DIR = os.environ['OCCA_DIR']
 
 commandLineArgs = ' '.join(sys.argv[1:])
 
-print 'make'                                   +\
-          ' OCCA_LIBPYTHON='     + libpython       +\
-          ' OCCA_LIBPYTHON_DIR=' + libpythonDir    +\
-          ' OCCA_PYTHON_DIR='    + pythonHeaderDir +\
-          ' OCCA_NUMPY_DIR='     + numpyHeaderDir  +\
-          ' ' + commandLineArgs                    +\
-          ' -f ' + OCCA_DIR + '/makefile'
-
 os.system('make'                                   +\
           ' OCCA_LIBPYTHON='     + libpython       +\
           ' OCCA_LIBPYTHON_DIR=' + libpythonDir    +\
