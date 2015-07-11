@@ -13,7 +13,13 @@ def isAString(v):
     return isinstance(v, basestring)
 
 def isNotAString(v):
-    return (not isAString(v, ))
+    return (not isAString(v))
+
+def isAInteger(v):
+    return isinstance(v, int)
+
+def isNotAInteger(v):
+    return (not isAInteger(v))
 
 def isAMemoryType(v):
     return (varIsOfClass(v, memory) or varIsOfClass(v, np.ndarray))
@@ -144,7 +150,7 @@ def buildKernel(str_, functionName, kInfo = 0):
             raise ValueError('1st argument to [occa.buildKernel] must be a string')
         elif isNotAString(functionName):
             raise ValueError('2nd argument to [occa.buildKernel] must be a string')
-        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
             raise ValueError('3rd argument to [occa.buildKernel] (if given) must be an [occa.kernelInfo]')
 
     except ValueError as e:
@@ -162,7 +168,7 @@ def buildKernelFromSource(filename, functionName, kInfo = 0):
             raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
         elif isNotAString(functionName):
             raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
-        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
             raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
 
     except ValueError as e:
@@ -180,7 +186,7 @@ def buildKernelFromString(source, functionName, kInfo = 0, language = "OKL"):
             raise ValueError('1st argument to [occa.buildKernelFromString] must be a string')
         elif isNotAString(functionName):
             raise ValueError('2nd argument to [occa.buildKernelFromString] must be a string')
-        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
             raise ValueError('3rd argument to [occa.buildKernelFromString] (if given) must be an [occa.kernelInfo]')
         elif isNotAString(language):
             raise ValueError('4th argument to [occa.buildKernelFromString] (if given) must be a string')
@@ -215,7 +221,7 @@ def buildKernelFromLoopy(filename, functionName, kInfo = 0):
             raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
         elif isNotAString(functionName):
             raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
-        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
             raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
 
     except ValueError as e:
@@ -233,7 +239,7 @@ def buildKernelFromFloopy(filename, functionName, kInfo = 0):
             raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
         elif isNotAString(functionName):
             raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
-        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+        elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
             raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
 
     except ValueError as e:
@@ -249,7 +255,15 @@ def buildKernelFromFloopy(filename, functionName, kInfo = 0):
 def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isAMemoryType(dest):
+            raise ValueError('1st argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
+        elif isAMemoryType(src):
+            raise ValueError('2nd argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
+        elif isNotAnInt(offset1):
+            raise ValueError('3rd argument to [occa.memcpy] must be an integer')
+        elif isNotAnInt(offset2):
+            raise ValueError('4th argument to [occa.memcpy] must be an integer')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -269,7 +283,15 @@ def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
 def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isAMemoryType(dest):
+            raise ValueError('1st argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
+        elif isAMemoryType(src):
+            raise ValueError('2nd argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
+        elif isNotAnInt(offset1):
+            raise ValueError('3rd argument to [occa.memcpy] must be an integer')
+        elif isNotAnInt(offset2):
+            raise ValueError('4th argument to [occa.memcpy] must be an integer')
+
     except ValueError as e:
         print(e)
         sys.exit()
