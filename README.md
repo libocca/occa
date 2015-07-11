@@ -196,7 +196,7 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 |
 |  Running an example:
 |    cd $OCCA_DIR/examples/addVectors
-|    python make.py
+|    python main.py
 |
 +===========================================================
 
