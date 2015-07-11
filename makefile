@@ -40,7 +40,7 @@ endif
 endif
 
 ifdef OCCA_LIBPYTHON_DIR
-  ifdef OCCA_LIBPYTHON_FLAG
+  ifdef OCCA_LIBPYTHON
     ifdef OCCA_PYTHON_DIR
       ifdef OCCA_NUMPY_DIR
         outputs += $(occaLPath)/_C_occa.so
@@ -48,7 +48,7 @@ ifdef OCCA_LIBPYTHON_DIR
         pyFlags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR} -L${OCCA_LIBPYTHON_DIR}
 
         ifeq ($(usingLinux),1)
-          pyFlags += ${OCCA_LIBPYTHON_FLAG}
+          pyFlags += -l${OCCA_LIBPYTHON}
         else ifeq ($(usingOSX),1)
           pyFlags += -framework Python
         endif
