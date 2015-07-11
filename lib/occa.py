@@ -28,11 +28,16 @@ def isAMemoryType(v):
 def isNotAMemoryType(v):
     return (not isAMemoryType(v))
 
-def isNumpyType(v):
-    return np.issctype(v)
+def isANumpyType(v):
+    try:
+        np.dtype(v)
+    except NameError:
+        return False
 
-def isNotNumpyType(v):
-    return (not isNumpyType(v))
+    return True
+
+def isNotANumpyType(v):
+    return (not isANumpyType(v))
 
 def sizeof(npType):
     return np.dtype(npType).itemsize
@@ -146,6 +151,16 @@ def setStream(stream_):
     _C_occa.setStream(stream_)
 
 def wrapStream(handle):
+    #---[ Arg Testing ]-------
+    try:
+        if varIsNotAnInteger(handle):
+            raise ValueError('Argument to [occa.wrapStream] must be a [void*] handle')
+
+    except ValueError as e:
+        print(e)
+        sys.exit()
+    #=========================
+
     return stream(_C_occa.wrapStream(handle))
 #  |====================================
 
@@ -262,14 +277,16 @@ def buildKernelFromFloopy(filename, functionName, kInfo = 0):
 def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
     #---[ Arg Testing ]-------
     try:
-        if isAMemoryType(dest):
+        if isNotAMemoryType(dest):
             raise ValueError('1st argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
-        elif isAMemoryType(src):
+        elif isNotAMemoryType(src):
             raise ValueError('2nd argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
+        elif isNotAnInteger(bytes_):
+            raise ValueError('3rd argument to [occa.memcpy] (if given) must be an integer')
         elif isNotAnInteger(offset1):
-            raise ValueError('3rd argument to [occa.memcpy] must be an integer')
+            raise ValueError('4th argument to [occa.memcpy] (if given) must be an integer')
         elif isNotAnInteger(offset2):
-            raise ValueError('4th argument to [occa.memcpy] must be an integer')
+            raise ValueError('5th argument to [occa.memcpy] (if given) must be an integer')
 
     except ValueError as e:
         print(e)
@@ -290,14 +307,16 @@ def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
 def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
     #---[ Arg Testing ]-------
     try:
-        if isAMemoryType(dest):
+        if isNotAMemoryType(dest):
             raise ValueError('1st argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
-        elif isAMemoryType(src):
+        elif isNotAMemoryType(src):
             raise ValueError('2nd argument to [occa.memcpy] must be a [numpy.ndarray] or [occa.memory]')
+        elif isNotAnInteger(bytes_):
+            raise ValueError('3rd argument to [occa.memcpy] (if given) must be an integer')
         elif isNotAnInteger(offset1):
-            raise ValueError('3rd argument to [occa.memcpy] must be an integer')
+            raise ValueError('4th argument to [occa.memcpy] (if given) must be an integer')
         elif isNotAnInteger(offset2):
-            raise ValueError('4th argument to [occa.memcpy] must be an integer')
+            raise ValueError('5th argument to [occa.memcpy] (if given) must be an integer')
 
     except ValueError as e:
         print(e)
@@ -320,7 +339,7 @@ def wrapMemory(handle, type_, entries):
     try:
         if varIsNotOfClass(handle, np.ndarray):
             raise ValueError('1st argument to [occa.wrapMemory] must be a numpy.ndarray')
-        elif isNotNumpyType(type_):
+        elif isNotANumpyType(type_):
             raise ValueError('2nd argument to [occa.wrapMemory] must be a numpy.dtype')
         elif isNotAnInteger(entries):
             raise ValueError('3rd argument to [occa.wrapMemory] must be an integer')
@@ -337,7 +356,7 @@ def wrapManagedMemory(handle, type_, entries):
     try:
         if varIsNotOfClass(handle, np.ndarray):
             raise ValueError('1st argument to [occa.wrapMappedMemory] must be a numpy.ndarray')
-        elif isNotNumpyType(type_):
+        elif isNotANumpyType(type_):
             raise ValueError('2nd argument to [occa.wrapMappedMemory] must be a numpy.dtype')
         elif isNotAnInteger(entries):
             raise ValueError('3rd argument to [occa.wrapMappedMemory] must be an integer')
@@ -352,7 +371,7 @@ def wrapManagedMemory(handle, type_, entries):
 def malloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
-        if isNotNumpyType(type_):
+        if isNotANumpyType(type_):
             raise ValueError('1st argument to [occa.malloc] must be a numpy.dtype')
         elif isNotAnInteger(entries):
             raise ValueError('2nd argument to [occa.malloc] must be an integer')
@@ -367,7 +386,7 @@ def malloc(type_, entries):
 def managedAlloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
-        if isNotNumpyType(type_):
+        if isNotANumpyType(type_):
             raise ValueError('1st argument to [occa.managedAlloc] must be a numpy.dtype')
         elif isNotAnInteger(entries):
             raise ValueError('2nd argument to [occa.managedAlloc] must be an integer')
@@ -382,7 +401,7 @@ def managedAlloc(type_, entries):
 def mappedAlloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
-        if isNotNumpyType(type_):
+        if isNotANumpyType(type_):
             raise ValueError('1st argument to [occa.mappedAlloc] must be a numpy.dtype')
         elif isNotAnInteger(entries):
             raise ValueError('2nd argument to [occa.mappedAlloc] must be an integer')
@@ -397,7 +416,7 @@ def mappedAlloc(type_, entries):
 def managedMappedAlloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
-        if isNotNumpyType(type_):
+        if isNotANumpyType(type_):
             raise ValueError('1st argument to [occa.managedMappedAlloc] must be a numpy.dtype')
         elif isNotAnInteger(entries):
             raise ValueError('2nd argument to [occa.managedMappedAlloc] must be an integer')
@@ -420,9 +439,9 @@ class device:
         #---[ Arg Testing ]-------
         try:
             if isNotAnInteger(arg) and \
-               varIsNotAString(arg):
+               isNotAString(arg):
 
-                raise ValueError('Optional argument to [occa.device.__init__] must be a string')
+                raise ValueError('1st argument to [occa.device.__init__] (if given) must be a string')
 
         except ValueError as e:
             print(e)
@@ -452,7 +471,8 @@ class device:
     def setCompiler(self, compiler):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(compiler):
+                raise ValueError('Argument to [occa.device.setCompiler] must be a string')
         except ValueError as e:
             print(e)
             sys.exit()
@@ -463,7 +483,8 @@ class device:
     def setCompilerEnvScript(self, compilerEnvScript):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(compilerEnvScript):
+                raise ValueError('Argument to [occa.device.setCompilerEnvScript] must be a string')
         except ValueError as e:
             print(e)
             sys.exit()
@@ -474,7 +495,8 @@ class device:
     def setCompilerFlags(self, compilerFlags):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(compilerFlags):
+                raise ValueError('Argument to [occa.device.setCompilerFlags] must be a string')
         except ValueError as e:
             print(e)
             sys.exit()
@@ -497,7 +519,13 @@ class device:
     def buildKernel(self, str_, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(str_):
+                raise ValueError('1st argument to [occa.device.buildKernel] must be a string')
+            elif isNotAString(functionName):
+                raise ValueError('2nd argument to [occa.device.buildKernel] must be a string')
+            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
+                raise ValueError('3rd argument to [occa.device.buildKernel] (if given) must be an [occa.kernelInfo]')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -509,7 +537,13 @@ class device:
     def buildKernelFromSource(self, filename, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(filename):
+                raise ValueError('1st argument to [occa.device.buildKernelFromSource] must be a string')
+            elif isNotAString(functionName):
+                raise ValueError('2nd argument to [occa.device.buildKernelFromSource] must be a string')
+            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
+                raise ValueError('3rd argument to [occa.device.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -521,7 +555,15 @@ class device:
     def buildKernelFromString(self, source, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(source):
+                raise ValueError('1st argument to [occa.device.buildKernelFromString] must be a string')
+            elif isNotAString(functionName):
+                raise ValueError('2nd argument to [occa.device.buildKernelFromString] must be a string')
+            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
+                raise ValueError('3rd argument to [occa.device.buildKernelFromString] (if given) must be an [occa.kernelInfo]')
+            elif isNotAString(language):
+                raise ValueError('4th argument to [occa.device.buildKernelFromString] (if given) must be a string')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -533,7 +575,11 @@ class device:
     def buildKernelFromBinary(self, binary, functionName):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(binary):
+                raise ValueError('1st argument to [occa.device.buildKernelFromBinary] must be a string')
+            elif isNotAString(functionName):
+                raise ValueError('2nd argument to [occa.device.buildKernelFromBinary] must be a string')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -544,7 +590,13 @@ class device:
     def buildKernelFromLoopy(self, filename, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(filename):
+                raise ValueError('1st argument to [occa.device.buildKernelFromSource] must be a string')
+            elif isNotAString(functionName):
+                raise ValueError('2nd argument to [occa.device.buildKernelFromSource] must be a string')
+            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
+                raise ValueError('3rd argument to [occa.device.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -556,7 +608,13 @@ class device:
     def buildKernelFromFloopy(self, filename, functionName, kInfo = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(filename):
+                raise ValueError('1st argument to [occa.device.buildKernelFromSource] must be a string')
+            elif isNotAString(functionName):
+                raise ValueError('2nd argument to [occa.device.buildKernelFromSource] must be a string')
+            elif (kInfo != 0) and (varNotIsOfClass(kInfo, kernelInfo)):
+                raise ValueError('3rd argument to [occa.device.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -568,7 +626,11 @@ class device:
     def malloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotANumpyType(type_):
+                raise ValueError('1st argument to [occa.device.malloc] must be a numpy.dtype')
+            elif isNotAnInteger(entries):
+                raise ValueError('2nd argument to [occa.device.malloc] must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -579,7 +641,11 @@ class device:
     def managedAlloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotANumpyType(type_):
+                raise ValueError('1st argument to [occa.device.managedAlloc] must be a numpy.dtype')
+            elif isNotAnInteger(entries):
+                raise ValueError('2nd argument to [occa.device.managedAlloc] must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -590,7 +656,11 @@ class device:
     def mappedAlloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotANumpyType(type_):
+                raise ValueError('1st argument to [occa.device.mappedAlloc] must be a numpy.dtype')
+            elif isNotAnInteger(entries):
+                raise ValueError('2nd argument to [occa.device.mappedAlloc] must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -601,7 +671,11 @@ class device:
     def managedMappedAlloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotANumpyType(type_):
+                raise ValueError('1st argument to [occa.device.managedMappedAlloc] must be a numpy.dtype')
+            elif isNotAnInteger(entries):
+                raise ValueError('2nd argument to [occa.device.managedMappedAlloc] must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -624,7 +698,9 @@ class device:
     def setStream(self, stream):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if varIsNotOfClass(stream_, stream):
+                raise ValueError('Argument to [occa.setStream] must be a occa.stream')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -633,6 +709,16 @@ class device:
         return stream(_C_occa.deviceSetStream(self.handle, stream))
 
     def wrapStream(self, handle):
+        #---[ Arg Testing ]-------
+        try:
+            if varIsNotAnInteger(handle):
+                raise ValueError('Argument to [occa.wrapStream] must be a [void*] handle')
+
+        except ValueError as e:
+            print(e)
+            sys.exit()
+        #=========================
+
         return stream(_C_occa.deviceWrapStream(self.handle, handle))
 
 class stream:
@@ -642,7 +728,7 @@ class stream:
             if handle_ is not None and \
                isNotAnInteger(handle_):
 
-                raise ValueError('Optional argument to [occa.stream.__init__] must be a stream handle')
+                raise ValueError('1st argument to [occa.stream.__init__] (if given) must be a stream handle')
 
         except ValueError as e:
             print(e)
@@ -675,7 +761,7 @@ class kernel:
             if handle_ is not None and \
                isNotAnInteger(handle_):
 
-                raise ValueError('Optional argument to [occa.kernel.__init__] must be a kernel handle')
+                raise ValueError('1st argument to [occa.kernel.__init__] (if given) must be a kernel handle')
 
         except ValueError as e:
             print(e)
@@ -711,6 +797,19 @@ class kernel:
             elif varIsOfClass(arg, memory):
                 _C_occa.argumentListAddArg(argList, i, arg.handle)
             else:
+                #---[ Arg Testing ]-------
+                try:
+                    if isNotANumpyType(arg):
+                        raise ValueError('Argument to an [occa.kernel()] launch must be either:\n'\
+                                         '    - OCCA-allocated numpy.ndarray\n'        \
+                                         '    - occa.memory object\n'                  \
+                                         '    - numpy.dtype (like numpy.int32, numpy.float32, ...)')
+
+                except ValueError as e:
+                    print(e)
+                    sys.exit()
+                #=========================
+
                 argType = getattr(_C_occa, nameof(arg))(arg)
                 _C_occa.argumentListAddArg(argList, i, argType)
 
@@ -734,7 +833,7 @@ class kernelInfo:
             if handle_ is not None and \
                isNotAnInteger(handle_):
 
-                raise ValueError('Optional argument to [occa.kernelInfo.__init__] must be a kernelInfo handle')
+                raise ValueError('1st argument to [occa.kernelInfo.__init__] (if given) must be a kernelInfo handle')
 
         except ValueError as e:
             print(e)
@@ -761,7 +860,11 @@ class kernelInfo:
     def addDefine(self, macro, value):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(macro):
+                raise ValueError('1st argument to [occa.kernelInfo.addDefine] must be a string')
+            elif not hasattr(value, '__str__'):
+                raise ValueError('2nd argument to [occa.kernelInfo.addDefine] must be have an [__str__] method')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -772,7 +875,9 @@ class kernelInfo:
     def addInclude(self, filename):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAString(filename):
+                raise ValueError('1st argument to [occa.kernelInfo.addInclude] must be a string')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -789,7 +894,7 @@ class memory:
             if handle_ is not None and \
                isNotAnInteger(handle_):
 
-                raise ValueError('Optional argument to [occa.memory.__init__] must be a memory handle')
+                raise ValueError('1st argument to [occa.memory.__init__] (if given) must be a memory handle')
 
         except ValueError as e:
             print(e)
@@ -828,7 +933,15 @@ class memory:
     def copyFrom(self, src, bytes_ = 0, offset1 = 0, offset2 = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAMemoryType(src):
+                raise ValueError('1st argument to [occa.memory.copyFrom] must be a [numpy.ndarray] or [occa.memory]')
+            elif isNotAnInteger(bytes_):
+                raise ValueError('2nd argument to [occa.memory.copyFrom] (if given) must be an integer')
+            elif isNotAnInteger(offset1):
+                raise ValueError('3rd argument to [occa.memory.copyFrom] (if given) must be an integer')
+            elif isNotAnInteger(offset2):
+                raise ValueError('4th argument to [occa.memory.copyFrom] (if given) must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -839,7 +952,15 @@ class memory:
     def copyTo(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAMemoryType(dest):
+                raise ValueError('1st argument to [occa.memory.copyTo] must be a [numpy.ndarray] or [occa.memory]')
+            elif isNotAnInteger(bytes_):
+                raise ValueError('2nd argument to [occa.memory.copyTo] (if given) must be an integer')
+            elif isNotAnInteger(offset1):
+                raise ValueError('3rd argument to [occa.memory.copyTo] (if given) must be an integer')
+            elif isNotAnInteger(offset2):
+                raise ValueError('4th argument to [occa.memory.copyTo] (if given) must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -847,10 +968,18 @@ class memory:
 
         memcpy(dest, self, bytes_, offset1, offset2)
 
-    def asyncCopyFrom(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
+    def asyncCopyFrom(self, src, bytes_ = 0, offset1 = 0, offset2 = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAMemoryType(src):
+                raise ValueError('1st argument to [occa.memory.asyncCopyFrom] must be a [numpy.ndarray] or [occa.memory]')
+            elif isNotAnInteger(bytes_):
+                raise ValueError('2nd argument to [occa.memory.asyncCopyFrom] (if given) must be an integer')
+            elif isNotAnInteger(offset1):
+                raise ValueError('3rd argument to [occa.memory.asyncCopyFrom] (if given) must be an integer')
+            elif isNotAnInteger(offset2):
+                raise ValueError('4th argument to [occa.memory.asyncCopyFrom] (if given) must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
@@ -861,7 +990,15 @@ class memory:
     def asyncCopyTo(self, dest, bytes_ = 0, offset1 = 0, offset2 = 0):
         #---[ Arg Testing ]-------
         try:
-            pass
+            if isNotAMemoryType(dest):
+                raise ValueError('1st argument to [occa.memory.asyncCopyTo] must be a [numpy.ndarray] or [occa.memory]')
+            elif isNotAnInteger(bytes_):
+                raise ValueError('2nd argument to [occa.memory.asyncCopyTo] (if given) must be an integer')
+            elif isNotAnInteger(offset1):
+                raise ValueError('3rd argument to [occa.memory.asyncCopyTo] (if given) must be an integer')
+            elif isNotAnInteger(offset2):
+                raise ValueError('4th argument to [occa.memory.asyncCopyTo] (if given) must be an integer')
+
         except ValueError as e:
             print(e)
             sys.exit()
