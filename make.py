@@ -17,7 +17,7 @@ pythonHeaderDir = sys.prefix + '/include/' + pythonName + '/'
 numpyHeaderDir = np.get_include() + '/'
 
 libpythonDir  = sysconfig.get_config_var("LIBDIR") + '/'
-libpythonFlag = 'lib' + pythonName + '.so'
+libpythonFlag = '-l' + pythonName
 
 OCCA_DIR = os.environ['OCCA_DIR']
 
