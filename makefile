@@ -75,7 +75,13 @@ $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOP
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ $(fFlags) -c $<
 
 $(occaLPath)/_C_occa.so: $(occaLPath)/libocca.so $(occaIPath)/python/_C_occa.h $(occaSPath)/python/_C_occa.c
-	clang -shared -fPIC $(occaSPath)/python/_C_occa.c -o $(occaLPath)/_C_occa.so -I${OCCA_DIR}/include/ -I${OCCA_DIR}/include/python -L${OCCA_DIR}/lib -I/System/Library/Frameworks/Python.framework//Versions/2.7/include/python2.7/ -I/System/Library/Frameworks/Python.framework//Versions/2.7/Extras/lib/python/numpy/core/include/ -locca -framework Python
+	clang -shared -fPIC $(occaSPath)/python/_C_occa.c -o $(occaLPath)/_C_occa.so -I${OCCA_DIR}/include/ -I${OCCA_DIR}/include/python -L${OCCA_DIR}/lib \
+	-I/System/Library/Frameworks/Python.framework//Versions/2.7/include/python2.7/ \
+	-I/System/Library/Frameworks/Python.framework//Versions/2.7/Extras/lib/python/numpy/core/include/ -locca -framework Python
+
+# -I /sys.prefix/include/ sys.version_info.major . sys.version_info.minor/
+# -I numpy.get_include()/
+
 
 # Ingore [-Wl,--enable-new-dtags] warnings if COI isn't being compiled
 ifeq (coiEnabled, 1)
