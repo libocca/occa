@@ -1,4 +1,4 @@
-import sys, os
+import sys, os, imp
 import numpy as np
 from distutils import sysconfig
 
@@ -21,6 +21,9 @@ libpython    = pythonName
 
 OCCA_DIR = os.environ['OCCA_DIR']
 
+while OCCA_DIR[-1] == '/':
+    OCCA_DIR = OCCA_DIR[:-1]
+
 commandLineArgs = ' '.join(sys.argv[1:])
 
 os.system('make'                                   +\
@@ -30,3 +33,9 @@ os.system('make'                                   +\
           ' OCCA_NUMPY_DIR='     + numpyHeaderDir  +\
           ' ' + commandLineArgs                    +\
           ' -f ' + OCCA_DIR + '/makefile')
+
+try:
+    imp.find_module('occa')
+except ImportError:
+    print "Remember to:"
+    print "  export PYTHONPATH=$PYTHONPATH:$OCCA_DIR/lib"
