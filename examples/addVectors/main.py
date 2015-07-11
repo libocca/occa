@@ -5,9 +5,9 @@ entries = np.int32(10)
 
 addVectors = occa.buildKernel('addVectors.okl', 'addVectors')
 
-a  = occa.managedAlloc(entries, np.float32)
-b  = occa.managedAlloc(entries, np.float32)
-ab = occa.managedAlloc(entries, np.float32)
+a  = occa.managedAlloc(np.float32, entries)
+b  = occa.managedAlloc(np.float32, entries)
+ab = occa.managedAlloc(np.float32, entries)
 
 for i in xrange(entries):
     a[i]  = i

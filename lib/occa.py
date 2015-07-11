@@ -308,7 +308,7 @@ def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
         else:
             _C_occa.asyncMemcpy(dest, src, bytes_)
 
-def wrapMemory(handle, entries, type_):
+def wrapMemory(handle, type_, entries):
     #---[ Arg Testing ]-------
     try:
         pass
@@ -319,7 +319,7 @@ def wrapMemory(handle, entries, type_):
 
     return memory(_C_occa.wrapMemory(handle, entries, sizeof(type_)))
 
-def wrapManagedMemory(handle, entries, type_):
+def wrapManagedMemory(handle, type_, entries):
     #---[ Arg Testing ]-------
     try:
         pass
@@ -330,7 +330,7 @@ def wrapManagedMemory(handle, entries, type_):
 
     return _C_occa.wrapManagedMemory(handle, entries, sizeof(type_), typeof(type_))
 
-def malloc(entries, type_):
+def malloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
         pass
@@ -341,7 +341,7 @@ def malloc(entries, type_):
 
     return memory(_C_occa.malloc(entries, sizeof(type_)))
 
-def managedAlloc(entries, type_):
+def managedAlloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
         pass
@@ -352,7 +352,7 @@ def managedAlloc(entries, type_):
 
     return _C_occa.managedAlloc(entries, sizeof(type_), typeof(type_))
 
-def malloc(entries, type_):
+def malloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
         pass
@@ -363,7 +363,7 @@ def malloc(entries, type_):
 
     return memory(_C_occa.mappedAlloc(entries, sizeof(type_)))
 
-def managedMappedAlloc(entries, type_):
+def managedMappedAlloc(type_, entries):
     #---[ Arg Testing ]-------
     try:
         pass
@@ -526,7 +526,7 @@ class device:
         kInfo_ = (0 if (kInfo == 0) else kInfo.handle)
         return kernel(_C_occa.deviceBuildKernelFromFloopy(self.handle, filename, functionName, kInfo_))
 
-    def malloc(self, entries, type_):
+    def malloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -537,7 +537,7 @@ class device:
 
         return memory(_C_occa.deviceMalloc(self.handle, entries, sizeof(type_)))
 
-    def managedAlloc(self, entries, type_):
+    def managedAlloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -548,7 +548,7 @@ class device:
 
         return _C_occa.deviceManagedAlloc(self.handle, entries, sizeof(type_), typeof(type_))
 
-    def mappedAlloc(self, entries, type_):
+    def mappedAlloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
             pass
@@ -559,7 +559,7 @@ class device:
 
         return memory(_C_occa.deviceMappedAlloc(self.handle, entries, sizeof(type_)))
 
-    def managedMappedAlloc(self, entries, type_):
+    def managedMappedAlloc(self, type_, entries):
         #---[ Arg Testing ]-------
         try:
             pass
