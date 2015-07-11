@@ -5,7 +5,7 @@ pythonHeaderDir = sys.prefix                  +\
                   '/include/python'           +\
                   str(sys.version_info.major) +\
                   '.'                         +\
-                  str(sys.version_info.major) +\
+                  str(sys.version_info.minor) +\
                   '/'
 
 numpyHeaderDir = np.get_include() + '/'
