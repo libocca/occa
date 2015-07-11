@@ -3,17 +3,23 @@ import numpy as np
 import sys
 
 #---[ Setup ]---------------------------
-def isA(self, class_):
-    return self.__class__ is class_
+def varIsOfClass(v, class_):
+    return v.__class__ is class_
 
-def isNotA(self, class_):
-    return not(self.__class__ is class_)
+def varIsNotOfClass(v, class_):
+    return (not varIsOfClass(v, class_))
 
-def isAString(self):
-    return isinstance(self, basestring)
+def isAString(v):
+    return isinstance(v, basestring)
 
-def isNotAString(self):
-    return (not isinstance(self, basestring))
+def isNotAString(v):
+    return (not isAString(v, ))
+
+def isAMemoryType(v):
+    return (varIsOfClass(v, memory) or varIsOfClass(v, np.ndarray))
+
+def isNotAMemoryType(v):
+    return (not isAMemoryType(v))
 
 def sizeof(npType):
     return np.dtype(npType).itemsize
@@ -35,8 +41,8 @@ def setVerboseCompilation(value):
 def setDevice(arg):
     #---[ Arg Testing ]-------
     try:
-        if arg.isNotAString() and \
-           arg.isNotA(device):
+        if isNotAString(arg) and \
+           varIsNotOfClass(arg, device):
 
             raise ValueError('Argument to [occa.setDevice] must be a occa.device or string')
 
@@ -45,9 +51,9 @@ def setDevice(arg):
         sys.exit()
     #=========================
 
-    if arg.isAString():
+    if isAString(arg):
         _C_occa.setDeviceFromInfo(arg)
-    elif arg.isA(device):
+    elif varIsOfClass(arg, device):
         _C_occa.setDevice(arg.handle)
 
 def getCurrentDevice():
@@ -56,7 +62,7 @@ def getCurrentDevice():
 def setCompiler(compiler):
     #---[ Arg Testing ]-------
     try:
-        if arg.isNotAString():
+        if isNotAString(arg):
             raise ValueError('Argument to [occa.setCompiler] must be a string')
 
     except ValueError as e:
@@ -69,7 +75,7 @@ def setCompiler(compiler):
 def setCompilerEnvScript(compilerEnvScript):
     #---[ Arg Testing ]-------
     try:
-        if arg.isNotAString():
+        if isNotAString(arg):
             raise ValueError('Argument to [occa.setCompilerEnvScript] must be a string')
 
     except ValueError as e:
@@ -82,7 +88,7 @@ def setCompilerEnvScript(compilerEnvScript):
 def setCompilerFlags(compilerFlags):
     #---[ Arg Testing ]-------
     try:
-        if arg.isNotAString():
+        if isNotAString(arg):
             raise ValueError('Argument to [occa.setCompilerFlags] must be a string')
 
     except ValueError as e:
@@ -113,10 +119,10 @@ def createStream():
 def getStream():
     return stream(_C_occa.getStream())
 
-def setStream(stream):
+def setStream(stream_):
     #---[ Arg Testing ]-------
     try:
-        if stream.isNotA(stream):
+        if varIsNotOfClass(stream_, stream):
             raise ValueError('Argument to [occa.setStream] must be a occa.stream')
 
     except ValueError as e:
@@ -124,7 +130,7 @@ def setStream(stream):
         sys.exit()
     #=========================
 
-    _C_occa.setStream(stream)
+    _C_occa.setStream(stream_)
 
 def wrapStream(handle):
     return stream(_C_occa.wrapStream(handle))
@@ -134,10 +140,12 @@ def wrapStream(handle):
 def buildKernel(str_, functionName, kInfo = 0):
     #---[ Arg Testing ]-------
     try:
-        pass
-        # if str_.isNotAString()         or \
-        #    functionName.isNotAString() or \
-        #    (kInfo != 0)
+        if isNotAString(str_):
+            raise ValueError('1st argument to [occa.buildKernel] must be a string')
+        elif isNotAString(functionName):
+            raise ValueError('2nd argument to [occa.buildKernel] must be a string')
+        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+            raise ValueError('3rd argument to [occa.buildKernel] (if given) must be an [occa.kernelInfo]')
 
     except ValueError as e:
         print(e)
@@ -150,7 +158,13 @@ def buildKernel(str_, functionName, kInfo = 0):
 def buildKernelFromSource(filename, functionName, kInfo = 0):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isNotAString(filename):
+            raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
+        elif isNotAString(functionName):
+            raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
+        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+            raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -162,7 +176,15 @@ def buildKernelFromSource(filename, functionName, kInfo = 0):
 def buildKernelFromString(source, functionName, kInfo = 0, language = "OKL"):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isNotAString(source):
+            raise ValueError('1st argument to [occa.buildKernelFromString] must be a string')
+        elif isNotAString(functionName):
+            raise ValueError('2nd argument to [occa.buildKernelFromString] must be a string')
+        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+            raise ValueError('3rd argument to [occa.buildKernelFromString] (if given) must be an [occa.kernelInfo]')
+        elif isNotAString(language):
+            raise ValueError('4th argument to [occa.buildKernelFromString] (if given) must be a string')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -174,18 +196,28 @@ def buildKernelFromString(source, functionName, kInfo = 0, language = "OKL"):
 def buildKernelFromBinary(binary, functionName):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isNotAString(binary):
+            raise ValueError('1st argument to [occa.buildKernelFromBinary] must be a string')
+        elif isNotAString(functionName):
+            raise ValueError('2nd argument to [occa.buildKernelFromBinary] must be a string')
+
     except ValueError as e:
         print(e)
         sys.exit()
     #=========================
 
-    return kernel(_C_occa.buildKernelFromBinary(filename, functionName))
+    return kernel(_C_occa.buildKernelFromBinary(binary, functionName))
 
 def buildKernelFromLoopy(filename, functionName, kInfo = 0):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isNotAString(filename):
+            raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
+        elif isNotAString(functionName):
+            raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
+        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+            raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -197,7 +229,13 @@ def buildKernelFromLoopy(filename, functionName, kInfo = 0):
 def buildKernelFromFloopy(filename, functionName, kInfo = 0):
     #---[ Arg Testing ]-------
     try:
-        pass
+        if isNotAString(filename):
+            raise ValueError('1st argument to [occa.buildKernelFromSource] must be a string')
+        elif isNotAString(functionName):
+            raise ValueError('2nd argument to [occa.buildKernelFromSource] must be a string')
+        elif (kInfo != 0) and (varIsOfClass(kInfo, kernelInfo)):
+            raise ValueError('3rd argument to [occa.buildKernelFromSource] (if given) must be an [occa.kernelInfo]')
+
     except ValueError as e:
         print(e)
         sys.exit()
@@ -217,13 +255,13 @@ def memcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
         sys.exit()
     #=========================
 
-    if dest.__class__ is memory:
-        if src.__class__ is memory:
+    if varIsOfClass(dest, memory):
+        if varIsOfClass(src, memory):
             _C_occa.copyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
         else:
             _C_occa.copyPtrToMem(dest.handle, src, bytes_, offset1)
     else:
-        if src.__class__ is memory:
+        if varIsOfClass(src, memory):
             _C_occa.copyMemToPtr(dest, src.handle, bytes_, offset1)
         else:
             _C_occa.memcpy(dest, src, bytes_)
@@ -237,13 +275,13 @@ def asyncMemcpy(dest, src, bytes_, offset1 = 0, offset2 = 0):
         sys.exit()
     #=========================
 
-    if dest.__class__ is memory:
-        if src.__class__ is memory:
+    if varIsOfClass(dest, memory):
+        if varIsOfClass(src, memory):
             _C_occa.asyncCopyMemToMem(dest.handle, src.handle, bytes_, offset1, offset2)
         else:
             _C_occa.asyncCopyPtrToMem(dest.handle, src, bytes_, offset1)
     else:
-        if src.__class__ is memory:
+        if varIsOfClass(src, memory):
             _C_occa.asyncCopyMemToPtr(dest, src.handle, bytes_, offset1)
         else:
             _C_occa.asyncMemcpy(dest, src, bytes_)
@@ -330,7 +368,7 @@ class device:
             sys.exit()
         #=========================
 
-        if arg.isAString():
+        if isAString(arg):
             self.handle = _C_occa.createDevice(arg)
         else:
             self.handle = arg
@@ -598,10 +636,10 @@ class kernel:
         for i in xrange(len(args)):
             arg = args[i]
 
-            if arg.__class__ is np.ndarray:
+            if varIsOfClass(arg, np.ndarray):
                 argType = _C_occa.ptr(arg.ctypes.data)
                 _C_occa.argumentListAddArg(argList, i, argType)
-            elif arg.__class__ is memory:
+            elif varIsOfClass(arg, memory):
                 _C_occa.argumentListAddArg(argList, i, arg.handle)
             else:
                 argType = getattr(_C_occa, nameof(arg))(arg)
