@@ -68,7 +68,7 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 |    (7) COI Options
 |            OCCA_COI_COMPILER, OCCA_COI_COMPILER_FLAGS
 |
-|    (A) Running OCCA on Matlab
+|    (A) Running OCCA on Python
 |
 |    (B) Running OCCA on Fortran
 +===========================================================
@@ -188,9 +188,15 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 +===========================================================
 
 
-+--[ (A) MATLAB ]-------------------------------------------
++--[ (A) PYTHON ]-------------------------------------------
 |
-|  path(strcat(getenv('OCCA_DIR'), '/lib'), path)
+|  Compiling the occa module:
+|    export PYTHONPATH=$PYTHONPATH:$OCCA_DIR/lib
+|    python $OCCA_DIR/make.py
+|
+|  Running an example:
+|    cd $OCCA_DIR/examples/addVectors
+|    python make.py
 |
 +===========================================================
 
