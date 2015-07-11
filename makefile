@@ -39,10 +39,18 @@ ifeq ($(OCCA_FORTRAN_ENABLED), 1)
 endif
 endif
 
-ifdef OCCA_PYTHON_ENABLED
-ifeq ($(OCCA_PYTHON_ENABLED), 1)
-  outputs += $(occaLPath)/_C_occa.so
-endif
+ifdef OCCA_PYTHON_DIR
+  ifdef OCCA_NUMPY_DIR
+    outputs += $(occaLPath)/_C_occa.so
+
+    pyFlags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR}
+
+    ifeq ($(usingLinux),1)
+      pyFlags += -lpython
+    else ifeq ($(usingOSX),1)
+      pyFlags += -framework Python
+    endif
+  endif
 endif
 
 ifdef occaDirWasInitialized
@@ -75,13 +83,8 @@ $(occaOPath)/occaF.o:$(occaSPath)/occaF.f90 $(occaSPath)/occaFTypes.f90 $(occaOP
 	$(fCompiler) $(fCompilerFlags) $(fModDirFlag) $(occaLPath) -o $@ $(fFlags) -c $<
 
 $(occaLPath)/_C_occa.so: $(occaLPath)/libocca.so $(occaIPath)/python/_C_occa.h $(occaSPath)/python/_C_occa.c
-	clang -shared -fPIC $(occaSPath)/python/_C_occa.c -o $(occaLPath)/_C_occa.so -I${OCCA_DIR}/include/ -I${OCCA_DIR}/include/python -L${OCCA_DIR}/lib \
-	-I/System/Library/Frameworks/Python.framework//Versions/2.7/include/python2.7/ \
-	-I/System/Library/Frameworks/Python.framework//Versions/2.7/Extras/lib/python/numpy/core/include/ -locca -framework Python
-
-# -I /sys.prefix/include/ sys.version_info.major . sys.version_info.minor/
-# -I numpy.get_include()/
-
+	clang -shared -fPIC $(occaSPath)/python/_C_occa.c -o $(occaLPath)/_C_occa.so \
+	-I${OCCA_DIR}/include/ -I${OCCA_DIR}/include/python -L${OCCA_DIR}/lib $(pyFlags) -locca
 
 # Ingore [-Wl,--enable-new-dtags] warnings if COI isn't being compiled
 ifeq (coiEnabled, 1)
