@@ -991,7 +991,7 @@ namespace occa {
     }
 
     void valueInfo_t::insertOp(const std::string &op,
-                               expNode &value){
+                               expNode &value_){
       expNode eOp;
       eOp.info  = expType::LR;
       eOp.value = op;
@@ -1000,17 +1000,17 @@ namespace occa {
 
       saveTo(eOp[1]);
 
-      eOp.leaves[0] = &value;
+      eOp.leaves[0] = &value_;
 
       load(eOp);
     }
 
     void valueInfo_t::insertOp(const std::string &op,
-                               const std::string &value){
+                               const std::string &value_){
 
       expNode eValue;
       eValue.info  = expType::presetValue;
-      eValue.value = value;
+      eValue.value = value_;
 
       insertOp(op, eValue);
     }
@@ -1906,9 +1906,9 @@ namespace occa {
         expNode &leaf = flatRoot[i];
 
         if(leaf.info & expType::varInfo){
-          varInfo &var = leaf.getVarInfo();
+          varInfo &var2 = leaf.getVarInfo();
 
-          viInfo_t *iter2 = db.has(var);
+          viInfo_t *iter2 = db.has(var2);
 
           if(iter2 &&
              (iter2->info & viType::isAnIterator)){
@@ -2265,10 +2265,10 @@ namespace occa {
       std::cout << "Kernel: " << kernel.onlyThisToString() << '\n';
 #endif
 
-      statement &globalScope = *(kernel.getGlobalScope());
+      statement &kGlobalScope = *(kernel.getGlobalScope());
 
       std::string kernelName = kernel.getFunctionName();
-      globalScope.createUniqueSequentialVariables(kernelName, kernelCount);
+      kGlobalScope.createUniqueSequentialVariables(kernelName, kernelCount);
 
       std::stringstream ss;
       intVector_t path;

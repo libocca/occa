@@ -59,8 +59,8 @@ namespace occa {
       case intType       : value.int_        = occa::atoi(str); break;
       case ulongType     : value.ulong_      = occa::atoi(str); break;
       case longType      : value.long_       = occa::atoi(str); break;
-      case ulonglongType : value.ulonglong_  = occa::atoi(str); break;
-      case longlongType  : value.longlong_   = occa::atoi(str); break;
+      // case ulonglongType : value.ulonglong_  = occa::atoi(str); break;
+      // case longlongType  : value.longlong_   = occa::atoi(str); break;
       case floatType     : value.float_      = occa::atof(str); break;
       case doubleType    : value.double_     = occa::atod(str); break;
       default:
@@ -90,8 +90,8 @@ namespace occa {
         return;
       }
       else if(strcmp(c, "NULL")  == 0){
-        type             = ulonglongType;
-        value.ulonglong_ = 0;
+        type        = voidType;
+        value.void_ = 0;
 
         ++c;
         return;
@@ -209,14 +209,16 @@ namespace occa {
           }
         }
         else{
-          if(!unsigned_){
-            type            = longlongType;
-            value.longlong_ = occa::atoi(std::string(c0, c - c0));
-          }
-          else{
-            type             = ulonglongType;
-            value.ulonglong_ = occa::atoi(std::string(c0, c - c0));
-          }
+          type        = voidType;
+          value.void_ = occa::atoi(std::string(c0, c - c0));
+          // if(!unsigned_){
+          //   type            = longlongType;
+          //   value.longlong_ = occa::atoi(std::string(c0, c - c0));
+          // }
+          // else{
+          //   type             = ulonglongType;
+          //   value.ulonglong_ = occa::atoi(std::string(c0, c - c0));
+          // }
         }
       }
 
@@ -269,15 +271,15 @@ namespace occa {
       value.long_ = long__;
     }
 
-    typeHolder::typeHolder(const unsigned long long ulonglong__){
-      type             = ulonglongType;
-      value.ulonglong_ = ulonglong__;
-    }
+    // typeHolder::typeHolder(const unsigned long long ulonglong__){
+    //   type             = ulonglongType;
+    //   value.ulonglong_ = ulonglong__;
+    // }
 
-    typeHolder::typeHolder(const long long longlong__){
-      type            = longlongType;
-      value.longlong_ = longlong__;
-    }
+    // typeHolder::typeHolder(const long long longlong__){
+    //   type            = longlongType;
+    //   value.longlong_ = longlong__;
+    // }
 
     typeHolder::typeHolder(const float float__){
       type         = floatType;
@@ -358,19 +360,19 @@ namespace occa {
       return *this;
     }
 
-    typeHolder& typeHolder::operator = (const unsigned long long ulonglong__){
-      type             = ulonglongType;
-      value.ulonglong_ = ulonglong__;
+    // typeHolder& typeHolder::operator = (const unsigned long long ulonglong__){
+    //   type             = ulonglongType;
+    //   value.ulonglong_ = ulonglong__;
 
-      return *this;
-    }
+    //   return *this;
+    // }
 
-    typeHolder& typeHolder::operator = (const long long longlong__){
-      type            = longlongType;
-      value.longlong_ = longlong__;
+    // typeHolder& typeHolder::operator = (const long long longlong__){
+    //   type            = longlongType;
+    //   value.longlong_ = longlong__;
 
-      return *this;
-    }
+    //   return *this;
+    // }
 
     typeHolder& typeHolder::operator = (const float float__){
       type         = floatType;
@@ -400,8 +402,8 @@ namespace occa {
       case intType       : return std::string("int");    break;
       case ulongType     : return std::string("long");   break;
       case longType      : return std::string("long");   break;
-      case ulonglongType : return std::string("long");   break;
-      case longlongType  : return std::string("long");   break;
+      // case ulonglongType : return std::string("long");   break;
+      // case longlongType  : return std::string("long");   break;
       case floatType     : return std::string("float");  break;
       case doubleType    : return std::string("double"); break;
       }
@@ -419,8 +421,8 @@ namespace occa {
       case intType       : return false; break;
       case ulongType     : return true;  break;
       case longType      : return false; break;
-      case ulonglongType : return true;  break;
-      case longlongType  : return false; break;
+      // case ulonglongType : return true;  break;
+      // case longlongType  : return false; break;
       case floatType     : return false; break;
       case doubleType    : return false; break;
       default:
@@ -440,8 +442,8 @@ namespace occa {
       case intType       : return true;  break;
       case ulongType     : return true;  break;
       case longType      : return true;  break;
-      case ulonglongType : return true;  break;
-      case longlongType  : return true;  break;
+      // case ulonglongType : return true;  break;
+      // case longlongType  : return true;  break;
       case floatType     : return false; break;
       case doubleType    : return false; break;
       default:
@@ -461,8 +463,8 @@ namespace occa {
       case intType       : return false; break;
       case ulongType     : return true;  break;
       case longType      : return true;  break;
-      case ulonglongType : return true;  break;
-      case longlongType  : return true;  break;
+      // case ulonglongType : return true;  break;
+      // case longlongType  : return true;  break;
       case floatType     : return false; break;
       case doubleType    : return false; break;
       default:
@@ -472,26 +474,26 @@ namespace occa {
       }
     }
 
-    bool typeHolder::isALongLongInt() const {
-      switch(type){
-      case boolType      : return false; break;
-      case charType      : return false; break;
-      case ushortType    : return false; break;
-      case shortType     : return false; break;
-      case uintType      : return false; break;
-      case intType       : return false; break;
-      case ulongType     : return false; break;
-      case longType      : return false; break;
-      case ulonglongType : return true;  break;
-      case longlongType  : return true;  break;
-      case floatType     : return false; break;
-      case doubleType    : return false; break;
-      default:
-        OCCA_CHECK(false,
-                   "Value not set\n");
-        return false;
-      }
-    }
+    // bool typeHolder::isALongLongInt() const {
+    //   switch(type){
+    //   case boolType      : return false; break;
+    //   case charType      : return false; break;
+    //   case ushortType    : return false; break;
+    //   case shortType     : return false; break;
+    //   case uintType      : return false; break;
+    //   case intType       : return false; break;
+    //   case ulongType     : return false; break;
+    //   case longType      : return false; break;
+    //   case ulonglongType : return true;  break;
+    //   case longlongType  : return true;  break;
+    //   case floatType     : return false; break;
+    //   case doubleType    : return false; break;
+    //   default:
+    //     OCCA_CHECK(false,
+    //                "Value not set\n");
+    //     return false;
+    //   }
+    // }
 
     bool typeHolder::isAFloat() const {
       switch(type){
@@ -503,8 +505,8 @@ namespace occa {
       case intType       : return false; break;
       case ulongType     : return false; break;
       case longType      : return false; break;
-      case ulonglongType : return false; break;
-      case longlongType  : return false; break;
+      // case ulonglongType : return false; break;
+      // case longlongType  : return false; break;
       case floatType     : return true;  break;
       case doubleType    : return true;  break;
       default:
@@ -524,8 +526,8 @@ namespace occa {
       case intType       : return false; break;
       case ulongType     : return false; break;
       case longType      : return false; break;
-      case ulonglongType : return false; break;
-      case longlongType  : return false; break;
+      // case ulonglongType : return false; break;
+      // case longlongType  : return false; break;
       case floatType     : return false; break;
       case doubleType    : return true;  break;
       default:
@@ -546,8 +548,8 @@ namespace occa {
       case intType       : return typeHolder(!value.int_);       break;
       case ulongType     : return typeHolder(!value.ulong_);     break;
       case longType      : return typeHolder(!value.long_);      break;
-      case ulonglongType : return typeHolder(!value.ulonglong_); break;
-      case longlongType  : return typeHolder(!value.longlong_);  break;
+      // case ulonglongType : return typeHolder(!value.ulonglong_); break;
+      // case longlongType  : return typeHolder(!value.longlong_);  break;
       case floatType     : return typeHolder(!value.float_);     break;
       case doubleType    : return typeHolder(!value.double_);    break;
       default:
@@ -571,8 +573,8 @@ namespace occa {
       case intType       : return typeHolder(-value.int_);       break;
       case ulongType     : return typeHolder(-value.ulong_);     break;
       case longType      : return typeHolder(-value.long_);      break;
-      case ulonglongType : return typeHolder(-value.ulonglong_); break;
-      case longlongType  : return typeHolder(-value.longlong_);  break;
+      // case ulonglongType : return typeHolder(-value.ulonglong_); break;
+      // case longlongType  : return typeHolder(-value.longlong_);  break;
       case floatType     : return typeHolder(-value.float_);     break;
       case doubleType    : return typeHolder(-value.double_);    break;
       default:
@@ -592,8 +594,8 @@ namespace occa {
       case intType       : return typeHolder(~value.int_);                            break;
       case ulongType     : return typeHolder(~value.ulong_);                          break;
       case longType      : return typeHolder(~value.long_);                           break;
-      case ulonglongType : return typeHolder(~value.ulonglong_);                      break;
-      case longlongType  : return typeHolder(~value.longlong_);                       break;
+      // case ulonglongType : return typeHolder(~value.ulonglong_);                      break;
+      // case longlongType  : return typeHolder(~value.longlong_);                       break;
       case floatType     : OCCA_CHECK(false, "Can't apply [~] operator to a float");  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [~] operator to a double"); break;
       default:
@@ -614,8 +616,8 @@ namespace occa {
       case intType       : ++value.int_;               break;
       case ulongType     : ++value.ulong_;             break;
       case longType      : ++value.long_;              break;
-      case ulonglongType : ++value.ulonglong_;         break;
-      case longlongType  : ++value.longlong_;          break;
+      // case ulonglongType : ++value.ulonglong_;         break;
+      // case longlongType  : ++value.longlong_;          break;
       case floatType     : ++value.float_;             break;
       case doubleType    : ++value.double_;            break;
       default:
@@ -636,8 +638,8 @@ namespace occa {
       case intType       : --value.int_;               break;
       case ulongType     : --value.ulong_;             break;
       case longType      : --value.long_;              break;
-      case ulonglongType : --value.ulonglong_;         break;
-      case longlongType  : --value.longlong_;          break;
+      // case ulonglongType : --value.ulonglong_;         break;
+      // case longlongType  : --value.longlong_;          break;
       case floatType     : --value.float_;             break;
       case doubleType    : --value.double_;            break;
       default:
@@ -658,8 +660,8 @@ namespace occa {
       case intType       : return typeHolder(value.int_++);       break;
       case ulongType     : return typeHolder(value.ulong_++);     break;
       case longType      : return typeHolder(value.long_++);      break;
-      case ulonglongType : return typeHolder(value.ulonglong_++); break;
-      case longlongType  : return typeHolder(value.longlong_++);  break;
+      // case ulonglongType : return typeHolder(value.ulonglong_++); break;
+      // case longlongType  : return typeHolder(value.longlong_++);  break;
       case floatType     : return typeHolder(value.float_++);     break;
       case doubleType    : return typeHolder(value.double_++);    break;
       default:
@@ -679,8 +681,8 @@ namespace occa {
       case intType       : return typeHolder(value.int_--);       break;
       case ulongType     : return typeHolder(value.ulong_--);     break;
       case longType      : return typeHolder(value.long_--);      break;
-      case ulonglongType : return typeHolder(value.ulonglong_--); break;
-      case longlongType  : return typeHolder(value.longlong_--);  break;
+      // case ulonglongType : return typeHolder(value.ulonglong_--); break;
+      // case longlongType  : return typeHolder(value.longlong_--);  break;
       case floatType     : return typeHolder(value.float_--);     break;
       case doubleType    : return typeHolder(value.double_--);    break;
       default:
@@ -705,8 +707,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                < th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      < th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               < th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() < th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          < th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() < th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          < th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              < th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             < th.to<double>());             break;
       default:
@@ -728,8 +730,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                <= th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      <= th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               <= th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() <= th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          <= th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() <= th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          <= th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              <= th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             <= th.to<double>());             break;
       default:
@@ -751,8 +753,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                == th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      == th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               == th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() == th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          == th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() == th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          == th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              == th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             == th.to<double>());             break;
       default:
@@ -774,8 +776,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                != th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      != th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               != th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() != th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          != th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() != th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          != th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              != th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             != th.to<double>());             break;
       default:
@@ -797,8 +799,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                >= th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      >= th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               >= th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() >= th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          >= th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() >= th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          >= th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              >= th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             >= th.to<double>());             break;
       default:
@@ -820,8 +822,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                > th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      > th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               > th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() > th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          > th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() > th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          > th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              > th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             > th.to<double>());             break;
       default:
@@ -843,8 +845,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                && th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      && th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               && th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() && th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          && th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() && th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          && th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              && th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             && th.to<double>());             break;
       default:
@@ -866,8 +868,8 @@ namespace occa {
       case intType       : return (bool) (to<int>()                || th.to<int>());                break;
       case ulongType     : return (bool) (to<unsigned long>()      || th.to<unsigned long>());      break;
       case longType      : return (bool) (to<long>()               || th.to<long>());               break;
-      case ulonglongType : return (bool) (to<unsigned long long>() || th.to<unsigned long long>()); break;
-      case longlongType  : return (bool) (to<long long>()          || th.to<long long>());          break;
+      // case ulonglongType : return (bool) (to<unsigned long long>() || th.to<unsigned long long>()); break;
+      // case longlongType  : return (bool) (to<long long>()          || th.to<long long>());          break;
       case floatType     : return (bool) (to<float>()              || th.to<float>());              break;
       case doubleType    : return (bool) (to<double>()             || th.to<double>());             break;
       default:
@@ -892,8 +894,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                * th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      * th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               * th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() * th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          * th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() * th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          * th.to<long long>());          break;
       case floatType     : return typeHolder(to<float>()              * th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             * th.to<double>());             break;
       default:
@@ -916,8 +918,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                + th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      + th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               + th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() + th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          + th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() + th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          + th.to<long long>());          break;
       case floatType     : return typeHolder(to<float>()              + th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             + th.to<double>());             break;
       default:
@@ -940,8 +942,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                - th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      - th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               - th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() - th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          - th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() - th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          - th.to<long long>());          break;
       case floatType     : return typeHolder(to<float>()              - th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             - th.to<double>());             break;
       default:
@@ -964,8 +966,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                / th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      / th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               / th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() / th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          / th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() / th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          / th.to<long long>());          break;
       case floatType     : return typeHolder(to<float>()              / th.to<float>());              break;
       case doubleType    : return typeHolder(to<double>()             / th.to<double>());             break;
       default:
@@ -987,8 +989,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                % th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      % th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               % th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() % th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          % th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() % th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          % th.to<long long>());          break;
       case floatType     : OCCA_CHECK(false, "Can't apply [%] operator to a float");                  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [%] operator to a double");                 break;
       default:
@@ -1011,8 +1013,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                & th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      & th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               & th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() & th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          & th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() & th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          & th.to<long long>());          break;
       case floatType     : OCCA_CHECK(false, "Can't apply [&] operator to a float");                  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [&] operator to a double");                 break;
       default:
@@ -1035,8 +1037,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                | th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      | th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               | th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() | th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          | th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() | th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          | th.to<long long>());          break;
       case floatType     : OCCA_CHECK(false, "Can't apply [|] operator to a float");                  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [|] operator to a double");                 break;
       default:
@@ -1059,8 +1061,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                ^ th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      ^ th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               ^ th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() ^ th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          ^ th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() ^ th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          ^ th.to<long long>());          break;
       case floatType     : OCCA_CHECK(false, "Can't apply [^] operator to a float");                  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [^] operator to a double");                 break;
       default:
@@ -1083,8 +1085,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                >> th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      >> th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               >> th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() >> th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          >> th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() >> th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          >> th.to<long long>());          break;
       case floatType     : OCCA_CHECK(false, "Can't apply [>>] operator to a float");                  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [>>] operator to a double");                 break;
       default:
@@ -1107,8 +1109,8 @@ namespace occa {
       case intType       : return typeHolder(to<int>()                << th.to<int>());                break;
       case ulongType     : return typeHolder(to<unsigned long>()      << th.to<unsigned long>());      break;
       case longType      : return typeHolder(to<long>()               << th.to<long>());               break;
-      case ulonglongType : return typeHolder(to<unsigned long long>() << th.to<unsigned long long>()); break;
-      case longlongType  : return typeHolder(to<long long>()          << th.to<long long>());          break;
+      // case ulonglongType : return typeHolder(to<unsigned long long>() << th.to<unsigned long long>()); break;
+      // case longlongType  : return typeHolder(to<long long>()          << th.to<long long>());          break;
       case floatType     : OCCA_CHECK(false, "Can't apply [<<] operator to a float");                  break;
       case doubleType    : OCCA_CHECK(false, "Can't apply [<<] operator to a double");                 break;
       default:
@@ -1176,9 +1178,9 @@ namespace occa {
     void typeHolder::convertTo(info_t type_){
       if(isAnInt()){
         if(isUnsigned()){
-          if(isALongLongInt())
-            convertFrom<unsigned long long>(type_);
-          else if(isALongInt())
+          // if(isALongLongInt())
+          //   convertFrom<unsigned long long>(type_);
+          if(isALongInt())
             convertFrom<unsigned long>(type_);
           else
             convertFrom<unsigned int>(type_);
@@ -1466,7 +1468,7 @@ namespace occa {
 
 
     //---[ Macro Info ]-----------------------------
-    macroInfo::macroInfo(){};
+    macroInfo::macroInfo(){}
 
     std::string macroInfo::applyArgs(const std::vector<std::string> &args){
       if(((size_t) argc) != args.size()){

@@ -1160,7 +1160,7 @@ namespace occa {
 
 
     //---[ Class Info ]---------------
-    varInfo* typeInfo::hasOperator(const std::string &name){
+    varInfo* typeInfo::hasOperator(const std::string &name_){
       return NULL;
     }
     //================================
@@ -1985,7 +1985,7 @@ namespace occa {
           pointerCount      = csvFlatRoot.leafCount;
           stackPointerCount = 0;
 
-          for(int i = 0; i < pointerCount; ++i)
+          for(int j = 0; j < pointerCount; ++j)
             rightQualifiers.add("*", 0);
 
           break;

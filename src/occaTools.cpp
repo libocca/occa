@@ -151,12 +151,12 @@ namespace occa {
 
       std::string sPath;
 
-      for(int dir = 0; dir < dirCount; ++dir){
+      for(int d = 0; d < dirCount; ++d){
         sPath += slash;
-        sPath += path[dir];
+        sPath += path[d];
 
         if(!dirExists(sPath)){
-          makeFrom = dir;
+          makeFrom = d;
           break;
         }
       }
@@ -164,9 +164,9 @@ namespace occa {
       if(0 < makeFrom){
         sys::mkdir(sPath);
 
-        for(int dir = (makeFrom + 1); dir < dirCount; ++dir){
+        for(int d = (makeFrom + 1); d < dirCount; ++d){
           sPath += slash;
-          sPath += path[dir];
+          sPath += path[d];
 
           sys::mkdir(sPath);
         }
@@ -891,12 +891,7 @@ namespace occa {
       else
         ret = ((uintptr_t) ((unsigned long) ret));
     }
-    else {
-      if(!unsigned_)
-        ret = ((uintptr_t) ((long long) ret));
-      else
-        ret = ((uintptr_t) ((unsigned long long) ret));
-    }
+    // else it's already in uintptr_t form
 
     return ret;
   }

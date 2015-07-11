@@ -239,34 +239,6 @@ namespace occa {
 
 
   //---[ Helper Classes ]-------------------------
-  class argInfo {
-  public:
-    std::string info, value;
-
-    argInfo();
-
-    argInfo(const argInfo &ai);
-    argInfo& operator = (const argInfo &ai);
-
-    argInfo(const std::string &info_);
-    argInfo(const std::string &info_,
-            const std::string &value_);
-
-    template <class TM>
-    argInfo operator = (const TM &value_) const {
-      return argInfo(info, toString(value));
-    }
-  };
-
-  extern const argInfo platformID;
-  extern const argInfo deviceID;
-
-  extern const argInfo schedule;
-  extern const argInfo chunk;
-
-  extern const argInfo threadCount;
-  extern const argInfo pinnedCores;
-
   class argInfoMap {
   public:
     std::map<std::string, std::string> iMap;
@@ -1400,21 +1372,9 @@ namespace occa {
 
     void setup(occa::mode m,
                const int arg1, const int arg2);
-    void setup(occa::mode m,
-               const argInfo &arg1);
-    void setup(occa::mode m,
-               const argInfo &arg1, const argInfo &arg2);
-    void setup(occa::mode m,
-               const argInfo &arg1, const argInfo &arg2, const argInfo &arg3);
 
     void setup(const std::string &m,
                const int arg1, const int arg2);
-    void setup(const std::string &m,
-               const argInfo &arg1);
-    void setup(const std::string &m,
-               const argInfo &arg1, const argInfo &arg2);
-    void setup(const std::string &m,
-               const argInfo &arg1, const argInfo &arg2, const argInfo &arg3);
 
     uintptr_t bytesAllocated() const;
 

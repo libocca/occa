@@ -147,9 +147,9 @@ namespace occa {
       void setBoundInfo(typeHolder *&bounds, bool *&hasBounds);
 
       void insertOp(const std::string &op,
-                    expNode &value);
+                    expNode &value_);
       void insertOp(const std::string &op,
-                    const std::string &value);
+                    const std::string &value_);
 
       varInfo& varValue();
       varInfo& var(const int pos);

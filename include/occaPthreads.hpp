@@ -48,7 +48,9 @@ namespace occa {
   };
 
   struct PthreadsKernelData_t {
-    void *dlHandle, *handle;
+    void *dlHandle;
+    handleFunction_t handle;
+
     int pThreadCount;
 
     int *pendingJobs;
@@ -75,7 +77,7 @@ namespace occa {
   struct PthreadKernelArg_t {
     int rank, count;
 
-    void *kernelHandle;
+    handleFunction_t kernelHandle;
 
     int dims;
     occa::dim inner, outer;

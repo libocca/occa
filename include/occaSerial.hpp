@@ -24,7 +24,8 @@
 namespace occa {
   //---[ Data Structs ]---------------
   struct SerialKernelData_t {
-    void *dlHandle, *handle;
+    void *dlHandle;
+    handleFunction_t handle;
   };
 
   struct SerialDeviceData_t {
@@ -84,9 +85,9 @@ namespace occa {
     void* dlopen(const std::string &filename,
                  const std::string &hash = "");
 
-    void* dlsym(void *dlHandle,
-                const std::string &functionName,
-                const std::string &hash = "");
+    handleFunction_t dlsym(void *dlHandle,
+                           const std::string &functionName,
+                           const std::string &hash = "");
   }
   //==================================
 

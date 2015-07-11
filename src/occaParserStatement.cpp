@@ -2213,18 +2213,18 @@ namespace occa {
 
       newExp.info = info;
 
-      const bool isVarInfo  = (info & expType::varInfo);
-      const bool isTypeInfo = (info & expType::typeInfo);
-      const bool isFuncInfo = ((info == (expType::function |
-                                         expType::declaration)) ||
-                               (info == (expType::function |
-                                         expType::prototype)));
+      const bool isAVarInfo  = (info & expType::varInfo);
+      const bool isATypeInfo = (info & expType::typeInfo);
+      const bool isAFuncInfo = ((info == (expType::function |
+                                          expType::declaration)) ||
+                                (info == (expType::function |
+                                          expType::prototype)));
 
       const bool inForStatement = ((newExp.sInfo != NULL) &&
                                    (newExp.sInfo->info & smntType::forStatement));
 
-      if(isVarInfo | isTypeInfo | isFuncInfo){
-        if(isVarInfo){
+      if(isAVarInfo | isATypeInfo | isAFuncInfo){
+        if(isAVarInfo){
           // Var is created if it also has [expType::type]
           if(info & expType::declaration){
             varInfo &var = newExp.addVarInfoNode();
@@ -2252,7 +2252,7 @@ namespace occa {
             newExp.info = info;
           }
         }
-        else if(isTypeInfo){
+        else if(isATypeInfo){
           typeInfo &type = newExp.addTypeInfoNode();
           type = getTypeInfo().clone();
 
@@ -2263,7 +2263,7 @@ namespace occa {
             sUp->addType(type);
           }
         }
-        else if(isFuncInfo){
+        else if(isAFuncInfo){
           // Get function variable
           varInfo &var    = leaves[0]->getVarInfo();
           varInfo &newVar = *(new varInfo(var.clone()));
@@ -3850,7 +3850,7 @@ namespace occa {
       statementStart(NULL),
       statementEnd(NULL) {}
 
-    statement::~statement(){};
+    statement::~statement(){}
 
     statement& statement::operator [] (const int snPos){
       statementNode *sn = statementStart;

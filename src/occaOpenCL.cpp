@@ -258,7 +258,7 @@ namespace occa {
                              NULL, NULL);
 
       if(error){
-        cl_int error;
+        cl_int logError;
         char *log;
         uintptr_t logSize;
 
@@ -267,8 +267,8 @@ namespace occa {
         if(logSize > 2){
           log = new char[logSize+1];
 
-          error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+          logError = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
+          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", logError);
           log[logSize] = '\0';
 
           printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);
@@ -325,7 +325,7 @@ namespace occa {
                              NULL, NULL);
 
       if(error){
-        cl_int error;
+        cl_int logError;
         char *log;
         uintptr_t logSize;
 
@@ -334,8 +334,8 @@ namespace occa {
         if(logSize > 2){
           log = new char[logSize+1];
 
-          error = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
-          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", error);
+          logError = clGetProgramBuildInfo(data_.program, data_.deviceID, CL_PROGRAM_BUILD_LOG, logSize, log, NULL);
+          OCCA_CL_CHECK("Kernel (" + functionName + ") : Building Program", logError);
           log[logSize] = '\0';
 
           printf("Kernel (%s): Build Log\n%s", functionName.c_str(), log);

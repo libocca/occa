@@ -490,9 +490,9 @@ namespace occa {
       return dlHandle;
     }
 
-    void* dlsym(void *dlHandle,
-                const std::string &functionName,
-                const std::string &hash){
+    handleFunction_t dlsym(void *dlHandle,
+                           const std::string &functionName,
+                           const std::string &hash){
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
       void *sym = ::dlsym(dlHandle, functionName.c_str());
@@ -515,7 +515,11 @@ namespace occa {
       }
 #endif
 
-      return sym;
+      handleFunction_t sym2;
+
+      memcpy(&sym2, &sym, sizeof(sym));
+
+      return sym2;
     }
   }
   //==================================

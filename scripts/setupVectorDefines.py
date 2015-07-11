@@ -60,14 +60,14 @@ def defineTypeN(type_, n):
 
     if typeN in cudaDefined:
         define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
-        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(...) '      + typeN + '(__VA_ARGS__)\n'
+        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR '      + typeN + '\n'
         define += '#else\n'
-        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(...) make_' + typeN + '(__VA_ARGS__)\n'
+        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR make_' + typeN + '\n'
         define += '#endif\n'
 
         define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
     else:
-        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(...) ' + typeN + '(__VA_ARGS__)\n'
+        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR ' + typeN + '\n'
 
     define += 'class ' + type_ + str(n) + '{\n' + \
              'public:\n'

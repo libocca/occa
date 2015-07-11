@@ -21,7 +21,8 @@
 namespace occa {
   //---[ Data Structs ]---------------
   struct OpenMPKernelData_t {
-    void *dlHandle, *handle;
+    void *dlHandle;
+    handleFunction_t handle;
   };
 
   struct OpenMPDeviceData_t {

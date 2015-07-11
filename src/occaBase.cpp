@@ -376,40 +376,6 @@ namespace occa {
     infos += '=';
     infos += value;
   }
-
-  //---[ Device :: Arg Info ]-
-  argInfo::argInfo() :
-    info(""),
-    value("") {}
-
-  argInfo::argInfo(const argInfo &ai) :
-    info(ai.info),
-    value(ai.value) {}
-
-  argInfo& argInfo::operator = (const argInfo &ai){
-    info  = ai.info;
-    value = ai.value;
-
-    return *this;
-  }
-
-  argInfo::argInfo(const std::string &info_) :
-    info(info_),
-    value("") {}
-
-  argInfo::argInfo(const std::string &info_,
-                   const std::string &value_) :
-    info(info_),
-    value(value_) {}
-
-  const argInfo platformID("platformID");
-  const argInfo deviceID("deviceID");
-
-  const argInfo schedule("schedule");
-  const argInfo chunk("chunk");
-
-  const argInfo threadCount("threadCount");
-  const argInfo pinnedCores("pinnedCores");
   //==========================
   //==================================
 
@@ -1305,79 +1271,10 @@ namespace occa {
     dHandle->currentStream = newStream.handle;
   }
 
-  void device::setup(occa::mode m,
-                     const argInfo &arg1){
-    setupHandle(m);
-
-    argInfoMap aim;
-
-    aim.set(arg1.info, arg1.value);
-
-    dHandle->setup(aim);
-
-    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
-    dHandle->id_      = library::genDeviceID();
-
-    stream newStream = createStream();
-    dHandle->currentStream = newStream.handle;
-  }
-
-  void device::setup(occa::mode m,
-                     const argInfo &arg1, const argInfo &arg2){
-    setupHandle(m);
-
-    argInfoMap aim;
-
-    aim.set(arg1.info, arg1.value);
-    aim.set(arg2.info, arg2.value);
-
-    dHandle->setup(aim);
-
-    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
-    dHandle->id_      = library::genDeviceID();
-
-    stream newStream = createStream();
-    dHandle->currentStream = newStream.handle;
-  }
-
-  void device::setup(occa::mode m,
-                     const argInfo &arg1, const argInfo &arg2, const argInfo &arg3){
-    setupHandle(m);
-
-    argInfoMap aim;
-
-    aim.set(arg1.info, arg1.value);
-    aim.set(arg2.info, arg2.value);
-    aim.set(arg3.info, arg3.value);
-
-    dHandle->setup(aim);
-
-    dHandle->modelID_ = library::deviceModelID(dHandle->getIdentifier());
-    dHandle->id_      = library::genDeviceID();
-
-    stream newStream = createStream();
-    dHandle->currentStream = newStream.handle;
-  }
-
 
   void device::setup(const std::string &m,
                      const int arg1, const int arg2){
     setup(strToMode(m), arg1, arg2);
-  }
-
-  void device::setup(const std::string &m,
-                     const argInfo &arg1){
-    setup(strToMode(m), arg1);
-  }
-
-  void device::setup(const std::string &m,
-                     const argInfo &arg1, const argInfo &arg2){
-    setup(strToMode(m), arg1, arg2);
-  }
-
-  void device::setup(const std::string &m,
-                     const argInfo &arg1, const argInfo &arg2, const argInfo &arg3){
-    setup(strToMode(m), arg1, arg2, arg3);
   }
 
   uintptr_t device::bytesAllocated() const {

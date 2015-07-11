@@ -9,7 +9,7 @@ namespace occa {
 #  endif
 
 //---[ bool2 ]--------------------------
-#  define OCCA_BOOL2_CONSTRUCTOR(...) bool2(__VA_ARGS__)
+#  define OCCA_BOOL2_CONSTRUCTOR bool2
 class bool2{
 public:
   union { bool s0, x; };
@@ -148,7 +148,7 @@ inline std::ostream& operator << (std::ostream &out, const bool2& a){
 
 
 //---[ bool4 ]--------------------------
-#  define OCCA_BOOL4_CONSTRUCTOR(...) bool4(__VA_ARGS__)
+#  define OCCA_BOOL4_CONSTRUCTOR bool4
 class bool4{
 public:
   union { bool s0, x; };
@@ -359,7 +359,7 @@ typedef bool4 bool3;
 
 
 //---[ bool8 ]--------------------------
-#  define OCCA_BOOL8_CONSTRUCTOR(...) bool8(__VA_ARGS__)
+#  define OCCA_BOOL8_CONSTRUCTOR bool8
 class bool8{
 public:
   union { bool s0, x; };
@@ -735,7 +735,7 @@ inline std::ostream& operator << (std::ostream &out, const bool8& a){
 
 
 //---[ bool16 ]-------------------------
-#  define OCCA_BOOL16_CONSTRUCTOR(...) bool16(__VA_ARGS__)
+#  define OCCA_BOOL16_CONSTRUCTOR bool16
 class bool16{
 public:
   union { bool s0, x; };
@@ -1596,9 +1596,9 @@ inline std::ostream& operator << (std::ostream &out, const bool16& a){
 
 //---[ char2 ]--------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_CHAR2_CONSTRUCTOR(...) char2(__VA_ARGS__)
+#  define OCCA_CHAR2_CONSTRUCTOR char2
 #else
-#  define OCCA_CHAR2_CONSTRUCTOR(...) make_char2(__VA_ARGS__)
+#  define OCCA_CHAR2_CONSTRUCTOR make_char2
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class char2{
@@ -1771,9 +1771,9 @@ inline std::ostream& operator << (std::ostream &out, const char2& a){
 
 //---[ char4 ]--------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_CHAR4_CONSTRUCTOR(...) char4(__VA_ARGS__)
+#  define OCCA_CHAR4_CONSTRUCTOR char4
 #else
-#  define OCCA_CHAR4_CONSTRUCTOR(...) make_char4(__VA_ARGS__)
+#  define OCCA_CHAR4_CONSTRUCTOR make_char4
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class char4{
@@ -2031,7 +2031,7 @@ typedef char4 char3;
 
 
 //---[ char8 ]--------------------------
-#  define OCCA_CHAR8_CONSTRUCTOR(...) char8(__VA_ARGS__)
+#  define OCCA_CHAR8_CONSTRUCTOR char8
 class char8{
 public:
   union { char s0, x; };
@@ -2473,7 +2473,7 @@ inline std::ostream& operator << (std::ostream &out, const char8& a){
 
 
 //---[ char16 ]-------------------------
-#  define OCCA_CHAR16_CONSTRUCTOR(...) char16(__VA_ARGS__)
+#  define OCCA_CHAR16_CONSTRUCTOR char16
 class char16{
 public:
   union { char s0, x; };
@@ -3448,9 +3448,9 @@ inline std::ostream& operator << (std::ostream &out, const char16& a){
 
 //---[ short2 ]-------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_SHORT2_CONSTRUCTOR(...) short2(__VA_ARGS__)
+#  define OCCA_SHORT2_CONSTRUCTOR short2
 #else
-#  define OCCA_SHORT2_CONSTRUCTOR(...) make_short2(__VA_ARGS__)
+#  define OCCA_SHORT2_CONSTRUCTOR make_short2
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class short2{
@@ -3623,9 +3623,9 @@ inline std::ostream& operator << (std::ostream &out, const short2& a){
 
 //---[ short4 ]-------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_SHORT4_CONSTRUCTOR(...) short4(__VA_ARGS__)
+#  define OCCA_SHORT4_CONSTRUCTOR short4
 #else
-#  define OCCA_SHORT4_CONSTRUCTOR(...) make_short4(__VA_ARGS__)
+#  define OCCA_SHORT4_CONSTRUCTOR make_short4
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class short4{
@@ -3883,7 +3883,7 @@ typedef short4 short3;
 
 
 //---[ short8 ]-------------------------
-#  define OCCA_SHORT8_CONSTRUCTOR(...) short8(__VA_ARGS__)
+#  define OCCA_SHORT8_CONSTRUCTOR short8
 class short8{
 public:
   union { short s0, x; };
@@ -4325,7 +4325,7 @@ inline std::ostream& operator << (std::ostream &out, const short8& a){
 
 
 //---[ short16 ]------------------------
-#  define OCCA_SHORT16_CONSTRUCTOR(...) short16(__VA_ARGS__)
+#  define OCCA_SHORT16_CONSTRUCTOR short16
 class short16{
 public:
   union { short s0, x; };
@@ -5300,9 +5300,9 @@ inline std::ostream& operator << (std::ostream &out, const short16& a){
 
 //---[ int2 ]---------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_INT2_CONSTRUCTOR(...) int2(__VA_ARGS__)
+#  define OCCA_INT2_CONSTRUCTOR int2
 #else
-#  define OCCA_INT2_CONSTRUCTOR(...) make_int2(__VA_ARGS__)
+#  define OCCA_INT2_CONSTRUCTOR make_int2
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class int2{
@@ -5475,9 +5475,9 @@ inline std::ostream& operator << (std::ostream &out, const int2& a){
 
 //---[ int4 ]---------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_INT4_CONSTRUCTOR(...) int4(__VA_ARGS__)
+#  define OCCA_INT4_CONSTRUCTOR int4
 #else
-#  define OCCA_INT4_CONSTRUCTOR(...) make_int4(__VA_ARGS__)
+#  define OCCA_INT4_CONSTRUCTOR make_int4
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class int4{
@@ -5735,7 +5735,7 @@ typedef int4 int3;
 
 
 //---[ int8 ]---------------------------
-#  define OCCA_INT8_CONSTRUCTOR(...) int8(__VA_ARGS__)
+#  define OCCA_INT8_CONSTRUCTOR int8
 class int8{
 public:
   union { int s0, x; };
@@ -6177,7 +6177,7 @@ inline std::ostream& operator << (std::ostream &out, const int8& a){
 
 
 //---[ int16 ]--------------------------
-#  define OCCA_INT16_CONSTRUCTOR(...) int16(__VA_ARGS__)
+#  define OCCA_INT16_CONSTRUCTOR int16
 class int16{
 public:
   union { int s0, x; };
@@ -7152,9 +7152,9 @@ inline std::ostream& operator << (std::ostream &out, const int16& a){
 
 //---[ long2 ]--------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_LONG2_CONSTRUCTOR(...) long2(__VA_ARGS__)
+#  define OCCA_LONG2_CONSTRUCTOR long2
 #else
-#  define OCCA_LONG2_CONSTRUCTOR(...) make_long2(__VA_ARGS__)
+#  define OCCA_LONG2_CONSTRUCTOR make_long2
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class long2{
@@ -7327,9 +7327,9 @@ inline std::ostream& operator << (std::ostream &out, const long2& a){
 
 //---[ long4 ]--------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_LONG4_CONSTRUCTOR(...) long4(__VA_ARGS__)
+#  define OCCA_LONG4_CONSTRUCTOR long4
 #else
-#  define OCCA_LONG4_CONSTRUCTOR(...) make_long4(__VA_ARGS__)
+#  define OCCA_LONG4_CONSTRUCTOR make_long4
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class long4{
@@ -7587,7 +7587,7 @@ typedef long4 long3;
 
 
 //---[ long8 ]--------------------------
-#  define OCCA_LONG8_CONSTRUCTOR(...) long8(__VA_ARGS__)
+#  define OCCA_LONG8_CONSTRUCTOR long8
 class long8{
 public:
   union { long s0, x; };
@@ -8029,7 +8029,7 @@ inline std::ostream& operator << (std::ostream &out, const long8& a){
 
 
 //---[ long16 ]-------------------------
-#  define OCCA_LONG16_CONSTRUCTOR(...) long16(__VA_ARGS__)
+#  define OCCA_LONG16_CONSTRUCTOR long16
 class long16{
 public:
   union { long s0, x; };
@@ -9004,9 +9004,9 @@ inline std::ostream& operator << (std::ostream &out, const long16& a){
 
 //---[ float2 ]-------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_FLOAT2_CONSTRUCTOR(...) float2(__VA_ARGS__)
+#  define OCCA_FLOAT2_CONSTRUCTOR float2
 #else
-#  define OCCA_FLOAT2_CONSTRUCTOR(...) make_float2(__VA_ARGS__)
+#  define OCCA_FLOAT2_CONSTRUCTOR make_float2
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class float2{
@@ -9157,9 +9157,9 @@ inline std::ostream& operator << (std::ostream &out, const float2& a){
 
 //---[ float4 ]-------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_FLOAT4_CONSTRUCTOR(...) float4(__VA_ARGS__)
+#  define OCCA_FLOAT4_CONSTRUCTOR float4
 #else
-#  define OCCA_FLOAT4_CONSTRUCTOR(...) make_float4(__VA_ARGS__)
+#  define OCCA_FLOAT4_CONSTRUCTOR make_float4
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class float4{
@@ -9387,7 +9387,7 @@ typedef float4 float3;
 
 
 //---[ float8 ]-------------------------
-#  define OCCA_FLOAT8_CONSTRUCTOR(...) float8(__VA_ARGS__)
+#  define OCCA_FLOAT8_CONSTRUCTOR float8
 class float8{
 public:
   union { float s0, x; };
@@ -9783,7 +9783,7 @@ inline std::ostream& operator << (std::ostream &out, const float8& a){
 
 
 //---[ float16 ]------------------------
-#  define OCCA_FLOAT16_CONSTRUCTOR(...) float16(__VA_ARGS__)
+#  define OCCA_FLOAT16_CONSTRUCTOR float16
 class float16{
 public:
   union { float s0, x; };
@@ -10680,9 +10680,9 @@ inline std::ostream& operator << (std::ostream &out, const float16& a){
 
 //---[ double2 ]------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_DOUBLE2_CONSTRUCTOR(...) double2(__VA_ARGS__)
+#  define OCCA_DOUBLE2_CONSTRUCTOR double2
 #else
-#  define OCCA_DOUBLE2_CONSTRUCTOR(...) make_double2(__VA_ARGS__)
+#  define OCCA_DOUBLE2_CONSTRUCTOR make_double2
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class double2{
@@ -10833,9 +10833,9 @@ inline std::ostream& operator << (std::ostream &out, const double2& a){
 
 //---[ double4 ]------------------------
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
-#  define OCCA_DOUBLE4_CONSTRUCTOR(...) double4(__VA_ARGS__)
+#  define OCCA_DOUBLE4_CONSTRUCTOR double4
 #else
-#  define OCCA_DOUBLE4_CONSTRUCTOR(...) make_double4(__VA_ARGS__)
+#  define OCCA_DOUBLE4_CONSTRUCTOR make_double4
 #endif
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class double4{
@@ -11063,7 +11063,7 @@ typedef double4 double3;
 
 
 //---[ double8 ]------------------------
-#  define OCCA_DOUBLE8_CONSTRUCTOR(...) double8(__VA_ARGS__)
+#  define OCCA_DOUBLE8_CONSTRUCTOR double8
 class double8{
 public:
   union { double s0, x; };
@@ -11459,7 +11459,7 @@ inline std::ostream& operator << (std::ostream &out, const double8& a){
 
 
 //---[ double16 ]-----------------------
-#  define OCCA_DOUBLE16_CONSTRUCTOR(...) double16(__VA_ARGS__)
+#  define OCCA_DOUBLE16_CONSTRUCTOR double16
 class double16{
 public:
   union { double s0, x; };

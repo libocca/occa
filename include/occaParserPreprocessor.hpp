@@ -52,8 +52,8 @@ namespace occa {
         int                int_;
         unsigned long      ulong_;
         long               long_;
-        unsigned long long ulonglong_;
-        long long          longlong_;
+        // unsigned long long ulonglong_;
+        // long long          longlong_;
         float              float_;
         double             double_;
       } value;
@@ -74,8 +74,8 @@ namespace occa {
       typeHolder(const int int__);
       typeHolder(const unsigned long ulong__);
       typeHolder(const long long__);
-      typeHolder(const unsigned long long ulonglong__);
-      typeHolder(const long long longlong__);
+      // typeHolder(const unsigned long long ulonglong__);
+      // typeHolder(const long long longlong__);
       typeHolder(const float float__);
       typeHolder(const double double__);
 
@@ -89,8 +89,8 @@ namespace occa {
       typeHolder& operator = (const int int__);
       typeHolder& operator = (const unsigned long ulong__);
       typeHolder& operator = (const long long__);
-      typeHolder& operator = (const unsigned long long ulonglong__);
-      typeHolder& operator = (const long long longlong__);
+      // typeHolder& operator = (const unsigned long long ulonglong__);
+      // typeHolder& operator = (const long long longlong__);
       typeHolder& operator = (const float float__);
       typeHolder& operator = (const double double__);
 
@@ -106,7 +106,7 @@ namespace occa {
       bool isUnsigned() const;
       bool isAnInt() const;
       bool isALongInt() const;
-      bool isALongLongInt() const;
+      // bool isALongLongInt() const;
       bool isAFloat() const;
       bool isADouble() const;
 
@@ -178,8 +178,8 @@ namespace occa {
         case intType       : return (TM) value.int_;       break;
         case ulongType     : return (TM) value.ulong_;     break;
         case longType      : return (TM) value.long_;      break;
-        case ulonglongType : return (TM) value.ulonglong_; break;
-        case longlongType  : return (TM) value.longlong_;  break;
+        // case ulonglongType : return (TM) value.ulonglong_; break;
+        // case longlongType  : return (TM) value.longlong_;  break;
         case floatType     : return (TM) value.float_;     break;
         case doubleType    : return (TM) value.double_;    break;
         default:
@@ -202,8 +202,8 @@ namespace occa {
         case intType       : value.int_        = (int)                oldValue; break;
         case ulongType     : value.ulong_      = (unsigned long)      oldValue; break;
         case longType      : value.long_       = (long)               oldValue; break;
-        case ulonglongType : value.ulonglong_  = (unsigned long long) oldValue; break;
-        case longlongType  : value.longlong_   = (long long)          oldValue; break;
+        // case ulonglongType : value.ulonglong_  = (unsigned long long) oldValue; break;
+        // case longlongType  : value.longlong_   = (long long)          oldValue; break;
         case floatType     : value.float_      = (float)              oldValue; break;
         case doubleType    : value.double_     = (double)             oldValue; break;
         default:
@@ -225,8 +225,8 @@ namespace occa {
         case intType       : value.int_        = (int)                 t; break;
         case ulongType     : value.ulong_      = (unsigned long)       t; break;
         case longType      : value.long_       = (long)                t; break;
-        case ulonglongType : value.ulonglong_  = (unsigned long long)  t; break;
-        case longlongType  : value.longlong_   = (long long)           t; break;
+        // case ulonglongType : value.ulonglong_  = (unsigned long long)  t; break;
+        // case longlongType  : value.longlong_   = (long long)           t; break;
         case floatType     : value.float_      = (float)               t; break;
         case doubleType    : value.double_     = (double)              t; break;
         default:

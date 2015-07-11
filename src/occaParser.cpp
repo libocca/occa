@@ -1748,17 +1748,17 @@ namespace occa {
           is.pushSourceLeftOf(is.statementStart,
                               (std::string) var + ";");
 
-        statementNode *sn = is.statementStart;
+        statementNode *sn2 = is.statementStart;
 
         for(int dim = 0; dim < tileDim; ++dim){
           ss << var.name << "." << (char) ('x' + dim) << " = __occa_iTileVar" << dim << ';';
 
-          is.pushSourceRightOf(sn,
+          is.pushSourceRightOf(sn2,
                                ss.str());
 
           ss.str("");
 
-          sn = sn->right;
+          sn2 = sn2->right;
         }
       }
 
@@ -3417,7 +3417,7 @@ namespace occa {
       if(ret.isUnsigned())
         var.addQualifier("unsigned");
 
-      if(ret.isALongLongInt())
+      if(ret.isALongInt())
         var.addQualifier("long");
 
       return var;
@@ -3450,7 +3450,7 @@ namespace occa {
         if(ret.isUnsigned())
           var.addQualifier("unsigned");
 
-        if(ret.isALongLongInt())
+        if(ret.isALongInt())
           var.addQualifier("long");
       }
 

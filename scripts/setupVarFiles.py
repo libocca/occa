@@ -59,8 +59,10 @@ defs += '}'
 
 hpp = open(occaDir + '/include/occaVarFiles.hpp', 'w')
 hpp.write(decs)
+hpp.write('\n')  # Make sure there is a newline at the end of the file
 hpp.close()
 
 cpp = open(occaDir + '/src/occaVarFiles.cpp', 'w')
 cpp.write(defs)
+cpp.write('\n')
 cpp.close()
