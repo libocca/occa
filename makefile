@@ -39,16 +39,20 @@ ifeq ($(OCCA_FORTRAN_ENABLED), 1)
 endif
 endif
 
-ifdef OCCA_PYTHON_DIR
-  ifdef OCCA_NUMPY_DIR
-    outputs += $(occaLPath)/_C_occa.so
+ifdef OCCA_LIBPYTHON_DIR
+  ifdef OCCA_LIBPYTHON_FLAG
+    ifdef OCCA_PYTHON_DIR
+      ifdef OCCA_NUMPY_DIR
+        outputs += $(occaLPath)/_C_occa.so
 
-    pyFlags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR}
+        pyFlags = -I${OCCA_PYTHON_DIR}/ -I${OCCA_NUMPY_DIR} -L${OCCA_LIBPYTHON_DIR}
 
-    ifeq ($(usingLinux),1)
-      pyFlags += -lpython
-    else ifeq ($(usingOSX),1)
-      pyFlags += -framework Python
+        ifeq ($(usingLinux),1)
+          pyFlags += -l${OCCA_LIBPYTHON_FLAG}
+        else ifeq ($(usingOSX),1)
+          pyFlags += -framework Python
+        endif
+      endif
     endif
   endif
 endif
