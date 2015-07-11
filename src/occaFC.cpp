@@ -492,86 +492,86 @@ extern "C" {
   }
 
   void OCCAKERNELRUN01_FC(occaKernel *kernel, occaMemory *arg01){
-    occaKernelRun(*kernel, *arg01);
+    occaKernelRun1(*kernel, *arg01);
   }
 
   void OCCAKERNELRUN02_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02){
-    occaKernelRun(*kernel, *arg01, *arg02);
+    occaKernelRun2(*kernel, *arg01, *arg02);
   }
 
   void OCCAKERNELRUN03_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03);
+    occaKernelRun3(*kernel, *arg01, *arg02, *arg03);
   }
 
   void OCCAKERNELRUN04_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04);
+    occaKernelRun4(*kernel, *arg01, *arg02, *arg03, *arg04);
   }
 
   void OCCAKERNELRUN05_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05);
+    occaKernelRun5(*kernel, *arg01, *arg02, *arg03, *arg04,
+                            *arg05);
   }
 
   void OCCAKERNELRUN06_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06);
+    occaKernelRun6(*kernel, *arg01, *arg02, *arg03, *arg04,
+                            *arg05, *arg06);
   }
 
   void OCCAKERNELRUN07_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07);
+    occaKernelRun7(*kernel, *arg01, *arg02, *arg03, *arg04,
+                            *arg05, *arg06, *arg07);
   }
 
   void OCCAKERNELRUN08_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08);
+    occaKernelRun8(*kernel, *arg01, *arg02, *arg03, *arg04,
+                            *arg05, *arg06, *arg07, *arg08);
   }
 
   void OCCAKERNELRUN09_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09);
+    occaKernelRun9(*kernel, *arg01, *arg02, *arg03, *arg04,
+                            *arg05, *arg06, *arg07, *arg08,
+                            *arg09);
   }
 
   void OCCAKERNELRUN10_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10);
+    occaKernelRun10(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10);
   }
 
   void OCCAKERNELRUN11_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11);
+    occaKernelRun11(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11);
   }
 
   void OCCAKERNELRUN12_FC(occaKernel *kernel,
                           occaMemory *arg01, occaMemory *arg02, occaMemory *arg03, occaMemory *arg04,
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12);
+    occaKernelRun12(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12);
   }
 
   void OCCAKERNELRUN13_FC(occaKernel *kernel,
@@ -579,10 +579,10 @@ extern "C" {
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13);
+    occaKernelRun13(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13);
   }
 
   void OCCAKERNELRUN14_FC(occaKernel *kernel,
@@ -590,10 +590,10 @@ extern "C" {
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14);
+    occaKernelRun14(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14);
   }
 
   void OCCAKERNELRUN15_FC(occaKernel *kernel,
@@ -601,10 +601,10 @@ extern "C" {
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15);
+    occaKernelRun15(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15);
   }
 
   void OCCAKERNELRUN16_FC(occaKernel *kernel,
@@ -612,10 +612,10 @@ extern "C" {
                           occaMemory *arg05, occaMemory *arg06, occaMemory *arg07, occaMemory *arg08,
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16);
+    occaKernelRun16(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16);
   }
 
   void OCCAKERNELRUN17_FC(occaKernel *kernel,
@@ -624,11 +624,11 @@ extern "C" {
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17);
+    occaKernelRun17(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17);
   }
 
   void OCCAKERNELRUN18_FC(occaKernel *kernel,
@@ -637,11 +637,11 @@ extern "C" {
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18);
+    occaKernelRun18(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18);
   }
 
   void OCCAKERNELRUN19_FC(occaKernel *kernel,
@@ -650,11 +650,11 @@ extern "C" {
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18, occaMemory *arg19){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18, *arg19);
+    occaKernelRun19(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18, *arg19);
   }
 
   void OCCAKERNELRUN20_FC(occaKernel *kernel,
@@ -663,11 +663,11 @@ extern "C" {
                           occaMemory *arg09, occaMemory *arg10, occaMemory *arg11, occaMemory *arg12,
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18, occaMemory *arg19, occaMemory *arg20){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18, *arg19, *arg20);
+    occaKernelRun20(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18, *arg19, *arg20);
   }
 
   void OCCAKERNELRUN21_FC(occaKernel *kernel,
@@ -677,12 +677,12 @@ extern "C" {
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18, occaMemory *arg19, occaMemory *arg20,
                           occaMemory *arg21){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18, *arg19, *arg20,
-                           *arg21);
+    occaKernelRun21(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18, *arg19, *arg20,
+                             *arg21);
   }
 
   void OCCAKERNELRUN22_FC(occaKernel *kernel,
@@ -692,12 +692,12 @@ extern "C" {
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18, occaMemory *arg19, occaMemory *arg20,
                           occaMemory *arg21, occaMemory *arg22){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18, *arg19, *arg20,
-                           *arg21, *arg22);
+    occaKernelRun22(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18, *arg19, *arg20,
+                             *arg21, *arg22);
   }
 
   void OCCAKERNELRUN23_FC(occaKernel *kernel,
@@ -707,12 +707,12 @@ extern "C" {
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18, occaMemory *arg19, occaMemory *arg20,
                           occaMemory *arg21, occaMemory *arg22, occaMemory *arg23){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18, *arg19, *arg20,
-                           *arg21, *arg22, *arg23);
+    occaKernelRun23(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18, *arg19, *arg20,
+                             *arg21, *arg22, *arg23);
   }
 
   void OCCAKERNELRUN24_FC(occaKernel *kernel,
@@ -722,12 +722,12 @@ extern "C" {
                           occaMemory *arg13, occaMemory *arg14, occaMemory *arg15, occaMemory *arg16,
                           occaMemory *arg17, occaMemory *arg18, occaMemory *arg19, occaMemory *arg20,
                           occaMemory *arg21, occaMemory *arg22, occaMemory *arg23, occaMemory *arg24){
-    occaKernelRun(*kernel, *arg01, *arg02, *arg03, *arg04,
-                           *arg05, *arg06, *arg07, *arg08,
-                           *arg09, *arg10, *arg11, *arg12,
-                           *arg13, *arg14, *arg15, *arg16,
-                           *arg17, *arg18, *arg19, *arg20,
-                           *arg21, *arg22, *arg23, *arg24);
+    occaKernelRun24(*kernel, *arg01, *arg02, *arg03, *arg04,
+                             *arg05, *arg06, *arg07, *arg08,
+                             *arg09, *arg10, *arg11, *arg12,
+                             *arg13, *arg14, *arg15, *arg16,
+                             *arg17, *arg18, *arg19, *arg20,
+                             *arg21, *arg22, *arg23, *arg24);
   }
 
   void OCCAKERNELRUN__FC(occaKernel *kernel,
