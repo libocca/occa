@@ -8,11 +8,13 @@ macro libCall(name)
     return :($name, @libocca())
 end
 
-#|---[ Setup ]---------------------------
-
-#|=======================================
-
 #|---[ Globals & Flags ]-----------------
+function set_verbose_compilation(yn::Bool)
+    ccall(@libCall(:occaSetVerboseCompilation),
+          Void,
+          ({Uint8},),
+          yn)
+end
 #|=======================================
 
 #|----[ Background Device ]--------------
@@ -83,6 +85,218 @@ type Stream
         return ret
     end
 end
+
+function set(; compiler = "", flags = "", env_script = "")
+    if 0 < length(compiler)
+        ccall(@libCall(:occaSetCompiler),
+              Void,
+              (Ptr{Uint8},),
+              bytestring(compiler))
+    end
+
+    if 0 < length(flags)
+        ccall(@libCall(:occaSetCompilerFlags),
+              Void,
+              (Ptr{Uint8},),
+              bytestring(flags))
+    end
+
+    if 0 < length(env_script)
+        ccall(@libCall(:occaSetCompilerEnvScript),
+              Void,
+              (Ptr{Uint8},),
+              bytestring(env_script))
+    end
+end
+
+function get_compiler()
+    str = ccall(@libCall(:occaGetCompiler),
+                Ptr{Uint8}, ())
+
+    return bytestring(str)
+end
+
+function get_compiler_flags()
+    str = ccall(@libCall(:occaGetCompilerFlags),
+                Ptr{Uint8}, ())
+
+    return bytestring(str)
+end
+
+function get_compiler_env_script()
+    str = ccall(@libCall(:occaGetCompilerEnvScript),
+                Ptr{Uint8}, ())
+
+    return bytestring(str)
+end
+
+function flush()
+    ccall(@libCall(:occaFlush),
+          Void, ())
+end
+
+function finish()
+    ccall(@libCall(:occaFinish),
+          Void, ())
+end
+
+function create_stream()
+    return Stream(ccall(@libCall(:occaCreateStream),
+                        Ptr{Void}, ()))
+end
+
+function get_stream()
+    return Stream(ccall(@libCall(:occaGetStream),
+                        Ptr{Void}, ()))
+end
+
+function set_stream(s::Stream)
+    return Stream(ccall(@libCall(:occaSetStream),
+                        Void,
+                        (Ptr{Void},),
+                        s.handle))
+end
+
+function wrap_stream(sHandle::Ptr{Void})
+    return Stream(ccall(@libCall(:occaWrapStream),
+                        Ptr{Void},
+                        (Ptr{Void},),
+                        sHandle))
+end
+#  |====================================
+
+#  |---[ Memory ]-----------------------
+type Memory
+    handle::Ptr{Void}
+
+    function Memory()
+        ret = new()
+
+        ret.handle = C_NULL
+
+        return ret
+    end
+
+    function Memory(handle_::Ptr{Void})
+        ret = new()
+
+        ret.handle = handle_
+
+        return ret
+    end
+
+    function Memory(m::Memory)
+        ret = new()
+
+        ret.handle = m.handle
+
+        return ret
+    end
+end
+
+function wrap_memory(arr::Array; managed = false)
+    entries = length(arr)
+
+    if entries == 0
+        if !managed
+            return Memory()
+        else
+            return []
+        end
+    end
+
+    bytes = entries * sizeof(arr[1])
+
+    if !managed
+        ptr = ccall(@libCall(:occaWrapMemory),
+                    Ptr{Void},
+                    (Uint64, Ptr{Void},),
+                    pointer(arr), bytes)
+    else
+        ptr = ccall(@libCall(:occaWrapManagedMemory),
+                    Ptr{Void},
+                    (Uint64, Ptr{Void},),
+                    pointer(arr), bytes)
+    end
+
+    if !managed
+        return Memory(ptr)
+    else
+        convert(Ptr{typeof(arr[1])}, ptr)
+
+        return pointer_to_array(ptr, entries)
+    end
+end
+
+function malloc(arr::Array; managed = false, mapped = false)
+    entries = length(arr)
+
+    if entries == 0
+        if !managed
+            return Memory()
+        else
+            return []
+        end
+    end
+
+    return malloc(typeof(arr[1]), length(arr), pointer(arr), managed = managed, mapped = mapped)
+end
+
+function managed_malloc(t::Type, entries, source = C_NULL)
+
+    return malloc(t, entries, source, managed = true, mapped = false)
+end
+
+function managed_malloc(arr::Array)
+    return malloc(arr, managed = true, mapped = false)
+end
+
+function managed_mapped_malloc(t::Type, entries, source = C_NULL)
+
+    return malloc(t, entries, source, managed = true, mapped = true)
+end
+
+function managed_mapped_malloc(arr::Array)
+    return malloc(arr, managed = true, mapped = true)
+end
+
+function malloc(t::Type, entries, source = C_NULL; managed = false, mapped = false)
+    bytes = entries * sizeof(t)
+
+    if !managed
+        if !mapped
+            ptr = ccall(@libCall(:occaMalloc),
+                        Ptr{Void},
+                        (Uint64, Ptr{Void},),
+                        bytes, source)
+        else
+            ptr = ccall(@libCall(:occaMappedAlloc),
+                        Ptr{Void},
+                        (Uint64, Ptr{Void},),
+                        bytes, source)
+        end
+    else
+        if !mapped
+            ptr = ccall(@libCall(:occaManagedAlloc),
+                        Ptr{Void},
+                        (Uint64, Ptr{Void},),
+                        bytes, source)
+        else
+            ptr = ccall(@libCall(:occaManagedMappedAlloc),
+                        Ptr{Void},
+                        (Uint64, Ptr{Void},),
+                        bytes, source)
+        end
+    end
+
+    if !managed
+        return Memory(ptr)
+    else
+        convert(Ptr{t}, ptr)
+
+        return pointer_to_array(ptr, entries)
+    end
+end
 #  |====================================
 
 #  |---[ Kernel ]-----------------------
@@ -114,6 +328,25 @@ type Kernel
     end
 end
 
+occaType(v::Int8)    = ccall(@libCall(:occaChar)  , Ptr{Void}, (Int8,)     , v)
+occaType(v::Uint8)   = ccall(@libCall(:occaUChar) , Ptr{Void}, (Uint8,)    , v)
+
+occaType(v::Int16)   = ccall(@libCall(:occaShort) , Ptr{Void}, (Int16,)    , v)
+occaType(v::Uint16)  = ccall(@libCall(:occaUShort), Ptr{Void}, (Uint16,)   , v)
+
+occaType(v::Int32)   = ccall(@libCall(:occaInt)   , Ptr{Void}, (Int32,)    , v)
+occaType(v::Uint32)  = ccall(@libCall(:occaUInt)  , Ptr{Void}, (Uint32,)   , v)
+
+occaType(v::Int64)   = ccall(@libCall(:occaLong)  , Ptr{Void}, (Int64,)    , v)
+occaType(v::Uint64)  = ccall(@libCall(:occaULong) , Ptr{Void}, (Uint64,)   , v)
+
+occaType(v::Float32) = ccall(@libCall(:occaFloat) , Ptr{Void}, (Float32,)  , v)
+occaType(v::Float64) = ccall(@libCall(:occaDouble), Ptr{Void}, (Float64,)  , v)
+
+occaType(v::Array)   = ccall(@libCall(:occaPtr)   , Ptr{Void}, (Ptr{Void},), pointer(v))
+
+occaType(v::Memory)  = v.handle
+
 type KernelInfo
     handle::Ptr{Void}
 
@@ -141,34 +374,43 @@ type KernelInfo
         return ret
     end
 end
-#  |====================================
 
-#  |---[ Memory ]-----------------------
-type Memory
-    handle::Ptr{Void}
+function build_kernel(filename::String, functionName::String, kInfo::KernelInfo; from = :auto)
+    return build_kernel(filename, functionName, kInfo.handle, from=from)
+end
 
-    function Memory()
-        ret = new()
+function build_kernel(filename::String, functionName::String; from = :auto)
+    return build_kernel(filename, functionName, C_NULL, from=from)
+end
 
-        ret.handle = C_NULL
-
-        return ret
-    end
-
-    function Memory(handle_::Ptr{Void})
-        ret = new()
-
-        ret.handle = handle_
-
-        return ret
-    end
-
-    function Memory(m::Memory)
-        ret = new()
-
-        ret.handle = m.handle
-
-        return ret
+function build_kernel(filename::String, functionName::String, kInfo::Ptr{Void}; from = :auto)
+    if from == :auto
+        return Kernel(ccall(@libCall(:occaBuildKernel),
+                            Ptr{Void},
+                            (Ptr{Uint8}, Ptr{Uint8}, Ptr{Void},),
+                            bytestring(filename),
+                            bytestring(functionName),
+                            kInfo))
+    elseif from == :source
+        return Kernel(ccall(@libCall(:occaBuildKernelFromSource),
+                            Ptr{Void},
+                            (Ptr{Uint8}, Ptr{Uint8}, Ptr{Void},),
+                            bytestring(filename),
+                            bytestring(functionName),
+                            kInfo))
+    elseif from == :string
+        return Kernel(ccall(@libCall(:occaBuildKernelFromString),
+                            Ptr{Void},
+                            (Ptr{Uint8}, Ptr{Uint8}, Ptr{Void},),
+                            bytestring(filename),
+                            bytestring(functionName),
+                            kInfo))
+    elseif from == :binary
+        return Kernel(ccall(@libCall(:occaBuildKernelFromBinary),
+                            Ptr{Void},
+                            (Ptr{Uint8}, Ptr{Uint8},),
+                            bytestring(filename),
+                            bytestring(functionName)))
     end
 end
 #  |====================================
@@ -297,52 +539,74 @@ function build_kernel(d::Device, filename::String, functionName::String, kInfo::
     end
 end
 
-function malloc(d::Device, t::Type, entries; source = C_NULL, mapped = false)
-    bytes = entries * sizeof(t)
-    convert(Uint64, bytes)
-
-    if !mapped
-        return Memory(ccall(@libCall(:occaDeviceMalloc),
-                            Ptr{Void},
-                            (Ptr{Void}, Uint64, Ptr{Void},),
-                            d.handle, bytes, source))
-    else
-        return Memory(ccall(@libCall(:occaDeviceMappedMalloc),
-                            Ptr{Void},
-                            (Ptr{Void}, Uint64, Ptr{Void},),
-                            d.handle, bytes, source))
-    end
-end
-
-function malloc(d::Device, arr::Array; mapped = false)
+function malloc(d::Device, arr::Array; managed = false, mapped = false)
     entries = length(arr)
 
     if entries == 0
-        return Memory()
+        if !managed
+            return Memory()
+        else
+            return []
+        end
     end
 
-    return malloc(d, typeof(arr[0]), entries, source = pointer(arr), mapped = mapped)
+    return malloc(d, typeof(arr[1]), length(arr), pointer(arr), managed = managed, mapped = mapped)
 end
 
-function managedAlloc(d::Device, t::Type, entries; mapped = false)
-    bytes = entries * sizeof(t)
-    convert(Uint64, bytes)
+function managed_malloc(d::Device, t::Type, entries, source = C_NULL)
 
-    if !mapped
-        ptr = ccall(@libCall(:occaDeviceManagedAlloc),
-                    Ptr{Void},
-                    (Ptr{Void}, Uint64, Ptr{Void},),
-                    d.handle, bytes, source)
+    return malloc(d, t, entries, source, managed = true, mapped = false)
+end
+
+function managed_malloc(d::Device, arr::Array)
+    return malloc(d, arr, managed = true, mapped = false)
+end
+
+function managed_mapped_malloc(d::Device, t::Type, entries, source = C_NULL)
+
+    return malloc(d, t, entries, source, managed = true, mapped = true)
+end
+
+function managed_mapped_malloc(d::Device, arr::Array)
+    return malloc(d, arr, managed = true, mapped = true)
+end
+
+function malloc(d::Device, t::Type, entries, source = C_NULL; managed = false, mapped = false)
+    bytes = entries * sizeof(t)
+
+    if !managed
+        if !mapped
+            ptr = ccall(@libCall(:occaDeviceMalloc),
+                        Ptr{Void},
+                        (Ptr{Void}, Uint64, Ptr{Void},),
+                        d.handle, bytes, source)
+        else
+            ptr = ccall(@libCall(:occaDeviceMappedAlloc),
+                        Ptr{Void},
+                        (Ptr{Void}, Uint64, Ptr{Void},),
+                        d.handle, bytes, source)
+        end
     else
-        ptr = ccall(@libCall(:occaDeviceManagedMappedAlloc),
-                    Ptr{Void},
-                    (Ptr{Void}, Uint64, Ptr{Void},),
-                    d.handle, bytes, source)
+        if !mapped
+            ptr = ccall(@libCall(:occaDeviceManagedAlloc),
+                        Ptr{Void},
+                        (Ptr{Void}, Uint64, Ptr{Void},),
+                        d.handle, bytes, source)
+        else
+            ptr = ccall(@libCall(:occaDeviceManagedMappedAlloc),
+                        Ptr{Void},
+                        (Ptr{Void}, Uint64, Ptr{Void},),
+                        d.handle, bytes, source)
+        end
     end
 
-    convert(Ptr{t}, ptr)
+    if !managed
+        return Memory(ptr)
+    else
+        convert(Ptr{t}, ptr)
 
-    return pointer_to_array(ptr, entries)
+        return pointer_to_array(ptr, entries)
+    end
 end
 
 function flush(d::Device)
@@ -401,82 +665,6 @@ function free!(s::Stream)
 end
 #|=======================================
 
-#|---[ Kernel ]--------------------------
-function mode(k::Kernel)
-    strMode = ccall(@libCall(:occaKernelMode),
-                    Ptr{Uint8},
-                    (Ptr{Void},),
-                    k.handle)
-
-    return bytestring(strMode)
-end
-
-function name(k::Kernel)
-    strName = ccall(@libCall(:occaKernelName),
-                    Ptr{Uint8},
-                    (Ptr{Void},),
-                    k.handle)
-
-    return bytestring(strName)
-end
-
-function get_device(k::Kernel)
-    return Device(ccall(@libCall(:occaKernelGetDevice),
-                        Ptr{Void},
-                        (Ptr{Void},),
-                        k.handle))
-end
-
-function free!(k::Kernel)
-    if k.handle == C_NULL
-        return
-    end
-
-    ccall(@libCall(:occaKernelFree),
-          Void,
-          (Ptr{Void},),
-          k.handle)
-
-    k.handle = C_NULL
-end
-
-function add_define!(kInfo::KernelInfo, macro_::String, value::String)
-    occaValue = ccall(@libCall(:occaString),
-                      Ptr{Void},
-                      (Ptr{Uint8},),
-                      bytestring(value))
-
-    ccall(@libCall(:occaKernelInfoAddDefine),
-          Void,
-          (Ptr{Void}, Ptr{Uint8}, Ptr{Void},),
-          kInfo.handle, bytestring(macro_), occaValue)
-end
-
-function add_define!(kInfo::KernelInfo, macro_::String, value)
-    add_define(kInfo, macro_, string(value))
-end
-
-function add_include!(kInfo::KernelInfo, include_::String)
-    ccall(@libCall(:occaKernelInfoAddInclude),
-          Void,
-          (Ptr{Void}, Ptr{Uint8},),
-          kInfo.handle, include_)
-end
-
-function free!(kInfo::KernelInfo)
-    if kInfo.handle == C_NULL
-        return
-    end
-
-    ccall(@libCall(:occaKernelInfoFree),
-          Void,
-          (Ptr{Void},),
-          kInfo.handle)
-
-    kInfo.handle = C_NULL
-end
-#|=======================================
-
 #|---[ Memory ]--------------------------
 function free!(m::Memory)
     if m.handle == C_NULL
@@ -521,46 +709,172 @@ function get_texture_handle(m::Memory)
                  m.handle)
 end
 
-function memcpy(dest, src, bytes; src_off = 0, dest_off = 0)
-    if (typeof(dest) == Memory)
-        if (typeof(src) == Memory)
-            memcpyCall = :occaCopyMemToMem
-        else
-            memcpyCall = :occaCopyPtrToMem
-        end
-    else
-        if (typeof(src) == Memory)
-            memcpyCall = :occaCopyMemToPtr
-        else
-            memcpyCall = :occaCopyPtrToPtr
-        end
-    end
+function memcpy!(dest::Memory, src::Memory, bytes; src_off = 0, dest_off = 0, async = false)
+    dest_ = dest.handle
+    src_  = src.handle
 
-    return ccall(@libCall(memcpyCall),
-                 Void,
-                 (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
-                 dest.handle, src.handle, bytes, src_off, dest_off)
+    if !async
+        return ccall(@libCall(:occaCopyMemToMem),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    else
+        return ccall(@libCall(:occaAsyncCopyMemToMem),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    end
 end
 
-function async_memcpy(dest, src, bytes; src_off = 0, dest_off = 0)
-    if (typeof(dest) == Memory)
-        if (typeof(src) == Memory)
-            memcpyCall = :occaAsyncCopyMemToMem
-        else
-            memcpyCall = :occaAsyncCopyPtrToMem
-        end
+function memcpy!(dest::Array, src::Memory, bytes; src_off = 0, dest_off = 0, async = false)
+    dest_ = pointer(dest)
+    src_  = src.handle
+
+    if !async
+        return ccall(@libCall(:occaCopyMemToPtr),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
     else
-        if (typeof(src) == Memory)
-            memcpyCall = :occaAsyncCopyMemToPtr
-        else
-            memcpyCall = :occaAsyncCopyPtrToPtr
-        end
+        return ccall(@libCall(:occaAsyncCopyMemToPtr),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    end
+end
+
+function memcpy!(dest::Memory, src::Array, bytes; src_off = 0, dest_off = 0, async = false)
+    dest_ = dest.handle
+    src_  = pointer(src)
+
+    if !async
+        return ccall(@libCall(:occaCopyPtrToMem),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    else
+        return ccall(@libCall(:occaAsyncCopyPtrToMem),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    end
+end
+
+function memcpy!(dest::Array, src::Array, bytes; src_off = 0, dest_off = 0, async = false)
+    dest_ = pointer(dest.handle)
+    src_  = pointer(src)
+
+    if !async
+        return ccall(@libCall(:occaCopyPtrToPtr),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    else
+        return ccall(@libCall(:occaAsyncCopyPtrToPtr),
+                     Void,
+                     (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
+                     dest, src, bytes, src_off, dest_off)
+    end
+end
+#|=======================================
+
+#|---[ Kernel ]--------------------------
+function mode(k::Kernel)
+    strMode = ccall(@libCall(:occaKernelMode),
+                    Ptr{Uint8},
+                    (Ptr{Void},),
+                    k.handle)
+
+    return bytestring(strMode)
+end
+
+function name(k::Kernel)
+    strName = ccall(@libCall(:occaKernelName),
+                    Ptr{Uint8},
+                    (Ptr{Void},),
+                    k.handle)
+
+    return bytestring(strName)
+end
+
+function get_device(k::Kernel)
+    return Device(ccall(@libCall(:occaKernelGetDevice),
+                        Ptr{Void},
+                        (Ptr{Void},),
+                        k.handle))
+end
+
+function free!(k::Kernel)
+    if k.handle == C_NULL
+        return
     end
 
-    return ccall(@libCall(memcpyCall),
-                 Void,
-                 (Ptr{Void}, Ptr{Void}, Uint64, Uint64, Uint64),
-                 dest.handle, src.handle, bytes, src_off, dest_off)
+    ccall(@libCall(:occaKernelFree),
+          Void,
+          (Ptr{Void},),
+          k.handle)
+
+    k.handle = C_NULL
+end
+
+function call(k::Kernel, args...)
+    argList = ccall(@libCall(:occaCreateArgumentList),
+                    Ptr{Void}, ())
+
+    argCount = length(args)
+
+    for i in 1:argCount
+        ccall(@libCall(:occaArgumentListAddArg),
+              Void,
+              (Ptr{Void}, Int32, Ptr{Void},),
+              argList, convert(Int32, i - 1), occaType(arg[i]))
+    end
+
+    ccall(@libCall(:occaKernelRun_),
+          Void,
+          (Ptr{Void}, Ptr{Void},),
+          k.handle, argList)
+
+    ccall(@libCall(:occaArgumentListFree),
+          Void,
+          (Ptr{Void},),
+          argList)
+end
+
+function add_define!(kInfo::KernelInfo, macro_::String, value::String)
+    occaValue = ccall(@libCall(:occaString),
+                      Ptr{Void},
+                      (Ptr{Uint8},),
+                      bytestring(value))
+
+    ccall(@libCall(:occaKernelInfoAddDefine),
+          Void,
+          (Ptr{Void}, Ptr{Uint8}, Ptr{Void},),
+          kInfo.handle, bytestring(macro_), occaValue)
+end
+
+function add_define!(kInfo::KernelInfo, macro_::String, value)
+    add_define(kInfo, macro_, string(value))
+end
+
+function add_include!(kInfo::KernelInfo, include_::String)
+    ccall(@libCall(:occaKernelInfoAddInclude),
+          Void,
+          (Ptr{Void}, Ptr{Uint8},),
+          kInfo.handle, include_)
+end
+
+function free!(kInfo::KernelInfo)
+    if kInfo.handle == C_NULL
+        return
+    end
+
+    ccall(@libCall(:occaKernelInfoFree),
+          Void,
+          (Ptr{Void},),
+          kInfo.handle)
+
+    kInfo.handle = C_NULL
 end
 #|=======================================
 
