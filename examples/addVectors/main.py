@@ -1,6 +1,11 @@
 import occa
 import numpy as np
 
+# OCCA defaults to using a [Serial] device
+# occa.setDevice('mode = OpenMP                              , UVA = enabled')
+# occa.setDevice('mode = OpenCL, platformID = 0, deviceID = 0, UVA = enabled')
+# occa.setDevice('mode = CUDA  , deviceID = 0                , UVA = enabled')
+
 entries = np.int32(10)
 
 addVectors = occa.buildKernel('addVectors.okl', 'addVectors')
