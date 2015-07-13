@@ -70,7 +70,9 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 |
 |    (A) Running OCCA on Python
 |
-|    (B) Running OCCA on Fortran
+|    (B) Running OCCA on Julia
+|
+|    (C) Running OCCA on Fortran
 +===========================================================
 
 
@@ -201,14 +203,26 @@ OCCA gives developers the ability to target devices at run-time by using run-tim
 +===========================================================
 
 
-+--[ (B) Fortran ]-------------------------------------------
++--[ (B) Julia ]--------------------------------------------
+|
+|  Setting it up:
+|    export JULIA_LOAD_PATH=$JULIA_LOAD_PATH:$OCCA_DIR/lib
+|
+|  Running an example:
+|    cd $OCCA_DIR/examples/addVectors
+|    julia main.jl
+|
++===========================================================
+
+
++--[ (C) Fortran ]-------------------------------------------
 |
 |  Info:
 |    OCCA_FORTRAN_ENABLED: Build Fortran wrappers
 |    FC                  : Fortran Compiler
 |    FCFLAGS             : Fortran Compiler Flags
 |
-|  Setting it:
+|  Setting it up:
 |    export OCCA_FORTRAN_ENABLED="1"
 |    export FC="gfortran"
 |    export FCFLAGS="-O3 -Wall"

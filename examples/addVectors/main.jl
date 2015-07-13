@@ -1,4 +1,4 @@
-require("OCCA.jl")
+using OCCA
 
 entries = convert(Int32, 10)
 
