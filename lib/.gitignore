@@ -3,6 +3,6 @@
 # Except this file
 !.gitignore
 !occa.py
-!occa.jl
+!OCCA.jl/
 !+occa
 !+occa/*
