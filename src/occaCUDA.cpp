@@ -262,6 +262,20 @@ namespace occa {
   kernel_t<CUDA>::~kernel_t(){}
 
   template <>
+  void* kernel_t<CUDA>::getKernelHandle(){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    return data_.function;
+  }
+
+  template <>
+  void* kernel_t<CUDA>::getProgramHandle(){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    return data_.module;
+  }
+
+  template <>
   std::string kernel_t<CUDA>::fixBinaryName(const std::string &filename){
     return filename;
   }
@@ -1133,20 +1147,6 @@ namespace occa {
                     cuEventElapsedTime(&msTimeTaken, startTag.cuEvent, endTag.cuEvent));
 
     return (double) (1.0e-3 * (double) msTimeTaken);
-  }
-
-  template <>
-  void* device_t<CUDA>::getKernelHandle(){
-    OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-    return data_.function;
-  }
-
-  template <>
-  void* device_t<CUDA>::getProgramHandle(){
-    OCCA_EXTRACT_DATA(CUDA, Kernel);
-
-    return data_.module;
   }
 
   template <>
