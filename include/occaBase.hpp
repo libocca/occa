@@ -533,6 +533,9 @@ namespace occa {
 
     virtual inline ~kernel_v(){}
 
+    virtual void* getKernelHandle() = 0;
+    virtual void* getProgramHandle() = 0;
+
     virtual std::string fixBinaryName(const std::string &filename) = 0;
 
     virtual kernel_v* buildFromSource(const std::string &filename,
@@ -570,6 +573,9 @@ namespace occa {
 
     ~kernel_t();
 
+    void* getKernelHandle();
+    void* getProgramHandle();
+
     std::string fixBinaryName(const std::string &filename);
 
     kernel_t<mode_>* buildFromSource(const std::string &filename,
@@ -602,6 +608,9 @@ namespace occa {
 
     kernel(const kernel &k);
     kernel& operator = (const kernel &k);
+
+    void* getKernelHandle();
+    void* getProgramHandle();
 
     kernel_v* getKHandle();
 
@@ -1120,6 +1129,8 @@ namespace occa {
 
     virtual void setup(argInfoMap &aim) = 0;
 
+    virtual void* getContextHandle() = 0;
+
     virtual void addOccaHeadersToInfo(kernelInfo &info) = 0;
     virtual std::string getInfoSalt(const kernelInfo &info) = 0;
     virtual deviceIdentifier getIdentifier() const = 0;
@@ -1227,6 +1238,8 @@ namespace occa {
     device_t<mode_>& operator = (const device_t<mode_> &k);
 
     void setup(argInfoMap &aim);
+
+    void* getContextHandle();
 
     void addOccaHeadersToInfo(kernelInfo &info);
     std::string getInfoSalt(const kernelInfo &info);
@@ -1338,6 +1351,10 @@ namespace occa {
       return *this;
     }
 
+    inline void* getStreamHandle(){
+      return handle;
+    }
+
     void free();
   };
 
@@ -1362,6 +1379,7 @@ namespace occa {
     device(const device &d);
     device& operator = (const device &d);
 
+    void* getContextHandle();
     device_v* getDHandle();
 
     void setupHandle(occa::mode m);

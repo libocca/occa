@@ -105,6 +105,15 @@ namespace occa {
   kernel_t<Pthreads>::kernel_t(const kernel_t<Pthreads> &k);
 
   template <>
+  void* kernel_t<Pthreads>::getKernelHandle();
+
+  template <>
+  void* kernel_t<Pthreads>::getProgramHandle();
+
+  template <>
+  void* kernel_t<Pthreads>::getProgramHandle();
+
+  template <>
   std::string kernel_t<Pthreads>::fixBinaryName(const std::string &filename);
 
   template <>
@@ -205,6 +214,9 @@ namespace occa {
 
   template <>
   device_t<Pthreads>& device_t<Pthreads>::operator = (const device_t<Pthreads> &k);
+
+  template <>
+  void* device_t<Pthreads>::getContextHandle();
 
   template <>
   void device_t<Pthreads>::setup(argInfoMap &aim);

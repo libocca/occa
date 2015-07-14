@@ -65,6 +65,24 @@ namespace occa {
   kernel_t<Pthreads>::~kernel_t(){}
 
   template <>
+  void* kernel_t<Pthreads>::getKernelHandle(){
+    OCCA_EXTRACT_DATA(Pthreads, Kernel);
+
+    void *ret;
+
+    ::memcpy(&ret, &data_.handle, sizeof(void*));
+
+    return ret;
+  }
+
+  template <>
+  void* kernel_t<Pthreads>::getProgramHandle(){
+    OCCA_EXTRACT_DATA(Pthreads, Kernel);
+
+    return data_.dlHandle;
+  }
+
+  template <>
   std::string kernel_t<Pthreads>::fixBinaryName(const std::string &filename){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
     return filename;
@@ -532,6 +550,11 @@ namespace occa {
     bytesAllocated = d.bytesAllocated;
 
     return *this;
+  }
+
+  template <>
+  void* device_t<Pthreads>::getContextHandle(){
+    return NULL;
   }
 
   template <>

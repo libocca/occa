@@ -106,6 +106,12 @@ namespace occa {
   kernel_t<Serial>::kernel_t(const kernel_t<Serial> &k);
 
   template <>
+  void* kernel_t<Serial>::getKernelHandle();
+
+  template <>
+  void* kernel_t<Serial>::getProgramHandle();
+
+  template <>
   std::string kernel_t<Serial>::fixBinaryName(const std::string &filename);
 
   template <>
@@ -209,6 +215,9 @@ namespace occa {
 
   template <>
   device_t<Serial>& device_t<Serial>::operator = (const device_t<Serial> &k);
+
+  template <>
+  void* device_t<Serial>::getContextHandle();
 
   template <>
   void device_t<Serial>::setup(argInfoMap &aim);

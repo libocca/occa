@@ -395,6 +395,14 @@ namespace occa {
     return *this;
   }
 
+  void* kernel::getKernelHandle(){
+    return kHandle->getKernelHandle();
+  }
+
+  void* kernel::getProgramHandle(){
+    return kHandle->getProgramHandle();
+  }
+
   kernel_v* kernel::getKHandle(){
     return kHandle;
   }
@@ -1128,6 +1136,10 @@ namespace occa {
     dHandle = d.dHandle;
 
     return *this;
+  }
+
+  void* device::getContextHandle(){
+    return dHandle->getContextHandle();
   }
 
   device_v* device::getDHandle(){

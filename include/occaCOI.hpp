@@ -185,6 +185,9 @@ namespace occa {
   device_t<COI>& device_t<COI>::operator = (const device_t<COI> &k);
 
   template <>
+  void* device_t<COI>::getContextHandle();
+
+  template <>
   void device_t<COI>::setup(argInfoMap &aim);
 
   template <>

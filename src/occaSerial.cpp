@@ -517,7 +517,7 @@ namespace occa {
 
       handleFunction_t sym2;
 
-      memcpy(&sym2, &sym, sizeof(sym));
+      ::memcpy(&sym2, &sym, sizeof(sym));
 
       return sym2;
     }
@@ -587,6 +587,24 @@ namespace occa {
 
   template <>
   kernel_t<Serial>::~kernel_t(){}
+
+  template <>
+  void* kernel_t<Serial>::getKernelHandle(){
+    OCCA_EXTRACT_DATA(Serial, Kernel);
+
+    void *ret;
+
+    ::memcpy(&ret, &data_.handle, sizeof(void*));
+
+    return ret;
+  }
+
+  template <>
+  void* kernel_t<Serial>::getProgramHandle(){
+    OCCA_EXTRACT_DATA(Serial, Kernel);
+
+    return data_.dlHandle;
+  }
 
   template <>
   std::string kernel_t<Serial>::fixBinaryName(const std::string &filename){
@@ -1027,6 +1045,11 @@ namespace occa {
     bytesAllocated = d.bytesAllocated;
 
     return *this;
+  }
+
+  template <>
+  void* device_t<Serial>::getContextHandle(){
+    return NULL;
   }
 
   template <>

@@ -58,6 +58,9 @@ namespace occa {
   kernel_t<OpenMP>::kernel_t(const kernel_t<OpenMP> &k);
 
   template <>
+  void* kernel_t<OpenMP>::getKernelHandle();
+
+  template <>
   std::string kernel_t<OpenMP>::fixBinaryName(const std::string &filename);
 
   template <>
@@ -161,6 +164,9 @@ namespace occa {
 
   template <>
   device_t<OpenMP>& device_t<OpenMP>::operator = (const device_t<OpenMP> &k);
+
+  template <>
+  void* device_t<OpenMP>::getContextHandle();
 
   template <>
   void device_t<OpenMP>::setup(argInfoMap &aim);

@@ -566,6 +566,20 @@ namespace occa {
   kernel_t<OpenCL>::~kernel_t(){}
 
   template <>
+  void* kernel_t<OpenCL>::getKernelHandle(){
+    OCCA_EXTRACT_DATA(OpenCL, Kernel);
+
+    return data_.kernel;
+  }
+
+  template <>
+  void* kernel_t<OpenCL>::getProgramHandle(){
+    OCCA_EXTRACT_DATA(OpenCL, Kernel);
+
+    return data_.program;
+  }
+
+  template <>
   std::string kernel_t<OpenCL>::fixBinaryName(const std::string &filename){
     return filename;
   }
@@ -1113,6 +1127,13 @@ namespace occa {
     bytesAllocated = d.bytesAllocated;
 
     return *this;
+  }
+
+  template <>
+  void* device_t<OpenCL>::getContextHandle(){
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    return (void*) data_.context;
   }
 
   template <>

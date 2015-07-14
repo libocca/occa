@@ -932,6 +932,13 @@ namespace occa {
   }
 
   template <>
+  void* device_t<CUDA>::getContextHandle(){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
+    return (void*) data_.context;
+  }
+
+  template <>
   void device_t<CUDA>::setup(argInfoMap &aim){
     cuda::init();
 
@@ -1126,6 +1133,20 @@ namespace occa {
                     cuEventElapsedTime(&msTimeTaken, startTag.cuEvent, endTag.cuEvent));
 
     return (double) (1.0e-3 * (double) msTimeTaken);
+  }
+
+  template <>
+  void* device_t<CUDA>::getKernelHandle(){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    return data_.function;
+  }
+
+  template <>
+  void* device_t<CUDA>::getProgramHandle(){
+    OCCA_EXTRACT_DATA(CUDA, Kernel);
+
+    return data_.module;
   }
 
   template <>

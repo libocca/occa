@@ -771,6 +771,11 @@ namespace occa {
   }
 
   template <>
+  void* device_t<COI>::getContextHandle(){
+    return NULL;
+  }
+
+  template <>
   void device_t<COI>::setup(argInfoMap &aim){
     data = new COIDeviceData_t;
 

@@ -177,6 +177,24 @@ namespace occa {
   kernel_t<OpenMP>::~kernel_t(){}
 
   template <>
+  void* kernel_t<OpenMP>::getKernelHandle(){
+    OCCA_EXTRACT_DATA(OpenMP, Kernel);
+
+    void *ret;
+
+    ::memcpy(&ret, &data_.handle, sizeof(void*));
+
+    return ret;
+  }
+
+  template <>
+  void* kernel_t<OpenMP>::getProgramHandle(){
+    OCCA_EXTRACT_DATA(OpenMP, Kernel);
+
+    return data_.dlHandle;
+  }
+
+  template <>
   std::string kernel_t<OpenMP>::fixBinaryName(const std::string &filename){
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
     return filename;
@@ -627,6 +645,11 @@ namespace occa {
     bytesAllocated = d.bytesAllocated;
 
     return *this;
+  }
+
+  template <>
+  void* device_t<OpenMP>::getContextHandle(){
+    return NULL;
   }
 
   template <>

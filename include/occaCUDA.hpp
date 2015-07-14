@@ -100,6 +100,12 @@ namespace occa {
   kernel_t<CUDA>::kernel_t(const kernel_t<CUDA> &k);
 
   template <>
+  void* kernel_t<CUDA>::getKernelHandle();
+
+  template <>
+  void* kernel_t<CUDA>::getProgramHandle();
+
+  template <>
   std::string kernel_t<CUDA>::fixBinaryName(const std::string &filename);
 
   template <>
@@ -203,6 +209,9 @@ namespace occa {
 
   template <>
   device_t<CUDA>& device_t<CUDA>::operator = (const device_t<CUDA> &k);
+
+  template <>
+  void* device_t<CUDA>::getContextHandle();
 
   template <>
   void device_t<CUDA>::setup(argInfoMap &aim);
