@@ -39,6 +39,7 @@ occaLPath = ${OCCA_DIR}/$(lPath)
 #---[ COMPILATION ]-------------------------------
 headers   = $(wildcard $(occaIPath)/*.hpp)        $(wildcard $(occaIPath)/*.tpp)
 headers  += $(wildcard $(occaIPath)/parser/*.hpp) $(wildcard $(occaIPath)/parser/*.tpp)
+headers  += $(wildcard $(occaIPath)/array/*.hpp)  $(wildcard $(occaIPath)/array/*.tpp)
 
 sources   = $(wildcard $(occaSPath)/*.cpp)
 sources  += $(wildcard $(occaSPath)/parser/*.cpp)
@@ -82,7 +83,10 @@ $(occaLPath)/libocca.so:$(objects) $(headers)
 $(occaOPath)/%.o:$(occaSPath)/%.cpp $(occaIPath)/%.hpp $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
-$(occaOPath)/parser/%.o:$(occaSPath)/parser/%.cpp $(occaIPath)/parser/%.hpp $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/,$(<:.cpp=.tpp)))
+$(occaOPath)/parser/%.o:$(occaSPath)/parser/%.cpp $(wildcard $(subst $(occaSPath)/,$(occaIPath)/parser/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/parser/,$(<:.cpp=.tpp)))
+	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
+
+$(occaOPath)/array/%.o:$(occaSPath)/array/%.cpp $(wildcard $(subst $(occaSPath)/,$(occaIPath)/array/,$(<:.cpp=.hpp))) $(wildcard $(subst $(occaSPath)/,$(occaIPath)/array/,$(<:.cpp=.tpp)))
 	$(compiler) $(compilerFlags) -o $@ $(flags) -c $(paths) $<
 
 $(occaOPath)/fTypes.mod:$(occaSPath)/fTypes.f90 $(occaOPath)/fTypes.o
