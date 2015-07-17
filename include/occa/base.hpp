@@ -1526,6 +1526,7 @@ namespace occa {
   };
 
   //   ---[ Device Functions ]----------
+  extern device host;
   extern device currentDevice;
 
   void setDevice(device d);
