@@ -77,15 +77,30 @@ namespace occa {
 
   //---[ clone() ]----------------------
   template <class TM, const int idxType>
+  array<TM,idxType> array<TM,idxType>::clone(const int copyOn){
+    return cloneOn(device, copyOn);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType> array<TM,idxType>::cloneOnCurrentDevice(const int copyOn){
+    return cloneOn(occa::getCurrentDevice(), copyOn);
+  }
+
+  template <class TM, const int idxType>
+  array<TM,idxType> array<TM,idxType>::cloneOn(occa::device device_, const int copyOn){
+    return cloneOn<TM,idxType>(device_, copyOn);
+  }
+
+  template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM2,idxType2> array<TM,idxType>::clone(const int copyOn){
-    return cloneOn<TM2>(device);
+    return cloneOn<TM2>(device, copyOn);
   }
 
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM2,idxType2> array<TM,idxType>::cloneOnCurrentDevice(const int copyOn){
-    return cloneOn<TM2>(occa::getCurrentDevice());
+    return cloneOn<TM2>(occa::getCurrentDevice(), copyOn);
   }
 
   template <class TM, const int idxType>

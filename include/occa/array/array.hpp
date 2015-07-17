@@ -57,6 +57,13 @@ namespace occa {
     std::string idxOrderStr();
 
     //---[ clone() ]--------------------
+    array<TM,idxType> clone(const int copyOn = copyOnHostAndDevice);
+
+    array<TM,idxType> cloneOnCurrentDevice(const int copyOn = copyOnHostAndDevice);
+
+    array<TM,idxType> cloneOn(occa::device device_,
+                              const int copyOn = copyOnHostAndDevice);
+
     template <class TM2, const int idxType2>
     array<TM2,idxType2> clone(const int copyOn = copyOnHostAndDevice);
 
