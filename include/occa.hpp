@@ -3,21 +3,21 @@
 
 #include <iostream>
 
-#include "occaDefines.hpp"
-#include "occaTools.hpp"
+#include "occa/defines.hpp"
+#include "occa/tools.hpp"
 
-#include "occaBase.hpp"
-#include "occaLibrary.hpp"
-#include "occaTimer.hpp"
+#include "occa/base.hpp"
+#include "occa/library.hpp"
+#include "occa/timer.hpp"
 
-#include "occaSerial.hpp"
-#include "occaOpenCL.hpp"
-#include "occaCUDA.hpp"
-#include "occaHSA.hpp"
-#include "occaCOI.hpp"
+#include "occa/Serial.hpp"
+#include "occa/OpenCL.hpp"
+#include "occa/CUDA.hpp"
+#include "occa/HSA.hpp"
+#include "occa/COI.hpp"
 
-#include "defines/occaVectorDefines.hpp"
+#include "occa/defines/vector.hpp"
 
-#include "occaMiniLib.hpp"
+#include "occa/miniLib.hpp"
 
 #endif

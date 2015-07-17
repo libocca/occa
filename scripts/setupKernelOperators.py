@@ -372,43 +372,43 @@ operatorModeDefinition = { 'Serial'   : serialOperatorDefinition,
 
 occaDir = ENV['OCCA_DIR']
 
-hpp = open(occaDir + '/include/operators/occaVirtualOperatorDeclarations.hpp', 'w')
+hpp = open(occaDir + '/include/occa/operators/virtualDeclarations.hpp', 'w')
 hpp.write(virtualOperatorDeclarations(maxN));
 hpp.write('\n'); # Make sure there is a newline at the end of the file
 hpp.close()
 
-hpp = open(occaDir + '/include/operators/occaOperatorDeclarations.hpp', 'w')
+hpp = open(occaDir + '/include/occa/operators/declarations.hpp', 'w')
 hpp.write(operatorDeclarations('Base', maxN));
 hpp.write('\n');
 hpp.close()
 
-hpp = open(occaDir + '/src/operators/occaOperatorDefinitions.cpp', 'w')
+hpp = open(occaDir + '/src/operators/definitions.cpp', 'w')
 hpp.write(operatorDefinitions('Base', maxN));
 hpp.write('\n');
 hpp.close()
 
-hpp = open(occaDir + '/src/operators/occaRunFromArguments.cpp', 'w')
+hpp = open(occaDir + '/src/operators/runFromArguments.cpp', 'w')
 hpp.write(runFromArguments(maxN));
 hpp.write('\n');
 hpp.close()
 
 for mode in operatorModeDefinition:
-    hpp = open(occaDir + '/include/operators/occa' + mode + 'KernelOperators.hpp', 'w')
+    hpp = open(occaDir + '/include/occa/operators/' + mode + 'KernelOperators.hpp', 'w')
     hpp.write(operatorDeclarations(mode, maxN));
     hpp.write('\n');
     hpp.close()
 
-    cpp = open(occaDir + '/src/operators/occa' + mode + 'KernelOperators.cpp', 'w')
+    cpp = open(occaDir + '/src/operators/' + mode + 'KernelOperators.cpp', 'w')
     cpp.write(operatorDefinitions(mode, maxN));
     cpp.write('\n');
     cpp.close()
 
-hpp = open(occaDir + '/include/operators/occaCKernelOperators.hpp', 'w')
+hpp = open(occaDir + '/include/occa/operators/cKernelOperators.hpp', 'w')
 hpp.write(cOperatorDeclarations(maxN));
 hpp.write('\n');
 hpp.close()
 
-cpp = open(occaDir + '/src/operators/occaCKernelOperators.cpp', 'w')
+cpp = open(occaDir + '/src/operators/cKernelOperators.cpp', 'w')
 cpp.write(cOperatorDefinitions(maxN));
 cpp.write('\n');
 cpp.close()

@@ -1,4 +1,4 @@
-#include "_C_occa.h"
+#include "occa/python/_C_occa.h"
 
 //---[ Globals & Flags ]----------------
 static PyObject* py_occaSetVerboseCompilation(PyObject *self, PyObject *args){

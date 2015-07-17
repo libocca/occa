@@ -269,6 +269,6 @@ def defineAllTypes():
 
 occaDir = ENV['OCCA_DIR']
 
-hpp = open(occaDir + '/include/defines/occaVectorDefines.hpp', 'w')
+hpp = open(occaDir + '/include/occa/defines/vector.hpp', 'w')
 hpp.write(defineAllTypes())
 hpp.close()

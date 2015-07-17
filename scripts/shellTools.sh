@@ -1,7 +1,6 @@
 #!/bin/bash
 
 #---[ Library Information ]-------------
-
 function uniqueAddToPath {
     local path=$1
     local dir=$2
@@ -485,5 +484,19 @@ function getCPUINFOField {
     fi
 
     echo ""
+}
+#=======================================
+
+#---[ Setup Obj Dir ]-------------------
+function occaMkdir {
+    if [ ! -d $OCCA_DIR/$1 ]; then
+        mkdir $OCCA_DIR/$1
+    fi
+}
+
+function setupObjDir {
+    occaMkdir obj
+    occaMkdir obj/parser
+    occaMkdir obj/python
 }
 #=======================================

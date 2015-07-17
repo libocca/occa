@@ -1,5 +1,5 @@
 #include "stdint.h"
-#include "occaCBase.hpp"
+#include "occa/cBase.hpp"
 
 #define OCCA_ARG_COUNT(...) OCCA_ARG_COUNT2(__VA_ARGS__,                \
                                             50,49,48,47,46,45,44,43,42,41, \

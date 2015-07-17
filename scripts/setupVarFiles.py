@@ -8,7 +8,7 @@ modes = ['Serial',
          'Pthreads',
          'COI',
 
-         'Vector']
+         'vector']
 
 occaDir = ENV['OCCA_DIR']
 
@@ -38,8 +38,8 @@ decs = 'namespace occa {\n'
 defs = 'namespace occa {\n'
 
 for mode in modes:
-    varName  = 'occa' + mode + 'Defines'
-    filename = occaDir + '/include/defines/' + varName + '.hpp'
+    varName  = 'occa' + mode[0].capitalize() + mode[1:] + 'Defines'
+    filename = occaDir + '/include/occa/defines/' + mode + '.hpp'
 
     info = defineVar(varName, filename)
 
@@ -57,12 +57,12 @@ defs += info[1]
 decs += '}'
 defs += '}'
 
-hpp = open(occaDir + '/include/occaVarFiles.hpp', 'w')
+hpp = open(occaDir + '/include/occa/varFiles.hpp', 'w')
 hpp.write(decs)
 hpp.write('\n')  # Make sure there is a newline at the end of the file
 hpp.close()
 
-cpp = open(occaDir + '/src/occaVarFiles.cpp', 'w')
+cpp = open(occaDir + '/src/varFiles.cpp', 'w')
 cpp.write(defs)
 cpp.write('\n')
 cpp.close()
