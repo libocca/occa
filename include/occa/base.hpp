@@ -1081,19 +1081,27 @@ namespace occa {
     }
   };
 
-#if OCCA_OPENCL_ENABLED
   namespace cl {
+    occa::device wrapDevice(void *platformIDPtr,
+                            void *deviceIDPtr,
+                            void *contextPtr);
+
+#if OCCA_OPENCL_ENABLED
     occa::device wrapDevice(cl_platform_id platformID,
                             cl_device_id deviceID,
                             cl_context context);
-  }
 #endif
+  }
+
+  namespace cuda {
+    occa::device wrapDevice(void *devicePtr,
+                            void *contextPtr);
 
 #if OCCA_CUDA_ENABLED
-  namespace cuda {
-    occa::device wrapDevice(CUdevice device, CUcontext context);
-  }
+    occa::device wrapDevice(CUdevice device,
+                            CUcontext context);
 #endif
+  }
 
 #if OCCA_HSA_ENABLED
   namespace hsa {
@@ -1101,11 +1109,12 @@ namespace occa {
   }
 #endif
 
-#if OCCA_COI_ENABLED
   namespace coi {
+    occa::device wrapDevice(void *coiDevicePtr);
+#if OCCA_COI_ENABLED
     occa::device wrapDevice(COIENGINE coiDevice);
-  }
 #endif
+  }
 
   class device_v {
     template <occa::mode> friend class occa::kernel_t;

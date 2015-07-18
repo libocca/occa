@@ -2202,4 +2202,49 @@ namespace occa {
     return 0;
   }
   //==================================
+
+  namespace cl {
+    occa::device wrapDevice(void *platformIDPtr,
+                            void *deviceIDPtr,
+                            void *contextPtr){
+#if OCCA_OPENCL_ENABLED
+      return cl::wrapDevice(*((cl_platform_id*) platformIDPtr),
+                            *((cl_device_id*)   deviceIDPtr),
+                            *((cl_context*)     contextPtr));
+#else
+      OCCA_CHECK(false,
+                 "OCCA was not compiled with [OpenCL] enabled");
+
+      return occa::host;
+#endif
+    }
+  }
+
+  namespace cuda {
+    occa::device wrapDevice(void *devicePtr,
+                            void *contextPtr){
+#if OCCA_CUDA_ENABLED
+      return cuda::wrapDevice(*((CUdevice*) devicePtr),
+                              *((CUcontext*) contextPtr));
+#else
+      OCCA_CHECK(false,
+                 "OCCA was not compiled with [CUDA] enabled");
+
+      return occa::host;
+#endif
+    }
+  }
+
+  namespace coi {
+    occa::device wrapDevice(void *coiDevicePtr){
+#if OCCA_COI_ENABLED
+      return coi::wrapDevice(*((COIENGINE*) coiDevice));
+#else
+      OCCA_CHECK(false,
+                 "OCCA was not compiled with [COI] enabled");
+
+      return occa::host;
+#endif
+    }
+  }
 }
