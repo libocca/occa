@@ -1098,7 +1098,7 @@ namespace occa {
   template <>
   void device_t<CUDA>::waitFor(streamTag tag){
     OCCA_CUDA_CHECK("Device: Waiting For Tag",
-                    cuEventSynchronize(tag.cuEvent());
+                    cuEventSynchronize(tag.cuEvent()));
   }
 
   template <>

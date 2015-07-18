@@ -1111,6 +1111,7 @@ namespace occa {
 
   namespace coi {
     occa::device wrapDevice(void *coiDevicePtr);
+
 #if OCCA_COI_ENABLED
     occa::device wrapDevice(COIENGINE coiDevice);
 #endif
