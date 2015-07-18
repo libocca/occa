@@ -439,15 +439,29 @@ namespace occa {
   OCCA_KERNEL_ARG_CONSTRUCTOR(uintptr_t)
 #endif
 
-  union streamTag {
+  class streamTag {
+  public:
     double tagTime;
+    void *handle;
+
 #if OCCA_OPENCL_ENABLED
-    cl_event clEvent;
+    inline cl_event& clEvent(){
+      return (cl_event&) handle;
+    }
+
+    inline cl_event& clEvent() const {
+      return const_cast<cl_event&>( (const cl_event&) handle );
+    }
 #endif
+
 #if OCCA_CUDA_ENABLED
-    CUevent cuEvent;
-#endif
-#if OCCA_HSA_ENABLED
+    inline CUevent& cuEvent(){
+      return (CUevent&) handle;
+    }
+
+    inline CUevent& cuEvent() const {
+      return const_cast<CUevent&>( (const CUevent&) handle );
+    }
 #endif
   };
 

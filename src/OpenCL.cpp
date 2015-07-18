@@ -1255,7 +1255,7 @@ namespace occa {
   template <>
   void device_t<OpenCL>::waitFor(streamTag tag){
     OCCA_CL_CHECK("Device: Waiting For Tag",
-                  clWaitForEvents(1, &(tag.clEvent)));
+                  clWaitForEvents(1, &(tag.clEvent())));
   }
 
   template <>
@@ -1292,10 +1292,10 @@ namespace occa {
 
 #ifdef CL_VERSION_1_2
     OCCA_CL_CHECK("Device: Tagging Stream",
-                  clEnqueueMarkerWithWaitList(stream, 0, NULL, &(ret.clEvent)));
+                  clEnqueueMarkerWithWaitList(stream, 0, NULL, &(ret.clEvent())));
 #else
     OCCA_CL_CHECK("Device: Tagging Stream",
-                  clEnqueueMarker(stream, &(ret.clEvent)));
+                  clEnqueueMarker(stream, &(ret.clEvent())));
 #endif
 
     return ret;
@@ -1308,22 +1308,22 @@ namespace occa {
     finish();
 
     OCCA_CL_CHECK ("Device: Time Between Tags (Start)",
-                   clGetEventProfilingInfo(startTag.clEvent  ,
+                   clGetEventProfilingInfo(startTag.clEvent(),
                                            CL_PROFILING_COMMAND_END,
                                            sizeof(cl_ulong),
                                            &start, NULL) );
 
     OCCA_CL_CHECK ("Device: Time Between Tags (End)",
-                   clGetEventProfilingInfo(endTag.clEvent  ,
+                   clGetEventProfilingInfo(endTag.clEvent(),
                                            CL_PROFILING_COMMAND_START,
                                            sizeof(cl_ulong),
                                            &end, NULL) );
 
     OCCA_CL_CHECK("Device: Time Between Tags (Freeing start tag)",
-                  clReleaseEvent(startTag.clEvent));
+                  clReleaseEvent(startTag.clEvent()));
 
     OCCA_CL_CHECK("Device: Time Between Tags (Freeing end tag)",
-                  clReleaseEvent(endTag.clEvent));
+                  clReleaseEvent(endTag.clEvent()));
 
     return (double) (1.0e-9 * (double)(end - start));
   }

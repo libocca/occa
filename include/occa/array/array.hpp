@@ -22,7 +22,7 @@ namespace occa {
     dim_t s_[6];    // Strides
 
     int idxCount;
-    dim_t fs_[6];   // Full Strides (used with idxOrder)
+    dim_t fs_[7];   // Full Strides (used with idxOrder)
     int sOrder_[6]; // Stride Ordering
 
     array();
@@ -72,7 +72,7 @@ namespace occa {
 
     template <class TM2, const int idxType2>
     array<TM2,idxType2> cloneOn(occa::device device_,
-                                 const int copyOn = copyOnHostAndDevice);
+                                const int copyOn = copyOnHostAndDevice);
 
     //---[ array(...) ]----------------
     array(const int dim, const dim_t *d);
@@ -81,30 +81,30 @@ namespace occa {
     array(const dim_t d1, const dim_t d0);
     array(const dim_t d2, const dim_t d1, const dim_t d0);
     array(const dim_t d3,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d2, const dim_t d1, const dim_t d0);
     array(const dim_t d4, const dim_t d3,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d2, const dim_t d1, const dim_t d0);
     array(const dim_t d5, const dim_t d4, const dim_t d3,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d2, const dim_t d1, const dim_t d0);
 
     //---[ array(device, ...) ]--------
     array(occa::device device_, const int dim, const dim_t *d);
 
     array(occa::device device_,
-           const dim_t d0);
+          const dim_t d0);
     array(occa::device device_,
-           const dim_t d1, const dim_t d0);
+          const dim_t d1, const dim_t d0);
     array(occa::device device_,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d2, const dim_t d1, const dim_t d0);
     array(occa::device device_,
-           const dim_t d3,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d3,
+          const dim_t d2, const dim_t d1, const dim_t d0);
     array(occa::device device_,
-           const dim_t d4, const dim_t d3,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d4, const dim_t d3,
+          const dim_t d2, const dim_t d1, const dim_t d0);
     array(occa::device device_,
-           const dim_t d5, const dim_t d4, const dim_t d3,
-           const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d5, const dim_t d4, const dim_t d3,
+          const dim_t d2, const dim_t d1, const dim_t d0);
 
     //---[ allocate(...) ]--------------
   private:

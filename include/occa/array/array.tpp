@@ -19,16 +19,15 @@ namespace occa {
     device = v.device;
     data_  = v.data_;
 
-    for(int i = 0; i < 6; ++i){
+    initSOrder(v.idxCount);
+
+    for(int i = 0; i < idxCount; ++i){
       s_[i]      = v.s_[i];
       sOrder_[i] = v.sOrder_[i];
     }
 
-    if((idxType  == occa::useIdxOrder) &&
-       (idxType2 != occa::useIdxOrder)){
-
-      initSOrder();
-    }
+    if(idxType == occa::useIdxOrder)
+      updateFS(v.idxCount);
   }
 
   template <class TM, const int idxType>
@@ -106,7 +105,15 @@ namespace occa {
   template <class TM, const int idxType>
   template <class TM2, const int idxType2>
   array<TM2,idxType2> array<TM,idxType>::cloneOn(occa::device device_, const int copyOn){
-    return array<TM2,idxType2>();
+    array<TM2,idxType2> clone_ = *this;
+
+    clone_.allocate(device_, idxCount, s_);
+
+    occa::memcpy(clone_.data_,
+                 data_,
+                 bytes());
+
+    return clone_;
   }
 
   //---[ array(...) ]------------------
@@ -156,7 +163,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(const dim_t d3,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d2, const dim_t d1, const dim_t d0){
     initSOrder(4);
 
     allocate(d3,
@@ -166,7 +173,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(const dim_t d4, const dim_t d3,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d2, const dim_t d1, const dim_t d0){
     initSOrder(5);
 
     allocate(d4, d3,
@@ -176,7 +183,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(const dim_t d5, const dim_t d4, const dim_t d3,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d2, const dim_t d1, const dim_t d0){
     initSOrder(6);
 
     allocate(d5, d4, d3,
@@ -207,7 +214,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                             const dim_t d0){
+                           const dim_t d0){
 
     allocate(device_,
              d0);
@@ -215,7 +222,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                             const dim_t d1, const dim_t d0){
+                           const dim_t d1, const dim_t d0){
 
     allocate(device_,
              d1, d0);
@@ -223,7 +230,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(device_,
              d2, d1, d0);
@@ -231,8 +238,8 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                             const dim_t d3,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d3,
+                           const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(device_,
              d3,
@@ -241,8 +248,8 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                             const dim_t d4, const dim_t d3,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d4, const dim_t d3,
+                           const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(device_,
              d4, d3,
@@ -251,8 +258,8 @@ namespace occa {
 
   template <class TM, const int idxType>
   array<TM,idxType>::array(occa::device device_,
-                             const dim_t d5, const dim_t d4, const dim_t d3,
-                             const dim_t d2, const dim_t d1, const dim_t d0){
+                           const dim_t d5, const dim_t d4, const dim_t d3,
+                           const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(device_,
              d5, d4, d3,
@@ -309,7 +316,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const dim_t d3,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(occa::getCurrentDevice(),
              d3,
@@ -318,7 +325,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const dim_t d4, const dim_t d3,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(occa::getCurrentDevice(),
              d4, d3,
@@ -327,7 +334,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(const dim_t d5, const dim_t d4, const dim_t d3,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     allocate(occa::getCurrentDevice(),
              d5, d4, d3,
@@ -358,7 +365,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                    const dim_t d0){
+                                   const dim_t d0){
 
     device = device_;
 
@@ -369,7 +376,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                    const dim_t d1, const dim_t d0){
+                                   const dim_t d1, const dim_t d0){
 
     device = device_;
 
@@ -380,7 +387,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     device = device_;
 
@@ -391,8 +398,8 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                    const dim_t d3,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d3,
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     device = device_;
 
@@ -404,8 +411,8 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                    const dim_t d4, const dim_t d3,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d4, const dim_t d3,
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     device = device_;
 
@@ -417,8 +424,8 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::allocate(occa::device device_,
-                                    const dim_t d5, const dim_t d4, const dim_t d3,
-                                    const dim_t d2, const dim_t d1, const dim_t d0){
+                                   const dim_t d5, const dim_t d4, const dim_t d3,
+                                   const dim_t d2, const dim_t d1, const dim_t d0){
 
     device = device_;
 
@@ -479,7 +486,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::reshape(const dim_t d3,
-                                   const dim_t d2, const dim_t d1, const dim_t d0){
+                                  const dim_t d2, const dim_t d1, const dim_t d0){
 
     s_[0] = d0; s_[1] = d1; s_[2] = d2;
     s_[3] = d3; s_[4] =  1; s_[5] =  1;
@@ -489,7 +496,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::reshape(const dim_t d4, const dim_t d3,
-                                   const dim_t d2, const dim_t d1, const dim_t d0){
+                                  const dim_t d2, const dim_t d1, const dim_t d0){
 
     s_[0] = d0; s_[1] = d1; s_[2] = d2;
     s_[3] = d3; s_[4] = d4; s_[5] =  1;
@@ -499,7 +506,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::reshape(const dim_t d5, const dim_t d4, const dim_t d3,
-                                   const dim_t d2, const dim_t d1, const dim_t d0){
+                                  const dim_t d2, const dim_t d1, const dim_t d0){
 
     s_[0] = d0; s_[1] = d1; s_[2] = d2;
     s_[3] = d3; s_[4] = d4; s_[5] = d5;
@@ -510,22 +517,20 @@ namespace occa {
   //---[ setIdxOrder(...) ]-------------
   template <class TM, const int idxType>
   void array<TM,idxType>::updateFS(const int idxCount_){
+    idxCount = idxCount_;
+
     if(idxType == occa::useIdxOrder){
-
-      idxCount = idxCount_;
-
-      dim_t fs2[6];
+      dim_t fs2[7];
 
       fs2[0] = 1;
 
       for(int i = 0; i < 6; ++i){
         const int i2 = (sOrder_[i] + 1);
 
-        if(i2 < 6)
-          fs2[i2] = s_[i];
+        fs2[i2] = s_[i];
       }
 
-      for(int i = 1; i < 6; ++i)
+      for(int i = 1; i < 7; ++i)
         fs2[i] *= fs2[i - 1];
 
       for(int i = 0; i < 6; ++i)
@@ -563,7 +568,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::setIdxOrder(const std::string &default_,
-                                       const std::string &given){
+                                      const std::string &given){
 
     const int dim = (int) default_.size();
     int o[6];
@@ -638,7 +643,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::setIdxOrder(const int o3,
-                                       const int o2, const int o1, const int o0){
+                                      const int o2, const int o1, const int o0){
     if(idxType == occa::useIdxOrder){
       OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
                  (0 <= o1) && (o1 <= 1) &&
@@ -663,7 +668,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::setIdxOrder(const int o4, const int o3,
-                                       const int o2, const int o1, const int o0){
+                                      const int o2, const int o1, const int o0){
     if(idxType == occa::useIdxOrder){
       OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
                  (0 <= o1) && (o1 <= 1) &&
@@ -690,7 +695,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   void array<TM,idxType>::setIdxOrder(const int o5, const int o4, const int o3,
-                                       const int o2, const int o1, const int o0){
+                                      const int o2, const int o1, const int o0){
     if(idxType == occa::useIdxOrder){
       OCCA_CHECK((0 <= o0) && (o0 <= 1) &&
                  (0 <= o1) && (o1 <= 1) &&
@@ -748,7 +753,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const dim_t i3,
-                                              const dim_t i2, const dim_t i1, const dim_t i0){
+                                             const dim_t i2, const dim_t i1, const dim_t i0){
     if(idxType == occa::dontUseIdxOrder)
       return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*i3))];
     else
@@ -757,7 +762,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const dim_t i4, const dim_t i3,
-                                              const dim_t i2, const dim_t i1, const dim_t i0){
+                                             const dim_t i2, const dim_t i1, const dim_t i0){
     if(idxType == occa::dontUseIdxOrder)
       return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*i4)))];
     else
@@ -766,7 +771,7 @@ namespace occa {
 
   template <class TM, const int idxType>
   inline TM& array<TM,idxType>::operator () (const dim_t i5, const dim_t i4, const dim_t i3,
-                                              const dim_t i2, const dim_t i1, const dim_t i0){
+                                             const dim_t i2, const dim_t i1, const dim_t i0){
     if(idxType == occa::dontUseIdxOrder)
       return data_[i0 + s_[0]*(i1 + s_[1]*(i2 + s_[2]*(i3 + s_[3]*(i4 + s_[4]*i5))))];
     else
