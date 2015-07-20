@@ -164,18 +164,21 @@ namespace occa {
 
       if(vendor.find("AMD")                    != std::string::npos ||
          vendor.find("Advanced Micro Devices") != std::string::npos ||
-         vendor.find("ATI")                    != std::string::npos)
+         vendor.find("ATI")                    != std::string::npos){
+
         ret |= occa::AMD;
-
-      else if(vendor.find("Intel") != std::string::npos)
+      }
+      else if(vendor.find("Intel") != std::string::npos){
         ret |= occa::Intel;
-
-      else if(vendor.find("Altera") != std::string::npos)
+      }
+      else if(vendor.find("Altera") != std::string::npos){
         ret |= occa::Altera;
-
+      }
       else if(vendor.find("Nvidia") != std::string::npos ||
-              vendor.find("NVIDIA") != std::string::npos)
+              vendor.find("NVIDIA") != std::string::npos){
+
         ret |= occa::NVIDIA;
+      }
 
       return ret;
     }

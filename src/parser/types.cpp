@@ -1698,9 +1698,67 @@ namespace occa {
             break;
           }
 
-
           argumentVarInfos[i] = new varInfo();
-          sLeafPos = argumentVarInfos[i]->loadFrom(s, leaf, sLeafPos);
+          varInfo &argVar = *(argumentVarInfos[i]);
+
+          sLeafPos = argVar.loadFrom(s, leaf, sLeafPos);
+
+          attribute_t *arrayArgAttr_ = argVar.hasAttribute("arrayArg");
+
+          if(arrayArgAttr_ != NULL){
+            attribute_t &attr = *arrayArgAttr_;
+            bool usingIdxOrder = false;
+
+            OCCA_CHECK((0 < attr.argCount) &&
+                       (attr.argCount < 3),
+                       "@arrayArg can only have two arguments:\n"
+                       "  dims = X, and an optional useIdxOrder");
+
+            expNode &arg1     = attr[0];
+            expNode *dimsArg_ = &arg1;
+
+            if(attr.argCount == 2){
+              expNode &arg2 = attr[1];
+
+              const bool arg1IsUIO = (arg1.value == "useIdxOrder");
+              const bool arg2IsUIO = (arg2.value == "useIdxOrder");
+
+              OCCA_CHECK(arg1IsUIO || arg2IsUIO,
+                         "@arrayArg can only have two arguments:\n"
+                         "  dims = X, and an optional useIdxOrder");
+
+              usingIdxOrder = true;
+
+              if(arg1IsUIO)
+                dimsArg_ = &arg2;
+            }
+
+            expNode &dimsArg = *dimsArg_;
+            dimsArg.changeExpTypes();
+
+            typeHolder thDims;
+
+            bool isValid = ((dimsArg.value     == "=")   &&
+                            (dimsArg.leafCount == 2)     &&
+                            (dimsArg[0].value == "dims") &&
+                            (dimsArg[1].info & expType::presetValue));
+
+            if(isValid){
+              thDims = dimsArg[1].calculateValue();
+
+              if(thDims.type & noType)
+                isValid = false;
+            }
+
+            OCCA_CHECK(isValid,
+                       "@arrayArg must have an argument:\n"
+                       "  dims = X, where X is known at compile-time\n");
+
+            const int dims = thDims.to<int>();
+
+            std::cout << "dims = " << dims << '\n';
+          }
+
           sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
         }
       }
