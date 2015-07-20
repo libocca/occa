@@ -423,6 +423,8 @@ namespace occa {
                        expNode &expRoot,
                        int leafPos);
 
+      varInfo& getArrayArgument(varInfo &argVar);
+
       void setupAttributes();
 
       //   ---[ Fortran ]-----

@@ -1703,68 +1703,100 @@ namespace occa {
 
           sLeafPos = argVar.loadFrom(s, leaf, sLeafPos);
 
-          attribute_t *arrayArgAttr_ = argVar.hasAttribute("arrayArg");
+          sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
+        }
 
-          if(arrayArgAttr_ != NULL){
-            attribute_t &attr = *arrayArgAttr_;
-            bool usingIdxOrder = false;
+        int arrayArgs = 0;
 
-            OCCA_CHECK((0 < attr.argCount) &&
-                       (attr.argCount < 3),
-                       "@arrayArg can only have two arguments:\n"
-                       "  dims = X, and an optional useIdxOrder");
+        for(int i = 0; i < argumentCount; ++i){
+          if(argumentVarInfos[i]->hasAttribute("arrayArg"))
+            ++arrayArgs;
+        }
 
-            expNode &arg1     = attr[0];
-            expNode *dimsArg_ = &arg1;
+        if(0 < arrayArgs){
+          varInfo **args = new varInfo*[argumentCount + arrayArgs];
+          swapValues(argumentVarInfos, args);
 
-            if(attr.argCount == 2){
-              expNode &arg2 = attr[1];
+          int argPos = 0;
 
-              const bool arg1IsUIO = (arg1.value == "useIdxOrder");
-              const bool arg2IsUIO = (arg2.value == "useIdxOrder");
+          for(int i = 0; i < argumentCount; ++i){
+            argumentVarInfos[argPos++] = args[i];
 
-              OCCA_CHECK(arg1IsUIO || arg2IsUIO,
-                         "@arrayArg can only have two arguments:\n"
-                         "  dims = X, and an optional useIdxOrder");
-
-              usingIdxOrder = true;
-
-              if(arg1IsUIO)
-                dimsArg_ = &arg2;
+            if(args[i]->hasAttribute("arrayArg")){
+              varInfo &arrayArg = getArrayArgument( *(args[i]) );
+              argumentVarInfos[argPos++] = &arrayArg;
             }
-
-            expNode &dimsArg = *dimsArg_;
-            dimsArg.changeExpTypes();
-
-            typeHolder thDims;
-
-            bool isValid = ((dimsArg.value     == "=")   &&
-                            (dimsArg.leafCount == 2)     &&
-                            (dimsArg[0].value == "dims") &&
-                            (dimsArg[1].info & expType::presetValue));
-
-            if(isValid){
-              thDims = dimsArg[1].calculateValue();
-
-              if(thDims.type & noType)
-                isValid = false;
-            }
-
-            OCCA_CHECK(isValid,
-                       "@arrayArg must have an argument:\n"
-                       "  dims = X, where X is known at compile-time\n");
-
-            const int dims = thDims.to<int>();
-
-            std::cout << "dims = " << dims << '\n';
           }
 
-          sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
+          argumentCount += arrayArgs;
+          delete [] args;
         }
       }
 
       return (leafPos + 1);
     }
+
+    varInfo& varInfo::getArrayArgument(varInfo &argVar){
+
+      attribute_t &attr = *(argVar.hasAttribute("arrayArg"));
+      varInfo &arrayArg = *(new varInfo());
+
+      bool usingIdxOrder = false;
+
+      OCCA_CHECK((0 < attr.argCount) &&
+                 (attr.argCount < 3),
+                 "@arrayArg can only have two arguments:\n"
+                 "  dims = X, and an optional useIdxOrder");
+
+      expNode &arg1     = attr[0];
+      expNode *dimsArg_ = &arg1;
+
+      if(attr.argCount == 2){
+        expNode &arg2 = attr[1];
+
+        const bool arg1IsUIO = (arg1.value == "useIdxOrder");
+        const bool arg2IsUIO = (arg2.value == "useIdxOrder");
+
+        OCCA_CHECK(arg1IsUIO || arg2IsUIO,
+                   "@arrayArg can only have two arguments:\n"
+                   "  dims = X, and an optional useIdxOrder");
+
+        usingIdxOrder = true;
+
+        if(arg1IsUIO)
+          dimsArg_ = &arg2;
+      }
+
+      expNode &dimsArg = *dimsArg_;
+      dimsArg.changeExpTypes();
+
+      typeHolder thDims;
+
+      bool isValid = ((dimsArg.value     == "=")   &&
+                      (dimsArg.leafCount == 2)     &&
+                      (dimsArg[0].value == "dims") &&
+                      (dimsArg[1].info & expType::presetValue));
+
+      if(isValid){
+        thDims = dimsArg[1].calculateValue();
+
+        if(thDims.type & noType)
+          isValid = false;
+      }
+
+      OCCA_CHECK(isValid,
+                 "@arrayArg must have an argument:\n"
+                 "  dims = X, where X is known at compile-time\n");
+
+      const int dims = thDims.to<int>();
+
+      std::cout << "dims = " << dims << '\n';
+
+      arrayArg.name = "blahblah";
+
+      return arrayArg;
+    }
+
 
     void varInfo::setupAttributes(){
       attributeMapIterator it = attributeMap.find("dim");
