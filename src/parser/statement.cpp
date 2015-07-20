@@ -361,9 +361,9 @@ namespace occa {
         return;
       }
 
-      expPos = setAttributeMap(sInfo->attributeMap,
-                               allExp,
-                               expPos);
+      expPos = updateAttributeMap(sInfo->attributeMap,
+                                  allExp,
+                                  expPos);
     }
 
     void expNode::organizeNode(){
@@ -4263,11 +4263,13 @@ namespace occa {
     void statement::addAttribute(const std::string &attrSource){
       expNode attrNode = createPlainExpNodeFrom(attrSource);
 
-      setAttributeMap(attributeMap, attrNode, 0);
+      updateAttributeMap(attributeMap, attrNode, 0);
+
+      attrNode.free();
     }
 
     void statement::addAttributeTag(const std::string &attrName){
-      setAttributeMap(attributeMap, attrName);
+      updateAttributeMap(attributeMap, attrName);
     }
 
     void statement::removeAttribute(const std::string &attr){

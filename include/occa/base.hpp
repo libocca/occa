@@ -376,6 +376,7 @@ namespace occa {
       size(size_),
       pointer(pointer_),
       hasTwoArgs(false) {
+
       arg.void_ = arg_.void_;
     }
 
@@ -385,6 +386,7 @@ namespace occa {
       size(k.size),
       pointer(k.pointer),
       hasTwoArgs(k.hasTwoArgs) {
+
       arg.void_ = k.arg.void_;
     }
 

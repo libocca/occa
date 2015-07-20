@@ -262,8 +262,8 @@ namespace occa {
       return ret;
     }
 
-    void setAttributeMap(attributeMap_t &attributeMap,
-                         const std::string &attrName){
+    void updateAttributeMap(attributeMap_t &attributeMap,
+                            const std::string &attrName){
 
       attribute_t &attr = *(new attribute_t());
       attr.name = attrName;
@@ -271,14 +271,14 @@ namespace occa {
       attributeMap[attrName] = &attr;
     }
 
-    int setAttributeMap(attributeMap_t &attributeMap,
-                        expNode &expRoot,
-                        int leafPos){
+    int updateAttributeMap(attributeMap_t &attributeMap,
+                           expNode &expRoot,
+                           int leafPos){
 
       while(true){
         const int leafPos2 = leafPos;
 
-        leafPos = setAttributeMapR(attributeMap, expRoot, leafPos);
+        leafPos = updateAttributeMapR(attributeMap, expRoot, leafPos);
 
         if(leafPos == leafPos2)
           break;
@@ -287,9 +287,9 @@ namespace occa {
       return leafPos;
     }
 
-    int setAttributeMapR(attributeMap_t &attributeMap,
-                         expNode &expRoot,
-                         int leafPos){
+    int updateAttributeMapR(attributeMap_t &attributeMap,
+                            expNode &expRoot,
+                            int leafPos){
 
       if(!isAnAttribute(expRoot, leafPos))
         return leafPos;
@@ -375,39 +375,41 @@ namespace occa {
     }
 
     void printAttributeMap(attributeMap_t &attributeMap){
-      std::cout << attributeMapToString(attributeMap) << '\n';
+      if(attributeMap.size())
+        std::cout << attributeMapToString(attributeMap) << '\n';
     }
 
     std::string attributeMapToString(attributeMap_t &attributeMap){
       std::string ret;
 
-      if(attributeMap.size()){
-        attributeMapIterator it = attributeMap.begin();
+      if(attributeMap.size() == 0)
+        return ret;
 
-        const bool putParentheses = ((1 < attributeMap.size()) ||
-                                     (it->second->value != NULL));
+      attributeMapIterator it = attributeMap.begin();
 
-        ret += '@';
+      const bool putParentheses = ((1 < attributeMap.size()) ||
+                                   (it->second->value != NULL));
 
-        if(putParentheses)
-          ret += '(';
+      ret += '@';
 
-        bool oneAttrSet = false;
+      if(putParentheses)
+        ret += '(';
 
-        while(it != attributeMap.end()){
-          if(oneAttrSet)
-            ret += ", ";
-          else
-            oneAttrSet = true;
+      bool oneAttrSet = false;
 
-          ret += (std::string) *(it->second);
+      while(it != attributeMap.end()){
+        if(oneAttrSet)
+          ret += ", ";
+        else
+          oneAttrSet = true;
 
-          ++it;
-        }
+        ret += (std::string) *(it->second);
 
-        if(putParentheses)
-          ret += ')';
+        ++it;
       }
+
+      if(putParentheses)
+        ret += ')';
 
       return ret;
     }
@@ -528,7 +530,7 @@ namespace occa {
               leafPos = skipAttribute(expRoot, leafPos);
             }
             else {
-              leafPos = setAttributeMap(var.attributeMap, expRoot, leafPos);
+              leafPos = updateAttributeMap(var.attributeMap, expRoot, leafPos);
 
               if(is__attribute__){
                 attributeMapIterator it = var.attributeMap.find("__attribute__");
@@ -1429,7 +1431,7 @@ namespace occa {
         }
       }
 
-      leafPos = setAttributeMap(attributeMap, expRoot, leafPos);
+      leafPos = updateAttributeMap(attributeMap, expRoot, leafPos);
 
       setupAttributes();
 
@@ -1706,37 +1708,41 @@ namespace occa {
           sLeafPos = typeInfo::nextDelimiter(leaf, sLeafPos, ",") + 1;
         }
 
-        int arrayArgs = 0;
-
-        for(int i = 0; i < argumentCount; ++i){
-          if(argumentVarInfos[i]->hasAttribute("arrayArg"))
-            ++arrayArgs;
-        }
-
-        if(0 < arrayArgs){
-          varInfo **args = new varInfo*[argumentCount + arrayArgs];
-          swapValues(argumentVarInfos, args);
-
-          int argPos = 0;
-
-          for(int i = 0; i < argumentCount; ++i){
-            argumentVarInfos[argPos++] = args[i];
-
-            if(args[i]->hasAttribute("arrayArg")){
-              varInfo &arrayArg = getArrayArgument(s,
-                                                   *(args[i]),
-                                                   occa::toString(argPos + 1));
-
-              argumentVarInfos[argPos++] = &arrayArg;
-            }
-          }
-
-          argumentCount += arrayArgs;
-          delete [] args;
-        }
+        setupArrayArguments(s);
       }
 
       return (leafPos + 1);
+    }
+
+    void varInfo::setupArrayArguments(statement &s){
+      int arrayArgs = 0;
+
+      for(int i = 0; i < argumentCount; ++i){
+        if(argumentVarInfos[i]->hasAttribute("arrayArg"))
+          ++arrayArgs;
+      }
+
+      if(0 < arrayArgs){
+        varInfo **args = new varInfo*[argumentCount + arrayArgs];
+        swapValues(argumentVarInfos, args);
+
+        int argPos = 0;
+
+        for(int i = 0; i < argumentCount; ++i){
+          argumentVarInfos[argPos++] = args[i];
+
+          if(args[i]->hasAttribute("arrayArg")){
+            varInfo &arrayArg = getArrayArgument(s,
+                                                 *(args[i]),
+                                                 occa::toString(argPos + 1));
+
+            argumentVarInfos[argPos++] = &arrayArg;
+          }
+        }
+
+        argumentCount += arrayArgs;
+        delete [] args;
+      }
     }
 
     varInfo& varInfo::getArrayArgument(statement &s,
@@ -1800,10 +1806,44 @@ namespace occa {
 
       const std::string dims2 = occa::toString(maxBase2(dims));
 
+      // Setup new argument
+      arrayArg.addQualifier("const");
       arrayArg.baseType = s.hasTypeInScope("int" + dims2);
 
       arrayArg.name  = "__occaAutoKernelArg";
       arrayArg.name += argPosStr;
+
+      // Add argument dims attribute
+      std::string dimAttributeStr = "@dim(";
+
+      for(int i = 0; i < dims; ++i){
+        if(0 < i)
+          dimAttributeStr += ',';
+
+        dimAttributeStr += arrayArg.name;
+        dimAttributeStr += '.';
+
+        if(i < 4){
+          dimAttributeStr += (char) ('w' + ((i + 1) % 4));
+        }
+        else{
+          dimAttributeStr += 's';
+          dimAttributeStr += (char) ('0' + i);
+        }
+      }
+
+      dimAttributeStr += ")";
+
+      expNode attrNode = s.createPlainExpNodeFrom(dimAttributeStr);
+
+      updateAttributeMap(argVar.attributeMap,
+                         attrNode,
+                         0);
+
+      attrNode.free();
+
+      // Setup @dim
+      argVar.setupAttributes();
 
       return arrayArg;
     }

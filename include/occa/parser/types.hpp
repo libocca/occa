@@ -114,16 +114,16 @@ namespace occa {
       }
     };
 
-    void setAttributeMap(attributeMap_t &attributeMap,
-                         const std::string &attrName);
+    void updateAttributeMap(attributeMap_t &attributeMap,
+                            const std::string &attrName);
 
-    int setAttributeMap(attributeMap_t &attributeMap,
-                        expNode &expRoot,
-                        int leafPos);
+    int updateAttributeMap(attributeMap_t &attributeMap,
+                           expNode &expRoot,
+                           int leafPos);
 
-    int setAttributeMapR(attributeMap_t &attributeMap,
-                         expNode &expRoot,
-                         int leafPos);
+    int updateAttributeMapR(attributeMap_t &attributeMap,
+                            expNode &expRoot,
+                            int leafPos);
 
     void printAttributeMap(attributeMap_t &attributeMap);
     std::string attributeMapToString(attributeMap_t &attributeMap);
@@ -422,6 +422,8 @@ namespace occa {
       int loadArgsFrom(statement &s,
                        expNode &expRoot,
                        int leafPos);
+
+      void setupArrayArguments(statement &s);
 
       varInfo& getArrayArgument(statement &s,
                                 varInfo &argVar,
