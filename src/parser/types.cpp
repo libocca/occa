@@ -1723,7 +1723,10 @@ namespace occa {
             argumentVarInfos[argPos++] = args[i];
 
             if(args[i]->hasAttribute("arrayArg")){
-              varInfo &arrayArg = getArrayArgument( *(args[i]) );
+              varInfo &arrayArg = getArrayArgument(s,
+                                                   *(args[i]),
+                                                   occa::toString(argPos + 1));
+
               argumentVarInfos[argPos++] = &arrayArg;
             }
           }
@@ -1736,7 +1739,9 @@ namespace occa {
       return (leafPos + 1);
     }
 
-    varInfo& varInfo::getArrayArgument(varInfo &argVar){
+    varInfo& varInfo::getArrayArgument(statement &s,
+                                       varInfo &argVar,
+                                       const std::string argPosStr){
 
       attribute_t &attr = *(argVar.hasAttribute("arrayArg"));
       varInfo &arrayArg = *(new varInfo());
@@ -1790,9 +1795,15 @@ namespace occa {
 
       const int dims = thDims.to<int>();
 
-      std::cout << "dims = " << dims << '\n';
+      OCCA_CHECK((0 < dims) && (dims < 7),
+                 "@arrayArg only supports dims [1-6]");
 
-      arrayArg.name = "blahblah";
+      const std::string dims2 = occa::toString(maxBase2(dims));
+
+      arrayArg.baseType = s.hasTypeInScope("int" + dims2);
+
+      arrayArg.name  = "__occaAutoKernelArg";
+      arrayArg.name += argPosStr;
 
       return arrayArg;
     }

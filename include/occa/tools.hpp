@@ -226,6 +226,24 @@ namespace occa {
 
 
   //---[ Misc Functions ]-------------------------
+  inline int maxBase2Bit(const int value){
+    if(value <= 0)
+      return 0;
+
+    const int maxBits = 8 * sizeof(value);
+
+    for(int i = 0; i < maxBits; ++i){
+      if(value <= (1 << i))
+        return i;
+    }
+
+    return 0;
+  }
+
+  inline int maxBase2(const int value){
+    return (1 << maxBase2Bit(value));
+  }
+
   inline uintptr_t ptrDiff(void *start, void *end){
     if(start < end)
       return (uintptr_t) (((char*) end) - ((char*) start));

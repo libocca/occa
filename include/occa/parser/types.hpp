@@ -423,7 +423,9 @@ namespace occa {
                        expNode &expRoot,
                        int leafPos);
 
-      varInfo& getArrayArgument(varInfo &argVar);
+      varInfo& getArrayArgument(statement &s,
+                                varInfo &argVar,
+                                const std::string argPosStr);
 
       void setupAttributes();
 
