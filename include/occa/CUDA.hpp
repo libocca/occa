@@ -39,6 +39,8 @@ namespace occa {
 
     void init();
 
+    int getDeviceCount();
+
     std::string getDeviceListInfo();
 
     void enablePeerToPeer(CUcontext context);

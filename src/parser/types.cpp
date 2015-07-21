@@ -1848,7 +1848,6 @@ namespace occa {
       return arrayArg;
     }
 
-
     void varInfo::setupAttributes(){
       attributeMapIterator it = attributeMap.find("dim");
 

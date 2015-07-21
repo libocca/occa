@@ -16,15 +16,21 @@ namespace occa {
       isInitialized = true;
     }
 
+    int getDeviceCount(){
+      int deviceCount;
+
+      OCCA_CUDA_CHECK("Finding Number of Devices",
+                      cuDeviceGetCount(&deviceCount));
+
+      return deviceCount;
+    }
+
     std::string getDeviceListInfo(){
       std::stringstream ss;
 
       cuda::init();
 
-      int deviceCount;
-
-      OCCA_CUDA_CHECK("Finding Number of Devices",
-                      cuDeviceGetCount(&deviceCount));
+      int deviceCount = cuda::getDeviceCount();
 
       if(deviceCount == 0)
         return "";
@@ -1053,10 +1059,7 @@ namespace occa {
   void device_t<CUDA>::appendAvailableDevices(std::vector<device> &dList){
     cuda::init();
 
-    int deviceCount;
-
-    OCCA_CUDA_CHECK("Finding Number of Devices",
-                    cuDeviceGetCount(&deviceCount));
+    int deviceCount = cuda::getDeviceCount();
 
     for(int i = 0; i < deviceCount; ++i){
       device d;

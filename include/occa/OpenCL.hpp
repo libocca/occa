@@ -44,12 +44,12 @@ namespace occa {
   namespace cl {
     cl_device_type deviceType(int type);
 
-    int platformCount();
+    int getPlatformCount();
 
     cl_platform_id platformID(int pID);
 
-    int deviceCount(int type = any);
-    int deviceCountInPlatform(int pID, int type = any);
+    int getDeviceCount(int type = any);
+    int getDeviceCountInPlatform(int pID, int type = any);
 
     cl_device_id deviceID(int pID, int dID, int type = any);
 

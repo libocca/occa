@@ -16,7 +16,7 @@ namespace occa {
       return ret;
     }
 
-    int platformCount(){
+    int getPlatformCount(){
       cl_uint platformCount;
 
       OCCA_CL_CHECK("OpenCL: Get Platform ID Count",
@@ -38,17 +38,17 @@ namespace occa {
       return ret;
     }
 
-    int deviceCount(int type){
-      int pCount = cl::platformCount();
+    int getDeviceCount(int type){
+      int pCount = cl::getPlatformCount();
       int ret = 0;
 
       for(int p = 0; p < pCount; ++p)
-        ret += deviceCountInPlatform(p, type);
+        ret += getDeviceCountInPlatform(p, type);
 
       return ret;
     }
 
-    int deviceCountInPlatform(int pID, int type){
+    int getDeviceCountInPlatform(int pID, int type){
       cl_uint dCount;
 
       cl_platform_id clPID = platformID(pID);
@@ -198,10 +198,10 @@ namespace occa {
     std::string getDeviceListInfo(){
       std::stringstream ss;
 
-      int platformCount = occa::cl::platformCount();
+      int platformCount = occa::cl::getPlatformCount();
 
       for(int pID = 0; pID < platformCount; ++pID){
-        int deviceCount = occa::cl::deviceCountInPlatform(pID);
+        int deviceCount = occa::cl::getDeviceCountInPlatform(pID);
 
         for(int dID = 0; dID < deviceCount; ++dID){
           if(pID || dID){
@@ -436,7 +436,7 @@ namespace occa {
       std::cout << "---[ OpenCL Image Format ]--------------\n"
                 << "Supported Channel Formats:\n";
 
-#define OCCA_CL_PRINT_CHANNEL_INFO(X) \
+#define OCCA_CL_PRINT_CHANNEL_INFO(X)                                   \
       if(imageFormat.image_channel_order & X) std::cout << "  " #X "\n"
 
       OCCA_CL_PRINT_CHANNEL_INFO(CL_R);
@@ -456,7 +456,7 @@ namespace occa {
 
       std::cout << "\nSupported Channel Types:\n";
 
-#define OCCA_CL_PRINT_CHANNEL_TYPE(X) \
+#define OCCA_CL_PRINT_CHANNEL_TYPE(X)                                   \
       if(imageFormat.image_channel_data_type & X) std::cout << "  " #X "\n"
 
       OCCA_CL_PRINT_CHANNEL_TYPE(CL_SNORM_INT8);
@@ -1209,10 +1209,10 @@ namespace occa {
 
   template <>
   void device_t<OpenCL>::appendAvailableDevices(std::vector<device> &dList){
-    int platformCount = occa::cl::platformCount();
+    int platformCount = occa::cl::getPlatformCount();
 
     for(int p = 0; p < platformCount; ++p){
-      int deviceCount = occa::cl::deviceCountInPlatform(p);
+      int deviceCount = occa::cl::getDeviceCountInPlatform(p);
 
       for(int d = 0; d < deviceCount; ++d){
         device dev;
@@ -1338,8 +1338,8 @@ namespace occa {
 
   template <>
   kernel_v* device_t<OpenCL>::buildKernelFromSource(const std::string &filename,
-                                                   const std::string &functionName,
-                                                   const kernelInfo &info_){
+                                                    const std::string &functionName,
+                                                    const kernelInfo &info_){
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
     kernel_v *k = new kernel_t<OpenCL>;
