@@ -1774,6 +1774,8 @@ namespace occa {
 
         usingIdxOrder = true;
 
+        ignoreResult(usingIdxOrder);
+
         if(arg1IsUIO)
           dimsArg_ = &arg2;
       }
