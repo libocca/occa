@@ -32,9 +32,9 @@ namespace occa {
   template <>
   inline std::string toString<float>(const float &t){
     std::stringstream ss;
-    ss.precision(7);
+    ss.precision(50);
 
-    ss << t;
+    ss << t << "f";
 
     return ss.str();
   }
@@ -42,7 +42,7 @@ namespace occa {
   template <>
   inline std::string toString<double>(const double &t){
     std::stringstream ss;
-    ss.precision(14);
+    ss.precision(100);
 
     ss << t;
 
