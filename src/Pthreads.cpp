@@ -2,6 +2,150 @@
 #include "occa/Pthreads.hpp"
 
 namespace occa {
+  //---[ Helper Functions ]-------------
+  namespace pthreads {
+    void* limbo(void *args){
+      PthreadWorkerData_t &data = *((PthreadWorkerData_t*) args);
+
+      // Thread affinity
+#if (OCCA_OS == LINUX_OS) // Not WINUX
+      cpu_set_t cpuHandle;
+      CPU_ZERO(&cpuHandle);
+      CPU_SET(data.pinnedCore, &cpuHandle);
+#else
+      // NBN: affinity on hyperthreaded multi-socket systems?
+      if(data.rank == 0)
+        fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
+      // BOOL SetProcessAffinityMask(HANDLE hProcess,DWORD_PTR dwProcessAffinityMask);
+#endif
+
+      while(true){
+        // Fence local data (incase of out-of-socket updates)
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+        __asm__ __volatile__ ("lfence");
+#else
+        __faststorefence(); // NBN: x64 only?
+#endif
+
+        if( *(data.pendingJobs) ){
+          pthread_mutex_lock(data.kernelMutex);
+
+          PthreadKernelInfo_t &pkInfo = *(data.pKernelInfo->front());
+          data.pKernelInfo->pop();
+
+          pthread_mutex_unlock(data.kernelMutex);
+
+          run(pkInfo);
+
+          //---[ Barrier ]----------------
+          pthread_mutex_lock(data.pendingJobsMutex);
+          --( *(data.pendingJobs) );
+          pthread_mutex_unlock(data.pendingJobsMutex);
+
+          while((*data.pendingJobs) % data.count){
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+            __asm__ __volatile__ ("lfence");
+#else
+            __faststorefence(); // NBN: x64 only?
+#endif
+          }
+          //==============================
+        }
+      }
+
+      return NULL;
+    }
+
+    void runFromArguments(PthreadsKernelData_t &data,
+                          const int dims,
+                          occa::dim &inner,
+                          occa::dim &outer,
+                          const int argc,
+                          const kernelArg *args){
+
+      const int pThreadCount = data.pThreadCount;
+
+      for(int p = 0; p < pThreadCount; ++p){
+        // Allocated individually since each thread frees their
+        //   own custom arg
+        PthreadKernelInfo_t &pArgs = *(new PthreadKernelInfo_t);
+
+        pArgs.rank  = p;
+        pArgs.count = pThreadCount;
+
+        pArgs.kernelHandle = data.handle;
+
+        pArgs.dims  = dims;
+        pArgs.inner = inner;
+        pArgs.outer = outer;
+
+        pthread_mutex_lock(data.kernelMutex);
+        data.pKernelInfo[p]->push(&pArgs);
+        pthread_mutex_unlock(data.kernelMutex);
+      }
+
+      pthread_mutex_lock(data.pendingJobsMutex);
+      *(data.pendingJobs) += data.pThreadCount;
+      pthread_mutex_unlock(data.pendingJobsMutex);
+    }
+
+    void run(PthreadKernelInfo_t &pkInfo){
+      handleFunction_t tmpKernel = (handleFunction_t) pkInfo.kernelHandle;
+
+      int dp           = pkInfo.dims - 1;
+      occa::dim &outer = pkInfo.outer;
+      occa::dim &inner = pkInfo.inner;
+
+      occa::dim start(0,0,0), end(outer);
+
+      int loops     = (outer[dp] / pkInfo.count);
+      int coolRanks = (outer[dp] - loops*pkInfo.count);
+
+      if(pkInfo.rank < coolRanks){
+        start[dp] = (pkInfo.rank)*(loops + 1);
+        end[dp]   = start[dp] + (loops + 1);
+      }
+      else{
+        start[dp] = pkInfo.rank*loops + coolRanks;
+        end[dp]   = start[dp] + loops;
+      }
+
+      int occaKernelArgs[12];
+
+      occaKernelArgs[0]  = outer.z;
+      occaKernelArgs[1]  = outer.y;
+      occaKernelArgs[2]  = outer.x;
+      occaKernelArgs[3]  = inner.z;
+      occaKernelArgs[4]  = inner.y;
+      occaKernelArgs[5]  = inner.x;
+      occaKernelArgs[6]  = start.z;
+      occaKernelArgs[7]  = end.z;
+      occaKernelArgs[8]  = start.y;
+      occaKernelArgs[9]  = end.y;
+      occaKernelArgs[10] = start.x;
+      occaKernelArgs[11] = end.x;
+
+      int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
+
+      void* args_[OCCA_MAX_ARGS];
+      int argc_ = 0;
+
+      for(int i = 0; i < pkInfo.argc; ++i){
+        for(int j = 0; j < pkInfo.args[i].argc; ++j){
+          args_[argc_++] = pkInfo.args[i].args[j].ptr();
+        }
+      }
+
+      cpu::runFunction(tmpKernel,
+                       occaKernelArgs,
+                       occaInnerId0, occaInnerId1, occaInnerId2,
+                       argc_, args_);
+
+      delete &pkInfo;
+    }
+  }
+  //==================================
+
   //---[ Kernel ]---------------------
   template <>
   kernel_t<Pthreads>::kernel_t(){
@@ -190,10 +334,8 @@ namespace occa {
 
     data_.pendingJobs = &(dData.pendingJobs);
 
-    for(int p = 0; p < 50; ++p){
-      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
-      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
-    }
+    for(int p = 0; p < 50; ++p)
+      data_.pKernelInfo[p] = &(dData.pKernelInfo[p]);
 
     data_.pendingJobsMutex = &(dData.pendingJobsMutex);
     data_.kernelMutex      = &(dData.kernelMutex);
@@ -222,10 +364,8 @@ namespace occa {
 
     data_.pendingJobs = &(dData.pendingJobs);
 
-    for(int p = 0; p < 50; ++p){
-      data_.kernelLaunch[p] = &(dData.kernelLaunch[p]);
-      data_.kernelArgs[p]   = &(dData.kernelArgs[p]);
-    }
+    for(int p = 0; p < 50; ++p)
+      data_.pKernelInfo[p] = &(dData.pKernelInfo[p]);
 
     data_.pendingJobsMutex = &(dData.pendingJobsMutex);
     data_.kernelMutex      = &(dData.kernelMutex);
@@ -650,10 +790,10 @@ namespace occa {
 
       // [-] Need to know number of sockets
       if(data_.schedule & occa::compact)
-        args->pinnedCore = p % data_.coreCount;
+        args->pinnedCore = (p % data_.coreCount);
       else if(data_.schedule & occa::scatter)
-        args->pinnedCore = p % data_.coreCount;
-      else // manual
+        args->pinnedCore = (p % data_.coreCount);
+      else // Manual
         args->pinnedCore = pinnedCores[p];
 
       args->pendingJobs = &(data_.pendingJobs);
@@ -661,10 +801,9 @@ namespace occa {
       args->pendingJobsMutex = &(data_.pendingJobsMutex);
       args->kernelMutex      = &(data_.kernelMutex);
 
-      args->kernelLaunch = &(data_.kernelLaunch[p]);
-      args->kernelArgs   = &(data_.kernelArgs[p]);
+      args->pKernelInfo = &(data_.pKernelInfo[p]);
 
-      pthread_create(&data_.tid[p], NULL, pthreadLimbo, args);
+      pthread_create(&data_.tid[p], NULL, pthreads::limbo, args);
     }
   }
 

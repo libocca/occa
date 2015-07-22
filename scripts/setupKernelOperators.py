@@ -23,16 +23,23 @@ def nlc(n, N):
 
     return ret;
 
-def runFromArguments(N):
-    return 'switch(argumentCount){\n' + '\n'.join([runFromArgument(n + 1) for n in xrange(N)]) + '}'
+def runFunctionFromArguments(N):
+    return 'switch(argc){\n' + '\n'.join([runFunctionFromArgument(n + 1) for n in xrange(N)]) + '}'
 
-def runFromArgument(N):
+def runFunctionFromArgument(N):
+    return '  case ' + str(N) + """:
+    f(occaKernelInfoArgs, occaInnerId0, occaInnerId1, occaInnerId2, """ + ', '.join(['args[{0}]'.format(n) for n in xrange(N)]) + """); break;"""
+
+def runKernelFromArguments(N):
+    return 'switch(argc){\n' + '\n'.join([runKernelFromArgument(n + 1) for n in xrange(N)]) + '}'
+
+def runKernelFromArgument(N):
     return '  case ' + str(N) + """:
   if(kHandle->nestedKernelCount == 0){
-    (*kHandle)(""" + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
+    (*kHandle)(""" + ', '.join(['args[{0}]'.format(n) for n in xrange(N)]) + """);
   }""" + (("""
   else{
-    (*kHandle)(kHandle->nestedKernels, """ + ', '.join(['arguments[{0}]'.format(n) for n in xrange(N)]) + """);
+    (*kHandle)(kHandle->nestedKernels, """ + ', '.join(['args[{0}]'.format(n) for n in xrange(N)]) + """);
   }""") if (N < maxN) else '') + """
   break;"""
 
@@ -51,9 +58,6 @@ def operatorDeclaration(mode, N):
     else:
         ret = '    template <>\n'\
               + '    void kernel_t<{0}>::operator () ({1});'.format(mode, ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) )
-
-    if mode == 'Pthreads':
-        ret += '\n    static void launchKernel{0}(PthreadKernelArg_t &args);'.format(N)
 
     return ret
 
@@ -74,12 +78,12 @@ def operatorDefinition(mode, N):
     }
   }
 
-  void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){
+  void kernelDatabase::operator() (""" + ' '.join(['const kernelArg &arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """){/*
     occa::device_v *launchDevice = NULL;
 
     if(arg0.dHandle) launchDevice = const_cast<occa::device_v*>(arg0.dHandle);
     """ + '    '.join([('else if(arg' + str(n + 1) + '.dHandle) launchDevice = const_cast<occa::device_v*>(arg' + str(n + 1) + '.dHandle);\n') for n in xrange(N - 1)]) + """
-    (*this)[launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);
+    (*this)[launchDevice](""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """);*/
   }"""
     else:
         header = operatorDefinitionHeader(mode, N)
@@ -92,74 +96,10 @@ def operatorDefinitionHeader(mode, N):
 def pthreadOperatorDefinition(N):
     return """
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[""" + str(N) + """] = {""" + ' '.join(['arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      """ + '\n    '.join(['args->args[{0}] = arg{0};'.format(n) for n in xrange(N)]) + """
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel""" + str(N) + """);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel""" + str(N) + """(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              """ + ',\n              '.join(['args.args[{0}].data()'.format(n) for n in xrange(N)]) + """);
-
-    delete &args;"""
+    pthreads::runFromArguments(data_, dims, inner, outer, """ + str(N) + """, args);"""
 
 def serialOperatorDefinition(N):
     return """
@@ -184,18 +124,18 @@ def ompOperatorDefinition(N):
     return """
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
-    int occaKernelArgs[6];
+    int occaKernelInfoArgs[6];
 
-    occaKernelArgs[0] = outer.z;
-    occaKernelArgs[1] = outer.y;
-    occaKernelArgs[2] = outer.x;
-    occaKernelArgs[3] = inner.z;
-    occaKernelArgs[4] = inner.y;
-    occaKernelArgs[5] = inner.x;
+    occaKernelInfoArgs[0] = outer.z;
+    occaKernelInfoArgs[1] = outer.y;
+    occaKernelInfoArgs[2] = outer.x;
+    occaKernelInfoArgs[3] = inner.z;
+    occaKernelInfoArgs[4] = inner.y;
+    occaKernelInfoArgs[5] = inner.x;
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
+    tmpKernel(occaKernelInfoArgs,
               occaInnerId0, occaInnerId1, occaInnerId2,
               """ + ',\n              '.join(['arg{0}.data()'.format(n) for n in xrange(N)]) + ');'
 
@@ -360,7 +300,7 @@ def cOperatorDefinition(N):
             '        }\n'                                                         + \
             '      }\n'                                                           + \
             '      \n'                                                            + \
-            '      kernel_.runFromArguments();\n'                                 + \
+            '      kernel_.runKernelFromArguments();\n'                                 + \
             '    }\n');
 
 operatorModeDefinition = { 'Serial'   : serialOperatorDefinition,
@@ -387,8 +327,13 @@ hpp.write(operatorDefinitions('Base', maxN));
 hpp.write('\n');
 hpp.close()
 
-hpp = open(occaDir + '/src/operators/runFromArguments.cpp', 'w')
-hpp.write(runFromArguments(maxN));
+hpp = open(occaDir + '/src/operators/runFunctionFromArguments.cpp', 'w')
+hpp.write(runFunctionFromArguments(maxN));
+hpp.write('\n');
+hpp.close()
+
+hpp = open(occaDir + '/src/operators/runKernelFromArguments.cpp', 'w')
+hpp.write(runKernelFromArguments(maxN));
 hpp.write('\n');
 hpp.close()
 

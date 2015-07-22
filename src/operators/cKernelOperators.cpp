@@ -21,7 +21,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -48,7 +48,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -75,7 +75,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -103,7 +103,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -131,7 +131,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -159,7 +159,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -188,7 +188,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -217,7 +217,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -246,7 +246,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -276,7 +276,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -306,7 +306,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -336,7 +336,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -367,7 +367,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -398,7 +398,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -429,7 +429,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -461,7 +461,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -493,7 +493,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -525,7 +525,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -558,7 +558,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -591,7 +591,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -624,7 +624,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -658,7 +658,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -692,7 +692,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -726,7 +726,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -761,7 +761,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -796,7 +796,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -831,7 +831,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -867,7 +867,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -903,7 +903,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -939,7 +939,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -976,7 +976,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1013,7 +1013,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1050,7 +1050,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1088,7 +1088,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1126,7 +1126,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1164,7 +1164,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1203,7 +1203,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1242,7 +1242,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1281,7 +1281,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1321,7 +1321,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1361,7 +1361,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1401,7 +1401,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1442,7 +1442,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1483,7 +1483,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1524,7 +1524,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1566,7 +1566,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1608,7 +1608,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1650,7 +1650,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1693,7 +1693,7 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 
 
@@ -1736,6 +1736,6 @@
         }
       }
       
-      kernel_.runFromArguments();
+      kernel_.runKernelFromArguments();
     }
 

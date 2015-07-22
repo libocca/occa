@@ -1,472 +1,61 @@
   template <>
   void kernel_t<Pthreads>::operator () (const kernelArg &arg0){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[1] = {arg0};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel1);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel1(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 1, args);
   }
 
   template <>
   void kernel_t<Pthreads>::operator () (const kernelArg &arg0,  const kernelArg &arg1){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[2] = {arg0,  arg1};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel2);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel2(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 2, args);
   }
 
   template <>
   void kernel_t<Pthreads>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[3] = {arg0,  arg1,  arg2};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel3);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel3(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 3, args);
   }
 
   template <>
   void kernel_t<Pthreads>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[4] = {arg0,  arg1,  arg2, 
+                      arg3};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel4);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel4(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 4, args);
   }
 
   template <>
   void kernel_t<Pthreads>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[5] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel5);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel5(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 5, args);
   }
 
   template <>
   void kernel_t<Pthreads>::operator () (const kernelArg &arg0,  const kernelArg &arg1,  const kernelArg &arg2, 
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[6] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel6);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel6(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 6, args);
   }
 
   template <>
@@ -474,86 +63,12 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[7] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel7);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel7(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 7, args);
   }
 
   template <>
@@ -561,88 +76,12 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[8] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel8);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel8(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 8, args);
   }
 
   template <>
@@ -650,90 +89,12 @@
                       const kernelArg &arg3,  const kernelArg &arg4,  const kernelArg &arg5, 
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[9] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel9);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel9(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 9, args);
   }
 
   template <>
@@ -742,92 +103,13 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[10] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel10);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel10(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 10, args);
   }
 
   template <>
@@ -836,94 +118,13 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[11] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel11);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel11(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 11, args);
   }
 
   template <>
@@ -932,96 +133,13 @@
                       const kernelArg &arg6,  const kernelArg &arg7,  const kernelArg &arg8, 
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[12] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel12);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel12(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 12, args);
   }
 
   template <>
@@ -1031,98 +149,14 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[13] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel13);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel13(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 13, args);
   }
 
   template <>
@@ -1132,100 +166,14 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[14] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel14);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel14(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 14, args);
   }
 
   template <>
@@ -1235,102 +183,14 @@
                       const kernelArg &arg9,  const kernelArg &arg10,  const kernelArg &arg11, 
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[15] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel15);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel15(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 15, args);
   }
 
   template <>
@@ -1341,104 +201,15 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[16] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel16);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel16(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 16, args);
   }
 
   template <>
@@ -1449,106 +220,15 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[17] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel17);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel17(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 17, args);
   }
 
   template <>
@@ -1559,108 +239,15 @@
                       const kernelArg &arg12,  const kernelArg &arg13,  const kernelArg &arg14, 
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[18] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel18);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel18(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 18, args);
   }
 
   template <>
@@ -1672,110 +259,16 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[19] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel19);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel19(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 19, args);
   }
 
   template <>
@@ -1787,112 +280,16 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[20] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel20);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel20(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 20, args);
   }
 
   template <>
@@ -1904,114 +301,16 @@
                       const kernelArg &arg15,  const kernelArg &arg16,  const kernelArg &arg17, 
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[21] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel21);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel21(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 21, args);
   }
 
   template <>
@@ -2024,116 +323,17 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[22] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel22);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel22(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 22, args);
   }
 
   template <>
@@ -2146,118 +346,17 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[23] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel23);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel23(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 23, args);
   }
 
   template <>
@@ -2270,120 +369,17 @@
                       const kernelArg &arg18,  const kernelArg &arg19,  const kernelArg &arg20, 
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[24] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel24);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel24(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 24, args);
   }
 
   template <>
@@ -2397,122 +393,18 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[25] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel25);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel25(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 25, args);
   }
 
   template <>
@@ -2526,124 +418,18 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[26] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel26);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel26(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 26, args);
   }
 
   template <>
@@ -2657,126 +443,18 @@
                       const kernelArg &arg21,  const kernelArg &arg22,  const kernelArg &arg23, 
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[27] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel27);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel27(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 27, args);
   }
 
   template <>
@@ -2791,128 +469,19 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[28] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel28);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel28(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 28, args);
   }
 
   template <>
@@ -2927,130 +496,19 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[29] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel29);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel29(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 29, args);
   }
 
   template <>
@@ -3065,132 +523,19 @@
                       const kernelArg &arg24,  const kernelArg &arg25,  const kernelArg &arg26, 
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[30] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel30);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel30(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 30, args);
   }
 
   template <>
@@ -3206,134 +551,20 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[31] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel31);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel31(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 31, args);
   }
 
   template <>
@@ -3349,136 +580,20 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[32] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel32);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel32(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 32, args);
   }
 
   template <>
@@ -3494,138 +609,20 @@
                       const kernelArg &arg27,  const kernelArg &arg28,  const kernelArg &arg29, 
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[33] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel33);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel33(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 33, args);
   }
 
   template <>
@@ -3642,140 +639,21 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[34] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel34);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel34(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 34, args);
   }
 
   template <>
@@ -3792,142 +670,21 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[35] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel35);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel35(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 35, args);
   }
 
   template <>
@@ -3944,144 +701,21 @@
                       const kernelArg &arg30,  const kernelArg &arg31,  const kernelArg &arg32, 
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[36] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel36);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel36(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 36, args);
   }
 
   template <>
@@ -4099,146 +733,22 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[37] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel37);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel37(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 37, args);
   }
 
   template <>
@@ -4256,148 +766,22 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[38] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel38);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel38(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 38, args);
   }
 
   template <>
@@ -4415,150 +799,22 @@
                       const kernelArg &arg33,  const kernelArg &arg34,  const kernelArg &arg35, 
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[39] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel39);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel39(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 39, args);
   }
 
   template <>
@@ -4577,152 +833,23 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[40] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel40);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel40(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 40, args);
   }
 
   template <>
@@ -4741,154 +868,23 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[41] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel41);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel41(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 41, args);
   }
 
   template <>
@@ -4907,156 +903,23 @@
                       const kernelArg &arg36,  const kernelArg &arg37,  const kernelArg &arg38, 
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[42] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel42);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel42(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 42, args);
   }
 
   template <>
@@ -5076,158 +939,24 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[43] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel43);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel43(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 43, args);
   }
 
   template <>
@@ -5247,160 +976,24 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[44] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel44);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel44(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 44, args);
   }
 
   template <>
@@ -5420,162 +1013,24 @@
                       const kernelArg &arg39,  const kernelArg &arg40,  const kernelArg &arg41, 
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[45] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43,  arg44};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-    args->args[44] = arg44;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel45);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel45(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data(),
-              args.args[44].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 45, args);
   }
 
   template <>
@@ -5596,164 +1051,25 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[46] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43,  arg44, 
+                      arg45};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-    args->args[44] = arg44;
-    args->args[45] = arg45;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel46);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel46(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data(),
-              args.args[44].data(),
-              args.args[45].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 46, args);
   }
 
   template <>
@@ -5774,166 +1090,25 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[47] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43,  arg44, 
+                      arg45,  arg46};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-    args->args[44] = arg44;
-    args->args[45] = arg45;
-    args->args[46] = arg46;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel47);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel47(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data(),
-              args.args[44].data(),
-              args.args[45].data(),
-              args.args[46].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 47, args);
   }
 
   template <>
@@ -5954,168 +1129,25 @@
                       const kernelArg &arg42,  const kernelArg &arg43,  const kernelArg &arg44, 
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[48] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43,  arg44, 
+                      arg45,  arg46,  arg47};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-    args->args[44] = arg44;
-    args->args[45] = arg45;
-    args->args[46] = arg46;
-    args->args[47] = arg47;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel48);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel48(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data(),
-              args.args[44].data(),
-              args.args[45].data(),
-              args.args[46].data(),
-              args.args[47].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 48, args);
   }
 
   template <>
@@ -6137,170 +1169,26 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[49] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43,  arg44, 
+                      arg45,  arg46,  arg47, 
+                      arg48};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-    args->args[44] = arg44;
-    args->args[45] = arg45;
-    args->args[46] = arg46;
-    args->args[47] = arg47;
-    args->args[48] = arg48;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel49);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel49(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data(),
-              args.args[44].data(),
-              args.args[45].data(),
-              args.args[46].data(),
-              args.args[47].data(),
-              args.args[48].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 49, args);
   }
 
   template <>
@@ -6322,170 +1210,24 @@
                       const kernelArg &arg45,  const kernelArg &arg46,  const kernelArg &arg47, 
                       const kernelArg &arg48,  const kernelArg &arg49){
     PthreadsKernelData_t &data_ = *((PthreadsKernelData_t*) data);
-    int pThreadCount = data_.pThreadCount;
 
-    for(int p = 0; p < pThreadCount; ++p){
-      PthreadKernelArg_t *args = new PthreadKernelArg_t;
-      args->rank  = p;
-      args->count = pThreadCount;
+    kernelArg args[50] = {arg0,  arg1,  arg2, 
+                      arg3,  arg4,  arg5, 
+                      arg6,  arg7,  arg8, 
+                      arg9,  arg10,  arg11, 
+                      arg12,  arg13,  arg14, 
+                      arg15,  arg16,  arg17, 
+                      arg18,  arg19,  arg20, 
+                      arg21,  arg22,  arg23, 
+                      arg24,  arg25,  arg26, 
+                      arg27,  arg28,  arg29, 
+                      arg30,  arg31,  arg32, 
+                      arg33,  arg34,  arg35, 
+                      arg36,  arg37,  arg38, 
+                      arg39,  arg40,  arg41, 
+                      arg42,  arg43,  arg44, 
+                      arg45,  arg46,  arg47, 
+                      arg48,  arg49};
 
-      args->kernelHandle = data_.handle;
-
-      args->dims  = dims;
-      args->inner = inner;
-      args->outer = outer;
-
-      args->args[0] = arg0;
-    args->args[1] = arg1;
-    args->args[2] = arg2;
-    args->args[3] = arg3;
-    args->args[4] = arg4;
-    args->args[5] = arg5;
-    args->args[6] = arg6;
-    args->args[7] = arg7;
-    args->args[8] = arg8;
-    args->args[9] = arg9;
-    args->args[10] = arg10;
-    args->args[11] = arg11;
-    args->args[12] = arg12;
-    args->args[13] = arg13;
-    args->args[14] = arg14;
-    args->args[15] = arg15;
-    args->args[16] = arg16;
-    args->args[17] = arg17;
-    args->args[18] = arg18;
-    args->args[19] = arg19;
-    args->args[20] = arg20;
-    args->args[21] = arg21;
-    args->args[22] = arg22;
-    args->args[23] = arg23;
-    args->args[24] = arg24;
-    args->args[25] = arg25;
-    args->args[26] = arg26;
-    args->args[27] = arg27;
-    args->args[28] = arg28;
-    args->args[29] = arg29;
-    args->args[30] = arg30;
-    args->args[31] = arg31;
-    args->args[32] = arg32;
-    args->args[33] = arg33;
-    args->args[34] = arg34;
-    args->args[35] = arg35;
-    args->args[36] = arg36;
-    args->args[37] = arg37;
-    args->args[38] = arg38;
-    args->args[39] = arg39;
-    args->args[40] = arg40;
-    args->args[41] = arg41;
-    args->args[42] = arg42;
-    args->args[43] = arg43;
-    args->args[44] = arg44;
-    args->args[45] = arg45;
-    args->args[46] = arg46;
-    args->args[47] = arg47;
-    args->args[48] = arg48;
-    args->args[49] = arg49;
-
-      pthread_mutex_lock(data_.kernelMutex);
-      data_.kernelLaunch[p]->push(launchKernel50);
-      data_.kernelArgs[p]->push(args);
-      pthread_mutex_unlock(data_.kernelMutex);
-    }
-
-    pthread_mutex_lock(data_.pendingJobsMutex);
-    *(data_.pendingJobs) += data_.pThreadCount;
-    pthread_mutex_unlock(data_.pendingJobsMutex);
-  }
-
-  void launchKernel50(PthreadKernelArg_t &args){
-    handleFunction_t tmpKernel = (handleFunction_t) args.kernelHandle;
-
-    int dp = args.dims - 1;
-    occa::dim &outer = args.outer;
-    occa::dim &inner = args.inner;
-
-    occa::dim start(0,0,0), end(outer);
-
-    int loops     = outer[dp]/args.count;
-    int coolRanks = (outer[dp] - loops*args.count);
-
-    if(args.rank < coolRanks){
-      start[dp] = (args.rank)*(loops + 1);
-      end[dp] = start[dp] + (loops + 1);
-    }
-    else{
-      start[dp] = args.rank*loops + coolRanks;
-      end[dp] = start[dp] + loops;
-    }
-    int occaKernelArgs[12];
-
-    occaKernelArgs[0]  = outer.z;
-    occaKernelArgs[1]  = outer.y;
-    occaKernelArgs[2]  = outer.x;
-    occaKernelArgs[3]  = inner.z;
-    occaKernelArgs[4]  = inner.y;
-    occaKernelArgs[5]  = inner.x;
-    occaKernelArgs[6]  = start.z;
-    occaKernelArgs[7]  = end.z;
-    occaKernelArgs[8]  = start.y;
-    occaKernelArgs[9]  = end.y;
-    occaKernelArgs[10] = start.x;
-    occaKernelArgs[11] = end.x;
-
-    int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
-
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              args.args[0].data(),
-              args.args[1].data(),
-              args.args[2].data(),
-              args.args[3].data(),
-              args.args[4].data(),
-              args.args[5].data(),
-              args.args[6].data(),
-              args.args[7].data(),
-              args.args[8].data(),
-              args.args[9].data(),
-              args.args[10].data(),
-              args.args[11].data(),
-              args.args[12].data(),
-              args.args[13].data(),
-              args.args[14].data(),
-              args.args[15].data(),
-              args.args[16].data(),
-              args.args[17].data(),
-              args.args[18].data(),
-              args.args[19].data(),
-              args.args[20].data(),
-              args.args[21].data(),
-              args.args[22].data(),
-              args.args[23].data(),
-              args.args[24].data(),
-              args.args[25].data(),
-              args.args[26].data(),
-              args.args[27].data(),
-              args.args[28].data(),
-              args.args[29].data(),
-              args.args[30].data(),
-              args.args[31].data(),
-              args.args[32].data(),
-              args.args[33].data(),
-              args.args[34].data(),
-              args.args[35].data(),
-              args.args[36].data(),
-              args.args[37].data(),
-              args.args[38].data(),
-              args.args[39].data(),
-              args.args[40].data(),
-              args.args[41].data(),
-              args.args[42].data(),
-              args.args[43].data(),
-              args.args[44].data(),
-              args.args[45].data(),
-              args.args[46].data(),
-              args.args[47].data(),
-              args.args[48].data(),
-              args.args[49].data());
-
-    delete &args;
+    pthreads::runFromArguments(data_, dims, inner, outer, 50, args);
   }
