@@ -333,7 +333,7 @@ namespace occa {
     inline uintptr_t operator [] (int i) const;
   };
 
-  union kernelArg_t {
+  struct kernelArgData_t {
     int int_;
     unsigned int uint_;
 
@@ -353,50 +353,66 @@ namespace occa {
     void* void_;
   };
 
+  class kernelArg_t {
+  public:
+    kernelArgData_t data;
+    uintptr_t       size;
+    bool            pointer;
+
+    inline kernelArg_t(){
+      data.void_ = NULL;
+      size       = 0;
+      pointer    = false;
+    }
+
+    inline kernelArg_t& operator = (const kernelArg_t &k){
+      data.void_ = k.data.void_;
+      size       = k.size;
+      pointer    = k.pointer;
+    }
+  };
+
   class kernelArg {
   public:
     occa::device_v *dHandle;
     occa::memory_v *mHandle;
 
-    kernelArg_t arg, arg2;
-
-    uintptr_t size;
-    bool pointer, hasTwoArgs;
+    int argc;
+    kerenlArg_t args[2];
 
     inline kernelArg(){
-      dHandle    = NULL;
-      mHandle    = NULL;
-      arg.void_  = NULL;
-      hasTwoArgs = false;
+      dHandle = NULL;
+      mHandle = NULL;
+
+      argc = 0;
     }
 
-    inline kernelArg(kernelArg_t arg_, uintptr_t size_, bool pointer_) :
+    inline kernelArg(kernelArgData_t arg_, uintptr_t size_, bool pointer_) :
       dHandle(NULL),
-      mHandle(NULL),
-      size(size_),
-      pointer(pointer_),
-      hasTwoArgs(false) {
+      mHandle(NULL) {
 
-      arg.void_ = arg_.void_;
+      argc = 1;
+      args[0].data.void_ = arg_.void_;
+      args[0].size       = size_;
+      args[0].pointer    = pointer_;
     }
 
     inline kernelArg(const kernelArg &k) :
       dHandle(k.dHandle),
-      mHandle(k.mHandle),
-      size(k.size),
-      pointer(k.pointer),
-      hasTwoArgs(k.hasTwoArgs) {
+      mHandle(k.mHandle) {
 
-      arg.void_ = k.arg.void_;
+      argc    = k.argc;
+      args[0] = k.args[0];
+      args[1] = k.args[1];
     }
 
     inline kernelArg& operator = (const kernelArg &k){
-      dHandle    = k.dHandle;
-      mHandle    = k.mHandle;
-      arg.void_  = k.arg.void_;
-      size       = k.size;
-      pointer    = k.pointer;
-      hasTwoArgs = k.hasTwoArgs;
+      dHandle = k.dHandle;
+      mHandle = k.mHandle;
+
+      argc    = k.argc;
+      args[0] = k.args[0];
+      args[1] = k.args[1];
 
       return *this;
     }
@@ -406,11 +422,10 @@ namespace occa {
       dHandle = NULL;
       mHandle = NULL;
 
-      arg.void_ = const_cast<TM*>(&arg_);
-      size = sizeof(TM);
-
-      pointer    = true;
-      hasTwoArgs = false;
+      argc = 1;
+      arg[0].data.void_ = const_cast<TM*>(&arg_);
+      arg[0].size       = sizeof(TM);
+      arg[0].pointer    = true;
     }
 
     template <class TM> inline kernelArg(TM *arg_);
@@ -419,7 +434,9 @@ namespace occa {
     inline occa::device getDevice() const;
 
     inline void* data() const {
-      return pointer ? arg.void_ : (void*) &arg;
+      return (arg[0].pointer    ?
+              arg[0].data.void_ :
+              (void*) &(arg[0].data));
     }
 
     inline void setupForKernelCall(const bool isConst) const;
