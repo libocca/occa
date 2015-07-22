@@ -4,6 +4,8 @@
 #include "occa/parser/defines.hpp"
 #include "occa/tools.hpp"
 
+#include <iomanip>
+
 namespace occa {
   //---[ Helper Functions ]-----------------------
   bool stringsAreEqual(const char *cStart, const size_t chars,
@@ -32,9 +34,8 @@ namespace occa {
   template <>
   inline std::string toString<float>(const float &t){
     std::stringstream ss;
-    ss.precision(7);
 
-    ss << t;
+    ss << std::scientific << std::setprecision(8) << t << 'f';
 
     return ss.str();
   }
@@ -42,9 +43,8 @@ namespace occa {
   template <>
   inline std::string toString<double>(const double &t){
     std::stringstream ss;
-    ss.precision(14);
 
-    ss << t;
+    ss << std::scientific << std::setprecision(16) << t;
 
     return ss.str();
   }
