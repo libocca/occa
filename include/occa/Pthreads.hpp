@@ -81,6 +81,7 @@ namespace occa {
 
     int argc;
     occa::kernelArg args[OCCA_MAX_ARGS];
+    void **vArgs[2*OCCA_MAX_ARGS];
   };
 
   static const int compact = (1 << 10);

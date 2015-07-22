@@ -604,7 +604,18 @@ namespace occa {
     return mHandle->strMode;
   }
 
-  void* memory::textureArg() const {
+  void* memory::textureArg1() const {
+#if !OCCA_CUDA_ENABLED
+    return (void*) mHandle;
+#else
+    if(mHandle->mode() != CUDA)
+      return (void*) mHandle;
+    else
+      return &(((CUDATextureData_t*) mHandle.handle)->surface);
+#endif
+  }
+
+  void* memory::textureArg2() const {
     return (void*) ((mHandle->textureInfo).arg);
   }
 

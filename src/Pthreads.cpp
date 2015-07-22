@@ -127,19 +127,18 @@ namespace occa {
 
       int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-      void* args_[OCCA_MAX_ARGS];
       int argc_ = 0;
 
       for(int i = 0; i < pkInfo.argc; ++i){
         for(int j = 0; j < pkInfo.args[i].argc; ++j){
-          args_[argc_++] = pkInfo.args[i].args[j].ptr();
+          pkInfo.vArgs[argc_++] = pkInfo.args[i].args[j].ptr();
         }
       }
 
       cpu::runFunction(tmpKernel,
                        occaKernelArgs,
                        occaInnerId0, occaInnerId1, occaInnerId2,
-                       argc_, args_);
+                       argc_, pkInfo.vArgs);
 
       delete &pkInfo;
     }

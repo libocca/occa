@@ -114,30 +114,52 @@ def serialOperatorDefinition(N):
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[""" + str(N) + """] = {""" + ' '.join(['&arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """};
+
+    for(int i = 0; i < """ + str(N) + """; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              """ + ',\n              '.join(['arg{0}.data()'.format(n) for n in xrange(N)]) + ');'
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);"""
 
 def ompOperatorDefinition(N):
     return """
     OpenMPKernelData_t &data_ = *((OpenMPKernelData_t*) data);
     handleFunction_t tmpKernel = (handleFunction_t) data_.handle;
-    int occaKernelInfoArgs[6];
+    int occaKernelArgs[6];
 
-    occaKernelInfoArgs[0] = outer.z;
-    occaKernelInfoArgs[1] = outer.y;
-    occaKernelInfoArgs[2] = outer.x;
-    occaKernelInfoArgs[3] = inner.z;
-    occaKernelInfoArgs[4] = inner.y;
-    occaKernelInfoArgs[5] = inner.x;
+    occaKernelArgs[0] = outer.z;
+    occaKernelArgs[1] = outer.y;
+    occaKernelArgs[2] = outer.x;
+    occaKernelArgs[3] = inner.z;
+    occaKernelArgs[4] = inner.y;
+    occaKernelArgs[5] = inner.x;
+
+    int argc = 0;
+
+    const kernelArg *args[""" + str(N) + """] = {""" + ' '.join(['&arg' + str(n) + nlc(n, N) for n in xrange(N)]) + """};
+
+    for(int i = 0; i < """ + str(N) + """; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
 
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelInfoArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              """ + ',\n              '.join(['arg{0}.data()'.format(n) for n in xrange(N)]) + ');'
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);"""
 
 def clOperatorDefinition(N):
     return """
@@ -146,23 +168,21 @@ def clOperatorDefinition(N):
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
-                                                             if (n and ((n % 5) == 0))
-                                                             else '')
-                                                            + "&arg{0}".format(n) for n in xrange(N))) + """};
+    const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
+                                                                   if (n and ((n % 5) == 0))
+                                                                   else '')
+                                                                  + "&arg{0}".format(n) for n in xrange(N))) + """};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < """ + str(N) + """; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -180,30 +200,28 @@ def cudaOperatorDefinition(N):
     CUfunction function_    = data_.function;
 
     int occaKernelInfoArgs = 0;
-    int argCount = 0;
+    int argc = 0;
 
-    void *args[""" + str(2 * N) + """];
-
-    const kernelArg *kArgs[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
-                                                             if (n and ((n % 5) == 0))
-                                                             else '')
-                                                            + "&arg{0}".format(n) for n in xrange(N))) + """};
+    const kernelArg *args[""" + str(N) + """] = {""" + (', '.join((('\n                                 ' + (' ' if (10 <= N) else ''))
+                                                                   if (n and ((n % 5) == 0))
+                                                                   else '')
+                                                                  + "&arg{0}".format(n) for n in xrange(N))) + """};
 
     args[argCount++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < """ + str(N) + """; ++i){
-      if(kArgs[i]->pointer){
-        if(kArgs[i]->hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) kArgs[i]->arg.void_)->surface);
+      if(args[i]->pointer){
+        if(args[i]->hasTwoArgs)
+          args[argCount++] = (void*) &(((CUDATextureData_t*) args[i]->arg.void_)->surface);
         else
-          args[argCount++] = kArgs[i]->arg.void_;
+          args[argCount++] = args[i]->arg.void_;
       }
       else {
-        args[argCount++] = (void*) &kArgs[i]->arg;
+        args[argCount++] = (void*) &args[i]->arg;
       }
 
-      if(kArgs[i]->hasTwoArgs)
-        args[argCount++] = kArgs[i]->arg2.void_;
+      if(args[i]->hasTwoArgs)
+        args[argCount++] = args[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",

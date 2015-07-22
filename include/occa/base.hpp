@@ -1012,7 +1012,8 @@ namespace occa {
       return (mHandle->memInfo & uvaFlag::isDirty);
     }
 
-    void* textureArg() const;
+    void* textureArg1() const;
+    void* textureArg2() const;
 
     device_v* getOccaDeviceHandle();
     memory_v* getOccaMemoryHandle();
@@ -1744,20 +1745,30 @@ namespace occa {
   template <>
   inline kernelArg::kernelArg(const occa::memory &m){
     if(m.mHandle->dHandle->fakesUva()){
-      argc = 1 + (m.isATexture());
+      if(!m.isATexture()){
+        argc = 1;
 
-      args[0].mHandle = NULL;
-      args[0].dHandle = m.mHandle->dHandle;
+        args[0].mHandle = m.mHandle;
+        args[0].dHandle = m.mHandle->dHandle;
 
-      args[0].data.void_ = m.mHandle->handle;
-      args[0].size       = sizeof(void*);
-      args[0].pointer    = true;
+        args[0].data.void_ = m.mHandle->handle;
+        args[0].size       = sizeof(void*);
+        args[0].pointer    = true;
+      }
+      else {
+        argc = 2;
 
-      if(argc == 2){
+        args[0].mHandle = m.mHandle;
+        args[0].dHandle = m.mHandle->dHandle;
+
+        args[0].data.void_ = m.textureArg1();
+        args[0].size       = sizeof(void*);
+        args[0].pointer    = true;
+
         args[1].mHandle = args[0].mHandle;
         args[1].dHandle = args[0].dHandle;
 
-        args[1].data.void_ = m.textureArg();
+        args[1].data.void_ = m.textureArg2();
         args[1].size       = sizeof(void*);
         args[1].pointer    = true;
       }

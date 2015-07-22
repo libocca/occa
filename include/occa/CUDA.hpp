@@ -18,6 +18,8 @@ namespace occa {
     CUcontext  context;
     CUmodule   module;
     CUfunction function;
+
+    void *vArgs[2*OCCA_MAX_ARGS];
   };
 
   struct CUDADeviceData_t {
