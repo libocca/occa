@@ -227,7 +227,6 @@
     argc                 = 1;                     \
     args[0].data.TYPE##_ = arg_;                  \
     args[0].size         = sizeof(TYPE);          \
-    args[0].pointer      = false;                 \
   }
 
 #define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
@@ -236,7 +235,6 @@
     argc                  = 1;                          \
     args[0].data.ALIAS##_ = arg_;                       \
     args[0].size          = sizeof(TYPE);               \
-    args[0].pointer       = false;                      \
   }
 
 #define OCCA_EXTRACT_DATA(MODE, CLASS)                          \

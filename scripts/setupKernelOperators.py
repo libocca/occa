@@ -207,21 +207,12 @@ def cudaOperatorDefinition(N):
                                                                    else '')
                                                                   + "&arg{0}".format(n) for n in xrange(N))) + """};
 
-    args[argCount++] = &occaKernelInfoArgs;
+    data_.vArgs[argc++] = &occaKernelInfoArgs;
 
     for(int i = 0; i < """ + str(N) + """; ++i){
-      if(args[i]->pointer){
-        if(args[i]->hasTwoArgs)
-          args[argCount++] = (void*) &(((CUDATextureData_t*) args[i]->arg.void_)->surface);
-        else
-          args[argCount++] = args[i]->arg.void_;
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
       }
-      else {
-        args[argCount++] = (void*) &args[i]->arg;
-      }
-
-      if(args[i]->hasTwoArgs)
-        args[argCount++] = args[i]->arg2.void_;
     }
 
     OCCA_CUDA_CHECK("Launching Kernel",
@@ -229,7 +220,7 @@ def cudaOperatorDefinition(N):
                                    outer.x, outer.y, outer.z,
                                    inner.x, inner.y, inner.z,
                                    0, *((CUstream*) dHandle->currentStream),
-                                   args, 0));"""
+                                   data_.vArgs, 0));"""
 
 def coiOperatorDefinition(N):
     return """

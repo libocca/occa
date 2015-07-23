@@ -611,7 +611,7 @@ namespace occa {
     if(mHandle->mode() != CUDA)
       return (void*) mHandle;
     else
-      return &(((CUDATextureData_t*) mHandle.handle)->surface);
+      return &(((CUDATextureData_t*) mHandle->handle)->surface);
 #endif
   }
 

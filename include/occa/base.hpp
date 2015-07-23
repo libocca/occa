@@ -356,6 +356,12 @@ namespace occa {
     void* void_;
   };
 
+  namespace kArgInfo {
+    static const char none       = 0;
+    static const char usePointer = (1 << 0);
+    static const char hasTexture = (1 << 1);
+  }
+
   class kernelArg_t {
   public:
     occa::device_v *dHandle;
@@ -363,15 +369,15 @@ namespace occa {
 
     kernelArgData_t data;
     uintptr_t       size;
-    bool            pointer;
+    char            info;
 
     inline kernelArg_t(){
       dHandle = NULL;
       mHandle = NULL;
 
       ::memset(&data, 0, sizeof(data));
-      size    = 0;
-      pointer = false;
+      size = 0;
+      info = kArgInfo::none;
     }
 
     inline kernelArg_t& operator = (const kernelArg_t &k){
@@ -379,8 +385,8 @@ namespace occa {
       mHandle = k.mHandle;
 
       ::memcpy(&data, &(k.data), sizeof(data));
-      size    = k.size;
-      pointer = k.pointer;
+      size = k.size;
+      info = k.info;
 
       return *this;
     }
@@ -388,7 +394,7 @@ namespace occa {
     inline ~kernelArg_t(){}
 
     inline void* ptr() const {
-      return (pointer ? data.void_ : (void*) &data);
+      return ((info & kArgInfo::usePointer) ? data.void_ : (void*) &data);
     }
   };
 
@@ -431,7 +437,7 @@ namespace occa {
 
       args[0].data.void_ = const_cast<TM*>(&arg_);
       args[0].size       = sizeof(TM);
-      args[0].pointer    = true;
+      args[0].info      |= kArgInfo::usePointer;
     }
 
     template <class TM> inline kernelArg(TM *arg_);
@@ -1698,14 +1704,14 @@ namespace occa {
 
       args[0].data.void_ = mHandle->handle;
       args[0].size       = sizeof(void*);
-      args[0].pointer    = true;
+      args[0].info      |= kArgInfo::usePointer;
     }
     else {
       argc = 1;
 
       args[0].data.void_ = arg_;
       args[0].size       = sizeof(TM*);
-      args[0].pointer    = true;
+      args[0].info      |= kArgInfo::usePointer;
     }
   }
 
@@ -1725,14 +1731,14 @@ namespace occa {
 
       args[0].data.void_ = mHandle->handle;
       args[0].size       = sizeof(void*);
-      args[0].pointer    = true;
+      args[0].info      |= kArgInfo::usePointer;
     }
     else {
       argc = 1;
 
       args[0].data.void_ = arg_;
       args[0].size       = sizeof(TM*);
-      args[0].pointer    = true;
+      args[0].info      |= kArgInfo::usePointer;
     }
   }
 
@@ -1747,7 +1753,7 @@ namespace occa {
 
         args[0].data.void_ = m.mHandle->handle;
         args[0].size       = sizeof(void*);
-        args[0].pointer    = true;
+        args[0].info      |= kArgInfo::usePointer;
       }
       else {
         argc = 2;
@@ -1757,14 +1763,15 @@ namespace occa {
 
         args[0].data.void_ = m.textureArg1();
         args[0].size       = sizeof(void*);
-        args[0].pointer    = true;
+        args[0].info      |= (kArgInfo::usePointer |
+                              kArgInfo::hasTexture);
 
         args[1].mHandle = args[0].mHandle;
         args[1].dHandle = args[0].dHandle;
 
         args[1].data.void_ = m.textureArg2();
         args[1].size       = sizeof(void*);
-        args[1].pointer    = true;
+        args[1].info      |= kArgInfo::usePointer;
       }
     }
     else{
@@ -1772,7 +1779,7 @@ namespace occa {
 
       args[0].data.void_ = m.mHandle->handle;
       args[0].size       = sizeof(void*);
-      args[0].pointer    = true;
+      args[0].info      |= kArgInfo::usePointer;
     }
   }
 

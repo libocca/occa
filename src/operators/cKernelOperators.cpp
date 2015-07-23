@@ -17,7 +17,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -45,7 +44,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -73,7 +71,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -102,7 +99,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -131,7 +127,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -160,7 +155,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -190,7 +184,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -220,7 +213,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -250,7 +242,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -281,7 +272,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -312,7 +302,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -343,7 +332,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -375,7 +363,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -407,7 +394,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -439,7 +425,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -472,7 +457,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -505,7 +489,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -538,7 +521,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -572,7 +554,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -606,7 +587,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -640,7 +620,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -675,7 +654,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -710,7 +688,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -745,7 +722,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -781,7 +757,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -817,7 +792,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -853,7 +827,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -890,7 +863,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -927,7 +899,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -964,7 +935,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1002,7 +972,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1040,7 +1009,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1078,7 +1046,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1117,7 +1084,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1156,7 +1122,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1195,7 +1160,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1235,7 +1199,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1275,7 +1238,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1315,7 +1277,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1356,7 +1317,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1397,7 +1357,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1438,7 +1397,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1480,7 +1438,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1522,7 +1479,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1564,7 +1520,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1607,7 +1562,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1650,7 +1604,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1693,7 +1646,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1737,7 +1689,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
@@ -1781,7 +1732,6 @@
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
         else {
-          printf("value = %d\n", arg.value.data.int_);
           kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }

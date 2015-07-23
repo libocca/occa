@@ -84,7 +84,7 @@ extern "C" {
     type->type            = OCCA_TYPE_INT;
     type->value.size      = sizeof(int);
     type->value.data.int_ = value;
-    type->value.pointer   = false;
+    type->value.info      = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -95,7 +95,7 @@ extern "C" {
     type->type             = OCCA_TYPE_UINT;
     type->value.size       = sizeof(unsigned int);
     type->value.data.uint_ = value;
-    type->value.pointer    = false;
+    type->value.info       = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -106,7 +106,7 @@ extern "C" {
     type->type             = OCCA_TYPE_CHAR;
     type->value.size       = sizeof(char);
     type->value.data.char_ = value;
-    type->value.pointer    = false;
+    type->value.info       = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -117,7 +117,7 @@ extern "C" {
     type->type              = OCCA_TYPE_UCHAR;
     type->value.size        = sizeof(unsigned char);
     type->value.data.uchar_ = value;
-    type->value.pointer     = false;
+    type->value.info        = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -128,7 +128,7 @@ extern "C" {
     type->type              = OCCA_TYPE_SHORT;
     type->value.size        = sizeof(short);
     type->value.data.short_ = value;
-    type->value.pointer     = false;
+    type->value.info        = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -139,7 +139,7 @@ extern "C" {
     type->type               = OCCA_TYPE_USHORT;
     type->value.size         = sizeof(unsigned short);
     type->value.data.ushort_ = value;
-    type->value.pointer      = false;
+    type->value.info         = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -150,7 +150,7 @@ extern "C" {
     type->type             = OCCA_TYPE_LONG;
     type->value.size       = sizeof(long);
     type->value.data.long_ = value;
-    type->value.pointer    = false;
+    type->value.info       = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -161,7 +161,7 @@ extern "C" {
     type->type                  = OCCA_TYPE_ULONG;
     type->value.size            = sizeof(unsigned long);
     type->value.data.uintptr_t_ = value;
-    type->value.pointer         = false;
+    type->value.info            = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -172,7 +172,7 @@ extern "C" {
     type->type              = OCCA_TYPE_FLOAT;
     type->value.size        = sizeof(float);
     type->value.data.float_ = value;
-    type->value.pointer     = false;
+    type->value.info        = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -183,7 +183,7 @@ extern "C" {
     type->type               = OCCA_TYPE_DOUBLE;
     type->value.size         = sizeof(double);
     type->value.data.double_ = value;
-    type->value.pointer      = false;
+    type->value.info         = occa::kArgInfo::none;
 
     return (occaType) type;
   }
@@ -194,7 +194,7 @@ extern "C" {
     type->type             = OCCA_TYPE_STRUCT;
     type->value.size       = bytes;
     type->value.data.void_ = value;
-    type->value.pointer    = true;
+    type->value.info      |= occa::kArgInfo::usePointer;
 
     return (occaType) type;
   }
@@ -205,7 +205,7 @@ extern "C" {
     type->type             = OCCA_TYPE_STRING;
     type->value.size       = sizeof(char*);
     type->value.data.void_ = const_cast<char*>(value);
-    type->value.pointer    = true;
+    type->value.info      |= occa::kArgInfo::usePointer;
 
     return (occaType) type;
   }
