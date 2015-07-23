@@ -23,6 +23,8 @@ namespace occa {
   struct OpenMPKernelData_t {
     void *dlHandle;
     handleFunction_t handle;
+
+    void *vArgs[2*OCCA_MAX_ARGS];
   };
 
   struct OpenMPDeviceData_t {

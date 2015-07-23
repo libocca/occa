@@ -26,6 +26,8 @@ namespace occa {
   struct SerialKernelData_t {
     void *dlHandle;
     handleFunction_t handle;
+
+    void *vArgs[2*OCCA_MAX_ARGS];
   };
 
   struct SerialDeviceData_t {
@@ -88,6 +90,11 @@ namespace occa {
     handleFunction_t dlsym(void *dlHandle,
                            const std::string &functionName,
                            const std::string &hash = "");
+
+    void runFunction(handleFunction_t f,
+                     const int *occaKernelInfoArgs,
+                     int occaInnerId0, int occaInnerId1, int occaInnerId2,
+                     int argc, void **args);
   }
   //==================================
 

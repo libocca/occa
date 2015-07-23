@@ -122,9 +122,9 @@
 
 
 //---[ Kernel Info ]------------------------------
-#define occaKernelInfoArg   const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
-#define occaFunctionInfoArg const int *occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
-#define occaFunctionInfo               occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
+#define occaKernelInfoArg   const int * occaRestrict occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
+#define occaFunctionInfoArg const int * occaRestrict occaKernelArgs, int occaInnerId0, int occaInnerId1, int occaInnerId2
+#define occaFunctionInfo                             occaKernelArgs,     occaInnerId0,     occaInnerId1,     occaInnerId2
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #ifndef MC_CL_EXE
 #  define occaKernel extern "C"

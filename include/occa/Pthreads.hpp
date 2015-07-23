@@ -24,9 +24,9 @@
 #include "occa/varFiles.hpp"
 
 namespace occa {
-  //---[ Data Structs ]---------------
-  struct PthreadKernelArg_t;
-  typedef void (*PthreadLaunchHandle_t)(PthreadKernelArg_t &args);
+  //---[ Data Structs ]-----------------
+  struct PthreadKernelInfo_t;
+  typedef void (*PthreadLaunchHandle_t)(PthreadKernelInfo_t &args);
 
   // [-] Hard-coded for now
   struct PthreadsDeviceData_t {
@@ -37,12 +37,11 @@ namespace occa {
     int pThreadCount;
     int schedule;
 
-    pthread_t tid[OCCA_MAX_ARGS];
+    pthread_t tid[50];
 
     int pendingJobs;
 
-    std::queue<PthreadLaunchHandle_t> kernelLaunch[OCCA_MAX_ARGS];
-    std::queue<PthreadKernelArg_t*> kernelArgs[OCCA_MAX_ARGS];
+    std::queue<PthreadKernelInfo_t*> pKernelInfo[50];
 
     pthread_mutex_t pendingJobsMutex, kernelMutex;
   };
@@ -55,8 +54,7 @@ namespace occa {
 
     int *pendingJobs;
 
-    std::queue<PthreadLaunchHandle_t> *kernelLaunch[50];
-    std::queue<PthreadKernelArg_t*> *kernelArgs[50];
+    std::queue<PthreadKernelInfo_t*> *pKernelInfo[50];
 
     pthread_mutex_t *pendingJobsMutex, *kernelMutex;
   };
@@ -67,14 +65,13 @@ namespace occa {
 
     int *pendingJobs;
 
-    std::queue<PthreadLaunchHandle_t> *kernelLaunch;
-    std::queue<PthreadKernelArg_t*> *kernelArgs;
+    std::queue<PthreadKernelInfo_t*> *pKernelInfo;
 
     pthread_mutex_t *pendingJobsMutex, *kernelMutex;
   };
 
   // [-] Hard-coded for now
-  struct PthreadKernelArg_t {
+  struct PthreadKernelInfo_t {
     int rank, count;
 
     handleFunction_t kernelHandle;
@@ -82,16 +79,34 @@ namespace occa {
     int dims;
     occa::dim inner, outer;
 
-    occa::kernelArg args[50];
+    int argc;
+    occa::kernelArg args[OCCA_MAX_ARGS];
+    void *vArgs[2*OCCA_MAX_ARGS];
   };
 
   static const int compact = (1 << 10);
   static const int scatter = (1 << 11);
   static const int manual  = (1 << 12);
-  //==================================
+  //====================================
 
 
-  //---[ Kernel ]---------------------
+  //---[ Helper Functions ]-------------
+  namespace pthreads {
+    void* limbo(void *args);
+
+    void runFromArguments(PthreadsKernelData_t &data,
+                          const int dims,
+                          occa::dim &inner,
+                          occa::dim &outer,
+                          const int argc,
+                          const kernelArg_t *args);
+
+    void run(PthreadKernelInfo_t &pArgs);
+  }
+  //====================================
+
+
+  //---[ Kernel ]-----------------------
   template <>
   kernel_t<Pthreads>::kernel_t();
 
@@ -134,10 +149,10 @@ namespace occa {
 
   template <>
   int kernel_t<Pthreads>::preferredDimSize();
-  //==================================
+  //====================================
 
 
-  //---[ Memory ]---------------------
+  //---[ Memory ]-----------------------
   template <>
   memory_t<Pthreads>::memory_t();
 
@@ -202,10 +217,10 @@ namespace occa {
 
   template <>
   void memory_t<Pthreads>::free();
-  //==================================
+  //====================================
 
 
-  //---[ Device ]---------------------
+  //---[ Device ]-----------------------
   template <>
   device_t<Pthreads>::device_t();
 
@@ -317,68 +332,9 @@ namespace occa {
 
   template <>
   int device_t<Pthreads>::simdWidth();
-  //==================================
+  //====================================
 
 #include "occa/operators/PthreadsKernelOperators.hpp"
-
-  //---[ Pthreads ]-------------------
-  static void* pthreadLimbo(void *args){
-    PthreadWorkerData_t &data = *((PthreadWorkerData_t*) args);
-
-    // Thread affinity
-#if (OCCA_OS == LINUX_OS) // Not WINUX
-    cpu_set_t cpuHandle;
-    CPU_ZERO(&cpuHandle);
-    CPU_SET(data.pinnedCore, &cpuHandle);
-#else
-    // NBN: affinity on hyperthreaded multi-socket systems?
-    if(data.rank == 0)
-      fprintf(stderr, "[Pthreads] Affinity not guaranteed in this OS\n");
-    // BOOL SetProcessAffinityMask(HANDLE hProcess,DWORD_PTR dwProcessAffinityMask);
-#endif
-
-    while(true){
-      // Fence local data (incase of out-of-socket updates)
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-      __asm__ __volatile__ ("lfence");
-#else
-      __faststorefence(); // NBN: x64 only?
-#endif
-
-      if( *(data.pendingJobs) ){
-        pthread_mutex_lock(data.kernelMutex);
-
-        std::cout.flush();
-
-        PthreadLaunchHandle_t launchKernel = data.kernelLaunch->front();
-        data.kernelLaunch->pop();
-
-        PthreadKernelArg_t &launchArgs = *(data.kernelArgs->front());
-        data.kernelArgs->pop();
-
-        pthread_mutex_unlock(data.kernelMutex);
-
-        launchKernel(launchArgs);
-
-        //---[ Barrier ]----------------
-        pthread_mutex_lock(data.pendingJobsMutex);
-        --( *(data.pendingJobs) );
-        pthread_mutex_unlock(data.pendingJobsMutex);
-
-        while((*data.pendingJobs) % data.count){
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-          __asm__ __volatile__ ("lfence");
-#else
-          __faststorefence(); // NBN: x64 only?
-#endif
-        }
-        //==============================
-      }
-    }
-
-    return NULL;
-  }
-  //==================================
 }
 
 #endif

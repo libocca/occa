@@ -2,22 +2,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[1] = {(occaMemory_t*) arg0};
+      occaType_t *args[1] = {(occaType_t*) arg0};
       
       for(int i = 0; i < 1; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -29,22 +29,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[2] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1};
+      occaType_t *args[2] = {(occaType_t*) arg0, (occaType_t*) arg1};
       
       for(int i = 0; i < 2; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -56,22 +56,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[3] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2};
+      occaType_t *args[3] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2};
       
       for(int i = 0; i < 3; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -84,22 +84,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[4] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3};
+      occaType_t *args[4] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3};
       
       for(int i = 0; i < 4; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -112,22 +112,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[5] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4};
+      occaType_t *args[5] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4};
       
       for(int i = 0; i < 5; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -140,22 +140,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[6] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5};
+      occaType_t *args[6] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5};
       
       for(int i = 0; i < 6; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -169,22 +169,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[7] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6};
+      occaType_t *args[7] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6};
       
       for(int i = 0; i < 7; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -198,22 +198,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[8] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7};
+      occaType_t *args[8] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7};
       
       for(int i = 0; i < 8; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -227,22 +227,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[9] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8};
+      occaType_t *args[9] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8};
       
       for(int i = 0; i < 9; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -257,22 +257,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[10] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9};
+      occaType_t *args[10] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9};
       
       for(int i = 0; i < 10; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -287,22 +287,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[11] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10};
+      occaType_t *args[11] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10};
       
       for(int i = 0; i < 11; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -317,22 +317,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[12] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11};
+      occaType_t *args[12] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11};
       
       for(int i = 0; i < 12; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -348,22 +348,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[13] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12};
+      occaType_t *args[13] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12};
       
       for(int i = 0; i < 13; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -379,22 +379,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[14] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13};
+      occaType_t *args[14] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13};
       
       for(int i = 0; i < 14; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -410,22 +410,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[15] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14};
+      occaType_t *args[15] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14};
       
       for(int i = 0; i < 15; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -442,22 +442,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[16] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15};
+      occaType_t *args[16] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15};
       
       for(int i = 0; i < 16; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -474,22 +474,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[17] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16};
+      occaType_t *args[17] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16};
       
       for(int i = 0; i < 17; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -506,22 +506,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[18] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17};
+      occaType_t *args[18] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17};
       
       for(int i = 0; i < 18; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -539,22 +539,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[19] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18};
+      occaType_t *args[19] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18};
       
       for(int i = 0; i < 19; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -572,22 +572,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[20] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19};
+      occaType_t *args[20] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19};
       
       for(int i = 0; i < 20; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -605,22 +605,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[21] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20};
+      occaType_t *args[21] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20};
       
       for(int i = 0; i < 21; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -639,22 +639,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[22] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21};
+      occaType_t *args[22] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21};
       
       for(int i = 0; i < 22; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -673,22 +673,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[23] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22};
+      occaType_t *args[23] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22};
       
       for(int i = 0; i < 23; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -707,22 +707,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[24] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23};
+      occaType_t *args[24] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23};
       
       for(int i = 0; i < 24; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -742,22 +742,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[25] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24};
+      occaType_t *args[25] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24};
       
       for(int i = 0; i < 25; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -777,22 +777,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[26] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25};
+      occaType_t *args[26] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25};
       
       for(int i = 0; i < 26; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -812,22 +812,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[27] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26};
+      occaType_t *args[27] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26};
       
       for(int i = 0; i < 27; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -848,22 +848,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[28] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27};
+      occaType_t *args[28] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27};
       
       for(int i = 0; i < 28; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -884,22 +884,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[29] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28};
+      occaType_t *args[29] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28};
       
       for(int i = 0; i < 29; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -920,22 +920,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[30] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29};
+      occaType_t *args[30] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29};
       
       for(int i = 0; i < 30; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -957,22 +957,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[31] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30};
+      occaType_t *args[31] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30};
       
       for(int i = 0; i < 31; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -994,22 +994,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[32] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31};
+      occaType_t *args[32] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31};
       
       for(int i = 0; i < 32; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1031,22 +1031,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[33] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32};
+      occaType_t *args[33] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32};
       
       for(int i = 0; i < 33; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1069,22 +1069,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[34] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33};
+      occaType_t *args[34] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33};
       
       for(int i = 0; i < 34; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1107,22 +1107,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[35] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34};
+      occaType_t *args[35] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34};
       
       for(int i = 0; i < 35; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1145,22 +1145,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[36] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35};
+      occaType_t *args[36] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35};
       
       for(int i = 0; i < 36; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1184,22 +1184,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[37] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36};
+      occaType_t *args[37] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36};
       
       for(int i = 0; i < 37; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1223,22 +1223,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[38] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37};
+      occaType_t *args[38] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37};
       
       for(int i = 0; i < 38; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1262,22 +1262,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[39] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38};
+      occaType_t *args[39] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38};
       
       for(int i = 0; i < 39; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1302,22 +1302,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[40] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39};
+      occaType_t *args[40] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39};
       
       for(int i = 0; i < 40; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1342,22 +1342,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[41] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40};
+      occaType_t *args[41] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40};
       
       for(int i = 0; i < 41; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1382,22 +1382,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[42] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41};
+      occaType_t *args[42] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41};
       
       for(int i = 0; i < 42; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1423,22 +1423,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[43] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42};
+      occaType_t *args[43] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42};
       
       for(int i = 0; i < 43; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1464,22 +1464,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[44] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43};
+      occaType_t *args[44] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43};
       
       for(int i = 0; i < 44; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1505,22 +1505,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[45] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43, (occaMemory_t*) arg44};
+      occaType_t *args[45] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44};
       
       for(int i = 0; i < 45; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1547,22 +1547,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[46] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43, (occaMemory_t*) arg44, (occaMemory_t*) arg45};
+      occaType_t *args[46] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45};
       
       for(int i = 0; i < 46; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1589,22 +1589,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[47] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43, (occaMemory_t*) arg44, (occaMemory_t*) arg45, (occaMemory_t*) arg46};
+      occaType_t *args[47] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46};
       
       for(int i = 0; i < 47; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1631,22 +1631,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[48] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43, (occaMemory_t*) arg44, (occaMemory_t*) arg45, (occaMemory_t*) arg46, (occaMemory_t*) arg47};
+      occaType_t *args[48] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46, (occaType_t*) arg47};
       
       for(int i = 0; i < 48; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1674,22 +1674,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[49] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43, (occaMemory_t*) arg44, (occaMemory_t*) arg45, (occaMemory_t*) arg46, (occaMemory_t*) arg47, (occaMemory_t*) arg48};
+      occaType_t *args[49] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46, (occaType_t*) arg47, (occaType_t*) arg48};
       
       for(int i = 0; i < 49; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       
@@ -1717,22 +1717,22 @@
       occa::kernel kernel_((occa::kernel_v*) kernel);
       kernel_.clearArgumentList();
       
-      occaMemory_t *args[50] = {(occaMemory_t*) arg0, (occaMemory_t*) arg1, (occaMemory_t*) arg2, (occaMemory_t*) arg3, (occaMemory_t*) arg4, (occaMemory_t*) arg5, (occaMemory_t*) arg6, (occaMemory_t*) arg7, (occaMemory_t*) arg8, (occaMemory_t*) arg9, (occaMemory_t*) arg10, (occaMemory_t*) arg11, (occaMemory_t*) arg12, (occaMemory_t*) arg13, (occaMemory_t*) arg14, (occaMemory_t*) arg15, (occaMemory_t*) arg16, (occaMemory_t*) arg17, (occaMemory_t*) arg18, (occaMemory_t*) arg19, (occaMemory_t*) arg20, (occaMemory_t*) arg21, (occaMemory_t*) arg22, (occaMemory_t*) arg23, (occaMemory_t*) arg24, (occaMemory_t*) arg25, (occaMemory_t*) arg26, (occaMemory_t*) arg27, (occaMemory_t*) arg28, (occaMemory_t*) arg29, (occaMemory_t*) arg30, (occaMemory_t*) arg31, (occaMemory_t*) arg32, (occaMemory_t*) arg33, (occaMemory_t*) arg34, (occaMemory_t*) arg35, (occaMemory_t*) arg36, (occaMemory_t*) arg37, (occaMemory_t*) arg38, (occaMemory_t*) arg39, (occaMemory_t*) arg40, (occaMemory_t*) arg41, (occaMemory_t*) arg42, (occaMemory_t*) arg43, (occaMemory_t*) arg44, (occaMemory_t*) arg45, (occaMemory_t*) arg46, (occaMemory_t*) arg47, (occaMemory_t*) arg48, (occaMemory_t*) arg49};
+      occaType_t *args[50] = {(occaType_t*) arg0, (occaType_t*) arg1, (occaType_t*) arg2, (occaType_t*) arg3, (occaType_t*) arg4, (occaType_t*) arg5, (occaType_t*) arg6, (occaType_t*) arg7, (occaType_t*) arg8, (occaType_t*) arg9, (occaType_t*) arg10, (occaType_t*) arg11, (occaType_t*) arg12, (occaType_t*) arg13, (occaType_t*) arg14, (occaType_t*) arg15, (occaType_t*) arg16, (occaType_t*) arg17, (occaType_t*) arg18, (occaType_t*) arg19, (occaType_t*) arg20, (occaType_t*) arg21, (occaType_t*) arg22, (occaType_t*) arg23, (occaType_t*) arg24, (occaType_t*) arg25, (occaType_t*) arg26, (occaType_t*) arg27, (occaType_t*) arg28, (occaType_t*) arg29, (occaType_t*) arg30, (occaType_t*) arg31, (occaType_t*) arg32, (occaType_t*) arg33, (occaType_t*) arg34, (occaType_t*) arg35, (occaType_t*) arg36, (occaType_t*) arg37, (occaType_t*) arg38, (occaType_t*) arg39, (occaType_t*) arg40, (occaType_t*) arg41, (occaType_t*) arg42, (occaType_t*) arg43, (occaType_t*) arg44, (occaType_t*) arg45, (occaType_t*) arg46, (occaType_t*) arg47, (occaType_t*) arg48, (occaType_t*) arg49};
       
       for(int i = 0; i < 50; ++i){
-        occaMemory_t &memory = *(args[i]);
-        if(memory.type == OCCA_TYPE_MEMORY){
-          occa::memory memory_((occa::memory_v*) memory.mHandle);
+        occaType_t &arg = *(args[i]);
+        void *argPtr    = arg.value.data.void_;
+      
+        if(arg.type == OCCA_TYPE_MEMORY){
+          occa::memory memory_((occa::memory_v*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else if(memory.type == OCCA_TYPE_PTR){
-          occa::memory memory_((void*) memory.mHandle);
+        else if(arg.type == OCCA_TYPE_PTR){
+          occa::memory memory_((void*) argPtr);
           kernel_.addArgument(i, occa::kernelArg(memory_));
         }
-        else{
-          occaType_t &type_ = *((occaType_t*) args[i]);
-          kernel_.addArgument(i, occa::kernelArg(type_.value, type_.bytes, (memory.type == OCCA_TYPE_STRUCT)));
-          delete (occaType_t*) args[i];
+        else {
+          kernel_.addArgument(i, occa::kernelArg(arg.value));
         }
       }
       

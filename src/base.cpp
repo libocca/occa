@@ -456,25 +456,24 @@ namespace occa {
 
   void kernel::addArgument(const int argPos,
                            const kernelArg &arg){
-    if(kHandle->argumentCount < (argPos + 1)){
-      OCCA_CHECK(argPos < OCCA_MAX_ARGS,
-                 "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
-                 << " [" << argPos << "] arguments were set");
 
-      kHandle->argumentCount = (argPos + 1);
+    if(kHandle->argumentCount < (argPos + arg.argc)){
+      OCCA_CHECK((argPos + arg.argc) < OCCA_MAX_ARGS,
+                 "Kernels can only have at most [" << OCCA_MAX_ARGS << "] arguments,"
+                 << " [" << (argPos + arg.argc) << "] arguments were set");
+
+      kHandle->argumentCount = (argPos + arg.argc);
     }
 
-    kHandle->arguments[argPos] = arg;
+    for(int i = 0; i < arg.argc; ++i)
+      kHandle->arguments[argPos + i] = arg.args[i];
   }
 
   void kernel::runFromArguments(){
-    const int argumentCount = kHandle->argumentCount;
-    kernelArg *arguments    = kHandle->arguments;
+    const int argc    = kHandle->argumentCount;
+    kernelArg_t *args = kHandle->arguments;
 
-    // [-] OCCA_MAX_ARGS = 25
-#include "operators/runFromArguments.cpp"
-
-    return;
+#include "operators/runKernelFromArguments.cpp"
   }
 
 #include "operators/definitions.cpp"
@@ -601,20 +600,27 @@ namespace occa {
     return mHandle;
   }
 
+  device_v* memory::getDHandle(){
+    return mHandle->dHandle;
+  }
+
   const std::string& memory::mode(){
     return mHandle->strMode;
   }
 
-  void* memory::textureArg() const {
+  void* memory::textureArg1() const {
+#if !OCCA_CUDA_ENABLED
+    return (void*) mHandle;
+#else
+    if(mHandle->mode() != CUDA)
+      return (void*) mHandle;
+    else
+      return &(((CUDATextureData_t*) mHandle->handle)->surface);
+#endif
+  }
+
+  void* memory::textureArg2() const {
     return (void*) ((mHandle->textureInfo).arg);
-  }
-
-  device_v* memory::getOccaDeviceHandle(){
-    return mHandle->dHandle;
-  }
-
-  memory_v* memory::getOccaMemoryHandle(){
-    return mHandle;
   }
 
   void* memory::getMappedPointer(){

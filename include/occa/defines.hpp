@@ -224,27 +224,17 @@
 #define OCCA_KERNEL_ARG_CONSTRUCTOR(TYPE)         \
   template <>                                     \
   inline kernelArg::kernelArg(const TYPE &arg_){  \
-    dHandle = NULL;                               \
-    mHandle = NULL;                               \
-                                                  \
-    arg.TYPE##_ = arg_;                           \
-    size        = sizeof(TYPE);                   \
-                                                  \
-    pointer    = false;                           \
-    hasTwoArgs = false;                           \
+    argc                 = 1;                     \
+    args[0].data.TYPE##_ = arg_;                  \
+    args[0].size         = sizeof(TYPE);          \
   }
 
 #define OCCA_KERNEL_ARG_CONSTRUCTOR_ALIAS(TYPE, ALIAS)  \
   template <>                                           \
   inline kernelArg::kernelArg(const TYPE &arg_){        \
-    dHandle = NULL;                                     \
-    mHandle = NULL;                                     \
-                                                        \
-    arg.ALIAS##_ = arg_;                                \
-    size         = sizeof(TYPE);                        \
-                                                        \
-    pointer    = false;                                 \
-    hasTwoArgs = false;                                 \
+    argc                  = 1;                          \
+    args[0].data.ALIAS##_ = arg_;                       \
+    args[0].size          = sizeof(TYPE);               \
   }
 
 #define OCCA_EXTRACT_DATA(MODE, CLASS)                          \

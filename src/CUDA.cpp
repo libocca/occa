@@ -495,8 +495,11 @@ namespace occa {
     dHandle = NULL;
     size    = 0;
 
+    textureInfo.arg = NULL;
+
     textureInfo.dim = 1;
-    textureInfo.w   = textureInfo.h = textureInfo.d = 0;
+
+    textureInfo.w  = textureInfo.h = textureInfo.d = 0;
   }
 
   template <>
@@ -515,7 +518,9 @@ namespace occa {
     dHandle = m.dHandle;
     size    = m.size;
 
-    textureInfo.dim  = m.textureInfo.dim;
+    textureInfo.arg = m.textureInfo.arg;
+
+    textureInfo.dim = m.textureInfo.dim;
 
     textureInfo.w = m.textureInfo.w;
     textureInfo.h = m.textureInfo.h;

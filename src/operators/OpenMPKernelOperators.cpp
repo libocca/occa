@@ -11,11 +11,22 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[1] = {&arg0};
+
+    for(int i = 0; i < 1; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -31,12 +42,22 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[2] = {&arg0,  &arg1};
+
+    for(int i = 0; i < 2; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -52,13 +73,22 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[3] = {&arg0,  &arg1,  &arg2};
+
+    for(int i = 0; i < 3; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -75,14 +105,23 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[4] = {&arg0,  &arg1,  &arg2, 
+                      &arg3};
+
+    for(int i = 0; i < 4; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -99,15 +138,23 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[5] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4};
+
+    for(int i = 0; i < 5; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -124,16 +171,23 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[6] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5};
+
+    for(int i = 0; i < 6; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -151,17 +205,24 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[7] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6};
+
+    for(int i = 0; i < 7; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -179,18 +240,24 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[8] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7};
+
+    for(int i = 0; i < 8; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -208,19 +275,24 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[9] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8};
+
+    for(int i = 0; i < 9; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -239,20 +311,25 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[10] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9};
+
+    for(int i = 0; i < 10; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -271,21 +348,25 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[11] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10};
+
+    for(int i = 0; i < 11; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -304,22 +385,25 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[12] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11};
+
+    for(int i = 0; i < 12; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -339,23 +423,26 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[13] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12};
+
+    for(int i = 0; i < 13; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -375,24 +462,26 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[14] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13};
+
+    for(int i = 0; i < 14; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -412,25 +501,26 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[15] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14};
+
+    for(int i = 0; i < 15; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -451,26 +541,27 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[16] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15};
+
+    for(int i = 0; i < 16; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -491,27 +582,27 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[17] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16};
+
+    for(int i = 0; i < 17; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -532,28 +623,27 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[18] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17};
+
+    for(int i = 0; i < 18; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -575,29 +665,28 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[19] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18};
+
+    for(int i = 0; i < 19; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -619,30 +708,28 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[20] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19};
+
+    for(int i = 0; i < 20; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -664,31 +751,28 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[21] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20};
+
+    for(int i = 0; i < 21; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -711,32 +795,29 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[22] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21};
+
+    for(int i = 0; i < 22; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -759,33 +840,29 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[23] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22};
+
+    for(int i = 0; i < 23; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -808,34 +885,29 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[24] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23};
+
+    for(int i = 0; i < 24; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -859,35 +931,30 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[25] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24};
+
+    for(int i = 0; i < 25; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -911,36 +978,30 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[26] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25};
+
+    for(int i = 0; i < 26; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -964,37 +1025,30 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[27] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26};
+
+    for(int i = 0; i < 27; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1019,38 +1073,31 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[28] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27};
+
+    for(int i = 0; i < 28; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1075,39 +1122,31 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[29] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28};
+
+    for(int i = 0; i < 29; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1132,40 +1171,31 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[30] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29};
+
+    for(int i = 0; i < 30; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1191,41 +1221,32 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[31] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30};
+
+    for(int i = 0; i < 31; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1251,42 +1272,32 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[32] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31};
+
+    for(int i = 0; i < 32; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1312,43 +1323,32 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[33] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32};
+
+    for(int i = 0; i < 33; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1375,44 +1375,33 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[34] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33};
+
+    for(int i = 0; i < 34; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1439,45 +1428,33 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[35] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34};
+
+    for(int i = 0; i < 35; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1504,46 +1481,33 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[36] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35};
+
+    for(int i = 0; i < 36; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1571,47 +1535,34 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[37] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36};
+
+    for(int i = 0; i < 37; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1639,48 +1590,34 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[38] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37};
+
+    for(int i = 0; i < 38; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1708,49 +1645,34 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[39] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38};
+
+    for(int i = 0; i < 39; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1779,50 +1701,35 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[40] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39};
+
+    for(int i = 0; i < 40; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1851,51 +1758,35 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[41] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40};
+
+    for(int i = 0; i < 41; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1924,52 +1815,35 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[42] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41};
+
+    for(int i = 0; i < 42; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -1999,53 +1873,36 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[43] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42};
+
+    for(int i = 0; i < 43; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2075,54 +1932,36 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[44] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43};
+
+    for(int i = 0; i < 44; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2152,55 +1991,36 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[45] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43,  &arg44};
+
+    for(int i = 0; i < 45; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data(),
-              arg44.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2231,56 +2051,37 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[46] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43,  &arg44, 
+                      &arg45};
+
+    for(int i = 0; i < 46; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data(),
-              arg44.data(),
-              arg45.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2311,57 +2112,37 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[47] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43,  &arg44, 
+                      &arg45,  &arg46};
+
+    for(int i = 0; i < 47; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data(),
-              arg44.data(),
-              arg45.data(),
-              arg46.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2392,58 +2173,37 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[48] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43,  &arg44, 
+                      &arg45,  &arg46,  &arg47};
+
+    for(int i = 0; i < 48; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data(),
-              arg44.data(),
-              arg45.data(),
-              arg46.data(),
-              arg47.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2475,59 +2235,38 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[49] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43,  &arg44, 
+                      &arg45,  &arg46,  &arg47, 
+                      &arg48};
+
+    for(int i = 0; i < 49; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data(),
-              arg44.data(),
-              arg45.data(),
-              arg46.data(),
-              arg47.data(),
-              arg48.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }
 
   template <>
@@ -2559,58 +2298,36 @@
     occaKernelArgs[4] = inner.y;
     occaKernelArgs[5] = inner.x;
 
+    int argc = 0;
+
+    const kernelArg *args[50] = {&arg0,  &arg1,  &arg2, 
+                      &arg3,  &arg4,  &arg5, 
+                      &arg6,  &arg7,  &arg8, 
+                      &arg9,  &arg10,  &arg11, 
+                      &arg12,  &arg13,  &arg14, 
+                      &arg15,  &arg16,  &arg17, 
+                      &arg18,  &arg19,  &arg20, 
+                      &arg21,  &arg22,  &arg23, 
+                      &arg24,  &arg25,  &arg26, 
+                      &arg27,  &arg28,  &arg29, 
+                      &arg30,  &arg31,  &arg32, 
+                      &arg33,  &arg34,  &arg35, 
+                      &arg36,  &arg37,  &arg38, 
+                      &arg39,  &arg40,  &arg41, 
+                      &arg42,  &arg43,  &arg44, 
+                      &arg45,  &arg46,  &arg47, 
+                      &arg48,  &arg49};
+
+    for(int i = 0; i < 50; ++i){
+      for(int j = 0; j < args[i]->argc; ++j){
+        data_.vArgs[argc++] = args[i]->args[j].ptr();
+      }
+    }
+
     int occaInnerId0 = 0, occaInnerId1 = 0, occaInnerId2 = 0;
 
-    tmpKernel(occaKernelArgs,
-              occaInnerId0, occaInnerId1, occaInnerId2,
-              arg0.data(),
-              arg1.data(),
-              arg2.data(),
-              arg3.data(),
-              arg4.data(),
-              arg5.data(),
-              arg6.data(),
-              arg7.data(),
-              arg8.data(),
-              arg9.data(),
-              arg10.data(),
-              arg11.data(),
-              arg12.data(),
-              arg13.data(),
-              arg14.data(),
-              arg15.data(),
-              arg16.data(),
-              arg17.data(),
-              arg18.data(),
-              arg19.data(),
-              arg20.data(),
-              arg21.data(),
-              arg22.data(),
-              arg23.data(),
-              arg24.data(),
-              arg25.data(),
-              arg26.data(),
-              arg27.data(),
-              arg28.data(),
-              arg29.data(),
-              arg30.data(),
-              arg31.data(),
-              arg32.data(),
-              arg33.data(),
-              arg34.data(),
-              arg35.data(),
-              arg36.data(),
-              arg37.data(),
-              arg38.data(),
-              arg39.data(),
-              arg40.data(),
-              arg41.data(),
-              arg42.data(),
-              arg43.data(),
-              arg44.data(),
-              arg45.data(),
-              arg46.data(),
-              arg47.data(),
-              arg48.data(),
-              arg49.data());
+    cpu::runFunction(tmpKernel,
+                     occaKernelArgs,
+                     occaInnerId0, occaInnerId1, occaInnerId2,
+                     argc, data_.vArgs);
   }

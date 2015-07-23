@@ -127,11 +127,11 @@ endif
 endif
 
 clean:
-	rm -rf $(occaOPath)/*;
-	rm  -f $(occaBPath)/*;
-	rm  -f ${OCCA_DIR}/scripts/main;
-	rm  -f $(occaLPath)/libocca.so;
-	rm  -f $(occaLPath)/*.mod;
+	rm -rf $(occaOPath)/*
+	rm -rf $(occaBPath)/*
+	rm  -f ${OCCA_DIR}/scripts/main
+	rm  -f $(occaLPath)/libocca.so
+	rm  -f $(occaLPath)/*.mod
 	rm  -f $(occaLPath)/_C_occa.so
 endif
 #=================================================

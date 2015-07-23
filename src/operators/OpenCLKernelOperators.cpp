@@ -5,20 +5,18 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[1] = {&arg0};
+    const kernelArg *args[1] = {&arg0};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 1; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -38,20 +36,18 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[2] = {&arg0, &arg1};
+    const kernelArg *args[2] = {&arg0, &arg1};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 2; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -71,20 +67,18 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[3] = {&arg0, &arg1, &arg2};
+    const kernelArg *args[3] = {&arg0, &arg1, &arg2};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 3; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -105,20 +99,18 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[4] = {&arg0, &arg1, &arg2, &arg3};
+    const kernelArg *args[4] = {&arg0, &arg1, &arg2, &arg3};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 4; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -139,20 +131,18 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[5] = {&arg0, &arg1, &arg2, &arg3, &arg4};
+    const kernelArg *args[5] = {&arg0, &arg1, &arg2, &arg3, &arg4};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 5; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -173,21 +163,19 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[6] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                  &arg5};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 6; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -209,21 +197,19 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[7] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[7] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                  &arg5, &arg6};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 7; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -245,21 +231,19 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[8] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[8] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                  &arg5, &arg6, &arg7};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 8; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -281,21 +265,19 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[9] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[9] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                  &arg5, &arg6, &arg7, &arg8};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 9; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -318,21 +300,19 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[10] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[10] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 10; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -355,22 +335,20 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[11] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[11] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 11; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -393,22 +371,20 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[12] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[12] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 12; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -432,22 +408,20 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[13] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[13] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 13; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -471,22 +445,20 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[14] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[14] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 14; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -510,22 +482,20 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[15] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[15] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 15; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -550,23 +520,21 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[16] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[16] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 16; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -591,23 +559,21 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[17] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[17] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 17; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -632,23 +598,21 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[18] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[18] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 18; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -674,23 +638,21 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[19] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[19] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 19; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -716,23 +678,21 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[20] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[20] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 20; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -758,24 +718,22 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[21] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[21] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
                                   &arg20};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 21; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -802,24 +760,22 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[22] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[22] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
                                   &arg20, &arg21};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 22; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -846,24 +802,22 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[23] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[23] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
                                   &arg20, &arg21, &arg22};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 23; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -890,24 +844,22 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[24] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[24] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
                                   &arg20, &arg21, &arg22, &arg23};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 24; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -935,24 +887,22 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[25] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[25] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
                                   &arg20, &arg21, &arg22, &arg23, &arg24};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 25; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -980,9 +930,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[26] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[26] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -990,15 +940,13 @@
                                   &arg25};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 26; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1026,9 +974,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[27] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[27] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1036,15 +984,13 @@
                                   &arg25, &arg26};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 27; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1073,9 +1019,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[28] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[28] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1083,15 +1029,13 @@
                                   &arg25, &arg26, &arg27};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 28; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1120,9 +1064,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[29] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[29] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1130,15 +1074,13 @@
                                   &arg25, &arg26, &arg27, &arg28};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 29; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1167,9 +1109,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[30] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[30] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1177,15 +1119,13 @@
                                   &arg25, &arg26, &arg27, &arg28, &arg29};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 30; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1215,9 +1155,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[31] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[31] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1226,15 +1166,13 @@
                                   &arg30};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 31; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1264,9 +1202,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[32] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[32] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1275,15 +1213,13 @@
                                   &arg30, &arg31};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 32; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1313,9 +1249,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[33] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[33] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1324,15 +1260,13 @@
                                   &arg30, &arg31, &arg32};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 33; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1363,9 +1297,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[34] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[34] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1374,15 +1308,13 @@
                                   &arg30, &arg31, &arg32, &arg33};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 34; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1413,9 +1345,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[35] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[35] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1424,15 +1356,13 @@
                                   &arg30, &arg31, &arg32, &arg33, &arg34};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 35; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1463,9 +1393,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[36] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[36] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1475,15 +1405,13 @@
                                   &arg35};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 36; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1515,9 +1443,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[37] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[37] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1527,15 +1455,13 @@
                                   &arg35, &arg36};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 37; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1567,9 +1493,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[38] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[38] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1579,15 +1505,13 @@
                                   &arg35, &arg36, &arg37};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 38; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1619,9 +1543,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[39] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[39] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1631,15 +1555,13 @@
                                   &arg35, &arg36, &arg37, &arg38};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 39; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1672,9 +1594,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[40] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[40] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1684,15 +1606,13 @@
                                   &arg35, &arg36, &arg37, &arg38, &arg39};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 40; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1725,9 +1645,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[41] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[41] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1738,15 +1658,13 @@
                                   &arg40};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 41; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1779,9 +1697,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[42] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[42] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1792,15 +1710,13 @@
                                   &arg40, &arg41};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 42; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1834,9 +1750,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[43] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[43] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1847,15 +1763,13 @@
                                   &arg40, &arg41, &arg42};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 43; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1889,9 +1803,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[44] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[44] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1902,15 +1816,13 @@
                                   &arg40, &arg41, &arg42, &arg43};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 44; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -1944,9 +1856,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[45] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[45] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -1957,15 +1869,13 @@
                                   &arg40, &arg41, &arg42, &arg43, &arg44};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 45; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -2000,9 +1910,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[46] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[46] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -2014,15 +1924,13 @@
                                   &arg45};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 46; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -2057,9 +1965,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[47] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[47] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -2071,15 +1979,13 @@
                                   &arg45, &arg46};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 47; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -2114,9 +2020,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[48] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[48] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -2128,15 +2034,13 @@
                                   &arg45, &arg46, &arg47};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 48; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -2172,9 +2076,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[49] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[49] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -2186,15 +2090,13 @@
                                   &arg45, &arg46, &arg47, &arg48};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 49; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
@@ -2230,9 +2132,9 @@
 
     occa::dim fullOuter = outer*inner;
 
-    int argPos = 0;
+    int argc = 0;
 
-    const kernelArg *kArgs[50] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
+    const kernelArg *args[50] = {&arg0, &arg1, &arg2, &arg3, &arg4, 
                                   &arg5, &arg6, &arg7, &arg8, &arg9, 
                                   &arg10, &arg11, &arg12, &arg13, &arg14, 
                                   &arg15, &arg16, &arg17, &arg18, &arg19, 
@@ -2244,15 +2146,13 @@
                                   &arg45, &arg46, &arg47, &arg48, &arg49};
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [0]",
-                  clSetKernelArg(kernel_, argPos++, sizeof(void*), NULL));
+                  clSetKernelArg(kernel_, argc++, sizeof(void*), NULL));
 
     for(int i = 0; i < 50; ++i){
-      OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
-                    clSetKernelArg(kernel_, argPos++, kArgs[i]->size, kArgs[i]->data()));
-
-      if(kArgs[i]->hasTwoArgs)
-        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Texture Kernel Argument for Argument [" << (i + 1) << "]",
-                      clSetKernelArg(kernel_, argPos++, sizeof(void*), kArgs[i]->arg2.void_));
+      for(int j = 0; j < args[i]->argc; ++j){
+        OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Setting Kernel Argument [" << (i + 1) << "]",
+                      clSetKernelArg(kernel_, argc++, args[i]->args[j].size, args[i]->args[j].ptr()));
+      }
     }
 
     OCCA_CL_CHECK("Kernel (" + metaInfo.name + ") : Kernel Run",
