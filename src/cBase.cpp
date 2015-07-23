@@ -194,7 +194,7 @@ extern "C" {
     type->type             = OCCA_TYPE_STRUCT;
     type->value.size       = bytes;
     type->value.data.void_ = value;
-    type->value.info      |= occa::kArgInfo::usePointer;
+    type->value.info       = occa::kArgInfo::usePointer;
 
     return (occaType) type;
   }
@@ -205,7 +205,7 @@ extern "C" {
     type->type             = OCCA_TYPE_STRING;
     type->value.size       = sizeof(char*);
     type->value.data.void_ = const_cast<char*>(value);
-    type->value.info      |= occa::kArgInfo::usePointer;
+    type->value.info       = occa::kArgInfo::usePointer;
 
     return (occaType) type;
   }

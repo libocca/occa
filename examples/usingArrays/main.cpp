@@ -35,6 +35,8 @@ int main(int argc, char **argv){
   //---[ Testing Kernel ]---------------
   std::cout << "Testing Kernel:\n";
 
+  occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1");
+
   occa::kernel smallTranspose = occa::buildKernel("smallTranspose.okl",
                                                   "smallTranspose");
 

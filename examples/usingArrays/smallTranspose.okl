@@ -4,7 +4,6 @@ kernel void smallTranspose(const int entries,
   for(int j = 0; j < entries; ++j; outer0){
     for(int i = 0; i < entries; ++i; inner0){
       if(i < j){
-        printf("(i,j) = (%d,%d)\n", i, j);
         const int Aij = A(i,j);
         A(i,j)        = A(j,i);
         A(j,i)        = Aij;
