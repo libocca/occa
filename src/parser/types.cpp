@@ -1747,28 +1747,34 @@ namespace occa {
           argumentVarInfos[argPos++] = args[i];
 
           if(args[i]->hasAttribute("arrayArg")){
-            varInfo &arrayArg = getArrayArgument(s,
-                                                 *(args[i]),
-                                                 occa::toString(argPos + 1));
+            std::string arrayArgName = "__occaAutoKernelArg";
+            arrayArgName            += occa::toString(argPos + 1);
 
-            argumentVarInfos[argPos++] = &arrayArg;
+            // Don't add if it's already added
+            if((argumentCount <= (i + 1)) ||
+               (args[i + 1]->name != arrayArgName)){
+
+              varInfo &arrayArg = getArrayArgument(s,
+                                                   *(args[i]),
+                                                   arrayArgName);
+
+              argumentVarInfos[argPos++] = &arrayArg;
+            }
           }
         }
 
-        argumentCount += arrayArgs;
+        argumentCount = argPos;
+
         delete [] args;
       }
     }
 
     varInfo& varInfo::getArrayArgument(statement &s,
                                        varInfo &argVar,
-                                       const std::string argPosStr){
+                                       const std::string &arrayArgName){
 
       attribute_t &attr = *(argVar.hasAttribute("arrayArg"));
       varInfo &arrayArg = *(new varInfo());
-
-      // @arrayArg fulfilled its purpose, and now it must die
-      argVar.removeAttribute("arrayArg");
 
       bool usingIdxOrder = false;
 
@@ -1834,8 +1840,7 @@ namespace occa {
       arrayArg.addQualifier("occaConst");
       arrayArg.baseType = s.hasTypeInScope("int" + dims2);
 
-      arrayArg.name  = "__occaAutoKernelArg";
-      arrayArg.name += argPosStr;
+      arrayArg.name = arrayArgName;
 
       // Add argument dims attribute
       std::string dimAttributeStr = "@dim(";

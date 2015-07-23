@@ -427,7 +427,7 @@ namespace occa {
 
       varInfo& getArrayArgument(statement &s,
                                 varInfo &argVar,
-                                const std::string argPosStr);
+                                const std::string &arrayArgName);
 
       void setupAttributes();
 
