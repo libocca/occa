@@ -72,7 +72,7 @@ extern "C" {
 
   typedef union occaStreamTag_t {
     double tagTime;
-    void *otherStuff;
+    void *handle;
   } occaStreamTag;
 
   typedef void* occaDeviceInfo;

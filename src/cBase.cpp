@@ -295,7 +295,9 @@ extern "C" {
     occa::streamTag oldTag = occa::tagStream();
     occaStreamTag newTag;
 
-    ::memcpy(&newTag, &oldTag, sizeof(oldTag));
+    newTag.tagTime = oldTag.tagTime;
+
+    ::memcpy(&(newTag.handle), &(oldTag.handle), sizeof(void*));
 
     return newTag;
   }

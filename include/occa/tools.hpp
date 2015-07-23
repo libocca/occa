@@ -71,7 +71,34 @@ namespace occa {
   }
 
   namespace sys {
+    namespace fileType {
+      static const int none    = 0;
+      static const int file    = (1 << 0);
+      static const int dir     = (1 << 1);
+      static const int symlink = (1 << 2);
+      static const int hidden  = (1 << 3);
+    }
+
+    class fileInfo_t {
+    public:
+      int info;
+      std::string name;
+
+      int fileCount;
+      fileInfo_t *files;
+
+      fileInfo_t();
+      fileInfo_t(const std::string &dir,
+                 const bool recursivelySearching = false);
+
+      void load(const std::string &dir,
+                const bool recursivelySearching = false);
+
+      void free();
+    };
+
     std::string echo(const std::string &var);
+    std::string expandEnvVariables(const std::string &str);
 
     void rmdir(const std::string &dir);
     int mkdir(const std::string &dir);

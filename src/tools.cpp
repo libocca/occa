@@ -106,6 +106,39 @@ namespace occa {
   }
 
   namespace sys {
+    fileInfo_t::fileInfo_t() :
+      info(fileType::none),
+      name(),
+
+      fileCount(0),
+      files(NULL) {}
+
+    fileInfo_t::fileInfo_t(const std::string &dir,
+                           const bool recursivelySearching){
+      load(dir, recursivelySearching);
+    }
+
+    void fileInfo_t::load(const std::string &dir,
+                          const bool recursivelySearching){
+
+
+    }
+
+    void fileInfo_t::free(){
+      info = fileType::none;
+      name = "";
+
+      if(0 < fileCount){
+        for(int i = 0; i < fileCount; ++i)
+          files[i].free();
+
+        fileCount = 0;
+
+        delete [] files;
+        files = NULL;
+      }
+    }
+
     std::string echo(const std::string &var){
       char *c_var = getenv(var.c_str());
 
@@ -113,6 +146,25 @@ namespace occa {
         return std::string(c_var);
 
       return "";
+    }
+
+    std::string expandEnvVariables(const std::string &str){
+      const char *c = str.c_str();
+      std::string ret;
+
+      while(*c != '\0'){
+        const char C = c[0];
+
+        if(C == '$'){
+          if(c[1] == '{'){
+
+          }
+        }
+
+        ++c;
+      }
+
+      return ret;
     }
 
     void rmdir(const std::string &dir){
