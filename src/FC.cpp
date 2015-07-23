@@ -875,8 +875,12 @@ extern "C" {
 
 
   //---[ Memory ]-----------------------
-  const char* OCCAMEMORYMODE_FC(occaMemory memory){ //[-]
-    return occaMemoryMode(memory);
+  const char* OCCAMEMORYMODE_FC(occaMemory *memory){ //[-]
+    return occaMemoryMode(*memory);
+  }
+
+  const void* OCCAMEMORYGETMAPPEDPOINTER_FC(occaMemory *memory){
+    return occaMemoryGetMappedPointer(*memory);
   }
 
   void OCCACOPYMEMTOMEM_FC(occaMemory *dest, occaMemory *src,

@@ -1465,6 +1465,21 @@ namespace occa {
         baseType       = varHasType->baseType;
       }
 
+      if((baseType             != NULL) &&
+         (baseType->typedefVar != NULL)){
+
+        varInfo &tdVar = *(baseType->typedefVar);
+
+        attributeMapIterator it = tdVar.attributeMap.begin();
+
+        while(it != tdVar.attributeMap.end()){
+          if(!hasAttribute(it->first))
+            attributeMap[it->first] = it->second;
+
+          ++it;
+        }
+      }
+
       leafPos = rightQualifiers.loadFrom(s, expRoot, leafPos);
 
       for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
@@ -1752,6 +1767,9 @@ namespace occa {
       attribute_t &attr = *(argVar.hasAttribute("arrayArg"));
       varInfo &arrayArg = *(new varInfo());
 
+      // @arrayArg fulfilled its purpose, and now it must die
+      argVar.removeAttribute("arrayArg");
+
       bool usingIdxOrder = false;
 
       OCCA_CHECK((0 < attr.argCount) &&
@@ -1781,7 +1799,11 @@ namespace occa {
       }
 
       expNode &dimsArg = *dimsArg_;
-      dimsArg.changeExpTypes();
+
+      if(!dimsArg.isOrganized()){
+        dimsArg.print();
+        dimsArg.changeExpTypes();
+      }
 
       typeHolder thDims;
 
@@ -2200,6 +2222,13 @@ namespace occa {
         return NULL;
 
       return (it->second);
+    }
+
+    void varInfo::removeAttribute(const std::string &attr){
+      attributeMapIterator it = attributeMap.find(attr);
+
+      if(it != attributeMap.end())
+        attributeMap.erase(it);
     }
 
     int varInfo::leftQualifierCount(){

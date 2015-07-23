@@ -465,6 +465,7 @@ namespace occa {
 
       //---[ Variable Info ]------------
       attribute_t* hasAttribute(const std::string &attr);
+      void removeAttribute(const std::string &attr);
 
       int leftQualifierCount();
       int rightQualifierCount();

@@ -1129,19 +1129,22 @@ namespace occa {
 
     bool expNode::isOrganized(){
       if(needsExpChange())
-        return true;
+        return false;
 
       for(int i = 0; i < leafCount; ++i){
         if(leaves[i]->needsExpChange())
-          return true;
+          return false;
       }
 
-      return false;
+      return true;
     }
 
     bool expNode::needsExpChange(){
-      if(info == expType::root)
+      if((info == expType::root) ||
+         (info & expType::hasInfo)){
+
         return false;
+      }
 
       return (info & expType::firstPass);
     }

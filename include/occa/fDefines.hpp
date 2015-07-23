@@ -381,6 +381,8 @@
 //---[ Memory ]-------------------------
 #define  OCCAMEMORYMODE_FC                                 OCCA_F2C_GLOBAL_(occamemorymode_fc,\
                                                                             OCCAMEMORYMODE_FC)
+#define  OCCAMEMORYGETMAPPEDPOINTER_FC                     OCCA_F2C_GLOBAL_(occamemorygetmappedpointer_fc,\
+                                                                            OCCAMEMORYGETMAPPEDPOINTER_FC)
 #define  OCCACOPYMEMTOMEM_FC                               OCCA_F2C_GLOBAL_(occacopymemtomem_fc,\
                                                                             OCCACOPYMEMTOMEM_FC)
 #define  OCCACOPYMEMTOMEMAUTO_FC                           OCCA_F2C_GLOBAL_(occacopymemtomemauto_fc,\
