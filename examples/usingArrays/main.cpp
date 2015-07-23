@@ -8,6 +8,8 @@ template <class TM, const int TMi>
 void printMatrix(occa::array<TM,TMi> &a);
 
 int main(int argc, char **argv){
+  // occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled");
+
   //---[ Testing API ]------------------
   std::cout << "Testing API:\n";
 
@@ -34,8 +36,6 @@ int main(int argc, char **argv){
 
   //---[ Testing Kernel ]---------------
   std::cout << "Testing Kernel:\n";
-
-  occa::setDevice("mode = OpenCL, platformID = 0, deviceID = 1");
 
   occa::kernel smallTranspose = occa::buildKernel("smallTranspose.okl",
                                                   "smallTranspose");

@@ -974,6 +974,7 @@ namespace occa {
     memory& operator = (const memory &m);
 
     memory_v* getMHandle();
+    device_v* getDHandle();
 
     const std::string& mode();
 
@@ -1014,9 +1015,6 @@ namespace occa {
 
     void* textureArg1() const;
     void* textureArg2() const;
-
-    device_v* getOccaDeviceHandle();
-    memory_v* getOccaMemoryHandle();
 
     void* getMappedPointer();
     void* getMemoryHandle();

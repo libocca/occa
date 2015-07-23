@@ -74,7 +74,7 @@ namespace occa {
   occa::device uvaPtrInfo_t::getDevice(){
     occa::memory m(mem);
 
-    return occa::device(m.getOccaDeviceHandle());
+    return occa::device(m.getDHandle());
   }
 
   occa::memory uvaPtrInfo_t::getMemory(){
@@ -190,7 +190,7 @@ namespace occa {
     if(!m.uvaIsDirty())
       return;
 
-    removeFromDirtyMap(m.getOccaMemoryHandle());
+    removeFromDirtyMap(m.getMHandle());
   }
 
   void removeFromDirtyMap(memory_v *mem){

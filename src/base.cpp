@@ -600,6 +600,10 @@ namespace occa {
     return mHandle;
   }
 
+  device_v* memory::getDHandle(){
+    return mHandle->dHandle;
+  }
+
   const std::string& memory::mode(){
     return mHandle->strMode;
   }
@@ -617,14 +621,6 @@ namespace occa {
 
   void* memory::textureArg2() const {
     return (void*) ((mHandle->textureInfo).arg);
-  }
-
-  device_v* memory::getOccaDeviceHandle(){
-    return mHandle->dHandle;
-  }
-
-  memory_v* memory::getOccaMemoryHandle(){
-    return mHandle;
   }
 
   void* memory::getMappedPointer(){

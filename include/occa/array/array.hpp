@@ -62,10 +62,10 @@ namespace occa {
 
       ret.argc = 2;
 
-      ret.args[0].dHandle = device.getDHandle();
       ret.args[0].mHandle = memory.getMHandle();
+      ret.args[0].dHandle = memory.getDHandle();
 
-      ret.args[0].data.void_ = data_;
+      ret.args[0].data.void_ = memory.getMemoryHandle();
       ret.args[0].size       = sizeof(void*);
       ret.args[0].info       = kArgInfo::usePointer;
 
