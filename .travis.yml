@@ -23,7 +23,7 @@ script:
   - cd $OCCA_DIR/examples/reduction/
   - make -j
   - ./main
-  - cd $OCCA_DIR/examples/testingArrays/
+  - cd $OCCA_DIR/examples/usingArrays/
   - make -j
   - ./main
 
