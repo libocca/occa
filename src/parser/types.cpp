@@ -1773,38 +1773,66 @@ namespace occa {
                                        varInfo &argVar,
                                        const std::string &arrayArgName){
 
-      attribute_t &attr = *(argVar.hasAttribute("arrayArg"));
+      attribute_t &argDimAttr = *(argVar.hasAttribute("dim"));
+
       varInfo &arrayArg = *(new varInfo());
+      const int dims    = argDimAttr.argCount;
 
-      bool usingIdxOrder = false;
+      const std::string dims2 = occa::toString(maxBase2(dims));
 
-      OCCA_CHECK((0 < attr.argCount) &&
-                 (attr.argCount < 3),
-                 "@arrayArg can only have two arguments:\n"
-                 "  dims = X, and an optional useIdxOrder");
+      // Setup new argument
+      arrayArg.addQualifier("occaConst");
+      arrayArg.baseType = s.hasTypeInScope("int" + dims2);
 
-      expNode &arg1     = attr[0];
-      expNode *dimsArg_ = &arg1;
+      arrayArg.name = arrayArgName;
 
-      if(attr.argCount == 2){
-        expNode &arg2 = attr[1];
+      // Auto-generated from arrayArg, might need to parse this ...
+      for(int i = 0; i < dims; ++i){
+        std::string &dimName = argDimAttr[i].value;
 
-        const bool arg1IsUIO = (arg1.value == "useIdxOrder");
-        const bool arg2IsUIO = (arg2.value == "useIdxOrder");
+        dimName = arrayArgName;
+        dimName += '.';
 
-        OCCA_CHECK(arg1IsUIO || arg2IsUIO,
-                   "@arrayArg can only have two arguments:\n"
-                   "  dims = X, and an optional useIdxOrder");
-
-        usingIdxOrder = true;
-
-        ignoreResult(usingIdxOrder);
-
-        if(arg1IsUIO)
-          dimsArg_ = &arg2;
+        if(i < 4){
+          dimName += (char) ('w' + ((i + 1) % 4));
+        }
+        else{
+          dimName += 's';
+          dimName += (char) ('0' + i);
+        }
       }
 
-      expNode &dimsArg = *dimsArg_;
+      return arrayArg;
+    }
+
+    void varInfo::setupAttributes(){
+      setupArrayArgAttribute();
+      setupDimAttribute();
+      setupIdxOrderAttribute();
+    }
+
+    void varInfo::setupDimAttribute(){
+      attributeMapIterator it = attributeMap.find("dim");
+
+      if(it == attributeMap.end())
+        return;
+
+      dimAttr = *(it->second);
+    }
+
+    void varInfo::setupArrayArgAttribute(){
+      attributeMapIterator it = attributeMap.find("arrayArg");
+
+      if(it == attributeMap.end())
+        return;
+
+      attribute_t &attr = *(it->second);
+
+      OCCA_CHECK(attr.argCount == 1,
+                 "@arrayArg has only one argument:\n"
+                 "  dims = X");
+
+      expNode &dimsArg = attr[0];
 
       if(!dimsArg.isOrganized()){
         dimsArg.print();
@@ -1834,116 +1862,94 @@ namespace occa {
       OCCA_CHECK((0 < dims) && (dims < 7),
                  "@arrayArg only supports dims [1-6]");
 
-      const std::string dims2 = occa::toString(maxBase2(dims));
-
-      // Setup new argument
-      arrayArg.addQualifier("occaConst");
-      arrayArg.baseType = s.hasTypeInScope("int" + dims2);
-
-      arrayArg.name = arrayArgName;
-
       // Add argument dims attribute
-      std::string dimAttributeStr = "@dim(";
+      std::string dimAttrStr = "@dim(";
 
       for(int i = 0; i < dims; ++i){
         if(0 < i)
-          dimAttributeStr += ',';
+          dimAttrStr += ',';
 
-        dimAttributeStr += arrayArg.name;
-        dimAttributeStr += '.';
-
-        if(i < 4){
-          dimAttributeStr += (char) ('w' + ((i + 1) % 4));
-        }
-        else{
-          dimAttributeStr += 's';
-          dimAttributeStr += (char) ('0' + i);
-        }
+        // Dummy args, the function will fill up the
+        //   proper auto-generated dims
+        dimAttrStr += '0';
       }
 
-      dimAttributeStr += ")";
+      dimAttrStr += ")";
 
-      expNode attrNode = s.createPlainExpNodeFrom(dimAttributeStr);
+      expNode attrNode = createExpNodeFrom(dimAttrStr);
 
-      updateAttributeMap(argVar.attributeMap,
+      updateAttributeMap(attributeMap,
                          attrNode,
                          0);
 
       attrNode.free();
-
-      // Setup @dim
-      argVar.setupAttributes();
-
-      return arrayArg;
     }
 
-    void varInfo::setupAttributes(){
-      attributeMapIterator it = attributeMap.find("dim");
+    void varInfo::setupIdxOrderAttribute(){
+      attributeMapIterator it = attributeMap.find("idxOrder");
 
-      if(it != attributeMap.end())
-        dimAttr = *(it->second);
+      if(it == attributeMap.end())
+        return;
 
-      it = attributeMap.find("idxOrder");
+      attribute_t &idxOrderAttr = *(it->second);
 
-      if(it != attributeMap.end()){
-        attribute_t &idxOrderAttr = *(it->second);
+      OCCA_CHECK(idxOrderAttr.argCount == dimAttr.argCount,
+                 "Variable [" << *this << "] has attributes dim(...) and idxOrder(...)"
+                 " with different dimensions (dim: " << dimAttr.argCount
+                 << ", idx: " << idxOrderAttr.argCount << ')');
 
-        OCCA_CHECK(idxOrderAttr.argCount == dimAttr.argCount,
-                   "Variable [" << *this << "] has attributes dim(...) and idxOrder(...) with different dimensions");
+      const int dims = dimAttr.argCount;
 
-        const int dims = dimAttr.argCount;
+      bool *idxFound = new bool[dims];
 
-        bool *idxFound = new bool[dims];
+      idxOrdering.clear();
 
-        idxOrdering.clear();
+      for(int i = 0; i < dims; ++i){
+        idxFound[i] = false;
+        idxOrdering.push_back(0);
+      }
 
-        for(int i = 0; i < dims; ++i){
-          idxFound[i] = false;
-          idxOrdering.push_back(0);
+      for(int i = 0; i < dims; ++i){
+        typeHolder th;
+
+        bool foundIdx = false;
+
+        if((idxOrderAttr[i].leafCount    == 0) &&
+           (idxOrderAttr[i].value.size() == 1)){
+
+          const char c = idxOrderAttr[i].value[0];
+
+          if(('w' <= c) && (c <= 'z')){
+            th = (int) (((c - 'w') + 3) % 4); // [w,x,y,z] -> [x,y,z,w]
+            foundIdx = true;
+          }
+          else if(('W' <= c) && (c <= 'Z')){
+            th = (int) (((c - 'W') + 3) % 4); // [W,X,Y,Z] -> [X,Y,Z,W]
+            foundIdx = true;
+          }
         }
 
-        for(int i = 0; i < dims; ++i){
-          typeHolder th;
+        if(!foundIdx){
+          OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
+                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time");
 
-          bool foundIdx = false;
+          th = idxOrderAttr[i].calculateValue();
 
-          if((idxOrderAttr[i].leafCount    == 0) &&
-             (idxOrderAttr[i].value.size() == 1)){
-
-            const char c = idxOrderAttr[i].value[0];
-
-            if(('w' <= c) && (c <= 'z')){
-              th = (int) (((c - 'w') + 3) % 4); // [w,x,y,z] -> [x,y,z,w]
-              foundIdx = true;
-            }
-            else if(('W' <= c) && (c <= 'Z')){
-              th = (int) (((c - 'W') + 3) % 4); // [W,X,Y,Z] -> [X,Y,Z,W]
-              foundIdx = true;
-            }
-          }
-
-          if(!foundIdx){
-            OCCA_CHECK(idxOrderAttr[i].valueIsKnown(),
-                       "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with ordering not known at compile time");
-
-            th = idxOrderAttr[i].calculateValue();
-
-            OCCA_CHECK(!th.isAFloat(),
-                       "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering");
-          }
-
-          const int idxOrder = th.to<int>();
-
-          idxOrdering[idxOrder] = i;
-
-          OCCA_CHECK(idxFound[idxOrder] == false,
-                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a repeating index");
-
-          OCCA_CHECK((0 <= idxOrder) && (idxOrder < dims),
-                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with an index [" << idxOrder << "] outside the range [0," << (dims - 1) << "]");
-
-          idxFound[idxOrder] = true;
+          OCCA_CHECK(!th.isAFloat(),
+                     "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a non-integer ordering");
         }
+
+        const int idxOrder = th.to<int>();
+
+        idxOrdering[idxOrder] = i;
+
+        OCCA_CHECK(idxFound[idxOrder] == false,
+                   "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with a repeating index");
+
+        OCCA_CHECK((0 <= idxOrder) && (idxOrder < dims),
+                   "Variable [" << *this << "] has the attribute [" << idxOrderAttr << "] with an index [" << idxOrder << "] outside the range [0," << (dims - 1) << "]");
+
+        idxFound[idxOrder] = true;
       }
     }
 

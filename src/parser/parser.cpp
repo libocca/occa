@@ -2048,7 +2048,7 @@ namespace occa {
         if(argVar.name == "occaKernelInfoArg")
           continue;
 
-        if(argVar.pointerCount){
+        if(argVar.pointerDepth()){
           if(!argVar.hasQualifier("occaPointer"))
             argVar.addQualifier("occaPointer", 0);
         }

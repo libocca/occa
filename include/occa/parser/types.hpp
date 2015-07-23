@@ -431,6 +431,10 @@ namespace occa {
 
       void setupAttributes();
 
+      void setupDimAttribute();
+      void setupArrayArgAttribute();
+      void setupIdxOrderAttribute();
+
       //   ---[ Fortran ]-----
       int loadFromFortran(expNode &expRoot,
                           int leafPos,
