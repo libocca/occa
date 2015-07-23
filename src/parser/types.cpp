@@ -1809,7 +1809,7 @@ namespace occa {
       const std::string dims2 = occa::toString(maxBase2(dims));
 
       // Setup new argument
-      arrayArg.addQualifier("const");
+      arrayArg.addQualifier("occaConst");
       arrayArg.baseType = s.hasTypeInScope("int" + dims2);
 
       arrayArg.name  = "__occaAutoKernelArg";

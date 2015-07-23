@@ -17,8 +17,11 @@ namespace occa {
   class array {
   public:
     occa::device device;
+    occa::memory memory;
+
     TM *data_;
 
+    int ks_[6];     // Passed to the kernel, not a problem for 32-bit
     dim_t s_[6];    // Strides
 
     int idxCount;
@@ -52,6 +55,29 @@ namespace occa {
 
     inline dim_t dim(const int i){
       return s_[i];
+    }
+
+    inline operator occa::kernelArg () {
+      occa::kernelArg ret;
+
+      ret.argc = 2;
+
+      for(int i = 0; i < 2; ++i){
+        occa::kernelArg_t &arg = ret.args[i];
+
+        arg.dHandle = device.getDHandle();
+        arg.mHandle = memory.getMHandle();
+
+        arg.info = kArgInfo::usePointer;
+      }
+
+      ret.args[0].data.void_ = data_;
+      ret.args[0].size       = sizeof(void*);
+
+      ret.args[1].data.void_ = (void*) ks_;
+      ret.args[1].size       = maxBase2(idxCount) * sizeof(int);
+
+      return ret;
     }
 
     std::string idxOrderStr();

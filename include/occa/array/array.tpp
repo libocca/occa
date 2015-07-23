@@ -17,11 +17,14 @@ namespace occa {
   template <class TM2, const int idxType2>
   array<TM,idxType>& array<TM,idxType>::operator = (const array<TM2,idxType2> &v){
     device = v.device;
-    data_  = v.data_;
+    memory = v.memory;
+
+    data_ = v.data_;
 
     initSOrder(v.idxCount);
 
     for(int i = 0; i < idxCount; ++i){
+      ks_[i]     = v.ks_[i];
       s_[i]      = v.s_[i];
       sOrder_[i] = v.sOrder_[i];
     }
@@ -50,6 +53,7 @@ namespace occa {
     data_ = NULL;
 
     for(int i = 0; i < 6; ++i){
+      ks_[i]     = 0;
       s_[i]      = 0;
       sOrder_[i] = i;
     }
@@ -273,6 +277,8 @@ namespace occa {
                            s_[3] * s_[4] * s_[5]);
 
     data_ = (TM*) device.managedAlloc(entries * sizeof(TM));
+
+    memory = occa::memory(data_);
   }
 
   template <class TM, const int idxType>
@@ -518,6 +524,9 @@ namespace occa {
   template <class TM, const int idxType>
   void array<TM,idxType>::updateFS(const int idxCount_){
     idxCount = idxCount_;
+
+    for(int i = 0; i < idxCount; ++i)
+      ks_[i] = s_[i];
 
     if(idxType == occa::useIdxOrder){
       dim_t fs2[7];
