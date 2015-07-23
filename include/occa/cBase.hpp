@@ -70,7 +70,7 @@ extern "C" {
 
   typedef void* occaStream;
 
-  typedef union occaStreamTag_t {
+  typedef struct occaStreamTag_t {
     double tagTime;
     void *handle;
   } occaStreamTag;
