@@ -11,6 +11,13 @@
 #include "occa/fDefines.hpp"
 #include "occa/defines.hpp"
 #include "occa/cBase.hpp"
+#include "occa/base.hpp"
+
+// [-] Keep [int type] as the first entry
+struct occaType_t {
+  int type;
+  occa::kernelArg_t value;
+};
 
 #  ifdef __cplusplus
 extern "C" {
@@ -22,10 +29,14 @@ extern "C" {
   }
 
   void OCCAINT32_FC(occaType *type, int32_t *value){
-    if(sizeof(int) == 4)
+    if(sizeof(int) == 4){
       *type = occaInt(*value);
+
+      printf("type = %p\n", *type);
+    }
     else {
-      OCCA_CHECK(false, "Bad integer size");
+      OCCA_CHECK(false,
+                 "Bad integer size");
     }
   }
 

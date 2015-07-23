@@ -32,11 +32,11 @@
 #  define OCCA_LFUNC
 #else
 #  define OCCA_RFUNC __stdcall
-#  ifdef LIBOCCA_C_EXPORTS
-//#define OCCA_LFUNC __declspec(dllexport)
+#  ifdef OCCA_C_EXPORTS
+//   #define OCCA_LFUNC __declspec(dllexport)
 #    define OCCA_LFUNC
 #  else
-//#define OCCA_LFUNC __declspec(dllimport)
+//   #define OCCA_LFUNC __declspec(dllimport)
 #    define OCCA_LFUNC
 #  endif
 #endif
@@ -64,8 +64,7 @@ extern "C" {
   typedef void* occaDevice;
   typedef void* occaKernel;
 
-  typedef struct occaMemory_t* occaMemory;
-
+  typedef struct occaType_t*         occaMemory;
   typedef struct occaType_t*         occaType;
   typedef struct occaArgumentList_t* occaArgumentList;
 

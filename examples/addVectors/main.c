@@ -41,7 +41,7 @@ int main(int argc, char **argv){
   occaKernelInfoAddDefine(info, "DIMENSION", occaInt(10));
 
   addVectors = occaDeviceBuildKernel(device,
-                                     "addVectors.occa", "addVectors",
+                                     "addVectors.okl", "addVectors",
                                      info);
 
   /* addVectors = occaBuildKernelFromSource(device, */

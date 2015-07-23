@@ -4,6 +4,8 @@
 #include "occa/parser/defines.hpp"
 #include "occa/tools.hpp"
 
+#include <iomanip>
+
 namespace occa {
   //---[ Helper Functions ]-----------------------
   bool stringsAreEqual(const char *cStart, const size_t chars,

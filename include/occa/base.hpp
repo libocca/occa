@@ -369,21 +369,23 @@ namespace occa {
       dHandle = NULL;
       mHandle = NULL;
 
-      data.void_ = NULL;
-      size       = 0;
-      pointer    = false;
+      ::memset(&data, 0, sizeof(data));
+      size    = 0;
+      pointer = false;
     }
 
     inline kernelArg_t& operator = (const kernelArg_t &k){
       dHandle = k.dHandle;
       mHandle = k.mHandle;
 
-      data.void_ = k.data.void_;
-      size       = k.size;
-      pointer    = k.pointer;
+      ::memcpy(&data, &(k.data), sizeof(data));
+      size    = k.size;
+      pointer = k.pointer;
 
       return *this;
     }
+
+    inline ~kernelArg_t(){}
 
     inline void* ptr() const {
       return (pointer ? data.void_ : (void*) &data);
@@ -399,20 +401,12 @@ namespace occa {
       argc = 0;
     }
 
+    inline ~kernelArg(){}
+
     inline kernelArg(kernelArg_t &arg_){
       argc = 1;
 
-      args[0].data.void_ = arg_.data.void_;
-      args[0].size       = arg_.size;
-      args[0].pointer    = arg_.pointer;
-    }
-
-    inline kernelArg(kernelArgData_t arg_, uintptr_t size_, bool pointer_){
-      argc = 1;
-
-      args[0].data.void_ = arg_.void_;
-      args[0].size       = size_;
-      args[0].pointer    = pointer_;
+      args[0] = arg_;
     }
 
     inline kernelArg(const kernelArg &k){
