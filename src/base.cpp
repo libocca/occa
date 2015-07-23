@@ -338,7 +338,8 @@ namespace occa {
     if(isAnOccaDefine(macro))
       ss << "#undef " << macro << "\n";
 
-    ss << "#define " << macro << " ((float) " << std::setprecision(8) << value << ")\n";
+    ss << "#define " << macro << ' '
+       << std::scientific << std::setprecision(8) << value << "f\n";
 
     header = ss.str() + header;
   }
@@ -350,7 +351,8 @@ namespace occa {
     if(isAnOccaDefine(macro))
       ss << "#undef " << macro << "\n";
 
-    ss << "#define " << macro << " ((double) " << std::setprecision(16) << value << ")\n";
+    ss << "#define " << macro << ' '
+       << std::scientific << std::setprecision(16) << value << '\n';
 
     header = ss.str() + header;
   }
