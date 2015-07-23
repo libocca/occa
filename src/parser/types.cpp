@@ -1465,21 +1465,6 @@ namespace occa {
         baseType       = varHasType->baseType;
       }
 
-      if((baseType             != NULL) &&
-         (baseType->typedefVar != NULL)){
-
-        varInfo &tdVar = *(baseType->typedefVar);
-
-        attributeMapIterator it = tdVar.attributeMap.begin();
-
-        while(it != tdVar.attributeMap.end()){
-          if(!hasAttribute(it->first))
-            attributeMap[it->first] = it->second;
-
-          ++it;
-        }
-      }
-
       leafPos = rightQualifiers.loadFrom(s, expRoot, leafPos);
 
       for(int i = 0; i < rightQualifiers.qualifierCount; ++i){
@@ -1812,21 +1797,21 @@ namespace occa {
     }
 
     void varInfo::setupDimAttribute(){
-      attributeMapIterator it = attributeMap.find("dim");
+      attribute_t *attr_ = hasAttribute("dim");
 
-      if(it == attributeMap.end())
+      if(attr_ == NULL)
         return;
 
-      dimAttr = *(it->second);
+      dimAttr = *attr_;
     }
 
     void varInfo::setupArrayArgAttribute(){
-      attributeMapIterator it = attributeMap.find("arrayArg");
+      attribute_t *attr_ = hasAttribute("arrayArg");
 
-      if(it == attributeMap.end())
+      if(attr_ == NULL)
         return;
 
-      attribute_t &attr = *(it->second);
+      attribute_t &attr = *(attr_);
 
       OCCA_CHECK(attr.argCount == 1,
                  "@arrayArg has only one argument:\n"
@@ -1886,12 +1871,12 @@ namespace occa {
     }
 
     void varInfo::setupIdxOrderAttribute(){
-      attributeMapIterator it = attributeMap.find("idxOrder");
+      attribute_t *attr_ = hasAttribute("idxOrder");
 
-      if(it == attributeMap.end())
+      if(attr_ == NULL)
         return;
 
-      attribute_t &idxOrderAttr = *(it->second);
+      attribute_t &idxOrderAttr = *(attr_);
 
       OCCA_CHECK(idxOrderAttr.argCount == dimAttr.argCount,
                  "Variable [" << *this << "] has attributes dim(...) and idxOrder(...)"
@@ -2229,10 +2214,16 @@ namespace occa {
     attribute_t* varInfo::hasAttribute(const std::string &attr){
       attributeMapIterator it = attributeMap.find(attr);
 
-      if(it == attributeMap.end())
-        return NULL;
+      if(it != attributeMap.end())
+        return (it->second);
 
-      return (it->second);
+      if((baseType             != NULL) &&
+         (baseType->typedefVar != NULL)){
+
+        return baseType->typedefVar->hasAttribute(attr);
+      }
+
+      return NULL;
     }
 
     void varInfo::removeAttribute(const std::string &attr){
