@@ -106,37 +106,226 @@ namespace occa {
   }
 
   namespace sys {
-    fileInfo_t::fileInfo_t() :
-      info(fileType::none),
+    dirTree_t::dirTree_t() :
+      info(dirType::none),
       name(),
 
-      fileCount(0),
-      files(NULL) {}
+      dirCount(0),
+      dirs(NULL) {}
 
-    fileInfo_t::fileInfo_t(const std::string &dir,
-                           const bool recursivelySearching){
-      load(dir, recursivelySearching);
+    dirTree_t::dirTree_t(const dirTree_t &dt) :
+      info(dt.info),
+      name(dt.name),
+
+      dirCount(dt.dirCount),
+      dirs(dt.dirs) {}
+
+    dirTree_t& dirTree_t::operator = (const dirTree_t &dt){
+      info = dt.info;
+      name = dt.name;
+
+      dirCount = dt.dirCount;
+      dirs     = dt.dirs;
+
+      return *this;
     }
 
-    void fileInfo_t::load(const std::string &dir,
-                          const bool recursivelySearching){
+    dirTree_t::dirTree_t(const std::string &dir) :
+      info(dirType::none),
+      name(),
 
+      dirCount(0),
+      dirs(NULL) {
 
+      load(dir);
     }
 
-    void fileInfo_t::free(){
-      info = fileType::none;
+    void dirTree_t::load(const std::string &dir_){
+      std::string dir = expandEnvVariables(dir_);
+      strip(dir);
+      dir = getFilename(dir);
+
+      stringVector_t path;
+      sys::absolutePathVec(dir, path);
+
+      // Root directory doesn't have a name
+      info = dirType::dir;
       name = "";
 
-      if(0 < fileCount){
-        for(int i = 0; i < fileCount; ++i)
-          files[i].free();
+      load("/", path, 0);
+    }
 
-        fileCount = 0;
+    bool dirTree_t::load(const std::string &base,
+                         stringVector_t &path,
+                         const int pathPos){
 
-        delete [] files;
-        files = NULL;
+      // Return values (for readability)
+      const bool somethingFound = true;
+      const bool nothingFound   = false;
+
+      // We reached the end
+      if(((int) path.size()) <= pathPos)
+        return somethingFound;
+
+      const std::string nextDir = path[pathPos];
+      const char *c_nextDir     = nextDir.c_str();
+
+      // Simple file traversal
+      if(!hasWildcard(c_nextDir)){
+        std::string nextBase = base;
+        nextBase += path[pathPos];
+        nextBase += '/';
+
+        if(!fileExists(nextBase))
+          return nothingFound;
+
+        dirCount = 1;
+        dirs     = new dirTree_t[1];
+
+        // Temporary info
+        dirs[0].info = dirType::dir;
+        dirs[0].name = path[pathPos];
+
+        const bool dirsCheck = dirs[0].load(nextBase,
+                                            path,
+                                            pathPos + 1);
+
+        if(dirsCheck == nothingFound)
+          free();
+
+        return dirsCheck;
       }
+
+#if (OCCA_OS & (LINUX_OS | OSX_OS))
+      DIR *DIR_ = opendir(base.c_str());
+
+      if(DIR_ == NULL)
+        return nothingFound;
+
+      std::vector<dirTree_t> vDirs;
+
+      dirent *dirent_;
+      int status;
+
+      while(true){
+        status  = 0;
+        dirent_ = readdir(DIR_);
+
+        if(dirent_ == NULL)
+          break;
+
+        const char *c_dirName = dirent_->d_name;
+
+        if(matchesWildcards(c_dirName, c_nextDir)){
+          std::string nextBase = base;
+          nextBase += c_dirName;
+          nextBase += '/';
+
+          vDirs.push_back(dirTree_t());
+          dirTree_t &vDir = vDirs.back();
+
+          const bool dirsCheck = vDir.load(nextBase,
+                                           path,
+                                           pathPos + 1);
+
+          if(dirsCheck == nothingFound){
+            vDir.free();
+            vDirs.pop_back();
+          }
+          else {
+            // Temporary info
+            vDir.info = dirType::dir;
+            vDir.name = c_dirName;
+          }
+        }
+      }
+
+      closedir(DIR_);
+
+      if(vDirs.size() == 0)
+        return nothingFound;
+
+      dirCount = (int) vDirs.size();
+      dirs     = new dirTree_t[dirCount];
+
+      for(int i = 0; i < dirCount; ++i)
+        dirs[i] = vDirs[i];
+#else
+      OCCA_CHECK(false,
+                 "dirTree_t wildcard traversal is not supported yet in Windows");
+#endif
+
+      return somethingFound;
+    }
+
+    void dirTree_t::free(){
+      info = dirType::none;
+
+      if(0 < dirCount){
+        for(int i = 0; i < dirCount; ++i)
+          dirs[i].free();
+
+        dirCount = 0;
+
+        delete [] dirs;
+        dirs = NULL;
+      }
+    }
+
+    void dirTree_t::printOnString(const std::string &base,
+                                  std::string &str,
+                                  const char delimiter){
+
+      // Empty
+      if(info == dirType::none)
+        return;
+
+      // Last dir
+      if(dirCount == 0){
+        if(0 < str.size())
+          str += delimiter;
+
+        str += base;
+        str += name;
+
+        if(info & dirType::dir)
+          str += '/';
+
+        return;
+      }
+
+      std::string newBase = base;
+      newBase += name;
+      newBase += '/';
+
+      for(int i = 0; i < dirCount; ++i)
+        dirs[i].printOnString(newBase, str, delimiter);
+    }
+
+    bool dirTree_t::hasWildcard(const char *c){
+      skipToWildcard(c);
+
+      return (*c != '\0');
+    }
+
+    void dirTree_t::skipToWildcard(const char *&c){
+      const char *c0 = c;
+
+      while(*c != '\0'){
+        if((c[0] == '*') &&
+           ((c0 == c) || (c[-1] != '\\'))){
+
+          return;
+        }
+
+        ++c;
+      }
+    }
+
+    bool dirTree_t::matchesWildcards(const char *c,
+                                     const char *match){
+
+      return true;
     }
 
     std::string echo(const std::string &var){
@@ -149,19 +338,39 @@ namespace occa {
     }
 
     std::string expandEnvVariables(const std::string &str){
-      const char *c = str.c_str();
       std::string ret;
+
+      const char *cRoot = str.c_str();
+      const char *c     = cRoot;
 
       while(*c != '\0'){
         const char C = c[0];
 
-        if(C == '$'){
-          if(c[1] == '{'){
+        if((C == '$')     &&
+           (c[1] != '\0') &&                   // Last $ doesn't expand
+           ((cRoot == c) || (c[-1] != '\\'))){ // Escape the '$'
 
-          }
+          ++c; // Skip $
+
+          const bool hasBrace = (*c == '{');
+          const char *c0 = (c + hasBrace);
+
+          if(hasBrace)
+            skipTo(c, '}');
+          else
+            skipToWhitespace(c);
+
+          std::string envVar = sys::echo(std::string(c0, c - c0));
+
+          ret += envVar;
+
+          if(hasBrace)
+            ++c;
         }
-
-        ++c;
+        else {
+          ret += C;
+          ++c;
+        }
       }
 
       return ret;
@@ -225,15 +434,21 @@ namespace occa {
       }
     }
 
-    bool dirExists(const std::string &dir){
+    bool dirExists(const std::string &dir_){
+      std::string dir = expandEnvVariables(dir_);
+      strip(dir);
+
       struct stat statInfo;
 
       return ((stat(dir.c_str(), &statInfo) == 0) &&
               (statInfo.st_mode &S_IFDIR));
     }
 
-    bool fileExists(const std::string &filename,
+    bool fileExists(const std::string &filename_,
                     const int flags){
+
+      std::string filename = expandEnvVariables(filename_);
+      strip(filename);
 
       if(flags & flags::checkCacheDir)
         return fileExists(getFilename(filename));
@@ -271,7 +486,7 @@ namespace occa {
     void absolutePathVec(const std::string &dir_,
                          stringVector_t &pathVec){
 
-      std::string dir = dir_;
+      std::string dir = expandEnvVariables(dir_);
       strip(dir);
 
       const int chars = (int) dir.size();

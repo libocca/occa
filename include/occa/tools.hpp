@@ -17,6 +17,8 @@
 #if   (OCCA_OS & LINUX_OS)
 #  include <sys/time.h>
 #  include <unistd.h>
+#  include <sys/types.h>
+#  include <sys/dir.h>
 #elif (OCCA_OS & OSX_OS)
 #  ifdef __clang__
 #    include <CoreServices/CoreServices.h>
@@ -25,6 +27,8 @@
 #    include <mach/clock.h>
 #    include <mach/mach.h>
 #  endif
+#  include <sys/types.h>
+#  include <sys/dir.h>
 #else
 #  ifndef NOMINMAX
 #    define NOMINMAX     // NBN: clear min/max macros
@@ -71,30 +75,51 @@ namespace occa {
   }
 
   namespace sys {
-    namespace fileType {
+    namespace dirType {
       static const int none    = 0;
-      static const int file    = (1 << 0);
-      static const int dir     = (1 << 1);
+      static const int dir     = (1 << 0);
+      static const int file    = (1 << 1);
       static const int symlink = (1 << 2);
       static const int hidden  = (1 << 3);
     }
 
-    class fileInfo_t {
+    class dirTree_t {
     public:
       int info;
       std::string name;
 
-      int fileCount;
-      fileInfo_t *files;
+      int dirCount;
+      dirTree_t *dirs;
 
-      fileInfo_t();
-      fileInfo_t(const std::string &dir,
-                 const bool recursivelySearching = false);
+      dirTree_t();
 
-      void load(const std::string &dir,
-                const bool recursivelySearching = false);
+      dirTree_t(const dirTree_t &dt);
+      dirTree_t& operator = (const dirTree_t &dt);
+
+      dirTree_t(const std::string &dir);
+
+      void load(const std::string &dir_);
+
+      bool load(const std::string &base,
+                stringVector_t &path,
+                const int pathPos);
 
       void free();
+
+      void printOnString(const std::string &base,
+                         std::string &str,
+                         const char delimiter);
+
+      inline std::string toString(const char delimiter = '\n'){
+        std::string ret;
+        printOnString("", ret, delimiter);
+        return ret;
+      }
+
+      bool hasWildcard(const char *c);
+      void skipToWildcard(const char *&c);
+      bool matchesWildcards(const char *c,
+                            const char *match);
     };
 
     std::string echo(const std::string &var);
@@ -104,8 +129,8 @@ namespace occa {
     int mkdir(const std::string &dir);
     void mkpath(const std::string &dir);
 
-    bool dirExists(const std::string &dir);
-    bool fileExists(const std::string &filename,
+    bool dirExists(const std::string &dir_);
+    bool fileExists(const std::string &filename_,
                     const int flags = 0);
 
     std::string getFilename(const std::string &filename);
