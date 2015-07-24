@@ -1226,16 +1226,10 @@ namespace occa {
         return str;
       }
 
-      if((type == floatType) ||
-         (type == doubleType)){
+      // double/float is auto-printed properly from
+      //  occa::toString()
 
-        if(str.find('.') == std::string::npos)
-          str += ".0";
-
-        if(type == floatType)
-          str += 'f';
-      }
-      else if(type == longType)
+      if(type == longType)
         str += 'L';
 
       return str;
