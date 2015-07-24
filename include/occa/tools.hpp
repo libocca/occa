@@ -88,8 +88,11 @@ namespace occa {
       int info;
       std::string name;
 
-      int dirCount;
+      int dirCount, nestedDirCount;
       dirTree_t *dirs;
+
+      // Store file names in [root]
+      std::string *nestedDirNames;
 
       dirTree_t();
 
@@ -106,20 +109,29 @@ namespace occa {
 
       void free();
 
-      void printOnString(const std::string &base,
-                         std::string &str,
+      inline int fileCount(){
+        return nestedDirCount;
+      }
+
+      inline std::string& filename(int i){
+        return nestedDirNames[i];
+      }
+
+      void setNestedDirNames(std::string *fdn,
+                             int fdnPos);
+
+      void printOnString(std::string &str,
                          const char delimiter);
 
       inline std::string toString(const char delimiter = '\n'){
         std::string ret;
-        printOnString("", ret, delimiter);
+        printOnString(ret, delimiter);
         return ret;
       }
 
       bool hasWildcard(const char *c);
-      void skipToWildcard(const char *&c);
-      bool matchesWildcards(const char *c,
-                            const char *match);
+      bool matches(const char *search,
+                   const char *c);
     };
 
     std::string echo(const std::string &var);
