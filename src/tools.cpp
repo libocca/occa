@@ -230,7 +230,7 @@ namespace occa {
       std::vector<dirTree_t> vDirs;
 
       dirent *dirent_;
-      int status;
+      int status = 0;
 
       while(true){
         status  = 0;
