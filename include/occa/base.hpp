@@ -380,6 +380,10 @@ namespace occa {
       info = kArgInfo::none;
     }
 
+    inline kernelArg_t(const kernelArg_t &k){
+      *this = k;
+    }
+
     inline kernelArg_t& operator = (const kernelArg_t &k){
       dHandle = k.dHandle;
       mHandle = k.mHandle;
