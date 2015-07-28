@@ -320,52 +320,52 @@ namespace occa {
           bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
-            return (startHash | readUntilNextHash | forceLineRemoval);
+            return (startHash | readUntilNextHash);
           else
-            return (startHash | ignoreUntilNextHash | forceLineRemoval);
+            return (startHash | ignoreUntilNextHash);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "elif")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
-            return (ignoreUntilEnd | forceLineRemoval);
+            return (ignoreUntilEnd);
 
           c = cEnd;
 
           bool isTrue = evaluateMacroBoolStatement(c);
 
           if(isTrue)
-            return (readUntilNextHash | forceLineRemoval);
+            return (readUntilNextHash);
           else
-            return (ignoreUntilNextHash | forceLineRemoval);
+            return (ignoreUntilNextHash);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "else")){
           if((state & readUntilNextHash) || (state & ignoreUntilEnd))
-            return (ignoreUntilEnd | forceLineRemoval);
+            return (ignoreUntilEnd);
           else
-            return (readUntilNextHash | forceLineRemoval);
+            return (readUntilNextHash);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "ifdef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | readUntilNextHash | forceLineRemoval);
+            return (startHash | readUntilNextHash);
           else
-            return (startHash | ignoreUntilNextHash | forceLineRemoval);
+            return (startHash | ignoreUntilNextHash);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "ifndef")){
           std::string name = getMacroName(c);
 
           if(macroMap.find(name) != macroMap.end())
-            return (startHash | ignoreUntilNextHash | forceLineRemoval);
+            return (startHash | ignoreUntilNextHash);
           else
-            return (startHash | readUntilNextHash | forceLineRemoval);
+            return (startHash | readUntilNextHash);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "endif")){
-          return (doneIgnoring | forceLineRemoval);
+          return (doneIgnoring);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "define")){
@@ -390,7 +390,7 @@ namespace occa {
 
           loadMacroInfo(info, c);
 
-          return (state | forceLineRemoval);
+          return (state);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "undef")){
@@ -418,7 +418,7 @@ namespace occa {
           includeFile = sys::getFilename(includeFile);
 
           if(includeFile == "")
-            return (state | forceLineRemoval);
+            return (state);
 
           const char *cRoot = cReadFile(includeFile);
 
@@ -428,13 +428,13 @@ namespace occa {
 
           // Empty include file
           if(includeExpRoot.leafCount == 0)
-            return (state | forceLineRemoval);
+            return (state);
 
           leafPos = allExp.insertExpAt(includeExpRoot, leafPos + 1);
 
           includeExpRoot.free();
 
-          return (state | forceLineRemoval);
+          return (state);
         }
 
         else if(stringsAreEqual(c, (cEnd - c), "pragma"))
@@ -609,15 +609,10 @@ namespace occa {
 
           currentState = loadMacro(allExp, linePos, currentState);
 
-          if(currentState & keepMacro){
+          if(currentState & keepMacro)
             currentState &= ~keepMacro;
-          }
-          else if(currentState & forceLineRemoval){
-            currentState &= ~forceLineRemoval;
-            ignoreLine = true;
-          }
           else
-            ignoreLine = false; // Keep macros for now
+            ignoreLine = true;
 
           // Nested #if's
           if(currentState & startHash){

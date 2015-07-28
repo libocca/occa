@@ -193,9 +193,7 @@ namespace occa {
     static const info_t readUntilNextHash   = (1 << 3);
     static const info_t doneIgnoring        = (1 << 4);
     static const info_t startHash           = (1 << 5);
-
     static const info_t keepMacro           = (1 << 6);
-    static const info_t forceLineRemoval    = (1 << 7);
 
     static const info_t readingCode          = 0;
     static const info_t insideCommentBlock   = 1;
