@@ -171,6 +171,14 @@
 
 
 //---[ Math ]-------------------------------------
+#define occaMin(a,b)  (((a) < (b)) ? (a) : (b))
+#define occaFastMin   occaMin
+#define occaNativeMin occaMin
+
+#define occaMax(a,b)  (((a) < (b)) ? (a) : (b))
+#define occaFastMax   occaMax
+#define occaNativeMax occaMax
+
 #define occaFabs       fabs
 #define occaFastFabs   fabs
 #define occaNativeFabs fabs

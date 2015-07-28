@@ -139,6 +139,20 @@
 
 
 //---[ Math ]-------------------------------------
+template <class TM>
+__device__ inline TM occaCuda_min(const TM a, const TM b){ return (((a) < (b)) ? (a) : (b)); }
+
+#define occaMin       occaCuda_min
+#define occaFastMin   occaCuda_min
+#define occaNativeMin occaCuda_min
+
+template <class TM>
+__device__ inline TM occaCuda_max(const TM a, const TM b){ return (((a) > (b)) ? (a) : (b)); }
+
+#define occaMax       occaCuda_max
+#define occaFastMax   occaCuda_max
+#define occaNativeMax occaCuda_max
+
 __device__ inline float  occaCuda_fabs(const float x){  return fabsf(x); }
 __device__ inline double occaCuda_fabs(const double x){ return fabs(x);  }
 
