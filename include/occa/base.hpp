@@ -336,7 +336,7 @@ namespace occa {
     inline uintptr_t operator [] (int i) const;
   };
 
-  struct kernelArgData_t {
+  union kernelArgData_t {
     int int_;
     unsigned int uint_;
 
