@@ -730,7 +730,8 @@ namespace occa {
       loadMacro("#define const    occaConst");
       loadMacro("#define constant occaConstant");
 
-      std::string mathFunctions[16] = {
+      std::string mathFunctions[18] = {
+        "min" , "max"  ,
         "sqrt", "sin"  , "asin" ,
         "sinh", "asinh", "cos"  ,
         "acos", "cosh" , "acosh",
@@ -739,7 +740,7 @@ namespace occa {
         "log10"
       };
 
-      for(int i = 0; i < 16; ++i){
+      for(int i = 0; i < 18; ++i){
         std::string mf = mathFunctions[i];
         std::string cmf = mf;
         cmf[0] += ('A' - 'a');
@@ -4056,7 +4057,8 @@ namespace occa {
       cKeywordType["blockIdx"]           = (expType::unknown | expType::cudaKeyword);
       cKeywordType["gridDim"]            = (expType::unknown | expType::cudaKeyword);
 
-      std::string mathFunctions[16] = {
+      std::string mathFunctions[18] = {
+        "min" , "max"  ,
         "sqrt", "sin"  , "asin" ,
         "sinh", "asinh", "cos"  ,
         "acos", "cosh" , "acosh",
@@ -4065,7 +4067,7 @@ namespace occa {
         "log10"
       };
 
-      for(int i = 0; i < 16; ++i){
+      for(int i = 0; i < 18; ++i){
         std::string mf = mathFunctions[i];
         std::string cmf = mf;
         cmf[0] += ('A' - 'a');
