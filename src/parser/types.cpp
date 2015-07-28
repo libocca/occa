@@ -1763,7 +1763,9 @@ namespace occa {
       varInfo &arrayArg = *(new varInfo());
       const int dims    = argDimAttr.argCount;
 
-      const std::string dims2 = occa::toString(maxBase2(dims));
+      const std::string dims2 = ((1 < dims)                     ?
+                                 occa::toString(maxBase2(dims)) :
+                                 "");
 
       // Setup new argument
       arrayArg.addQualifier("occaConst");
