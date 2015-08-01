@@ -8,8 +8,8 @@ iPath = include
 
 
 #---[ Default Variables ]-------------------------
-debugEnabled   = 0
-checkEnabled   = 1
+debugEnabled = 0
+checkEnabled = 1
 
 osFlags =
 flags   =
