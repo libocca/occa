@@ -1325,5 +1325,29 @@ namespace occa {
 
     return ret;
   }
+
+  std::string stringifyBytes(uintptr_t bytes){
+    if(0 < bytes){
+      std::stringstream ss;
+      uintptr_t big1 = 1;
+
+      if(bytes < (big1 << 10))
+        ss << bytes << " bytes";
+      else if(bytes < (big1 << 20))
+        ss << (bytes >> 10) << " KB";
+      else if(bytes < (big1 << 30))
+        ss << (bytes >> 20) << " MB";
+      else if(bytes < (big1 << 40))
+        ss << (bytes >> 30) << " GB";
+      else if(bytes < (big1 << 50))
+        ss << (bytes >> 40) << " TB";
+      else
+        ss << bytes << " bytes";
+
+      return ss.str();
+    }
+
+    return "";
+  }
   //==============================================
 }

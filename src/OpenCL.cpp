@@ -195,6 +195,23 @@ namespace occa {
       return ret;
     }
 
+    uintptr_t getDeviceAvailableMemory(cl_device_id dID){
+      cl_ulong ret;
+
+      OCCA_CL_CHECK("OpenCL: Get Device Available Memory",
+                    clGetDeviceInfo(dID,
+                                    CL_DEVICE_GLOBAL_MEM_SIZE,
+                                    sizeof(ret), &ret, NULL));
+
+      return ret;
+    }
+
+    uintptr_t getDeviceAvailableMemory(int pID, int dID){
+      cl_device_id clDID = deviceID(pID, dID);
+
+      return getDeviceAvailableMemory(clDID);
+    }
+
     std::string getDeviceListInfo(){
       std::stringstream ss;
 
@@ -204,6 +221,9 @@ namespace occa {
         int deviceCount = occa::cl::getDeviceCountInPlatform(pID);
 
         for(int dID = 0; dID < deviceCount; ++dID){
+          uintptr_t bytes      = getDeviceAvailableMemory(pID, dID);
+          std::string bytesStr = stringifyBytes(bytes);
+
           if(pID || dID){
             ss << "              |-----------------------+------------------------------------------\n"
                << "              |  Device Name          | " << deviceName(pID, dID)            << '\n';
@@ -214,7 +234,8 @@ namespace occa {
 
           ss << "              |  Driver Vendor        | " << occa::vendor(deviceVendor(pID,dID)) << '\n'
              << "              |  Platform ID          | " << pID                                 << '\n'
-             << "              |  Device ID            | " << dID                                 << '\n';
+             << "              |  Device ID            | " << dID                                 << '\n'
+             << "              |  Memory               | " << bytesStr                            << '\n';
         }
       }
 
@@ -1774,6 +1795,13 @@ namespace occa {
     finish();
 
     return mem;
+  }
+
+  template <>
+  uintptr_t device_t<OpenCL>::maxBytesAvailable(){
+    OCCA_EXTRACT_DATA(OpenCL, Device);
+
+    return cl::getDeviceAvailableMemory(data_.deviceID);
   }
 
   template <>

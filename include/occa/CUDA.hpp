@@ -43,6 +43,8 @@ namespace occa {
 
     int getDeviceCount();
 
+    uintptr_t getDeviceAvailableMemory(CUdevice device);
+
     std::string getDeviceListInfo();
 
     void enablePeerToPeer(CUcontext context);
@@ -310,6 +312,9 @@ namespace occa {
   template <>
   memory_v* device_t<CUDA>::mappedAlloc(const uintptr_t bytes,
                                         void *src);
+
+  template <>
+  uintptr_t device_t<CUDA>::maxBytesAvailable();
 
   template <>
   void device_t<CUDA>::free();

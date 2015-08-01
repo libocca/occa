@@ -306,6 +306,9 @@ namespace occa {
                                                       const std::string &functionName);
 
   template <>
+  uintptr_t device_t<Pthreads>::maxBytesAvailable();
+
+  template <>
   void device_t<Pthreads>::free();
 
   template <>

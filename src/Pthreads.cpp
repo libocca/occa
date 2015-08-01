@@ -1187,6 +1187,11 @@ namespace occa {
   }
 
   template <>
+  uintptr_t device_t<Pthreads>::maxBytesAvailable(){
+    return cpu::installedRAM();
+  }
+
+  template <>
   void device_t<Pthreads>::free(){
     finish();
 

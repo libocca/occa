@@ -333,7 +333,7 @@ namespace occa {
     inline bool hasNegativeEntries();
 
     inline uintptr_t& operator [] (int i);
-    inline uintptr_t operator [] (int i) const;
+    inline uintptr_t  operator [] (int i) const;
   };
 
   union kernelArgData_t {
@@ -1270,6 +1270,7 @@ namespace occa {
 
     virtual void free() = 0;
 
+    virtual uintptr_t maxBytesAvailable() = 0;
     virtual int simdWidth() = 0;
   };
 
@@ -1385,6 +1386,7 @@ namespace occa {
 
     void free();
 
+    uintptr_t maxBytesAvailable();
     int simdWidth();
   };
 
@@ -1455,6 +1457,7 @@ namespace occa {
     void setup(const std::string &m,
                const int arg1, const int arg2);
 
+    uintptr_t maxBytesAvailable() const;
     uintptr_t bytesAllocated() const;
 
     deviceIdentifier getIdentifier() const;

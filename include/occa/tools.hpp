@@ -286,6 +286,8 @@ namespace occa {
   inline double atod(const std::string &str){
     return occa::atod(str.c_str());
   }
+
+  std::string stringifyBytes(uintptr_t bytes);
   //==============================================
 
 

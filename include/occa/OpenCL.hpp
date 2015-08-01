@@ -64,6 +64,9 @@ namespace occa {
 
     int deviceCoreCount(int pID, int dID);
 
+    uintptr_t getDeviceAvailableMemory(cl_device_id dID);
+    uintptr_t getDeviceAvailableMemory(int pID, int dID);
+
     std::string getDeviceListInfo();
 
     void buildKernelFromSource(OpenCLKernelData_t &data_,
@@ -318,6 +321,9 @@ namespace occa {
   template <>
   memory_v* device_t<OpenCL>::mappedAlloc(const uintptr_t bytes,
                                           void *src);
+
+  template <>
+  uintptr_t device_t<OpenCL>::maxBytesAvailable();
 
   template <>
   void device_t<OpenCL>::free();

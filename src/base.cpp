@@ -1295,6 +1295,10 @@ namespace occa {
     setup(strToMode(m), arg1, arg2);
   }
 
+  uintptr_t device::maxBytesAvailable() const {
+    return dHandle->maxBytesAvailable();
+  }
+
   uintptr_t device::bytesAllocated() const {
     return dHandle->bytesAllocated;
   }

@@ -143,16 +143,7 @@ namespace occa {
       OCCA_CHECK(error != ENOMEM,
                  "Error getting L" << level << " Cache Size.\n");
 
-      ss.str("");
-
-      if(cache < (1 << 10))
-        ss << cache << " B";
-      else if(cache < (1 << 20))
-        ss << (cache >> 10) << " KB";
-      else if(cache < (1 << 30))
-        ss << (cache >> 20) << " MB";
-
-      return ss.str();
+      return stringifyBytes(cache);
 #elif (OCCA_OS == WINDOWS_OS)
       std::stringstream ss;
       DWORD cache = 0;
@@ -189,16 +180,70 @@ namespace occa {
           break;
       }
 
-      if(cache < (1 << 10))
-        ss << cache << " B";
-      else if(cache < (1 << 20))
-        ss << (cache >> 10) << " KB";
-      else if(cache < (1 << 30))
-        ss << (cache >> 20) << " MB";
-
       cpu::free(buffer);
 
-      return ss.str();
+      return stringifyBytes(cache);
+#endif
+    }
+
+    uintptr_t installedRAM(){
+#if   (OCCA_OS & LINUX_OS)
+      struct sysinfo info;
+
+      const int error = sysinfo(info);
+
+      if(error != 0)
+        return 0;
+
+      return info.totalram;
+#elif (OCCA_OS == OSX_OS)
+      int64_t ram;
+
+      int mib[2]   = {CTL_HW, HW_MEMSIZE};
+      size_t bytes = sizeof(ram);
+
+      sysctl(mib, 2, &ram, &bytes, NULL, 0);
+
+      return ram;
+#elif (OCCA_OS == WINDOWS_OS)
+      return 0;
+#endif
+    }
+
+    uintptr_t availableRAM(){
+#if   (OCCA_OS & LINUX_OS)
+      struct sysinfo info;
+
+      const int error = sysinfo(info);
+
+      if(error != 0)
+        return 0;
+
+      return info.freeram;
+#elif (OCCA_OS == OSX_OS)
+      mach_msg_type_number_t infoCount = HOST_VM_INFO_COUNT;
+      mach_port_t hostPort = mach_host_self();
+
+      vm_statistics_data_t hostInfo;
+      kern_return_t status;
+      vm_size_t pageSize;
+
+      status = host_page_size(hostPort, &pageSize);
+
+      if(status != KERN_SUCCESS)
+        return 0;
+
+      status = host_statistics(hostPort,
+                               HOST_VM_INFO,
+                               (host_info_t) &hostInfo,
+                               &infoCount);
+
+      if(status != KERN_SUCCESS)
+        return 0;
+
+      return (hostInfo.free_count * pageSize);
+#elif (OCCA_OS == WINDOWS_OS)
+      return 0;
 #endif
     }
 
@@ -206,6 +251,9 @@ namespace occa {
       std::stringstream ss, ssFreq;
 
       ss << getCoreCount();
+
+      uintptr_t ram      = installedRAM();
+      std::string ramStr = stringifyBytes(ram);
 
       const int freq = getProcessorFrequency();
 
@@ -237,6 +285,7 @@ namespace occa {
 
       ss.str("");
 
+      // [P]rinted [S]omething
       bool ps = false;
 
       // << "==============o=======================o==========================================\n";
@@ -244,14 +293,16 @@ namespace occa {
         ss << tab[ps]  << "|  Processor Name       | " << processorName                   << '\n'; ps = true;
       if(coreCount.size())
         ss << tab[ps]  << "|  Cores                | " << coreCount                       << '\n'; ps = true;
+      if(ramStr.size())
+        ss << tab[ps]  << "|  Memory (RAM)         | " << ramStr                          << '\n'; ps = true;
       if(clockFrequency.size())
         ss << tab[ps]  << "|  Clock Frequency      | " << clockFrequency                  << '\n'; ps = true;
       ss   << tab[ps]  << "|  SIMD Instruction Set | " << OCCA_VECTOR_SET                 << '\n'
            << tab[ps]  << "|  SIMD Width           | " << (32*OCCA_SIMD_WIDTH) << " bits" << '\n'; ps = true;
       if(l1.size())
-        ss << tab[ps]  << "|  L1 Cache Size (d)    | " << l1                              << '\n';
+        ss << tab[ps]  << "|  L1 Cache Size (d)    | " << l1                              << '\n'; ps = true;
       if(l2.size())
-        ss << tab[ps]  << "|  L2 Cache Size        | " << l2                              << '\n';
+        ss << tab[ps]  << "|  L2 Cache Size        | " << l2                              << '\n'; ps = true;
       if(l3.size())
         ss << tab[ps]  << "|  L3 Cache Size        | " << l3                              << '\n';
       // << "==============o=======================o==========================================\n";
@@ -1437,6 +1488,11 @@ namespace occa {
     mem->mappedPtr = mem->handle;
 
     return mem;
+  }
+
+  template <>
+  uintptr_t device_t<Serial>::maxBytesAvailable(){
+    return cpu::installedRAM();
   }
 
   template <>

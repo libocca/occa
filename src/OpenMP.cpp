@@ -1063,6 +1063,11 @@ namespace occa {
   }
 
   template <>
+  uintptr_t device_t<OpenMP>::maxBytesAvailable(){
+    return cpu::installedRAM();
+  }
+
+  template <>
   void device_t<OpenMP>::free(){}
 
   template <>

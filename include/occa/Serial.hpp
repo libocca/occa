@@ -2,6 +2,12 @@
 #define OCCA_SERIAL_HEADER
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
+#  if   (OCCA_OS == LINUX_OS)
+#    include <sys/sysinfo>
+#  elif (OCCA_OS == OSX_OS)
+#    include <mach/mach.h>
+#    include <mach/mach_host.h>
+#  endif
 #  if (OCCA_OS != WINUX_OS)
 #    include <sys/sysctl.h>
 #  endif
@@ -70,6 +76,8 @@ namespace occa {
     int getCoreCount();
     int getProcessorFrequency();
     std::string getProcessorCacheSize(int level);
+    uintptr_t installedRAM();
+    uintptr_t availableRAM();
 
     std::string getDeviceListInfo();
 
@@ -319,6 +327,9 @@ namespace occa {
   template <>
   memory_v* device_t<Serial>::mappedAlloc(const uintptr_t bytes,
                                           void *src);
+
+  template <>
+  uintptr_t device_t<Serial>::maxBytesAvailable();
 
   template <>
   void device_t<Serial>::free();

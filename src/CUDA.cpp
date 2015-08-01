@@ -25,6 +25,15 @@ namespace occa {
       return deviceCount;
     }
 
+    uintptr_t getDeviceAvailableMemory(CUdevice device){
+      size_t bytes;
+
+      OCCA_CUDA_CHECK("Finding available memory on device",
+                      cuDeviceTotalMem(&bytes, device));
+
+      return bytes;
+    }
+
     std::string getDeviceListInfo(){
       std::stringstream ss;
 
@@ -930,11 +939,7 @@ namespace occa {
 
   template <>
   device_t<CUDA>::device_t(const device_t<CUDA> &d){
-    data            = d.data;
-    bytesAllocated = d.bytesAllocated;
-
-    compiler      = d.compiler;
-    compilerFlags = d.compilerFlags;
+    *this = d;
   }
 
   template <>
@@ -1415,6 +1420,13 @@ namespace occa {
       ::memcpy(mem->mappedPtr, src, bytes);
 
     return mem;
+  }
+
+  template <>
+  uintptr_t device_t<CUDA>::maxBytesAvailable(){
+    OCCA_EXTRACT_DATA(CUDA, Device);
+
+    return cuda::getDeviceAvailableMemory(data_.device);
   }
 
   template <>
