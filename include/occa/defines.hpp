@@ -48,6 +48,14 @@
 #  define __PRETTY_FUNCTION__ __FUNCTION__
 #endif
 
+#ifdef __cplusplus
+#  define OCCA_START_EXTERN_C extern "C" {
+#  define OCCA_END_EXTERN_C   }
+#else
+#  define OCCA_START_EXTERN_C
+#  define OCCA_END_EXTERN_C
+#endif
+
 #if defined(__x86_64__) || defined(_M_X64) // 64 Bit
 #  define OCCA_64_BIT 1
 #  define OCCA_32_BIT 0
