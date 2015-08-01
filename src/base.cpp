@@ -1299,6 +1299,11 @@ namespace occa {
     return dHandle->memorySize();
   }
 
+  uintptr_t device::memoryAllocated() const {
+    return dHandle->bytesAllocated;
+  }
+
+  // Old name for [memoryAllocated()]
   uintptr_t device::bytesAllocated() const {
     return dHandle->bytesAllocated;
   }

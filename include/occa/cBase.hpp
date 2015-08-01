@@ -234,6 +234,8 @@ extern "C" {
   OCCA_LFUNC const char* OCCA_RFUNC occaDeviceGetCompilerFlags(occaDevice device);
 
 
+  OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device);
+  OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device);
   OCCA_LFUNC uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device);
 
   OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,

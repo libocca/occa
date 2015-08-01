@@ -564,10 +564,23 @@ extern "C" {
     return device_.getCompilerEnvScript().c_str();
   }
 
+  uintptr_t OCCA_RFUNC occaDeviceMemorySize(occaDevice device){
+    occa::device device_((occa::device_v*) device);
+
+    return device_.memorySize();
+  }
+
+  uintptr_t OCCA_RFUNC occaDeviceMemoryAllocated(occaDevice device){
+    occa::device device_((occa::device_v*) device);
+
+    return device_.memoryAllocated();
+  }
+
+  // Old version of [occaDeviceMemoryAllocated()]
   uintptr_t OCCA_RFUNC occaDeviceBytesAllocated(occaDevice device){
     occa::device device_((occa::device_v*) device);
 
-    return device_.bytesAllocated();
+    return device_.memoryAllocated();
   }
 
   occaKernel OCCA_RFUNC occaDeviceBuildKernel(occaDevice device,

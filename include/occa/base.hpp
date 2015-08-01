@@ -1458,6 +1458,8 @@ namespace occa {
                const int arg1, const int arg2);
 
     uintptr_t memorySize() const;
+    uintptr_t memoryAllocated() const;
+    // Old name for [memoryAllocated()]
     uintptr_t bytesAllocated() const;
 
     deviceIdentifier getIdentifier() const;

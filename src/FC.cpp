@@ -146,8 +146,17 @@ extern "C" {
     OCCA_F2C_FREE_STR(mode, mode_c);
   }
 
+  void OCCADEVICEMEMORYSIZE_FC(occaDevice *device, int64_t *bytes){
+    *bytes = occaDeviceMemorySize(*device);
+  }
+
+  void OCCADEVICEMEMORYALLOCATED_FC(occaDevice *device, int64_t *bytes){
+    *bytes = occaDeviceMemoryAllocated(*device);
+  }
+
+  // Old version of [OCCADEVICEMEMORYALLOCATED_FC()]
   void OCCADEVICEBYTESALLOCATED_FC(occaDevice *device, int64_t *bytes){
-    *bytes = occaDeviceBytesAllocated(*device);
+    *bytes = occaDeviceMemoryAllocated(*device);
   }
 
   void OCCADEVICEBUILDKERNEL_FC(occaKernel *kernel, occaDevice *device,

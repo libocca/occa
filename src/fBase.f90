@@ -905,6 +905,38 @@ contains !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     call occaCreateDeviceFromArgs_fc(device, mode, arg1, arg2)
   end function occaCreateDeviceFromArgs_func
 
+  integer(8) function occaDeviceMemorySize(device) result (bytes)
+    type(occaDevice), intent(inout) :: device
+
+    interface
+       subroutine occaDeviceMemorySize_fc(device, bytes)
+         use occaFTypes_m
+
+         implicit none
+         type(occaDevice), intent(inout) :: device
+         integer(8),       intent(out)   :: bytes
+       end subroutine occaDeviceMemorySize_fc
+    end interface
+
+    call occaDeviceMemorySize_fc(device, bytes)
+  end function occaDeviceMemorySize
+
+  integer(8) function occaDeviceMemoryAllocated(device) result (bytes)
+    type(occaDevice), intent(inout) :: device
+
+    interface
+       subroutine occaDeviceMemoryAllocated_fc(device, bytes)
+         use occaFTypes_m
+
+         implicit none
+         type(occaDevice), intent(inout) :: device
+         integer(8),       intent(out)   :: bytes
+       end subroutine occaDeviceMemoryAllocated_fc
+    end interface
+
+    call occaDeviceMemoryAllocated_fc(device, bytes)
+  end function occaDeviceMemoryAllocated
+
   integer(8) function occaDeviceBytesAllocated(device) result (bytes)
     type(occaDevice), intent(inout) :: device
 

@@ -201,6 +201,10 @@
                                                                             OCCACREATEDEVICEFROMINFO_FC)
 #define  OCCACREATEDEVICEFROMARGS_FC                       OCCA_F2C_GLOBAL_(occacreatedevicefromargs_fc,\
                                                                             OCCACREATEDEVICEFROMARGS_FC)
+#define  OCCADEVICEMEMORYSIZE_FC                           OCCA_F2C_GLOBAL_(occadevicememorysize_fc,\
+                                                                            OCCADEVICEMEMORYSIZE_FC)
+#define  OCCADEVICEMEMORYALLOCATED_FC                      OCCA_F2C_GLOBAL_(occadevicememoryallocated_fc,\
+                                                                            OCCADEVICEMEMORYALLOCATED_FC)
 #define  OCCADEVICEBYTESALLOCATED_FC                       OCCA_F2C_GLOBAL_(occadevicebytesallocated_fc,\
                                                                             OCCADEVICEBYTESALLOCATED_FC)
 #define  OCCADEVICEBUILDKERNEL_FC                          OCCA_F2C_GLOBAL_(occadevicebuildkernel_fc,\
