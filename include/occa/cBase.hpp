@@ -178,8 +178,8 @@ extern "C" {
   OCCA_LFUNC occaMemory OCCA_RFUNC occaWrapMemory(void *handle_,
                                                   const uintptr_t bytes);
 
-  OCCA_LFUNC void* OCCA_RFUNC occaWrapManagedMemory(void *handle_,
-                                                    const uintptr_t bytes);
+  OCCA_LFUNC void OCCA_RFUNC occaWrapManagedMemory(void *handle_,
+                                                   const uintptr_t bytes);
 
   OCCA_LFUNC occaMemory OCCA_RFUNC occaMalloc(const uintptr_t bytes,
                                               void *src);

@@ -1686,13 +1686,11 @@ namespace occa {
     return mem;
   }
 
-  void* device::wrapManagedMemory(void *handle_,
-                                  const uintptr_t bytes){
+  void device::wrapManagedMemory(void *handle_,
+                                 const uintptr_t bytes){
     memory mem = wrapMemory(handle_, bytes);
 
     mem.manage();
-
-    return mem.mHandle->uvaPtr;
   }
 
   memory device::wrapTexture(void *handle_,
@@ -1713,15 +1711,13 @@ namespace occa {
     return mem;
   }
 
-  void* device::wrapManagedTexture(void *handle_,
-                                   const int dim, const occa::dim &dims,
-                                   occa::formatType type, const int permissions){
+  void device::wrapManagedTexture(void *handle_,
+                                  const int dim, const occa::dim &dims,
+                                  occa::formatType type, const int permissions){
 
     memory mem = wrapTexture(handle_, dim, dims, type, permissions);
 
     mem.manage();
-
-    return mem.mHandle->uvaPtr;
   }
 
   memory device::malloc(const uintptr_t bytes,
@@ -2014,10 +2010,10 @@ namespace occa {
     return currentDevice.wrapMemory(handle_, bytes);
   }
 
-  void* wrapManagedMemory(void *handle_,
-                          const uintptr_t bytes){
+  void wrapManagedMemory(void *handle_,
+                         const uintptr_t bytes){
 
-    return currentDevice.wrapManagedMemory(handle_, bytes);
+    currentDevice.wrapManagedMemory(handle_, bytes);
   }
 
   memory wrapTexture(void *handle_,
@@ -2029,13 +2025,13 @@ namespace occa {
                                      type, permissions);
   }
 
-  void* wrapManagedTexture(void *handle_,
-                           const int dim, const occa::dim &dims,
-                           occa::formatType type, const int permissions){
+  void wrapManagedTexture(void *handle_,
+                          const int dim, const occa::dim &dims,
+                          occa::formatType type, const int permissions){
 
-    return currentDevice.wrapManagedTexture(handle_,
-                                            dim, dims,
-                                            type, permissions);
+    currentDevice.wrapManagedTexture(handle_,
+                                     dim, dims,
+                                     type, permissions);
   }
 
   memory malloc(const uintptr_t bytes,

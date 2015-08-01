@@ -421,10 +421,10 @@ extern "C" {
     return (occaMemory) memory;
   }
 
-  void* OCCA_RFUNC occaWrapManagedMemory(void *handle_,
-                                         const uintptr_t bytes){
+  void OCCA_RFUNC occaWrapManagedMemory(void *handle_,
+                                        const uintptr_t bytes){
 
-    return occa::wrapManagedMemory(handle_, bytes);
+    occa::wrapManagedMemory(handle_, bytes);
   }
 
   occaMemory OCCA_RFUNC occaMalloc(const uintptr_t bytes,
