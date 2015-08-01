@@ -329,7 +329,7 @@ namespace occa {
                                           void *src);
 
   template <>
-  uintptr_t device_t<Serial>::maxBytesAvailable();
+  uintptr_t device_t<Serial>::memorySize();
 
   template <>
   void device_t<Serial>::free();

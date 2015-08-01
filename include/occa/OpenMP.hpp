@@ -265,7 +265,7 @@ namespace occa {
                                           void *src);
 
   template <>
-  uintptr_t device_t<OpenMP>::maxBytesAvailable();
+  uintptr_t device_t<OpenMP>::memorySize();
 
   template <>
   void device_t<OpenMP>::free();

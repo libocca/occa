@@ -1491,7 +1491,7 @@ namespace occa {
   }
 
   template <>
-  uintptr_t device_t<Serial>::maxBytesAvailable(){
+  uintptr_t device_t<Serial>::memorySize(){
     return cpu::installedRAM();
   }
 

@@ -1187,7 +1187,7 @@ namespace occa {
   }
 
   template <>
-  uintptr_t device_t<Pthreads>::maxBytesAvailable(){
+  uintptr_t device_t<Pthreads>::memorySize(){
     return cpu::installedRAM();
   }
 

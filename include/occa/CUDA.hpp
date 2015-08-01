@@ -45,7 +45,7 @@ namespace occa {
 
     CUdevice getDevice(const int id);
 
-    uintptr_t getDeviceAvailableMemory(CUdevice device);
+    uintptr_t getDeviceMemorySize(CUdevice device);
 
     std::string getDeviceListInfo();
 
@@ -316,7 +316,7 @@ namespace occa {
                                         void *src);
 
   template <>
-  uintptr_t device_t<CUDA>::maxBytesAvailable();
+  uintptr_t device_t<CUDA>::memorySize();
 
   template <>
   void device_t<CUDA>::free();

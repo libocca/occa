@@ -195,7 +195,7 @@ namespace occa {
       return ret;
     }
 
-    uintptr_t getDeviceAvailableMemory(cl_device_id dID){
+    uintptr_t getDeviceMemorySize(cl_device_id dID){
       cl_ulong ret;
 
       OCCA_CL_CHECK("OpenCL: Get Device Available Memory",
@@ -206,10 +206,10 @@ namespace occa {
       return ret;
     }
 
-    uintptr_t getDeviceAvailableMemory(int pID, int dID){
+    uintptr_t getDeviceMemorySize(int pID, int dID){
       cl_device_id clDID = deviceID(pID, dID);
 
-      return getDeviceAvailableMemory(clDID);
+      return getDeviceMemorySize(clDID);
     }
 
     std::string getDeviceListInfo(){
@@ -221,7 +221,7 @@ namespace occa {
         int deviceCount = occa::cl::getDeviceCountInPlatform(pID);
 
         for(int dID = 0; dID < deviceCount; ++dID){
-          uintptr_t bytes      = getDeviceAvailableMemory(pID, dID);
+          uintptr_t bytes      = getDeviceMemorySize(pID, dID);
           std::string bytesStr = stringifyBytes(bytes);
 
           if(pID || dID){
@@ -1798,10 +1798,10 @@ namespace occa {
   }
 
   template <>
-  uintptr_t device_t<OpenCL>::maxBytesAvailable(){
+  uintptr_t device_t<OpenCL>::memorySize(){
     OCCA_EXTRACT_DATA(OpenCL, Device);
 
-    return cl::getDeviceAvailableMemory(data_.deviceID);
+    return cl::getDeviceMemorySize(data_.deviceID);
   }
 
   template <>

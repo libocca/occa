@@ -34,7 +34,7 @@ namespace occa {
       return device;
     }
 
-    uintptr_t getDeviceAvailableMemory(CUdevice device){
+    uintptr_t getDeviceMemorySize(CUdevice device){
       size_t bytes;
 
       OCCA_CUDA_CHECK("Finding available memory on device",
@@ -58,7 +58,7 @@ namespace occa {
       OCCA_CUDA_CHECK("Getting Device Name",
                       cuDeviceGetName(deviceName, 1024, 0));
 
-      uintptr_t bytes      = getDeviceAvailableMemory(getDevice(0));
+      uintptr_t bytes      = getDeviceMemorySize(getDevice(0));
       std::string bytesStr = stringifyBytes(bytes);
 
       // << "==============o=======================o==========================================\n";
@@ -67,7 +67,7 @@ namespace occa {
          << "              |  Memory               | " << bytesStr                        << '\n';
 
       for(int i = 1; i < deviceCount; ++i){
-        bytes    = getDeviceAvailableMemory(getDevice(i));
+        bytes    = getDeviceMemorySize(getDevice(i));
         bytesStr = stringifyBytes(bytes);
 
         OCCA_CUDA_CHECK("Getting Device Name",
@@ -1440,10 +1440,10 @@ namespace occa {
   }
 
   template <>
-  uintptr_t device_t<CUDA>::maxBytesAvailable(){
+  uintptr_t device_t<CUDA>::memorySize(){
     OCCA_EXTRACT_DATA(CUDA, Device);
 
-    return cuda::getDeviceAvailableMemory(data_.device);
+    return cuda::getDeviceMemorySize(data_.device);
   }
 
   template <>
