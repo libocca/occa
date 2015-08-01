@@ -190,7 +190,7 @@ namespace occa {
 #if   (OCCA_OS & LINUX_OS)
       struct sysinfo info;
 
-      const int error = sysinfo(info);
+      const int error = sysinfo(&info);
 
       if(error != 0)
         return 0;
@@ -214,7 +214,7 @@ namespace occa {
 #if   (OCCA_OS & LINUX_OS)
       struct sysinfo info;
 
-      const int error = sysinfo(info);
+      const int error = sysinfo(&info);
 
       if(error != 0)
         return 0;

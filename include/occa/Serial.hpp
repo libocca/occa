@@ -3,7 +3,7 @@
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  if   (OCCA_OS == LINUX_OS)
-#    include <sys/sysinfo>
+#    include <sys/sysinfo.h>
 #  elif (OCCA_OS == OSX_OS)
 #    include <mach/mach.h>
 #    include <mach/mach_host.h>

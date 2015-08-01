@@ -43,6 +43,8 @@ namespace occa {
 
     int getDeviceCount();
 
+    CUdevice getDevice(const int id);
+
     uintptr_t getDeviceAvailableMemory(CUdevice device);
 
     std::string getDeviceListInfo();

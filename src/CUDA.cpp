@@ -25,6 +25,15 @@ namespace occa {
       return deviceCount;
     }
 
+    CUdevice getDevice(const int id){
+      CUdevice device;
+
+      OCCA_CUDA_CHECK("Getting CUdevice",
+                      cuDeviceGet(&device, id));
+
+      return device;
+    }
+
     uintptr_t getDeviceAvailableMemory(CUdevice device){
       size_t bytes;
 
@@ -49,17 +58,25 @@ namespace occa {
       OCCA_CUDA_CHECK("Getting Device Name",
                       cuDeviceGetName(deviceName, 1024, 0));
 
+      uintptr_t bytes      = getDeviceAvailableMemory(getDevice(0));
+      std::string bytesStr = stringifyBytes(bytes);
+
       // << "==============o=======================o==========================================\n";
       ss << "     CUDA     |  Device ID            | 0 "                                  << '\n'
-         << "              |  Device Name          | " << deviceName                      << '\n';
+         << "              |  Device Name          | " << deviceName                      << '\n'
+         << "              |  Memory               | " << bytesStr                        << '\n';
 
       for(int i = 1; i < deviceCount; ++i){
+        bytes    = getDeviceAvailableMemory(getDevice(i));
+        bytesStr = stringifyBytes(bytes);
+
         OCCA_CUDA_CHECK("Getting Device Name",
                         cuDeviceGetName(deviceName, 1024, i));
 
         ss << "              |-----------------------+------------------------------------------\n"
            << "              |  Device ID            | " << i                                << '\n'
-           << "              |  Device Name          | " << deviceName                       << '\n';
+           << "              |  Device Name          | " << deviceName                       << '\n'
+           << "              |  Memory               | " << bytesStr                         << '\n';
       }
 
       return ss.str();
