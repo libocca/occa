@@ -9,21 +9,12 @@ OCCA_START_EXTERN_C
 
 int joccaIsInitialized = 0;
 
-jclass   jdClass;
-jclass   jkClass;
-jclass   jkiClass;
-jclass   jsClass;
-jclass   jstClass;
-jclass   jmClass;
-jfieldID jdHandleF;
-jfieldID jkHandleF;
-jfieldID jkiHandleF;
-jfieldID jsHandleF;
-jfieldID jstHandleF;
-jfieldID jmHandleF;
+jclass   jdClass  , jkClass  , jkiClass  , jsClass  , jstClass  , jmClass;
+jfieldID jdHandleF, jkHandleF, jkiHandleF, jsHandleF, jstHandleF, jmHandleF;
 
+// Keep last line so no warning will occur with the [;]
 #define JOCCA_EXTRACT_CLASSES()                                    \
-  if(!joccaIsInitialized){                                         \
+  if(joccaIsInitialized == 0){                                     \
     jdClass    = (*env)->FindClass(env, "occa/Device");            \
     jkClass    = (*env)->FindClass(env, "occa/Kernel");            \
     jkiClass   = (*env)->FindClass(env, "occa/KernelInfo");        \
@@ -38,7 +29,6 @@ jfieldID jmHandleF;
     jmHandleF  = (*env)->GetFieldID(env, jmClass , "handle", "J"); \
   }                                                                \
   joccaIsInitialized = 1
-// Keep last line so no warning will occur with the [;]
 
 #define JOCCA_GET_DEVICE(OBJ)                   \
   (*env)->GetLongField(env, OBJ, jdHandleF)
@@ -86,86 +76,135 @@ JNIEXPORT void JNICALL Java_occa_Device_setup(JNIEnv *env,
 JNIEXPORT jlong JNICALL Java_occa_Device_memorySize(JNIEnv *env,
                                                     jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  return (jlong) occaDeviceMemorySize(device);
 }
 
 JNIEXPORT jlong JNICALL Java_occa_Device_memoryAllocated(JNIEnv *env,
                                                          jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  return (jlong) occaDeviceMemoryAllocated(device);
 }
 
 JNIEXPORT jobjectArray JNICALL Java_occa_Device_mode(JNIEnv *env,
                                                      jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *mode = occaDeviceMode(device);
+
+  return (*env)->NewStringUTF(env, mode);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_setCompiler(JNIEnv *env,
                                                     jobject this_,
                                                     jobjectArray compiler_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *compiler = JOCCA_GET_STRING(compiler_);
+  JOCCA_RELEASE_STRING(compiler);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_setCompilerEnvScript(JNIEnv *env,
                                                              jobject this_,
                                                              jobjectArray compilerEnvScript_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *compilerEnvScript = JOCCA_GET_STRING(compilerEnvScript_);
+  JOCCA_RELEASE_STRING(compilerEnvScript);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_setCompilerFlags(JNIEnv *env,
                                                          jobject this_,
                                                          jobjectArray compilerFlags_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *compilerFlags = JOCCA_GET_STRING(compilerFlags_);
+  JOCCA_RELEASE_STRING(compilerFlags);
 }
 
 JNIEXPORT jobjectArray JNICALL Java_occa_Device_getCompiler(JNIEnv *env,
                                                             jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobjectArray JNICALL Java_occa_Device_getCompilerEnvScript(JNIEnv *env,
                                                                      jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobjectArray JNICALL Java_occa_Device_getCompilerFlags(JNIEnv *env,
                                                                  jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_flush(JNIEnv *env,
                                               jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_finish(JNIEnv *env,
                                                jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_waitFor(JNIEnv *env,
                                                 jobject this_,
                                                 jobject tag){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_createStream(JNIEnv *env,
                                                         jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_getStream(JNIEnv *env,
                                                      jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_setStream(JNIEnv *env,
                                                   jobject this_,
                                                   jobject stream){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_tagStream(JNIEnv *env,
                                                      jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jdouble JNICALL Java_occa_Device_timeBetween(JNIEnv *env,
@@ -173,6 +212,8 @@ JNIEXPORT jdouble JNICALL Java_occa_Device_timeBetween(JNIEnv *env,
                                                        jobject startTag,
                                                        jobject endTag){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_buildKernel(JNIEnv *env,
@@ -181,6 +222,14 @@ JNIEXPORT jobject JNICALL Java_occa_Device_buildKernel(JNIEnv *env,
                                                        jobjectArray functionName_,
                                                        jobject info){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *str          = JOCCA_GET_STRING(str_);
+  const char *functionName = JOCCA_GET_STRING(functionName_);
+
+  JOCCA_RELEASE_STRING(str);
+  JOCCA_RELEASE_STRING(functionName);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromString(JNIEnv *env,
@@ -190,6 +239,14 @@ JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromString(JNIEnv *env,
                                                                  jobject info,
                                                                  jint language){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *content      = JOCCA_GET_STRING(content_);
+  const char *functionName = JOCCA_GET_STRING(functionName_);
+
+  JOCCA_RELEASE_STRING(content);
+  JOCCA_RELEASE_STRING(functionName);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromSource(JNIEnv *env,
@@ -198,6 +255,14 @@ JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromSource(JNIEnv *env,
                                                                  jobjectArray functionName_,
                                                                  jobject info){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *filename      = JOCCA_GET_STRING(filename_);
+  const char *functionName = JOCCA_GET_STRING(functionName_);
+
+  JOCCA_RELEASE_STRING(filename);
+  JOCCA_RELEASE_STRING(functionName);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromBinary(JNIEnv *env,
@@ -205,6 +270,14 @@ JNIEXPORT jobject JNICALL Java_occa_Device_buildKernelFromBinary(JNIEnv *env,
                                                                  jobjectArray filename_,
                                                                  jobjectArray functionName_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
+
+  const char *filename      = JOCCA_GET_STRING(filename_);
+  const char *functionName = JOCCA_GET_STRING(functionName_);
+
+  JOCCA_RELEASE_STRING(filename);
+  JOCCA_RELEASE_STRING(functionName);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_wrapMemory(JNIEnv *env,
@@ -212,6 +285,8 @@ JNIEXPORT jobject JNICALL Java_occa_Device_wrapMemory(JNIEnv *env,
                                                       jobjectArray handle,
                                                       jlong bytes){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_wrapManagedMemory(JNIEnv *env,
@@ -219,6 +294,8 @@ JNIEXPORT void JNICALL Java_occa_Device_wrapManagedMemory(JNIEnv *env,
                                                           jobjectArray handle,
                                                           jlong bytes){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_malloc(JNIEnv *env,
@@ -226,6 +303,8 @@ JNIEXPORT jobject JNICALL Java_occa_Device_malloc(JNIEnv *env,
                                                   jlong bytes,
                                                   jobjectArray src){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobjectArray JNICALL Java_occa_Device_managedAlloc(JNIEnv *env,
@@ -233,6 +312,8 @@ JNIEXPORT jobjectArray JNICALL Java_occa_Device_managedAlloc(JNIEnv *env,
                                                              jlong bytes,
                                                              jobjectArray src){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobject JNICALL Java_occa_Device_mappedAlloc(JNIEnv *env,
@@ -240,6 +321,8 @@ JNIEXPORT jobject JNICALL Java_occa_Device_mappedAlloc(JNIEnv *env,
                                                        jlong bytes,
                                                        jobjectArray src){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT jobjectArray JNICALL Java_occa_Device_managedMappedAlloc(JNIEnv *env,
@@ -247,11 +330,15 @@ JNIEXPORT jobjectArray JNICALL Java_occa_Device_managedMappedAlloc(JNIEnv *env,
                                                                    jlong byts,
                                                                    jobjectArray src){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 JNIEXPORT void JNICALL Java_occa_Device_free(JNIEnv *env,
                                              jobject this_){
   JOCCA_EXTRACT_CLASSES();
+
+  occaDevice device = (occaDevice) JOCCA_GET_DEVICE(this_);
 }
 
 OCCA_END_EXTERN_C

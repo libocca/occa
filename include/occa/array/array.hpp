@@ -100,14 +100,14 @@ namespace occa {
     array(const int dim, const dim_t *d);
 
     array(const dim_t d0);
-    array(const dim_t d1, const dim_t d0);
-    array(const dim_t d2, const dim_t d1, const dim_t d0);
-    array(const dim_t d3,
-          const dim_t d2, const dim_t d1, const dim_t d0);
-    array(const dim_t d4, const dim_t d3,
-          const dim_t d2, const dim_t d1, const dim_t d0);
-    array(const dim_t d5, const dim_t d4, const dim_t d3,
-          const dim_t d2, const dim_t d1, const dim_t d0);
+    array(const dim_t d0, const dim_t d1);
+    array(const dim_t d0, const dim_t d1, const dim_t d2);
+    array(const dim_t d0, const dim_t d1, const dim_t d2,
+          const dim_t d3);
+    array(const dim_t d0, const dim_t d1, const dim_t d2,
+          const dim_t d3, const dim_t d4);
+    array(const dim_t d0, const dim_t d1, const dim_t d2,
+          const dim_t d3, const dim_t d4, const dim_t d5);
 
     //---[ array(device, ...) ]--------
     array(occa::device device_, const int dim, const dim_t *d);
@@ -115,18 +115,18 @@ namespace occa {
     array(occa::device device_,
           const dim_t d0);
     array(occa::device device_,
-          const dim_t d1, const dim_t d0);
+          const dim_t d0, const dim_t d1);
     array(occa::device device_,
-          const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d0, const dim_t d1, const dim_t d2);
     array(occa::device device_,
-          const dim_t d3,
-          const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d0, const dim_t d1, const dim_t d2,
+          const dim_t d3);
     array(occa::device device_,
-          const dim_t d4, const dim_t d3,
-          const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d0, const dim_t d1, const dim_t d2,
+          const dim_t d3, const dim_t d4);
     array(occa::device device_,
-          const dim_t d5, const dim_t d4, const dim_t d3,
-          const dim_t d2, const dim_t d1, const dim_t d0);
+          const dim_t d0, const dim_t d1, const dim_t d2,
+          const dim_t d3, const dim_t d4, const dim_t d5);
 
     //---[ allocate(...) ]--------------
   private:
@@ -136,14 +136,14 @@ namespace occa {
     void allocate(const int dim, const dim_t *d);
 
     void allocate(const dim_t d0);
-    void allocate(const dim_t d1, const dim_t d0);
-    void allocate(const dim_t d2, const dim_t d1, const dim_t d0);
-    void allocate(const dim_t d3,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
-    void allocate(const dim_t d4, const dim_t d3,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
-    void allocate(const dim_t d5, const dim_t d4, const dim_t d3,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
+    void allocate(const dim_t d0, const dim_t d1);
+    void allocate(const dim_t d0, const dim_t d1, const dim_t d2);
+    void allocate(const dim_t d0, const dim_t d1, const dim_t d2,
+                  const dim_t d3);
+    void allocate(const dim_t d0, const dim_t d1, const dim_t d2,
+                  const dim_t d3, const dim_t d4);
+    void allocate(const dim_t d0, const dim_t d1, const dim_t d2,
+                  const dim_t d3, const dim_t d4, const dim_t d5);
 
     //---[ allocate(device, ...) ]------
     void allocate(occa::device device_, const int dim, const dim_t *d);
@@ -151,31 +151,31 @@ namespace occa {
     void allocate(occa::device device_,
                   const dim_t d0);
     void allocate(occa::device device_,
-                  const dim_t d1, const dim_t d0);
+                  const dim_t d0, const dim_t d1);
     void allocate(occa::device device_,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
+                  const dim_t d0, const dim_t d1, const dim_t d2);
     void allocate(occa::device device_,
-                  const dim_t d3,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
+                  const dim_t d0, const dim_t d1, const dim_t d2,
+                  const dim_t d3);
     void allocate(occa::device device_,
-                  const dim_t d4, const dim_t d3,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
+                  const dim_t d0, const dim_t d1, const dim_t d2,
+                  const dim_t d3, const dim_t d4);
     void allocate(occa::device device_,
-                  const dim_t d5, const dim_t d4, const dim_t d3,
-                  const dim_t d2, const dim_t d1, const dim_t d0);
+                  const dim_t d0, const dim_t d1, const dim_t d2,
+                  const dim_t d3, const dim_t d4, const dim_t d5);
 
     //---[ reshape(...) ]---------------
     void reshape(const int dim, const dim_t *d);
 
     void reshape(const dim_t d0);
-    void reshape(const dim_t d1, const dim_t d0);
-    void reshape(const dim_t d2, const dim_t d1, const dim_t d0);
-    void reshape(const dim_t d3,
-                 const dim_t d2, const dim_t d1, const dim_t d0);
-    void reshape(const dim_t d4, const dim_t d3,
-                 const dim_t d2, const dim_t d1, const dim_t d0);
-    void reshape(const dim_t d5, const dim_t d4, const dim_t d3,
-                 const dim_t d2, const dim_t d1, const dim_t d0);
+    void reshape(const dim_t d0, const dim_t d1);
+    void reshape(const dim_t d0, const dim_t d1, const dim_t d2);
+    void reshape(const dim_t d0, const dim_t d1, const dim_t d2,
+                 const dim_t d3);
+    void reshape(const dim_t d0, const dim_t d1, const dim_t d2,
+                 const dim_t d3, const dim_t d4);
+    void reshape(const dim_t d0, const dim_t d1, const dim_t d2,
+                 const dim_t d3, const dim_t d4, const dim_t d5);
 
     //---[ setIdxOrder(...) ]-----------
     void updateFS(const int idxCount_ = 1);
@@ -184,27 +184,28 @@ namespace occa {
     void setIdxOrder(const std::string &default_,
                      const std::string &given);
 
-    void setIdxOrder(const int o1, const int o0);
-    void setIdxOrder(const int o2, const int o1, const int o0);
-    void setIdxOrder(const int o3,
-                     const int o2, const int o1, const int o0);
-    void setIdxOrder(const int o4, const int o3,
-                     const int o2, const int o1, const int o0);
-    void setIdxOrder(const int o5, const int o4, const int o3,
-                     const int o2, const int o1, const int o0);
+    void setIdxOrder(const int o0);
+    void setIdxOrder(const int o0, const int o1);
+    void setIdxOrder(const int o0, const int o1, const int o2);
+    void setIdxOrder(const int o0, const int o1, const int o2,
+                     const int o3);
+    void setIdxOrder(const int o0, const int o1, const int o2,
+                     const int o3, const int o4);
+    void setIdxOrder(const int o0, const int o1, const int o2,
+                     const int o3, const int o4, const int o5);
 
     //---[ Operators ]------------------
     inline TM& operator [] (const dim_t i0);
 
     inline TM& operator () (const dim_t i0);
-    inline TM& operator () (const dim_t i1, const dim_t i0);
-    inline TM& operator () (const dim_t i2, const dim_t i1, const dim_t i0);
-    inline TM& operator () (const dim_t i3,
-                            const dim_t i2, const dim_t i1, const dim_t i0);
-    inline TM& operator () (const dim_t i4, const dim_t i3,
-                            const dim_t i2, const dim_t i1, const dim_t i0);
-    inline TM& operator () (const dim_t i5, const dim_t i4, const dim_t i3,
-                            const dim_t i2, const dim_t i1, const dim_t i0);
+    inline TM& operator () (const dim_t i0, const dim_t i1);
+    inline TM& operator () (const dim_t i0, const dim_t i1, const dim_t i2);
+    inline TM& operator () (const dim_t i0, const dim_t i1, const dim_t i2,
+                            const dim_t i3);
+    inline TM& operator () (const dim_t i0, const dim_t i1, const dim_t i2,
+                            const dim_t i3, const dim_t i4);
+    inline TM& operator () (const dim_t i0, const dim_t i1, const dim_t i2,
+                            const dim_t i3, const dim_t i4, const dim_t i5);
 
     //---[ Syncs ]----------------------
     void startManaging();
