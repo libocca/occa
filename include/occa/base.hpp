@@ -392,12 +392,6 @@ namespace occa {
       size = k.size;
       info = k.info;
 
-      std::cout << "getBits(k.data.double_) = " << getBits(k.data.double_) << '\n'
-                << "k.data.double_          = " << k.data.double_ << '\n'
-                << "data.double_            = " << data.double_ << '\n'
-                << "&(k.data)               = " << &(k.data) << '\n'
-                << "&(k.data.double_)       = " << &(k.data.double_) << '\n' << '\n';
-
       return *this;
     }
 
