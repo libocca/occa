@@ -13,6 +13,8 @@ before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
   - sudo apt-get install -qq fglrx=2:8.960-0ubuntu1 opencl-headers gcc-4.8 g++-4.8 gfortran-4.8
+  - export CXX=g++-4.8
+  - export CC=gcc-4.8
 script:
   - make -j
   - cd $OCCA_DIR/examples/addVectors/
