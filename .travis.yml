@@ -5,6 +5,7 @@ env:
   global:
     - OCCA_DIR=$TRAVIS_BUILD_DIR
     - OMP_NUM_THREADS=4
+    - ASAN_OPTIONS=detect_leaks=1
     - FC=gfortran-4.9
     - OCCA_FORTRAN_ENABLED=1
     - LD_LIBRARY_PATH=$OCCA_DIR/lib:$LD_LIBRARY_PATH
@@ -15,18 +16,40 @@ before_install:
   - export CXX=g++-4.9
   - export CC=gcc-4.9
 script:
-  - make -j
+  - echo 'with library address sanitizer'
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
   - cd $OCCA_DIR/examples/addVectors/
-  - make -j
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
   - ./main
   - ./main_c
   - ./main_f90
+  - make clean
   - cd $OCCA_DIR/examples/reduction/
-  - make -j
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
   - ./main
+  - make clean
   - cd $OCCA_DIR/examples/usingArrays/
-  - make -j
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
   - ./main
+  - make clean
+  - echo 'without library address sanitizer'
+  - cd $OCCA_DIR
+  - make clean
+  - make -j CXXFLAGS='-fno-omit-frame-pointer -g' FCFLAGS='-fno-omit-frame-pointer -g'
+  - cd $OCCA_DIR/examples/addVectors/
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+  - ./main
+  - ./main_c
+  - ./main_f90
+  - make clean
+  - cd $OCCA_DIR/examples/reduction/
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+  - ./main
+  - make clean
+  - cd $OCCA_DIR/examples/usingArrays/
+  - make -j CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+  - ./main
+  - make clean
 
 notifications:
   email:
