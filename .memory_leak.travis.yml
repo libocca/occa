@@ -5,6 +5,7 @@ env:
   global:
     - OCCA_DIR=$TRAVIS_BUILD_DIR
     - OMP_NUM_THREADS=4
+    - ASAN_OPTIONS=detect_leaks=1
     - FC=gfortran-4.9
     - OCCA_FORTRAN_ENABLED=1
     - LD_LIBRARY_PATH=$OCCA_DIR/lib:$LD_LIBRARY_PATH
@@ -31,6 +32,28 @@ script:
 
   - cd $OCCA_DIR/examples/usingArrays/
   - make -j 4 CXXFLAGS='-g' FCFLAGS='-g'
+  - ./main
+
+  - echo '---[ Testing Memory Leaks ]-------------'
+  - cd $OCCA_DIR
+  - make clean
+  - make -j 4 CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+
+  - cd $OCCA_DIR/examples/addVectors/
+  - make clean
+  - make -j 4 CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+  - ./main
+  - ./main_c
+  - ./main_f90
+
+  - cd $OCCA_DIR/examples/reduction/
+  - make clean
+  - make -j 4 CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+  - ./main
+
+  - cd $OCCA_DIR/examples/usingArrays/
+  - make clean
+  - make -j 4 CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
   - ./main
 
 notifications:

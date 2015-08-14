@@ -398,30 +398,44 @@ namespace occa {
   }
 
   void* kernel::getKernelHandle(){
+    checkIfInitialized();
+
     return kHandle->getKernelHandle();
   }
 
   void* kernel::getProgramHandle(){
+    checkIfInitialized();
+
     return kHandle->getProgramHandle();
   }
 
   kernel_v* kernel::getKHandle(){
+    checkIfInitialized();
+
     return kHandle;
   }
 
   const std::string& kernel::mode(){
+    checkIfInitialized();
+
     return kHandle->strMode;
   }
 
   const std::string& kernel::name(){
+    checkIfInitialized();
+
     return kHandle->name;
   }
 
   occa::device kernel::getDevice(){
+    checkIfInitialized();
+
     return occa::device(kHandle->dHandle);
   }
 
   void kernel::setWorkingDims(int dims, occa::dim inner, occa::dim outer){
+    checkIfInitialized();
+
     for(int i = 0; i < dims; ++i){
       inner[i] += (inner[i] ? 0 : 1);
       outer[i] += (outer[i] ? 0 : 1);
@@ -442,10 +456,14 @@ namespace occa {
   }
 
   uintptr_t kernel::maximumInnerDimSize(){
+    checkIfInitialized();
+
     return kHandle->maximumInnerDimSize();
   }
 
   int kernel::preferredDimSize(){
+    checkIfInitialized();
+
     if(0 < kHandle->nestedKernelCount)
       return 0;
 
@@ -453,11 +471,14 @@ namespace occa {
   }
 
   void kernel::clearArgumentList(){
+    checkIfInitialized();
+
     kHandle->argumentCount = 0;
   }
 
   void kernel::addArgument(const int argPos,
                            const kernelArg &arg){
+    checkIfInitialized();
 
     if(kHandle->argumentCount < (argPos + arg.argc)){
       OCCA_CHECK((argPos + arg.argc) < OCCA_MAX_ARGS,
@@ -472,6 +493,8 @@ namespace occa {
   }
 
   void kernel::runFromArguments(){
+    checkIfInitialized();
+
     const int argc    = kHandle->argumentCount;
     kernelArg_t *args = kHandle->arguments;
 
@@ -481,6 +504,8 @@ namespace occa {
 #include "operators/definitions.cpp"
 
   void kernel::free(){
+    checkIfInitialized();
+
     if(0 < kHandle->nestedKernelCount){
       for(int k = 0; k < kHandle->nestedKernelCount; ++k)
         kHandle->nestedKernels[k].free();
@@ -599,18 +624,26 @@ namespace occa {
   }
 
   memory_v* memory::getMHandle(){
+    checkIfInitialized();
+
     return mHandle;
   }
 
   device_v* memory::getDHandle(){
+    checkIfInitialized();
+
     return mHandle->dHandle;
   }
 
   const std::string& memory::mode(){
+    checkIfInitialized();
+
     return mHandle->strMode;
   }
 
   void* memory::textureArg1() const {
+    checkIfInitialized();
+
 #if !OCCA_CUDA_ENABLED
     return (void*) mHandle;
 #else
@@ -622,22 +655,32 @@ namespace occa {
   }
 
   void* memory::textureArg2() const {
+    checkIfInitialized();
+
     return (void*) ((mHandle->textureInfo).arg);
   }
 
   void* memory::getMappedPointer(){
+    checkIfInitialized();
+
     return mHandle->mappedPtr;
   }
 
   void* memory::getMemoryHandle(){
+    checkIfInitialized();
+
     return mHandle->getMemoryHandle();
   }
 
   void* memory::getTextureHandle(){
+    checkIfInitialized();
+
     return mHandle->getTextureHandle();
   }
 
   void memory::placeInUva(){
+    checkIfInitialized();
+
     if( !(mHandle->dHandle->fakesUva()) ){
       mHandle->uvaPtr = mHandle->handle;
     }
@@ -662,6 +705,8 @@ namespace occa {
   }
 
   void memory::manage(){
+    checkIfInitialized();
+
     placeInUva();
 
     mHandle->memInfo |= memFlag::isManaged;
@@ -669,6 +714,7 @@ namespace occa {
 
   void memory::syncToDevice(const uintptr_t bytes,
                             const uintptr_t offset){
+    checkIfInitialized();
 
     if(mHandle->dHandle->fakesUva()){
       uintptr_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
@@ -684,6 +730,7 @@ namespace occa {
 
   void memory::syncFromDevice(const uintptr_t bytes,
                               const uintptr_t offset){
+    checkIfInitialized();
 
     if(mHandle->dHandle->fakesUva()){
       uintptr_t bytes_ = ((bytes == 0) ? mHandle->size : bytes);
@@ -698,15 +745,21 @@ namespace occa {
   }
 
   bool memory::uvaIsDirty(){
+    checkIfInitialized();
+
     return (mHandle && mHandle->isDirty());
   }
 
   void memory::uvaMarkDirty(){
+    checkIfInitialized();
+
     if(mHandle != NULL)
       mHandle->memInfo |= uvaFlag::isDirty;
   }
 
   void memory::uvaMarkClean(){
+    checkIfInitialized();
+
     if(mHandle != NULL)
       mHandle->memInfo &= ~uvaFlag::isDirty;
   }
@@ -714,6 +767,7 @@ namespace occa {
   void memory::copyFrom(const void *src,
                         const uintptr_t bytes,
                         const uintptr_t offset){
+    checkIfInitialized();
 
     mHandle->copyFrom(src, bytes, offset);
   }
@@ -722,6 +776,7 @@ namespace occa {
                         const uintptr_t bytes,
                         const uintptr_t destOffset,
                         const uintptr_t srcOffset){
+    checkIfInitialized();
 
     if(mHandle->dHandle == src.mHandle->dHandle){
       mHandle->copyFrom(src.mHandle, bytes, destOffset, srcOffset);
@@ -784,6 +839,7 @@ namespace occa {
   void memory::copyTo(void *dest,
                       const uintptr_t bytes,
                       const uintptr_t offset){
+    checkIfInitialized();
 
     mHandle->copyTo(dest, bytes, offset);
   }
@@ -792,6 +848,7 @@ namespace occa {
                       const uintptr_t bytes,
                       const uintptr_t destOffset,
                       const uintptr_t srcOffset){
+    checkIfInitialized();
 
     if(mHandle->dHandle == dest.mHandle->dHandle){
       mHandle->copyTo(dest.mHandle, bytes, destOffset, srcOffset);
@@ -845,6 +902,7 @@ namespace occa {
   void memory::asyncCopyFrom(const void *src,
                              const uintptr_t bytes,
                              const uintptr_t offset){
+    checkIfInitialized();
 
     mHandle->asyncCopyFrom(src, bytes, offset);
   }
@@ -853,6 +911,7 @@ namespace occa {
                              const uintptr_t bytes,
                              const uintptr_t destOffset,
                              const uintptr_t srcOffset){
+    checkIfInitialized();
 
     if(mHandle->dHandle == src.mHandle->dHandle){
       mHandle->asyncCopyFrom(src.mHandle, bytes, destOffset, srcOffset);
@@ -906,6 +965,7 @@ namespace occa {
   void memory::asyncCopyTo(void *dest,
                            const uintptr_t bytes,
                            const uintptr_t offset){
+    checkIfInitialized();
 
     mHandle->asyncCopyTo(dest, bytes, offset);
   }
@@ -914,6 +974,7 @@ namespace occa {
                            const uintptr_t bytes,
                            const uintptr_t destOffset,
                            const uintptr_t srcOffset){
+    checkIfInitialized();
 
     if(mHandle->dHandle == dest.mHandle->dHandle){
       mHandle->asyncCopyTo(dest.mHandle, bytes, destOffset, srcOffset);
@@ -1085,6 +1146,8 @@ namespace occa {
   }
 
   void memory::free(){
+    checkIfInitialized();
+
     mHandle->dHandle->bytesAllocated -= (mHandle->size);
 
     if(mHandle->uvaPtr){
@@ -1296,67 +1359,99 @@ namespace occa {
   }
 
   uintptr_t device::memorySize() const {
+    checkIfInitialized();
+
     return dHandle->memorySize();
   }
 
   uintptr_t device::memoryAllocated() const {
+    checkIfInitialized();
+
     return dHandle->bytesAllocated;
   }
 
   // Old name for [memoryAllocated()]
   uintptr_t device::bytesAllocated() const {
+    checkIfInitialized();
+
     return dHandle->bytesAllocated;
   }
 
   deviceIdentifier device::getIdentifier() const {
+    checkIfInitialized();
+
     return dHandle->getIdentifier();
   }
 
   void device::setCompiler(const std::string &compiler_){
+    checkIfInitialized();
+
     dHandle->setCompiler(compiler_);
   }
 
   void device::setCompilerEnvScript(const std::string &compilerEnvScript_){
+    checkIfInitialized();
+
     dHandle->setCompilerEnvScript(compilerEnvScript_);
   }
 
   void device::setCompilerFlags(const std::string &compilerFlags_){
+    checkIfInitialized();
+
     dHandle->setCompilerFlags(compilerFlags_);
   }
 
   std::string& device::getCompiler(){
+    checkIfInitialized();
+
     return dHandle->compiler;
   }
 
   std::string& device::getCompilerEnvScript(){
+    checkIfInitialized();
+
     return dHandle->compilerEnvScript;
   }
 
   std::string& device::getCompilerFlags(){
+    checkIfInitialized();
+
     return dHandle->compilerFlags;
   }
 
   int device::modelID(){
+    checkIfInitialized();
+
     return dHandle->modelID_;
   }
 
   int device::id(){
+    checkIfInitialized();
+
     return dHandle->id_;
   }
 
   int device::modeID(){
+    checkIfInitialized();
+
     return dHandle->mode();
   }
 
   const std::string& device::mode(){
+    checkIfInitialized();
+
     return dHandle->strMode;
   }
 
   void device::flush(){
+    checkIfInitialized();
+
     dHandle->flush();
   }
 
   void device::finish(){
+    checkIfInitialized();
+
     if(dHandle->fakesUva()){
       const size_t dirtyEntries = uvaDirtyMemory.size();
 
@@ -1378,10 +1473,14 @@ namespace occa {
   }
 
   void device::waitFor(streamTag tag){
+    checkIfInitialized();
+
     dHandle->waitFor(tag);
   }
 
   stream device::createStream(){
+    checkIfInitialized();
+
     stream newStream(dHandle, dHandle->createStream());
 
     dHandle->streams.push_back(newStream.handle);
@@ -1390,26 +1489,38 @@ namespace occa {
   }
 
   stream device::getStream(){
+    checkIfInitialized();
+
     return stream(dHandle, dHandle->currentStream);
   }
 
   void device::setStream(stream s){
+    checkIfInitialized();
+
     dHandle->currentStream = s.handle;
   }
 
   stream device::wrapStream(void *handle_){
+    checkIfInitialized();
+
     return stream(dHandle, dHandle->wrapStream(handle_));
   }
 
   streamTag device::tagStream(){
+    checkIfInitialized();
+
     return dHandle->tagStream();
   }
 
   double device::timeBetween(const streamTag &startTag, const streamTag &endTag){
+    checkIfInitialized();
+
     return dHandle->timeBetween(startTag, endTag);
   }
 
   void device::freeStream(stream s){
+    checkIfInitialized();
+
     const int streamCount = dHandle->streams.size();
 
     for(int i = 0; i < streamCount; ++i){
@@ -1428,6 +1539,7 @@ namespace occa {
   kernel device::buildKernel(const std::string &str,
                              const std::string &functionName,
                              const kernelInfo &info_){
+    checkIfInitialized();
 
     if(sys::fileExists(str, flags::checkCacheDir))
       return buildKernelFromSource(str, functionName, info_);
@@ -1438,6 +1550,7 @@ namespace occa {
   kernel device::buildKernelFromString(const std::string &content,
                                        const std::string &functionName,
                                        const int language){
+    checkIfInitialized();
 
     return buildKernelFromString(content,
                                  functionName,
@@ -1449,6 +1562,7 @@ namespace occa {
                                        const std::string &functionName,
                                        const kernelInfo &info_,
                                        const int language){
+    checkIfInitialized();
 
     kernelInfo info = info_;
 
@@ -1490,6 +1604,7 @@ namespace occa {
   kernel device::buildKernelFromSource(const std::string &filename,
                                        const std::string &functionName,
                                        const kernelInfo &info_){
+    checkIfInitialized();
 
     const std::string realFilename = sys::getFilename(filename);
     const bool usingParser         = fileNeedsParser(filename);
@@ -1576,6 +1691,8 @@ namespace occa {
 
   kernel device::buildKernelFromBinary(const std::string &filename,
                                        const std::string &functionName){
+    checkIfInitialized();
+
     kernel ker;
 
     ker.kHandle          = dHandle->buildKernelFromBinary(filename,
@@ -1588,6 +1705,7 @@ namespace occa {
   void device::cacheKernelInLibrary(const std::string &filename,
                                     const std::string &functionName,
                                     const kernelInfo &info_){
+    checkIfInitialized();
 
     dHandle->cacheKernelInLibrary(filename,
                                   functionName,
@@ -1596,6 +1714,8 @@ namespace occa {
 
   kernel device::loadKernelFromLibrary(const char *cache,
                                        const std::string &functionName){
+    checkIfInitialized();
+
     kernel ker;
 
     ker.kHandle          = dHandle->loadKernelFromLibrary(cache,
@@ -1619,6 +1739,7 @@ namespace occa {
                                       const std::string &functionName,
                                       const kernelInfo &info_,
                                       const int useLoopyOrFloopy){
+    checkIfInitialized();
 
     const std::string realFilename = sys::getFilename(filename);
 
@@ -1678,6 +1799,8 @@ namespace occa {
 
   memory device::wrapMemory(void *handle_,
                             const uintptr_t bytes){
+    checkIfInitialized();
+
     memory mem;
 
     mem.mHandle = dHandle->wrapMemory(handle_, bytes);
@@ -1688,6 +1811,8 @@ namespace occa {
 
   void device::wrapManagedMemory(void *handle_,
                                  const uintptr_t bytes){
+    checkIfInitialized();
+
     memory mem = wrapMemory(handle_, bytes);
 
     mem.manage();
@@ -1696,6 +1821,7 @@ namespace occa {
   memory device::wrapTexture(void *handle_,
                              const int dim, const occa::dim &dims,
                              occa::formatType type, const int permissions){
+    checkIfInitialized();
 
     OCCA_CHECK((dim == 1) || (dim == 2),
                "Textures of [" << dim << "D] are not supported,"
@@ -1714,6 +1840,7 @@ namespace occa {
   void device::wrapManagedTexture(void *handle_,
                                   const int dim, const occa::dim &dims,
                                   occa::formatType type, const int permissions){
+    checkIfInitialized();
 
     memory mem = wrapTexture(handle_, dim, dims, type, permissions);
 
@@ -1722,6 +1849,8 @@ namespace occa {
 
   memory device::malloc(const uintptr_t bytes,
                         void *src){
+    checkIfInitialized();
+
     memory mem;
 
     mem.mHandle          = dHandle->malloc(bytes, src);
@@ -1734,6 +1863,8 @@ namespace occa {
 
   void* device::managedAlloc(const uintptr_t bytes,
                              void *src){
+    checkIfInitialized();
+
     memory mem = malloc(bytes, src);
 
     mem.manage();
@@ -1744,6 +1875,8 @@ namespace occa {
   memory device::textureAlloc(const int dim, const occa::dim &dims,
                               void *src,
                               occa::formatType type, const int permissions){
+    checkIfInitialized();
+
     OCCA_CHECK((dim == 1) || (dim == 2),
                "Textures of [" << dim << "D] are not supported,"
                << "only 1D or 2D are supported at the moment");
@@ -1767,6 +1900,7 @@ namespace occa {
   void* device::managedTextureAlloc(const int dim, const occa::dim &dims,
                                     void *src,
                                     occa::formatType type, const int permissions){
+    checkIfInitialized();
 
     memory mem = textureAlloc(dim, dims, src, type, permissions);
 
@@ -1777,6 +1911,8 @@ namespace occa {
 
   memory device::mappedAlloc(const uintptr_t bytes,
                              void *src){
+    checkIfInitialized();
+
     memory mem;
 
     mem.mHandle          = dHandle->mappedAlloc(bytes, src);
@@ -1789,6 +1925,8 @@ namespace occa {
 
   void* device::managedMappedAlloc(const uintptr_t bytes,
                                    void *src){
+    checkIfInitialized();
+
     memory mem = mappedAlloc(bytes, src);
 
     mem.manage();
@@ -1797,6 +1935,8 @@ namespace occa {
   }
 
   void device::free(){
+    checkIfInitialized();
+
     const int streamCount = dHandle->streams.size();
 
     for(int i = 0; i < streamCount; ++i)
@@ -1809,6 +1949,8 @@ namespace occa {
   }
 
   int device::simdWidth(){
+    checkIfInitialized();
+
     return dHandle->simdWidth();
   }
 
