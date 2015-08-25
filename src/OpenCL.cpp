@@ -744,6 +744,8 @@ namespace occa {
 
     OCCA_CL_CHECK("Kernel: Free",
                   clReleaseKernel(data_.kernel));
+
+    delete (OpenCLKernelData_t*) this->data;
   }
   //==================================
 
