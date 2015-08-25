@@ -744,6 +744,8 @@ namespace occa {
 
     OCCA_CL_CHECK("Kernel: Free",
                   clReleaseKernel(data_.kernel));
+
+    delete (OpenCLKernelData_t*) this->data;
   }
   //==================================
 
@@ -1091,13 +1093,15 @@ namespace occa {
     error = clReleaseMemObject(*((cl_mem*) handle));
 
     OCCA_CL_CHECK("Mapped Free: clReleaseMemObject", error);
+
+    delete (cl_mem*) handle;
   }
 
   template <>
   void memory_t<OpenCL>::free(){
     clReleaseMemObject(*((cl_mem*) handle));
 
-    if(isAWrapper())
+    if(!isAWrapper())
       delete (cl_mem*) handle;
 
     if(isATexture()){

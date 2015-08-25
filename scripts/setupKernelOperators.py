@@ -306,6 +306,7 @@ def cOperatorDefinition(N):
             '        }\n'                                                         + \
             '        else {\n'                                                    + \
             '          kernel_.addArgument(i, occa::kernelArg(arg.value));\n'     + \
+            '          delete (occaType_t*) args[i];\n'                           + \
             '        }\n'                                                         + \
             '      }\n'                                                           + \
             '      \n'                                                            + \
