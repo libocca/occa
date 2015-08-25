@@ -77,6 +77,7 @@ int main(int argc, char **argv){
   free(b);
   free(ab);
 
+  occaKernelInfoFree(info);
   occaKernelFree(addVectors);
   occaMemoryFree(o_a);
   occaMemoryFree(o_b);
