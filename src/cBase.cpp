@@ -818,6 +818,7 @@ double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
 
 void OCCA_RFUNC occaStreamFree(occaStream stream){
   ((occa::stream*) stream)->free();
+  delete (occa::stream*) stream;
 }
 
 void OCCA_RFUNC occaDeviceFree(occaDevice device){
