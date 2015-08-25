@@ -503,6 +503,8 @@ namespace occa {
 
     OCCA_CUDA_CHECK("Kernel (" + name + ") : Unloading Module",
                     cuModuleUnload(data_.module));
+
+    delete (CUDAKernelData_t*) this->data;
   }
   //==================================
 
