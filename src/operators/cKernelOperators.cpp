@@ -18,6 +18,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -45,6 +46,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -72,6 +74,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -100,6 +103,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -128,6 +132,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -156,6 +161,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -185,6 +191,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -214,6 +221,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -243,6 +251,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -273,6 +282,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -303,6 +313,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -333,6 +344,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -364,6 +376,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -395,6 +408,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -426,6 +440,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -458,6 +473,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -490,6 +506,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -522,6 +539,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -555,6 +573,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -588,6 +607,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -621,6 +641,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -655,6 +676,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -689,6 +711,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -723,6 +746,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -758,6 +782,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -793,6 +818,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -828,6 +854,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -864,6 +891,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -900,6 +928,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -936,6 +965,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -973,6 +1003,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1010,6 +1041,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1047,6 +1079,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1085,6 +1118,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1123,6 +1157,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1161,6 +1196,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1200,6 +1236,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1239,6 +1276,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1278,6 +1316,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1318,6 +1357,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1358,6 +1398,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1398,6 +1439,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1439,6 +1481,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1480,6 +1523,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1521,6 +1565,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1563,6 +1608,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1605,6 +1651,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1647,6 +1694,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1690,6 +1738,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       
@@ -1733,6 +1782,7 @@
         }
         else {
           kernel_.addArgument(i, occa::kernelArg(arg.value));
+          delete (occaType_t*) args[i];
         }
       }
       

@@ -961,6 +961,7 @@ void OCCA_RFUNC occaKernelRun_(occaKernel kernel,
     }
     else {
       kernel_.addArgument(i, occa::kernelArg(arg.value));
+      delete (occaType_t*) list_.argv[i];
     }
   }
 
