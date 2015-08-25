@@ -296,6 +296,7 @@ OCCA_LFUNC void OCCA_RFUNC occaDeviceWaitForTag(occaDevice device,
 OCCA_LFUNC double OCCA_RFUNC occaDeviceTimeBetweenTags(occaDevice device,
                                                        occaStreamTag startTag, occaStreamTag endTag);
 
+OCCA_LFUNC void OCCA_RFUNC occaGetStreamFree(occaStream stream);
 OCCA_LFUNC void OCCA_RFUNC occaStreamFree(occaStream stream);
 OCCA_LFUNC void OCCA_RFUNC occaDeviceFree(occaDevice device);
 //====================================
