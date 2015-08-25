@@ -1157,6 +1157,7 @@ void OCCA_RFUNC occaMemoryFree(occaMemory memory){
   occa::memory memory_((occa::memory_v*) memory->value.data.void_);
 
   memory_.free();
+  delete (occaType_t *)memory;
 }
 //====================================
 
