@@ -1093,6 +1093,8 @@ namespace occa {
     error = clReleaseMemObject(*((cl_mem*) handle));
 
     OCCA_CL_CHECK("Mapped Free: clReleaseMemObject", error);
+
+    delete (cl_mem*) handle;
   }
 
   template <>
