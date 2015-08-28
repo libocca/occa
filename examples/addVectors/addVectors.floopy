@@ -3,15 +3,18 @@ subroutine addVectors(entries, a, b, ab)
 
   integer*4 entries
   real*4 a(entries), b(entries), ab(entries)
+  integer i
 
   do i = 1, entries
     ab(i) = a(i) + b(i)
   end do
 end
 
-!$loopy begin transform
+!$loopy begin
 !
+! addVectors, = lp.parse_fortran(SOURCE, FILENAME)
 ! addVectors = lp.split_iname(addVectors, "i", 16,
 !     outer_tag="g.0", inner_tag="l.0")
+! RESULT = [addVectors]
 !
-!$loopy end transform
+!$loopy end
