@@ -56,6 +56,13 @@ script:
   - make -j 4 CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
   - ./main
 
+  - cd $OCCA_DIR/tests/loopy/
+  - make clean
+  - export PATH=`pwd`/bin/centos6/x86-64:$PATH
+  - make -j 4 CXXFLAGS='-fsanitize=address -fno-omit-frame-pointer -g' FCFLAGS='-fsanitize=address -fno-omit-frame-pointer -g'
+  - ./main_c
+  - ./main_f90
+
 notifications:
   email:
     recipients:
