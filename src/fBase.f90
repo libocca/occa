@@ -83,10 +83,12 @@ module occa
   end interface occaDeviceBuildKernelFromBinary
 
   interface occaDeviceBuildKernelFromLoopy
+     module procedure occaDeviceBuildKernelFromLoopyNoKernelInfo_func
      module procedure occaDeviceBuildKernelFromLoopy_func
   end interface occaDeviceBuildKernelFromLoopy
 
   interface occaDeviceBuildKernelFromFloopy
+     module procedure occaDeviceBuildKernelFromFloopyNoKernelInfo_func
      module procedure occaDeviceBuildKernelFromFloopy_func
   end interface occaDeviceBuildKernelFromFloopy
 
@@ -1115,6 +1117,25 @@ contains !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
     call occaDeviceBuildKernelFromBinary_fc(kernel, device, filename, functionName)
   end function occaDeviceBuildKernelFromBinary_func
 
+  type(occaKernel) function occaDeviceBuildKernelFromLoopyNoKernelInfo_func(device, filename, functionName) result(kernel)
+    type(occaDevice),     intent(in)  :: device
+    character(len=*),     intent(in)  :: filename
+    character(len=*),     intent(in)  :: functionName
+
+    interface
+       subroutine occaDeviceBuildKernelFromLoopyNoKernelInfo_fc(kernel, device, filename, functionName)
+         use occaFTypes_m
+         implicit none
+         type(occaKernel),     intent(out) :: kernel
+         type(occaDevice),     intent(in)  :: device
+         character(len=*),     intent(in)  :: filename
+         character(len=*),     intent(in)  :: functionName
+       end subroutine occaDeviceBuildKernelFromLoopyNoKernelInfo_fc
+    end interface
+
+    call occaDeviceBuildKernelFromLoopyNoKernelInfo_fc(kernel, device, filename, functionName)
+  end function occaDeviceBuildKernelFromLoopyNoKernelInfo_func
+
   type(occaKernel) function occaDeviceBuildKernelFromLoopy_func(device, filename, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device
     character(len=*),     intent(in)  :: filename
@@ -1135,6 +1156,25 @@ contains !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call occaDeviceBuildKernelFromLoopy_fc(kernel, device, filename, functionName, info)
   end function occaDeviceBuildKernelFromLoopy_func
+
+  type(occaKernel) function occaDeviceBuildKernelFromFloopyNoKernelInfo_func(device, filename, functionName) result(kernel)
+    type(occaDevice),     intent(in)  :: device
+    character(len=*),     intent(in)  :: filename
+    character(len=*),     intent(in)  :: functionName
+
+    interface
+       subroutine occaDeviceBuildKernelFromFloopyNoKernelInfo_fc(kernel, device, filename, functionName)
+         use occaFTypes_m
+         implicit none
+         type(occaKernel),     intent(out) :: kernel
+         type(occaDevice),     intent(in)  :: device
+         character(len=*),     intent(in)  :: filename
+         character(len=*),     intent(in)  :: functionName
+       end subroutine occaDeviceBuildKernelFromFloopyNoKernelInfo_fc
+    end interface
+
+    call occaDeviceBuildKernelFromFloopyNoKernelInfo_fc(kernel, device, filename, functionName)
+  end function occaDeviceBuildKernelFromFloopyNoKernelInfo_func
 
   type(occaKernel) function occaDeviceBuildKernelFromFloopy_func(device, filename, functionName, info) result(kernel)
     type(occaDevice),     intent(in)  :: device

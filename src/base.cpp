@@ -1743,8 +1743,12 @@ namespace occa {
 
     const std::string realFilename = sys::getFilename(filename);
 
+    kernelInfo info = defaultKernelInfo;
+    if (&info_)
+      info = info_;
+
     const std::string hash = getFileContentHash(realFilename,
-                                                dHandle->getInfoSalt(info_));
+                                                dHandle->getInfoSalt(info));
 
     const std::string hashDir    = hashDirFor("", hash);
     const std::string binaryFile = hashDir + "binary";
@@ -1759,9 +1763,9 @@ namespace occa {
     }
 
     const std::string defsFile = hashDir + "loopy.defs";
-    const std::string clFile   = hashDir + "loopy.cl";
+    const std::string clFile   = hashDir + "loopy.ocl";
 
-    writeToFile(defsFile, info_.header);
+    writeToFile(defsFile, info.header);
 
     std::string loopyLang = "loopy";
 
