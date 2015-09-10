@@ -1,6 +1,6 @@
 namespace occa {
   extern char occaSerialDefines[13342];
-  extern char occaOpenMPDefines[14592];
+  extern char occaOpenMPDefines[14610];
   extern char occaOpenCLDefines[13497];
   extern char occaCUDADefines[14049];
   extern char occaPthreadsDefines[13336];

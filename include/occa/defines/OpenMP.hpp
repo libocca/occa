@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#include <omp.h>
+
 #include <cstdlib>
 #include <cstdio>
 #include <cmath>
