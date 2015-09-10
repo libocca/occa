@@ -29,8 +29,6 @@ void OCCASETVERBOSECOMPILATION_FC(const bool value){
 void OCCAINT32_FC(occaType *type, int32_t *value){
   if(sizeof(int) == 4){
     *type = occaInt(*value);
-
-    printf("type = %p\n", *type);
   }
   else {
     OCCA_CHECK(false,
