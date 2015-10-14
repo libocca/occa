@@ -190,11 +190,11 @@ def binaryOpDef(type_, n, op):
     a = 'a.'
     b = 'b.'
 
-    defines = ['occaFunction inline ' + typeN + ' operator ' + op + ' (const ' + typeN + ' &a, const ' + typeN + ' &b){\n',
-               'occaFunction inline ' + typeN + ' operator ' + op + ' (const ' + type_ + ' &a, const ' + typeN + ' &b){\n',
-               'occaFunction inline ' + typeN + ' operator ' + op + ' (const ' + typeN + ' &a, const ' + type_ + ' &b){\n',
-               'occaFunction inline ' + typeN + '& operator ' + op + '= (' + typeN + ' &a, const ' + typeN + ' &b){\n',
-               'occaFunction inline ' + typeN + '& operator ' + op + '= (' + typeN + ' &a, const ' + type_ + ' &b){\n']
+    defines = ['occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + typeN + ' &a, const ' + typeN + ' &b){\n',
+               'occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + type_ + ' &a, const ' + typeN + ' &b){\n',
+               'occaFunction inline ' + typeN + '  operator ' + op + '  (const ' + typeN + ' &a, const ' + type_ + ' &b){\n',
+               'occaFunction inline ' + typeN + '& operator ' + op + '= (      ' + typeN + ' &a, const ' + typeN + ' &b){\n',
+               'occaFunction inline ' + typeN + '& operator ' + op + '= (      ' + typeN + ' &a, const ' + type_ + ' &b){\n']
 
     aIsTypeN = [True, False, True, True, True]
     bIsTypeN = [True, True, False, True, False]
@@ -267,8 +267,46 @@ def defineAllTypes():
 
     return define
 
+def intrinsicFunctions():
+    return """
+#if OCCA_USING_CPU && (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
+#  define OCCA_CPU_SIMD_WIDTH OCCA_SIMD_WIDTH
+#else
+#  define OCCA_CPU_SIMD_WIDTH 0
+#endif
+
+#if 4 <= OCCA_CPU_SIMD_WIDTH
+#  define occaLoadF4(DEST, SRC)   *((_m128*)&DEST) = __mm_load_ps((float*)&SRC)
+#  define occaStoreF4(DEST, SRC)  _mm_store_ps((float*)&DEST, *((_m128*)&SRC)
+#  define occaAddF4(V12, V1, V2)  *((_m128*)&V12) = __mm_add_ps(*((_m128*)&V1), *((_m128*)&V2))
+#  define occaMultF4(V12, V1, V2) *((_m128*)&V12) = __mm_mul_ps(*((_m128*)&V1), *((_m128*)&V2))
+#else
+#  define occaLoadF4(DEST, SRC)   DEST = SRC
+#  define occaStoreF4(DEST, SRC)  DEST = SRC
+#  define occaAddF4(V12, V1, V2)  V12 = (V1 + V2)
+#  define occaMultF4(V12, V1, V2) V12 = (V1 * V2)
+#endif
+
+#if 8 <= OCCA_CPU_SIMD_WIDTH
+#  define occaLoadFloat8(DEST, SRC)  *((_m256*)&DEST) = __mm256_load_ps((float*)&SRC)
+#  define occaStoreFloat8(DEST, SRC) _mm256_store_ps((float*)&DEST, *((_m256*)&SRC)
+#  define occaAddF8(V12, V1, V2)     *((_m256*)&V12) = __mm256_add_ps(*((_m256*)&V1), *((_m256*)&V2))
+#  define occaMultF8(V12, V1, V2)    *((_m256*)&V12) = __mm256_mul_ps(*((_m256*)&V1), *((_m256*)&V2))
+#else
+#  define occaLoadFloat8(DEST, SRC)  DEST = SRC
+#  define occaStoreFloat8(DEST, SRC) DEST = SRC
+#  define occaAddF8(V12, V1, V2)     V12 = (V1 + V2)
+#  define occaMultF8(V12, V1, V2)    V12 = (V1 * V2)
+#endif
+"""
+
+def genFileContents():
+    contents  = defineAllTypes()
+    contents += '\n'
+    contents += intrinsicFunctions()
+
 occaDir = ENV['OCCA_DIR']
 
 hpp = open(occaDir + '/include/occa/defines/vector.hpp', 'w')
-hpp.write(defineAllTypes())
+hpp.write(genFileContents())
 hpp.close()
