@@ -288,15 +288,15 @@ def intrinsicFunctions():
 #endif
 
 #if 8 <= OCCA_CPU_SIMD_WIDTH
-#  define occaLoadFloat8(DEST, SRC)  *((_m256*)&DEST) = __mm256_load_ps((float*)&SRC)
-#  define occaStoreFloat8(DEST, SRC) _mm256_store_ps((float*)&DEST, *((_m256*)&SRC)
-#  define occaAddF8(V12, V1, V2)     *((_m256*)&V12) = __mm256_add_ps(*((_m256*)&V1), *((_m256*)&V2))
-#  define occaMultF8(V12, V1, V2)    *((_m256*)&V12) = __mm256_mul_ps(*((_m256*)&V1), *((_m256*)&V2))
+#  define occaLoadF8(DEST, SRC)   *((_m256*)&DEST) = __mm256_load_ps((float*)&SRC)
+#  define occaStoreF8(DEST, SRC)  _mm256_store_ps((float*)&DEST, *((_m256*)&SRC)
+#  define occaAddF8(V12, V1, V2)  *((_m256*)&V12) = __mm256_add_ps(*((_m256*)&V1), *((_m256*)&V2))
+#  define occaMultF8(V12, V1, V2) *((_m256*)&V12) = __mm256_mul_ps(*((_m256*)&V1), *((_m256*)&V2))
 #else
-#  define occaLoadFloat8(DEST, SRC)  DEST = SRC
-#  define occaStoreFloat8(DEST, SRC) DEST = SRC
-#  define occaAddF8(V12, V1, V2)     V12 = (V1 + V2)
-#  define occaMultF8(V12, V1, V2)    V12 = (V1 * V2)
+#  define occaLoadF8(DEST, SRC)   DEST = SRC
+#  define occaStoreF8(DEST, SRC)  DEST = SRC
+#  define occaAddF8(V12, V1, V2)  V12 = (V1 + V2)
+#  define occaMultF8(V12, V1, V2) V12 = (V1 * V2)
 #endif
 """
 
