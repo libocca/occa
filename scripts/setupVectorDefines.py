@@ -305,6 +305,8 @@ def genFileContents():
     contents += '\n'
     contents += intrinsicFunctions()
 
+    return contents
+
 occaDir = ENV['OCCA_DIR']
 
 hpp = open(occaDir + '/include/occa/defines/vector.hpp', 'w')
