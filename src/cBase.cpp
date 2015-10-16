@@ -1012,6 +1012,26 @@ void OCCA_RFUNC occaKernelInfoFree(occaKernelInfo info){
 //====================================
 
 
+//---[ Helper Functions ]-------------
+int OCCA_RFUNC occaSysCall(const char *cmdline,
+                           char **output){
+  if(output == NULL)
+    return occa::sys::call(cmdline);
+
+  std::string sOutput;
+  int ret = occa::sys::call(cmdline, sOutput);
+
+  const size_t chars = sOutput.size();
+  *output = (char*) ::malloc(chars + 1);
+
+  ::memcpy(*output, sOutput.c_str(), chars);
+  output[chars] = 0;
+
+  return ret;
+}
+//====================================
+
+
 //---[ Wrappers ]---------------------
 #if OCCA_OPENCL_ENABLED
 occaDevice OCCA_RFUNC occaWrapOpenCLDevice(cl_platform_id platformID,

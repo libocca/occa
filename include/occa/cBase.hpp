@@ -351,6 +351,12 @@ OCCA_LFUNC void OCCA_RFUNC occaKernelInfoFree(occaKernelInfo info);
 //====================================
 
 
+//---[ Helper Functions ]-------------
+OCCA_LFUNC int OCCA_RFUNC occaSysCall(const char *cmdline,
+                                      char **output);
+//====================================
+
+
 //---[ Wrappers ]---------------------
 #if OCCA_OPENCL_ENABLED
 OCCA_LFUNC occaDevice OCCA_RFUNC occaWrapOpenCLDevice(cl_platform_id platformID,
