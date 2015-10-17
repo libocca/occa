@@ -1184,7 +1184,7 @@ namespace occa {
   }
 
   device::device(){
-    dHandle = new device_t<Serial>();
+    dHandle = NULL;
   }
 
   device::device(device_v *dHandle_) :
@@ -1955,8 +1955,10 @@ namespace occa {
   }
 
   //   ---[ Device Functions ]----------
-  device host;
-  device currentDevice;
+  device_t<Serial> hostHandle;
+
+  device host(&hostHandle);
+  device currentDevice = host;
 
   void setDevice(device d){
     currentDevice = d;

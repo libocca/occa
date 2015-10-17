@@ -1604,6 +1604,8 @@ namespace occa {
   };
 
   //   ---[ Device Functions ]----------
+  extern device_t<Serial> hostHandle;
+
   extern device host;
   extern device currentDevice;
 

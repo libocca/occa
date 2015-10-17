@@ -1496,7 +1496,12 @@ namespace occa {
   }
 
   template <>
-  void device_t<Serial>::free(){}
+  void device_t<Serial>::free(){
+    if(data){
+      delete data;
+      data = NULL;
+    }
+  }
 
   template <>
   int device_t<Serial>::simdWidth(){

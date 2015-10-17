@@ -81,6 +81,8 @@ namespace occa {
       std::string content = header;
       content += readFile(filename);
 
+      return "a";
+
       return parseSource(content.c_str());
     }
 

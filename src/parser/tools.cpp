@@ -26,6 +26,9 @@ namespace occa {
   }
 
   bool charIsIn2(const char *c, const char *delimiters){
+    if((c[0] == '\0') || (c[1] == '\0'))
+      return false;
+
     const char c0 = c[0];
     const char c1 = c[1];
 
@@ -40,6 +43,9 @@ namespace occa {
   }
 
   bool charIsIn3(const char *c, const char *delimiters){
+    if((c[0] == '\0') || (c[1] == '\0') || (c[2] == '\0'))
+      return false;
+
     const char c0 = c[0];
     const char c1 = c[1];
     const char c2 = c[2];

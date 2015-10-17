@@ -3,36 +3,34 @@
 
 namespace occa {
   timerTraits::timerTraits(){
-    timeTaken = 0.;
-    selfTime = 0.;
-    numCalls = 0.;
-    flopCount = 0.;
-    bandWidthCount = 0.;
-    treeDepth = 0;
+    timeTaken      = 0.0;
+    selfTime       = 0.0;
+    numCalls       = 0;
+    flopCount      = 0.0;
+    bandWidthCount = 0.0;
+    treeDepth      = 0;
   }
 
   timer::timer(){
-
+    profileKernels     = false;
+    deviceInitialized  = false;
     profileApplication = false;
-    profileKernels = false;
-    deviceInitialized = false;
 
-    const char *c_profilerOn       = getenv("OCCA_PROFILE");
-    const char *c_kernelProfilerOn = getenv("OCCA_KERNEL_PROFILE");
+    std::string profilerOn       = occa::sys::echo("OCCA_PROFILE");
+    std::string kernelProfilerOn = occa::sys::echo("OCCA_KERNEL_PROFILE");
 
-    if(c_profilerOn != NULL)
-      if(atoi(c_profilerOn))
-        profileApplication = true;
+    if(profilerOn == "1")
+      profileApplication = true;
 
-    if(c_kernelProfilerOn != NULL)
-      if(atoi(c_kernelProfilerOn)){
-        profileKernels = true;
-        profileApplication = true;
-      }
+    if(kernelProfilerOn == "1"){
+      profileKernels     = true;
+      profileApplication = true;
+    }
   }
 
   void timer::initTimer(const occa::device &deviceHandle){
     deviceInitialized = true;
+
     occaHandle = deviceHandle;
   }
 
@@ -407,7 +405,6 @@ namespace occa {
 
     }
   }
-
 
   timer globalTimer;
 
