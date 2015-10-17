@@ -1882,6 +1882,8 @@ namespace occa {
     occa::mode mode;
     std::string header, flags;
 
+    flags_t parserFlags;
+
     kernelInfo();
 
     kernelInfo(const kernelInfo &p);
@@ -1918,6 +1920,12 @@ namespace occa {
     void addCompilerFlag(const std::string &f);
 
     void addCompilerIncludePath(const std::string &path);
+
+    flags_t& getParserFlags();
+    const flags_t& getParserFlags() const;
+
+    void addParserFlag(const std::string &flag,
+                       const std::string &value = "");
   };
 
   template <> void kernelInfo::addDefine(const std::string &macro, const std::string &value);

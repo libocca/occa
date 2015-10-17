@@ -28,7 +28,7 @@ namespace occa {
 
       int parsingLanguage;
 
-      strToStrMap_t compilerFlags;
+      flags_t flags;
 
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
@@ -54,14 +54,14 @@ namespace occa {
       ~parserBase();
 
       inline const std::string parseFile(const std::string &filename_,
-                                         const strToStrMap_t &compilerFlags_ = strToStrMap_t()){
+                                         const flags_t &flags_ = flags_t()){
 
-        return parseFile("", filename_, compilerFlags_);
+        return parseFile("", filename_, flags_);
       }
 
       const std::string parseFile(const std::string &header,
                                   const std::string &filename,
-                                  const strToStrMap_t &compilerFlags_ = strToStrMap_t());
+                                  const flags_t &flags_ = flags_t());
 
       const std::string parseSource(const char *cRoot);
 
@@ -367,7 +367,7 @@ namespace occa {
   }
 
   // Just to ignore the namespace
-  class parser : public parserNS::parserBase {};
+  class parser: public parserNS::parserBase {};
 }
 
 #endif

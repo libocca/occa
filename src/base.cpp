@@ -299,6 +299,20 @@ namespace occa {
 #endif
   }
 
+  flags_t& kernelInfo::getParserFlags(){
+    return parserFlags;
+  }
+
+  const flags_t& kernelInfo::getParserFlags() const {
+    return parserFlags;
+  }
+
+  void kernelInfo::addParserFlag(const std::string &flag,
+                                 const std::string &value){
+
+    parserFlags[flag] = value;
+  }
+
   template <>
   void kernelInfo::addDefine(const std::string &macro, const std::string &value){
     std::stringstream ss;

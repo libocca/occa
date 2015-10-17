@@ -763,4 +763,28 @@ namespace occa {
 
     return ret.str();
   }
+
+  //---[ Flag Holder ]----------------------------
+  bool flags_t::has(const std::string &flag){
+    return (flags.find(flag) != flags.end());
+  }
+
+  bool flags_t::hasSet(const std::string &flag, const std::string &value){
+    strToStrMapIterator it = flags.find(flag);
+
+    if(it == flags.end())
+      return false;
+
+    return (it->second == value);
+  }
+
+  bool flags_t::hasEnabled(const std::string &flag, bool defaultValue){
+    strToStrMapIterator it = flags.find(flag);
+
+    if(it == flags.end())
+      return defaultValue;
+
+    return (it->second == "enabled");
+  }
+  //==============================================
 }

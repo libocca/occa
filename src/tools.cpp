@@ -982,22 +982,23 @@ namespace occa {
                                         const kernelInfo &info){
 
     parser fileParser;
-    strToStrMap_t compilerFlags;
 
     const std::string extension = getFileExtension(filename);
 
-    compilerFlags["mode"]     = deviceMode;
-    compilerFlags["language"] = ((extension != "ofl") ? "C" : "Fortran");
+    flags_t parserFlags = info.getParserFlags();
+
+    parserFlags["mode"]     = deviceMode;
+    parserFlags["language"] = ((extension != "ofl") ? "C" : "Fortran");
 
     if((extension == "oak") ||
        (extension == "oaf")){
 
-      compilerFlags["magic"] = "enabled";
+      parserFlags["magic"] = "enabled";
     }
 
     std::string parsedContent = fileParser.parseFile(info.header,
                                                      filename,
-                                                     compilerFlags);
+                                                     parserFlags);
 
     if(!sys::fileExists(parsedFile)){
       sys::mkpath(getFileDirectory(parsedFile));

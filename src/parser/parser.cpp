@@ -48,42 +48,31 @@ namespace occa {
 
     const std::string parserBase::parseFile(const std::string &header,
                                             const std::string &filename_,
-                                            const strToStrMap_t &compilerFlags_){
+                                            const flags_t &flags_){
 
       filename = filename_;
 
-      compilerFlags = compilerFlags_;
+      flags = flags_;
 
       //---[ Language ]-------
-      strToStrMapIterator it = compilerFlags.find("language");
-
-      if((it          == compilerFlags.end()) ||
-         (it->second) != "Fortran"){
-
-        parsingLanguage = parserInfo::parsingC;
-      }
-      else {
+      if(flags.hasSet("language", "Fortran"))
         parsingLanguage = parserInfo::parsingFortran;
-      }
+      else
+        parsingLanguage = parserInfo::parsingC;
 
       pushLanguage(parsingLanguage);
 
       //---[ Mode ]-----------
-      it = compilerFlags.find("mode");
-
-      OCCA_CHECK(it != compilerFlags.end(),
+      OCCA_CHECK(flags.has("mode"),
                  "Compilation mode must be passed to the parser");
 
-      std::string &modeStr = (it->second);
+      std::string &modeStr = flags["mode"];
 
       cpuMode = ((modeStr == "Serial") ||
                  (modeStr == "OpenMP"));
 
       //---[ Magic ]----------
-      it = compilerFlags.find("magic");
-
-      magicEnabled = (( it          != compilerFlags.end()) &&
-                      ((it->second) == "enabled"));
+      magicEnabled = flags.has("magic");
 
       std::string content = header;
       content += readFile(filename);
