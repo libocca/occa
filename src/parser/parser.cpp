@@ -39,6 +39,13 @@ namespace occa {
       magicEnabled               = false;
     }
 
+    parserBase::~parserBase(){
+      if(globalScope){
+        delete globalScope;
+        globalScope = NULL;
+      }
+    }
+
     const std::string parserBase::parseFile(const std::string &header,
                                             const std::string &filename_,
                                             const strToStrMap_t &compilerFlags_){
@@ -80,8 +87,6 @@ namespace occa {
 
       std::string content = header;
       content += readFile(filename);
-
-      return "a";
 
       return parseSource(content.c_str());
     }

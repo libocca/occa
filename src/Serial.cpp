@@ -1498,7 +1498,7 @@ namespace occa {
   template <>
   void device_t<Serial>::free(){
     if(data){
-      delete data;
+      delete (SerialDeviceData_t*) data;
       data = NULL;
     }
   }

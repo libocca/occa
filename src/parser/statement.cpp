@@ -3853,7 +3853,12 @@ namespace occa {
       statementStart(NULL),
       statementEnd(NULL) {}
 
-    statement::~statement(){}
+    statement::~statement(){
+      if(scope){
+        delete scope;
+        scope = NULL;
+      }
+    }
 
     statement& statement::operator [] (const int snPos){
       statementNode *sn = statementStart;

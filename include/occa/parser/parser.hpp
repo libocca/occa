@@ -51,7 +51,7 @@ namespace occa {
       //================================
 
       parserBase();
-      inline ~parserBase(){}
+      ~parserBase();
 
       inline const std::string parseFile(const std::string &filename_,
                                          const strToStrMap_t &compilerFlags_ = strToStrMap_t()){
