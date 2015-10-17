@@ -370,36 +370,6 @@ occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
 
   return (occaKernel) kernel.getKHandle();
 }
-
-occaKernel OCCA_RFUNC occaBuildKernelFromLoopy(const char *filename,
-                                               const char *functionName,
-                                               occaKernelInfo info){
-  occa::kernel kernel;
-
-  occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
-
-  kernel = occa::buildKernelFromLoopy(filename,
-                                      functionName,
-                                      info_,
-                                      occa::useLoopy);
-
-  return (occaKernel) kernel.getKHandle();
-}
-
-occaKernel OCCA_RFUNC occaBuildKernelFromFloopy(const char *filename,
-                                                const char *functionName,
-                                                occaKernelInfo info){
-  occa::kernel kernel;
-
-  occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
-
-  kernel = occa::buildKernelFromLoopy(filename,
-                                      functionName,
-                                      info_,
-                                      occa::useFloopy);
-
-  return (occaKernel) kernel.getKHandle();
-}
 //  |=================================
 
 //  |---[ Memory ]--------------------
@@ -654,40 +624,6 @@ occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
   occa::kernel kernel;
 
   kernel = device_.buildKernelFromBinary(filename, functionName);
-
-  return (occaKernel) kernel.getKHandle();
-}
-
-occaKernel OCCA_RFUNC occaDeviceBuildKernelFromLoopy(occaDevice device,
-                                                     const char *filename,
-                                                     const char *functionName,
-                                                     occaKernelInfo info){
-  occa::device device_((occa::device_v*) device);
-  occa::kernel kernel;
-
-  occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
-
-  kernel = device_.buildKernelFromLoopy(filename,
-                                        functionName,
-                                        info_,
-                                        occa::useLoopy);
-
-  return (occaKernel) kernel.getKHandle();
-}
-
-occaKernel OCCA_RFUNC occaDeviceBuildKernelFromFloopy(occaDevice device,
-                                                      const char *filename,
-                                                      const char *functionName,
-                                                      occaKernelInfo info){
-  occa::device device_((occa::device_v*) device);
-  occa::kernel kernel;
-
-  occa::kernelInfo &info_ = *((occa::kernelInfo*) info);
-
-  kernel = device_.buildKernelFromLoopy(filename,
-                                        functionName,
-                                        info_,
-                                        occa::useFloopy);
 
   return (occaKernel) kernel.getKHandle();
 }

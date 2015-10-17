@@ -1739,78 +1739,6 @@ namespace occa {
     return ker;
   }
 
-  kernel device::buildKernelFromLoopy(const std::string &filename,
-                                      const std::string &functionName,
-                                      const int useLoopyOrFloopy){
-
-    return buildKernelFromLoopy(filename,
-                                functionName,
-                                defaultKernelInfo,
-                                useLoopyOrFloopy);
-  }
-
-  kernel device::buildKernelFromLoopy(const std::string &filename,
-                                      const std::string &functionName,
-                                      const kernelInfo &info_,
-                                      const int useLoopyOrFloopy){
-    checkIfInitialized();
-
-    const std::string realFilename = sys::getFilename(filename);
-
-    const std::string hash = getFileContentHash(realFilename,
-                                                dHandle->getInfoSalt(info_));
-
-    const std::string hashDir    = hashDirFor("", hash);
-    const std::string binaryFile = hashDir + "binary";
-
-    if(!haveHash(hash, 2)){
-      waitForHash(hash, 2);
-
-      if(verboseCompilation_f)
-        std::cout << "Found loo.py cached binary of [" << filename << "] in [" << binaryFile << "]\n";
-
-      return buildKernelFromBinary(binaryFile, functionName);
-    }
-
-    const std::string defsFile = hashDir + "loopy.defs";
-    const std::string clFile   = hashDir + "loopy.cl";
-
-    writeToFile(defsFile, info_.header);
-
-    std::string loopyLang = "loopy";
-
-    if(useLoopyOrFloopy == occa::useFloopy)
-      loopyLang = "fpp";
-
-    std::stringstream command;
-
-    command << "loopy"
-            << " --lang="         << loopyLang
-            << " --occa-defines=" << defsFile << ' '
-            << " --occa-add-dummy-arg "
-            << realFilename << ' ' << clFile;
-
-    const std::string &sCommand = command.str();
-
-    if(verboseCompilation_f)
-      std::cout << sCommand << '\n';
-
-#if (OCCA_OS & (LINUX_OS | OSX_OS))
-    const int compileError = system(sCommand.c_str());
-#else
-    const int compileError = system(("\"" +  sCommand + "\"").c_str());
-#endif
-
-    if(compileError)
-      OCCA_CHECK(false, "Compilation error");
-
-    kernel k = buildKernelFromSource(clFile, functionName);
-
-    releaseHash(hash, 2);
-
-    return k;
-  }
-
   memory device::wrapMemory(void *handle_,
                             const uintptr_t bytes){
     checkIfInitialized();
@@ -2139,26 +2067,6 @@ namespace occa {
 
     return currentDevice.loadKernelFromLibrary(cache,
                                                functionName);
-  }
-
-  kernel buildKernelFromLoopy(const std::string &filename,
-                              const std::string &functionName,
-                              const int loopyOrFloopy){
-
-    return currentDevice.buildKernelFromLoopy(filename,
-                                              functionName,
-                                              loopyOrFloopy);
-  }
-
-  kernel buildKernelFromLoopy(const std::string &filename,
-                              const std::string &functionName,
-                              const kernelInfo &info_,
-                              const int loopyOrFloopy){
-
-    return currentDevice.buildKernelFromLoopy(filename,
-                                              functionName,
-                                              info_,
-                                              loopyOrFloopy);
   }
 
   //   ---[ Memory Functions ]----------

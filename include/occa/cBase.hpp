@@ -162,14 +162,6 @@ OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromString(const char *str,
 
 OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromBinary(const char *filename,
                                                            const char *functionName);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromLoopy(const char *filename,
-                                                          const char *functionName,
-                                                          occaKernelInfo info);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaBuildKernelFromFloopy(const char *filename,
-                                                           const char *functionName,
-                                                           occaKernelInfo info);
 //  |=================================
 
 //  |---[ Memory ]--------------------
@@ -255,16 +247,6 @@ OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromString(occaDevice devi
 OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromBinary(occaDevice device,
                                                                  const char *filename,
                                                                  const char *functionName);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromLoopy(occaDevice device,
-                                                                const char *filename,
-                                                                const char *functionName,
-                                                                occaKernelInfo info);
-
-OCCA_LFUNC occaKernel OCCA_RFUNC occaDeviceBuildKernelFromFloopy(occaDevice device,
-                                                                 const char *filename,
-                                                                 const char *functionName,
-                                                                 occaKernelInfo info);
 
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceMalloc(occaDevice device,
                                                   uintptr_t bytes,

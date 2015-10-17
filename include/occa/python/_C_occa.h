@@ -63,8 +63,6 @@ static PyObject* py_occaBuildKernel(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromSource(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromString(PyObject *self, PyObject *args);
 static PyObject* py_occaBuildKernelFromBinary(PyObject *self, PyObject *args);
-static PyObject* py_occaBuildKernelFromLoopy(PyObject *self, PyObject *args);
-static PyObject* py_occaBuildKernelFromFloopy(PyObject *self, PyObject *args);
 //  |===================================
 
 //  |---[ Memory ]----------------------
@@ -100,8 +98,6 @@ static PyObject* py_occaDeviceBuildKernel(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceBuildKernelFromSource(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceBuildKernelFromString(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceBuildKernelFromBinary(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceBuildKernelFromLoopy(PyObject *self, PyObject *args);
-static PyObject* py_occaDeviceBuildKernelFromFloopy(PyObject *self, PyObject *args);
 
 static PyObject* py_occaDeviceMalloc(PyObject *self, PyObject *args);
 static PyObject* py_occaDeviceManagedAlloc(PyObject *self, PyObject *args);
@@ -228,8 +224,6 @@ static PyMethodDef _C_occaMethods[] = {
   {"buildKernelFromSource", py_occaBuildKernelFromSource, METH_VARARGS},
   {"buildKernelFromString", py_occaBuildKernelFromString, METH_VARARGS},
   {"buildKernelFromBinary", py_occaBuildKernelFromBinary, METH_VARARGS},
-  {"buildKernelFromLoopy" , py_occaBuildKernelFromLoopy , METH_VARARGS},
-  {"buildKernelFromFloopy", py_occaBuildKernelFromFloopy, METH_VARARGS},
   //  |=================================
 
   //  |---[ Memory ]--------------------
@@ -265,8 +259,6 @@ static PyMethodDef _C_occaMethods[] = {
   {"deviceBuildKernelFromSource", py_occaDeviceBuildKernelFromSource, METH_VARARGS},
   {"deviceBuildKernelFromString", py_occaDeviceBuildKernelFromString, METH_VARARGS},
   {"deviceBuildKernelFromBinary", py_occaDeviceBuildKernelFromBinary, METH_VARARGS},
-  {"deviceBuildKernelFromLoopy" , py_occaDeviceBuildKernelFromLoopy , METH_VARARGS},
-  {"deviceBuildKernelFromFloopy", py_occaDeviceBuildKernelFromFloopy, METH_VARARGS},
 
   {"deviceMalloc"      , py_occaDeviceMalloc      , METH_VARARGS},
   {"deviceManagedAlloc", py_occaDeviceManagedAlloc, METH_VARARGS},

@@ -148,9 +148,6 @@ namespace occa {
   static const int usingOFL    = (1 << 1);
   static const int usingNative = (1 << 2);
 
-  static const int useLoopy  = (1 << 0);
-  static const int useFloopy = (1 << 1);
-
   typedef void (*handleFunction_t)(const int *occaKernelInfoArgs,
                                    int occaInnerId0,
                                    int occaInnerId1,
@@ -1533,15 +1530,6 @@ namespace occa {
     kernel loadKernelFromLibrary(const char *cache,
                                  const std::string &functionName);
 
-    kernel buildKernelFromLoopy(const std::string &filename,
-                                const std::string &functionName,
-                                const int loopyOrFloopy);
-
-    kernel buildKernelFromLoopy(const std::string &filename,
-                                const std::string &functionName,
-                                const kernelInfo &info_ = defaultKernelInfo,
-                                const int loopyOrFloopy = occa::useLoopy);
-
     kernel& operator [] (kernelDatabase &kdb);
 
 #if OCCA_OPENCL_ENABLED
@@ -1666,15 +1654,6 @@ namespace occa {
 
   kernel loadKernelFromLibrary(const char *cache,
                                const std::string &functionName);
-
-  kernel buildKernelFromLoopy(const std::string &filename,
-                              const std::string &functionName,
-                              const int loopyOrFloopy);
-
-  kernel buildKernelFromLoopy(const std::string &filename,
-                              const std::string &functionName,
-                              const kernelInfo &info_ = defaultKernelInfo,
-                              const int loopyOrFloopy = occa::useLoopy);
 
   //   ---[ Memory Functions ]----------
   memory wrapMemory(void *handle_,

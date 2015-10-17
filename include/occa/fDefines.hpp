@@ -162,10 +162,6 @@
                                                                             OCCABUILDKERNELFROMSTRING_FC)
 #define OCCABUILDKERNELFROMBINARY                          OCCA_F2C_GLOBAL_(occabuildkernelfrombinary_fc, \
                                                                             OCCABUILDKERNELFROMBINARY_FC)
-#define OCCABUILDKERNELFROMLOOPY                           OCCA_F2C_GLOBAL_(occabuildkernelfromloopy_fc, \
-                                                                            OCCABUILDKERNELFROMLOOPY_FC)
-#define OCCABUILDKERNELFROMFLOOPY                          OCCA_F2C_GLOBAL_(occabuildkernelfromfloopy_fc, \
-                                                                            OCCABUILDKERNELFROMFLOOPY_FC)
 
 //  |---[ Memory Functions ]------------
 #define OCCAWRAPMEMORY                                     OCCA_F2C_GLOBAL_(occawrapmemory_fc,  \
@@ -223,10 +219,6 @@
                                                                             OCCADEVICEBUILDKERNELFROMSTRINGNOARGS_FC)
 #define  OCCADEVICEBUILDKERNELFROMBINARY_FC                OCCA_F2C_GLOBAL_(occadevicebuildkernelfrombinary_fc,\
                                                                             OCCADEVICEBUILDKERNELFROMBINARY_FC)
-#define  OCCADEVICEBUILDKERNELFROMLOOPY_FC                 OCCA_F2C_GLOBAL_(occadevicebuildkernelfromloopy_fc,\
-                                                                            OCCADEVICEBUILDKERNELFROMLOOPY_FC)
-#define  OCCADEVICEBUILDKERNELFROMFLOOPY_FC                OCCA_F2C_GLOBAL_(occadevicebuildkernelfromfloopy_fc,\
-                                                                            OCCADEVICEBUILDKERNELFROMFLOOPY_FC)
 #define  OCCADEVICEMALLOCNULL_FC                           OCCA_F2C_GLOBAL_(occadevicemallocnull_fc,\
                                                                             OCCADEVICEMALLOCNULL_FC)
 #define  OCCADEVICEMALLOC_FC                               OCCA_F2C_GLOBAL_(occadevicemalloc_fc,\
