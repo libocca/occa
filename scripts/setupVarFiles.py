@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from os import environ as ENV
 import binascii
 
