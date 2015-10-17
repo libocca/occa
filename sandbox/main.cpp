@@ -18,7 +18,7 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/easy.c"             , compilerFlags);
   // parsedContent = parser.parseFile("tests/test.cpp"           , compilerFlags);
   // parsedContent = parser.parseFile("tests/test2.cpp"          , compilerFlags);
-  parsedContent = parser.parseFile("tests/scratch.okl"        , compilerFlags);
+  // parsedContent = parser.parseFile("tests/scratch.okl"        , compilerFlags);
   // parsedContent = parser.parseFile("tests/pwdg.okl"           , compilerFlags);
   // parsedContent = parser.parseFile("tests/openclTest.cpp"     , compilerFlags);
   // parsedContent = parser.parseFile("tests/cudaTest.cpp"       , compilerFlags);
@@ -34,9 +34,9 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/addVectors_loopy.cl", compilerFlags);
 
   //---[ Fortran ]----------------------
-  // compilerFlags["language"] = "Fortran";
+  compilerFlags["language"] = "Fortran";
 
-  // parsedContent = parser.parseFile("tests/scratch.ofl"   , compilerFlags);
+  parsedContent = parser.parseFile("tests/scratch.ofl"   , compilerFlags);
   // parsedContent = parser.parseFile("tests/addVectors.ofl", compilerFlags);
   // parsedContent = parser.parseFile("tests/fakeNuma.ofl"  , compilerFlags);
   //====================================

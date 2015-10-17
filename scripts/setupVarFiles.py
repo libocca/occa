@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 from os import environ as ENV
 import binascii
 
@@ -34,6 +35,12 @@ def defineVar(varName, filename):
 
     return [chars, define]
 
+def writeToFile(filename, contents):
+    fd = open(occaDir + filename, 'w')
+    fd.write(contents)
+    fd.write('\n')  # Make sure there is a newline at the end of the file
+    fd.close()
+
 decs = 'namespace occa {\n'
 defs = 'namespace occa {\n'
 
@@ -57,12 +64,5 @@ defs += info[1]
 decs += '}'
 defs += '}'
 
-hpp = open(occaDir + '/include/occa/varFiles.hpp', 'w')
-hpp.write(decs)
-hpp.write('\n')  # Make sure there is a newline at the end of the file
-hpp.close()
-
-cpp = open(occaDir + '/src/varFiles.cpp', 'w')
-cpp.write(defs)
-cpp.write('\n')
-cpp.close()
+writeToFile('/include/occa/varFiles.hpp', decs)
+writeToFile('/src/varFiles.cpp'         , defs)

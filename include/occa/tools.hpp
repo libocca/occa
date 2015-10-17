@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#include <sys/types.h>
 #include <sys/stat.h>
 #include <string.h>
 #include <errno.h>
@@ -133,6 +134,9 @@ namespace occa {
       bool matches(const char *search,
                    const char *c);
     };
+
+    int call(const std::string &cmdline);
+    int call(const std::string &cmdline, std::string &output);
 
     std::string echo(const std::string &var);
     std::string expandEnvVariables(const std::string &str);

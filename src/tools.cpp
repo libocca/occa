@@ -415,6 +415,23 @@ namespace occa {
       return foundMatch;
     }
 
+    int call(const std::string &cmdline){
+      FILE *fp = popen(cmdline.c_str(), "r");
+      return pclose(fp);
+    }
+
+    int call(const std::string &cmdline, std::string &output){
+      FILE *fp = popen(cmdline.c_str(), "r");
+
+      size_t lineBytes = 512;
+      char lineBuffer[512];
+
+      while(fgets(lineBuffer, lineBytes, fp))
+        output += lineBuffer;
+
+      return pclose(fp);
+    }
+
     std::string echo(const std::string &var){
       char *c_var = getenv(var.c_str());
 

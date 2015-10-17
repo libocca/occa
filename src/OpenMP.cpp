@@ -79,7 +79,7 @@ namespace occa {
           std::string sCommand;
 
           if(flag != omp::notSupported){
-            sCommand += safeCompiler;
+            sCommand += compiler;
             sCommand += ' ';
             sCommand += flag;
             sCommand += ' ';

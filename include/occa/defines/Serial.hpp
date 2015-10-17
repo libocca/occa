@@ -27,6 +27,12 @@
 
 #define OCCA_USING_CPU (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS || OCCA_USING_COI)
 #define OCCA_USING_GPU (OCCA_USING_OPENCL || OCCA_USING_CUDA)
+
+#if OCCA_USING_CPU && (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
+#  include "immintrin.h"
+#  include "xmmintrin.h"
+#  include "pmmintrin.h"
+#endif
 //================================================
 
 
@@ -350,7 +356,12 @@ TM occaAtomicCAS(TM *ptr, const int comp, const TM &update){
 // - - - - - - - - - - - - - - - - - - - - - - - -
 #define occaUnroll3(N) OCCA_PRAGMA(#N)
 #define occaUnroll2(N) occaUnroll3(N)
-#define occaUnroll(N)  occaUnroll2(unroll N)
+
+#if (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
+#  define occaUnroll(N)  occaUnroll2(unroll(N))
+#else
+#  define occaUnroll(N)  occaUnroll2(unroll N)
+#endif
 //================================================
 
 

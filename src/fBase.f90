@@ -772,9 +772,16 @@ module occa
      end subroutine occaMemoryFree_fc
   end interface occaMemoryFree
 
+  !---[ Helper Functions ]--------------
+
+  interface occaSysCall
+     module procedure occaSysCall_
+     ! module procedure occaSysCall_output
+  end interface occaSysCall
+
 contains !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  ! ---[ TypesCasting ]------------------
+  ! ---[ TypesCasting ]-----------------
   type(occaMemory) function occaTypeMem_int4_c(v) result(t)
     integer(4), intent(in) :: v
 
@@ -1896,5 +1903,20 @@ contains !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
     call occaAsyncCopyMemToPtrAuto_fc(dest, src)
   end subroutine occaAsyncCopyMemToPtrAuto_char
+
+  subroutine occaSysCall_(stat, cmdline)
+    integer(4),       intent(out) :: stat
+    character(len=*), intent(in)  :: cmdline
+
+    call occaSysCall_fc(stat, 0, cmdline)
+  end subroutine occaSysCall_
+
+  ! subroutine occaSysCall_output(stat, output, cmdline)
+  !   integer(4),       intent(out) :: stat
+  !   character(len=*), intent(out) :: output
+  !   character(len=*), intent(in)  :: cmdline
+
+  !   call occaSysCall_fc(stat, output, cmdline)
+  ! end subroutine occaSysCall_output
 
 end module occa

@@ -957,6 +957,21 @@ void OCCAMEMORYFREE_FC(occaMemory *memory){
 }
 //====================================
 
+
+//---[ Helper Functions ]-------------
+void OCCASYSCALL_FC(int32_t *stat,
+                    const char *cmdline OCCA_F2C_LSTR(cmdline_l)
+                    OCCA_F2C_RSTR(cmdline_l)
+                    ){
+  char *cmdline_c;
+  OCCA_F2C_ALLOC_STR(cmdline, cmdline_l, cmdline_c);
+
+  *stat = occaSysCall(cmdline_c, NULL);
+
+  OCCA_F2C_FREE_STR(cmdline, cmdline_c);
+}
+//====================================
+
 OCCA_END_EXTERN_C
 
 #endif

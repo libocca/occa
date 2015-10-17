@@ -414,3 +414,8 @@
 #define  OCCAMEMORYFREE_FC                                 OCCA_F2C_GLOBAL_(occamemoryfree_fc,\
                                                                             OCCAMEMORYFREE_FC)
 //======================================
+
+//---[ Helper Functions ]---------------
+#define  OCCASYSCALL_FC                                    OCCA_F2C_GLOBAL_(occasyscall_fc,\
+                                                                            OCCASYSCALL_FC)
+//======================================
