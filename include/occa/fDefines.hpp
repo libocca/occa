@@ -225,8 +225,12 @@
                                                                             OCCADEVICEBUILDKERNELFROMBINARY_FC)
 #define  OCCADEVICEBUILDKERNELFROMLOOPY_FC                 OCCA_F2C_GLOBAL_(occadevicebuildkernelfromloopy_fc,\
                                                                             OCCADEVICEBUILDKERNELFROMLOOPY_FC)
+#define  OCCADEVICEBUILDKERNELFROMLOOPYNOKERNELINFO_FC     OCCA_F2C_GLOBAL_(occadevicebuildkernelfromloopynokernelinfo_fc,\
+                                                                            OCCADEVICEBUILDKERNELFROMLOOPYNOKERNELINFO_FC)
 #define  OCCADEVICEBUILDKERNELFROMFLOOPY_FC                OCCA_F2C_GLOBAL_(occadevicebuildkernelfromfloopy_fc,\
                                                                             OCCADEVICEBUILDKERNELFROMFLOOPY_FC)
+#define  OCCADEVICEBUILDKERNELFROMFLOOPYNOKERNELINFO_FC    OCCA_F2C_GLOBAL_(occadevicebuildkernelfromfloopynokernelinfo_fc,\
+                                                                            OCCADEVICEBUILDKERNELFROMFLOOPYNOKERNELINFO_FC)
 #define  OCCADEVICEMALLOCNULL_FC                           OCCA_F2C_GLOBAL_(occadevicemallocnull_fc,\
                                                                             OCCADEVICEMALLOCNULL_FC)
 #define  OCCADEVICEMALLOC_FC                               OCCA_F2C_GLOBAL_(occadevicemalloc_fc,\

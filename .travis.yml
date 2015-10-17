@@ -33,6 +33,12 @@ script:
   - make -j 4 CXXFLAGS='-g' FCFLAGS='-g'
   - ./main
 
+  - cd $OCCA_DIR/tests/loopy/
+  - export PATH=`pwd`/bin/centos6/x86-64:$PATH
+  - make -j 4 CXXFLAGS='-g' FCFLAGS='-g'
+  - ./main_c
+  - ./main_f90
+
 notifications:
   email:
     recipients:
