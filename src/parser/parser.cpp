@@ -17,7 +17,9 @@ namespace occa {
       const int ret = loadedLanguageVec.back();
 
       loadedLanguageVec.pop_back();
-      loadKeywords(loadedLanguageVec.back());
+
+      if(loadedLanguageVec.size())
+        loadKeywords(loadedLanguageVec.back());
 
       return ret;
     }

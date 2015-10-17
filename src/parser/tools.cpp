@@ -261,7 +261,6 @@ namespace occa {
 
   int skipWord(const char *&c, const int parsingLanguage_){
     while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0')){
-      std::cout << '[' << c << ']';
       const int delimiterChars = isAWordDelimiter(c, parsingLanguage_);
 
       if(delimiterChars == 0)
