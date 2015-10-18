@@ -7,12 +7,14 @@ int main(int argc, char **argv){
   occa::parser parser;
   std::string parsedContent;
 
-  parser.warnForMissingBarriers     = false;
-  parser.warnForBarrierConditionals = false;
-
   occa::flags_t parserFlags;
+
   // parserFlags["mode"] = "Serial";
   parserFlags["mode"] = "OpenCL";
+
+  parserFlags["warn-for-missing-barriers"]     = "no";
+  parserFlags["warn-for-conditional-barriers"] = "no";
+  parserFlags["automate-add-barriers"]         = "yes";
 
   parserFlags["language"] = "C";
   // parsedContent = parser.parseFile("tests/easy.c"             , parserFlags);

@@ -33,10 +33,6 @@ namespace occa {
 
       globalScope       = new statement(*this);
       globalScope->info = smntType::namespaceStatement;
-
-      warnForMissingBarriers     = true;
-      warnForBarrierConditionals = true;
-      magicEnabled               = false;
     }
 
     parserBase::~parserBase(){
@@ -66,14 +62,7 @@ namespace occa {
       OCCA_CHECK(flags.has("mode"),
                  "Compilation mode must be passed to the parser");
 
-      std::string &modeStr = flags["mode"];
-
-      cpuMode = ((modeStr == "Serial") ||
-                 (modeStr == "OpenMP"));
-
       //---[ Magic ]----------
-      magicEnabled = flags.has("magic");
-
       std::string content = header;
       content += readFile(filename);
 
@@ -99,7 +88,7 @@ namespace occa {
       markKernelFunctions();
       labelNativeKernels();
 
-      if(magicEnabled){
+      if(hasMagicEnabled()){
         magician::castMagicOn(*this);
         std::cout << (std::string) *globalScope;
         throw 1;
@@ -133,6 +122,40 @@ namespace occa {
 
       return (std::string) *globalScope;
     }
+
+    //---[ Parser Warnings ]------------
+    bool parserBase::hasMagicEnabled(){
+      static bool ret = flags.has("magic");
+
+      return ret;
+    }
+
+    bool parserBase::compilingForCPU(){
+      static bool ret = ((flags["mode"] == "Serial")   ||
+                         (flags["mode"] == "Pthreads") ||
+                         (flags["mode"] == "OpenMP"));
+
+      return ret;
+    }
+
+    bool parserBase::warnForMissingBarriers(){
+      static bool ret = flags.hasEnabled("warn-for-missing-barriers", true);
+
+      return ret;
+    }
+
+    bool parserBase::warnForConditionalBarriers(){
+      static bool ret = flags.hasEnabled("warn-for-conditional-barriers", true);
+
+      return ret;
+    }
+
+    bool parserBase::insertBarriersAutomatically(){
+      static bool ret = flags.hasEnabled("automate-add-barriers", true);
+
+      return ret;
+    }
+    //==================================
 
     //---[ Macro Parser Functions ]-------
     std::string parserBase::getMacroName(const char *&c){
@@ -949,7 +972,7 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if(cpuMode)
+      if(compilingForCPU())
         return;
 
       if(s.info != smntType::occaFor)
@@ -1978,8 +2001,7 @@ namespace occa {
           }
 
           if(snPos == lastLoop){
-            if(warnForMissingBarriers){
-
+            if(warnForMissingBarriers()){
               std::cout << "Warning: Placing a shared-memory barrier between:\n"
                         << "---[ A ]--------------------------------\n"
                         << *(firstLoop->value)
@@ -2350,7 +2372,7 @@ namespace occa {
       statementVector_t newKernels;
 
       // Add parallel for's
-      if(cpuMode){
+      if(compilingForCPU()){
         for(int k = 0; k < kernelCount; ++k){
           statement &omLoop  = *(omLoops[k]);
 

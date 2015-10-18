@@ -784,7 +784,14 @@ namespace occa {
     if(it == flags.end())
       return defaultValue;
 
-    return (it->second == "enabled");
+    if(upStringCheck(it->second, "enabled") ||
+       upStringCheck(it->second, "yes")     ||
+       upStringCheck(it->second, "y")){
+
+      return true;
+    }
+
+    return false;
   }
   //==============================================
 }

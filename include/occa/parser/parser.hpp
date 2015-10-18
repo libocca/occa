@@ -41,15 +41,6 @@ namespace occa {
 
       statement *globalScope;
 
-      //---[ Flags ]--------------------
-      int cpuMode;
-      bool magicEnabled;
-
-      // Warnings
-      bool warnForMissingBarriers;
-      bool warnForBarrierConditionals;
-      //================================
-
       parserBase();
       ~parserBase();
 
@@ -64,6 +55,14 @@ namespace occa {
                                   const flags_t &flags_ = flags_t());
 
       const std::string parseSource(const char *cRoot);
+
+      //---[ Parser Warnings ]----------
+      bool hasMagicEnabled();
+      bool compilingForCPU();
+      bool warnForMissingBarriers();
+      bool warnForConditionalBarriers();
+      bool insertBarriersAutomatically();
+      //================================
 
       //---[ Macro Parser Functions ]---
       std::string getMacroName(const char *&c);
