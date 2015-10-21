@@ -1934,6 +1934,9 @@ namespace occa {
     }
 
     void parserBase::checkOccaBarriers(statement &s){
+      if(!warnForConditionalBarriers())
+        return;
+
       statementNode *statementPos = s.statementStart;
 
       while(statementPos){
@@ -1953,6 +1956,9 @@ namespace occa {
     }
 
     void parserBase::addOccaBarriers(){
+      if(!insertBarriersAutomatically())
+        return;
+
       statementNode *statementPos = globalScope->statementStart;
 
       while(statementPos){
