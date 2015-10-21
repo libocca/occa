@@ -12482,7 +12482,7 @@ struct vdouble4 {
 
 #if OCCA_USING_CPU
 #if OCCA_SSE
-vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
+inline vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
 #if OCCA_SSE
 
     a.reg = _mm_add_ps(a.reg, b.reg);
@@ -12495,7 +12495,7 @@ vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
 
 #if OCCA_USING_CPU
 #if OCCA_SSE
-vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
+inline vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
 #if OCCA_SSE
 
     vfloat4 ret;

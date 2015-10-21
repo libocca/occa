@@ -160,9 +160,9 @@ def make_function(f):
     source += '#if OCCA_USING_CPU\n'
 
     source += '#if OCCA_{}\n'.format(f.instruction_set) # [-] Remove after fallback is implemented
-    source += '{} operator {} ({}) {{\n'.format(f.ret_type,
-                                                f.operator,
-                                                args)
+    source += 'inline {} operator {} ({}) {{\n'.format(f.ret_type,
+                                                       f.operator,
+                                                       args)
 
     source += '#if OCCA_{}\n'.format(f.instruction_set)
     source += intrinsic_source
