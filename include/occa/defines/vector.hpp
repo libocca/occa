@@ -12361,6 +12361,39 @@ inline std::ostream& operator << (std::ostream &out, const double16& a){
 #endif
 
 
+#if OCCA_MMX
+#  include <mmintrin.h>
+#endif
+
+#if OCCA_SSE
+#  include <xmmintrin.h>
+#endif
+
+#if OCCA_SSE2
+#  include <emmintrin.h>
+#endif
+
+#if OCCA_SSE3
+#  include <pmmintrin.h>
+#endif
+
+#if OCCA_SSSE3
+#  include <tmmintrin.h>
+#endif
+
+#if OCCA_SSE4_1
+#  include <smmintrin.h>
+#endif
+
+#if OCCA_SSE4_2
+#  include <nmmintrin.h>
+#endif
+
+#if OCCA_AVX
+#  include <immintrin.h>
+#endif
+
+
 #if OCCA_USING_CPU && (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
 #  define OCCA_CPU_SIMD_WIDTH OCCA_SIMD_WIDTH
 #else

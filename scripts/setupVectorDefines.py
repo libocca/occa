@@ -268,6 +268,41 @@ def define_all_types():
 
     return define
 
+def intrinsic_headers():
+    return """
+#if OCCA_MMX
+#  include <mmintrin.h>
+#endif
+
+#if OCCA_SSE
+#  include <xmmintrin.h>
+#endif
+
+#if OCCA_SSE2
+#  include <emmintrin.h>
+#endif
+
+#if OCCA_SSE3
+#  include <pmmintrin.h>
+#endif
+
+#if OCCA_SSSE3
+#  include <tmmintrin.h>
+#endif
+
+#if OCCA_SSE4_1
+#  include <smmintrin.h>
+#endif
+
+#if OCCA_SSE4_2
+#  include <nmmintrin.h>
+#endif
+
+#if OCCA_AVX
+#  include <immintrin.h>
+#endif
+"""
+
 def intrinsic_macros():
     return """
 #if OCCA_USING_CPU && (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
@@ -370,10 +405,13 @@ def intrinsic_functions():
     return contents
 
 def intrinsic_contents():
-    return (intrinsic_macros() +
-            '\n'              +
-            vfloat_defines()   +
-            '\n'              +
+
+    return (intrinsic_headers() +
+            '\n'                +
+            intrinsic_macros()  +
+            '\n'                +
+            vfloat_defines()    +
+            '\n'                +
             intrinsic_functions())
 
 def gen_file_contents():
