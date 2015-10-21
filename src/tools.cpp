@@ -1035,15 +1035,23 @@ namespace occa {
     return ret;
   }
 
-  char* getCachedDefines(const std::string &filename){
+  char* getCachedOccaFile(const std::string &filename){
     static std::map<std::string, char*> sourceMap;
 
     char *&source = sourceMap[filename];
 
     if(source == NULL)
-      source = cReadFile(env::OCCA_DIR + "/include/occa/defines/" + filename);
+      source = cReadFile(env::OCCA_DIR + "/" + filename);
 
     return source;
+  }
+
+  char* getCachedDefines(const std::string &filename){
+    return getCachedOccaFile("include/occa/defines/" + filename);
+  }
+
+  char* getCachedScript(const std::string &filename){
+    return getCachedOccaFile("scripts/" + filename);
   }
 
   char* getVectorDefines(){

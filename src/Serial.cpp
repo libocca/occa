@@ -14,7 +14,7 @@ namespace occa {
         std::ofstream fs2;
         fs2.open(shellToolsFile.c_str());
 
-        fs2 << occaShellTools;
+        fs2 << getCachedScript("shellTools.sh");
 
         fs2.close();
       }

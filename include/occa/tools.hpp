@@ -231,7 +231,9 @@ namespace occa {
 
   std::string removeSlashes(const std::string &str);
 
+  char* getCachedOccaFile(const std::string &filename);
   char* getCachedDefines(const std::string &filename);
+  char* getCachedScript(const std::string &filename);
 
   char* getVectorDefines();
   char* getSerialDefines();
