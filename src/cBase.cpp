@@ -995,14 +995,6 @@ occaDevice OCCA_RFUNC occaWrapHSADevice(){
 }
 #endif
 
-#if OCCA_COI_ENABLED
-occaDevice OCCA_RFUNC occaWrapCoiDevice(COIENGINE coiDevice){
-  occa::device device = occa::coi::wrapDevice(coiDevice);
-
-  return (occaDevice) device_.getDHandle();
-}
-#endif
-
 occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
                                            void *handle_,
                                            const uintptr_t bytes){

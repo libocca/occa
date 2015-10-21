@@ -354,10 +354,6 @@ OCCA_LFUNC occaDevice OCCA_RFUNC occaWrapCudaDevice(CUdevice device, CUcontext c
 OCCA_LFUNC occaDevice OCCA_RFUNC occaWrapHSADevice();
 #endif
 
-#if OCCA_COI_ENABLED
-OCCA_LFUNC occaDevice OCCA_RFUNC occaWrapCoiDevice(COIENGINE coiDevice);
-#endif
-
 OCCA_LFUNC occaMemory OCCA_RFUNC occaDeviceWrapMemory(occaDevice device,
                                                       void *handle_,
                                                       const uintptr_t bytes);

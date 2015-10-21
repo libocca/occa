@@ -351,25 +351,4 @@
 #endif
 //======================================
 
-
-//---[ COI ]----------------------------
-#if OCCA_CHECK_ENABLED
-#  define OCCA_COI_CHECK( _str , _statement ) OCCA_COI_CHECK2( _str , _statement , __FILE__ , __LINE__ )
-#  define OCCA_COI_CHECK2( _str , _statement , file , line )            \
-  do {                                                                  \
-    COIRESULT errorCode = _statement;                                   \
-    if(errorCode != COI_SUCCESS){                                       \
-      std::cout << "Error\n"                                            \
-                << "    File    : " << file << '\n'                     \
-                << "    Line    : " << line << '\n'                     \
-                << "    Error   : " << occa::coiError(errorCode) << '\n' \
-                << "    Message : " << _str << '\n';                    \
-      throw 1;                                                          \
-    }                                                                   \
-  } while(0);
-#else
-#  define OCCA_COI_CHECK( _str , _statement ) do { _statement; } while(0);
-#endif
-//======================================
-
 #endif

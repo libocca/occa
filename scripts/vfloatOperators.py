@@ -159,6 +159,7 @@ def make_function(f):
 
     source += '#if OCCA_USING_CPU\n'
 
+    source += '#if OCCA_{}\n'.format(f.instruction_set) # [-] Remove after fallback is implemented
     source += '{} operator {} ({}) {{\n'.format(f.ret_type,
                                                 f.operator,
                                                 args)
@@ -170,6 +171,7 @@ def make_function(f):
     source += '#endif\n'
 
     source += '}\n';
+    source += '#endif\n' # [-] Remove after fallback is implemented
     source += '#endif\n\n'
 
     return source

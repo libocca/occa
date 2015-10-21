@@ -12448,6 +12448,7 @@ struct vdouble4 {
 };
 
 #if OCCA_USING_CPU
+#if OCCA_SSE
 vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
 #if OCCA_SSE
 
@@ -12457,8 +12458,10 @@ vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
 #endif
 }
 #endif
+#endif
 
 #if OCCA_USING_CPU
+#if OCCA_SSE
 vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
 #if OCCA_SSE
 
@@ -12468,5 +12471,6 @@ vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
 #else
 #endif
 }
+#endif
 #endif
 

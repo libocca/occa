@@ -102,7 +102,6 @@ namespace occa {
   bool hasOpenMPEnabled();
   bool hasOpenCLEnabled();
   bool hasCUDAEnabled();
-  bool hasCOIEnabled();
   bool hasHSAEnabled();
   //==============================================
 
@@ -162,7 +161,6 @@ namespace occa {
   static const occa::mode CUDA     = (1 << 23);
   static const occa::mode HSA      = (1 << 24);
   static const occa::mode Pthreads = (1 << 25);
-  static const occa::mode COI      = (1 << 26);
 
   static const int onChipMode = (Serial |
                                  OpenMP |
@@ -178,8 +176,7 @@ namespace occa {
   static const occa::mode CUDAIndex     = 3;
   static const occa::mode HSAIndex      = 4;
   static const occa::mode PthreadsIndex = 5;
-  static const occa::mode COIIndex      = 6;
-  static const int modeCount = 7;
+  static const int modeCount = 6;
 
   inline std::string modeToStr(const occa::mode &m){
     if(m & Serial)   return "Serial";
@@ -188,7 +185,6 @@ namespace occa {
     if(m & CUDA)     return "CUDA";
     if(m & HSA)      return "HSA";
     if(m & Pthreads) return "Pthreads";
-    if(m & COI)      return "COI";
 
     OCCA_CHECK(false, "Mode [" << m << "] is not valid");
 
@@ -204,7 +200,6 @@ namespace occa {
     if(upStr == "CUDA")     return CUDA;
     if(upStr == "HSA")      return HSA;
     if(upStr == "PTHREADS") return Pthreads;
-    if(upStr == "COI")      return COI;
 
     OCCA_CHECK(false, "Mode [" << str << "] is not valid");
 
@@ -228,7 +223,6 @@ namespace occa {
     if(info_ & CUDA)     ret += std::string(count++ ? ", " : "") + "CUDA";
     if(info_ & HSA)      ret += std::string(count++ ? ", " : "") + "HSA";
     if(info_ & Pthreads) ret += std::string(count++ ? ", " : "") + "Pthreads";
-    if(info_ & COI)      ret += std::string(count++ ? ", " : "") + "COI";
 
     if(count)
       return ret;
@@ -1144,14 +1138,6 @@ namespace occa {
   }
 #endif
 
-  namespace coi {
-    occa::device wrapDevice(void *coiDevicePtr);
-
-#if OCCA_COI_ENABLED
-    occa::device wrapDevice(COIENGINE coiDevice);
-#endif
-  }
-
   class device_v {
     template <occa::mode> friend class occa::kernel_t;
     template <occa::mode> friend class occa::memory_t;
@@ -1246,10 +1232,6 @@ namespace occa {
 
 #if OCCA_HSA_ENABLED
     friend occa::device hsa::wrapDevice(CUdevice device, CUcontext context);
-#endif
-
-#if OCCA_COI_ENABLED
-    friend occa::device coi::wrapDevice(COIENGINE coiDevice);
 #endif
 
     virtual memory_v* wrapMemory(void *handle_,
@@ -1362,10 +1344,6 @@ namespace occa {
 
 #if OCCA_HSA_ENABLED
     friend occa::device hsa::wrapDevice(CUdevice device, CUcontext context);
-#endif
-
-#if OCCA_COI_ENABLED
-    friend occa::device coi::wrapDevice(COIENGINE coiDevice);
 #endif
 
     memory_v* wrapMemory(void *handle_,
@@ -1544,10 +1522,6 @@ namespace occa {
 
 #if OCCA_HSA_ENABLED
     friend occa::device hsa::wrapDevice(CUdevice device, CUcontext context);
-#endif
-
-#if OCCA_COI_ENABLED
-    friend occa::device coi::wrapDevice(COIENGINE coiDevice);
 #endif
 
     memory wrapMemory(void *handle_,

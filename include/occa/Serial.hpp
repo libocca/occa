@@ -25,8 +25,6 @@
 #include "occa/base.hpp"
 #include "occa/library.hpp"
 
-#include "occa/varFiles.hpp"
-
 namespace occa {
   //---[ Data Structs ]---------------
   struct SerialKernelData_t {

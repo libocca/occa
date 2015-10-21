@@ -1,4 +1,3 @@
-#include "occa/varFiles.hpp"
 #include "occa/tools.hpp"
 #include "occa/base.hpp"
 
@@ -1036,6 +1035,45 @@ namespace occa {
     return ret;
   }
 
+  char* getCachedDefines(const std::string &filename){
+    static std::map<std::string, char*> sourceMap;
+
+    char *&source = sourceMap[filename];
+
+    if(source == NULL)
+      source = cReadFile(env::OCCA_DIR + "/include/occa/defines/" + filename);
+
+    return source;
+  }
+
+  char* getVectorDefines(){
+    return getCachedDefines("vector.hpp");
+  }
+
+  char* getSerialDefines(){
+    return getCachedDefines("Serial.hpp");
+  }
+
+  char* getOpenMPDefines(){
+    return getCachedDefines("OpenMP.hpp");
+  }
+
+  char* getOpenCLDefines(){
+    return getCachedDefines("OpenCL.hpp");
+  }
+
+  char* getCUDADefines(){
+    return getCachedDefines("CUDA.hpp");
+  }
+
+  char* getHSADefines(){
+    return getCachedDefines("HSA.hpp");
+  }
+
+  char* getPthreadsDefines(){
+    return getCachedDefines("Pthreads.hpp");
+  }
+
   void setupOccaHeaders(const kernelInfo &info){
     std::string primitivesFile = sys::getFilename("[occa]/primitives.hpp");
     std::string headerFile     = info.getModeHeaderFilename();
@@ -1046,7 +1084,7 @@ namespace occa {
       std::ofstream fs2;
       fs2.open(primitivesFile.c_str());
 
-      fs2 << occaVectorDefines;
+      fs2 << getVectorDefines();
 
       fs2.close();
     }
@@ -1057,13 +1095,12 @@ namespace occa {
       std::ofstream fs2;
       fs2.open(headerFile.c_str());
 
-      if(info.mode & Serial)   fs2 << occaSerialDefines;
-      if(info.mode & OpenMP)   fs2 << occaOpenMPDefines;
-      if(info.mode & OpenCL)   fs2 << occaOpenCLDefines;
-      if(info.mode & CUDA)     fs2 << occaCUDADefines;
-      // if(info.mode & HSA)      fs2 << occaHSADefines;
-      if(info.mode & Pthreads) fs2 << occaPthreadsDefines;
-      if(info.mode & COI)      fs2 << occaCOIDefines;
+      if(info.mode & Serial)   fs2 << getSerialDefines();
+      if(info.mode & OpenMP)   fs2 << getOpenMPDefines();
+      if(info.mode & OpenCL)   fs2 << getOpenCLDefines();
+      if(info.mode & CUDA)     fs2 << getCUDADefines();
+      // if(info.mode & HSA)      fs2 << getHSADefines();
+      if(info.mode & Pthreads) fs2 << getPthreadsDefines();
 
       fs2.close();
     }

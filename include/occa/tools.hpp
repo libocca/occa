@@ -231,6 +231,16 @@ namespace occa {
 
   std::string removeSlashes(const std::string &str);
 
+  char* getCachedDefines(const std::string &filename);
+
+  char* getVectorDefines();
+  char* getSerialDefines();
+  char* getOpenMPDefines();
+  char* getOpenCLDefines();
+  char* getCUDADefines();
+  char* getHSADefines();
+  char* getPthreadsDefines();
+
   void setupOccaHeaders(const kernelInfo &info);
 
   void createSourceFileFrom(const std::string &filename,

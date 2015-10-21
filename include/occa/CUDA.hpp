@@ -5,8 +5,6 @@
 #include "occa/base.hpp"
 #include "occa/library.hpp"
 
-#include "occa/varFiles.hpp"
-
 #include "occa/defines.hpp"
 
 #include <cuda.h>

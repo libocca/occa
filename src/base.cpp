@@ -56,14 +56,6 @@ namespace occa {
 #endif
   }
 
-  bool hasCOIEnabled(){
-#if OCCA_COI_ENABLED
-    return true;
-#else
-    return false;
-#endif
-  }
-
   bool hasHSAEnabled(){
 #if OCCA_HSA_ENABLED
     return true;
@@ -238,7 +230,6 @@ namespace occa {
     if(mode & CUDA)     return sys::getFilename("[occa]/defines/CUDA.hpp");
     if(mode & HSA)      return sys::getFilename("[occa]/defines/HSA.hpp");
     if(mode & Pthreads) return sys::getFilename("[occa]/defines/Pthreads.hpp");
-    if(mode & COI)      return sys::getFilename("[occa]/defines/COI.hpp");
 
     return "";
   }
@@ -252,7 +243,6 @@ namespace occa {
        (name == "OCCA_USING_OPENCL")   ||
        (name == "OCCA_USING_CUDA")     ||
        (name == "OCCA_USING_PTHREADS") ||
-       (name == "OCCA_USING_COI")      ||
 
        (name == "occaInnerDim0") ||
        (name == "occaInnerDim1") ||
@@ -1268,16 +1258,6 @@ namespace occa {
       dHandle = new device_t<Pthreads>();
       break;
     }
-    case COI:{
-#if OCCA_COI_ENABLED
-      std::cout << "OCCA mode [COI] is deprecated (unstable)\n";
-      dHandle = new device_t<COI>();
-#else
-      std::cout << "OCCA mode [COI] is not enabled, defaulting to [Serial] mode\n";
-      dHandle = new device_t<Serial>();
-#endif
-      break;
-    }
     default:{
       std::cout << "Unsupported OCCA mode given, defaulting to [Serial] mode\n";
       dHandle = new device_t<Serial>();
@@ -1349,10 +1329,6 @@ namespace occa {
     case Pthreads:{
       aim.set("threadCount", arg1);
       aim.set("pinningInfo", arg2);
-      break;
-    }
-    case COI:{
-      aim.set("deviceID", arg1);
       break;
     }
     }
@@ -1941,9 +1917,6 @@ namespace occa {
 #if OCCA_CUDA_ENABLED
     device_t<CUDA>::appendAvailableDevices(deviceList);
 #endif
-#if OCCA_COI_ENABLED
-    device_t<COI>::appendAvailableDevices(deviceList);
-#endif
 
     deviceListMutex.unlock();
 
@@ -2173,10 +2146,6 @@ namespace occa {
     ss << "==============o=======================o==========================================\n";
     ss << cuda::getDeviceListInfo();
 #endif
-#if OCCA_COI_ENABLED
-    ss << "==============o=======================o==========================================\n";
-    ss << coi::getDeviceListInfo();
-#endif
     ss << "==============o=======================o==========================================\n";
 
     std::cout << ss.str();
@@ -2308,19 +2277,6 @@ namespace occa {
 #else
       OCCA_CHECK(false,
                  "OCCA was not compiled with [CUDA] enabled");
-
-      return occa::host;
-#endif
-    }
-  }
-
-  namespace coi {
-    occa::device wrapDevice(void *coiDevicePtr){
-#if OCCA_COI_ENABLED
-      return coi::wrapDevice(*((COIENGINE*) coiDevice));
-#else
-      OCCA_CHECK(false,
-                 "OCCA was not compiled with [COI] enabled");
 
       return occa::host;
 #endif

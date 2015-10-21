@@ -10,8 +10,6 @@
 #include "occa/base.hpp"
 #include "occa/library.hpp"
 
-#include "occa/varFiles.hpp"
-
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
 #  include <dlfcn.h>
 #else
