@@ -2,7 +2,6 @@ obj/
 y
 
 main
-main.dSYM
 
 notes.org
 
@@ -10,7 +9,10 @@ web/
 web2/
 
 .DS_Store
+*.dSYM
 
 # for now
 benchmarks/
 scripts/occaBenchmark.cpp
+
+*.pyc

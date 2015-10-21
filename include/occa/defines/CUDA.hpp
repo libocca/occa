@@ -15,6 +15,38 @@
 #define OCCA_USING_GPU (OCCA_USING_OPENCL || OCCA_USING_CUDA)
 //================================================
 
+//---[ Remove CPU Defines ]-----------------------
+//  |---[ Compiler ]----------
+#define OCCA_GNU_COMPILER       (1 << 0)
+#define OCCA_LLVM_COMPILER      (1 << 1)
+#define OCCA_INTEL_COMPILER     (1 << 2)
+#define OCCA_PATHSCALE_COMPILER (1 << 3)
+#define OCCA_IBM_COMPILER       (1 << 4)
+#define OCCA_PGI_COMPILER       (1 << 5)
+#define OCCA_HP_COMPILER        (1 << 6)
+#define OCCA_VS_COMPILER        (1 << 7)
+#define OCCA_CRAY_COMPILER      (1 << 8)
+#define OCCA_UNKNOWN_COMPILER   (1 << 9)
+
+#define OCCA_COMPILED_WITH OCCA_UNKNOWN_COMPILER
+
+//  |---[ Vectorization ]-----
+#define OCCA_MIC    0
+#define OCCA_AVX2   0
+#define OCCA_AVX    0
+#define OCCA_SSE4_2 0
+#define OCCA_SSE4_1 0
+#define OCCA_SSE4   0
+#define OCCA_SSE3   0
+#define OCCA_SSE2   0
+#define OCCA_SSE    0
+#define OCCA_MMX    0
+
+#define OCCA_VECTOR_SET
+
+#define OCCA_SIMD_WIDTH 0
+//================================================
+
 
 //---[ Math Defines ]-----------------------------
 #define OCCA_E         2.7182818284590452 // e
