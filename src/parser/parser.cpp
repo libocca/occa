@@ -48,10 +48,10 @@ namespace occa {
 
       filename = filename_;
 
-      flags = flags_;
+      parsingFlags = flags_;
 
       //---[ Language ]-------
-      if(flags.hasSet("language", "Fortran"))
+      if(parsingFlags.hasSet("language", "Fortran"))
         parsingLanguage = parserInfo::parsingFortran;
       else
         parsingLanguage = parserInfo::parsingC;
@@ -59,7 +59,7 @@ namespace occa {
       pushLanguage(parsingLanguage);
 
       //---[ Mode ]-----------
-      OCCA_CHECK(flags.has("mode"),
+      OCCA_CHECK(parsingFlags.has("mode"),
                  "Compilation mode must be passed to the parser");
 
       //---[ Magic ]----------
@@ -125,33 +125,33 @@ namespace occa {
 
     //---[ Parser Warnings ]------------
     bool parserBase::hasMagicEnabled(){
-      static bool ret = flags.has("magic");
+      static bool ret = parsingFlags.has("magic");
 
       return ret;
     }
 
     bool parserBase::compilingForCPU(){
-      static bool ret = ((flags["mode"] == "Serial")   ||
-                         (flags["mode"] == "Pthreads") ||
-                         (flags["mode"] == "OpenMP"));
+      static bool ret = ((parsingFlags["mode"] == "Serial")   ||
+                         (parsingFlags["mode"] == "Pthreads") ||
+                         (parsingFlags["mode"] == "OpenMP"));
 
       return ret;
     }
 
     bool parserBase::warnForMissingBarriers(){
-      static bool ret = flags.hasEnabled("warn-for-missing-barriers", true);
+      static bool ret = parsingFlags.hasEnabled("warn-for-missing-barriers", true);
 
       return ret;
     }
 
     bool parserBase::warnForConditionalBarriers(){
-      static bool ret = flags.hasEnabled("warn-for-conditional-barriers", true);
+      static bool ret = parsingFlags.hasEnabled("warn-for-conditional-barriers", true);
 
       return ret;
     }
 
     bool parserBase::insertBarriersAutomatically(){
-      static bool ret = flags.hasEnabled("automate-add-barriers", true);
+      static bool ret = parsingFlags.hasEnabled("automate-add-barriers", true);
 
       return ret;
     }

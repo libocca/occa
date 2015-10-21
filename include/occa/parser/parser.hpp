@@ -28,7 +28,7 @@ namespace occa {
 
       int parsingLanguage;
 
-      flags_t flags;
+      flags_t parsingFlags;
 
       macroMap_t macroMap;
       std::vector<macroInfo> macros;

@@ -12390,3 +12390,83 @@ inline std::ostream& operator << (std::ostream &out, const double16& a){
 #  define occaAddF8(V12, V1, V2)  V12 = (V1 + V2)
 #  define occaMultF8(V12, V1, V2) V12 = (V1 * V2)
 #endif
+
+
+struct vfloat2 {
+#if OCCA_MMX
+  union {
+    __m64 reg;
+    float vec[2];
+  };
+#else
+  float vec[2];
+#endif
+};
+
+struct vfloat4 {
+#if OCCA_SSE
+  union {
+    __m128 reg;
+    float vec[4];
+  };
+#else
+  float vec[4];
+#endif
+};
+
+struct vfloat8 {
+#if OCCA_AVX
+  union {
+    __m256 reg;
+    float vec[4];
+  };
+#else
+  float vec[4];
+#endif
+};
+
+struct vdouble2 {
+#if OCCA_SSE2
+  union {
+    __m128d reg;
+    double vec[2];
+  };
+#else
+  double vec[2];
+#endif
+};
+
+struct vdouble4 {
+#if OCCA_AVX
+  union {
+    __m256d reg;
+    double vec[4];
+  };
+#else
+  double vec[4];
+#endif
+};
+
+#if OCCA_USING_CPU
+vfloat4 & operator += (vfloat4 & a, vfloat4 & b) {
+#if OCCA_SSE
+
+    a.reg = _mm_add_ps(a.reg, b.reg);
+    return a;
+#else
+#endif
+}
+#endif
+
+#if OCCA_USING_CPU
+vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
+#if OCCA_SSE
+
+    vfloat4 ret;
+    ret.reg = _mm_add_ps(a.reg, b.reg);
+    return ret;
+#else
+#endif
+}
+#endif
+

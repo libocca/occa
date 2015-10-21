@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 from os import environ as ENV
 
 types = ['bool' ,
@@ -11,27 +11,27 @@ types = ['bool' ,
 
 Ns = [2, 4, 3, 8, 16]
 
-cudaDefined = [ 'char2'  ,
-                'char3'  ,
-                'char4'  ,
-                'short2' ,
-                'short3' ,
-                'short4' ,
-                'int2'   ,
-                'int3'   ,
-                'int4'   ,
-                'long2'  ,
-                'long3'  ,
-                'long4'  ,
-                'float2' ,
-                'float3' ,
-                'float4' ,
-                'double2',
-                'double3',
-                'double4']
+defined_in_cuda = [ 'char2'  ,
+                    'char3'  ,
+                    'char4'  ,
+                    'short2' ,
+                    'short3' ,
+                    'short4' ,
+                    'int2'   ,
+                    'int3'   ,
+                    'int4'   ,
+                    'long2'  ,
+                    'long3'  ,
+                    'long4'  ,
+                    'float2' ,
+                    'float3' ,
+                    'float4' ,
+                    'double2',
+                    'double3',
+                    'double4' ]
 
-unaryOps  = ['+', '-']
-binaryOps = ['+', '-', '*', '/']
+unary_ops  = ['+', '-']
+binary_ops = ['+', '-', '*', '/']
 
 def varL(n):
     if n < 4:
@@ -42,24 +42,24 @@ def varL(n):
 def varN(n):
     return 's' + str(n)
 
-def defineTypeN(type_, n):
+def define_typeN(type_, n):
     typeN = type_ + str(n)
     TYPEN = (type_ + str(n)).upper();
 
     define = ''
 
     if n == 3:
-        if typeN in cudaDefined:
+        if typeN in defined_in_cuda:
             define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
 
         define += 'typedef ' + type_ + '4 ' + type_ + '3;\n'
 
-        if typeN in cudaDefined:
+        if typeN in defined_in_cuda:
             define += '#endif\n'
 
         return define
 
-    if typeN in cudaDefined:
+    if typeN in defined_in_cuda:
         define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
         define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR '      + typeN + '\n'
         define += '#else\n'
@@ -73,7 +73,7 @@ def defineTypeN(type_, n):
     define += 'class ' + type_ + str(n) + '{\n' + \
              'public:\n'
 
-    for i in xrange(n):
+    for i in range(n):
         if(i < 4):
             define += '  union { ' + type_ + ' ' + varN(i) + ', ' + varL(i) + '; };\n'
         else:
@@ -81,13 +81,13 @@ def defineTypeN(type_, n):
 
     define += '\n'
 
-    for i in xrange(n + 1):
+    for i in range(n + 1):
         start = '  occaFunction inline ' + typeN + '('
 
-        args = (',\n' + (' ' * len(start))).join('const ' + type_ + ' &' + varL(j) + '_' for j in xrange(i))
+        args = (',\n' + (' ' * len(start))).join('const ' + type_ + ' &' + varL(j) + '_' for j in range(i))
 
         define += '  inline occaFunction ' + typeN + '(' + args + ') : \n' + \
-                  '    ' + (',\n    '.join(varL(j) +'(' + ('0' if (i <= j) else varL(j) + '_') + ')' for j in xrange(n))) + \
+                  '    ' + (',\n    '.join(varL(j) +'(' + ('0' if (i <= j) else varL(j) + '_') + ')' for j in range(n))) + \
                   ' {}\n'
 
         if i < n:
@@ -95,16 +95,16 @@ def defineTypeN(type_, n):
 
     define += '};\n'
 
-    if typeN in cudaDefined:
+    if typeN in defined_in_cuda:
         define += '#endif\n'
 
     define += '\n'
 
-    for op in unaryOps:
-        define += unaryOpDef(type_, n, op)
+    for op in unary_ops:
+        define += unary_op_def(type_, n, op)
 
-    for op in binaryOps:
-        define += binaryOpDef(type_, n, op)
+    for op in binary_ops:
+        define += binary_op_def(type_, n, op)
 
     define += '\n'
     define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))\n'
@@ -115,7 +115,7 @@ def defineTypeN(type_, n):
     if type_ == 'bool':
         l = '('; r = ' ? "true" : "false")'
 
-    define += '  out << "[" << ' + (' << ", "\n             << '.join((l + 'a.' + varL(i) + r) for i in xrange(n))) + '\n'
+    define += '  out << "[" << ' + (' << ", "\n             << '.join((l + 'a.' + varL(i) + r) for i in range(n))) + '\n'
 
     define += '      << "]\\n";\n\n'
     define += '  return out;\n'
@@ -124,7 +124,7 @@ def defineTypeN(type_, n):
 
     return define
 
-def unaryOpDef(type_, n, op):
+def unary_op_def(type_, n, op):
     typeN = type_ + str(n)
     TYPEN = (type_ + str(n)).upper();
 
@@ -145,18 +145,18 @@ def unaryOpDef(type_, n, op):
 
     indent = ['  ', '  ', '  ']
 
-    for d in xrange(1 if isFloat else 2):
+    for d in range(1 if isFloat else 2):
         ret         = '  return OCCA_' + TYPEN + '_CONSTRUCTOR(';
         indent[d]   = ' ' * len(ret)
         defines[d] += ret;
 
-    for d in xrange(maxDefs):
+    for d in range(maxDefs):
         dm = (',' if (d < 2) else ';')
 
         if d == 2:
             defines[d] += indent[d]
 
-        for i in xrange(n):
+        for i in range(n):
             if d != 1:
                 defines[d] += ops[d]
 
@@ -173,7 +173,7 @@ def unaryOpDef(type_, n, op):
         else:
             defines[d] += ';\n'
 
-    for d in xrange(maxDefs):
+    for d in range(maxDefs):
         if 0 < d:
             defines[0] += '\n' + defines[d]
 
@@ -184,7 +184,7 @@ def unaryOpDef(type_, n, op):
 
     return defines[0]
 
-def binaryOpDef(type_, n, op):
+def binary_op_def(type_, n, op):
     typeN = type_ + str(n)
     TYPEN = (type_ + str(n)).upper();
 
@@ -200,13 +200,13 @@ def binaryOpDef(type_, n, op):
     aIsTypeN = [True, False, True , True, True ]
     bIsTypeN = [True, True , False, True, False]
 
-    a = [[('a.' + varL(i)) if aIsTypeN[define] else 'a' for i in xrange(n)] for define in xrange(5)]
-    b = [[('b.' + varL(i)) if bIsTypeN[define] else 'b' for i in xrange(n)] for define in xrange(5)]
+    a = [[('a.' + varL(i)) if aIsTypeN[define] else 'a' for i in range(n)] for define in range(5)]
+    b = [[('b.' + varL(i)) if bIsTypeN[define] else 'b' for i in range(n)] for define in range(5)]
 
     retDef = '  return OCCA_' + TYPEN + '_CONSTRUCTOR('
 
-    for d in xrange(5):
-        for i in xrange(n):
+    for d in range(5):
+        for i in range(n):
             if d < 3:
                 if i == 0:
                     defines[d] += retDef
@@ -218,7 +218,7 @@ def binaryOpDef(type_, n, op):
             else:
                 defines[d] += '  a.' + varL(i) + ' ' + op + '= ' + b[d][i] + ';\n'
 
-    for d in xrange(5):
+    for d in range(5):
         if 0 < d:
             defines[0] += '\n' + defines[d]
 
@@ -231,7 +231,7 @@ def binaryOpDef(type_, n, op):
 
     return defines[0]
 
-def defineType(type_):
+def define_type(type_):
     define = ''
 
     for n in Ns:
@@ -240,13 +240,13 @@ def defineType(type_):
         comment = '//---[ ' + typeN + ' ]'
         define += comment + ('-' * (40 - len(comment))) + '\n'
 
-        define += defineTypeN(type_, n)
+        define += define_typeN(type_, n)
 
         define += '//' + ('=' * 38) + '\n\n\n'
 
     return define
 
-def defineAllTypes():
+def define_all_types():
     define  = '#if (!defined(OCCA_IN_KERNEL) || (!OCCA_USING_OPENCL))\n'
     define += '#  if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))\n'
     define += '#    include <iostream>\n'
@@ -258,7 +258,7 @@ def defineAllTypes():
     define += '#  endif\n\n'
 
     for type_ in types:
-        define += defineType(type_)
+        define += define_type(type_)
 
     define += '#  ifndef OCCA_IN_KERNEL\n'
     define += '}\n'
@@ -268,7 +268,7 @@ def defineAllTypes():
 
     return define
 
-def intrinsicMacros():
+def intrinsic_macros():
     return """
 #if OCCA_USING_CPU && (OCCA_COMPILED_WITH & OCCA_INTEL_COMPILER)
 #  define OCCA_CPU_SIMD_WIDTH OCCA_SIMD_WIDTH
@@ -301,88 +301,65 @@ def intrinsicMacros():
 #endif
 """
 
-def vfloatDefines():
+def vfloat_defines():
     return """
 struct vfloat2 {
-  union {
-    struct {
-      union{ float s0, x; };
-      union{ float s1, y; };
-    };
 #if OCCA_MMX
-    __m64 vec;
-#else
+  union {
+    __m64 reg;
     float vec[2];
-#endif
   };
+#else
+  float vec[2];
+#endif
 };
 
 struct vfloat4 {
-  union {
-    struct {
-      union{ float s0, x; };
-      union{ float s1, y; };
-      union{ float s2, z; };
-      union{ float s3, w; };
-    };
 #if OCCA_SSE
-    __m128 vec;
-#else
+  union {
+    __m128 reg;
     float vec[4];
-#endif
   };
+#else
+  float vec[4];
+#endif
 };
 
 struct vfloat8 {
-  union {
-      union{ float s0, x; };
-      union{ float s1, y; };
-      union{ float s2, z; };
-      union{ float s3, w; };
-      float s4;
-      float s5;
-      float s6;
-      float s7;
 #if OCCA_AVX
-    __m256 vec;
-#else
+  union {
+    __m256 reg;
     float vec[4];
-#endif
   };
+#else
+  float vec[4];
+#endif
 };
 
 struct vdouble2 {
-  union {
-    struct {
-      union{ double s0, x; };
-      union{ double s1, y; };
-    };
 #if OCCA_SSE2
-    __m128d vec;
-#else
+  union {
+    __m128d reg;
     double vec[2];
-#endif
   };
+#else
+  double vec[2];
+#endif
 };
 
 struct vdouble4 {
+#if OCCA_AVX
   union {
-    struct {
-      union{ double s0, x; };
-      union{ double s1, y; };
-      union{ double s2, z; };
-      union{ double s3, w; };
-    };
-#if OCCA_SSE
-    __m256d vec;
-#else
+    __m256d reg;
     double vec[4];
-#endif
   };
+#else
+  double vec[4];
+#endif
 };
 """
 
-def intrinsicFunctions():
+def intrinsic_functions():
     import vfloatOperators as vo
 
     contents = ''
@@ -392,19 +369,19 @@ def intrinsicFunctions():
 
     return contents
 
-def intrinsicContents():
-    return (intrinsicMacros() +
+def intrinsic_contents():
+    return (intrinsic_macros() +
             '\n'              +
-            vfloatDefines()   +
+            vfloat_defines()   +
             '\n'              +
-            intrinsicFunctions())
+            intrinsic_functions())
 
-def genFileContents():
-    return (defineAllTypes() +
+def gen_file_contents():
+    return (define_all_types() +
             '\n'             +
-            intrinsicContents())
+            intrinsic_contents())
 
-occaDir = ENV['OCCA_DIR']
+occa_dir = ENV['OCCA_DIR']
 
-with open(occaDir + '/include/occa/defines/vector.hpp', 'w') as f:
-    f.write(genFileContents())
+with open(occa_dir + '/include/occa/defines/vector.hpp', 'w') as f:
+    f.write(gen_file_contents())
