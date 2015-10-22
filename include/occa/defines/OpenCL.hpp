@@ -210,6 +210,10 @@
 #define occaFastMax   occaMax
 #define occaNativeMax occaMax
 
+#define occaHypot       hypot
+#define occaFastHypot   hypot
+#define occaNativeHypot hypot
+
 #define occaFabs       fabs
 #define occaFastFabs   fabs
 #define occaNativeFabs fabs
