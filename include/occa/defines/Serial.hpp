@@ -255,6 +255,10 @@ TM occaAtomicCAS(TM *ptr, const int comp, const TM &update){
 #define occaFastMax   std::max
 #define occaNativeMax std::max
 
+#define occaHypot       hypot
+#define occaFastHypot   hypot
+#define occaNativeHypot hypot
+
 #define occaFabs       fabs
 #define occaFastFabs   fabs
 #define occaNativeFabs fabs
