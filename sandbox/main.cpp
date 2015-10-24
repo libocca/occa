@@ -20,7 +20,7 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/easy.c"             , parserFlags);
   // parsedContent = parser.parseFile("tests/test.cpp"           , parserFlags);
   // parsedContent = parser.parseFile("tests/test2.cpp"          , parserFlags);
-  // parsedContent = parser.parseFile("tests/scratch.okl"        , parserFlags);
+  parsedContent = parser.parseFile("tests/scratch.okl"        , parserFlags);
   // parsedContent = parser.parseFile("tests/pwdg.okl"           , parserFlags);
   // parsedContent = parser.parseFile("tests/openclTest.cpp"     , parserFlags);
   // parsedContent = parser.parseFile("tests/cudaTest.cpp"       , parserFlags);
@@ -28,7 +28,7 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/midg.okl"           , parserFlags);
   // parsedContent = parser.parseFile("tests/cleanTest.c"        , parserFlags);
   // parsedContent = parser.parseFile("tests/clangTest2.c"       , parserFlags);
-  parsedContent = parser.parseFile("tests/addVectors.okl"     , parserFlags);
+  // parsedContent = parser.parseFile("tests/addVectors.okl"     , parserFlags);
   // parsedContent = parser.parseFile("tests/PCGpart1.cl"        , parserFlags);
   // parsedContent = parser.parseFile("tests/lookup_kernel.okl"  , parserFlags);
   // parsedContent = parser.parseFile("tests/reduction.cl"       , parserFlags);

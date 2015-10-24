@@ -263,7 +263,15 @@ namespace occa {
 
         skipTo(c, ",)");
 
-        macroArgMap[strip(cStart, c - cStart)] = (info.argc++);
+        const std::string macroArgName = strip(cStart, c - cStart);
+
+        if(macroArgName.size()){
+          macroArgMap[strip(cStart, c - cStart)] = (info.argc++);
+        }
+        else {
+          OCCA_CHECK((*c == ')') && (info.argc == 0),
+                     "Macro [" << info.name << "] has an argument without a name");
+        }
 
         if(*c == ')')
           break;
@@ -536,8 +544,9 @@ namespace occa {
               macroInfo &info = macros[it->second];
               word += info.parts[0];
             }
-            else
+            else{
               word += word2;
+            }
           }
           else
             break;
@@ -598,7 +607,9 @@ namespace occa {
         }
 
         cStart = c;
-        c += delimiterChars;
+
+        if(*c != '\0')
+          c += delimiterChars;
 
         if(cStart != c)
           newLine += std::string(cStart, c - cStart);
@@ -665,7 +676,7 @@ namespace occa {
         return;
 
       if(linesIgnored.back() != (allExp.leafCount - 1))
-        linesIgnored.push_back(allExp.leafCount - 1);
+        linesIgnored.push_back(allExp.leafCount);
 
       const int ignoreCount = (int) linesIgnored.size();
 
