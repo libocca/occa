@@ -184,8 +184,8 @@ __device__ inline TM occaCuda_max(const TM a, const TM b){ return (((a) > (b)) ?
 #define occaFastMax   occaCuda_max
 #define occaNativeMax occaCuda_max
 
-__device__ inline float  occaCuda_hypot(const float x){  return hypotf(x); }
-__device__ inline double occaCuda_hypot(const double x){ return hypot(x);  }
+__device__ inline float  occaCuda_hypot(const float x, const float y){  return hypotf(x, y); }
+__device__ inline double occaCuda_hypot(const double x, const double y){ return hypot(x, y);  }
 
 #define occaHypot       occaCuda_hypot
 #define occaFastHypot   occaCuda_hypot
