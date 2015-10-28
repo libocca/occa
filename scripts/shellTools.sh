@@ -223,6 +223,12 @@ function resolveRelativePath {
     fi
 }
 
+function manualReadlink {
+    pushd `dirname $1` > /dev/null
+    SCRIPTPATH=`pwd -P`
+    popd > /dev/null
+}
+
 function manualWhich {
     local input=$1
 
@@ -246,8 +252,8 @@ function realCommand {
     local b
 
     case "$(uname)" in
-        Darwin) b="$(command readlink    $a)";;
-        *)      b="$(command readlink -f $a)";;
+        Darwin) b="$(manualReadlink $a)";;
+        *)      b="$(manualReadlink $a)";;
     esac
 
     if [ -z $b ]; then
@@ -260,8 +266,8 @@ function realCommand {
         a=$(manualWhich $b)
 
         case "$(uname)" in
-            Darwin) b="$(command readlink    $a)";;
-            *)      b="$(command readlink -f $a)";;
+            Darwin) b="$(manualReadlink $a)";;
+            *)      b="$(manualReadlink $a)";;
         esac
 
         if [ -z $b ]; then
