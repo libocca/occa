@@ -985,8 +985,8 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      if(compilingForCPU())
-        return;
+      // if(compilingForCPU())
+      //   return;
 
       if(s.info != smntType::occaFor)
         return;
@@ -2127,7 +2127,6 @@ namespace occa {
           varInfo &var = s2.getDeclarationVarInfo(0);
 
           sUp->removeVarFromScope(var.name);
-
           sUp->removeStatement(s2);
         }
 
@@ -2135,7 +2134,6 @@ namespace occa {
         while(sUp){
           if((sUp->info == smntType::occaFor) &&
              statementIsOccaOuterFor(*sUp)){
-
             break;
           }
 
@@ -2152,7 +2150,6 @@ namespace occa {
             if((!(s3.info & smntType::declareStatement)) ||
                (!s3.hasQualifier("exclusive") &&
                 !s3.hasQualifier("occaShared"))){
-
               break;
             }
 
@@ -3565,7 +3562,8 @@ namespace occa {
       std::string line;
 
       while(*c != '\0'){
-        const char *cEnd = readLine(c, parsingLanguage_);
+        const char *cEnd     = readLine(c, parsingLanguage_);
+        const char firstChar = *c;
 
         line += strip(c, cEnd - c, parsingLanguage_);
         c = cEnd;
