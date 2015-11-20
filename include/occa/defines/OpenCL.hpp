@@ -206,7 +206,7 @@
 #define occaFastMin   occaMin
 #define occaNativeMin occaMin
 
-#define occaMax(a,b)  (((a) < (b)) ? (a) : (b))
+#define occaMax(a,b)  (((a) > (b)) ? (a) : (b))
 #define occaFastMax   occaMax
 #define occaNativeMax occaMax
 
