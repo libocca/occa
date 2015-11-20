@@ -9,8 +9,8 @@ int main(int argc, char **argv){
 
   occa::flags_t parserFlags;
 
-  // parserFlags["mode"] = "Serial";
-  parserFlags["mode"] = "OpenCL";
+  parserFlags["mode"] = "Serial";
+  // parserFlags["mode"] = "OpenCL";
 
   parserFlags["warn-for-missing-barriers"]     = "no";
   parserFlags["warn-for-conditional-barriers"] = "no";

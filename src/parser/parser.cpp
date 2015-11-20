@@ -131,6 +131,7 @@ namespace occa {
     }
 
     bool parserBase::compilingForCPU(){
+      return false;
       static bool ret = ((parsingFlags["mode"] == "Serial")   ||
                          (parsingFlags["mode"] == "Pthreads") ||
                          (parsingFlags["mode"] == "OpenMP"));
@@ -985,8 +986,8 @@ namespace occa {
     }
 
     void parserBase::setupOccaFors(statement &s){
-      // if(compilingForCPU())
-      //   return;
+      if(compilingForCPU())
+        return;
 
       if(s.info != smntType::occaFor)
         return;
