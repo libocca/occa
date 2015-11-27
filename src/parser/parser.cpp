@@ -3563,8 +3563,7 @@ namespace occa {
       std::string line;
 
       while(*c != '\0'){
-        const char *cEnd     = readLine(c, parsingLanguage_);
-        const char firstChar = *c;
+        const char *cEnd = readLine(c, parsingLanguage_);
 
         line += strip(c, cEnd - c, parsingLanguage_);
         c = cEnd;
