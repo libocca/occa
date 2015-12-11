@@ -11,7 +11,7 @@ sources = $(wildcard $(sPath)/*.cpp)
 
 objects  = $(subst $(sPath)/,$(oPath)/,$(sources:.cpp=.o))
 
-executables = main main_c
+executables = main main_c main_ispc
 
 ifdef OCCA_FORTRAN_ENABLED
 ifeq ($(OCCA_FORTRAN_ENABLED), 1)
@@ -37,6 +37,9 @@ all: $(executables)
 main: $(objects) $(headers) main.cpp
 	$(compiler) $(compilerFlags) -o main $(flags) $(objects) main.cpp $(paths) $(links)
 
+main_ispc: $(objects) $(headers) main_ispc.cpp
+	$(compiler) $(compilerFlags) -o main_ispc $(flags) $(objects) main_ispc.cpp $(paths) $(links)
+
 main_c: main.c
 	$(compiler) $(compilerFlags) -o main_c $(flags) $(objects) main.c $(paths) $(links)
 
@@ -54,5 +57,5 @@ $(oPath)/%.o:$(sPath)/%.cpp $(wildcard $(subst $(sPath)/,$(iPath)/,$(<:.cpp=.hpp
 
 clean:
 	rm -f $(oPath)/*;
-	rm -f main main_c main_f90 mainFloopy mainFloopy_f90
+	rm -f main main_c main_f90 mainFloopy mainFloopy_f90 main_ispc
 #=================================================
