@@ -152,18 +152,23 @@ namespace occa {
     inline flags_t(const flags_t &f) :
       flags(f.flags) {}
 
-    inline flags_t& operator = (const flags_t &f){
+    inline flags_t& operator = (const flags_t &f) {
       flags = f.flags;
       return *this;
     }
 
-    inline std::string& operator [] (const std::string &flag){
+    inline std::string& operator [] (const std::string &flag) {
       return flags[flag];
     }
 
-    bool has(const std::string &flag);
-    bool hasSet(const std::string &flag, const std::string &value);
-    bool hasEnabled(const std::string &flag, bool defaultValue = false);
+    inline std::string operator [] (const std::string &flag) const {
+      cStrToStrMapIterator it = flags.find(flag);
+      return (it != flags.end()) ? it->second : "";
+    }
+
+    bool has(const std::string &flag) const ;
+    bool hasSet(const std::string &flag, const std::string &value) const ;
+    bool hasEnabled(const std::string &flag, bool defaultValue = false) const ;
   };
   //==============================================
 }

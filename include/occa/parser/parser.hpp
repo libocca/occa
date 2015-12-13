@@ -33,7 +33,14 @@ namespace occa {
       macroMap_t macroMap;
       std::vector<macroInfo> macros;
 
+      //---[ Parser Warnings ]----------
       bool macrosAreInitialized;
+      bool _hasMagicEnabled;
+      bool _compilingForCPU;
+      bool _warnForMissingBarriers;
+      bool _warnForConditionalBarriers;
+      bool _insertBarriersAutomatically;
+      //================================
 
       varOriginMap_t varOriginMap;
 
@@ -57,6 +64,8 @@ namespace occa {
       const std::string parseSource(const char *cRoot);
 
       //---[ Parser Warnings ]----------
+      void loadParserFlags(const flags_t &flags);
+
       bool hasMagicEnabled();
       bool compilingForCPU();
       bool warnForMissingBarriers();

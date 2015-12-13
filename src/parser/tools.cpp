@@ -5,35 +5,35 @@
 namespace occa {
   //---[ Helper Functions ]-----------------------
   bool stringsAreEqual(const char *cStart, const size_t chars,
-                       const char *c2){
-    for(size_t c = 0; c < chars; ++c){
-      if(cStart[c] != c2[c])
+                       const char *c2) {
+    for (size_t c = 0; c < chars; ++c) {
+      if (cStart[c] != c2[c])
         return false;
 
-      if((cStart[c] == '\0') || (c2[c] == '\0'))
+      if ((cStart[c] == '\0') || (c2[c] == '\0'))
         return false;
     }
 
     return true;
   }
 
-  bool charIsIn(const char c, const char *delimiters){
+  bool charIsIn(const char c, const char *delimiters) {
     while((*delimiters) != '\0')
-      if(c == *(delimiters++))
+      if (c == *(delimiters++))
         return true;
 
     return false;
   }
 
-  bool charIsIn2(const char *c, const char *delimiters){
-    if((c[0] == '\0') || (c[1] == '\0'))
+  bool charIsIn2(const char *c, const char *delimiters) {
+    if ((c[0] == '\0') || (c[1] == '\0'))
       return false;
 
     const char c0 = c[0];
     const char c1 = c[1];
 
-    while((*delimiters) != '\0'){
-      if((c0 == delimiters[0]) && (c1 == delimiters[1]))
+    while((*delimiters) != '\0') {
+      if ((c0 == delimiters[0]) && (c1 == delimiters[1]))
         return true;
 
       delimiters += 2;
@@ -42,16 +42,16 @@ namespace occa {
     return false;
   }
 
-  bool charIsIn3(const char *c, const char *delimiters){
-    if((c[0] == '\0') || (c[1] == '\0') || (c[2] == '\0'))
+  bool charIsIn3(const char *c, const char *delimiters) {
+    if ((c[0] == '\0') || (c[1] == '\0') || (c[2] == '\0'))
       return false;
 
     const char c0 = c[0];
     const char c1 = c[1];
     const char c2 = c[2];
 
-    while((*delimiters) != '\0'){
-      if((c0 == delimiters[0]) && (c1 == delimiters[1]) && (c2 == delimiters[2]))
+    while((*delimiters) != '\0') {
+      if ((c0 == delimiters[0]) && (c1 == delimiters[1]) && (c2 == delimiters[2]))
         return true;
 
       delimiters += 3;
@@ -60,134 +60,134 @@ namespace occa {
     return false;
   }
 
-  char upChar(const char c){
-    if(('a' <= c) && (c <= 'z'))
+  char upChar(const char c) {
+    if (('a' <= c) && (c <= 'z'))
       return ((c + 'A') - 'a');
 
     return c;
   }
 
-  char downChar(const char c){
-    if(('A' <= c) && (c <= 'Z'))
+  char downChar(const char c) {
+    if (('A' <= c) && (c <= 'Z'))
       return ((c + 'a') - 'A');
 
     return c;
   }
 
-  std::string upString(const char *c, const int chars){
+  std::string upString(const char *c, const int chars) {
     std::string ret(c, chars);
 
-    for(int i = 0; i < chars; ++i)
+    for (int i = 0; i < chars; ++i)
       ret[i] = upChar(ret[i]);
 
     return ret;
   }
 
-  std::string upString(const std::string &s){
+  std::string upString(const std::string &s) {
     return upString(s.c_str(), s.size());
   }
 
   bool upStringCheck(const std::string &a,
-                     const std::string &b){
+                     const std::string &b) {
     const int aSize = a.size();
     const int bSize = b.size();
 
-    if(aSize != bSize)
+    if (aSize != bSize)
       return false;
 
-    for(int i = 0; i < aSize; ++i){
-      if(upChar(a[i]) != upChar(b[i]))
+    for (int i = 0; i < aSize; ++i) {
+      if (upChar(a[i]) != upChar(b[i]))
         return false;
     }
 
     return true;
   }
 
-  bool isWhitespace(const char c){
+  bool isWhitespace(const char c) {
     return charIsIn(c, parserNS::whitespace);
   }
 
-  void skipWhitespace(const char *&c){
+  void skipWhitespace(const char *&c) {
     while(charIsIn(*c, parserNS::whitespace) && (*c != '\0'))
       ++c;
   }
 
-  void skipToWhitespace(const char *&c){
+  void skipToWhitespace(const char *&c) {
     while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0'))
       ++c;
   }
 
-  int charsBeforeNewline(const std::string &str){
+  int charsBeforeNewline(const std::string &str) {
     const int chars = (int) str.size();
     const char *c0  = str.c_str();
     const char *c;
 
-    for(c = (c0 + chars - 1); c0 <= c; --c){
-      if(*c == '\n')
+    for (c = (c0 + chars - 1); c0 <= c; --c) {
+      if (*c == '\n')
         break;
     }
 
     return (chars - (c - c0) - 1);
   }
 
-  bool isAString(const char *c){
+  bool isAString(const char *c) {
     return ((*c == '\'') || (*c == '"'));
   }
 
-  bool isAnInt(const char *c){
+  bool isAnInt(const char *c) {
     parserNS::typeHolder th;
     th.load(c);
 
     return (th.isAnInt());
   }
 
-  bool isAFloat(const char *c){
+  bool isAFloat(const char *c) {
     parserNS::typeHolder th;
     th.load(c);
 
     return (th.isAFloat());
   }
 
-  bool isANumber(const char *c){
+  bool isANumber(const char *c) {
     parserNS::typeHolder th;
     th.load(c);
 
     return (th.type != parserNS::noType);
   }
 
-  bool isAString(const std::string &str){
+  bool isAString(const std::string &str) {
     return isAString(str.c_str());
   }
 
-  bool isAnInt(const std::string &str){
+  bool isAnInt(const std::string &str) {
     return isAnInt(str.c_str());
   }
 
-  bool isAFloat(const std::string &str){
+  bool isAFloat(const std::string &str) {
     return isAFloat(str.c_str());
   }
 
-  bool isANumber(const std::string &str){
+  bool isANumber(const std::string &str) {
     return isANumber(str.c_str());
   }
 
-  void skipInt(const char *&c){
+  void skipInt(const char *&c) {
     parserNS::typeHolder th;
     th.load(c);
   }
 
-  void skipNumber(const char *&c, const int parsingLanguage_){
+  void skipNumber(const char *&c, const int parsingLanguage_) {
     parserNS::typeHolder th;
     th.load(c);
   }
 
-  void skipFortranNumber(const char *&c){
-    if((*c == '+') || (*c == '-'))
+  void skipFortranNumber(const char *&c) {
+    if ((*c == '+') || (*c == '-'))
       ++c;
 
     skipInt(c);
 
-    if(*c == '.'){
+    if (*c == '.') {
       ++c;
 
       skipInt(c);
@@ -195,32 +195,32 @@ namespace occa {
 
     const char nextChar = upChar(*c);
 
-    if((nextChar == 'D') ||
-       (nextChar == 'E')){
+    if ((nextChar == 'D') ||
+       (nextChar == 'E')) {
       ++c;
 
-      if((*c == '+') || (*c == '-'))
+      if ((*c == '+') || (*c == '-'))
         ++c;
 
       skipInt(c);
     }
 
-    if(*c == '_')
+    if (*c == '_')
       c += 2;
   }
 
-  void skipString(const char *&c, const int parsingLanguage_){
-    if(!isAString(c))
+  void skipString(const char *&c, const int parsingLanguage_) {
+    if (!isAString(c))
       return;
 
     const char nl = ((parsingLanguage_ & parserInfo::parsingC) ? '\\' : '&');
 
     const char match = *(c++);
 
-    while(*c != '\0'){
-      if(*c == nl)
+    while(*c != '\0') {
+      if (*c == nl)
         ++c;
-      else if(*c == match){
+      else if (*c == match) {
         ++c;
         return;
       }
@@ -229,28 +229,28 @@ namespace occa {
     }
   }
 
-  char isAWordDelimiter(const char *c, const int parsingLanguage_){
-    if(!(parsingLanguage_ & parserInfo::parsingC))
+  char isAWordDelimiter(const char *c, const int parsingLanguage_) {
+    if (!(parsingLanguage_ & parserInfo::parsingC))
       return isAFortranWordDelimiter(c);
 
-    if(charIsIn3(c, parserNS::cWordDelimiter3))
+    if (charIsIn3(c, parserNS::cWordDelimiter3))
       return 3;
 
-    if(charIsIn2(c, parserNS::cWordDelimiter2))
+    if (charIsIn2(c, parserNS::cWordDelimiter2))
       return 2;
 
-    if(charIsIn(c[0], parserNS::cWordDelimiter))
+    if (charIsIn(c[0], parserNS::cWordDelimiter))
       return 1;
 
     return 0;
   }
 
-  char isAFortranWordDelimiter(const char *c){
-    if(charIsIn2(c, parserNS::fortranWordDelimiter2)){
+  char isAFortranWordDelimiter(const char *c) {
+    if (charIsIn2(c, parserNS::fortranWordDelimiter2)) {
       return 2;
     }
-    else if(charIsIn(c[0], parserNS::fortranWordDelimiter)){
-      if(c[0] == '.'){
+    else if (charIsIn(c[0], parserNS::fortranWordDelimiter)) {
+      if (c[0] == '.') {
         const char *c2 = (c + 1);
 
         while(*c2 != '.')
@@ -265,11 +265,11 @@ namespace occa {
     return 0;
   }
 
-  int skipWord(const char *&c, const int parsingLanguage_){
-    while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0')){
+  int skipWord(const char *&c, const int parsingLanguage_) {
+    while(!charIsIn(*c, parserNS::whitespace) && (*c != '\0')) {
       const int delimiterChars = isAWordDelimiter(c, parsingLanguage_);
 
-      if(delimiterChars == 0)
+      if (delimiterChars == 0)
         ++c;
       else
         return delimiterChars;
@@ -279,44 +279,44 @@ namespace occa {
   }
 
   bool isAnUpdateOperator(const std::string &s,
-                          const int parsingLanguage_){
-    if(isAnAssOperator(s, parsingLanguage_))
+                          const int parsingLanguage_) {
+    if (isAnAssOperator(s, parsingLanguage_))
       return true;
 
     return (s == "++" || s == "--");
   }
 
   bool isAnAssOperator(const std::string &s,
-                       const int parsingLanguage_){ // hehe
+                       const int parsingLanguage_) { // hehe
     const size_t chars = s.size();
     const char *c      = s.c_str();
 
-    if((chars < 1) ||
+    if ((chars < 1) ||
        (3 < chars) ||          // Not in range
-       (c[chars - 1] != '=')){ // Not an assignment operator
+       (c[chars - 1] != '=')) { // Not an assignment operator
 
       return false;
     }
 
-    if(chars == 1) {      // =
+    if (chars == 1) {      // =
       return true;
     }
-    else if(chars == 2) { // +=, -=, *=, /=, %=, &=, ^=, |=
-      if((c[0] == '+') ||
+    else if (chars == 2) { // +=, -=, *=, /=, %=, &=, ^=, |=
+      if ((c[0] == '+') ||
          (c[0] == '-') ||
          (c[0] == '*') ||
          (c[0] == '/') ||
          (c[0] == '%') ||
          (c[0] == '&') ||
          (c[0] == '^') ||
-         (c[0] == '|')){
+         (c[0] == '|')) {
 
         return true;
       }
     }
     else {                // <<=, >>=
-      if(((c[0] == '<') && (c[1] == '<')) ||
-         ((c[0] == '>') && (c[1] == '>'))){
+      if (((c[0] == '<') && (c[1] == '<')) ||
+         ((c[0] == '>') && (c[1] == '>'))) {
 
         return true;
       }
@@ -325,59 +325,59 @@ namespace occa {
     return false;
   }
 
-  bool isAnInequalityOperator(const std::string &s, const int parsingLanguage_){
+  bool isAnInequalityOperator(const std::string &s, const int parsingLanguage_) {
     const size_t chars = s.size();
     const char *c      = s.c_str();
 
     const bool hasEQ = ((c[0] == '<') || (c[0] == '>'));
 
-    if(!hasEQ)
+    if (!hasEQ)
       return false;
 
-    if(chars == 1)
+    if (chars == 1)
       return hasEQ;
-    else if(chars == 2)
+    else if (chars == 2)
       return (c[1] == '=');
 
     return false;
   }
 
-  const char* readLine(const char *c, const int parsingLanguage_){
-    if(!(parsingLanguage_ & parserInfo::parsingC))
+  const char* readLine(const char *c, const int parsingLanguage_) {
+    if (!(parsingLanguage_ & parserInfo::parsingC))
       return readFortranLine(c);
 
     bool breakNextLine = true;
 
-    while(*c != '\0'){
-      if(*c == '\0')
+    while(*c != '\0') {
+      if (*c == '\0')
         break;
 
-      if(*c == '\n'){
-        if(breakNextLine)
+      if (*c == '\n') {
+        if (breakNextLine)
           break;
 
         breakNextLine = false;
       }
       // Append next line
-      else if((c[0] == '\\') && isWhitespace(c[1])){
+      else if ((c[0] == '\\') && isWhitespace(c[1])) {
         breakNextLine = true;
         ++c;
       }
-      else if(c[0] == '/'){
-        if(c[1] == '/'){
+      else if (c[0] == '/') {
+        if (c[1] == '/') {
           while((*c != '\n') && (*c != '\0'))
             ++c;
 
           return c;
         }
-        else if(c[1] == '*'){
+        else if (c[1] == '*') {
           c += 2;
 
           while( !((c[0] == '*') && (c[1] == '/')) &&
                  (*c != '\0') )
             ++c;
 
-          if(*c == '*')
+          if (*c == '*')
             c += 2;
 
           return c;
@@ -390,13 +390,13 @@ namespace occa {
     return ((c[0] != '\0') ? (c + 1) : c);
   }
 
-  const char* readFortranLine(const char *c){
+  const char* readFortranLine(const char *c) {
     bool breakNextLine = true;
 
     // Starting with [c] means line is a comment
-    if(*c == 'c'){
+    if (*c == 'c') {
       while((*c != '\n') &&
-            (*c != '\0')){
+            (*c != '\0')) {
 
         ++c;
       }
@@ -404,22 +404,22 @@ namespace occa {
       return c;
     }
 
-    while(*c != '\0'){
-      if(*c == '\0')
+    while(*c != '\0') {
+      if (*c == '\0')
         break;
 
-      if(*c == '\n'){
-        if(breakNextLine)
+      if (*c == '\n') {
+        if (breakNextLine)
           break;
 
         breakNextLine = false;
       }
       // Append next line
-      else if((c[0] == '&') && isWhitespace(c[1])){
+      else if ((c[0] == '&') && isWhitespace(c[1])) {
         breakNextLine = true;
         ++c;
       }
-      else if(c[0] == '!'){
+      else if (c[0] == '!') {
         while((*c != '\n') && (*c != '\0'))
           ++c;
 
@@ -432,14 +432,14 @@ namespace occa {
     return ((c[0] != '\0') ? (c + 1) : c);
   }
 
-  std::string compressWhitespace(const std::string &str){
+  std::string compressWhitespace(const std::string &str) {
     std::string ret = str;
 
     const char *c = str.c_str();
     size_t pos = 0;
 
-    while(*c != '\0'){
-      if(isWhitespace(*c)){
+    while(*c != '\0') {
+      if (isWhitespace(*c)) {
         ret[pos++] = ' ';
 
         skipWhitespace(c);
@@ -455,8 +455,8 @@ namespace occa {
 
   std::string strip(const char *c,
                     const size_t chars,
-                    const int parsingLanguage_){
-    if(chars == 0)
+                    const int parsingLanguage_) {
+    if (chars == 0)
       return "";
 
     const char nl = ((parsingLanguage_ & parserInfo::parsingC) ? '\\' : '&');
@@ -467,15 +467,15 @@ namespace occa {
     while(charIsIn(*cLeft , parserNS::whitespace) && (cLeft <= cRight)) ++cLeft;
     while(charIsIn(*cRight, parserNS::whitespace) && (cRight > cLeft)) --cRight;
 
-    if(cLeft > cRight)
+    if (cLeft > cRight)
       return "";
 
     std::string ret = "";
 
     const char *cMid = cLeft;
 
-    while(cMid < cRight){
-      if((cMid[0] == nl) && isWhitespace(cMid[1])){
+    while(cMid < cRight) {
+      if ((cMid[0] == nl) && isWhitespace(cMid[1])) {
         ret += strip(cLeft, cMid - cLeft);
         ret += ' ';
 
@@ -486,22 +486,22 @@ namespace occa {
 
       ++cMid;
 
-      if((cMid >= cRight) && ret.size())
+      if ((cMid >= cRight) && ret.size())
         ret += strip(cLeft, (cMid - cLeft + 1));
     }
 
-    if(ret.size() == 0)
+    if (ret.size() == 0)
       return compressWhitespace( std::string(cLeft, (cRight - cLeft + 1)) );
 
     return compressWhitespace(ret);
   }
 
   void strip(std::string &str,
-             const int parsingLanguage_){
+             const int parsingLanguage_) {
     str = strip(str.c_str(), str.size());
   }
 
-  char* cReadFile(const std::string &filename){
+  char* cReadFile(const std::string &filename) {
     // NBN: handle EOL chars on Windows
     FILE *fp = fopen(filename.c_str(), "r");
 
@@ -523,8 +523,8 @@ namespace occa {
     return buffer;
   }
 
-  int stripComments(std::string &line, const int parsingLanguage_){
-    if(!(parsingLanguage_ & parserInfo::parsingC))
+  int stripComments(std::string &line, const int parsingLanguage_) {
+    if (!(parsingLanguage_ & parserInfo::parsingC))
       return stripFortranComments(line);
 
     std::string line2 = line;
@@ -535,26 +535,26 @@ namespace occa {
 
     info_t status = parserNS::readingCode;
 
-    while(*cRight != '\0'){
-      if((*cRight == '\0') || (*cRight == '\n'))
+    while(*cRight != '\0') {
+      if ((*cRight == '\0') || (*cRight == '\n'))
         break;
 
-      if((cRight[0] == '/') && (cRight[1] == '/')){
-        if( !(status == parserNS::insideCommentBlock) ){
+      if ((cRight[0] == '/') && (cRight[1] == '/')) {
+        if ( !(status == parserNS::insideCommentBlock) ) {
           line += std::string(cLeft, cRight - cLeft);
           return parserNS::readingCode;
         }
       }
-      else if((cRight[0] == '/') && (cRight[1] == '*')){
-        if( !(status == parserNS::insideCommentBlock) ){
+      else if ((cRight[0] == '/') && (cRight[1] == '*')) {
+        if ( !(status == parserNS::insideCommentBlock) ) {
           line += std::string(cLeft, cRight - cLeft);
           status = parserNS::insideCommentBlock;
         }
 
         cLeft = cRight + 2;
       }
-      else if((cRight[0] == '*') && (cRight[1] == '/')){
-        if(status == parserNS::insideCommentBlock)
+      else if ((cRight[0] == '*') && (cRight[1] == '/')) {
+        if (status == parserNS::insideCommentBlock)
           status = parserNS::readingCode;
         else
           status = parserNS::finishedCommentBlock;
@@ -565,13 +565,13 @@ namespace occa {
       ++cRight;
     }
 
-    if(cLeft < cRight)
+    if (cLeft < cRight)
       line += std::string(cLeft, cRight - cLeft);
 
     return status;
   }
 
-  int stripFortranComments(std::string &line){
+  int stripFortranComments(std::string &line) {
     std::string line2  = line;
     line = "";
 
@@ -580,11 +580,11 @@ namespace occa {
 
     int status = parserNS::readingCode;
 
-    while(*cRight != '\0'){
-      if((*cRight == '\0') || (*cRight == '\n'))
+    while(*cRight != '\0') {
+      if ((*cRight == '\0') || (*cRight == '\n'))
         break;
 
-      if(*cRight == '!'){
+      if (*cRight == '!') {
         line += std::string(cLeft, cRight - cLeft);
         return parserNS::readingCode;
       }
@@ -592,39 +592,39 @@ namespace occa {
       ++cRight;
     }
 
-    if(cLeft != cRight)
+    if (cLeft != cRight)
       line += std::string(cLeft, cRight - cLeft);
 
     return status;
   }
 
-  bool charStartsSection(const char c){
+  bool charStartsSection(const char c) {
     return ((c == '(') ||
             (c == '[') ||
             (c == '{'));
   }
 
-  bool charEndsSection(const char c){
+  bool charEndsSection(const char c) {
     return ((c == ')') ||
             (c == ']') ||
             (c == '}'));
   }
 
-  bool startsSection(const std::string &str){
-    if(str.size() == 1)
+  bool startsSection(const std::string &str) {
+    if (str.size() == 1)
       return charStartsSection(str[0]);
 
     return false;
   }
 
-  bool endsSection(const std::string &str){
-    if(str.size() == 1)
+  bool endsSection(const std::string &str) {
+    if (str.size() == 1)
       return charEndsSection(str[0]);
 
     return false;
   }
 
-  char segmentPair(const char c){
+  char segmentPair(const char c) {
     return ((')' * (c == '(')) +
             (']' * (c == '[')) +
             ('}' * (c == '{')) +
@@ -633,41 +633,41 @@ namespace occa {
             ('{' * (c == '}')));
   }
 
-  char segmentPair(const std::string &str){
-    if(str.size() == 1)
+  char segmentPair(const std::string &str) {
+    if (str.size() == 1)
       return segmentPair(str[0]);
 
     return '\0';
   }
 
-  void skipPair(const char *&c){
-    if(*c == '\0')
+  void skipPair(const char *&c) {
+    if (*c == '\0')
       return;
 
     const char pair = segmentPair(*c);
 
-    if(pair == 0)
+    if (pair == 0)
       return;
 
     ++c;
 
     while((*c != '\0') &&
-          (*c != pair)){
-      if(segmentPair(*c))
+          (*c != pair)) {
+      if (segmentPair(*c))
         skipPair(c);
       else
         ++c;
     }
 
-    if(*c != '\0')
+    if (*c != '\0')
       ++c;
   }
 
-  int countDelimiters(const char *c, const char delimiter){
+  int countDelimiters(const char *c, const char delimiter) {
     int count = 0;
 
-    while(*c != '\0'){
-      if(*c == delimiter)
+    while(*c != '\0') {
+      if (*c == delimiter)
         ++count;
 
       ++c;
@@ -676,22 +676,22 @@ namespace occa {
     return count;
   }
 
-  void skipTo(const char *&c, const char delimiter){
-    while(*c != '\0'){
-      if(*c == delimiter)
+  void skipTo(const char *&c, const char delimiter) {
+    while(*c != '\0') {
+      if (*c == delimiter)
         return;
 
       ++c;
     }
   }
 
-  void skipTo(const char *&c, std::string delimiters){
+  void skipTo(const char *&c, std::string delimiters) {
     const size_t chars = delimiters.size();
     const char *d      = delimiters.c_str();
 
-    while(*c != '\0'){
-      for(size_t i = 0; i < chars; ++i){
-        if(*c == d[i])
+    while(*c != '\0') {
+      for (size_t i = 0; i < chars; ++i) {
+        if (*c == d[i])
           return;
       }
 
@@ -699,42 +699,42 @@ namespace occa {
     }
   }
 
-  void skipToWord(const char *&c, std::string word){
+  void skipToWord(const char *&c, std::string word) {
     const size_t chars = word.size();
     const char *d      = word.c_str();
 
-    while(*c != '\0'){
+    while(*c != '\0') {
       size_t i;
 
-      for(i = 0; i < chars; ++i){
-        if((c[i] == '\0') ||
-           (c[i] == d[i])){
+      for (i = 0; i < chars; ++i) {
+        if ((c[i] == '\0') ||
+           (c[i] == d[i])) {
 
           break;
         }
       }
 
-      if(i == chars)
+      if (i == chars)
         return;
 
       ++c;
     }
   }
 
-  std::string findFileInPath(const std::string &filename){
+  std::string findFileInPath(const std::string &filename) {
     const char *c0 = env::PATH.c_str();
     const char *c1 = c0;
 
-    while(*c1 != '\0'){
+    while(*c1 != '\0') {
       while((*c1 != ':') && (*c1 != '\0'))
         ++c1;
 
       std::string fullFilename = std::string(c0, c1 - c0) + filename;
 
-      if(sys::fileExists(fullFilename))
+      if (sys::fileExists(fullFilename))
         return fullFilename;
 
-      if(*c1 != '\0')
+      if (*c1 != '\0')
         c0 = ++c1;
     }
 
@@ -742,17 +742,17 @@ namespace occa {
   }
   //==============================================
 
-  std::string getBits(const info_t value){
-    if(value == 0)
+  std::string getBits(const info_t value) {
+    if (value == 0)
       return "0";
 
     std::stringstream ret;
 
     bool printedSomething = false;
 
-   for(info_t i = 0; i < (8*sizeof(info_t)); ++i){
-     if(value & (((info_t) 1) << i)){
-        if(printedSomething)
+   for (info_t i = 0; i < (8*sizeof(info_t)); ++i) {
+     if (value & (((info_t) 1) << i)) {
+        if (printedSomething)
           ret << ',';
 
         ret << i;
@@ -765,28 +765,24 @@ namespace occa {
   }
 
   //---[ Flag Holder ]----------------------------
-  bool flags_t::has(const std::string &flag){
+  bool flags_t::has(const std::string &flag) const {
     return (flags.find(flag) != flags.end());
   }
 
-  bool flags_t::hasSet(const std::string &flag, const std::string &value){
-    strToStrMapIterator it = flags.find(flag);
-
-    if(it == flags.end())
-      return false;
-
-    return (it->second == value);
+  bool flags_t::hasSet(const std::string &flag, const std::string &value) const {
+    cStrToStrMapIterator it = flags.find(flag);
+    return (it != flags.end()) ? (it->second == value) : false;
   }
 
-  bool flags_t::hasEnabled(const std::string &flag, bool defaultValue){
-    strToStrMapIterator it = flags.find(flag);
+  bool flags_t::hasEnabled(const std::string &flag, bool defaultValue) const {
+    cStrToStrMapIterator it = flags.find(flag);
 
-    if(it == flags.end())
+    if (it == flags.end())
       return defaultValue;
 
-    if(upStringCheck(it->second, "enabled") ||
-       upStringCheck(it->second, "yes")     ||
-       upStringCheck(it->second, "y")){
+    if (upStringCheck(it->second, "enabled") ||
+        upStringCheck(it->second, "yes")     ||
+        upStringCheck(it->second, "y")) {
 
       return true;
     }

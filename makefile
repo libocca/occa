@@ -125,7 +125,38 @@ $(occaIPath)/occaKernelDefines.hpp:$(OCCA_DIR)/scripts/occaKernelDefines.py
 	python $(OCCA_DIR)/scripts/occaKernelDefines.py
 endif
 endif
+#=================================================
 
+
+#---[ TEST ]--------------------------------------
+test:
+	echo '---[ Testing ]--------------------------'
+	cd $(OCCA_DIR); \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'
+
+	cd $(OCCA_DIR)/examples/addVectors/cpp; \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
+	./main
+
+	cd $(OCCA_DIR)/examples/addVectors/c; \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
+	./main
+
+	cd $(OCCA_DIR)/examples/addVectors/f90; \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
+	./main
+
+	cd $(OCCA_DIR)/examples/reduction/; \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
+	./main
+
+	cd $(OCCA_DIR)/examples/usingArrays/; \
+	make -j 4 CXXFLAGS='-g' FCFLAGS='-g'; \
+	./main
+#=================================================
+
+
+#---[ CLEAN ]-------------------------------------
 clean:
 	rm -rf $(occaOPath)/*
 	rm -rf $(occaBPath)/*
