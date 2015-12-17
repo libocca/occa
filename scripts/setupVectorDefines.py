@@ -258,6 +258,7 @@ def define_all_types():
     define  = '#if (!defined(OCCA_IN_KERNEL) || (!OCCA_USING_OPENCL))\n'
     define += '#  if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))\n'
     define += '#    include <iostream>\n'
+    define += '#    include <cmath>\n'
     define += '#    include "occa/defines.hpp"\n'
     define += '#  endif\n\n'
 

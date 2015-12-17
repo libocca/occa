@@ -9,6 +9,7 @@
 #if (!defined(OCCA_IN_KERNEL) || (!OCCA_USING_OPENCL))
 #  if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
 #    include <iostream>
+#    include <cmath>
 #    include "occa/defines.hpp"
 #  endif
 
