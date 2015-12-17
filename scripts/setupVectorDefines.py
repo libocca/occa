@@ -341,8 +341,8 @@ OCCA_INLINE {typeN} clamp(const {typeN} &v, const {type_} min, const {type_} max
 }}\n""".format(type_=type_,typeN=typeN,func=clamp_func)
 
     return """
-#if (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS)
-#  ifndef OCCA_IN_KERNEL
+#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
+#  if !defined(OCCA_IN_KERNEL)
 namespace occa {{
 #  endif
 {}
