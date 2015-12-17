@@ -21,7 +21,7 @@ tFloat mandelbulb(const tFloat3 pos) {
 
     const tFloat theta    = POWER * acos(z.z / r);
     const tFloat phi      = POWER * atan2(z.y, z.x);
-    const tFloat rPm1     = pow(r, POWER - 1);
+    const tFloat rPm1     = pow((tFloat) r, (tFloat) POWER - 1);
     const tFloat zr       = r*rPm1;
     const tFloat sinTheta = sin(theta);
     dr = rPm1 * POWER * dr + 1.0;
@@ -118,7 +118,7 @@ kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
           const tFloat3 halfway   = normalize(rayDirection + lightDirection);
           const tFloat3 dotNH     = clamp(halfway * normal, (tFloat) 0.0, (tFloat) 1.0);
           const tFloat dotNL      = clamp((tFloat) dot(lightDirection, normal), (tFloat) 0.0, (tFloat) 1.0);
-          const tFloat spec       = pow(dotNH.x, 35.0f);
+          const tFloat spec       = pow((tFloat) dotNH.x, (tFloat) 35.0f);
           const tFloat shad       = castShadow(rayLocation, lightDirection, 1.0f, DEPTH_OF_FIELD, 16.0f) + 0.25f;
           const tFloat brightness = (10.0f + (200.0f + spec*45.0f)*shad*dotNL) / 270.0f;
 

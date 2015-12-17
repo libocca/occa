@@ -30,6 +30,7 @@ tFloat3 eyeLocation;
 
 int frame = 0;
 int width, height;
+int batchSize;
 tFloat pixel, halfPixel;
 
 double startTime, endTime;
@@ -85,12 +86,14 @@ int main(int argc, char **argv) {
 
     const double frameEndTime = occa::currentTime();
 
-    std::cout << "Time Taken (Frame): " << (frameEndTime - frameStartTime) << '\n';
+    std::cout << "Time Taken (Frame): " << (frameEndTime - frameStartTime) << '\r';
 
     if (frame % 360 == 355) {
       endTime = frameEndTime;
       std::cout << "Time Taken (Cycle): " << (endTime - startTime) << '\n';
     }
+
+    ++frame;
 
     updateScene();
   }
@@ -131,6 +134,7 @@ void readSetupFile() {
 
   setup.getArgs("WIDTH" , width);
   setup.getArgs("HEIGHT", height);
+  setup.getArgs("BATCH_SIZE", batchSize);
 
   std::cout << "DEVICE INFO    = " << deviceInfo    << '\n'
             << "SHAPE FUNCTION = " << shapeFunction << '\n'
@@ -178,7 +182,7 @@ void setupOCCA() {
 
   kInfo.addDefine("WIDTH"         , width);
   kInfo.addDefine("HEIGHT"        , height);
-  kInfo.addDefine("BATCH_SIZE"    , (width + 63)/ 64);
+  kInfo.addDefine("BATCH_SIZE"    , batchSize);
   kInfo.addDefine("SHAPE_FUNCTION", shapeFunction);
   kInfo.addDefine("PIXEL"         , pixel);
   kInfo.addDefine("HALF_PIXEL"    , halfPixel);
