@@ -69,7 +69,8 @@ def define_typeN(type_, n):
 
         return define
 
-    define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
+    if typeN in defined_in_cuda:
+        define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
 
     define += 'class ' + type_ + str(n) + '{\n' + \
              'public:\n'
@@ -95,7 +96,10 @@ def define_typeN(type_, n):
             define += '\n'
 
     define += '};\n'
-    define += '#endif\n'
+
+    if typeN in defined_in_cuda:
+        define += '#endif\n'
+
     define += '\n'
 
     for op in unary_ops:

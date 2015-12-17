@@ -22,7 +22,6 @@ namespace occa {
 #else
 #  define OCCA_BOOL2 bool2
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class bool2{
 public:
   union { bool s0, x; };
@@ -41,7 +40,6 @@ public:
     x(x_),
     y(y_) {}
 };
-#endif
 
 occaFunction inline bool2  operator +  (const bool2 &a, const bool2 &b){
   return OCCA_BOOL2(a.x + b.x,
@@ -167,7 +165,6 @@ inline std::ostream& operator << (std::ostream &out, const bool2& a){
 #else
 #  define OCCA_BOOL4 bool4
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class bool4{
 public:
   union { bool s0, x; };
@@ -211,7 +208,6 @@ public:
     z(z_),
     w(w_) {}
 };
-#endif
 
 occaFunction inline bool4  operator +  (const bool4 &a, const bool4 &b){
   return OCCA_BOOL4(a.x + b.x,
@@ -391,7 +387,6 @@ typedef bool4 bool3;
 #else
 #  define OCCA_BOOL8 bool8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class bool8{
 public:
   union { bool s0, x; };
@@ -521,7 +516,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline bool8  operator +  (const bool8 &a, const bool8 &b){
   return OCCA_BOOL8(a.x + b.x,
@@ -773,7 +767,6 @@ inline std::ostream& operator << (std::ostream &out, const bool8& a){
 #else
 #  define OCCA_BOOL16 bool16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class bool16{
 public:
   union { bool s0, x; };
@@ -1219,7 +1212,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline bool16  operator +  (const bool16 &a, const bool16 &b){
   return OCCA_BOOL16(a.x + b.x,
@@ -2080,7 +2072,6 @@ typedef char4 char3;
 #else
 #  define OCCA_CHAR8 char8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class char8{
 public:
   union { char s0, x; };
@@ -2210,7 +2201,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline char8 operator + (const char8 &a){
   return OCCA_CHAR8(+a.x,
@@ -2528,7 +2518,6 @@ inline std::ostream& operator << (std::ostream &out, const char8& a){
 #else
 #  define OCCA_CHAR16 char16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class char16{
 public:
   union { char s0, x; };
@@ -2974,7 +2963,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline char16 operator + (const char16 &a){
   return OCCA_CHAR16(+a.x,
@@ -3949,7 +3937,6 @@ typedef short4 short3;
 #else
 #  define OCCA_SHORT8 short8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class short8{
 public:
   union { short s0, x; };
@@ -4079,7 +4066,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline short8 operator + (const short8 &a){
   return OCCA_SHORT8(+a.x,
@@ -4397,7 +4383,6 @@ inline std::ostream& operator << (std::ostream &out, const short8& a){
 #else
 #  define OCCA_SHORT16 short16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class short16{
 public:
   union { short s0, x; };
@@ -4843,7 +4828,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline short16 operator + (const short16 &a){
   return OCCA_SHORT16(+a.x,
@@ -5818,7 +5802,6 @@ typedef int4 int3;
 #else
 #  define OCCA_INT8 int8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class int8{
 public:
   union { int s0, x; };
@@ -5948,7 +5931,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline int8 operator + (const int8 &a){
   return OCCA_INT8(+a.x,
@@ -6266,7 +6248,6 @@ inline std::ostream& operator << (std::ostream &out, const int8& a){
 #else
 #  define OCCA_INT16 int16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class int16{
 public:
   union { int s0, x; };
@@ -6712,7 +6693,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline int16 operator + (const int16 &a){
   return OCCA_INT16(+a.x,
@@ -7687,7 +7667,6 @@ typedef long4 long3;
 #else
 #  define OCCA_LONG8 long8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class long8{
 public:
   union { long s0, x; };
@@ -7817,7 +7796,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline long8 operator + (const long8 &a){
   return OCCA_LONG8(+a.x,
@@ -8135,7 +8113,6 @@ inline std::ostream& operator << (std::ostream &out, const long8& a){
 #else
 #  define OCCA_LONG16 long16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class long16{
 public:
   union { long s0, x; };
@@ -8581,7 +8558,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline long16 operator + (const long16 &a){
   return OCCA_LONG16(+a.x,
@@ -9504,7 +9480,6 @@ typedef float4 float3;
 #else
 #  define OCCA_FLOAT8 float8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class float8{
 public:
   union { float s0, x; };
@@ -9634,7 +9609,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline float8 operator + (const float8 &a){
   return OCCA_FLOAT8(+a.x,
@@ -9906,7 +9880,6 @@ inline std::ostream& operator << (std::ostream &out, const float8& a){
 #else
 #  define OCCA_FLOAT16 float16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class float16{
 public:
   union { float s0, x; };
@@ -10352,7 +10325,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline float16 operator + (const float16 &a){
   return OCCA_FLOAT16(+a.x,
@@ -11197,7 +11169,6 @@ typedef double4 double3;
 #else
 #  define OCCA_DOUBLE8 double8
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class double8{
 public:
   union { double s0, x; };
@@ -11327,7 +11298,6 @@ public:
     s6(s6_),
     s7(s7_) {}
 };
-#endif
 
 occaFunction inline double8 operator + (const double8 &a){
   return OCCA_DOUBLE8(+a.x,
@@ -11599,7 +11569,6 @@ inline std::ostream& operator << (std::ostream &out, const double8& a){
 #else
 #  define OCCA_DOUBLE16 double16
 #endif
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 class double16{
 public:
   union { double s0, x; };
@@ -12045,7 +12014,6 @@ public:
     s14(s14_),
     s15(s15_) {}
 };
-#endif
 
 occaFunction inline double16 operator + (const double16 &a){
   return OCCA_DOUBLE16(+a.x,
