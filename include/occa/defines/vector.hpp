@@ -12724,8 +12724,7 @@ OCCA_INLINE double dot(const double16 &a, const double16 &b) {
   return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
 }
 
-template <class TM>
-OCCA_INLINE TM clamp(const TM val, TM min, TM max) {
+OCCA_INLINE char clamp(const char val, const char min, const char max) {
   return (val < min) ? min : ((max < val) ? max : val);
 }
 
@@ -12745,6 +12744,10 @@ OCCA_INLINE char16 clamp(const char16 &v, const char min, const char max) {
   return char16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
+OCCA_INLINE short clamp(const short val, const short min, const short max) {
+  return (val < min) ? min : ((max < val) ? max : val);
+}
+
 OCCA_INLINE short2 clamp(const short2 &v, const short min, const short max) {
   return short2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
@@ -12759,6 +12762,10 @@ OCCA_INLINE short8 clamp(const short8 &v, const short min, const short max) {
 
 OCCA_INLINE short16 clamp(const short16 &v, const short min, const short max) {
   return short16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE int clamp(const int val, const int min, const int max) {
+  return (val < min) ? min : ((max < val) ? max : val);
 }
 
 OCCA_INLINE int2 clamp(const int2 &v, const int min, const int max) {
@@ -12777,6 +12784,10 @@ OCCA_INLINE int16 clamp(const int16 &v, const int min, const int max) {
   return int16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
+OCCA_INLINE long clamp(const long val, const long min, const long max) {
+  return (val < min) ? min : ((max < val) ? max : val);
+}
+
 OCCA_INLINE long2 clamp(const long2 &v, const long min, const long max) {
   return long2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
@@ -12793,6 +12804,10 @@ OCCA_INLINE long16 clamp(const long16 &v, const long min, const long max) {
   return long16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
 }
 
+OCCA_INLINE float clamp(const float val, const float min, const float max) {
+  return (val < min) ? min : ((max < val) ? max : val);
+}
+
 OCCA_INLINE float2 clamp(const float2 &v, const float min, const float max) {
   return float2(clamp(v.x,min,max),clamp(v.y,min,max));
 }
@@ -12807,6 +12822,10 @@ OCCA_INLINE float8 clamp(const float8 &v, const float min, const float max) {
 
 OCCA_INLINE float16 clamp(const float16 &v, const float min, const float max) {
   return float16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE double clamp(const double val, const double min, const double max) {
+  return (val < min) ? min : ((max < val) ? max : val);
 }
 
 OCCA_INLINE double2 clamp(const double2 &v, const double min, const double max) {

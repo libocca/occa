@@ -1,0 +1,8 @@
+[DEVICE INFO] "mode = Serial, UVA = enabled"
+#[DEVICE INFO] "mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled"
+
+[SHAPE FUNCTION] mandelbulb
+#[SHAPE FUNCTION] sphere
+
+[WIDTH]  200
+[HEIGHT] 200

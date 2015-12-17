@@ -290,11 +290,7 @@ def define_vector_functions():
     length    = ''
     normalize = ''
     dot       = ''
-    clamp     = """
-template <class TM>
-OCCA_INLINE TM clamp(const TM val, TM min, TM max) {
-  return (val < min) ? min : ((max < val) ? max : val);
-}\n"""
+    clamp     = ''
     cross     = """
 OCCA_INLINE float3 cross(const float3 &a, const float3 &b) {
   return float3(a.z*b.y - b.z*a.y,
@@ -309,6 +305,11 @@ OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
 }\n"""
 
     for type_ in [t for t in types if t != 'bool']:
+        clamp += """
+OCCA_INLINE {type_} clamp(const {type_} val, const {type_} min, const {type_} max) {{
+  return (val < min) ? min : ((max < val) ? max : val);
+}}\n""".format(type_=type_)
+
         for n in [n for n in Ns if n != 3]:
             typeN = type_ + str(n)
             TYPEN = (type_ + str(n)).upper();

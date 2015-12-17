@@ -1,0 +1,137 @@
+const int    ITERATIONS     = 10;
+const tFloat POWER          = 8;
+const tFloat MAX_ITERATIONS = 5000;
+const tFloat DEPTH_OF_FIELD = 2.5;
+const tFloat EYE_DISTANCE_FROM_NEAR_FIELD = 2.2;
+const tFloat DEG_TO_RAD = (M_PI / 180.0);
+
+tFloat sphere(const tFloat3 pos) {
+  return length(pos) - 1.5;
+}
+
+tFloat mandelbulb(const tFloat3 pos) {
+  tFloat3 z = pos;
+  tFloat dr = 1.0;
+  tFloat r  = 0.0;
+
+  for (int i = 0; i < ITERATIONS; ++i) {
+    r = length(z);
+    if (r > DEPTH_OF_FIELD)
+      break;
+
+    const tFloat theta    = POWER * acos(z.z / r);
+    const tFloat phi      = POWER * atan2(z.y, z.x);
+    const tFloat rPm1     = pow(r, POWER - 1);
+    const tFloat zr       = r*rPm1;
+    const tFloat sinTheta = sin(theta);
+    dr = rPm1 * POWER * dr + 1.0;
+
+    z.x = pos.x + zr*(sinTheta * cos(phi));
+    z.y = pos.y + zr*(sinTheta * sin(phi));
+    z.z = pos.z + zr*(cos(theta));
+  }
+
+  return (0.5 * r * log(r) / dr);
+}
+
+
+tFloat castShadow(const tFloat3 rayLocation,
+                  const tFloat3 lightDirection,
+                  const tFloat min, const tFloat max, const tFloat k) {
+  tFloat ret = 1.0f;
+  tFloat t = min;
+
+  while (t < max) {
+      const tFloat h = SHAPE_FUNCTION(rayLocation - (t * lightDirection));
+      if (h < 0.001f)
+        return 0.0f;
+
+      const tFloat kht = (k * h / t);
+      if(kht < ret)
+        ret = kht;
+
+      t += h;
+  }
+
+  return ret;
+}
+
+kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
+                       const tFloat3 lightDirection,
+                       const tFloat3 viewDirectionY,
+                       const tFloat3 viewDirectionX,
+                       const tFloat3 nearFieldLocation,
+                       const tFloat3 eyeLocation){
+
+  for (int y = 0; y < HEIGHT; ++y; outer0) {
+    const tFloat ny = y - (0.5 * HEIGHT);
+    const tFloat3 p_viewDirectionY = (ny * PIXEL) * viewDirectionY;
+
+    for (int xg = 0; xg < WIDTH; xg += BATCH_SIZE; inner0) {
+      for (int x = xg; x < BATCH_SIZE; ++x; inner0) {
+        const tFloat nx = x - (0.5 * WIDTH);
+        const tFloat3 p_viewDirectionX = (nx*PIXEL) * viewDirectionX;
+
+        if (WIDTH <= x)
+          continue;
+
+        tFloat3 rayLocation = (nearFieldLocation + p_viewDirectionY + p_viewDirectionX);
+        const tFloat3 rayDirection = normalize(rayLocation - eyeLocation);
+
+        tFloat d, distanceFromCamera;
+
+        int iterations;
+        for (iterations = 0; iterations < MAX_ITERATIONS; ++iterations) {
+          d = SHAPE_FUNCTION(rayLocation);
+          rayLocation += d * rayDirection;
+          distanceFromCamera = length(nearFieldLocation - rayLocation);
+
+          if ((d < HALF_PIXEL) || (DEPTH_OF_FIELD <= distanceFromCamera))
+            break;
+        }
+
+        if (distanceFromCamera < DEPTH_OF_FIELD) {
+          const tFloat smallStep = 0.01f;
+          const tFloat bigStep   = 0.02f;
+
+          tFloat3 leftLoc, rightLoc;
+
+          rayLocation.x -= smallStep;
+          leftLoc.x = SHAPE_FUNCTION(rayLocation);
+          rayLocation.x += bigStep;
+          rightLoc.x = SHAPE_FUNCTION(rayLocation);
+          rayLocation.x -= smallStep;
+
+          rayLocation.y -= smallStep;
+          leftLoc.y = SHAPE_FUNCTION(rayLocation);
+          rayLocation.y += bigStep;
+          rightLoc.y = SHAPE_FUNCTION(rayLocation);
+          rayLocation.y -= smallStep;
+
+          rayLocation.z -= smallStep;
+          leftLoc.z = SHAPE_FUNCTION(rayLocation);
+          rayLocation.z += bigStep;
+          rightLoc.z = SHAPE_FUNCTION(rayLocation);
+          rayLocation.z -= smallStep;
+
+          const tFloat3 normal    = normalize(leftLoc - rightLoc);
+          const tFloat3 halfway   = normalize(rayDirection + lightDirection);
+          const tFloat3 dotNH     = clamp(halfway * normal, (tFloat) 0.0, (tFloat) 1.0);
+          const tFloat dotNL      = clamp((tFloat) dot(lightDirection, normal), (tFloat) 0.0, (tFloat) 1.0);
+          const tFloat spec       = pow(dotNH.x, 35.0f);
+          const tFloat shad       = castShadow(rayLocation, lightDirection, 1.0f, DEPTH_OF_FIELD, 16.0f) + 0.25f;
+          const tFloat brightness = (10.0f + (200.0f + spec*45.0f)*shad*dotNL) / 270.0f;
+
+          rgba(0,x,y) = clamp((tFloat) 10 + (380 * brightness), (tFloat) 0, (tFloat) 255);
+          rgba(1,x,y) = clamp((tFloat) 10 + (280 * brightness), (tFloat) 0, (tFloat) 255);
+          rgba(2,x,y) = clamp((tFloat) 0  + (180 * brightness), (tFloat) 0, (tFloat) 255);
+        }
+        else {
+          rgba(0,x,y) = 155 + clamp(1.5*iterations, 0.0, 100.0);
+          rgba(1,x,y) = 205 + clamp(1.5*iterations, 0.0,  50.0);
+          rgba(2,x,y) = 255;
+        }
+      }
+    }
+  }
+}
