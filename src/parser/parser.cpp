@@ -229,14 +229,7 @@ namespace occa {
       const bool hasWhitespace = isWhitespace(*c);
 
       skipWhitespace(c);
-
-      info.argc = 0;
-      info.parts.clear();
-      info.argBetweenParts.clear();
-
-      info.parts.push_back(""); // First part
-
-      info.isAFunction = false;
+      info.reset();
 
       if (*c == '\0')
         return;
@@ -245,7 +238,6 @@ namespace occa {
         const size_t chars = strlen(c);
 
         info.parts[0] = strip(c, chars);
-
         c += chars;
 
         return;
@@ -262,13 +254,20 @@ namespace occa {
 
       while(*c != '\0') {
         const char *cStart = c;
-
         skipTo(c, ",)");
 
         const std::string macroArgName = strip(cStart, c - cStart);
 
         if (macroArgName.size()) {
-          macroArgMap[strip(cStart, c - cStart)] = (info.argc++);
+          OCCA_CHECK(!info.hasVarArgs,
+                     "Macro [" << info.name << "] has arguments after variadic ... argument");
+          if(macroArgName != "...") {
+            macroArgMap[macroArgName] = (info.argc++);
+          }
+          else {
+            info.hasVarArgs = true;
+            macroArgMap["__VA_ARGS__"] = macroInfo::VA_ARGS_POS;
+          }
         }
         else {
           OCCA_CHECK((*c == ')') && (info.argc == 0),
@@ -562,8 +561,11 @@ namespace occa {
 
           macroInfo &info = macros[it->second];
 
-          if (!info.isAFunction || (*c != '(')) {
-            newLine += info.parts[0];
+          if (!info.isAFunction) {
+            if (*c == '(')
+              newLine += word;
+            else
+              newLine += info.parts[0];
           }
           else{
             std::vector<std::string> args;
@@ -781,9 +783,9 @@ namespace occa {
         std::string cmf = mf;
         cmf[0] += ('A' - 'a');
 
-        loadMacro("#define "       + mf  + " occa"       + cmf);
-        loadMacro("#define fast"   + cmf + " occaFast"   + cmf);
-        loadMacro("#define native" + cmf + " occaNative" + cmf);
+        loadMacro("#define "       + mf  + "(...) occa"       + cmf + "(__VA_ARGS__)");
+        loadMacro("#define fast"   + cmf + "(...) occaFast"   + cmf + "(__VA_ARGS__)");
+        loadMacro("#define native" + cmf + "(...) occaNative" + cmf + "(__VA_ARGS__)");
       }
 
       //---[ CUDA Macros ]----------------

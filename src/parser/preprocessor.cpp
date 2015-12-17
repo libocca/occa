@@ -1462,16 +1462,32 @@ namespace occa {
 
 
     //---[ Macro Info ]-----------------------------
-    macroInfo::macroInfo(){}
+    macroInfo::macroInfo() {}
 
-    std::string macroInfo::applyArgs(const std::vector<std::string> &args){
-      if(((size_t) argc) != args.size()){
+    void macroInfo::reset() {
+      argc = 0;
+      parts.clear();
+      argBetweenParts.clear();
+
+      parts.push_back(""); // First part
+
+      isAFunction = false;
+      hasVarArgs  = false;
+    }
+
+    std::string macroInfo::applyArgs(const std::vector<std::string> &args) {
+      const int inputArgc = (int) args.size();
+
+      if ((!hasVarArgs && (argc != inputArgc)) ||
+          ( hasVarArgs && (argc  > inputArgc))) {
+
         std::cout << "Macro [" << name << "]:\n";
         for(size_t i = 0; i < args.size(); ++i)
           std::cout << "    args[" << i << "] = " << args[i] << '\n';
 
         OCCA_CHECK(false,
-                   "Macro [" << name << "] uses [" << argc << "] argument(s) ([" << args.size() << "] provided)");
+                   "Macro [" << name << "] uses [" << argc << (hasVarArgs ? " + ..." : "")
+                   << "] argument(s) ([" << args.size() << "] provided)");
       }
 
       const int subs = argBetweenParts.size();
@@ -1480,7 +1496,18 @@ namespace occa {
 
       for(int i = 0; i < subs; ++i){
         const int argPos = argBetweenParts[i];
-        ret += args[argPos];
+
+        if (argPos != VA_ARGS_POS) {
+          ret += args[argPos];
+        }
+        else {
+          for(int j = argc; j < inputArgc; ++j) {
+            ret += args[j];
+            if(j < (inputArgc - 1))
+              ret += ',';
+          }
+        }
+
         ret += parts[i + 1];
       }
 

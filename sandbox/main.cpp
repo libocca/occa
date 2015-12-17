@@ -16,11 +16,11 @@ int main(int argc, char **argv){
   parserFlags["warn-for-conditional-barriers"] = "no";
   parserFlags["automate-add-barriers"]         = "yes";
 
-  // parserFlags["language"] = "C";
+  parserFlags["language"] = "C";
   // parsedContent = parser.parseFile("tests/easy.c"             , parserFlags);
   // parsedContent = parser.parseFile("tests/test.cpp"           , parserFlags);
   // parsedContent = parser.parseFile("tests/test2.cpp"          , parserFlags);
-  // parsedContent = parser.parseFile("tests/scratch.okl"        , parserFlags);
+  parsedContent = parser.parseFile("tests/scratch.okl"        , parserFlags);
   // parsedContent = parser.parseFile("tests/pwdg.okl"           , parserFlags);
   // parsedContent = parser.parseFile("tests/openclTest.cpp"     , parserFlags);
   // parsedContent = parser.parseFile("tests/cudaTest.cpp"       , parserFlags);
@@ -36,10 +36,10 @@ int main(int argc, char **argv){
   // parsedContent = parser.parseFile("tests/addVectors_loopy.cl", parserFlags);
 
   //---[ Fortran ]----------------------
-  parserFlags["language"] = "Fortran";
+  // parserFlags["language"] = "Fortran";
 
   // parsedContent = parser.parseFile("tests/scratch.ofl"   , parserFlags);
-  parsedContent = parser.parseFile("tests/addVectors.ofl", parserFlags);
+  // parsedContent = parser.parseFile("tests/addVectors.ofl", parserFlags);
   // parsedContent = parser.parseFile("tests/fakeNuma.ofl"  , parserFlags);
   //====================================
 

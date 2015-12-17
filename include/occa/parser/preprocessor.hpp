@@ -276,14 +276,17 @@ namespace occa {
     //---[ Macro Info ]-----------------------------
     class macroInfo {
     public:
+      static const int VA_ARGS_POS = -1;
+
       std::string name;
-      bool isAFunction;
+      bool isAFunction, hasVarArgs;
 
       int argc;
       std::vector<std::string> parts;
       std::vector<int> argBetweenParts;
 
       macroInfo();
+      void reset();
 
       std::string applyArgs(const std::vector<std::string> &args);
     };

@@ -1821,10 +1821,8 @@ namespace occa {
 
       expNode &dimsArg = attr[0];
 
-      if(!dimsArg.isOrganized()){
-        dimsArg.print();
+      if(!dimsArg.isOrganized())
         dimsArg.changeExpTypes();
-      }
 
       typeHolder thDims;
 
