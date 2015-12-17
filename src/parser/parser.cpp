@@ -303,9 +303,10 @@ namespace occa {
 
         macroArgMapIterator it = macroArgMap.find(word);
 
-        if (it == macroArgMap.end())
+        if (it == macroArgMap.end()) {
           info.parts[partPos] += word;
-        else{
+        }
+        else {
           info.argBetweenParts.push_back(it->second);
           info.parts.push_back("");
           ++partPos;
@@ -562,10 +563,7 @@ namespace occa {
           macroInfo &info = macros[it->second];
 
           if (!info.isAFunction) {
-            if (*c == '(')
-              newLine += word;
-            else
-              newLine += info.parts[0];
+            newLine += info.parts[0];
           }
           else{
             std::vector<std::string> args;
@@ -740,26 +738,26 @@ namespace occa {
       //---[ Macros ]---------------------
       loadMacro("#define kernel occaKernel");
 
-      loadMacro("#define barrier        occaBarrier");
+      loadMacro("#define barrier(...)   occaBarrier(__VA_ARGS__)");
       loadMacro("#define localMemFence  occaLocalMemFence");
       loadMacro("#define globalMemFence occaGlobalMemFence");
 
-      loadMacro("#define atomicAdd  occaAtomicAdd");
-      loadMacro("#define atomicSub  occaAtomicSub");
-      loadMacro("#define atomicSwap occaAtomicSwap");
-      loadMacro("#define atomicInc  occaAtomicInc");
-      loadMacro("#define atomicDec  occaAtomicDec");
-      loadMacro("#define atomicMin  occaAtomicMin");
-      loadMacro("#define atomicMax  occaAtomicMax");
-      loadMacro("#define atomicAnd  occaAtomicAnd");
-      loadMacro("#define atomicOr   occaAtomicOr");
-      loadMacro("#define atomicXor  occaAtomicXor");
+      loadMacro("#define atomicAdd(...)  occaAtomicAdd(__VA_ARGS__)");
+      loadMacro("#define atomicSub(...)  occaAtomicSub(__VA_ARGS__)");
+      loadMacro("#define atomicSwap(...) occaAtomicSwap(__VA_ARGS__)");
+      loadMacro("#define atomicInc(...)  occaAtomicInc(__VA_ARGS__)");
+      loadMacro("#define atomicDec(...)  occaAtomicDec(__VA_ARGS__)");
+      loadMacro("#define atomicMin(...)  occaAtomicMin(__VA_ARGS__)");
+      loadMacro("#define atomicMax(...)  occaAtomicMax(__VA_ARGS__)");
+      loadMacro("#define atomicAnd(...)  occaAtomicAnd(__VA_ARGS__)");
+      loadMacro("#define atomicOr(...)   occaAtomicOr(__VA_ARGS__)");
+      loadMacro("#define atomicXor(...)  occaAtomicXor(__VA_ARGS__)");
 
-      loadMacro("#define atomicAdd64  occaAtomicAdd64");
-      loadMacro("#define atomicSub64  occaAtomicSub64");
-      loadMacro("#define atomicSwap64 occaAtomicSwap64");
-      loadMacro("#define atomicInc64  occaAtomicInc64");
-      loadMacro("#define atomicDec64  occaAtomicDec64");
+      loadMacro("#define atomicAdd64(...)  occaAtomicAdd64(__VA_ARGS__)");
+      loadMacro("#define atomicSub64(...)  occaAtomicSub64(__VA_ARGS__)");
+      loadMacro("#define atomicSwap64(...) occaAtomicSwap64(__VA_ARGS__)");
+      loadMacro("#define atomicInc64(...)  occaAtomicInc64(__VA_ARGS__)");
+      loadMacro("#define atomicDec64(...)  occaAtomicDec64(__VA_ARGS__)");
 
       loadMacro("#define shared   occaShared");
       loadMacro("#define restrict occaRestrict");

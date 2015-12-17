@@ -1515,13 +1515,18 @@ namespace occa {
     }
 
     std::ostream& operator << (std::ostream &out, const macroInfo &info){
-      const int argc = info.argBetweenParts.size();
+      const int subs = info.argBetweenParts.size();
 
       out << info.name << ": " << info.parts[0];
 
-      for(int i = 0; i < argc; ++i){
+      for(int i = 0; i < subs; ++i){
         const int argPos = info.argBetweenParts[i];
-        out << "ARG" << argPos << info.parts[i + 1];
+        if (argPos != macroInfo::VA_ARGS_POS)
+          out << "ARG" << argPos;
+        else
+          out << "__VA_ARGS__";
+
+          out << info.parts[i + 1];
       }
 
       return out;
