@@ -1133,7 +1133,7 @@ namespace occa {
     fs << "#include \"" << info.getModeHeaderFilename() << "\"\n"
        << "#include \"" << sys::getFilename("[occa]/primitives.hpp") << "\"\n";
 
-    if (info.mode & onChipMode)
+    if (info.mode & (Serial | OpenMP | Pthreads | CUDA))
       fs << "using namespace occa;\n";
 
     fs << info.header
