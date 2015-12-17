@@ -11,7 +11,6 @@
 #    include <iostream>
 #    include <cmath>
 #    include "occa/defines.hpp"
-#    using namespace occa;
 #  endif
 
 #  ifndef OCCA_IN_KERNEL

@@ -260,7 +260,6 @@ def define_all_types():
     define += '#    include <iostream>\n'
     define += '#    include <cmath>\n'
     define += '#    include "occa/defines.hpp"\n'
-    define += '#    using namespace occa;\n'
     define += '#  endif\n\n'
 
     define += '#  ifndef OCCA_IN_KERNEL\n'
