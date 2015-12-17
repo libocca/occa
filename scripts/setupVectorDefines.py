@@ -56,11 +56,14 @@ def define_typeN(type_, n):
 
     define = ''
 
-    define += '#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)\n'
-    define += '#  define OCCA_' + TYPEN + ' make_' + typeN + '\n'
-    define += '#else\n'
-    define += '#  define OCCA_' + TYPEN + ' ' + typeN + '\n'
-    define += '#endif\n'
+    if typeN in defined_in_cuda:
+        define += '#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)\n'
+        define += '#  define OCCA_' + TYPEN + ' make_' + typeN + '\n'
+        define += '#else\n'
+        define += '#  define OCCA_' + TYPEN + ' ' + typeN + '\n'
+        define += '#endif\n'
+    else:
+        define += '#define OCCA_' + TYPEN + ' ' + typeN + '\n'
 
     if n == 3:
         define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n' if defined_in_cuda else ''

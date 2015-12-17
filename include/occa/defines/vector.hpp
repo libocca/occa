@@ -17,11 +17,7 @@ namespace occa {
 #  endif
 
 //---[ bool2 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_BOOL2 make_bool2
-#else
-#  define OCCA_BOOL2 bool2
-#endif
+#define OCCA_BOOL2 bool2
 class bool2{
 public:
   union { bool s0, x; };
@@ -160,11 +156,7 @@ inline std::ostream& operator << (std::ostream &out, const bool2& a){
 
 
 //---[ bool4 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_BOOL4 make_bool4
-#else
-#  define OCCA_BOOL4 bool4
-#endif
+#define OCCA_BOOL4 bool4
 class bool4{
 public:
   union { bool s0, x; };
@@ -370,11 +362,7 @@ inline std::ostream& operator << (std::ostream &out, const bool4& a){
 
 
 //---[ bool3 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_BOOL3 make_bool3
-#else
-#  define OCCA_BOOL3 bool3
-#endif
+#define OCCA_BOOL3 bool3
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))
 typedef bool4 bool3;
 #endif
@@ -382,11 +370,7 @@ typedef bool4 bool3;
 
 
 //---[ bool8 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_BOOL8 make_bool8
-#else
-#  define OCCA_BOOL8 bool8
-#endif
+#define OCCA_BOOL8 bool8
 class bool8{
 public:
   union { bool s0, x; };
@@ -762,11 +746,7 @@ inline std::ostream& operator << (std::ostream &out, const bool8& a){
 
 
 //---[ bool16 ]-------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_BOOL16 make_bool16
-#else
-#  define OCCA_BOOL16 bool16
-#endif
+#define OCCA_BOOL16 bool16
 class bool16{
 public:
   union { bool s0, x; };
@@ -2067,11 +2047,7 @@ typedef char4 char3;
 
 
 //---[ char8 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_CHAR8 make_char8
-#else
-#  define OCCA_CHAR8 char8
-#endif
+#define OCCA_CHAR8 char8
 class char8{
 public:
   union { char s0, x; };
@@ -2513,11 +2489,7 @@ inline std::ostream& operator << (std::ostream &out, const char8& a){
 
 
 //---[ char16 ]-------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_CHAR16 make_char16
-#else
-#  define OCCA_CHAR16 char16
-#endif
+#define OCCA_CHAR16 char16
 class char16{
 public:
   union { char s0, x; };
@@ -3932,11 +3904,7 @@ typedef short4 short3;
 
 
 //---[ short8 ]-------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_SHORT8 make_short8
-#else
-#  define OCCA_SHORT8 short8
-#endif
+#define OCCA_SHORT8 short8
 class short8{
 public:
   union { short s0, x; };
@@ -4378,11 +4346,7 @@ inline std::ostream& operator << (std::ostream &out, const short8& a){
 
 
 //---[ short16 ]------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_SHORT16 make_short16
-#else
-#  define OCCA_SHORT16 short16
-#endif
+#define OCCA_SHORT16 short16
 class short16{
 public:
   union { short s0, x; };
@@ -5797,11 +5761,7 @@ typedef int4 int3;
 
 
 //---[ int8 ]---------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_INT8 make_int8
-#else
-#  define OCCA_INT8 int8
-#endif
+#define OCCA_INT8 int8
 class int8{
 public:
   union { int s0, x; };
@@ -6243,11 +6203,7 @@ inline std::ostream& operator << (std::ostream &out, const int8& a){
 
 
 //---[ int16 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_INT16 make_int16
-#else
-#  define OCCA_INT16 int16
-#endif
+#define OCCA_INT16 int16
 class int16{
 public:
   union { int s0, x; };
@@ -7662,11 +7618,7 @@ typedef long4 long3;
 
 
 //---[ long8 ]--------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_LONG8 make_long8
-#else
-#  define OCCA_LONG8 long8
-#endif
+#define OCCA_LONG8 long8
 class long8{
 public:
   union { long s0, x; };
@@ -8108,11 +8060,7 @@ inline std::ostream& operator << (std::ostream &out, const long8& a){
 
 
 //---[ long16 ]-------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_LONG16 make_long16
-#else
-#  define OCCA_LONG16 long16
-#endif
+#define OCCA_LONG16 long16
 class long16{
 public:
   union { long s0, x; };
@@ -9475,11 +9423,7 @@ typedef float4 float3;
 
 
 //---[ float8 ]-------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_FLOAT8 make_float8
-#else
-#  define OCCA_FLOAT8 float8
-#endif
+#define OCCA_FLOAT8 float8
 class float8{
 public:
   union { float s0, x; };
@@ -9875,11 +9819,7 @@ inline std::ostream& operator << (std::ostream &out, const float8& a){
 
 
 //---[ float16 ]------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_FLOAT16 make_float16
-#else
-#  define OCCA_FLOAT16 float16
-#endif
+#define OCCA_FLOAT16 float16
 class float16{
 public:
   union { float s0, x; };
@@ -11164,11 +11104,7 @@ typedef double4 double3;
 
 
 //---[ double8 ]------------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_DOUBLE8 make_double8
-#else
-#  define OCCA_DOUBLE8 double8
-#endif
+#define OCCA_DOUBLE8 double8
 class double8{
 public:
   union { double s0, x; };
@@ -11564,11 +11500,7 @@ inline std::ostream& operator << (std::ostream &out, const double8& a){
 
 
 //---[ double16 ]-----------------------
-#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)
-#  define OCCA_DOUBLE16 make_double16
-#else
-#  define OCCA_DOUBLE16 double16
-#endif
+#define OCCA_DOUBLE16 double16
 class double16{
 public:
   union { double s0, x; };
