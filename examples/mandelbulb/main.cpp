@@ -28,8 +28,11 @@ tFloat3 viewDirectionY, viewDirectionX;
 tFloat3 nearFieldLocation;
 tFloat3 eyeLocation;
 
+int frame = 0;
 int width, height;
 tFloat pixel, halfPixel;
+
+double startTime, endTime;
 
 std::string deviceInfo;
 occa::kernel rayMarcher;
@@ -68,7 +71,27 @@ int main(int argc, char **argv) {
   glRun();
 #else
   while(true) {
-    updateRGB();
+    const double frameStartTime = occa::currentTime();
+
+    if (frame % 360 == 0)
+      startTime = frameStartTime;
+
+    rayMarcher(rgba,
+               lightDirection,
+               viewDirectionY, viewDirectionX,
+               nearFieldLocation, eyeLocation);
+
+    occa::finish();
+
+    const double frameEndTime = occa::currentTime();
+
+    std::cout << "Time Taken (Frame): " << (frameEndTime - frameStartTime) << '\n';
+
+    if (frame % 360 == 355) {
+      endTime = frameEndTime;
+      std::cout << "Time Taken (Cycle): " << (endTime - startTime) << '\n';
+    }
+
     updateScene();
   }
 #endif
@@ -116,6 +139,8 @@ void readSetupFile() {
 }
 
 void updateScene() {
+  ++frame;
+
   lightAngle    += DEG_TO_RAD;
   viewAngle     += DEG_TO_RAD;
 
@@ -185,7 +210,13 @@ void setupRenderer() {
 void render() {
   vis.placeViewport(0,0);
 
-  updateRGB();
+  rayMarcher(rgba,
+             lightDirection,
+             viewDirectionY, viewDirectionX,
+             nearFieldLocation, eyeLocation);
+
+  occa::finish();
+
   updateScene();
 
   glColor3f(1.0, 1.0, 1.0);
@@ -206,16 +237,4 @@ void render() {
 #endif
 
 void updateRGB() {
-  const double startTime = occa::currentTime();
-
-  rayMarcher(rgba,
-             lightDirection,
-             viewDirectionY, viewDirectionX,
-             nearFieldLocation, eyeLocation);
-
-  occa::finish();
-
-  const double endTime = occa::currentTime();
-
-  std::cout << "Time Taken: " << (endTime - startTime) << '\n';
 }
