@@ -1,10 +1,19 @@
+#ifndef OCCA_VECTOR_DEFINE_HEADER
+#define OCCA_VECTOR_DEFINE_HEADER
+/*
+-------------[ DO NOT EDIT ]-------------
+ THIS IS AN AUTOMATICALLY GENERATED FILE
+ EDIT: scripts/setupVectorDefines.py
+=========================================
+*/
 #if (!defined(OCCA_IN_KERNEL) || (!OCCA_USING_OPENCL))
 #  if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
 #    include <iostream>
+#    include "occa/defines.hpp"
 #  endif
 
 #  ifndef OCCA_IN_KERNEL
-#    define occaFunction
+#  define occaFunction
 namespace occa {
 #  endif
 
@@ -12359,7 +12368,479 @@ inline std::ostream& operator << (std::ostream &out, const double16& a){
 #  endif
 
 #endif
+#if OCCA_USING_OPENCL
+#  define OCCA_BOOL2_CONSTRUCTOR(a, b) (bool2)(a, b)
+#  define OCCA_BOOL4_CONSTRUCTOR(a, b, c, d) (bool4)(a, b, c, d)
+#  define OCCA_BOOL3_CONSTRUCTOR(a, b, c) (bool3)(a, b, c)
+#  define OCCA_BOOL8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (bool8)(a, b, c, d, e, f, g, h)
+#  define OCCA_BOOL16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (bool16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#  define OCCA_CHAR2_CONSTRUCTOR(a, b) (char2)(a, b)
+#  define OCCA_CHAR4_CONSTRUCTOR(a, b, c, d) (char4)(a, b, c, d)
+#  define OCCA_CHAR3_CONSTRUCTOR(a, b, c) (char3)(a, b, c)
+#  define OCCA_CHAR8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (char8)(a, b, c, d, e, f, g, h)
+#  define OCCA_CHAR16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (char16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#  define OCCA_SHORT2_CONSTRUCTOR(a, b) (short2)(a, b)
+#  define OCCA_SHORT4_CONSTRUCTOR(a, b, c, d) (short4)(a, b, c, d)
+#  define OCCA_SHORT3_CONSTRUCTOR(a, b, c) (short3)(a, b, c)
+#  define OCCA_SHORT8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (short8)(a, b, c, d, e, f, g, h)
+#  define OCCA_SHORT16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (short16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#  define OCCA_INT2_CONSTRUCTOR(a, b) (int2)(a, b)
+#  define OCCA_INT4_CONSTRUCTOR(a, b, c, d) (int4)(a, b, c, d)
+#  define OCCA_INT3_CONSTRUCTOR(a, b, c) (int3)(a, b, c)
+#  define OCCA_INT8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (int8)(a, b, c, d, e, f, g, h)
+#  define OCCA_INT16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (int16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#  define OCCA_LONG2_CONSTRUCTOR(a, b) (long2)(a, b)
+#  define OCCA_LONG4_CONSTRUCTOR(a, b, c, d) (long4)(a, b, c, d)
+#  define OCCA_LONG3_CONSTRUCTOR(a, b, c) (long3)(a, b, c)
+#  define OCCA_LONG8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (long8)(a, b, c, d, e, f, g, h)
+#  define OCCA_LONG16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (long16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#  define OCCA_FLOAT2_CONSTRUCTOR(a, b) (float2)(a, b)
+#  define OCCA_FLOAT4_CONSTRUCTOR(a, b, c, d) (float4)(a, b, c, d)
+#  define OCCA_FLOAT3_CONSTRUCTOR(a, b, c) (float3)(a, b, c)
+#  define OCCA_FLOAT8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (float8)(a, b, c, d, e, f, g, h)
+#  define OCCA_FLOAT16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (float16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#  define OCCA_DOUBLE2_CONSTRUCTOR(a, b) (double2)(a, b)
+#  define OCCA_DOUBLE4_CONSTRUCTOR(a, b, c, d) (double4)(a, b, c, d)
+#  define OCCA_DOUBLE3_CONSTRUCTOR(a, b, c) (double3)(a, b, c)
+#  define OCCA_DOUBLE8_CONSTRUCTOR(a, b, c, d, e, f, g, h) (double8)(a, b, c, d, e, f, g, h)
+#  define OCCA_DOUBLE16_CONSTRUCTOR(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p) (double16)(a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p)
+#endif
 
+
+#if (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS)
+#  ifndef OCCA_IN_KERNEL
+namespace occa {
+#  endif
+
+OCCA_INLINE char length(const char2 &v) {
+  return sqrt(v.x*v.x+v.y*v.y);
+}
+
+OCCA_INLINE char length(const char4 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
+}
+
+OCCA_INLINE char length(const char8 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
+}
+
+OCCA_INLINE char length(const char16 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
+}
+
+OCCA_INLINE short length(const short2 &v) {
+  return sqrt(v.x*v.x+v.y*v.y);
+}
+
+OCCA_INLINE short length(const short4 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
+}
+
+OCCA_INLINE short length(const short8 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
+}
+
+OCCA_INLINE short length(const short16 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
+}
+
+OCCA_INLINE int length(const int2 &v) {
+  return sqrt(v.x*v.x+v.y*v.y);
+}
+
+OCCA_INLINE int length(const int4 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
+}
+
+OCCA_INLINE int length(const int8 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
+}
+
+OCCA_INLINE int length(const int16 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
+}
+
+OCCA_INLINE long length(const long2 &v) {
+  return sqrt(v.x*v.x+v.y*v.y);
+}
+
+OCCA_INLINE long length(const long4 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
+}
+
+OCCA_INLINE long length(const long8 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
+}
+
+OCCA_INLINE long length(const long16 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
+}
+
+OCCA_INLINE float length(const float2 &v) {
+  return sqrt(v.x*v.x+v.y*v.y);
+}
+
+OCCA_INLINE float length(const float4 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
+}
+
+OCCA_INLINE float length(const float8 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
+}
+
+OCCA_INLINE float length(const float16 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
+}
+
+OCCA_INLINE double length(const double2 &v) {
+  return sqrt(v.x*v.x+v.y*v.y);
+}
+
+OCCA_INLINE double length(const double4 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w);
+}
+
+OCCA_INLINE double length(const double8 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7);
+}
+
+OCCA_INLINE double length(const double16 &v) {
+  return sqrt(v.x*v.x+v.y*v.y+v.z*v.z+v.w*v.w+v.s4*v.s4+v.s5*v.s5+v.s6*v.s6+v.s7*v.s7+v.s8*v.s8+v.s9*v.s9+v.s10*v.s10+v.s11*v.s11+v.s12*v.s12+v.s13*v.s13+v.s14*v.s14+v.s15*v.s15);
+}
+
+OCCA_INLINE char2 normalize(const char2 &v) {
+  const char invNorm = (1.0 / length(v));
+  return char2(invNorm*v.x,invNorm*v.y);
+}
+
+OCCA_INLINE char4 normalize(const char4 &v) {
+  const char invNorm = (1.0 / length(v));
+  return char4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
+}
+
+OCCA_INLINE char8 normalize(const char8 &v) {
+  const char invNorm = (1.0 / length(v));
+  return char8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
+}
+
+OCCA_INLINE char16 normalize(const char16 &v) {
+  const char invNorm = (1.0 / length(v));
+  return char16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
+}
+
+OCCA_INLINE short2 normalize(const short2 &v) {
+  const short invNorm = (1.0 / length(v));
+  return short2(invNorm*v.x,invNorm*v.y);
+}
+
+OCCA_INLINE short4 normalize(const short4 &v) {
+  const short invNorm = (1.0 / length(v));
+  return short4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
+}
+
+OCCA_INLINE short8 normalize(const short8 &v) {
+  const short invNorm = (1.0 / length(v));
+  return short8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
+}
+
+OCCA_INLINE short16 normalize(const short16 &v) {
+  const short invNorm = (1.0 / length(v));
+  return short16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
+}
+
+OCCA_INLINE int2 normalize(const int2 &v) {
+  const int invNorm = (1.0 / length(v));
+  return int2(invNorm*v.x,invNorm*v.y);
+}
+
+OCCA_INLINE int4 normalize(const int4 &v) {
+  const int invNorm = (1.0 / length(v));
+  return int4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
+}
+
+OCCA_INLINE int8 normalize(const int8 &v) {
+  const int invNorm = (1.0 / length(v));
+  return int8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
+}
+
+OCCA_INLINE int16 normalize(const int16 &v) {
+  const int invNorm = (1.0 / length(v));
+  return int16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
+}
+
+OCCA_INLINE long2 normalize(const long2 &v) {
+  const long invNorm = (1.0 / length(v));
+  return long2(invNorm*v.x,invNorm*v.y);
+}
+
+OCCA_INLINE long4 normalize(const long4 &v) {
+  const long invNorm = (1.0 / length(v));
+  return long4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
+}
+
+OCCA_INLINE long8 normalize(const long8 &v) {
+  const long invNorm = (1.0 / length(v));
+  return long8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
+}
+
+OCCA_INLINE long16 normalize(const long16 &v) {
+  const long invNorm = (1.0 / length(v));
+  return long16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
+}
+
+OCCA_INLINE float2 normalize(const float2 &v) {
+  const float invNorm = (1.0 / length(v));
+  return float2(invNorm*v.x,invNorm*v.y);
+}
+
+OCCA_INLINE float4 normalize(const float4 &v) {
+  const float invNorm = (1.0 / length(v));
+  return float4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
+}
+
+OCCA_INLINE float8 normalize(const float8 &v) {
+  const float invNorm = (1.0 / length(v));
+  return float8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
+}
+
+OCCA_INLINE float16 normalize(const float16 &v) {
+  const float invNorm = (1.0 / length(v));
+  return float16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
+}
+
+OCCA_INLINE double2 normalize(const double2 &v) {
+  const double invNorm = (1.0 / length(v));
+  return double2(invNorm*v.x,invNorm*v.y);
+}
+
+OCCA_INLINE double4 normalize(const double4 &v) {
+  const double invNorm = (1.0 / length(v));
+  return double4(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w);
+}
+
+OCCA_INLINE double8 normalize(const double8 &v) {
+  const double invNorm = (1.0 / length(v));
+  return double8(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7);
+}
+
+OCCA_INLINE double16 normalize(const double16 &v) {
+  const double invNorm = (1.0 / length(v));
+  return double16(invNorm*v.x,invNorm*v.y,invNorm*v.z,invNorm*v.w,invNorm*v.s4,invNorm*v.s5,invNorm*v.s6,invNorm*v.s7,invNorm*v.s8,invNorm*v.s9,invNorm*v.s10,invNorm*v.s11,invNorm*v.s12,invNorm*v.s13,invNorm*v.s14,invNorm*v.s15);
+}
+
+OCCA_INLINE char dot(const char2 &a, const char2 &b) {
+  return (a.x*b.x+a.y*b.y);
+}
+
+OCCA_INLINE char dot(const char4 &a, const char4 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
+}
+
+OCCA_INLINE char dot(const char8 &a, const char8 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
+}
+
+OCCA_INLINE char dot(const char16 &a, const char16 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
+}
+
+OCCA_INLINE short dot(const short2 &a, const short2 &b) {
+  return (a.x*b.x+a.y*b.y);
+}
+
+OCCA_INLINE short dot(const short4 &a, const short4 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
+}
+
+OCCA_INLINE short dot(const short8 &a, const short8 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
+}
+
+OCCA_INLINE short dot(const short16 &a, const short16 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
+}
+
+OCCA_INLINE int dot(const int2 &a, const int2 &b) {
+  return (a.x*b.x+a.y*b.y);
+}
+
+OCCA_INLINE int dot(const int4 &a, const int4 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
+}
+
+OCCA_INLINE int dot(const int8 &a, const int8 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
+}
+
+OCCA_INLINE int dot(const int16 &a, const int16 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
+}
+
+OCCA_INLINE long dot(const long2 &a, const long2 &b) {
+  return (a.x*b.x+a.y*b.y);
+}
+
+OCCA_INLINE long dot(const long4 &a, const long4 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
+}
+
+OCCA_INLINE long dot(const long8 &a, const long8 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
+}
+
+OCCA_INLINE long dot(const long16 &a, const long16 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
+}
+
+OCCA_INLINE float dot(const float2 &a, const float2 &b) {
+  return (a.x*b.x+a.y*b.y);
+}
+
+OCCA_INLINE float dot(const float4 &a, const float4 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
+}
+
+OCCA_INLINE float dot(const float8 &a, const float8 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
+}
+
+OCCA_INLINE float dot(const float16 &a, const float16 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
+}
+
+OCCA_INLINE double dot(const double2 &a, const double2 &b) {
+  return (a.x*b.x+a.y*b.y);
+}
+
+OCCA_INLINE double dot(const double4 &a, const double4 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w);
+}
+
+OCCA_INLINE double dot(const double8 &a, const double8 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7);
+}
+
+OCCA_INLINE double dot(const double16 &a, const double16 &b) {
+  return (a.x*b.x+a.y*b.y+a.z*b.z+a.w*b.w+a.s4*b.s4+a.s5*b.s5+a.s6*b.s6+a.s7*b.s7+a.s8*b.s8+a.s9*b.s9+a.s10*b.s10+a.s11*b.s11+a.s12*b.s12+a.s13*b.s13+a.s14*b.s14+a.s15*b.s15);
+}
+
+template <class TM>
+OCCA_INLINE TM clamp(const TM val, TM min, TM max) {
+  return (val < min) ? min : ((max < val) ? max : val);
+}
+
+OCCA_INLINE char2 clamp(const char2 &v, const char min, const char max) {
+  return char2(clamp(v.x,min,max),clamp(v.y,min,max));
+}
+
+OCCA_INLINE char4 clamp(const char4 &v, const char min, const char max) {
+  return char4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
+}
+
+OCCA_INLINE char8 clamp(const char8 &v, const char min, const char max) {
+  return char8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
+}
+
+OCCA_INLINE char16 clamp(const char16 &v, const char min, const char max) {
+  return char16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE short2 clamp(const short2 &v, const short min, const short max) {
+  return short2(clamp(v.x,min,max),clamp(v.y,min,max));
+}
+
+OCCA_INLINE short4 clamp(const short4 &v, const short min, const short max) {
+  return short4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
+}
+
+OCCA_INLINE short8 clamp(const short8 &v, const short min, const short max) {
+  return short8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
+}
+
+OCCA_INLINE short16 clamp(const short16 &v, const short min, const short max) {
+  return short16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE int2 clamp(const int2 &v, const int min, const int max) {
+  return int2(clamp(v.x,min,max),clamp(v.y,min,max));
+}
+
+OCCA_INLINE int4 clamp(const int4 &v, const int min, const int max) {
+  return int4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
+}
+
+OCCA_INLINE int8 clamp(const int8 &v, const int min, const int max) {
+  return int8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
+}
+
+OCCA_INLINE int16 clamp(const int16 &v, const int min, const int max) {
+  return int16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE long2 clamp(const long2 &v, const long min, const long max) {
+  return long2(clamp(v.x,min,max),clamp(v.y,min,max));
+}
+
+OCCA_INLINE long4 clamp(const long4 &v, const long min, const long max) {
+  return long4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
+}
+
+OCCA_INLINE long8 clamp(const long8 &v, const long min, const long max) {
+  return long8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
+}
+
+OCCA_INLINE long16 clamp(const long16 &v, const long min, const long max) {
+  return long16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE float2 clamp(const float2 &v, const float min, const float max) {
+  return float2(clamp(v.x,min,max),clamp(v.y,min,max));
+}
+
+OCCA_INLINE float4 clamp(const float4 &v, const float min, const float max) {
+  return float4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
+}
+
+OCCA_INLINE float8 clamp(const float8 &v, const float min, const float max) {
+  return float8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
+}
+
+OCCA_INLINE float16 clamp(const float16 &v, const float min, const float max) {
+  return float16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE double2 clamp(const double2 &v, const double min, const double max) {
+  return double2(clamp(v.x,min,max),clamp(v.y,min,max));
+}
+
+OCCA_INLINE double4 clamp(const double4 &v, const double min, const double max) {
+  return double4(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max));
+}
+
+OCCA_INLINE double8 clamp(const double8 &v, const double min, const double max) {
+  return double8(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max));
+}
+
+OCCA_INLINE double16 clamp(const double16 &v, const double min, const double max) {
+  return double16(clamp(v.x,min,max),clamp(v.y,min,max),clamp(v.z,min,max),clamp(v.w,min,max),clamp(v.s4,min,max),clamp(v.s5,min,max),clamp(v.s6,min,max),clamp(v.s7,min,max),clamp(v.s8,min,max),clamp(v.s9,min,max),clamp(v.s10,min,max),clamp(v.s11,min,max),clamp(v.s12,min,max),clamp(v.s13,min,max),clamp(v.s14,min,max),clamp(v.s15,min,max));
+}
+
+OCCA_INLINE float3 cross(const float3 &a, const float3 &b) {
+  return float3(a.z*b.y - b.z*a.y,
+                a.x*b.z - b.x*a.z,
+                a.y*b.x - b.y*a.x);
+}
+
+OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
+  return double3(a.z*b.y - b.z*a.y,
+                 a.x*b.z - b.x*a.z,
+                 a.y*b.x - b.y*a.x);
+}
+
+#  ifndef OCCA_IN_KERNEL
+}
+#  endif
+#endif
 
 #if OCCA_MMX
 #  include <mmintrin.h>
@@ -12507,3 +12988,4 @@ inline vfloat4 operator + (vfloat4 & a, vfloat4 & b) {
 #endif
 #endif
 
+#endif
