@@ -68,14 +68,13 @@ int main(int argc, char **argv) {
   updateScene();
   setupOCCA();
 
+  startTime = occa::currentTime();
+
 #if OCCA_GL_ENABLED
   glRun();
 #else
   while(true) {
     const double frameStartTime = occa::currentTime();
-
-    if (frame % 360 == 0)
-      startTime = frameStartTime;
 
     rayMarcher(rgba,
                lightDirection,
@@ -86,11 +85,12 @@ int main(int argc, char **argv) {
 
     const double frameEndTime = occa::currentTime();
 
-    std::cout << "Time Taken (Frame): " << (frameEndTime - frameStartTime) << '\r';
+    std::cout << "Time Taken (Frame): " << (frameEndTime - frameStartTime) << '\n';
 
-    if (frame % 360 == 355) {
+    if (frame % 360 == 359) {
       endTime = frameEndTime;
       std::cout << "Time Taken (Cycle): " << (endTime - startTime) << '\n';
+      break;
     }
 
     ++frame;
