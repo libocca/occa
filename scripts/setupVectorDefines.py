@@ -56,27 +56,20 @@ def define_typeN(type_, n):
 
     define = ''
 
+    define += '#if (defined(OCCA_IN_KERNEL) && OCCA_USING_CUDA)\n'
+    define += '#  define OCCA_' + TYPEN + ' make_' + typeN + '\n'
+    define += '#else\n'
+    define += '#  define OCCA_' + TYPEN + ' ' + typeN + '\n'
+    define += '#endif\n'
+
     if n == 3:
-        if typeN in defined_in_cuda:
-            define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
-
+        define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n' if defined_in_cuda else ''
         define += 'typedef {type4} {type3};\n'.format(type3=type_+'3', type4=type_+'4')
-
-        if typeN in defined_in_cuda:
-            define += '#endif\n'
+        define += '#endif\n' if defined_in_cuda else ''
 
         return define
 
-    if typeN in defined_in_cuda:
-        define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
-        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR '      + typeN + '\n'
-        define += '#else\n'
-        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR make_' + typeN + '\n'
-        define += '#endif\n'
-
-        define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
-    else:
-        define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR ' + typeN + '\n'
+    define += '#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_CUDA == 0))\n'
 
     define += 'class ' + type_ + str(n) + '{\n' + \
              'public:\n'
@@ -102,10 +95,7 @@ def define_typeN(type_, n):
             define += '\n'
 
     define += '};\n'
-
-    if typeN in defined_in_cuda:
-        define += '#endif\n'
-
+    define += '#endif\n'
     define += '\n'
 
     for op in unary_ops:
@@ -154,7 +144,7 @@ def unary_op_def(type_, n, op):
     indent = ['  ', '  ', '  ']
 
     for d in range(1 if isFloat else 2):
-        ret         = '  return OCCA_' + TYPEN + '_CONSTRUCTOR(';
+        ret         = '  return OCCA_' + TYPEN + '(';
         indent[d]   = ' ' * len(ret)
         defines[d] += ret;
 
@@ -211,7 +201,7 @@ def binary_op_def(type_, n, op):
     a = [[('a.' + varL(i)) if aIsTypeN[define] else 'a' for i in range(n)] for define in range(5)]
     b = [[('b.' + varL(i)) if bIsTypeN[define] else 'b' for i in range(n)] for define in range(5)]
 
-    retDef = '  return OCCA_' + TYPEN + '_CONSTRUCTOR('
+    retDef = '  return OCCA_' + TYPEN + '('
 
     for d in range(5):
         for i in range(n):
@@ -279,7 +269,7 @@ def define_all_types():
             typeN = type_ + str(n)
             TYPEN = (type_ + str(n)).upper();
             args  = ', '.join([chr(ord('a') + i) for i in range(n)])
-            define += '#  define OCCA_' + TYPEN + '_CONSTRUCTOR(' + args + ') (' + typeN + ')(' + args + ')\n'
+            define += '#  define OCCA_' + TYPEN + '(' + args + ') (' + typeN + ')(' + args + ')\n'
 
     define += '#endif\n'
 
@@ -292,15 +282,15 @@ def define_vector_functions():
     clamp     = ''
     cross     = """
 OCCA_INLINE float3 cross(const float3 &a, const float3 &b) {
-  return float3(a.z*b.y - b.z*a.y,
-                a.x*b.z - b.x*a.z,
-                a.y*b.x - b.y*a.x);
+  return OCCA_FLOAT3(a.z*b.y - b.z*a.y,
+                     a.x*b.z - b.x*a.z,
+                     a.y*b.x - b.y*a.x);
 }
 
 OCCA_INLINE double3 cross(const double3 &a, const double3 &b) {
-  return double3(a.z*b.y - b.z*a.y,
-                 a.x*b.z - b.x*a.z,
-                 a.y*b.x - b.y*a.x);
+  return OCCA_DOUBLE3(a.z*b.y - b.z*a.y,
+                     a.x*b.z - b.x*a.z,
+                     a.y*b.x - b.y*a.x);
 }\n"""
 
     for type_ in [t for t in types if t != 'bool']:
@@ -326,8 +316,8 @@ OCCA_INLINE {type_} length(const {typeN} &v) {{
             normalize += """
 OCCA_INLINE {typeN} normalize(const {typeN} &v) {{
   const {type_} invNorm = (1.0 / length(v));
-  return {typeN}({func});
-}}\n""".format(type_=type_,typeN=typeN,func=normalize_func)
+  return OCCA_{TYPEN}({func});
+}}\n""".format(type_=type_,typeN=typeN,TYPEN=TYPEN,func=normalize_func)
 
             dot += """
 OCCA_INLINE {type_} dot(const {typeN} &a, const {typeN} &b) {{
@@ -336,8 +326,8 @@ OCCA_INLINE {type_} dot(const {typeN} &a, const {typeN} &b) {{
 
             clamp += """
 OCCA_INLINE {typeN} clamp(const {typeN} &v, const {type_} min, const {type_} max) {{
-  return {typeN}({func});
-}}\n""".format(type_=type_,typeN=typeN,func=clamp_func)
+  return OCCA_{TYPEN}({func});
+}}\n""".format(type_=type_,typeN=typeN,TYPEN=TYPEN,func=clamp_func)
 
     return """
 #if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS || OCCA_USING_CUDA))
