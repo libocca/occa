@@ -1134,7 +1134,7 @@ namespace occa {
        << "#include \"" << sys::getFilename("[occa]/primitives.hpp") << "\"\n";
 
     if (info.mode & (Serial | OpenMP | Pthreads | CUDA)) {
-      fs << "#if defined(OCCA_IN_KERNEL) && OCCA_IN_KERNEL\n"
+      fs << "#if defined(OCCA_IN_KERNEL) && !OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
          << "#endif\n";
     }
