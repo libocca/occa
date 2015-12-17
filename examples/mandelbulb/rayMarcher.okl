@@ -63,12 +63,12 @@ kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
                        const tFloat3 nearFieldLocation,
                        const tFloat3 eyeLocation){
 
-  for (int y = 0; y < HEIGHT; ++y; outer0) {
+  for (int y = 0; y < HEIGHT; ++y; outer1) {
     const tFloat ny = y - (0.5 * HEIGHT);
     const tFloat3 p_viewDirectionY = (ny * PIXEL) * viewDirectionY;
 
-    for (int xg = 0; xg < BATCH_SIZE; ++xg; inner0) {
-      for (int x = xg; x < WIDTH; x += BATCH_SIZE) {
+    for (int xg = 0; xg < WIDTH; xg += BATCH_SIZE; outer0) {
+      for (int x = xg; x < (xg + BATCH_SIZE); ++x; inner0) {
         const tFloat nx = x - (0.5 * WIDTH);
         const tFloat3 p_viewDirectionX = (nx*PIXEL) * viewDirectionX;
 
