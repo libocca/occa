@@ -1,5 +1,5 @@
-[DEVICE INFO] "mode = Serial, UVA = enabled"
-#[DEVICE INFO] "mode = OpenMP, UVA = enabled"
+#[DEVICE INFO] "mode = Serial, UVA = enabled"
+[DEVICE INFO] "mode = OpenMP, UVA = enabled"
 #[DEVICE INFO] "mode = OpenCL, platformID = 0, deviceID = 1, UVA = enabled"
 #[DEVICE INFO] "mode = CUDA, deviceID = 0, UVA = enabled"
 

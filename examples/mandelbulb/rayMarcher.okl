@@ -68,7 +68,7 @@ kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
     const tFloat3 p_viewDirectionY = (ny * PIXEL) * viewDirectionY;
 
     for (int xg = 0; xg < BATCH_SIZE; ++xg; inner0) {
-      for (int x = 0; x < WIDTH; x += BATCH_SIZE) {
+      for (int x = xg; x < WIDTH; x += BATCH_SIZE) {
         const tFloat nx = x - (0.5 * WIDTH);
         const tFloat3 p_viewDirectionX = (nx*PIXEL) * viewDirectionX;
 
