@@ -557,10 +557,21 @@ namespace occa {
 
         it = macroMap.find(word);
 
-        if (it != macroMap.end()) {
-          foundMacro = true;
+        bool wordIsAMacro = false;
+        macroInfo *info_ = (it != macroMap.end()) ? &(macros[it->second]) : NULL;
 
-          macroInfo &info = macros[it->second];
+        if (info_) {
+          macroInfo &info = *info_;
+
+          cStart = c;
+          skipWhitespace(cStart);
+          const bool foundAFunction = (*cStart == '(');
+
+          wordIsAMacro = (info.isAFunction == foundAFunction);
+        }
+
+        if (wordIsAMacro) {
+          macroInfo &info = *info_;
 
           if (!info.isAFunction) {
             newLine += info.parts[0];
