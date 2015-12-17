@@ -567,7 +567,7 @@ namespace occa {
           skipWhitespace(cStart);
           const bool foundAFunction = (*cStart == '(');
 
-          wordIsAMacro = (info.isAFunction == foundAFunction);
+          wordIsAMacro = (!info.isAFunction || foundAFunction);
         }
 
         if (wordIsAMacro) {
