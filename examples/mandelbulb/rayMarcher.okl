@@ -3,7 +3,7 @@ const tFloat POWER          = 8;
 const tFloat MAX_ITERATIONS = 5000;
 const tFloat DEPTH_OF_FIELD = 2.5;
 const tFloat EYE_DISTANCE_FROM_NEAR_FIELD = 2.2;
-const tFloat DEG_TO_RAD = (M_PI / 180.0);
+const tFloat DEG_TO_RAD = (OCCA_PI / 180.0);
 
 tFloat sphere(const tFloat3 pos) {
   return length(pos) - 1.5;
