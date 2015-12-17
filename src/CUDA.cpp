@@ -400,6 +400,7 @@ namespace occa {
     command << dHandle->compiler
             << " -o "       << binaryFile
             << " -ptx -I."
+            << " -I"  << env::OCCA_DIR << "/include"
             << ' '          << dHandle->compilerFlags
             << archSM
             << ' '          << info.flags
