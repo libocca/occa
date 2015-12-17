@@ -1137,6 +1137,7 @@ namespace occa {
       fs << "#if defined(OCCA_IN_KERNEL) && OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
          << "#endif";
+    }
 
 
     fs << info.header
