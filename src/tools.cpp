@@ -1136,7 +1136,7 @@ namespace occa {
     if (info.mode & (Serial | OpenMP | Pthreads | CUDA)) {
       fs << "#if defined(OCCA_IN_KERNEL) && OCCA_IN_KERNEL\n"
          << "using namespace occa;\n"
-         << "#endif";
+         << "#endif\n";
     }
 
 
