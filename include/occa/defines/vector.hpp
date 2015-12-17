@@ -12408,7 +12408,7 @@ inline std::ostream& operator << (std::ostream &out, const double16& a){
 #endif
 
 
-#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS))
+#if (!defined(OCCA_IN_KERNEL) || (OCCA_USING_SERIAL || OCCA_USING_OPENMP || OCCA_USING_PTHREADS || OCCA_USING_CUDA))
 #  if !defined(OCCA_IN_KERNEL)
 namespace occa {
 #  endif
