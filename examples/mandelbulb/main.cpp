@@ -199,12 +199,18 @@ void setupRenderer() {
 void render() {
   vis.placeViewport(0,0);
 
+  const double startTime = occa::currentTime();
+
   rayMarcher(rgba,
              lightDirection,
              viewDirectionY, viewDirectionX,
              nearFieldLocation, eyeLocation);
 
   occa::finish();
+
+  const double endTime = occa::currentTime();
+
+  std::cout << "Render Time Taken: " << (endTime - startTime) << '\n';
 
   updateScene();
 
