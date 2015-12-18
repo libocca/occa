@@ -28,12 +28,9 @@ tFloat3 viewDirectionY, viewDirectionX;
 tFloat3 nearFieldLocation;
 tFloat3 eyeLocation;
 
-int frame = 0;
 int width, height;
 int batchSize;
 tFloat pixel, halfPixel;
-
-double startTime, endTime;
 
 std::string deviceInfo;
 occa::kernel rayMarcher;
@@ -68,13 +65,11 @@ int main(int argc, char **argv) {
   updateScene();
   setupOCCA();
 
-  startTime = occa::currentTime();
-
 #if OCCA_GL_ENABLED
   glRun();
 #else
   while(true) {
-    const double frameStartTime = occa::currentTime();
+    const double startTime = occa::currentTime();
 
     rayMarcher(rgba,
                lightDirection,
@@ -83,17 +78,9 @@ int main(int argc, char **argv) {
 
     occa::finish();
 
-    const double frameEndTime = occa::currentTime();
+    const double endTime = occa::currentTime();
 
-    std::cout << "Time Taken (Frame): " << (frameEndTime - frameStartTime) << '\n';
-
-    if (frame % 360 == 359) {
-      endTime = frameEndTime;
-      std::cout << "Time Taken (Cycle): " << (endTime - startTime) << '\n';
-      break;
-    }
-
-    ++frame;
+    std::cout << "Render Time Taken: " << (endTime - startTime) << '\n';
 
     updateScene();
   }
@@ -143,8 +130,6 @@ void readSetupFile() {
 }
 
 void updateScene() {
-  ++frame;
-
   lightAngle    += DEG_TO_RAD;
   viewAngle     += DEG_TO_RAD;
 
