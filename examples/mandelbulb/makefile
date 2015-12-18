@@ -22,9 +22,9 @@ else
 endif
 
 ifeq ($(DOUBLE), 1)
-  flags += -D tFloat=float -D tFloat3=occa::float3
-else
   flags += -D tFloat=double -D tFloat3=occa::double3
+else
+  flags += -D tFloat=float -D tFloat3=occa::float3
 endif
 
 #---[ COMPILATION ]-------------------------------
