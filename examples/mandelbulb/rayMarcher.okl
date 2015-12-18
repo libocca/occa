@@ -127,8 +127,8 @@ kernel void rayMarcher(char *rgba @arrayArg(dims = 3),
           rgba(2,x,y) = clamp((tFloat) 0  + (180 * brightness), (tFloat) 0, (tFloat) 255);
         }
         else {
-          rgba(0,x,y) = 155 + clamp(1.5*iterations, 0.0, 100.0);
-          rgba(1,x,y) = 205 + clamp(1.5*iterations, 0.0,  50.0);
+          rgba(0,x,y) = 155 + clamp((tFloat) 1.5*iterations, (tFloat) 0.0, (tFloat) 100.0);
+          rgba(1,x,y) = 205 + clamp((tFloat) 1.5*iterations, (tFloat) 0.0, (tFloat)  50.0);
           rgba(2,x,y) = 255;
         }
       }
