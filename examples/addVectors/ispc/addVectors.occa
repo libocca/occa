@@ -1,0 +1,32 @@
+#undef occaInnerDim0
+#undef occaInnerDim1
+#undef occaInnerDim2
+
+#define occaInnerDim0 16
+#define occaInnerDim1 1
+#define occaInnerDim2 1
+
+occaFunction void addVectors_kernel(occaFunctionInfoArg,
+                                    occaConst occaPointer int &entries,
+                                    occaConst occaPointer float a[],
+                                    occaConst occaPointer float b[],
+                                    occaPointer float ab[]) {
+
+
+  occaInnerFor{
+    for (int i = occaGlobalId; i < entries; i += occaGlobalDim)
+    {
+      ab[i] = a[i] + b[i];
+    }
+  }
+}
+
+occaKernel void addVectors(occaKernelInfoArg,
+                           occaConst occaPointer int &entries,
+                           occaConst occaPointer float a[],
+                           occaConst occaPointer float b[],
+                           occaPointer float ab[])
+{
+  occaOuterFor
+    addVectors_kernel(occaFunctionInfo, entries, a, b, ab);
+}
