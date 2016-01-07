@@ -1,0 +1,24 @@
+subroutine addVectors(entries, a, b, ab)
+  implicit none
+
+  integer*4 entries, i
+  real_type a(entries), b(entries), ab(entries)
+
+  do i = 1, entries
+    ab(i) = a(i) + b(i)
+  end do
+end
+
+
+!$loopy begin
+!
+! SOURCE = lp.c_preprocess(SOURCE, [
+!       "real_type real*4",
+!       ])
+! addVectors, = lp.parse_fortran(SOURCE, FILENAME)
+! addVectors = lp.split_iname(addVectors, "i", 8,
+!     outer_tag="g.0", inner_tag="l.0")
+!
+! RESULT = [addVectors]
+!
+!$loopy end
