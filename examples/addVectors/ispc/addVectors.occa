@@ -1,5 +1,13 @@
-occaFunction void addVectors_kernel(occaFunctionInfoarg,
-                                    occaConst int occaVariable entries,
+#undef occaInnerDim0
+#undef occaInnerDim1
+#undef occaInnerDim2
+
+#define occaInnerDim0 16
+#define occaInnerDim1 1
+#define occaInnerDim2 1
+
+occaFunction void addVectors_kernel(occaFunctionInfoArg,
+                                    occaConst occaPointer int &entries,
                                     occaConst occaPointer float a[],
                                     occaConst occaPointer float b[],
                                     occaPointer float ab[]) {
@@ -14,7 +22,7 @@ occaFunction void addVectors_kernel(occaFunctionInfoarg,
 }
 
 occaKernel void addVectors(occaKernelInfoArg,
-                           occaConst int occaVariable entries,
+                           occaConst occaPointer int &entries,
                            occaConst occaPointer float a[],
                            occaConst occaPointer float b[],
                            occaPointer float ab[])

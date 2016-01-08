@@ -21,9 +21,9 @@ std::string ispcCreateSourceFileFrom(const std::string &filename,
   fs.open(cached_filename.c_str());
 
   if(filename.substr(filename.find_last_of(".") + 1) != "ispc"){
-    fs << "#include \"" << info.getModeHeaderFilename() << "\"\n"
+    //    fs << "#include \"" << info.getModeHeaderFilename() << "\"\n"
        //<< "#include \"" << occa::sys::getFilename("[occa]/primitives.hpp") << "\"\n"
-       << occa::readFile("patchISPC.hpp");
+      fs << occa::readFile("patchISPC.hpp");
   }
 
   fs << info.header
@@ -57,12 +57,14 @@ int main(int argc, char **argv){
 
   device.setup("mode = Serial");
   info.mode = occa::Serial;
+  info.addDefine("OCCA_SERIAL_DEFINES_HEADER", 1);
 
   o_a  = device.malloc(entries*sizeof(float));
   o_b  = device.malloc(entries*sizeof(float));
   o_ab = device.malloc(entries*sizeof(float));
 
-  std::string ispc_file = "addVectors.ispc";
+  //  std::string ispc_file = "addVectors.ispc";
+  std::string ispc_file = "addVectors.occa";
 
   // Note the following is not working yet;  The right headers need developed
   // to get this occa file to compile with ispc.
