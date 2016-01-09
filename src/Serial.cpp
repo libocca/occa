@@ -503,7 +503,7 @@ namespace occa {
 #if   (OCCA_OS & LINUX_OS)
       ignoreResult( posix_memalign(&ptr, OCCA_MEM_ALIGN, bytes) );
 #elif (OCCA_OS == OSX_OS)
-      ptr = ::malloc(bytes);
+      ignoreResult( posix_memalign(&ptr, OCCA_MEM_ALIGN, bytes) );
 #elif (OCCA_OS == WINDOWS_OS)
       ptr = ::malloc(bytes);
 #endif
