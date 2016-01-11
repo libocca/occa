@@ -1,3 +1,5 @@
+#include <cstddef>
+
 #include "occa/tools.hpp"
 #include "occa/base.hpp"
 
@@ -12,6 +14,7 @@ namespace occa {
     std::string PATH, LD_LIBRARY_PATH;
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
+    size_t OCCA_HEAP_MEM_ALIGN;
     stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize() {
@@ -40,6 +43,21 @@ namespace occa {
 
       endDirWithSlash(OCCA_DIR);
       endDirWithSlash(OCCA_CACHE_DIR);
+
+      if(sys::echo("OCCA_HEAP_MEM_ALIGN").size() > 0){
+        OCCA_HEAP_MEM_ALIGN =
+          (size_t) std::atoi(sys::echo("OCCA_HEAP_MEM_ALIGN").c_str());
+
+        // Bit twiddling from
+        // http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/
+        OCCA_CHECK(((OCCA_HEAP_MEM_ALIGN != 0) &&
+                    ((OCCA_HEAP_MEM_ALIGN &
+                      (~OCCA_HEAP_MEM_ALIGN + 1)) == OCCA_HEAP_MEM_ALIGN)),
+                   "Environment variable [OCCA_HEAP_MEM_ALIGN]"
+                   " is not a power of two");
+      }
+      else
+        OCCA_HEAP_MEM_ALIGN = 0;
 
       isInitialized = true;
     }

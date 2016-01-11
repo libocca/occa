@@ -50,6 +50,7 @@ namespace occa {
     extern std::string PATH, LD_LIBRARY_PATH;
 
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;
+    extern size_t OCCA_HEAP_MEM_ALIGN;
     extern stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize();
