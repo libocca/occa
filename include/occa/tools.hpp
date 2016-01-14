@@ -50,13 +50,15 @@ namespace occa {
     extern std::string PATH, LD_LIBRARY_PATH;
 
     extern std::string OCCA_DIR, OCCA_CACHE_DIR;
-    extern size_t OCCA_HEAP_MEM_ALIGN;
+    extern size_t OCCA_MEM_BYTE_ALIGN;
     extern stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize();
 
     void initCachePath();
     void initIncludePath();
+
+    std::string var(const std::string &var);
 
     inline void endDirWithSlash(std::string &dir){
       if((0 < dir.size()) &&
@@ -139,7 +141,6 @@ namespace occa {
     int call(const std::string &cmdline);
     int call(const std::string &cmdline, std::string &output);
 
-    std::string echo(const std::string &var);
     std::string expandEnvVariables(const std::string &str);
 
     void rmdir(const std::string &dir);

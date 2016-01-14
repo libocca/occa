@@ -12,8 +12,8 @@
 //---[ Defines ]----------------------------------
 #define OCCA_MAX_THREADS 512
 
-#ifndef OCCA_MEM_ALIGN
-#  define OCCA_MEM_ALIGN 16
+#ifndef OCCA_MEM_BYTE_ALIGN
+#  define OCCA_MEM_BYTE_ALIGN OCCA_DEFAULT_MEM_BYTE_ALIGN
 #endif
 
 #define OCCA_IN_KERNEL 1
@@ -98,7 +98,7 @@
 #ifndef MC_CL_EXE
 #  define occaRestrict __restrict__
 #  define occaVolatile volatile
-#  define occaAligned  __attribute__ ((aligned (OCCA_MEM_ALIGN)))
+#  define occaAligned  __attribute__ ((aligned (OCCA_MEM_BYTE_ALIGN)))
 #else
 // branch for Microsoft cl.exe - compiler: __restrict__ and __attribute__ ((aligned(...))) are not available there.
 #  define occaRestrict

@@ -14,7 +14,7 @@ namespace occa {
     std::string PATH, LD_LIBRARY_PATH;
 
     std::string OCCA_DIR, OCCA_CACHE_DIR;
-    size_t OCCA_HEAP_MEM_ALIGN;
+    size_t OCCA_MEM_BYTE_ALIGN;
     stringVector_t OCCA_INCLUDE_PATH;
 
     void initialize() {
@@ -23,10 +23,10 @@ namespace occa {
 
       // Standard environment variables
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-      HOME            = sys::echo("HOME");
-      PWD             = sys::echo("PWD");
-      PATH            = sys::echo("PATH");
-      LD_LIBRARY_PATH = sys::echo("LD_LIBRARY_PATH");
+      HOME            = env::var("HOME");
+      PWD             = env::var("PWD");
+      PATH            = env::var("PATH");
+      LD_LIBRARY_PATH = env::var("LD_LIBRARY_PATH");
 
       endDirWithSlash(HOME);
       endDirWithSlash(PWD);
@@ -34,7 +34,7 @@ namespace occa {
 #endif
 
       // OCCA environment variables
-      OCCA_DIR = sys::echo("OCCA_DIR");
+      OCCA_DIR = env::var("OCCA_DIR");
       initCachePath();
       initIncludePath();
 
@@ -44,34 +44,33 @@ namespace occa {
       endDirWithSlash(OCCA_DIR);
       endDirWithSlash(OCCA_CACHE_DIR);
 
-      if(sys::echo("OCCA_HEAP_MEM_ALIGN").size() > 0){
-        OCCA_HEAP_MEM_ALIGN =
-          (size_t) std::atoi(sys::echo("OCCA_HEAP_MEM_ALIGN").c_str());
+      OCCA_MEM_BYTE_ALIGN = OCCA_DEFAULT_MEM_BYTE_ALIGN;
+      if(env::var("OCCA_MEM_BYTE_ALIGN").size() > 0){
+        const size_t align = (size_t) std::atoi(env::var("OCCA_MEM_BYTE_ALIGN").c_str());
 
-        // Bit twiddling from
-        // http://www.exploringbinary.com/ten-ways-to-check-if-an-integer-is-a-power-of-two-in-c/
-        OCCA_CHECK(((OCCA_HEAP_MEM_ALIGN != 0) &&
-                    ((OCCA_HEAP_MEM_ALIGN &
-                      (~OCCA_HEAP_MEM_ALIGN + 1)) == OCCA_HEAP_MEM_ALIGN)),
-                   "Environment variable [OCCA_HEAP_MEM_ALIGN]"
-                   " is not a power of two");
+        if((align != 0) && ((align & (~align + 1)) == align)) {
+          OCCA_MEM_BYTE_ALIGN = align;
+        }
+        else {
+          std::cout << "Environment variable [OCCA_MEM_BYTE_ALIGN ("
+                    << align << ")] is not a power of two, defaulting to "
+                    << OCCA_DEFAULT_MEM_BYTE_ALIGN << '\n';
+        }
       }
-      else
-        OCCA_HEAP_MEM_ALIGN = 0;
 
       isInitialized = true;
     }
 
     void initCachePath() {
-      env::OCCA_CACHE_DIR = sys::echo("OCCA_CACHE_DIR");
+      env::OCCA_CACHE_DIR = env::var("OCCA_CACHE_DIR");
 
       if (env::OCCA_CACHE_DIR.size() == 0) {
         std::stringstream ss;
 
 #if (OCCA_OS & (LINUX_OS | OSX_OS))
-        ss << sys::echo("HOME") << "/._occa";
+        ss << env::var("HOME") << "/._occa";
 #else
-        ss << sys::echo("USERPROFILE") << "\\AppData\\Local\\OCCA";
+        ss << env::var("USERPROFILE") << "\\AppData\\Local\\OCCA";
 
 #  if OCCA_64_BIT
         ss << "_amd64";  // use different dir's fro 32 and 64 bit
@@ -95,7 +94,7 @@ namespace occa {
     }
 
     void initIncludePath() {
-      std::string oip = sys::echo("OCCA_INCLUDE_PATH");
+      std::string oip = env::var("OCCA_INCLUDE_PATH");
 
       const char *cStart = oip.c_str();
       const char *cEnd;
@@ -117,6 +116,15 @@ namespace occa {
       }
 
       tmpOIP.swap(env::OCCA_INCLUDE_PATH);
+    }
+
+    std::string var(const std::string &varName) {
+      char *c_varName = getenv(varName.c_str());
+
+      if (c_varName != NULL)
+        return std::string(c_varName);
+
+      return "";
     }
 
     envInitializer_t envInitializer;
@@ -449,15 +457,6 @@ namespace occa {
       return pclose(fp);
     }
 
-    std::string echo(const std::string &var) {
-      char *c_var = getenv(var.c_str());
-
-      if (c_var != NULL)
-        return std::string(c_var);
-
-      return "";
-    }
-
     std::string expandEnvVariables(const std::string &str) {
       std::string ret;
 
@@ -481,7 +480,7 @@ namespace occa {
           else
             skipToWhitespace(c);
 
-          std::string envVar = sys::echo(std::string(c0, c - c0));
+          std::string envVar = env::var(std::string(c0, c - c0));
 
           ret += envVar;
 

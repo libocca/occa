@@ -120,11 +120,7 @@
 #  define OCCA_CHECK( _expr , _msg )
 #endif
 
-#if (OCCA_OS & OSX_OS)
-#  define OCCA_MEM_ALIGN 16
-#else
-#  define OCCA_MEM_ALIGN 16
-#endif
+#define OCCA_DEFAULT_MEM_BYTE_ALIGN 32
 
 //---[ Compiler ]-------------
 #define OCCA_GNU_COMPILER       (1 << 0)

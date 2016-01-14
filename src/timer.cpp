@@ -16,8 +16,8 @@ namespace occa {
     deviceInitialized  = false;
     profileApplication = false;
 
-    std::string profilerOn       = occa::sys::echo("OCCA_PROFILE");
-    std::string kernelProfilerOn = occa::sys::echo("OCCA_KERNEL_PROFILE");
+    std::string profilerOn       = occa::env::var("OCCA_PROFILE");
+    std::string kernelProfilerOn = occa::env::var("OCCA_KERNEL_PROFILE");
 
     if(profilerOn == "1")
       profileApplication = true;

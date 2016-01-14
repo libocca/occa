@@ -1106,7 +1106,7 @@ namespace occa {
 
       varOriginMap_t deps;
 
-      findDependenciesFor (occaIterExp, deps);
+      findDependenciesFor(occaIterExp, deps);
 
       varOriginMapIterator it = deps.begin();
 
@@ -1146,7 +1146,7 @@ namespace occa {
       }
     }
 
-    bool parserBase::statementIsOccaOuterFor (statement &s) {
+    bool parserBase::statementIsOccaOuterFor(statement &s) {
       if (s.info == smntType::occaFor) {
         std::string &forName = s.expRoot.value;
 
@@ -1162,7 +1162,7 @@ namespace occa {
       return false;
     }
 
-    bool parserBase::statementIsOccaInnerFor (statement &s) {
+    bool parserBase::statementIsOccaInnerFor(statement &s) {
       if (s.info == smntType::occaFor) {
         std::string &forName = s.expRoot.value;
 
@@ -1178,14 +1178,14 @@ namespace occa {
       return false;
     }
 
-    bool parserBase::statementHasOccaOuterFor (statement &s) {
-      if (statementIsOccaOuterFor (s))
+    bool parserBase::statementHasOccaOuterFor(statement &s) {
+      if (statementIsOccaOuterFor(s))
         return true;
 
       statementNode *statementPos = s.statementStart;
 
       while(statementPos) {
-        if ( statementHasOccaOuterFor (*(statementPos->value)) )
+        if ( statementHasOccaOuterFor(*(statementPos->value)) )
           return true;
 
         statementPos = statementPos->right;
@@ -1194,7 +1194,7 @@ namespace occa {
       return false;
     }
 
-    bool parserBase::statementHasOccaFor (statement &s) {
+    bool parserBase::statementHasOccaFor(statement &s) {
       if ((s.info == smntType::occaFor) &&
          (s.getForStatementCount() == 0)) {
 
@@ -1204,7 +1204,7 @@ namespace occa {
       statementNode *statementPos = s.statementStart;
 
       while(statementPos) {
-        if ( statementHasOccaFor (*(statementPos->value)) )
+        if ( statementHasOccaFor(*(statementPos->value)) )
           return true;
 
         statementPos = statementPos->right;
@@ -1213,7 +1213,7 @@ namespace occa {
       return false;
     }
 
-    bool parserBase::statementHasOklFor (statement &s) {
+    bool parserBase::statementHasOklFor(statement &s) {
       if ((s.info == smntType::occaFor) &&
          (0 < s.getForStatementCount())) {
 
@@ -1223,7 +1223,7 @@ namespace occa {
       statementNode *statementPos = s.statementStart;
 
       while(statementPos) {
-        if ( statementHasOklFor (*(statementPos->value)) )
+        if ( statementHasOklFor(*(statementPos->value)) )
           return true;
 
         statementPos = statementPos->right;
@@ -1233,10 +1233,10 @@ namespace occa {
     }
 
     bool parserBase::statementHasOccaStuff(statement &s) {
-      if (statementHasOklFor (s))
+      if (statementHasOklFor(s))
         return true;
 
-      if (statementHasOccaOuterFor (s))
+      if (statementHasOccaOuterFor(s))
         return true;
 
       statementNode *statementPos = s.statementStart;
@@ -1330,7 +1330,7 @@ namespace occa {
         newFrom[ oldTo[i] ] = from;
         oldTo[ from ]       = oldTo[i];
 
-        statement::swapStatementNodesFor (*(loopsToReorder[relatedLoops[to]]),
+        statement::swapStatementNodesFor(*(loopsToReorder[relatedLoops[to]]),
                                          *(loopsToReorder[relatedLoops[from]]));
 
         swapValues(relatedLoops[to], relatedLoops[from]);
@@ -1843,8 +1843,8 @@ namespace occa {
         if (statementIsAKernel(s) && // Kernel
            (s.statementStart != NULL)) {
 
-          bool hasOccaFor = statementHasOccaFor (s);
-          bool hasOklFor  = statementHasOklFor (s);
+          bool hasOccaFor = statementHasOccaFor(s);
+          bool hasOklFor  = statementHasOklFor(s);
 
           if (hasOccaFor | hasOklFor) {
             if (hasOccaFor) {
@@ -2146,7 +2146,7 @@ namespace occa {
         // Find inner-most outer-for loop
         while(sUp) {
           if ((sUp->info == smntType::occaFor) &&
-             statementIsOccaOuterFor (*sUp)) {
+             statementIsOccaOuterFor(*sUp)) {
             break;
           }
 
@@ -2212,7 +2212,7 @@ namespace occa {
           }
         }
         else{
-          if (statementIsOccaInnerFor (s2))
+          if (statementIsOccaInnerFor(s2))
             isAppending = true;
 
           snTail = appendSharedAndExclusives(s2, snTail, isAppending);
@@ -2416,7 +2416,7 @@ namespace occa {
         varOriginMapVector_t varDeps(kernelCount);
 
         for (int k = 0; k < kernelCount; ++k)
-          varDeps[k] = findKernelDependenciesFor (sKernel,
+          varDeps[k] = findKernelDependenciesFor(sKernel,
                                                  *(omLoops[k]));
 
         newKernels = newKernelsFromLoops(sKernel,
@@ -2510,12 +2510,12 @@ namespace occa {
       }
     }
 
-    varOriginMap_t parserBase::findKernelDependenciesFor (statement &sKernel,
+    varOriginMap_t parserBase::findKernelDependenciesFor(statement &sKernel,
                                                          statement &omLoop) {
       varInfoVector_t depsIgnored;
       varOriginMap_t deps;
 
-      findDependenciesFor (omLoop, deps);
+      findDependenciesFor(omLoop, deps);
 
       varOriginMapIterator it = deps.begin();
 
@@ -2541,20 +2541,20 @@ namespace occa {
       return deps;
     }
 
-    varOriginMap_t parserBase::findDependenciesFor (statement &s,
+    varOriginMap_t parserBase::findDependenciesFor(statement &s,
                                                    const int flags) {
       varOriginMap_t deps;
 
-      findDependenciesFor (s, deps, flags);
+      findDependenciesFor(s, deps, flags);
 
       return deps;
     }
 
-    void parserBase::findDependenciesFor (statement &s,
+    void parserBase::findDependenciesFor(statement &s,
                                          varOriginMap_t &deps,
                                          const int flags) {
 
-      findDependenciesFor (s.expRoot, deps);
+      findDependenciesFor(s.expRoot, deps);
 
       if ((flags & parserInfo::checkSubStatements) == 0)
         return;
@@ -2564,21 +2564,21 @@ namespace occa {
       while(statementPos) {
         statement &s2 = *(statementPos->value);
 
-        findDependenciesFor (s2, deps, flags);
+        findDependenciesFor(s2, deps, flags);
 
         statementPos = statementPos->right;
       }
     }
 
-    varOriginMap_t parserBase::findDependenciesFor (expNode &e) {
+    varOriginMap_t parserBase::findDependenciesFor(expNode &e) {
       varOriginMap_t deps;
 
-      findDependenciesFor (e, deps);
+      findDependenciesFor(e, deps);
 
       return deps;
     }
 
-    void parserBase::findDependenciesFor (expNode &e,
+    void parserBase::findDependenciesFor(expNode &e,
                                          varOriginMap_t &deps) {
       expNode &flatRoot = *(e.makeFlatHandle());
 
@@ -2875,14 +2875,14 @@ namespace occa {
     }
 
     int parserBase::getKernelOuterDim(statement &s) {
-      return getKernelDimFor (s, "outer");
+      return getKernelDimFor(s, "outer");
     }
 
     int parserBase::getKernelInnerDim(statement &s) {
-      return getKernelDimFor (s, "inner");
+      return getKernelDimFor(s, "inner");
     }
 
-    int parserBase::getKernelDimFor (statement &s,
+    int parserBase::getKernelDimFor(statement &s,
                                     const std::string &tag) {
       statementNode *statementPos = s.statementStart;
       int dim = -1;
@@ -2906,7 +2906,7 @@ namespace occa {
       }
 
       while(statementPos) {
-        const int dim2 = getKernelDimFor (*(statementPos->value), tag);
+        const int dim2 = getKernelDimFor(*(statementPos->value), tag);
 
         if (dim < dim2)
           dim = dim2;

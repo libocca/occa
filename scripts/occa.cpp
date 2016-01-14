@@ -168,7 +168,7 @@ void runHelp(const std::string &cmd){
 }
 
 std::string envEcho(const std::string &arg){
-  std::string ret = occa::sys::echo(arg);
+  std::string ret = occa::env::var(arg);
 
   return (ret.size() ? ret : "[NOT SET]");
 }
