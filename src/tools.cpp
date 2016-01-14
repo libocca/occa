@@ -94,6 +94,7 @@ namespace occa {
     }
 
     void initIncludePath() {
+      env::OCCA_INCLUDE_PATH.clear();
       std::string oip = env::var("OCCA_INCLUDE_PATH");
 
       const char *cStart = oip.c_str();
@@ -107,6 +108,7 @@ namespace occa {
 
         if (0 < (cEnd - cStart)) {
           std::string newPath(cStart, cEnd - cStart);
+          newPath = sys::getFilename(newPath);
           endDirWithSlash(newPath);
 
           tmpOIP.push_back(newPath);
@@ -351,7 +353,6 @@ namespace occa {
 
     void dirTree_t::printOnString(std::string &str,
                                   const char delimiter) {
-
       // Empty
       if (info == dirType::none)
         return;
