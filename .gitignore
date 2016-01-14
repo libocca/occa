@@ -16,3 +16,4 @@ benchmarks/
 scripts/occaBenchmark.cpp
 
 *.pyc
+/examples/addVectors/ispc/tasksys.cpp
