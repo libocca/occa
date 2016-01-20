@@ -376,6 +376,8 @@ namespace occa {
       command << dHandle->compilerEnvScript << " && ";
 
     command << dHandle->compiler
+            << " -I."
+            << " -I"  << env::OCCA_DIR << "/include"
             << ' '          << dHandle->compilerFlags
             << archSM
             << " -Xptxas -v,-dlcm=cg,-abi=no"
