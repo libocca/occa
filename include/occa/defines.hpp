@@ -134,6 +134,7 @@
 #define OCCA_CRAY_COMPILER      (1 << 8)
 #define OCCA_UNKNOWN_COMPILER   (1 << 9)
 
+#ifndef OCCA_COMPILED_WITH
 #if defined(__clang__)
 #  define OCCA_COMPILED_WITH OCCA_LLVM_COMPILER
 #elif defined(__ICC) || defined(__INTEL_COMPILER)
@@ -154,6 +155,7 @@
 #  define OCCA_COMPILED_WITH OCCA_VS_COMPILER
 #else
 #  define OCCA_COMPILED_WITH OCCA_UNKNOWN_COMPILER
+#endif
 #endif
 
 //---[ Vectorization ]--------
@@ -209,24 +211,31 @@
 #  endif
 #endif
 
+#ifndef OCCA_SSE2
 #ifdef __SSE2__
 #  define OCCA_SSE2 1
 #else
 #  define OCCA_SSE2 0
 #endif
+#endif
 
+#ifndef OCCA_SSE
 #ifdef __SSE__
 #  define OCCA_SSE 1
 #else
 #  define OCCA_SSE 0
 #endif
+#endif
 
+#ifndef OCCA_MMX
 #ifdef __MMX__
 #  define OCCA_MMX 1
 #else
 #  define OCCA_MMX 0
 #endif
+#endif
 
+#ifndef OCCA_VECTOR_SET
 #if OCCA_MIC
 #  define OCCA_VECTOR_SET "MIC AVX-512"
 #elif OCCA_AVX2
@@ -246,7 +255,9 @@
 #else
 #  define OCCA_VECTOR_SET "[Vector Instruction Set Not Found]"
 #endif
+#endif
 
+#ifndef OCCA_SIMD_WIDTH
 #if   OCCA_MIC
 #  define OCCA_SIMD_WIDTH 16
 #elif OCCA_AVX | OCCA_AVX2
@@ -257,6 +268,7 @@
 #  define OCCA_SIMD_WIDTH 2
 #else
 #  define OCCA_SIMD_WIDTH 1
+#endif
 #endif
 //============================
 
