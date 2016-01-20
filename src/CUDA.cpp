@@ -371,6 +371,10 @@ namespace occa {
 
     std::stringstream command;
 
+    if(verboseCompilation_f)
+      std::cout << "Compiling [" << functionName << "]\n";
+
+#if 0
     //---[ PTX Check Command ]----------
     if(dHandle->compilerEnvScript.size())
       command << dHandle->compilerEnvScript << " && ";
@@ -394,6 +398,7 @@ namespace occa {
     ignoreResult( system(ptxCommand.c_str()) );
 #else
     ignoreResult( system(("\"" +  ptxCommand + "\"").c_str()) );
+#endif
 #endif
 
     //---[ Compiling Command ]----------
